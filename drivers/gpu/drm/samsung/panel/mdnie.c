@@ -805,10 +805,10 @@ static void mdnie_update_scr_white_mode(struct mdnie_info *mdnie)
 			mdnie_set_property(mdnie,
 					&mdnie->props.scr_white_mode,
 					SCR_WHITE_MODE_ADJUST_LDU);
-		} else if (mdnie->props.update_sensorRGB &&
-				mdnie->props.scenario_mode == AUTO &&
+		} else if (mdnie->props.update_sensorRGB ||
+				(mdnie->props.scenario_mode == AUTO &&
 				(mdnie->props.scenario == BROWSER_MODE ||
-				 mdnie->props.scenario == EBOOK_MODE)) {
+				 mdnie->props.scenario == EBOOK_MODE))) {
 			mdnie_set_property(mdnie,
 					&mdnie->props.scr_white_mode,
 					SCR_WHITE_MODE_SENSOR_RGB);
@@ -1372,7 +1372,7 @@ static ssize_t sensorRGB_store(struct device *dev,
 {
 	struct mdnie_info *mdnie = dev_get_drvdata(dev);
 	unsigned int white_red, white_green, white_blue;
-	int mdnie_mode = mdnie_current_state(mdnie), ret;
+	int ret;
 
 	ret = sscanf(buf, "%u %u %u",
 		&white_red, &white_green, &white_blue);
@@ -1382,10 +1382,7 @@ static ssize_t sensorRGB_store(struct device *dev,
 	 panel_info("white_r %u, white_g %u, white_b %u\n",
 			 white_red, white_green, white_blue);
 
-	if (mdnie_mode == MDNIE_SCENARIO_MODE &&
-			mdnie->props.scenario_mode == AUTO &&
-		(mdnie->props.scenario == BROWSER_MODE ||
-		 mdnie->props.scenario == EBOOK_MODE)) {
+	if (IS_MDNIE_ENABLED(mdnie)) {
 		panel_mutex_lock(&mdnie->lock);
 		mdnie->props.ssr_wrgb[0] = white_red;
 		mdnie->props.ssr_wrgb[1] = white_green;
