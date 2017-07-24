@@ -39956,6 +39956,9 @@
 #define DCIO_WRCMD_DELAY__DPHY_DELAY_MASK                                                                     0x00000F00L
 #define DCIO_WRCMD_DELAY__DCRXPHY_DELAY_MASK                                                                  0x0000F000L
 #define DCIO_WRCMD_DELAY__ZCAL_DELAY_MASK                                                                     0x000F0000L
+//DC_PINSTRAPS
+#define DC_PINSTRAPS__DC_PINSTRAPS_AUDIO__SHIFT                                                               0xe
+#define DC_PINSTRAPS__DC_PINSTRAPS_AUDIO_MASK                                                                 0x0000C000L
 //DC_DVODATA_CONFIG
 #define DC_DVODATA_CONFIG__VIP_MUX_EN__SHIFT                                                                  0x13
 #define DC_DVODATA_CONFIG__VIP_ALTER_MAPPING_EN__SHIFT                                                        0x14
