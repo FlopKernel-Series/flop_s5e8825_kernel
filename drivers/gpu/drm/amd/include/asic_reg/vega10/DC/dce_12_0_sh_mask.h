@@ -2447,6 +2447,14 @@
 //DCCG_CBUS_WRCMD_DELAY
 #define DCCG_CBUS_WRCMD_DELAY__CBUS_PLL_WRCMD_DELAY__SHIFT                                                    0x0
 #define DCCG_CBUS_WRCMD_DELAY__CBUS_PLL_WRCMD_DELAY_MASK                                                      0x0000000FL
+//DC_PINSTRAPS
+#define DC_PINSTRAPS__DC_PINSTRAPS_AUDIO__SHIFT                                                               0xe
+#define DC_PINSTRAPS__DC_PINSTRAPS_AUDIO_MASK                                                                 0x0000C000L
+//CC_DC_MISC_STRAPS
+#define CC_DC_MISC_STRAPS__HDMI_DISABLE__SHIFT                                                                0x6
+#define CC_DC_MISC_STRAPS__AUDIO_STREAM_NUMBER__SHIFT                                                         0x8
+#define CC_DC_MISC_STRAPS__HDMI_DISABLE_MASK                                                                  0x00000040L
+#define CC_DC_MISC_STRAPS__AUDIO_STREAM_NUMBER_MASK                                                           0x00000700L
 //DCCG_DS_DTO_INCR
 #define DCCG_DS_DTO_INCR__DCCG_DS_DTO_INCR__SHIFT                                                             0x0
 #define DCCG_DS_DTO_INCR__DCCG_DS_DTO_INCR_MASK                                                               0xFFFFFFFFL
