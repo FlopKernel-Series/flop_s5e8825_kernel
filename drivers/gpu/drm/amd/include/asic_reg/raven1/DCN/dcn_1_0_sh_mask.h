@@ -9361,12 +9361,14 @@
 #define HUBPREQ0_DCSURF_SECONDARY_META_SURFACE_ADDRESS_HIGH_C__SECONDARY_META_SURFACE_ADDRESS_HIGH_C__SHIFT   0x0
 #define HUBPREQ0_DCSURF_SECONDARY_META_SURFACE_ADDRESS_HIGH_C__SECONDARY_META_SURFACE_ADDRESS_HIGH_C_MASK     0x0000FFFFL
 //HUBPREQ0_DCSURF_SURFACE_CONTROL
+#define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_TMZ__SHIFT                                           0x0
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_DCC_EN__SHIFT                                        0x1
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_DCC_IND_64B_BLK__SHIFT                               0x2
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_DCC_IND_64B_BLK_C__SHIFT                             0x5
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__SECONDARY_SURFACE_DCC_EN__SHIFT                                      0x9
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__SECONDARY_SURFACE_DCC_IND_64B_BLK__SHIFT                             0xa
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__SECONDARY_SURFACE_DCC_IND_64B_BLK_C__SHIFT                           0xd
+#define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_TMZ_MASK                                             0x00000001L
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_DCC_EN_MASK                                          0x00000002L
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_DCC_IND_64B_BLK_MASK                                 0x00000004L
 #define HUBPREQ0_DCSURF_SURFACE_CONTROL__PRIMARY_SURFACE_DCC_IND_64B_BLK_C_MASK                               0x00000020L
@@ -39956,6 +39958,9 @@
 #define DCIO_WRCMD_DELAY__DPHY_DELAY_MASK                                                                     0x00000F00L
 #define DCIO_WRCMD_DELAY__DCRXPHY_DELAY_MASK                                                                  0x0000F000L
 #define DCIO_WRCMD_DELAY__ZCAL_DELAY_MASK                                                                     0x000F0000L
+//DC_PINSTRAPS
+#define DC_PINSTRAPS__DC_PINSTRAPS_AUDIO__SHIFT                                                               0xe
+#define DC_PINSTRAPS__DC_PINSTRAPS_AUDIO_MASK                                                                 0x0000C000L
 //DC_DVODATA_CONFIG
 #define DC_DVODATA_CONFIG__VIP_MUX_EN__SHIFT                                                                  0x13
 #define DC_DVODATA_CONFIG__VIP_ALTER_MAPPING_EN__SHIFT                                                        0x14
