@@ -5999,6 +5999,19 @@
 #define WB_DEBUG_CTRL__WB_DEBUG_SEL__SHIFT                                                                    0x6
 #define WB_DEBUG_CTRL__WB_DEBUG_EN_MASK                                                                       0x00000001L
 #define WB_DEBUG_CTRL__WB_DEBUG_SEL_MASK                                                                      0x000000C0L
+//WB_DBG_MODE
+#define WB_DBG_MODE__WB_DBG_MODE_EN__SHIFT                                                                    0x0
+#define WB_DBG_MODE__WB_DBG_DIN_FMT__SHIFT                                                                    0x1
+#define WB_DBG_MODE__WB_DBG_36MODE__SHIFT                                                                     0x2
+#define WB_DBG_MODE__WB_DBG_CMAP__SHIFT                                                                       0x3
+#define WB_DBG_MODE__WB_DBG_PXLRATE_ERROR__SHIFT                                                              0x8
+#define WB_DBG_MODE__WB_DBG_SOURCE_WIDTH__SHIFT                                                               0x10
+#define WB_DBG_MODE__WB_DBG_MODE_EN_MASK                                                                      0x00000001L
+#define WB_DBG_MODE__WB_DBG_DIN_FMT_MASK                                                                      0x00000002L
+#define WB_DBG_MODE__WB_DBG_36MODE_MASK                                                                       0x00000004L
+#define WB_DBG_MODE__WB_DBG_CMAP_MASK                                                                         0x00000008L
+#define WB_DBG_MODE__WB_DBG_PXLRATE_ERROR_MASK                                                                0x00000100L
+#define WB_DBG_MODE__WB_DBG_SOURCE_WIDTH_MASK                                                                 0x7FFF0000L
 //WB_HW_DEBUG
 #define WB_HW_DEBUG__WB_HW_DEBUG__SHIFT                                                                       0x0
 #define WB_HW_DEBUG__WB_HW_DEBUG_MASK                                                                         0xFFFFFFFFL
@@ -6646,6 +6659,9 @@
 //MCIF_WB0_MULTI_LEVEL_QOS_CTRL
 #define MCIF_WB0_MULTI_LEVEL_QOS_CTRL__MAX_SCALED_TIME_TO_URGENT__SHIFT                                       0x0
 #define MCIF_WB0_MULTI_LEVEL_QOS_CTRL__MAX_SCALED_TIME_TO_URGENT_MASK                                         0x003FFFFFL
+//MCIF_WB0_MCIF_WB_SECURITY_LEVEL
+#define MCIF_WB0_MCIF_WB_SECURITY_LEVEL__MCIF_WB_SECURITY_LEVEL__SHIFT                                        0x0
+#define MCIF_WB0_MCIF_WB_SECURITY_LEVEL__MCIF_WB_SECURITY_LEVEL_MASK                                          0x00000007L
 //MCIF_WB0_MCIF_WB_BUF_LUMA_SIZE
 #define MCIF_WB0_MCIF_WB_BUF_LUMA_SIZE__MCIF_WB_BUF_LUMA_SIZE__SHIFT                                          0x0
 #define MCIF_WB0_MCIF_WB_BUF_LUMA_SIZE__MCIF_WB_BUF_LUMA_SIZE_MASK                                            0x000FFFFFL
