@@ -20420,9 +20420,9 @@
 #define BIF_FB_EN__FB_WRITE_EN__SHIFT                                                                         0x1
 #define BIF_FB_EN__FB_READ_EN_MASK                                                                            0x00000001L
 #define BIF_FB_EN__FB_WRITE_EN_MASK                                                                           0x00000002L
-//BIF_BUSY_DELAY_CNTR
-#define BIF_BUSY_DELAY_CNTR__DELAY_CNT__SHIFT                                                                 0x0
-#define BIF_BUSY_DELAY_CNTR__DELAY_CNT_MASK                                                                   0x0000003FL
+//BIF_INTR_CNTL
+#define BIF_INTR_CNTL__RAS_INTR_VEC_SEL__SHIFT                                                                0x0
+#define BIF_INTR_CNTL__RAS_INTR_VEC_SEL_MASK                                                                  0x00000001L
 //BIF_MST_TRANS_PENDING_VF
 #define BIF_MST_TRANS_PENDING_VF__BIF_MST_TRANS_PENDING__SHIFT                                                0x0
 #define BIF_MST_TRANS_PENDING_VF__BIF_MST_TRANS_PENDING_MASK                                                  0x7FFFFFFFL
