@@ -1320,13 +1320,12 @@ config RT_SOFTINT_OPTIMIZATION
 	 which may soon block preemptions, such as a CPU running a ksoftirq
 	 thread which handles slow softints.
 
-config CPUSETS_ASSIST
-	bool "Cpusets configuration helper"
+config CPUSET_ASSIST
+	bool "Cpuset configuration helper"
 	depends on CPUSETS
 	depends on ANDROID
 	help
-	  This option enables the configuration of default cpusets
-	  parameters from kernel.
+	  This option enables in-kernel overrides for cpuset values.
 
 	  If unsure, say N.
 
