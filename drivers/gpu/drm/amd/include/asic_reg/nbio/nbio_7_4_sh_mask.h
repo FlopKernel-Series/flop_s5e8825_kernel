@@ -20420,9 +20420,9 @@
 #define BIF_FB_EN__FB_WRITE_EN__SHIFT                                                                         0x1
 #define BIF_FB_EN__FB_READ_EN_MASK                                                                            0x00000001L
 #define BIF_FB_EN__FB_WRITE_EN_MASK                                                                           0x00000002L
-//BIF_BUSY_DELAY_CNTR
-#define BIF_BUSY_DELAY_CNTR__DELAY_CNT__SHIFT                                                                 0x0
-#define BIF_BUSY_DELAY_CNTR__DELAY_CNT_MASK                                                                   0x0000003FL
+//BIF_INTR_CNTL
+#define BIF_INTR_CNTL__RAS_INTR_VEC_SEL__SHIFT                                                                0x0
+#define BIF_INTR_CNTL__RAS_INTR_VEC_SEL_MASK                                                                  0x00000001L
 //BIF_MST_TRANS_PENDING_VF
 #define BIF_MST_TRANS_PENDING_VF__BIF_MST_TRANS_PENDING__SHIFT                                                0x0
 #define BIF_MST_TRANS_PENDING_VF__BIF_MST_TRANS_PENDING_MASK                                                  0x7FFFFFFFL
@@ -48435,5 +48435,48 @@
 #define RCC_DEV0_EPF0_VF15_GFXMSIX_PBA__MSIX_PENDING_BITS_0_MASK                                              0x00000001L
 #define RCC_DEV0_EPF0_VF15_GFXMSIX_PBA__MSIX_PENDING_BITS_1_MASK                                              0x00000002L
 #define RCC_DEV0_EPF0_VF15_GFXMSIX_PBA__MSIX_PENDING_BITS_2_MASK                                              0x00000004L
+
+//IOHC_INTERRUPT_EOI
+#define IOHC_INTERRUPT_EOI__SMI_EOI__SHIFT                                                                    0x0
+#define IOHC_INTERRUPT_EOI__SCI_EOI__SHIFT                                                                    0x1
+#define IOHC_INTERRUPT_EOI__NMI_EOI__SHIFT                                                                    0x2
+#define IOHC_INTERRUPT_EOI__SMI_EOI_MASK                                                                      0x00000001L
+#define IOHC_INTERRUPT_EOI__SCI_EOI_MASK                                                                      0x00000002L
+#define IOHC_INTERRUPT_EOI__NMI_EOI_MASK                                                                      0x00000004L
+
+//RAS_GLOBAL_STATUS_LO
+#define RAS_GLOBAL_STATUS_LO__ParityErrCorr__SHIFT                                                            0x0
+#define RAS_GLOBAL_STATUS_LO__ParityErrNonFatal__SHIFT                                                        0x1
+#define RAS_GLOBAL_STATUS_LO__ParityErrFatal__SHIFT                                                           0x2
+#define RAS_GLOBAL_STATUS_LO__ParityErrSerr__SHIFT                                                            0x3
+#define RAS_GLOBAL_STATUS_LO__HPLGWA_NMI__SHIFT                                                               0x6
+#define RAS_GLOBAL_STATUS_LO__HPLGWA_SCI__SHIFT                                                               0x7
+#define RAS_GLOBAL_STATUS_LO__HPLGWA_SMI__SHIFT                                                               0x8
+#define RAS_GLOBAL_STATUS_LO__SW_SMI__SHIFT                                                                   0x9
+#define RAS_GLOBAL_STATUS_LO__SW_SCI__SHIFT                                                                   0xa
+#define RAS_GLOBAL_STATUS_LO__SW_NMI__SHIFT                                                                   0xb
+#define RAS_GLOBAL_STATUS_LO__APML_NMI__SHIFT                                                                 0xc
+#define RAS_GLOBAL_STATUS_LO__APML_SyncFld__SHIFT                                                             0xd
+#define RAS_GLOBAL_STATUS_LO__PIN_SyncFld_NMI__SHIFT                                                          0xe
+#define RAS_GLOBAL_STATUS_LO__APML_SyncFld_Private__SHIFT                                                     0xf
+#define RAS_GLOBAL_STATUS_LO__ParityErrCorr_MASK                                                              0x00000001L
+#define RAS_GLOBAL_STATUS_LO__ParityErrNonFatal_MASK                                                          0x00000002L
+#define RAS_GLOBAL_STATUS_LO__ParityErrFatal_MASK                                                             0x00000004L
+#define RAS_GLOBAL_STATUS_LO__ParityErrSerr_MASK                                                              0x00000008L
+#define RAS_GLOBAL_STATUS_LO__HPLGWA_NMI_MASK                                                                 0x00000040L
+#define RAS_GLOBAL_STATUS_LO__HPLGWA_SCI_MASK                                                                 0x00000080L
+#define RAS_GLOBAL_STATUS_LO__HPLGWA_SMI_MASK                                                                 0x00000100L
+#define RAS_GLOBAL_STATUS_LO__SW_SMI_MASK                                                                     0x00000200L
+#define RAS_GLOBAL_STATUS_LO__SW_SCI_MASK                                                                     0x00000400L
+#define RAS_GLOBAL_STATUS_LO__SW_NMI_MASK                                                                     0x00000800L
+#define RAS_GLOBAL_STATUS_LO__APML_NMI_MASK                                                                   0x00001000L
+#define RAS_GLOBAL_STATUS_LO__APML_SyncFld_MASK                                                               0x00002000L
+#define RAS_GLOBAL_STATUS_LO__PIN_SyncFld_NMI_MASK                                                            0x00004000L
+#define RAS_GLOBAL_STATUS_LO__APML_SyncFld_Private_MASK                                                       0x00008000L
+//RAS_GLOBAL_STATUS_HI
+#define RAS_GLOBAL_STATUS_HI__PCIE0PortAErr__SHIFT                                                            0x0
+#define RAS_GLOBAL_STATUS_HI__NBIF0PortAErr__SHIFT                                                            0x1
+#define RAS_GLOBAL_STATUS_HI__PCIE0PortAErr_MASK                                                              0x00000001L
+#define RAS_GLOBAL_STATUS_HI__NBIF0PortAErr_MASK                                                              0x00000002L
 
 #endif
