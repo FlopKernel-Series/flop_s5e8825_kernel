@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Advanced Micro Devices, Inc.
+ * Copyright 2012-16 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,21 +23,25 @@
  *
  */
 
-#include "dml_common_defs.h"
-#include "dcn_calc_math.h"
+#ifndef _DMUB_PSR_H_
+#define _DMUB_PSR_H_
 
-#include "dml_inline_defs.h"
+#include "os_types.h"
 
-double dml_round(double a)
-{
-	double round_pt = 0.5;
-	double ceil = dml_ceil(a, 1);
-	double floor = dml_floor(a, 1);
+struct dmub_psr {
+	struct dc_context *ctx;
+	const struct dmub_psr_funcs *funcs;
+};
 
-	if (a - floor >= round_pt)
-		return ceil;
-	else
-		return floor;
-}
+struct dmub_psr_funcs {
+	void (*set_psr_enable)(struct dmub_psr *dmub, bool enable);
+	bool (*setup_psr)(struct dmub_psr *dmub, struct dc_link *link, struct psr_context *psr_context);
+	void (*get_psr_state)(uint32_t *psr_state);
+	void (*set_psr_level)(struct dmub_psr *dmub, uint16_t psr_level);
+};
+
+struct dmub_psr *dmub_psr_create(struct dc_context *ctx);
+void dmub_psr_destroy(struct dmub_psr **dmub);
 
 
+#endif /* _DCE_DMUB_H_ */
