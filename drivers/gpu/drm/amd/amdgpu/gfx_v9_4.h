@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat Inc.
+ * Copyright 2020 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -18,43 +18,18 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ *
  */
-#include "core.h"
-#include "head.h"
 
-static void
-corec57d_init(struct nv50_core *core)
-{
-	const u32 windows = 8; /*XXX*/
-	u32 *push, i;
-	if ((push = evo_wait(&core->chan, 2 + 5 * windows))) {
-		evo_mthd(push, 0x0208, 1);
-		evo_data(push, core->chan.sync.handle);
-		for (i = 0; i < windows; i++) {
-			evo_mthd(push, 0x1004 + (i * 0x080), 2);
-			evo_data(push, 0x0000000f);
-			evo_data(push, 0x00000000);
-			evo_mthd(push, 0x1010 + (i * 0x080), 1);
-			evo_data(push, 0x00117fff);
-		}
-		evo_kick(push, &core->chan);
-		core->assign_windows = true;
-	}
-}
+#ifndef __GFX_V9_4_H__
+#define __GFX_V9_4_H__
 
-static const struct nv50_core_func
-corec57d = {
-	.init = corec57d_init,
-	.ntfy_init = corec37d_ntfy_init,
-	.ntfy_wait_done = corec37d_ntfy_wait_done,
-	.update = corec37d_update,
-	.wndw.owner = corec37d_wndw_owner,
-	.head = &headc57d,
-	.sor = &sorc37d,
-};
+void gfx_v9_4_clear_ras_edc_counter(struct amdgpu_device *adev);
 
-int
-corec57d_new(struct nouveau_drm *drm, s32 oclass, struct nv50_core **pcore)
-{
-	return core507d_new_(&corec57d, drm, oclass, pcore);
-}
+int gfx_v9_4_query_ras_error_count(struct amdgpu_device *adev,
+				   void *ras_error_status);
+
+int gfx_v9_4_ras_error_inject(struct amdgpu_device *adev,
+				     void *inject_if);
+
+#endif /* __GFX_V9_4_H__ */
