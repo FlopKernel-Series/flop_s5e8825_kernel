@@ -5599,6 +5599,7 @@
 #define GRBM_PWR_CNTL__ALL_REQ_EN_MASK                                                                        0x00008000L
 //GRBM_STATUS
 #define GRBM_STATUS__ME0PIPE0_CMDFIFO_AVAIL__SHIFT                                                            0x0
+#define GRBM_STATUS__RSMU_RQ_PENDING__SHIFT                                                                   0x5
 #define GRBM_STATUS__ME0PIPE0_CF_RQ_PENDING__SHIFT                                                            0x7
 #define GRBM_STATUS__ME0PIPE0_PF_RQ_PENDING__SHIFT                                                            0x8
 #define GRBM_STATUS__GDS_DMA_RQ_PENDING__SHIFT                                                                0x9
@@ -5619,6 +5620,7 @@
 #define GRBM_STATUS__CB_BUSY__SHIFT                                                                           0x1e
 #define GRBM_STATUS__GUI_ACTIVE__SHIFT                                                                        0x1f
 #define GRBM_STATUS__ME0PIPE0_CMDFIFO_AVAIL_MASK                                                              0x0000000FL
+#define GRBM_STATUS__RSMU_RQ_PENDING_MASK                                                                     0x00000020L
 #define GRBM_STATUS__ME0PIPE0_CF_RQ_PENDING_MASK                                                              0x00000080L
 #define GRBM_STATUS__ME0PIPE0_PF_RQ_PENDING_MASK                                                              0x00000100L
 #define GRBM_STATUS__GDS_DMA_RQ_PENDING_MASK                                                                  0x00000200L
@@ -5832,6 +5834,7 @@
 #define GRBM_READ_ERROR__READ_ERROR_MASK                                                                      0x80000000L
 //GRBM_READ_ERROR2
 #define GRBM_READ_ERROR2__READ_REQUESTER_CPF__SHIFT                                                           0x10
+#define GRBM_READ_ERROR2__READ_REQUESTER_RSMU__SHIFT                                                          0x11
 #define GRBM_READ_ERROR2__READ_REQUESTER_RLC__SHIFT                                                           0x12
 #define GRBM_READ_ERROR2__READ_REQUESTER_GDS_DMA__SHIFT                                                       0x13
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME0PIPE0_CF__SHIFT                                                   0x14
@@ -5847,6 +5850,7 @@
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME2PIPE2__SHIFT                                                      0x1e
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME2PIPE3__SHIFT                                                      0x1f
 #define GRBM_READ_ERROR2__READ_REQUESTER_CPF_MASK                                                             0x00010000L
+#define GRBM_READ_ERROR2__READ_REQUESTER_RSMU_MASK                                                            0x00020000L
 #define GRBM_READ_ERROR2__READ_REQUESTER_RLC_MASK                                                             0x00040000L
 #define GRBM_READ_ERROR2__READ_REQUESTER_GDS_DMA_MASK                                                         0x00080000L
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME0PIPE0_CF_MASK                                                     0x00100000L
