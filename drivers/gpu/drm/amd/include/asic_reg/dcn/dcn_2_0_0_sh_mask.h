@@ -28263,7 +28263,14 @@
 #define MPC_OUT5_CSC_C33_C34_B__MPC_OCSC_C34_B__SHIFT                                                         0x10
 #define MPC_OUT5_CSC_C33_C34_B__MPC_OCSC_C33_B_MASK                                                           0x0000FFFFL
 #define MPC_OUT5_CSC_C33_C34_B__MPC_OCSC_C34_B_MASK                                                           0xFFFF0000L
-
+//MPC_OCSC_TEST_DEBUG_INDEX
+#define MPC_OCSC_TEST_DEBUG_INDEX__MPC_OCSC_TEST_DEBUG_INDEX__SHIFT                                           0x0
+#define MPC_OCSC_TEST_DEBUG_INDEX__MPC_OCSC_TEST_DEBUG_WRITE_EN__SHIFT                                        0x8
+#define MPC_OCSC_TEST_DEBUG_INDEX__MPC_OCSC_TEST_DEBUG_INDEX_MASK                                             0x000000FFL
+#define MPC_OCSC_TEST_DEBUG_INDEX__MPC_OCSC_TEST_DEBUG_WRITE_EN_MASK                                          0x00000100L
+//MPC_OCSC_TEST_DEBUG_DATA
+#define MPC_OCSC_TEST_DEBUG_DATA__MPC_OCSC_TEST_DEBUG_DATA__SHIFT                                             0x0
+#define MPC_OCSC_TEST_DEBUG_DATA__MPC_OCSC_TEST_DEBUG_DATA_MASK                                               0xFFFFFFFFL
 
 // addressBlock: dce_dc_mpc_mpc_dcperfmon_dc_perfmon_dispdec
 //DC_PERFMON17_PERFCOUNTER_CNTL
