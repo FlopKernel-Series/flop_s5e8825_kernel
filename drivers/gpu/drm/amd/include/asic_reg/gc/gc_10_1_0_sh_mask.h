@@ -42546,6 +42546,26 @@
 
 
 // addressBlock: sqind
+//SQ_DEBUG_STS_LOCAL
+#define SQ_DEBUG_STS_LOCAL__BUSY_MASK                                                                         0x00000001L
+#define SQ_DEBUG_STS_LOCAL__BUSY__SHIFT                                                                       0x00000000
+#define SQ_DEBUG_STS_LOCAL__WAVE_LEVEL_MASK                                                                   0x000003f0L
+#define SQ_DEBUG_STS_LOCAL__WAVE_LEVEL__SHIFT                                                                 0x00000004
+#define SQ_DEBUG_STS_LOCAL__SQ_BUSY_MASK                                                                      0x00001000L
+#define SQ_DEBUG_STS_LOCAL__SQ_BUSY__SHIFT                                                                    0x0000000C
+#define SQ_DEBUG_STS_LOCAL__IS_BUSY_MASK                                                                      0x00002000L
+#define SQ_DEBUG_STS_LOCAL__IS_BUSY__SHIFT                                                                    0x0000000D
+#define SQ_DEBUG_STS_LOCAL__IB_BUSY_MASK                                                                      0x00004000L
+#define SQ_DEBUG_STS_LOCAL__IB_BUSY__SHIFT                                                                    0x0000000E
+#define SQ_DEBUG_STS_LOCAL__ARB_BUSY_MASK                                                                     0x00008000L
+#define SQ_DEBUG_STS_LOCAL__ARB_BUSY__SHIFT                                                                   0x0000000F
+#define SQ_DEBUG_STS_LOCAL__EXP_BUSY_MASK                                                                     0x00010000L
+#define SQ_DEBUG_STS_LOCAL__EXP_BUSY__SHIFT                                                                   0x00000010
+#define SQ_DEBUG_STS_LOCAL__BRMSG_BUSY_MASK                                                                   0x00020000L
+#define SQ_DEBUG_STS_LOCAL__BRMSG_BUSY__SHIFT                                                                 0x00000011
+#define SQ_DEBUG_STS_LOCAL__VM_BUSY_MASK                                                                      0x00040000L
+#define SQ_DEBUG_STS_LOCAL__VM_BUSY__SHIFT                                                                    0x00000018
+
 //SQ_WAVE_MODE
 #define SQ_WAVE_MODE__FP_ROUND__SHIFT                                                                         0x0
 #define SQ_WAVE_MODE__FP_DENORM__SHIFT                                                                        0x4
