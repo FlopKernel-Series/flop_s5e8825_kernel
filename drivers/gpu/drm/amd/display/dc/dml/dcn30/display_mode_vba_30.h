@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Advanced Micro Devices, Inc.
+ * Copyright 2020 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,34 +23,21 @@
  *
  */
 
-#ifndef _DMUB_CMD_DAL_H_
-#define _DMUB_CMD_DAL_H_
+#ifndef __DML30_DISPLAY_MODE_VBA_H__
+#define __DML30_DISPLAY_MODE_VBA_H__
 
-/*
- * Command IDs should be treated as stable ABI.
- * Do not reuse or modify IDs.
- */
+void dml30_recalculate(struct display_mode_lib *mode_lib);
+void dml30_ModeSupportAndSystemConfigurationFull(struct display_mode_lib *mode_lib);
+double dml30_CalculateWriteBackDISPCLK(
+		enum source_format_class WritebackPixelFormat,
+		double PixelClock,
+		double WritebackHRatio,
+		double WritebackVRatio,
+		unsigned int WritebackHTaps,
+		unsigned int WritebackVTaps,
+		long   WritebackSourceWidth,
+		long   WritebackDestinationWidth,
+		unsigned int HTotal,
+		unsigned int WritebackLineBufferSize);
 
-enum dmub_cmd_psr_type {
-	DMUB_CMD__PSR_SET_VERSION		= 0,
-	DMUB_CMD__PSR_COPY_SETTINGS		= 1,
-	DMUB_CMD__PSR_ENABLE			= 2,
-	DMUB_CMD__PSR_DISABLE			= 3,
-	DMUB_CMD__PSR_SET_LEVEL			= 4,
-};
-
-enum psr_version {
-	PSR_VERSION_1				= 0,
-	PSR_VERSION_UNSUPPORTED			= 0xFFFFFFFF,
-};
-
-enum dmub_cmd_abm_type {
-	DMUB_CMD__ABM_INIT_CONFIG	= 0,
-	DMUB_CMD__ABM_SET_PIPE		= 1,
-	DMUB_CMD__ABM_SET_BACKLIGHT	= 2,
-	DMUB_CMD__ABM_SET_LEVEL		= 3,
-	DMUB_CMD__ABM_SET_AMBIENT_LEVEL	= 4,
-	DMUB_CMD__ABM_SET_PWM_FRAC	= 5,
-};
-
-#endif /* _DMUB_CMD_DAL_H_ */
+#endif /* __DML30_DISPLAY_MODE_VBA_H__ */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Advanced Micro Devices, Inc.
+ * Copyright 2020 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,53 +23,28 @@
  *
  */
 
-#ifndef _DMUB_TYPES_H_
-#define _DMUB_TYPES_H_
+#ifndef _DMUB_DCN30_H_
+#define _DMUB_DCN30_H_
 
-/* Basic type definitions. */
-#include <asm/byteorder.h>
-#include <linux/types.h>
-#include <linux/string.h>
-#include <linux/delay.h>
-#include <stdarg.h>
+#include "dmub_dcn20.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+/* Registers. */
 
-#ifndef dmub_memcpy
-#define dmub_memcpy(dest, source, bytes) memcpy((dest), (source), (bytes))
-#endif
+extern const struct dmub_srv_common_regs dmub_srv_dcn30_regs;
 
-#ifndef dmub_memset
-#define dmub_memset(dest, val, bytes) memset((dest), (val), (bytes))
-#endif
+/* Hardware functions. */
 
-#ifndef dmub_udelay
-#define dmub_udelay(microseconds) udelay(microseconds)
-#endif
+void dmub_dcn30_backdoor_load(struct dmub_srv *dmub,
+			      const struct dmub_window *cw0,
+			      const struct dmub_window *cw1);
 
-/* Maximum number of streams on any ASIC. */
-#define DMUB_MAX_STREAMS 6
+void dmub_dcn30_setup_windows(struct dmub_srv *dmub,
+			      const struct dmub_window *cw2,
+			      const struct dmub_window *cw3,
+			      const struct dmub_window *cw4,
+			      const struct dmub_window *cw5,
+			      const struct dmub_window *cw6);
 
-/* Maximum number of planes on any ASIC. */
-#define DMUB_MAX_PLANES 6
+bool dmub_dcn30_is_auto_load_done(struct dmub_srv *dmub);
 
-union dmub_addr {
-	struct {
-		uint32_t low_part;
-		uint32_t high_part;
-	} u;
-	uint64_t quad_part;
-};
-
-struct dmub_psr_debug_flags {
-	uint8_t visual_confirm : 1;
-	uint8_t reserved : 7;
-};
-
-#if defined(__cplusplus)
-}
-#endif
-
-#endif /* _DMUB_TYPES_H_ */
+#endif /* _DMUB_DCN30_H_ */

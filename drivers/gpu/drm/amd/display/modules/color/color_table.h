@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Advanced Micro Devices, Inc.
+ * Copyright 2016 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,42 +22,26 @@
  * Authors: AMD
  *
  */
-#ifndef _DMUB_META_H_
-#define _DMUB_META_H_
 
-#include "dmub_types.h"
 
-#pragma pack(push, 1)
+#ifndef COLOR_MOD_COLOR_TABLE_H_
+#define COLOR_MOD_COLOR_TABLE_H_
 
-/* Magic value for identifying dmub_fw_meta_info */
-#define DMUB_FW_META_MAGIC 0x444D5542
+#include "dc_types.h"
 
-/* Offset from the end of the file to the dmub_fw_meta_info */
-#define DMUB_FW_META_OFFSET 0x24
+#define NUM_PTS_IN_REGION 16
+#define NUM_REGIONS 32
+#define MAX_HW_POINTS (NUM_PTS_IN_REGION*NUM_REGIONS)
 
-/**
- * struct dmub_fw_meta_info - metadata associated with fw binary
- *
- * NOTE: This should be considered a stable API. Fields should
- *       not be repurposed or reordered. New fields should be
- *       added instead to extend the structure.
- *
- * @magic_value: magic value identifying DMUB firmware meta info
- * @fw_region_size: size of the firmware state region
- * @trace_buffer_size: size of the tracebuffer region
- */
-struct dmub_fw_meta_info {
-	uint32_t magic_value;
-	uint32_t fw_region_size;
-	uint32_t trace_buffer_size;
+enum table_type {
+	type_pq_table,
+	type_de_pq_table
 };
 
-/* Ensure that the structure remains 64 bytes. */
-union dmub_fw_meta {
-	struct dmub_fw_meta_info info;
-	uint8_t reserved[64];
-};
+bool mod_color_is_table_init(enum table_type type);
 
-#pragma pack(pop)
+struct fixed31_32 *mod_color_get_table(enum table_type type);
 
-#endif /* _DMUB_META_H_ */
+void mod_color_set_table_init_state(enum table_type type, bool state);
+
+#endif /* COLOR_MOD_COLOR_TABLE_H_ */

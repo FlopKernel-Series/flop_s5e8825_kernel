@@ -19,23 +19,21 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * Authors: AMD
- *
  */
 
-#ifndef _DMUB_CMD_VBIOS_H_
-#define _DMUB_CMD_VBIOS_H_
+#ifndef __GFXHUB_V2_1_H__
+#define __GFXHUB_V2_1_H__
 
-/*
- * Command IDs should be treated as stable ABI.
- * Do not reuse or modify IDs.
- */
+u64 gfxhub_v2_1_get_fb_location(struct amdgpu_device *adev);
+int gfxhub_v2_1_gart_enable(struct amdgpu_device *adev);
+void gfxhub_v2_1_gart_disable(struct amdgpu_device *adev);
+void gfxhub_v2_1_set_fault_enable_default(struct amdgpu_device *adev,
+					  bool value);
+void gfxhub_v2_1_init(struct amdgpu_device *adev);
+u64 gfxhub_v2_1_get_mc_fb_offset(struct amdgpu_device *adev);
+void gfxhub_v2_1_setup_vm_pt_regs(struct amdgpu_device *adev, uint32_t vmid,
+				uint64_t page_table_base);
 
-enum dmub_cmd_vbios_type {
-	DMUB_CMD__VBIOS_DIGX_ENCODER_CONTROL = 0,
-	DMUB_CMD__VBIOS_DIG1_TRANSMITTER_CONTROL = 1,
-	DMUB_CMD__VBIOS_SET_PIXEL_CLOCK = 2,
-	DMUB_CMD__VBIOS_ENABLE_DISP_POWER_GATING = 3,
-};
+int gfxhub_v2_1_get_xgmi_info(struct amdgpu_device *adev);
 
-#endif /* _DMUB_CMD_VBIOS_H_ */
+#endif
