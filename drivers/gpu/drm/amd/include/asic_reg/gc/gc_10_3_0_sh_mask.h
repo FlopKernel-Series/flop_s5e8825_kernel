@@ -32315,6 +32315,31 @@
 #define RLC_RLCG_DOORBELL_CNTL__DOORBELL_3_MODE_MASK                                                          0x000000C0L
 #define RLC_RLCG_DOORBELL_CNTL__DOORBELL_ID_MASK                                                              0x001F0000L
 #define RLC_RLCG_DOORBELL_CNTL__DOORBELL_ID_EN_MASK                                                           0x00200000L
+//RLC_CGTT_MGCG_OVERRIDE
+#define RLC_CGTT_MGCG_OVERRIDE__RESERVED_0__SHIFT                                                             0x0
+#define RLC_CGTT_MGCG_OVERRIDE__RLC_CGTT_SCLK_OVERRIDE__SHIFT                                                 0x1
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_MGCG_OVERRIDE__SHIFT                                                    0x2
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_CGCG_OVERRIDE__SHIFT                                                    0x3
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_CGLS_OVERRIDE__SHIFT                                                    0x4
+#define RLC_CGTT_MGCG_OVERRIDE__GRBM_CGTT_SCLK_OVERRIDE__SHIFT                                                0x5
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_MGLS_OVERRIDE__SHIFT                                                    0x6
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_GFX3D_CG_OVERRIDE__SHIFT                                                0x7
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_FGCG_OVERRIDE__SHIFT                                                    0x8
+#define RLC_CGTT_MGCG_OVERRIDE__RESERVED_15_9__SHIFT                                                          0x9
+#define RLC_CGTT_MGCG_OVERRIDE__ENABLE_CGTS_LEGACY__SHIFT                                                     0x10
+#define RLC_CGTT_MGCG_OVERRIDE__RESERVED_31_17__SHIFT                                                         0x11
+#define RLC_CGTT_MGCG_OVERRIDE__RESERVED_0_MASK                                                               0x00000001L
+#define RLC_CGTT_MGCG_OVERRIDE__RLC_CGTT_SCLK_OVERRIDE_MASK                                                   0x00000002L
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_MGCG_OVERRIDE_MASK                                                      0x00000004L
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_CGCG_OVERRIDE_MASK                                                      0x00000008L
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_CGLS_OVERRIDE_MASK                                                      0x00000010L
+#define RLC_CGTT_MGCG_OVERRIDE__GRBM_CGTT_SCLK_OVERRIDE_MASK                                                  0x00000020L
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_MGLS_OVERRIDE_MASK                                                      0x00000040L
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_GFX3D_CG_OVERRIDE_MASK                                                  0x00000080L
+#define RLC_CGTT_MGCG_OVERRIDE__GFXIP_FGCG_OVERRIDE_MASK                                                      0x00000100L
+#define RLC_CGTT_MGCG_OVERRIDE__RESERVED_15_9_MASK                                                            0x0000FE00L
+#define RLC_CGTT_MGCG_OVERRIDE__ENABLE_CGTS_LEGACY_MASK                                                       0x00010000L
+#define RLC_CGTT_MGCG_OVERRIDE__RESERVED_31_17_MASK                                                           0xFFFE0000L
 //RLC_RLCG_DOORBELL_STAT
 #define RLC_RLCG_DOORBELL_STAT__DOORBELL_0_VALID__SHIFT                                                       0x0
 #define RLC_RLCG_DOORBELL_STAT__DOORBELL_1_VALID__SHIFT                                                       0x1
