@@ -5599,6 +5599,7 @@
 #define GRBM_PWR_CNTL__ALL_REQ_EN_MASK                                                                        0x00008000L
 //GRBM_STATUS
 #define GRBM_STATUS__ME0PIPE0_CMDFIFO_AVAIL__SHIFT                                                            0x0
+#define GRBM_STATUS__RSMU_RQ_PENDING__SHIFT                                                                   0x5
 #define GRBM_STATUS__ME0PIPE0_CF_RQ_PENDING__SHIFT                                                            0x7
 #define GRBM_STATUS__ME0PIPE0_PF_RQ_PENDING__SHIFT                                                            0x8
 #define GRBM_STATUS__GDS_DMA_RQ_PENDING__SHIFT                                                                0x9
@@ -5619,6 +5620,7 @@
 #define GRBM_STATUS__CB_BUSY__SHIFT                                                                           0x1e
 #define GRBM_STATUS__GUI_ACTIVE__SHIFT                                                                        0x1f
 #define GRBM_STATUS__ME0PIPE0_CMDFIFO_AVAIL_MASK                                                              0x0000000FL
+#define GRBM_STATUS__RSMU_RQ_PENDING_MASK                                                                     0x00000020L
 #define GRBM_STATUS__ME0PIPE0_CF_RQ_PENDING_MASK                                                              0x00000080L
 #define GRBM_STATUS__ME0PIPE0_PF_RQ_PENDING_MASK                                                              0x00000100L
 #define GRBM_STATUS__GDS_DMA_RQ_PENDING_MASK                                                                  0x00000200L
@@ -5832,6 +5834,7 @@
 #define GRBM_READ_ERROR__READ_ERROR_MASK                                                                      0x80000000L
 //GRBM_READ_ERROR2
 #define GRBM_READ_ERROR2__READ_REQUESTER_CPF__SHIFT                                                           0x10
+#define GRBM_READ_ERROR2__READ_REQUESTER_RSMU__SHIFT                                                          0x11
 #define GRBM_READ_ERROR2__READ_REQUESTER_RLC__SHIFT                                                           0x12
 #define GRBM_READ_ERROR2__READ_REQUESTER_GDS_DMA__SHIFT                                                       0x13
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME0PIPE0_CF__SHIFT                                                   0x14
@@ -5847,6 +5850,7 @@
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME2PIPE2__SHIFT                                                      0x1e
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME2PIPE3__SHIFT                                                      0x1f
 #define GRBM_READ_ERROR2__READ_REQUESTER_CPF_MASK                                                             0x00010000L
+#define GRBM_READ_ERROR2__READ_REQUESTER_RSMU_MASK                                                            0x00020000L
 #define GRBM_READ_ERROR2__READ_REQUESTER_RLC_MASK                                                             0x00040000L
 #define GRBM_READ_ERROR2__READ_REQUESTER_GDS_DMA_MASK                                                         0x00080000L
 #define GRBM_READ_ERROR2__READ_REQUESTER_ME0PIPE0_CF_MASK                                                     0x00100000L
@@ -42542,6 +42546,42 @@
 
 
 // addressBlock: sqind
+//SQ_DEBUG_STS_GLOBAL
+#define SQ_DEBUG_STS_GLOBAL2__FIFO_LEVEL_GFX0_MASK 0x000000ffL
+#define SQ_DEBUG_STS_GLOBAL2__FIFO_LEVEL_GFX0__SHIFT 0x00000000
+#define SQ_DEBUG_STS_GLOBAL2__FIFO_LEVEL_GFX1_MASK 0x0000ff00L
+#define SQ_DEBUG_STS_GLOBAL2__FIFO_LEVEL_GFX1__SHIFT 0x00000008
+#define SQ_DEBUG_STS_GLOBAL2__FIFO_LEVEL_COMPUTE_MASK 0xff0000L
+#define SQ_DEBUG_STS_GLOBAL2__FIFO_LEVEL_COMPUTE__SHIFT 0x00000010
+#define SQ_DEBUG_STS_GLOBAL__BUSY_MASK 0x00000001L
+#define SQ_DEBUG_STS_GLOBAL__BUSY__SHIFT 0x00000000
+#define SQ_DEBUG_STS_GLOBAL__INTERRUPT_MSG_BUSY_MASK 0x00000002L
+#define SQ_DEBUG_STS_GLOBAL__INTERRUPT_MSG_BUSY__SHIFT 0x00000001
+#define SQ_DEBUG_STS_GLOBAL__WAVE_LEVEL_SA0_MASK 0x0000fff0L
+#define SQ_DEBUG_STS_GLOBAL__WAVE_LEVEL_SA0__SHIFT 0x00000004
+#define SQ_DEBUG_STS_GLOBAL__WAVE_LEVEL_SA1_MASK 0x0fff0000L
+#define SQ_DEBUG_STS_GLOBAL__WAVE_LEVEL_SA1__SHIFT 0x00000010
+
+//SQ_DEBUG_STS_LOCAL
+#define SQ_DEBUG_STS_LOCAL__BUSY_MASK                                                                         0x00000001L
+#define SQ_DEBUG_STS_LOCAL__BUSY__SHIFT                                                                       0x00000000
+#define SQ_DEBUG_STS_LOCAL__WAVE_LEVEL_MASK                                                                   0x000003f0L
+#define SQ_DEBUG_STS_LOCAL__WAVE_LEVEL__SHIFT                                                                 0x00000004
+#define SQ_DEBUG_STS_LOCAL__SQ_BUSY_MASK                                                                      0x00001000L
+#define SQ_DEBUG_STS_LOCAL__SQ_BUSY__SHIFT                                                                    0x0000000C
+#define SQ_DEBUG_STS_LOCAL__IS_BUSY_MASK                                                                      0x00002000L
+#define SQ_DEBUG_STS_LOCAL__IS_BUSY__SHIFT                                                                    0x0000000D
+#define SQ_DEBUG_STS_LOCAL__IB_BUSY_MASK                                                                      0x00004000L
+#define SQ_DEBUG_STS_LOCAL__IB_BUSY__SHIFT                                                                    0x0000000E
+#define SQ_DEBUG_STS_LOCAL__ARB_BUSY_MASK                                                                     0x00008000L
+#define SQ_DEBUG_STS_LOCAL__ARB_BUSY__SHIFT                                                                   0x0000000F
+#define SQ_DEBUG_STS_LOCAL__EXP_BUSY_MASK                                                                     0x00010000L
+#define SQ_DEBUG_STS_LOCAL__EXP_BUSY__SHIFT                                                                   0x00000010
+#define SQ_DEBUG_STS_LOCAL__BRMSG_BUSY_MASK                                                                   0x00020000L
+#define SQ_DEBUG_STS_LOCAL__BRMSG_BUSY__SHIFT                                                                 0x00000011
+#define SQ_DEBUG_STS_LOCAL__VM_BUSY_MASK                                                                      0x00040000L
+#define SQ_DEBUG_STS_LOCAL__VM_BUSY__SHIFT                                                                    0x00000018
+
 //SQ_WAVE_MODE
 #define SQ_WAVE_MODE__FP_ROUND__SHIFT                                                                         0x0
 #define SQ_WAVE_MODE__FP_DENORM__SHIFT                                                                        0x4
