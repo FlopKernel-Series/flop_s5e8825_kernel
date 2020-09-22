@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Advanced Micro Devices, Inc.
+ * Copyright 2020 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -19,16 +19,19 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
+ * Authors: AMD
+ *
  */
-#ifndef __RENOIR_PPT_H__
-#define __RENOIR_PPT_H__
 
-extern void renoir_set_ppt_funcs(struct smu_context *smu);
+#ifndef __AMDGPU_DM_IRQ_PARAMS_H__
+#define __AMDGPU_DM_IRQ_PARAMS_H__
 
-/* UMD PState Renoir Msg Parameters in MHz */
-#define RENOIR_UMD_PSTATE_GFXCLK       700
-#define RENOIR_UMD_PSTATE_SOCCLK       678
-#define RENOIR_UMD_PSTATE_FCLK         800
-#define RENOIR_UMD_PSTATE_VCNCLK       0x022D01D8
+struct dm_irq_params {
+	u32 last_flip_vblank;
+	struct mod_vrr_params vrr_params;
+	struct dc_stream_state *stream;
+	int active_planes;
+	struct mod_freesync_config freesync_config;
+};
 
-#endif
+#endif /* __AMDGPU_DM_IRQ_PARAMS_H__ */
