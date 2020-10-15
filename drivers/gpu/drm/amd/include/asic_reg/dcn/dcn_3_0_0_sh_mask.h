@@ -50271,6 +50271,10 @@
 #define DSC_TOP0_DSC_TOP_CONTROL__DSC_CLOCK_EN_MASK                                                           0x00000001L
 #define DSC_TOP0_DSC_TOP_CONTROL__DSC_DISPCLK_R_GATE_DIS_MASK                                                 0x00000010L
 #define DSC_TOP0_DSC_TOP_CONTROL__DSC_DSCCLK_R_GATE_DIS_MASK                                                  0x00000100L
+//DSC_TOP0_DSC_DEBUG_CONTROL
+#define DSC_TOP0_DSC_DEBUG_CONTROL__DSC_DBG_EN__SHIFT                                                         0x0
+#define DSC_TOP0_DSC_DEBUG_CONTROL__DSC_DBG_EN_MASK                                                           0x00000001L
+
 
 // addressBlock: dce_dc_dsc0_dispdec_dsccif_dispdec
 //DSCCIF0_DSCCIF_CONFIG0
@@ -50789,6 +50793,9 @@
 #define DSC_TOP1_DSC_TOP_CONTROL__DSC_CLOCK_EN_MASK                                                           0x00000001L
 #define DSC_TOP1_DSC_TOP_CONTROL__DSC_DISPCLK_R_GATE_DIS_MASK                                                 0x00000010L
 #define DSC_TOP1_DSC_TOP_CONTROL__DSC_DSCCLK_R_GATE_DIS_MASK                                                  0x00000100L
+//DSC_TOP1_DSC_DEBUG_CONTROL
+#define DSC_TOP1_DSC_DEBUG_CONTROL__DSC_DBG_EN__SHIFT                                                         0x0
+#define DSC_TOP1_DSC_DEBUG_CONTROL__DSC_DBG_EN_MASK                                                           0x00000001L
 
 
 // addressBlock: dce_dc_dsc1_dispdec_dsccif_dispdec
@@ -51308,6 +51315,10 @@
 #define DSC_TOP2_DSC_TOP_CONTROL__DSC_CLOCK_EN_MASK                                                           0x00000001L
 #define DSC_TOP2_DSC_TOP_CONTROL__DSC_DISPCLK_R_GATE_DIS_MASK                                                 0x00000010L
 #define DSC_TOP2_DSC_TOP_CONTROL__DSC_DSCCLK_R_GATE_DIS_MASK                                                  0x00000100L
+//DSC_TOP2_DSC_DEBUG_CONTROL
+#define DSC_TOP2_DSC_DEBUG_CONTROL__DSC_DBG_EN__SHIFT                                                         0x0
+#define DSC_TOP2_DSC_DEBUG_CONTROL__DSC_DBG_EN_MASK                                                           0x00000001L
+
 
 // addressBlock: dce_dc_dsc2_dispdec_dsccif_dispdec
 //DSCCIF2_DSCCIF_CONFIG0
@@ -51826,6 +51837,9 @@
 #define DSC_TOP3_DSC_TOP_CONTROL__DSC_CLOCK_EN_MASK                                                           0x00000001L
 #define DSC_TOP3_DSC_TOP_CONTROL__DSC_DISPCLK_R_GATE_DIS_MASK                                                 0x00000010L
 #define DSC_TOP3_DSC_TOP_CONTROL__DSC_DSCCLK_R_GATE_DIS_MASK                                                  0x00000100L
+//DSC_TOP3_DSC_DEBUG_CONTROL
+#define DSC_TOP3_DSC_DEBUG_CONTROL__DSC_DBG_EN__SHIFT                                                         0x0
+#define DSC_TOP3_DSC_DEBUG_CONTROL__DSC_DBG_EN_MASK                                                           0x00000001L
 
 
 // addressBlock: dce_dc_dsc3_dispdec_dsccif_dispdec
@@ -52346,6 +52360,10 @@
 #define DSC_TOP4_DSC_TOP_CONTROL__DSC_CLOCK_EN_MASK                                                           0x00000001L
 #define DSC_TOP4_DSC_TOP_CONTROL__DSC_DISPCLK_R_GATE_DIS_MASK                                                 0x00000010L
 #define DSC_TOP4_DSC_TOP_CONTROL__DSC_DSCCLK_R_GATE_DIS_MASK                                                  0x00000100L
+//DSC_TOP4_DSC_DEBUG_CONTROL
+#define DSC_TOP4_DSC_DEBUG_CONTROL__DSC_DBG_EN__SHIFT                                                         0x0
+#define DSC_TOP4_DSC_DEBUG_CONTROL__DSC_DBG_EN_MASK                                                           0x00000001L
+
 
 // addressBlock: dce_dc_dsc4_dispdec_dsccif_dispdec
 //DSCCIF4_DSCCIF_CONFIG0
@@ -52864,6 +52882,10 @@
 #define DSC_TOP5_DSC_TOP_CONTROL__DSC_CLOCK_EN_MASK                                                           0x00000001L
 #define DSC_TOP5_DSC_TOP_CONTROL__DSC_DISPCLK_R_GATE_DIS_MASK                                                 0x00000010L
 #define DSC_TOP5_DSC_TOP_CONTROL__DSC_DSCCLK_R_GATE_DIS_MASK                                                  0x00000100L
+//DSC_TOP5_DSC_DEBUG_CONTROL
+#define DSC_TOP5_DSC_DEBUG_CONTROL__DSC_DBG_EN__SHIFT                                                         0x0
+#define DSC_TOP5_DSC_DEBUG_CONTROL__DSC_DBG_EN_MASK                                                           0x00000001L
+
 
 // addressBlock: dce_dc_dsc5_dispdec_dsccif_dispdec
 //DSCCIF5_DSCCIF_CONFIG0
