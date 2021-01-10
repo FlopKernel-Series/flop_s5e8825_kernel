@@ -2015,6 +2015,10 @@ static int __set_cpus_allowed_ptr_locked(struct task_struct *p,
 	unsigned int dest_cpu;
 	int ret = 0;
 
+	/* Don't allow perf-critical threads to have non-perf affinities */
+	if ((p->flags & PF_PERF_CRITICAL) && new_mask != cpu_perf_mask)
+		return -EINVAL;
+
 	update_rq_clock(rq);
 
 	if (p->flags & PF_KTHREAD) {
