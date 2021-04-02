@@ -281,6 +281,7 @@
       <elf-symbol name='amba_request_regions' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x67fb1b1c'/>
       <elf-symbol name='android_debug_per_cpu_symbol' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ee3d8d9'/>
       <elf-symbol name='android_debug_symbol' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe86cb523'/>
+      <elf-symbol name='android_rvh_probe_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7fbbd0bb'/>
       <elf-symbol name='anon_inode_getfd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6a8076de'/>
       <elf-symbol name='anon_inode_getfile' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3b73675'/>
       <elf-symbol name='argv_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe0b13336'/>
@@ -24268,24 +24269,24 @@
           <var-decl name='get_wireless_stats' type-id='55e2a83c' visibility='default' filepath='include/net/iw_handler.h' line='352' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='kmem_cache_node' size-in-bits='512' is-struct='yes' visibility='default' filepath='mm/slab.h' line='588' column='1' id='edac1e8f'>
+      <class-decl name='kmem_cache_node' size-in-bits='512' is-struct='yes' visibility='default' filepath='mm/slab.h' line='589' column='1' id='edac1e8f'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='list_lock' type-id='fb4018a0' visibility='default' filepath='mm/slab.h' line='589' column='1'/>
+          <var-decl name='list_lock' type-id='fb4018a0' visibility='default' filepath='mm/slab.h' line='590' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='nr_partial' type-id='7359adad' visibility='default' filepath='mm/slab.h' line='607' column='1'/>
+          <var-decl name='nr_partial' type-id='7359adad' visibility='default' filepath='mm/slab.h' line='608' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='partial' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='608' column='1'/>
+          <var-decl name='partial' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='609' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='nr_slabs' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='610' column='1'/>
+          <var-decl name='nr_slabs' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='611' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='total_objects' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='611' column='1'/>
+          <var-decl name='total_objects' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='612' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='full' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='612' column='1'/>
+          <var-decl name='full' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='613' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='llist_head' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/linux/llist.h' line='54' column='1' id='77df194e'>
@@ -142003,6 +142004,12 @@
         <parameter type-id='eaa32e2f' name='data' filepath='kernel/tracepoint.c' line='408' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='android_rvh_probe_register' mangled-name='android_rvh_probe_register' filepath='kernel/tracepoint.c' line='720' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='android_rvh_probe_register'>
+        <parameter type-id='08e531de' name='tp' filepath='kernel/tracepoint.c' line='720' column='1'/>
+        <parameter type-id='eaa32e2f' name='probe' filepath='kernel/tracepoint.c' line='720' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='kernel/tracepoint.c' line='720' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='kernel/workqueue.c' language='LANG_C89'>
       <array-type-def dimensions='1' type-id='a84c031d' size-in-bits='192' id='6653bb13'>
@@ -145133,24 +145140,24 @@
           <var-decl name='is_kmalloc' type-id='b50a4934' visibility='default' filepath='include/linux/kasan.h' line='87' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='kmem_cache_node' size-in-bits='512' is-struct='yes' visibility='default' filepath='mm/slab.h' line='588' column='1' id='edac1e8f'>
+      <class-decl name='kmem_cache_node' size-in-bits='512' is-struct='yes' visibility='default' filepath='mm/slab.h' line='589' column='1' id='edac1e8f'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='list_lock' type-id='fb4018a0' visibility='default' filepath='mm/slab.h' line='589' column='1'/>
+          <var-decl name='list_lock' type-id='fb4018a0' visibility='default' filepath='mm/slab.h' line='590' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='nr_partial' type-id='7359adad' visibility='default' filepath='mm/slab.h' line='607' column='1'/>
+          <var-decl name='nr_partial' type-id='7359adad' visibility='default' filepath='mm/slab.h' line='608' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='partial' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='608' column='1'/>
+          <var-decl name='partial' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='609' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='nr_slabs' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='610' column='1'/>
+          <var-decl name='nr_slabs' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='611' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='total_objects' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='611' column='1'/>
+          <var-decl name='total_objects' type-id='f22a8abb' visibility='default' filepath='mm/slab.h' line='612' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='full' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='612' column='1'/>
+          <var-decl name='full' type-id='72f469ec' visibility='default' filepath='mm/slab.h' line='613' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='8696da2b' size-in-bits='64' id='75f3cc0b'/>
