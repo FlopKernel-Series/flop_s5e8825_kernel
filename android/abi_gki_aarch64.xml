@@ -1686,6 +1686,10 @@
       <elf-symbol name='input_unregister_handler' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe23941c5'/>
       <elf-symbol name='int_pow' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1af267f8'/>
       <elf-symbol name='int_sqrt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb678366f'/>
+      <elf-symbol name='interval_tree_insert' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdab5a1eb'/>
+      <elf-symbol name='interval_tree_iter_first' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa44a1307'/>
+      <elf-symbol name='interval_tree_iter_next' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd96babb4'/>
+      <elf-symbol name='interval_tree_remove' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9b53e14'/>
       <elf-symbol name='invalidate_bdev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xefc65134'/>
       <elf-symbol name='invalidate_mapping_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9be48898'/>
       <elf-symbol name='iommu_alloc_resv_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf40724'/>
@@ -49626,41 +49630,41 @@
     </abi-instr>
     <abi-instr address-size='64' path='drivers/dma-buf/dma-fence.c' language='LANG_C89'>
       <var-decl name='__tracepoint_dma_fence_emit' type-id='4ca0c298' mangled-name='__tracepoint_dma_fence_emit' visibility='default' filepath='include/trace/events/dma_fence.h' line='37' column='1' elf-symbol-id='__tracepoint_dma_fence_emit'/>
-      <function-decl name='dma_fence_release' mangled-name='dma_fence_release' filepath='drivers/dma-buf/dma-fence.c' line='438' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_release'>
-        <parameter type-id='aa29ecab' name='kref' filepath='drivers/dma-buf/dma-fence.c' line='438' column='1'/>
+      <function-decl name='dma_fence_release' mangled-name='dma_fence_release' filepath='drivers/dma-buf/dma-fence.c' line='494' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_release'>
+        <parameter type-id='aa29ecab' name='kref' filepath='drivers/dma-buf/dma-fence.c' line='494' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='dma_fence_wait_timeout' mangled-name='dma_fence_wait_timeout' filepath='drivers/dma-buf/dma-fence.c' line='410' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_wait_timeout'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='410' column='1'/>
-        <parameter type-id='b50a4934' name='intr' filepath='drivers/dma-buf/dma-fence.c' line='410' column='1'/>
-        <parameter type-id='bd54fe1a' name='timeout' filepath='drivers/dma-buf/dma-fence.c' line='410' column='1'/>
+      <function-decl name='dma_fence_wait_timeout' mangled-name='dma_fence_wait_timeout' filepath='drivers/dma-buf/dma-fence.c' line='466' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_wait_timeout'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='466' column='1'/>
+        <parameter type-id='b50a4934' name='intr' filepath='drivers/dma-buf/dma-fence.c' line='466' column='1'/>
+        <parameter type-id='bd54fe1a' name='timeout' filepath='drivers/dma-buf/dma-fence.c' line='466' column='1'/>
         <return type-id='bd54fe1a'/>
       </function-decl>
-      <function-decl name='dma_fence_signal' mangled-name='dma_fence_signal' filepath='drivers/dma-buf/dma-fence.c' line='370' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_signal'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='370' column='1'/>
+      <function-decl name='dma_fence_signal' mangled-name='dma_fence_signal' filepath='drivers/dma-buf/dma-fence.c' line='426' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_signal'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='426' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dma_fence_init' mangled-name='dma_fence_init' filepath='drivers/dma-buf/dma-fence.c' line='848' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_init'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='848' column='1'/>
-        <parameter type-id='13d85783' name='ops' filepath='drivers/dma-buf/dma-fence.c' line='848' column='1'/>
-        <parameter type-id='cff2d845' name='lock' filepath='drivers/dma-buf/dma-fence.c' line='849' column='1'/>
-        <parameter type-id='91ce1af9' name='context' filepath='drivers/dma-buf/dma-fence.c' line='849' column='1'/>
-        <parameter type-id='91ce1af9' name='seqno' filepath='drivers/dma-buf/dma-fence.c' line='849' column='1'/>
+      <function-decl name='dma_fence_init' mangled-name='dma_fence_init' filepath='drivers/dma-buf/dma-fence.c' line='904' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_init'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='904' column='1'/>
+        <parameter type-id='13d85783' name='ops' filepath='drivers/dma-buf/dma-fence.c' line='904' column='1'/>
+        <parameter type-id='cff2d845' name='lock' filepath='drivers/dma-buf/dma-fence.c' line='905' column='1'/>
+        <parameter type-id='91ce1af9' name='context' filepath='drivers/dma-buf/dma-fence.c' line='905' column='1'/>
+        <parameter type-id='91ce1af9' name='seqno' filepath='drivers/dma-buf/dma-fence.c' line='905' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='dma_fence_add_callback' mangled-name='dma_fence_add_callback' filepath='drivers/dma-buf/dma-fence.c' line='556' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_add_callback'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='556' column='1'/>
-        <parameter type-id='a47516e5' name='cb' filepath='drivers/dma-buf/dma-fence.c' line='556' column='1'/>
-        <parameter type-id='9c175524' name='func' filepath='drivers/dma-buf/dma-fence.c' line='557' column='1'/>
+      <function-decl name='dma_fence_add_callback' mangled-name='dma_fence_add_callback' filepath='drivers/dma-buf/dma-fence.c' line='612' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_add_callback'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='612' column='1'/>
+        <parameter type-id='a47516e5' name='cb' filepath='drivers/dma-buf/dma-fence.c' line='612' column='1'/>
+        <parameter type-id='9c175524' name='func' filepath='drivers/dma-buf/dma-fence.c' line='613' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dma_fence_remove_callback' mangled-name='dma_fence_remove_callback' filepath='drivers/dma-buf/dma-fence.c' line='630' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_remove_callback'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='630' column='1'/>
-        <parameter type-id='a47516e5' name='cb' filepath='drivers/dma-buf/dma-fence.c' line='630' column='1'/>
+      <function-decl name='dma_fence_remove_callback' mangled-name='dma_fence_remove_callback' filepath='drivers/dma-buf/dma-fence.c' line='686' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_remove_callback'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='686' column='1'/>
+        <parameter type-id='a47516e5' name='cb' filepath='drivers/dma-buf/dma-fence.c' line='686' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='dma_fence_enable_sw_signaling' mangled-name='dma_fence_enable_sw_signaling' filepath='drivers/dma-buf/dma-fence.c' line='518' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_enable_sw_signaling'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='518' column='1'/>
+      <function-decl name='dma_fence_enable_sw_signaling' mangled-name='dma_fence_enable_sw_signaling' filepath='drivers/dma-buf/dma-fence.c' line='574' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_enable_sw_signaling'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='574' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='__traceiter_dma_fence_emit' mangled-name='__traceiter_dma_fence_emit' filepath='include/trace/events/dma_fence.h' line='37' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_dma_fence_emit'>
@@ -49668,22 +49672,22 @@
         <parameter type-id='28271da3' name='fence' filepath='include/trace/events/dma_fence.h' line='37' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dma_fence_default_wait' mangled-name='dma_fence_default_wait' filepath='drivers/dma-buf/dma-fence.c' line='674' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_default_wait'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='674' column='1'/>
-        <parameter type-id='b50a4934' name='intr' filepath='drivers/dma-buf/dma-fence.c' line='674' column='1'/>
-        <parameter type-id='bd54fe1a' name='timeout' filepath='drivers/dma-buf/dma-fence.c' line='674' column='1'/>
+      <function-decl name='dma_fence_default_wait' mangled-name='dma_fence_default_wait' filepath='drivers/dma-buf/dma-fence.c' line='730' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_default_wait'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='730' column='1'/>
+        <parameter type-id='b50a4934' name='intr' filepath='drivers/dma-buf/dma-fence.c' line='730' column='1'/>
+        <parameter type-id='bd54fe1a' name='timeout' filepath='drivers/dma-buf/dma-fence.c' line='730' column='1'/>
         <return type-id='bd54fe1a'/>
       </function-decl>
-      <function-decl name='dma_fence_signal_locked' mangled-name='dma_fence_signal_locked' filepath='drivers/dma-buf/dma-fence.c' line='330' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_signal_locked'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='330' column='1'/>
+      <function-decl name='dma_fence_signal_locked' mangled-name='dma_fence_signal_locked' filepath='drivers/dma-buf/dma-fence.c' line='407' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_signal_locked'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='407' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dma_fence_get_status' mangled-name='dma_fence_get_status' filepath='drivers/dma-buf/dma-fence.c' line='598' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_get_status'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='598' column='1'/>
+      <function-decl name='dma_fence_get_status' mangled-name='dma_fence_get_status' filepath='drivers/dma-buf/dma-fence.c' line='654' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_get_status'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='654' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dma_fence_free' mangled-name='dma_fence_free' filepath='drivers/dma-buf/dma-fence.c' line='480' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_free'>
-        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='480' column='1'/>
+      <function-decl name='dma_fence_free' mangled-name='dma_fence_free' filepath='drivers/dma-buf/dma-fence.c' line='536' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_free'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='536' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='dma_fence_context_alloc' mangled-name='dma_fence_context_alloc' filepath='drivers/dma-buf/dma-fence.c' line='152' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_context_alloc'>
@@ -55099,7 +55103,7 @@
       <array-type-def dimensions='1' type-id='9c313c2d' size-in-bits='4096' id='ed4ceada'>
         <subrange length='64' type-id='7ff19f0f' id='b10be967'/>
       </array-type-def>
-      <union-decl name='__anonymous_union__10' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/hdmi.h' line='386' column='1' id='c778239e'>
+      <union-decl name='__anonymous_union__6' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/hdmi.h' line='386' column='1' id='c778239e'>
         <data-member access='private'>
           <var-decl name='hdmi_type1' type-id='4ba022f8' visibility='default' filepath='include/linux/hdmi.h' line='387' column='1'/>
         </data-member>
@@ -60619,7 +60623,7 @@
           <var-decl name='length' type-id='3f1a6b60' visibility='default' filepath='include/uapi/drm/drm.h' line='978' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__9' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/drm/drm_vblank.h' line='58' column='1' id='4eb3729d'>
+      <union-decl name='__anonymous_union__5' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/drm/drm_vblank.h' line='58' column='1' id='4eb3729d'>
         <data-member access='private'>
           <var-decl name='base' type-id='9857a465' visibility='default' filepath='include/drm/drm_vblank.h' line='62' column='1'/>
         </data-member>
@@ -61419,7 +61423,7 @@
           <var-decl name='' type-id='c778239e' visibility='default' filepath='include/linux/hdmi.h' line='386' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/hdmi.h' line='386' column='1' id='c778239e'>
+      <union-decl name='__anonymous_union__6' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/hdmi.h' line='386' column='1' id='c778239e'>
         <data-member access='private'>
           <var-decl name='hdmi_type1' type-id='4ba022f8' visibility='default' filepath='include/linux/hdmi.h' line='387' column='1'/>
         </data-member>
@@ -64525,9 +64529,9 @@
       <typedef-decl name='drm_ioctl_t' type-id='4e407315' filepath='include/drm/drm_ioctl.h' line='54' column='1' id='28063720'/>
       <pointer-type-def type-id='28063720' size-in-bits='64' id='e2cefc47'/>
       <pointer-type-def type-id='2aa44dc9' size-in-bits='64' id='16ab0351'/>
-      <function-decl name='drm_send_event_locked' mangled-name='drm_send_event_locked' filepath='drivers/gpu/drm/drm_file.c' line='791' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_send_event_locked'>
-        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_file.c' line='791' column='1'/>
-        <parameter type-id='16ab0351' name='e' filepath='drivers/gpu/drm/drm_file.c' line='791' column='1'/>
+      <function-decl name='drm_send_event_locked' mangled-name='drm_send_event_locked' filepath='drivers/gpu/drm/drm_file.c' line='857' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_send_event_locked'>
+        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_file.c' line='857' column='1'/>
+        <parameter type-id='16ab0351' name='e' filepath='drivers/gpu/drm/drm_file.c' line='857' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='drm_release' mangled-name='drm_release' filepath='drivers/gpu/drm/drm_file.c' line='483' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_release'>
@@ -66731,39 +66735,39 @@
         <parameter type-id='f0981eeb' name='num_crtcs' filepath='drivers/gpu/drm/drm_vblank.c' line='517' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='drm_handle_vblank' mangled-name='drm_handle_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1912' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_handle_vblank'>
-        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_vblank.c' line='1912' column='1'/>
-        <parameter type-id='f0981eeb' name='pipe' filepath='drivers/gpu/drm/drm_vblank.c' line='1912' column='1'/>
+      <function-decl name='drm_handle_vblank' mangled-name='drm_handle_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1919' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_handle_vblank'>
+        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_vblank.c' line='1919' column='1'/>
+        <parameter type-id='f0981eeb' name='pipe' filepath='drivers/gpu/drm/drm_vblank.c' line='1919' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='drm_wait_one_vblank' mangled-name='drm_wait_one_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1233' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_wait_one_vblank'>
-        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_vblank.c' line='1233' column='1'/>
-        <parameter type-id='f0981eeb' name='pipe' filepath='drivers/gpu/drm/drm_vblank.c' line='1233' column='1'/>
+      <function-decl name='drm_wait_one_vblank' mangled-name='drm_wait_one_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1240' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_wait_one_vblank'>
+        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_vblank.c' line='1240' column='1'/>
+        <parameter type-id='f0981eeb' name='pipe' filepath='drivers/gpu/drm/drm_vblank.c' line='1240' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_send_vblank_event' mangled-name='drm_crtc_send_vblank_event' filepath='drivers/gpu/drm/drm_vblank.c' line='1069' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_send_vblank_event'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1069' column='1'/>
-        <parameter type-id='6301fad2' name='e' filepath='drivers/gpu/drm/drm_vblank.c' line='1070' column='1'/>
+      <function-decl name='drm_crtc_send_vblank_event' mangled-name='drm_crtc_send_vblank_event' filepath='drivers/gpu/drm/drm_vblank.c' line='1076' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_send_vblank_event'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1076' column='1'/>
+        <parameter type-id='6301fad2' name='e' filepath='drivers/gpu/drm/drm_vblank.c' line='1077' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_vblank_reset' mangled-name='drm_crtc_vblank_reset' filepath='drivers/gpu/drm/drm_vblank.c' line='1363' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_reset'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1363' column='1'/>
+      <function-decl name='drm_crtc_vblank_reset' mangled-name='drm_crtc_vblank_reset' filepath='drivers/gpu/drm/drm_vblank.c' line='1370' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_reset'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1370' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_wait_one_vblank' mangled-name='drm_crtc_wait_one_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1267' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_wait_one_vblank'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1267' column='1'/>
+      <function-decl name='drm_crtc_wait_one_vblank' mangled-name='drm_crtc_wait_one_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1274' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_wait_one_vblank'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1274' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_vblank_put' mangled-name='drm_crtc_vblank_put' filepath='drivers/gpu/drm/drm_vblank.c' line='1216' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_put'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1216' column='1'/>
+      <function-decl name='drm_crtc_vblank_put' mangled-name='drm_crtc_vblank_put' filepath='drivers/gpu/drm/drm_vblank.c' line='1223' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_put'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1223' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_vblank_on' mangled-name='drm_crtc_vblank_on' filepath='drivers/gpu/drm/drm_vblank.c' line='1426' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_on'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1426' column='1'/>
+      <function-decl name='drm_crtc_vblank_on' mangled-name='drm_crtc_vblank_on' filepath='drivers/gpu/drm/drm_vblank.c' line='1433' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_on'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1433' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_vblank_off' mangled-name='drm_crtc_vblank_off' filepath='drivers/gpu/drm/drm_vblank.c' line='1284' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_off'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1284' column='1'/>
+      <function-decl name='drm_crtc_vblank_off' mangled-name='drm_crtc_vblank_off' filepath='drivers/gpu/drm/drm_vblank.c' line='1291' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_off'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1291' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='drm_crtc_vblank_helper_get_vblank_timestamp' mangled-name='drm_crtc_vblank_helper_get_vblank_timestamp' filepath='drivers/gpu/drm/drm_vblank.c' line='829' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_helper_get_vblank_timestamp'>
@@ -66773,22 +66777,22 @@
         <parameter type-id='b50a4934' name='in_vblank_irq' filepath='drivers/gpu/drm/drm_vblank.c' line='832' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='drm_crtc_vblank_get' mangled-name='drm_crtc_vblank_get' filepath='drivers/gpu/drm/drm_vblank.c' line='1181' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_get'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1181' column='1'/>
+      <function-decl name='drm_crtc_vblank_get' mangled-name='drm_crtc_vblank_get' filepath='drivers/gpu/drm/drm_vblank.c' line='1188' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_vblank_get'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1188' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='drm_crtc_set_max_vblank_count' mangled-name='drm_crtc_set_max_vblank_count' filepath='drivers/gpu/drm/drm_vblank.c' line='1402' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_set_max_vblank_count'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1402' column='1'/>
-        <parameter type-id='19c2251e' name='max_vblank_count' filepath='drivers/gpu/drm/drm_vblank.c' line='1403' column='1'/>
+      <function-decl name='drm_crtc_set_max_vblank_count' mangled-name='drm_crtc_set_max_vblank_count' filepath='drivers/gpu/drm/drm_vblank.c' line='1409' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_set_max_vblank_count'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1409' column='1'/>
+        <parameter type-id='19c2251e' name='max_vblank_count' filepath='drivers/gpu/drm/drm_vblank.c' line='1410' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='drm_crtc_handle_vblank' mangled-name='drm_crtc_handle_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1986' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_handle_vblank'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1986' column='1'/>
+      <function-decl name='drm_crtc_handle_vblank' mangled-name='drm_crtc_handle_vblank' filepath='drivers/gpu/drm/drm_vblank.c' line='1993' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_handle_vblank'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1993' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='drm_crtc_arm_vblank_event' mangled-name='drm_crtc_arm_vblank_event' filepath='drivers/gpu/drm/drm_vblank.c' line='1044' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_arm_vblank_event'>
-        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1044' column='1'/>
-        <parameter type-id='6301fad2' name='e' filepath='drivers/gpu/drm/drm_vblank.c' line='1045' column='1'/>
+      <function-decl name='drm_crtc_arm_vblank_event' mangled-name='drm_crtc_arm_vblank_event' filepath='drivers/gpu/drm/drm_vblank.c' line='1051' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_crtc_arm_vblank_event'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_vblank.c' line='1051' column='1'/>
+        <parameter type-id='6301fad2' name='e' filepath='drivers/gpu/drm/drm_vblank.c' line='1052' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
     </abi-instr>
@@ -72905,7 +72909,7 @@
           <var-decl name='userbits' type-id='c213d3d4' visibility='default' filepath='include/uapi/linux/videodev2.h' line='881' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1057' column='1' id='e0a2553c'>
+      <union-decl name='__anonymous_union__13' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1057' column='1' id='e0a2553c'>
         <data-member access='private'>
           <var-decl name='request_fd' type-id='3158a266' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1058' column='1'/>
         </data-member>
@@ -72913,7 +72917,7 @@
           <var-decl name='reserved' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1059' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__8' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1049' column='1' id='09960b26'>
+      <union-decl name='__anonymous_union__11' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1049' column='1' id='09960b26'>
         <data-member access='private'>
           <var-decl name='offset' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1050' column='1'/>
         </data-member>
@@ -72948,7 +72952,7 @@
       <array-type-def dimensions='1' type-id='3f1a6b60' size-in-bits='352' id='9d263779'>
         <subrange length='11' type-id='7ff19f0f' id='847bc017'/>
       </array-type-def>
-      <union-decl name='__anonymous_union__9' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='992' column='1' id='9942b293'>
+      <union-decl name='__anonymous_union__12' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='992' column='1' id='9942b293'>
         <data-member access='private'>
           <var-decl name='mem_offset' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='993' column='1'/>
         </data-member>
@@ -76342,7 +76346,7 @@
           <var-decl name='' type-id='d749ec6e' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1568' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__1' size-in-bits='1024' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1568' column='1' id='d749ec6e'>
+      <union-decl name='__anonymous_union__2' size-in-bits='1024' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1568' column='1' id='d749ec6e'>
         <data-member access='private'>
           <var-decl name='bt' type-id='ecc13ba0' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1569' column='1'/>
         </data-member>
@@ -76695,7 +76699,7 @@
           <var-decl name='reserved' type-id='b4bb2e32' visibility='default' filepath='include/uapi/linux/v4l2-mediabus.h' line='50' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__2' size-in-bits='16' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/v4l2-mediabus.h' line='41' column='1' id='7034aa6a'>
+      <union-decl name='__anonymous_union__3' size-in-bits='16' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/v4l2-mediabus.h' line='41' column='1' id='7034aa6a'>
         <data-member access='private'>
           <var-decl name='ycbcr_enc' type-id='d315442e' visibility='default' filepath='include/uapi/linux/v4l2-mediabus.h' line='43' column='1'/>
         </data-member>
@@ -76857,7 +76861,7 @@
           <var-decl name='' type-id='7bbb3c88' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1634' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__3' size-in-bits='1024' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1634' column='1' id='7bbb3c88'>
+      <union-decl name='__anonymous_union__4' size-in-bits='1024' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1634' column='1' id='7bbb3c88'>
         <data-member access='private'>
           <var-decl name='bt' type-id='e5bfe593' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1635' column='1'/>
         </data-member>
@@ -77000,7 +77004,7 @@
         <enumerator name='V4L2_ASYNC_MATCH_I2C' value='2'/>
         <enumerator name='V4L2_ASYNC_MATCH_FWNODE' value='3'/>
       </enum-decl>
-      <union-decl name='__anonymous_union__4' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/media/v4l2-async.h' line='81' column='1' id='5c61413a'>
+      <union-decl name='__anonymous_union__7' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/media/v4l2-async.h' line='81' column='1' id='5c61413a'>
         <data-member access='private'>
           <var-decl name='fwnode' type-id='4a935625' visibility='default' filepath='include/media/v4l2-async.h' line='82' column='1'/>
         </data-member>
@@ -77512,7 +77516,7 @@
           <var-decl name='fmt' type-id='08bd2345' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2302' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__5' size-in-bits='1600' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2293' column='1' id='08bd2345'>
+      <union-decl name='__anonymous_union__8' size-in-bits='1600' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2293' column='1' id='08bd2345'>
         <data-member access='private'>
           <var-decl name='pix' type-id='e8f6102b' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2294' column='1'/>
         </data-member>
@@ -77576,7 +77580,7 @@
           <var-decl name='xfer_func' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='515' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__6' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='508' column='1' id='930baada'>
+      <union-decl name='__anonymous_union__9' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='508' column='1' id='930baada'>
         <data-member access='private'>
           <var-decl name='ycbcr_enc' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='510' column='1'/>
         </data-member>
@@ -77633,7 +77637,7 @@
           <var-decl name='reserved' type-id='81144473' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2224' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='8' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2251' column='1' id='29c254d4'>
+      <union-decl name='__anonymous_union__10' size-in-bits='8' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2251' column='1' id='29c254d4'>
         <data-member access='private'>
           <var-decl name='ycbcr_enc' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2252' column='1'/>
         </data-member>
@@ -77780,7 +77784,7 @@
           <var-decl name='userbits' type-id='c213d3d4' visibility='default' filepath='include/uapi/linux/videodev2.h' line='881' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__8' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1049' column='1' id='09960b26'>
+      <union-decl name='__anonymous_union__11' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1049' column='1' id='09960b26'>
         <data-member access='private'>
           <var-decl name='offset' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1050' column='1'/>
         </data-member>
@@ -77811,7 +77815,7 @@
           <var-decl name='reserved' type-id='9d263779' visibility='default' filepath='include/uapi/linux/videodev2.h' line='999' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__9' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='992' column='1' id='9942b293'>
+      <union-decl name='__anonymous_union__12' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='992' column='1' id='9942b293'>
         <data-member access='private'>
           <var-decl name='mem_offset' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='993' column='1'/>
         </data-member>
@@ -77822,7 +77826,7 @@
           <var-decl name='fd' type-id='3158a266' visibility='default' filepath='include/uapi/linux/videodev2.h' line='995' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1057' column='1' id='e0a2553c'>
+      <union-decl name='__anonymous_union__13' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1057' column='1' id='e0a2553c'>
         <data-member access='private'>
           <var-decl name='request_fd' type-id='3158a266' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1058' column='1'/>
         </data-member>
@@ -78081,7 +78085,7 @@
           <var-decl name='controls' type-id='264baaf7' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1752' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__11' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1742' column='1' id='3e79fede'>
+      <union-decl name='__anonymous_union__14' size-in-bits='32' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1742' column='1' id='3e79fede'>
         <data-member access='private'>
           <var-decl name='which' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1746' column='1'/>
         </data-member>
@@ -78100,7 +78104,7 @@
           <var-decl name='' type-id='56e9fb5b' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1729' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__12' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1729' column='1' id='56e9fb5b'>
+      <union-decl name='__anonymous_union__15' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1729' column='1' id='56e9fb5b'>
         <data-member access='private'>
           <var-decl name='value' type-id='3158a266' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1730' column='1'/>
         </data-member>
@@ -78148,7 +78152,7 @@
           <var-decl name='reserved' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1823' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__13' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1819' column='1' id='3cef873b'>
+      <union-decl name='__anonymous_union__16' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1819' column='1' id='3cef873b'>
         <data-member access='private'>
           <var-decl name='name' type-id='7e67d89d' visibility='default' filepath='include/uapi/linux/videodev2.h' line='1820' column='1'/>
         </data-member>
@@ -78272,7 +78276,7 @@
           <var-decl name='' type-id='96b0dd6a' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2026' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__14' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2026' column='1' id='96b0dd6a'>
+      <union-decl name='__anonymous_union__17' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2026' column='1' id='96b0dd6a'>
         <data-member access='private'>
           <var-decl name='raw' type-id='f1fdc4dc' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2029' column='1'/>
         </data-member>
@@ -78293,7 +78297,7 @@
           <var-decl name='' type-id='ddc566bc' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2062' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__15' size-in-bits='512' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2062' column='1' id='ddc566bc'>
+      <union-decl name='__anonymous_union__18' size-in-bits='512' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2062' column='1' id='ddc566bc'>
         <data-member access='private'>
           <var-decl name='stop' type-id='e0122dec' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2065' column='1'/>
         </data-member>
@@ -78330,7 +78334,7 @@
           <var-decl name='parm' type-id='1ccea1b5' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2313' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__16' size-in-bits='1600' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2309' column='1' id='1ccea1b5'>
+      <union-decl name='__anonymous_union__19' size-in-bits='1600' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2309' column='1' id='1ccea1b5'>
         <data-member access='private'>
           <var-decl name='capture' type-id='f88a5c22' visibility='default' filepath='include/uapi/linux/videodev2.h' line='2310' column='1'/>
         </data-member>
@@ -78424,7 +78428,7 @@
           <var-decl name='reserved' type-id='839e8989' visibility='default' filepath='include/uapi/linux/videodev2.h' line='838' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__17' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='833' column='1' id='8e6aae74'>
+      <union-decl name='__anonymous_union__20' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='833' column='1' id='8e6aae74'>
         <data-member access='private'>
           <var-decl name='discrete' type-id='10186cf6' visibility='default' filepath='include/uapi/linux/videodev2.h' line='834' column='1'/>
         </data-member>
@@ -78483,7 +78487,7 @@
           <var-decl name='reserved' type-id='839e8989' visibility='default' filepath='include/uapi/linux/videodev2.h' line='868' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__18' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='863' column='1' id='cfd72743'>
+      <union-decl name='__anonymous_union__21' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/videodev2.h' line='863' column='1' id='cfd72743'>
         <data-member access='private'>
           <var-decl name='discrete' type-id='5f37256e' visibility='default' filepath='include/uapi/linux/videodev2.h' line='864' column='1'/>
         </data-member>
@@ -142948,6 +142952,46 @@
         <return type-id='95e97e5e'/>
       </function-type>
     </abi-instr>
+    <abi-instr address-size='64' path='lib/interval_tree.c' language='LANG_C89'>
+      <class-decl name='interval_tree_node' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/interval_tree.h' line='7' column='1' id='7a8b9f02'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='rb' type-id='2a8a6332' visibility='default' filepath='include/linux/interval_tree.h' line='8' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='start' type-id='7359adad' visibility='default' filepath='include/linux/interval_tree.h' line='9' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='last' type-id='7359adad' visibility='default' filepath='include/linux/interval_tree.h' line='10' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='__subtree_last' type-id='7359adad' visibility='default' filepath='include/linux/interval_tree.h' line='11' column='1'/>
+        </data-member>
+      </class-decl>
+      <pointer-type-def type-id='7a8b9f02' size-in-bits='64' id='c7ea70e0'/>
+      <pointer-type-def type-id='6fe1603d' size-in-bits='64' id='9e8dca7d'/>
+      <function-decl name='interval_tree_remove' mangled-name='interval_tree_remove' filepath='lib/interval_tree.c' line='10' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='interval_tree_remove'>
+        <parameter type-id='c7ea70e0' name='node' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <parameter type-id='9e8dca7d' name='root' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='interval_tree_iter_next' mangled-name='interval_tree_iter_next' filepath='lib/interval_tree.c' line='10' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='interval_tree_iter_next'>
+        <parameter type-id='c7ea70e0' name='node' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <parameter type-id='7359adad' name='start' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <parameter type-id='7359adad' name='last' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <return type-id='c7ea70e0'/>
+      </function-decl>
+      <function-decl name='interval_tree_iter_first' mangled-name='interval_tree_iter_first' filepath='lib/interval_tree.c' line='10' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='interval_tree_iter_first'>
+        <parameter type-id='9e8dca7d' name='root' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <parameter type-id='7359adad' name='start' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <parameter type-id='7359adad' name='last' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <return type-id='c7ea70e0'/>
+      </function-decl>
+      <function-decl name='interval_tree_insert' mangled-name='interval_tree_insert' filepath='lib/interval_tree.c' line='10' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='interval_tree_insert'>
+        <parameter type-id='c7ea70e0' name='node' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <parameter type-id='9e8dca7d' name='root' filepath='lib/interval_tree.c' line='10' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+    </abi-instr>
     <abi-instr address-size='64' path='lib/iomap_copy.c' language='LANG_C89'>
       <function-decl name='__iowrite32_copy' mangled-name='__iowrite32_copy' filepath='lib/iomap_copy.c' line='19' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__iowrite32_copy'>
         <parameter type-id='eaa32e2f' name='to' filepath='lib/iomap_copy.c' line='19' column='1'/>
@@ -150435,7 +150479,7 @@
           <var-decl name='drv_priv' type-id='29c3368c' visibility='default' filepath='include/net/mac80211.h' line='2162' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
+      <class-decl name='__anonymous_struct__5' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='params' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='695' column='1'/>
         </data-member>
@@ -150650,7 +150694,7 @@
       <array-type-def dimensions='1' type-id='53a31c26' size-in-bits='192' id='b7cdf388'>
         <subrange length='4' type-id='7ff19f0f' id='16fe7105'/>
       </array-type-def>
-      <class-decl name='__anonymous_struct__2' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
+      <class-decl name='__anonymous_struct__4' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='idx' type-id='fdbf7a0f' visibility='default' filepath='include/net/mac80211.h' line='1996' column='1'/>
         </data-member>
@@ -150830,7 +150874,7 @@
           <var-decl name='smps_mode' type-id='5e2794d2' visibility='default' filepath='include/net/mac80211.h' line='1585' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
+      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='units_pos' type-id='95e97e5e' visibility='default' filepath='include/net/mac80211.h' line='2597' column='1'/>
         </data-member>
@@ -151033,7 +151077,7 @@
         <enumerator name='IEEE80211_SMPS_DYNAMIC' value='3'/>
         <enumerator name='IEEE80211_SMPS_NUM_MODES' value='4'/>
       </enum-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
+      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='units_pos' type-id='95e97e5e' visibility='default' filepath='include/net/mac80211.h' line='2597' column='1'/>
         </data-member>
@@ -151487,7 +151531,7 @@
           <var-decl name='rate' type-id='b7cdf388' visibility='default' filepath='include/net/mac80211.h' line='2001' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__2' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
+      <class-decl name='__anonymous_struct__4' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='idx' type-id='fdbf7a0f' visibility='default' filepath='include/net/mac80211.h' line='1996' column='1'/>
         </data-member>
@@ -151820,7 +151864,7 @@
           <var-decl name='civicloc_len' type-id='b59d7dce' visibility='default' filepath='include/net/mac80211.h' line='495' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
+      <class-decl name='__anonymous_struct__5' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='params' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='695' column='1'/>
         </data-member>
@@ -151931,7 +151975,7 @@
           <var-decl name='' type-id='eb542e10' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='160' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1' id='eb542e10'>
+      <union-decl name='__anonymous_union__17' size-in-bits='160' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1' id='eb542e10'>
         <data-member access='private'>
           <var-decl name='tkip' type-id='5a0ae575' visibility='default' filepath='include/net/mac80211.h' line='1886' column='1'/>
         </data-member>
@@ -151951,7 +151995,7 @@
           <var-decl name='hw' type-id='ea135534' visibility='default' filepath='include/net/mac80211.h' line='1902' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__4' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1883' column='1' id='5a0ae575'>
+      <class-decl name='__anonymous_struct__6' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1883' column='1' id='5a0ae575'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='iv32' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='1884' column='1'/>
         </data-member>
@@ -151959,12 +152003,12 @@
           <var-decl name='iv16' type-id='1dc6a898' visibility='default' filepath='include/net/mac80211.h' line='1885' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__5' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1887' column='1' id='71c656e5'>
+      <class-decl name='__anonymous_struct__7' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1887' column='1' id='71c656e5'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='pn' type-id='cf1a4160' visibility='default' filepath='include/net/mac80211.h' line='1888' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__9' size-in-bits='136' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1899' column='1' id='ea135534'>
+      <class-decl name='__anonymous_struct__11' size-in-bits='136' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1899' column='1' id='ea135534'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='seq' type-id='0d8415b5' visibility='default' filepath='include/net/mac80211.h' line='1900' column='1'/>
         </data-member>
@@ -152095,7 +152139,7 @@
         <enumerator name='BAR_RX_EVENT' value='2'/>
         <enumerator name='BA_FRAME_TIMEOUT' value='3'/>
       </enum-decl>
-      <union-decl name='__anonymous_union__8' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='463' column='1' id='2a1a3e21'>
+      <union-decl name='__anonymous_union__18' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='463' column='1' id='2a1a3e21'>
         <data-member access='private'>
           <var-decl name='rssi' type-id='1569e170' visibility='default' filepath='include/net/mac80211.h' line='464' column='1'/>
         </data-member>
@@ -154469,34 +154513,6 @@
           <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='694' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='iw_param' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='680' column='1' id='b024252b'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='value' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='681' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='fixed' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='682' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='40'>
-          <var-decl name='disabled' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='683' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='48'>
-          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='684' column='1'/>
-        </data-member>
-      </class-decl>
-      <class-decl name='iw_freq' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='706' column='1' id='bc1ac22c'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='m' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='707' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='e' type-id='b55def60' visibility='default' filepath='include/uapi/linux/wireless.h' line='708' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='48'>
-          <var-decl name='i' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='709' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='56'>
-          <var-decl name='flags' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='710' column='1'/>
-        </data-member>
-      </class-decl>
       <union-decl name='iwreq_data' size-in-bits='128' visibility='default' filepath='include/uapi/linux/wireless.h' line='902' column='1' id='ed626d0d'>
         <data-member access='private'>
           <var-decl name='name' type-id='ac1fa8c0' visibility='default' filepath='include/uapi/linux/wireless.h' line='904' column='1'/>
@@ -154553,6 +154569,34 @@
           <var-decl name='data' type-id='db4e746c' visibility='default' filepath='include/uapi/linux/wireless.h' line='930' column='1'/>
         </data-member>
       </union-decl>
+      <class-decl name='iw_param' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='680' column='1' id='b024252b'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='value' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='681' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='fixed' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='682' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='40'>
+          <var-decl name='disabled' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='683' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='48'>
+          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='684' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='iw_freq' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='706' column='1' id='bc1ac22c'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='m' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='707' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='e' type-id='b55def60' visibility='default' filepath='include/uapi/linux/wireless.h' line='708' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='48'>
+          <var-decl name='i' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='709' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='56'>
+          <var-decl name='flags' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='710' column='1'/>
+        </data-member>
+      </class-decl>
       <class-decl name='iw_quality' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='716' column='1' id='aa80c027'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='qual' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='717' column='1'/>
