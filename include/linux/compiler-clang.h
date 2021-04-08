@@ -154,3 +154,5 @@
 #else
 #define __diag_clang_23(s)
 #endif
+
+#define __nocfi		__attribute__((__no_sanitize__("cfi")))
