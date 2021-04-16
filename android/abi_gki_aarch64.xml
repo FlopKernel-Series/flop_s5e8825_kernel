@@ -3039,6 +3039,10 @@
       <elf-symbol name='schedule_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ddd8aad'/>
       <elf-symbol name='schedule_timeout_interruptible' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x54496b4'/>
       <elf-symbol name='schedule_timeout_uninterruptible' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x151f4898'/>
+      <elf-symbol name='scmi_driver_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x38f10a25'/>
+      <elf-symbol name='scmi_driver_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe518286f'/>
+      <elf-symbol name='scmi_protocol_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xad8492bc'/>
+      <elf-symbol name='scmi_protocol_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf09967a7'/>
       <elf-symbol name='scnprintf' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x96848186'/>
       <elf-symbol name='scsi_autopm_get_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd4222de4'/>
       <elf-symbol name='scsi_autopm_put_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e0c80d6'/>
@@ -53353,6 +53357,400 @@
         <parameter type-id='c0d6fada' name='edev' filepath='drivers/extcon/extcon.c' line='1406' column='1'/>
         <return type-id='80f4b756'/>
       </function-decl>
+    </abi-instr>
+    <abi-instr address-size='64' path='drivers/firmware/arm_scmi/bus.c' language='LANG_C89'>
+      <class-decl name='scmi_driver' size-in-bits='1408' is-struct='yes' visibility='default' filepath='include/linux/scmi_protocol.h' line='670' column='1' id='35ff1d34'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='name' type-id='80f4b756' visibility='default' filepath='include/linux/scmi_protocol.h' line='671' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='probe' type-id='fa2519a6' visibility='default' filepath='include/linux/scmi_protocol.h' line='672' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='remove' type-id='6219347f' visibility='default' filepath='include/linux/scmi_protocol.h' line='673' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='id_table' type-id='2d81b115' visibility='default' filepath='include/linux/scmi_protocol.h' line='674' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='driver' type-id='fe007c02' visibility='default' filepath='include/linux/scmi_protocol.h' line='676' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_device' size-in-bits='6464' is-struct='yes' visibility='default' filepath='include/linux/scmi_protocol.h' line='650' column='1' id='c016a1fc'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='id' type-id='19c2251e' visibility='default' filepath='include/linux/scmi_protocol.h' line='651' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='protocol_id' type-id='f9b06939' visibility='default' filepath='include/linux/scmi_protocol.h' line='652' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='name' type-id='80f4b756' visibility='default' filepath='include/linux/scmi_protocol.h' line='653' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='dev' type-id='66e487eb' visibility='default' filepath='include/linux/scmi_protocol.h' line='654' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6400'>
+          <var-decl name='handle' type-id='94f1df82' visibility='default' filepath='include/linux/scmi_protocol.h' line='655' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_handle' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/scmi_protocol.h' line='616' column='1' id='ee54f9d4'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='dev' type-id='fa0b179b' visibility='default' filepath='include/linux/scmi_protocol.h' line='617' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='version' type-id='3f2d9c8e' visibility='default' filepath='include/linux/scmi_protocol.h' line='618' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='devm_acquire_protocol' type-id='cf781f0e' visibility='default' filepath='include/linux/scmi_protocol.h' line='620' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='devm_get_protocol' type-id='ad477c6b' visibility='default' filepath='include/linux/scmi_protocol.h' line='623' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='devm_put_protocol' type-id='a7ad1583' visibility='default' filepath='include/linux/scmi_protocol.h' line='625' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='notify_ops' type-id='43023603' visibility='default' filepath='include/linux/scmi_protocol.h' line='627' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_revision_info' size-in-bits='352' is-struct='yes' visibility='default' filepath='include/linux/scmi_protocol.h' line='33' column='1' id='889b9d08'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='major_ver' type-id='1dc6a898' visibility='default' filepath='include/linux/scmi_protocol.h' line='34' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='16'>
+          <var-decl name='minor_ver' type-id='1dc6a898' visibility='default' filepath='include/linux/scmi_protocol.h' line='35' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='num_protocols' type-id='f9b06939' visibility='default' filepath='include/linux/scmi_protocol.h' line='36' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='40'>
+          <var-decl name='num_agents' type-id='f9b06939' visibility='default' filepath='include/linux/scmi_protocol.h' line='37' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='impl_ver' type-id='19c2251e' visibility='default' filepath='include/linux/scmi_protocol.h' line='38' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='vendor_id' type-id='ac1fa8c0' visibility='default' filepath='include/linux/scmi_protocol.h' line='39' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='224'>
+          <var-decl name='sub_vendor_id' type-id='ac1fa8c0' visibility='default' filepath='include/linux/scmi_protocol.h' line='40' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_protocol_handle' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='169' column='1' id='4ca01201'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='dev' type-id='fa0b179b' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='170' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='xops' type-id='5836a47f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='171' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='set_priv' type-id='6c473266' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='172' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='get_priv' type-id='181cff2f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='173' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_xfer_ops' size-in-bits='384' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='190' column='1' id='eb5ce574'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='version_get' type-id='7f0caae8' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='191' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='xfer_get_init' type-id='a436cbba' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='192' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='reset_rx_to_maxsz' type-id='0ad8f865' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='195' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='do_xfer' type-id='b9eef1f6' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='197' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='do_xfer_with_response' type-id='b9eef1f6' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='199' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='xfer_put' type-id='0ad8f865' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='201' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_xfer' size-in-bits='704' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='138' column='1' id='77984907'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='transfer_id' type-id='95e97e5e' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='139' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='hdr' type-id='23d1ead2' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='140' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='tx' type-id='0569c65f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='141' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='rx' type-id='0569c65f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='142' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='done' type-id='f9fef04f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='143' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='640'>
+          <var-decl name='async_done' type-id='389faaf7' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='144' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_msg_hdr' size-in-bits='96' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='80' column='1' id='23d1ead2'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='id' type-id='f9b06939' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='81' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='8'>
+          <var-decl name='protocol_id' type-id='f9b06939' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='82' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='16'>
+          <var-decl name='seq' type-id='1dc6a898' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='83' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='status' type-id='19c2251e' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='84' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='poll_completion' type-id='b50a4934' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='85' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_msg' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='121' column='1' id='0569c65f'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='buf' type-id='eaa32e2f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='122' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='len' type-id='b59d7dce' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='123' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_notify_ops' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/linux/scmi_protocol.h' line='584' column='1' id='3042e3e4'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='devm_register_event_notifier' type-id='f49945f2' visibility='default' filepath='include/linux/scmi_protocol.h' line='585' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='devm_unregister_event_notifier' type-id='f49945f2' visibility='default' filepath='include/linux/scmi_protocol.h' line='588' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='register_event_notifier' type-id='8596937d' visibility='default' filepath='include/linux/scmi_protocol.h' line='592' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='unregister_event_notifier' type-id='8596937d' visibility='default' filepath='include/linux/scmi_protocol.h' line='595' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_device_id' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/scmi_protocol.h' line='665' column='1' id='9aefc15c'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='protocol_id' type-id='f9b06939' visibility='default' filepath='include/linux/scmi_protocol.h' line='666' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='name' type-id='80f4b756' visibility='default' filepath='include/linux/scmi_protocol.h' line='667' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_protocol' size-in-bits='384' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='225' column='1' id='d44f152a'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='id' type-id='19272f09' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='226' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='owner' type-id='2730d015' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='227' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='init_instance' type-id='c321beba' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='228' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='deinit_instance' type-id='c321beba' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='229' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='ops' type-id='eaa32e2f' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='230' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='events' type-id='d5dff457' visibility='default' filepath='drivers/firmware/arm_scmi/common.h' line='231' column='1'/>
+        </data-member>
+      </class-decl>
+      <typedef-decl name='scmi_prot_init_ph_fn_t' type-id='039c1bc4' filepath='drivers/firmware/arm_scmi/common.h' line='213' column='1' id='dec3e96a'/>
+      <class-decl name='scmi_protocol_events' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='72' column='1' id='b19a033a'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='queue_sz' type-id='b59d7dce' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='73' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='ops' type-id='4dbd8756' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='74' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='evts' type-id='7a6880f3' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='75' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='num_events' type-id='f0981eeb' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='76' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='224'>
+          <var-decl name='num_sources' type-id='f0981eeb' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='77' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_event_ops' size-in-bits='192' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='52' column='1' id='bc536f35'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='get_num_sources' type-id='039c1bc4' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='53' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='set_notify_enabled' type-id='45e13c1a' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='54' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='fill_custom_report' type-id='35cdc1ce' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='56' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='scmi_event' size-in-bits='192' is-struct='yes' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='28' column='1' id='04b222a6'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='id' type-id='f9b06939' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='29' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='max_payld_sz' type-id='b59d7dce' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='30' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='max_report_sz' type-id='b59d7dce' visibility='default' filepath='drivers/firmware/arm_scmi/notify.h' line='31' column='1'/>
+        </data-member>
+      </class-decl>
+      <qualified-type-def type-id='9aefc15c' const='yes' id='425bcb9d'/>
+      <pointer-type-def type-id='425bcb9d' size-in-bits='64' id='2d81b115'/>
+      <qualified-type-def type-id='04b222a6' const='yes' id='c29a9f0b'/>
+      <pointer-type-def type-id='c29a9f0b' size-in-bits='64' id='7a6880f3'/>
+      <qualified-type-def type-id='bc536f35' const='yes' id='b01bc938'/>
+      <pointer-type-def type-id='b01bc938' size-in-bits='64' id='4dbd8756'/>
+      <qualified-type-def type-id='ee54f9d4' const='yes' id='970fe03f'/>
+      <pointer-type-def type-id='970fe03f' size-in-bits='64' id='e2fdc10f'/>
+      <qualified-type-def type-id='3042e3e4' const='yes' id='b1837ffb'/>
+      <pointer-type-def type-id='b1837ffb' size-in-bits='64' id='43023603'/>
+      <qualified-type-def type-id='dec3e96a' const='yes' id='c321beba'/>
+      <qualified-type-def type-id='d44f152a' const='yes' id='9154cd19'/>
+      <pointer-type-def type-id='9154cd19' size-in-bits='64' id='fb7f0749'/>
+      <qualified-type-def type-id='b19a033a' const='yes' id='e3840c87'/>
+      <pointer-type-def type-id='e3840c87' size-in-bits='64' id='d5dff457'/>
+      <qualified-type-def type-id='4ca01201' const='yes' id='53637fcc'/>
+      <pointer-type-def type-id='53637fcc' size-in-bits='64' id='2ba25712'/>
+      <qualified-type-def type-id='eb5ce574' const='yes' id='752b54cf'/>
+      <pointer-type-def type-id='752b54cf' size-in-bits='64' id='5836a47f'/>
+      <pointer-type-def type-id='7ff8f2c1' size-in-bits='64' id='8596937d'/>
+      <pointer-type-def type-id='453c30fa' size-in-bits='64' id='039c1bc4'/>
+      <pointer-type-def type-id='557ef084' size-in-bits='64' id='b9eef1f6'/>
+      <pointer-type-def type-id='e2bf3f10' size-in-bits='64' id='a436cbba'/>
+      <pointer-type-def type-id='590183f8' size-in-bits='64' id='45e13c1a'/>
+      <pointer-type-def type-id='44dd8636' size-in-bits='64' id='7f0caae8'/>
+      <pointer-type-def type-id='81d856a4' size-in-bits='64' id='6c473266'/>
+      <pointer-type-def type-id='0d3f29fc' size-in-bits='64' id='fa2519a6'/>
+      <pointer-type-def type-id='117e939c' size-in-bits='64' id='cf781f0e'/>
+      <pointer-type-def type-id='034410a0' size-in-bits='64' id='f49945f2'/>
+      <pointer-type-def type-id='c016a1fc' size-in-bits='64' id='260390aa'/>
+      <pointer-type-def type-id='35ff1d34' size-in-bits='64' id='7f2f8862'/>
+      <pointer-type-def type-id='ee54f9d4' size-in-bits='64' id='94f1df82'/>
+      <pointer-type-def type-id='4ca01201' size-in-bits='64' id='ab88b499'/>
+      <pointer-type-def type-id='ab88b499' size-in-bits='64' id='bb3475c9'/>
+      <pointer-type-def type-id='889b9d08' size-in-bits='64' id='3f2d9c8e'/>
+      <pointer-type-def type-id='77984907' size-in-bits='64' id='14bde5bf'/>
+      <pointer-type-def type-id='14bde5bf' size-in-bits='64' id='3bf0698f'/>
+      <pointer-type-def type-id='ac765b39' size-in-bits='64' id='0ad8f865'/>
+      <pointer-type-def type-id='a35f0003' size-in-bits='64' id='6219347f'/>
+      <pointer-type-def type-id='43e7c387' size-in-bits='64' id='a7ad1583'/>
+      <pointer-type-def type-id='a24ec55b' size-in-bits='64' id='181cff2f'/>
+      <pointer-type-def type-id='4aa69d9c' size-in-bits='64' id='35cdc1ce'/>
+      <pointer-type-def type-id='7bb1ea6f' size-in-bits='64' id='ad477c6b'/>
+      <function-decl name='scmi_driver_unregister' mangled-name='scmi_driver_unregister' filepath='drivers/firmware/arm_scmi/bus.c' line='159' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scmi_driver_unregister'>
+        <parameter type-id='7f2f8862' name='driver' filepath='drivers/firmware/arm_scmi/bus.c' line='159' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='scmi_driver_register' mangled-name='scmi_driver_register' filepath='drivers/firmware/arm_scmi/bus.c' line='137' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scmi_driver_register'>
+        <parameter type-id='7f2f8862' name='driver' filepath='drivers/firmware/arm_scmi/bus.c' line='137' column='1'/>
+        <parameter type-id='2730d015' name='owner' filepath='drivers/firmware/arm_scmi/bus.c' line='137' column='1'/>
+        <parameter type-id='80f4b756' name='mod_name' filepath='drivers/firmware/arm_scmi/bus.c' line='138' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='scmi_protocol_unregister' mangled-name='scmi_protocol_unregister' filepath='drivers/firmware/arm_scmi/bus.c' line='258' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scmi_protocol_unregister'>
+        <parameter type-id='fb7f0749' name='proto' filepath='drivers/firmware/arm_scmi/bus.c' line='258' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='scmi_protocol_register' mangled-name='scmi_protocol_register' filepath='drivers/firmware/arm_scmi/bus.c' line='228' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scmi_protocol_register'>
+        <parameter type-id='fb7f0749' name='proto' filepath='drivers/firmware/arm_scmi/bus.c' line='228' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-type size-in-bits='64' id='7ff8f2c1'>
+        <parameter type-id='e2fdc10f'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='f9409001'/>
+        <parameter type-id='d504f73d'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='453c30fa'>
+        <parameter type-id='2ba25712'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='557ef084'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='14bde5bf'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='e2bf3f10'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='b59d7dce'/>
+        <parameter type-id='b59d7dce'/>
+        <parameter type-id='3bf0698f'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='590183f8'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='19c2251e'/>
+        <parameter type-id='b50a4934'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='44dd8636'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='f9409001'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='81d856a4'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='eaa32e2f'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='0d3f29fc'>
+        <parameter type-id='260390aa'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='117e939c'>
+        <parameter type-id='260390aa'/>
+        <parameter type-id='f9b06939'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='034410a0'>
+        <parameter type-id='260390aa'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='f9409001'/>
+        <parameter type-id='d504f73d'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='ac765b39'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='14bde5bf'/>
+        <return type-id='48b5725f'/>
+      </function-type>
+      <function-type size-in-bits='64' id='a35f0003'>
+        <parameter type-id='260390aa'/>
+        <return type-id='48b5725f'/>
+      </function-type>
+      <function-type size-in-bits='64' id='43e7c387'>
+        <parameter type-id='260390aa'/>
+        <parameter type-id='f9b06939'/>
+        <return type-id='48b5725f'/>
+      </function-type>
+      <function-type size-in-bits='64' id='a24ec55b'>
+        <parameter type-id='2ba25712'/>
+        <return type-id='eaa32e2f'/>
+      </function-type>
+      <function-type size-in-bits='64' id='4aa69d9c'>
+        <parameter type-id='2ba25712'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='fbc017ef'/>
+        <parameter type-id='eaa32e2f'/>
+        <parameter type-id='b59d7dce'/>
+        <parameter type-id='eaa32e2f'/>
+        <parameter type-id='f9409001'/>
+        <return type-id='eaa32e2f'/>
+      </function-type>
+      <function-type size-in-bits='64' id='7bb1ea6f'>
+        <parameter type-id='260390aa'/>
+        <parameter type-id='f9b06939'/>
+        <parameter type-id='bb3475c9'/>
+        <return type-id='eaa32e2f'/>
+      </function-type>
     </abi-instr>
     <abi-instr address-size='64' path='drivers/firmware/efi/efi.c' language='LANG_C89'>
       <class-decl name='efi' size-in-bits='2048' is-struct='yes' visibility='default' filepath='include/linux/efi.h' line='541' column='1' id='f7bdefe9'>
@@ -160581,7 +160979,7 @@
           <var-decl name='drv_priv' type-id='29c3368c' visibility='default' filepath='include/net/mac80211.h' line='2162' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
+      <class-decl name='__anonymous_struct__2' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='params' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='695' column='1'/>
         </data-member>
@@ -160793,7 +161191,7 @@
       <array-type-def dimensions='1' type-id='53a31c26' size-in-bits='192' id='b7cdf388'>
         <subrange length='4' type-id='7ff19f0f' id='16fe7105'/>
       </array-type-def>
-      <class-decl name='__anonymous_struct__2' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
+      <class-decl name='__anonymous_struct__1' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='idx' type-id='fdbf7a0f' visibility='default' filepath='include/net/mac80211.h' line='1996' column='1'/>
         </data-member>
@@ -160973,7 +161371,7 @@
           <var-decl name='smps_mode' type-id='5e2794d2' visibility='default' filepath='include/net/mac80211.h' line='1585' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
+      <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='units_pos' type-id='95e97e5e' visibility='default' filepath='include/net/mac80211.h' line='2597' column='1'/>
         </data-member>
@@ -161173,7 +161571,7 @@
         <enumerator name='IEEE80211_SMPS_DYNAMIC' value='3'/>
         <enumerator name='IEEE80211_SMPS_NUM_MODES' value='4'/>
       </enum-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
+      <class-decl name='__anonymous_struct__' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='units_pos' type-id='95e97e5e' visibility='default' filepath='include/net/mac80211.h' line='2597' column='1'/>
         </data-member>
@@ -161627,7 +162025,7 @@
           <var-decl name='rate' type-id='b7cdf388' visibility='default' filepath='include/net/mac80211.h' line='2001' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__2' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
+      <class-decl name='__anonymous_struct__1' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='idx' type-id='fdbf7a0f' visibility='default' filepath='include/net/mac80211.h' line='1996' column='1'/>
         </data-member>
@@ -161960,7 +162358,7 @@
           <var-decl name='civicloc_len' type-id='b59d7dce' visibility='default' filepath='include/net/mac80211.h' line='495' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
+      <class-decl name='__anonymous_struct__2' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='params' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='695' column='1'/>
         </data-member>
@@ -162071,7 +162469,7 @@
           <var-decl name='' type-id='eb542e10' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='160' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1' id='eb542e10'>
+      <union-decl name='__anonymous_union__6' size-in-bits='160' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1' id='eb542e10'>
         <data-member access='public'>
           <var-decl name='tkip' type-id='5a0ae575' visibility='default' filepath='include/net/mac80211.h' line='1886' column='1'/>
         </data-member>
@@ -162091,7 +162489,7 @@
           <var-decl name='hw' type-id='ea135534' visibility='default' filepath='include/net/mac80211.h' line='1902' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__4' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1883' column='1' id='5a0ae575'>
+      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1883' column='1' id='5a0ae575'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='iv32' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='1884' column='1'/>
         </data-member>
@@ -162099,12 +162497,12 @@
           <var-decl name='iv16' type-id='1dc6a898' visibility='default' filepath='include/net/mac80211.h' line='1885' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__5' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1887' column='1' id='71c656e5'>
+      <class-decl name='__anonymous_struct__4' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1887' column='1' id='71c656e5'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='pn' type-id='cf1a4160' visibility='default' filepath='include/net/mac80211.h' line='1888' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__9' size-in-bits='136' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1899' column='1' id='ea135534'>
+      <class-decl name='__anonymous_struct__8' size-in-bits='136' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1899' column='1' id='ea135534'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='seq' type-id='0d8415b5' visibility='default' filepath='include/net/mac80211.h' line='1900' column='1'/>
         </data-member>
@@ -162235,7 +162633,7 @@
         <enumerator name='BAR_RX_EVENT' value='2'/>
         <enumerator name='BA_FRAME_TIMEOUT' value='3'/>
       </enum-decl>
-      <union-decl name='__anonymous_union__8' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='463' column='1' id='2a1a3e21'>
+      <union-decl name='__anonymous_union__7' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='463' column='1' id='2a1a3e21'>
         <data-member access='public'>
           <var-decl name='rssi' type-id='1569e170' visibility='default' filepath='include/net/mac80211.h' line='464' column='1'/>
         </data-member>
@@ -175132,17 +175530,6 @@
           <var-decl name='__pad4' type-id='7e3959e3' visibility='default' filepath='include/uapi/sound/asound.h' line='585' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
-        <data-member access='public'>
-          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
-        </data-member>
-      </union-decl>
       <class-decl name='snd_pcm_hardware' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/sound/pcm.h' line='31' column='1' id='eacd353c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='info' type-id='f0981eeb' visibility='default' filepath='include/sound/pcm.h' line='32' column='1'/>
@@ -175219,6 +175606,17 @@
         </data-member>
       </class-decl>
       <typedef-decl name='snd_pcm_hw_rule_func_t' type-id='657a5cf1' filepath='include/sound/pcm.h' line='226' column='1' id='58d3b2a5'/>
+      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
+        <data-member access='public'>
+          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='snd_timer' size-in-bits='3456' is-struct='yes' visibility='default' filepath='include/sound/timer.h' line='57' column='1' id='73595e52'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='tmr_class' type-id='95e97e5e' visibility='default' filepath='include/sound/timer.h' line='58' column='1'/>
