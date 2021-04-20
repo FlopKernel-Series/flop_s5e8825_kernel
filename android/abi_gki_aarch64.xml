@@ -4170,6 +4170,7 @@
       <elf-symbol name='__tracepoint_android_rvh_sched_newidle_balance' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbadefe48'/>
       <elf-symbol name='__tracepoint_android_rvh_sched_nohz_balancer_kick' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x52e58c76'/>
       <elf-symbol name='__tracepoint_android_rvh_sched_rebalance_domains' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1149ef27'/>
+      <elf-symbol name='__tracepoint_android_rvh_sched_setaffinity' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9b40afe0'/>
       <elf-symbol name='__tracepoint_android_rvh_schedule' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb6bce8f8'/>
       <elf-symbol name='__tracepoint_android_rvh_schedule_bug' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x650a8c4'/>
       <elf-symbol name='__tracepoint_android_rvh_select_fallback_rq' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x65c25846'/>
@@ -42963,6 +42964,7 @@
       <var-decl name='__tracepoint_android_rvh_find_energy_efficient_cpu' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_find_energy_efficient_cpu' visibility='default' filepath='include/trace/hooks/sched.h' line='112' column='1' elf-symbol-id='__tracepoint_android_rvh_find_energy_efficient_cpu'/>
       <var-decl name='__tracepoint_android_rvh_set_iowait' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_set_iowait' visibility='default' filepath='include/trace/hooks/sched.h' line='116' column='1' elf-symbol-id='__tracepoint_android_rvh_set_iowait'/>
       <var-decl name='__tracepoint_android_rvh_cpu_overutilized' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_cpu_overutilized' visibility='default' filepath='include/trace/hooks/sched.h' line='120' column='1' elf-symbol-id='__tracepoint_android_rvh_cpu_overutilized'/>
+      <var-decl name='__tracepoint_android_rvh_sched_setaffinity' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_sched_setaffinity' visibility='default' filepath='include/trace/hooks/sched.h' line='124' column='1' elf-symbol-id='__tracepoint_android_rvh_sched_setaffinity'/>
       <var-decl name='__tracepoint_android_rvh_update_cpus_allowed' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_update_cpus_allowed' visibility='default' filepath='include/trace/hooks/sched.h' line='128' column='1' elf-symbol-id='__tracepoint_android_rvh_update_cpus_allowed'/>
       <var-decl name='__tracepoint_android_rvh_set_task_cpu' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_set_task_cpu' visibility='default' filepath='include/trace/hooks/sched.h' line='133' column='1' elf-symbol-id='__tracepoint_android_rvh_set_task_cpu'/>
       <var-decl name='__tracepoint_android_rvh_try_to_wake_up' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_try_to_wake_up' visibility='default' filepath='include/trace/hooks/sched.h' line='137' column='1' elf-symbol-id='__tracepoint_android_rvh_try_to_wake_up'/>
@@ -54422,7 +54424,7 @@
         <parameter type-id='94411a61'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__5' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -111740,7 +111742,7 @@
           <var-decl name='buf' type-id='5e6516ee' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__5' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
