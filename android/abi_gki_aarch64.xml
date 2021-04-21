@@ -4213,6 +4213,7 @@
       <elf-symbol name='__tracepoint_android_vh_ftrace_oops_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xecd968c8'/>
       <elf-symbol name='__tracepoint_android_vh_ftrace_size_check' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcbc20ca'/>
       <elf-symbol name='__tracepoint_android_vh_gic_v3_set_affinity' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xde6a49c9'/>
+      <elf-symbol name='__tracepoint_android_vh_gpio_block_read' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4842b6e5'/>
       <elf-symbol name='__tracepoint_android_vh_iommu_setup_dma_ops' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x95f68a6b'/>
       <elf-symbol name='__tracepoint_android_vh_ipi_stop' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8064d573'/>
       <elf-symbol name='__tracepoint_android_vh_jiffies_update' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5415675e'/>
@@ -17748,7 +17749,7 @@
           <var-decl name='_sigsys' type-id='07fe0781' visibility='default' filepath='include/uapi/asm-generic/siginfo.h' line='108' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__15' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='235' column='1' id='097c5bdb'>
+      <union-decl name='__anonymous_union__9' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='235' column='1' id='097c5bdb'>
         <data-member access='public'>
           <var-decl name='csd' type-id='bb75ea85' visibility='default' filepath='include/linux/blkdev.h' line='236' column='1'/>
         </data-member>
@@ -17764,7 +17765,7 @@
           <var-decl name='type' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/btf.h' line='51' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__14' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='177' column='1' id='7fc3d482'>
+      <union-decl name='__anonymous_union__8' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='177' column='1' id='7fc3d482'>
         <data-member access='public'>
           <var-decl name='elv' type-id='6d001302' visibility='default' filepath='include/linux/blkdev.h' line='181' column='1'/>
         </data-member>
@@ -17799,7 +17800,7 @@
           <var-decl name='d_rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/dcache.h' line='119' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__12' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='154' column='1' id='2f76bc4b'>
+      <union-decl name='__anonymous_union__6' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='154' column='1' id='2f76bc4b'>
         <data-member access='public'>
           <var-decl name='hash' type-id='03a4a074' visibility='default' filepath='include/linux/blkdev.h' line='155' column='1'/>
         </data-member>
@@ -17850,7 +17851,7 @@
           <var-decl name='freq' type-id='da4cc8f3' visibility='default' filepath='include/linux/pm_qos.h' line='112' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__13' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='164' column='1' id='df8866ad'>
+      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='164' column='1' id='df8866ad'>
         <data-member access='public'>
           <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='include/linux/blkdev.h' line='165' column='1'/>
         </data-member>
@@ -31880,7 +31881,7 @@
           <var-decl name='nulls_head' type-id='af86905d' visibility='default' filepath='include/net/inet_hashtables.h' line='117' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/xfrm.h' line='151' column='1' id='fc320d58'>
+      <union-decl name='__anonymous_union__7' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/xfrm.h' line='151' column='1' id='fc320d58'>
         <data-member access='public'>
           <var-decl name='gclist' type-id='03a4a074' visibility='default' filepath='include/net/xfrm.h' line='152' column='1'/>
         </data-member>
@@ -43048,6 +43049,7 @@
       <var-decl name='__tracepoint_android_vh_typec_tcpm_get_timer' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_typec_tcpm_get_timer' visibility='default' filepath='include/trace/hooks/typec.h' line='47' column='1' elf-symbol-id='__tracepoint_android_vh_typec_tcpm_get_timer'/>
       <var-decl name='__tracepoint_android_vh_typec_store_partner_src_caps' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_typec_store_partner_src_caps' visibility='default' filepath='include/trace/hooks/typec.h' line='51' column='1' elf-symbol-id='__tracepoint_android_vh_typec_store_partner_src_caps'/>
       <var-decl name='__tracepoint_android_vh_typec_tcpm_adj_current_limit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_typec_tcpm_adj_current_limit' visibility='default' filepath='include/trace/hooks/typec.h' line='56' column='1' elf-symbol-id='__tracepoint_android_vh_typec_tcpm_adj_current_limit'/>
+      <var-decl name='__tracepoint_android_vh_gpio_block_read' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_gpio_block_read' visibility='default' filepath='include/trace/hooks/gpiolib.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_gpio_block_read'/>
       <var-decl name='__tracepoint_android_vh_logbuf' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_logbuf' visibility='default' filepath='include/trace/hooks/logbuf.h' line='17' column='1' elf-symbol-id='__tracepoint_android_vh_logbuf'/>
       <var-decl name='__tracepoint_android_vh_psi_event' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_psi_event' visibility='default' filepath='include/trace/hooks/psi.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_psi_event'/>
       <var-decl name='__tracepoint_android_vh_psi_group' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_psi_group' visibility='default' filepath='include/trace/hooks/psi.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_psi_group'/>
@@ -54428,7 +54430,7 @@
         <parameter type-id='94411a61'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <union-decl name='__anonymous_union__5' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -111746,7 +111748,7 @@
           <var-decl name='buf' type-id='5e6516ee' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__5' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -155475,72 +155477,72 @@
       <pointer-type-def type-id='3c95971e' size-in-bits='64' id='0f561784'/>
       <var-decl name='init_on_free' type-id='237c0d27' mangled-name='init_on_free' visibility='default' filepath='mm/page_alloc.c' line='183' column='1' elf-symbol-id='init_on_free'/>
       <var-decl name='_totalram_pages' type-id='f22a8abb' mangled-name='_totalram_pages' visibility='default' filepath='mm/page_alloc.c' line='173' column='1' elf-symbol-id='_totalram_pages'/>
-      <function-decl name='__alloc_pages_nodemask' mangled-name='__alloc_pages_nodemask' filepath='mm/page_alloc.c' line='5034' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__alloc_pages_nodemask'>
-        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5034' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5034' column='1'/>
-        <parameter type-id='95e97e5e' name='preferred_nid' filepath='mm/page_alloc.c' line='5034' column='1'/>
-        <parameter type-id='f461c050' name='nodemask' filepath='mm/page_alloc.c' line='5035' column='1'/>
+      <function-decl name='__alloc_pages_nodemask' mangled-name='__alloc_pages_nodemask' filepath='mm/page_alloc.c' line='5052' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__alloc_pages_nodemask'>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5052' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5052' column='1'/>
+        <parameter type-id='95e97e5e' name='preferred_nid' filepath='mm/page_alloc.c' line='5052' column='1'/>
+        <parameter type-id='f461c050' name='nodemask' filepath='mm/page_alloc.c' line='5053' column='1'/>
         <return type-id='02f11ed4'/>
       </function-decl>
-      <function-decl name='get_zeroed_page' mangled-name='get_zeroed_page' filepath='mm/page_alloc.c' line='5113' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_zeroed_page'>
-        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5113' column='1'/>
+      <function-decl name='get_zeroed_page' mangled-name='get_zeroed_page' filepath='mm/page_alloc.c' line='5131' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_zeroed_page'>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5131' column='1'/>
         <return type-id='7359adad'/>
       </function-decl>
-      <function-decl name='__free_pages' mangled-name='__free_pages' filepath='mm/page_alloc.c' line='5127' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__free_pages'>
-        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='5127' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5127' column='1'/>
+      <function-decl name='__free_pages' mangled-name='__free_pages' filepath='mm/page_alloc.c' line='5145' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__free_pages'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='5145' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5145' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='si_mem_available' mangled-name='si_mem_available' filepath='mm/page_alloc.c' line='5401' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='si_mem_available'>
+      <function-decl name='si_mem_available' mangled-name='si_mem_available' filepath='mm/page_alloc.c' line='5419' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='si_mem_available'>
         <return type-id='bd54fe1a'/>
       </function-decl>
-      <function-decl name='zone_watermark_ok_safe' mangled-name='zone_watermark_ok_safe' filepath='mm/page_alloc.c' line='3818' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='zone_watermark_ok_safe'>
-        <parameter type-id='0a0aff97' name='z' filepath='mm/page_alloc.c' line='3818' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='3818' column='1'/>
-        <parameter type-id='7359adad' name='mark' filepath='mm/page_alloc.c' line='3819' column='1'/>
-        <parameter type-id='95e97e5e' name='highest_zoneidx' filepath='mm/page_alloc.c' line='3819' column='1'/>
+      <function-decl name='zone_watermark_ok_safe' mangled-name='zone_watermark_ok_safe' filepath='mm/page_alloc.c' line='3836' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='zone_watermark_ok_safe'>
+        <parameter type-id='0a0aff97' name='z' filepath='mm/page_alloc.c' line='3836' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='3836' column='1'/>
+        <parameter type-id='7359adad' name='mark' filepath='mm/page_alloc.c' line='3837' column='1'/>
+        <parameter type-id='95e97e5e' name='highest_zoneidx' filepath='mm/page_alloc.c' line='3837' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='zone_watermark_ok' mangled-name='zone_watermark_ok' filepath='mm/page_alloc.c' line='3770' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='zone_watermark_ok'>
-        <parameter type-id='0a0aff97' name='z' filepath='mm/page_alloc.c' line='3770' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='3770' column='1'/>
-        <parameter type-id='7359adad' name='mark' filepath='mm/page_alloc.c' line='3770' column='1'/>
-        <parameter type-id='95e97e5e' name='highest_zoneidx' filepath='mm/page_alloc.c' line='3771' column='1'/>
-        <parameter type-id='f0981eeb' name='alloc_flags' filepath='mm/page_alloc.c' line='3771' column='1'/>
+      <function-decl name='zone_watermark_ok' mangled-name='zone_watermark_ok' filepath='mm/page_alloc.c' line='3788' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='zone_watermark_ok'>
+        <parameter type-id='0a0aff97' name='z' filepath='mm/page_alloc.c' line='3788' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='3788' column='1'/>
+        <parameter type-id='7359adad' name='mark' filepath='mm/page_alloc.c' line='3788' column='1'/>
+        <parameter type-id='95e97e5e' name='highest_zoneidx' filepath='mm/page_alloc.c' line='3789' column='1'/>
+        <parameter type-id='f0981eeb' name='alloc_flags' filepath='mm/page_alloc.c' line='3789' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='split_page' mangled-name='split_page' filepath='mm/page_alloc.c' line='3352' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='split_page'>
-        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='3352' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='3352' column='1'/>
+      <function-decl name='split_page' mangled-name='split_page' filepath='mm/page_alloc.c' line='3370' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='split_page'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='3370' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='3370' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='si_meminfo' mangled-name='si_meminfo' filepath='mm/page_alloc.c' line='5447' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='si_meminfo'>
-        <parameter type-id='0f561784' name='val' filepath='mm/page_alloc.c' line='5447' column='1'/>
+      <function-decl name='si_meminfo' mangled-name='si_meminfo' filepath='mm/page_alloc.c' line='5465' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='si_meminfo'>
+        <parameter type-id='0f561784' name='val' filepath='mm/page_alloc.c' line='5465' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='free_pages_exact' mangled-name='free_pages_exact' filepath='mm/page_alloc.c' line='5336' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_pages_exact'>
-        <parameter type-id='eaa32e2f' name='virt' filepath='mm/page_alloc.c' line='5336' column='1'/>
-        <parameter type-id='b59d7dce' name='size' filepath='mm/page_alloc.c' line='5336' column='1'/>
+      <function-decl name='free_pages_exact' mangled-name='free_pages_exact' filepath='mm/page_alloc.c' line='5354' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_pages_exact'>
+        <parameter type-id='eaa32e2f' name='virt' filepath='mm/page_alloc.c' line='5354' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='mm/page_alloc.c' line='5354' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='free_pages' mangled-name='free_pages' filepath='mm/page_alloc.c' line='5137' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_pages'>
-        <parameter type-id='7359adad' name='addr' filepath='mm/page_alloc.c' line='5137' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5137' column='1'/>
+      <function-decl name='free_pages' mangled-name='free_pages' filepath='mm/page_alloc.c' line='5155' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_pages'>
+        <parameter type-id='7359adad' name='addr' filepath='mm/page_alloc.c' line='5155' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5155' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='alloc_pages_exact' mangled-name='alloc_pages_exact' filepath='mm/page_alloc.c' line='5290' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='alloc_pages_exact'>
-        <parameter type-id='b59d7dce' name='size' filepath='mm/page_alloc.c' line='5290' column='1'/>
-        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5290' column='1'/>
+      <function-decl name='alloc_pages_exact' mangled-name='alloc_pages_exact' filepath='mm/page_alloc.c' line='5308' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='alloc_pages_exact'>
+        <parameter type-id='b59d7dce' name='size' filepath='mm/page_alloc.c' line='5308' column='1'/>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5308' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
-      <function-decl name='adjust_managed_page_count' mangled-name='adjust_managed_page_count' filepath='mm/page_alloc.c' line='7680' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='adjust_managed_page_count'>
-        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='7680' column='1'/>
-        <parameter type-id='bd54fe1a' name='count' filepath='mm/page_alloc.c' line='7680' column='1'/>
+      <function-decl name='adjust_managed_page_count' mangled-name='adjust_managed_page_count' filepath='mm/page_alloc.c' line='7698' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='adjust_managed_page_count'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='7698' column='1'/>
+        <parameter type-id='bd54fe1a' name='count' filepath='mm/page_alloc.c' line='7698' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='__get_free_pages' mangled-name='__get_free_pages' filepath='mm/page_alloc.c' line='5102' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__get_free_pages'>
-        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5102' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5102' column='1'/>
+      <function-decl name='__get_free_pages' mangled-name='__get_free_pages' filepath='mm/page_alloc.c' line='5120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__get_free_pages'>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/page_alloc.c' line='5120' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='mm/page_alloc.c' line='5120' column='1'/>
         <return type-id='7359adad'/>
       </function-decl>
     </abi-instr>
