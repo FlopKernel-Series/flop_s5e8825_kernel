@@ -134,6 +134,7 @@
       <elf-symbol name='__mmc_claim_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfdcf19cf'/>
       <elf-symbol name='__mmc_send_status' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd7bfb4cc'/>
       <elf-symbol name='__mmdrop' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x645e8ad6'/>
+      <elf-symbol name='__mod_zone_page_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x17f00e53'/>
       <elf-symbol name='__module_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x41fda09c'/>
       <elf-symbol name='__msecs_to_jiffies' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7f02188f'/>
       <elf-symbol name='__mutex_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x977f511b'/>
@@ -1630,6 +1631,7 @@
       <elf-symbol name='get_next_ino' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe953b21f'/>
       <elf-symbol name='get_option' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0e10781'/>
       <elf-symbol name='get_page_owner_handle' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbdd70345'/>
+      <elf-symbol name='get_pfnblock_flags_mask' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa0d34868'/>
       <elf-symbol name='get_pid_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd084f7e7'/>
       <elf-symbol name='get_random_bytes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x79aa04a2'/>
       <elf-symbol name='get_random_bytes_arch' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5d830297'/>
@@ -1881,6 +1883,7 @@
       <elf-symbol name='in6_pton' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x609bcd98'/>
       <elf-symbol name='in_aton' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1b6314fd'/>
       <elf-symbol name='in_egroup_p' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39461d6a'/>
+      <elf-symbol name='inc_node_page_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ceb2231'/>
       <elf-symbol name='inc_zone_page_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2dd5ea25'/>
       <elf-symbol name='inet_proto_csum_replace4' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1a3fbf8e'/>
       <elf-symbol name='init_dummy_netdev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0a43cc4'/>
@@ -2029,6 +2032,8 @@
       <elf-symbol name='irq_work_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf361a95b'/>
       <elf-symbol name='is_dma_buf_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc28b37e0'/>
       <elf-symbol name='is_vmalloc_addr' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc31db0ce'/>
+      <elf-symbol name='isolate_and_split_free_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb0db743'/>
+      <elf-symbol name='isolate_anon_lru_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f19cc03'/>
       <elf-symbol name='jiffies64_to_msecs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92ec510d'/>
       <elf-symbol name='jiffies_64_to_clock_t' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb1ddf995'/>
       <elf-symbol name='jiffies_to_msecs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x37befc70'/>
@@ -2205,6 +2210,7 @@
       <elf-symbol name='memunmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9e9fdd9d'/>
       <elf-symbol name='mfd_add_devices' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1cc909d8'/>
       <elf-symbol name='mfd_remove_devices' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f845a25'/>
+      <elf-symbol name='migrate_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf4223938'/>
       <elf-symbol name='migrate_swap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaa3da5a7'/>
       <elf-symbol name='mii_check_media' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2686f509'/>
       <elf-symbol name='mii_ethtool_get_link_ksettings' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x424c2a1c'/>
@@ -2772,6 +2778,7 @@
       <elf-symbol name='put_sg_io_hdr' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5ec4aee6'/>
       <elf-symbol name='put_unused_fd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3f4547a7'/>
       <elf-symbol name='put_vaddr_frames' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1b700d37'/>
+      <elf-symbol name='putback_movable_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbd6f03f7'/>
       <elf-symbol name='pwm_apply_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x35cf1fd9'/>
       <elf-symbol name='pwm_get_chip_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdddfeabf'/>
       <elf-symbol name='pwm_set_chip_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb1073889'/>
@@ -17749,7 +17756,7 @@
           <var-decl name='_sigsys' type-id='07fe0781' visibility='default' filepath='include/uapi/asm-generic/siginfo.h' line='108' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__9' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='235' column='1' id='097c5bdb'>
+      <union-decl name='__anonymous_union__15' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='235' column='1' id='097c5bdb'>
         <data-member access='public'>
           <var-decl name='csd' type-id='bb75ea85' visibility='default' filepath='include/linux/blkdev.h' line='236' column='1'/>
         </data-member>
@@ -17765,7 +17772,7 @@
           <var-decl name='type' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/btf.h' line='51' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__8' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='177' column='1' id='7fc3d482'>
+      <union-decl name='__anonymous_union__14' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='177' column='1' id='7fc3d482'>
         <data-member access='public'>
           <var-decl name='elv' type-id='6d001302' visibility='default' filepath='include/linux/blkdev.h' line='181' column='1'/>
         </data-member>
@@ -17800,7 +17807,7 @@
           <var-decl name='d_rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/dcache.h' line='119' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__6' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='154' column='1' id='2f76bc4b'>
+      <union-decl name='__anonymous_union__12' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='154' column='1' id='2f76bc4b'>
         <data-member access='public'>
           <var-decl name='hash' type-id='03a4a074' visibility='default' filepath='include/linux/blkdev.h' line='155' column='1'/>
         </data-member>
@@ -17851,7 +17858,7 @@
           <var-decl name='freq' type-id='da4cc8f3' visibility='default' filepath='include/linux/pm_qos.h' line='112' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='164' column='1' id='df8866ad'>
+      <union-decl name='__anonymous_union__13' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/blkdev.h' line='164' column='1' id='df8866ad'>
         <data-member access='public'>
           <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='include/linux/blkdev.h' line='165' column='1'/>
         </data-member>
@@ -26973,15 +26980,15 @@
           <var-decl name='pr_ops' type-id='08d45f21' visibility='default' filepath='include/linux/blkdev.h' line='1870' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='bpf_xdp_link' size-in-bits='640' is-struct='yes' visibility='default' filepath='net/core/dev.c' line='8931' column='1' id='0200d321'>
+      <class-decl name='bpf_xdp_link' size-in-bits='640' is-struct='yes' visibility='default' filepath='net/core/dev.c' line='8932' column='1' id='0200d321'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='link' type-id='e07e9784' visibility='default' filepath='net/core/dev.c' line='8932' column='1'/>
+          <var-decl name='link' type-id='e07e9784' visibility='default' filepath='net/core/dev.c' line='8933' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='dev' type-id='68a2d05b' visibility='default' filepath='net/core/dev.c' line='8933' column='1'/>
+          <var-decl name='dev' type-id='68a2d05b' visibility='default' filepath='net/core/dev.c' line='8934' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='flags' type-id='95e97e5e' visibility='default' filepath='net/core/dev.c' line='8934' column='1'/>
+          <var-decl name='flags' type-id='95e97e5e' visibility='default' filepath='net/core/dev.c' line='8935' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='cdev' size-in-bits='1088' is-struct='yes' visibility='default' filepath='include/linux/cdev.h' line='14' column='1' id='22f86351'>
@@ -52540,12 +52547,12 @@
         <parameter type-id='27f3f5d8' name='chan' filepath='drivers/dma/dmaengine.c' line='903' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='dma_async_device_register' mangled-name='dma_async_device_register' filepath='drivers/dma/dmaengine.c' line='1139' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_async_device_register'>
-        <parameter type-id='c60ba652' name='device' filepath='drivers/dma/dmaengine.c' line='1139' column='1'/>
+      <function-decl name='dma_async_device_register' mangled-name='dma_async_device_register' filepath='drivers/dma/dmaengine.c' line='1140' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_async_device_register'>
+        <parameter type-id='c60ba652' name='device' filepath='drivers/dma/dmaengine.c' line='1140' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dmaengine_unmap_put' mangled-name='dmaengine_unmap_put' filepath='drivers/dma/dmaengine.c' line='1430' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dmaengine_unmap_put'>
-        <parameter type-id='e220a5e2' name='unmap' filepath='drivers/dma/dmaengine.c' line='1430' column='1'/>
+      <function-decl name='dmaengine_unmap_put' mangled-name='dmaengine_unmap_put' filepath='drivers/dma/dmaengine.c' line='1431' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dmaengine_unmap_put'>
+        <parameter type-id='e220a5e2' name='unmap' filepath='drivers/dma/dmaengine.c' line='1431' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='dma_request_chan' mangled-name='dma_request_chan' filepath='drivers/dma/dmaengine.c' line='813' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_request_chan'>
@@ -52562,13 +52569,13 @@
         <parameter type-id='d9f19b23' name='caps' filepath='drivers/dma/dmaengine.c' line='570' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dma_async_tx_descriptor_init' mangled-name='dma_async_tx_descriptor_init' filepath='drivers/dma/dmaengine.c' line='1496' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_async_tx_descriptor_init'>
-        <parameter type-id='0e3f80d9' name='tx' filepath='drivers/dma/dmaengine.c' line='1496' column='1'/>
-        <parameter type-id='27f3f5d8' name='chan' filepath='drivers/dma/dmaengine.c' line='1497' column='1'/>
+      <function-decl name='dma_async_tx_descriptor_init' mangled-name='dma_async_tx_descriptor_init' filepath='drivers/dma/dmaengine.c' line='1497' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_async_tx_descriptor_init'>
+        <parameter type-id='0e3f80d9' name='tx' filepath='drivers/dma/dmaengine.c' line='1497' column='1'/>
+        <parameter type-id='27f3f5d8' name='chan' filepath='drivers/dma/dmaengine.c' line='1498' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='dma_async_device_unregister' mangled-name='dma_async_device_unregister' filepath='drivers/dma/dmaengine.c' line='1310' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_async_device_unregister'>
-        <parameter type-id='c60ba652' name='device' filepath='drivers/dma/dmaengine.c' line='1310' column='1'/>
+      <function-decl name='dma_async_device_unregister' mangled-name='dma_async_device_unregister' filepath='drivers/dma/dmaengine.c' line='1311' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_async_device_unregister'>
+        <parameter type-id='c60ba652' name='device' filepath='drivers/dma/dmaengine.c' line='1311' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='__dma_request_channel' mangled-name='__dma_request_channel' filepath='drivers/dma/dmaengine.c' line='755' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__dma_request_channel'>
@@ -110306,10 +110313,10 @@
         <parameter type-id='f9841541' name='params' filepath='drivers/usb/dwc3/gadget.c' line='273' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dwc3_stop_active_transfer' mangled-name='dwc3_stop_active_transfer' filepath='drivers/usb/dwc3/gadget.c' line='3267' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dwc3_stop_active_transfer'>
-        <parameter type-id='b31af340' name='dep' filepath='drivers/usb/dwc3/gadget.c' line='3267' column='1'/>
-        <parameter type-id='b50a4934' name='force' filepath='drivers/usb/dwc3/gadget.c' line='3267' column='1'/>
-        <parameter type-id='b50a4934' name='interrupt' filepath='drivers/usb/dwc3/gadget.c' line='3268' column='1'/>
+      <function-decl name='dwc3_stop_active_transfer' mangled-name='dwc3_stop_active_transfer' filepath='drivers/usb/dwc3/gadget.c' line='3268' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dwc3_stop_active_transfer'>
+        <parameter type-id='b31af340' name='dep' filepath='drivers/usb/dwc3/gadget.c' line='3268' column='1'/>
+        <parameter type-id='b50a4934' name='force' filepath='drivers/usb/dwc3/gadget.c' line='3268' column='1'/>
+        <parameter type-id='b50a4934' name='interrupt' filepath='drivers/usb/dwc3/gadget.c' line='3269' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <pointer-type-def type-id='f01e85cf' size-in-bits='64' id='62fa2ea7'/>
@@ -144862,15 +144869,15 @@
         </data-member>
       </class-decl>
       <class-decl name='bpf_offload_dev' is-struct='yes' visibility='default' is-declaration-only='yes' id='22474385'/>
-      <class-decl name='bpf_xdp_link' size-in-bits='640' is-struct='yes' visibility='default' filepath='net/core/dev.c' line='8931' column='1' id='0200d321'>
+      <class-decl name='bpf_xdp_link' size-in-bits='640' is-struct='yes' visibility='default' filepath='net/core/dev.c' line='8932' column='1' id='0200d321'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='link' type-id='e07e9784' visibility='default' filepath='net/core/dev.c' line='8932' column='1'/>
+          <var-decl name='link' type-id='e07e9784' visibility='default' filepath='net/core/dev.c' line='8933' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='dev' type-id='68a2d05b' visibility='default' filepath='net/core/dev.c' line='8933' column='1'/>
+          <var-decl name='dev' type-id='68a2d05b' visibility='default' filepath='net/core/dev.c' line='8934' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='flags' type-id='95e97e5e' visibility='default' filepath='net/core/dev.c' line='8934' column='1'/>
+          <var-decl name='flags' type-id='95e97e5e' visibility='default' filepath='net/core/dev.c' line='8935' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='btf' is-struct='yes' visibility='default' is-declaration-only='yes' id='dccc7677'/>
@@ -154466,6 +154473,11 @@
       </function-type>
     </abi-instr>
     <abi-instr address-size='64' path='mm/compaction.c' language='LANG_C89'>
+      <function-decl name='isolate_and_split_free_page' mangled-name='isolate_and_split_free_page' filepath='mm/compaction.c' line='766' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='isolate_and_split_free_page'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/compaction.c' line='766' column='1'/>
+        <parameter type-id='e84b031a' name='list' filepath='mm/compaction.c' line='767' column='1'/>
+        <return type-id='7359adad'/>
+      </function-decl>
       <function-decl name='__SetPageMovable' mangled-name='__SetPageMovable' filepath='mm/compaction.c' line='130' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__SetPageMovable'>
         <parameter type-id='02f11ed4' name='page' filepath='mm/compaction.c' line='130' column='1'/>
         <parameter type-id='f57039f0' name='mapping' filepath='mm/compaction.c' line='130' column='1'/>
@@ -154922,6 +154934,35 @@
         <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/mempool.c' line='373' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
+    </abi-instr>
+    <abi-instr address-size='64' path='mm/migrate.c' language='LANG_C89'>
+      <typedef-decl name='new_page_t' type-id='5824bc76' filepath='include/linux/migrate.h' line='10' column='1' id='e61ec55f'/>
+      <typedef-decl name='free_page_t' type-id='ae5a8333' filepath='include/linux/migrate.h' line='11' column='1' id='b8791da7'/>
+      <pointer-type-def type-id='b8791da7' size-in-bits='64' id='7d2f2ada'/>
+      <pointer-type-def type-id='e61ec55f' size-in-bits='64' id='355404d0'/>
+      <function-decl name='migrate_pages' mangled-name='migrate_pages' filepath='mm/migrate.c' line='1390' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='migrate_pages'>
+        <parameter type-id='e84b031a' name='from' filepath='mm/migrate.c' line='1390' column='1'/>
+        <parameter type-id='355404d0' name='get_new_page' filepath='mm/migrate.c' line='1390' column='1'/>
+        <parameter type-id='7d2f2ada' name='put_new_page' filepath='mm/migrate.c' line='1391' column='1'/>
+        <parameter type-id='7359adad' name='private' filepath='mm/migrate.c' line='1391' column='1'/>
+        <parameter type-id='157252dd' name='mode' filepath='mm/migrate.c' line='1392' column='1'/>
+        <parameter type-id='95e97e5e' name='reason' filepath='mm/migrate.c' line='1392' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='putback_movable_pages' mangled-name='putback_movable_pages' filepath='mm/migrate.c' line='143' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='putback_movable_pages'>
+        <parameter type-id='e84b031a' name='l' filepath='mm/migrate.c' line='143' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-type size-in-bits='64' id='5824bc76'>
+        <parameter type-id='02f11ed4'/>
+        <parameter type-id='7359adad'/>
+        <return type-id='02f11ed4'/>
+      </function-type>
+      <function-type size-in-bits='64' id='ae5a8333'>
+        <parameter type-id='02f11ed4'/>
+        <parameter type-id='7359adad'/>
+        <return type-id='48b5725f'/>
+      </function-type>
     </abi-instr>
     <abi-instr address-size='64' path='mm/mmap.c' language='LANG_C89'>
       <function-decl name='get_unmapped_area' mangled-name='get_unmapped_area' filepath='mm/mmap.c' line='2325' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_unmapped_area'>
@@ -155519,6 +155560,16 @@
       <function-decl name='si_meminfo' mangled-name='si_meminfo' filepath='mm/page_alloc.c' line='5465' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='si_meminfo'>
         <parameter type-id='0f561784' name='val' filepath='mm/page_alloc.c' line='5465' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='isolate_anon_lru_page' mangled-name='isolate_anon_lru_page' filepath='mm/page_alloc.c' line='542' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='isolate_anon_lru_page'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='542' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='get_pfnblock_flags_mask' mangled-name='get_pfnblock_flags_mask' filepath='mm/page_alloc.c' line='535' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_pfnblock_flags_mask'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='535' column='1'/>
+        <parameter type-id='7359adad' name='pfn' filepath='mm/page_alloc.c' line='535' column='1'/>
+        <parameter type-id='7359adad' name='mask' filepath='mm/page_alloc.c' line='536' column='1'/>
+        <return type-id='7359adad'/>
       </function-decl>
       <function-decl name='free_pages_exact' mangled-name='free_pages_exact' filepath='mm/page_alloc.c' line='5354' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_pages_exact'>
         <parameter type-id='eaa32e2f' name='virt' filepath='mm/page_alloc.c' line='5354' column='1'/>
@@ -156288,6 +156339,11 @@
         <parameter type-id='a1f2d9a1' name='item' filepath='mm/vmstat.c' line='534' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='inc_node_page_state' mangled-name='inc_node_page_state' filepath='mm/vmstat.c' line='601' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='inc_node_page_state'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/vmstat.c' line='601' column='1'/>
+        <parameter type-id='93f9c3d3' name='item' filepath='mm/vmstat.c' line='601' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='dec_zone_page_state' mangled-name='dec_zone_page_state' filepath='mm/vmstat.c' line='540' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dec_zone_page_state'>
         <parameter type-id='02f11ed4' name='page' filepath='mm/vmstat.c' line='540' column='1'/>
         <parameter type-id='a1f2d9a1' name='item' filepath='mm/vmstat.c' line='540' column='1'/>
@@ -156295,6 +156351,12 @@
       </function-decl>
       <function-decl name='all_vm_events' mangled-name='all_vm_events' filepath='mm/vmstat.c' line='131' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='all_vm_events'>
         <parameter type-id='1d2c2b85' name='ret' filepath='mm/vmstat.c' line='131' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='__mod_zone_page_state' mangled-name='__mod_zone_page_state' filepath='mm/vmstat.c' line='316' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__mod_zone_page_state'>
+        <parameter type-id='0a0aff97' name='zone' filepath='mm/vmstat.c' line='316' column='1'/>
+        <parameter type-id='a1f2d9a1' name='item' filepath='mm/vmstat.c' line='316' column='1'/>
+        <parameter type-id='bd54fe1a' name='delta' filepath='mm/vmstat.c' line='317' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
     </abi-instr>
@@ -157716,25 +157778,25 @@
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='5062' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netif_napi_add' mangled-name='netif_napi_add' filepath='net/core/dev.c' line='6681' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_napi_add'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='6681' column='1'/>
-        <parameter type-id='c50361c5' name='napi' filepath='net/core/dev.c' line='6681' column='1'/>
-        <parameter type-id='f07d90b4' name='poll' filepath='net/core/dev.c' line='6682' column='1'/>
-        <parameter type-id='95e97e5e' name='weight' filepath='net/core/dev.c' line='6682' column='1'/>
+      <function-decl name='netif_napi_add' mangled-name='netif_napi_add' filepath='net/core/dev.c' line='6682' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_napi_add'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='6682' column='1'/>
+        <parameter type-id='c50361c5' name='napi' filepath='net/core/dev.c' line='6682' column='1'/>
+        <parameter type-id='f07d90b4' name='poll' filepath='net/core/dev.c' line='6683' column='1'/>
+        <parameter type-id='95e97e5e' name='weight' filepath='net/core/dev.c' line='6683' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netdev_lower_state_changed' mangled-name='netdev_lower_state_changed' filepath='net/core/dev.c' line='8178' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_lower_state_changed'>
-        <parameter type-id='68a2d05b' name='lower_dev' filepath='net/core/dev.c' line='8178' column='1'/>
-        <parameter type-id='eaa32e2f' name='lower_state_info' filepath='net/core/dev.c' line='8179' column='1'/>
+      <function-decl name='netdev_lower_state_changed' mangled-name='netdev_lower_state_changed' filepath='net/core/dev.c' line='8179' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_lower_state_changed'>
+        <parameter type-id='68a2d05b' name='lower_dev' filepath='net/core/dev.c' line='8179' column='1'/>
+        <parameter type-id='eaa32e2f' name='lower_state_info' filepath='net/core/dev.c' line='8180' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='register_netdevice' mangled-name='register_netdevice' filepath='net/core/dev.c' line='9940' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='register_netdevice'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9940' column='1'/>
+      <function-decl name='register_netdevice' mangled-name='register_netdevice' filepath='net/core/dev.c' line='9941' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='register_netdevice'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9941' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='unregister_netdevice_queue' mangled-name='unregister_netdevice_queue' filepath='net/core/dev.c' line='10676' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_netdevice_queue'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10676' column='1'/>
-        <parameter type-id='e84b031a' name='head' filepath='net/core/dev.c' line='10676' column='1'/>
+      <function-decl name='unregister_netdevice_queue' mangled-name='unregister_netdevice_queue' filepath='net/core/dev.c' line='10677' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_netdevice_queue'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10677' column='1'/>
+        <parameter type-id='e84b031a' name='head' filepath='net/core/dev.c' line='10677' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <var-decl name='softnet_data' type-id='035aa62d' mangled-name='softnet_data' visibility='default' filepath='net/core/dev.c' line='402' column='1' elf-symbol-id='softnet_data'/>
@@ -157748,23 +157810,23 @@
         <parameter type-id='95e97e5e' name='ifindex' filepath='net/core/dev.c' line='977' column='1'/>
         <return type-id='68a2d05b'/>
       </function-decl>
-      <function-decl name='netdev_warn' mangled-name='netdev_warn' filepath='net/core/dev.c' line='11075' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_warn'>
-        <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11075' column='1'/>
-        <parameter type-id='80f4b756' name='fmt' filepath='net/core/dev.c' line='11075' column='1'/>
+      <function-decl name='netdev_warn' mangled-name='netdev_warn' filepath='net/core/dev.c' line='11076' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_warn'>
+        <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11076' column='1'/>
+        <parameter type-id='80f4b756' name='fmt' filepath='net/core/dev.c' line='11076' column='1'/>
         <parameter is-variadic='yes'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='alloc_netdev_mqs' mangled-name='alloc_netdev_mqs' filepath='net/core/dev.c' line='10493' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='alloc_netdev_mqs'>
-        <parameter type-id='95e97e5e' name='sizeof_priv' filepath='net/core/dev.c' line='10493' column='1'/>
-        <parameter type-id='80f4b756' name='name' filepath='net/core/dev.c' line='10493' column='1'/>
-        <parameter type-id='002ac4a6' name='name_assign_type' filepath='net/core/dev.c' line='10494' column='1'/>
-        <parameter type-id='548eee3a' name='setup' filepath='net/core/dev.c' line='10495' column='1'/>
-        <parameter type-id='f0981eeb' name='txqs' filepath='net/core/dev.c' line='10496' column='1'/>
-        <parameter type-id='f0981eeb' name='rxqs' filepath='net/core/dev.c' line='10496' column='1'/>
+      <function-decl name='alloc_netdev_mqs' mangled-name='alloc_netdev_mqs' filepath='net/core/dev.c' line='10494' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='alloc_netdev_mqs'>
+        <parameter type-id='95e97e5e' name='sizeof_priv' filepath='net/core/dev.c' line='10494' column='1'/>
+        <parameter type-id='80f4b756' name='name' filepath='net/core/dev.c' line='10494' column='1'/>
+        <parameter type-id='002ac4a6' name='name_assign_type' filepath='net/core/dev.c' line='10495' column='1'/>
+        <parameter type-id='548eee3a' name='setup' filepath='net/core/dev.c' line='10496' column='1'/>
+        <parameter type-id='f0981eeb' name='txqs' filepath='net/core/dev.c' line='10497' column='1'/>
+        <parameter type-id='f0981eeb' name='rxqs' filepath='net/core/dev.c' line='10497' column='1'/>
         <return type-id='68a2d05b'/>
       </function-decl>
-      <function-decl name='free_netdev' mangled-name='free_netdev' filepath='net/core/dev.c' line='10612' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_netdev'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10612' column='1'/>
+      <function-decl name='free_netdev' mangled-name='free_netdev' filepath='net/core/dev.c' line='10613' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_netdev'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10613' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='__skb_gso_segment' mangled-name='__skb_gso_segment' filepath='net/core/dev.c' line='3370' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__skb_gso_segment'>
@@ -157773,30 +157835,30 @@
         <parameter type-id='b50a4934' name='tx_path' filepath='net/core/dev.c' line='3371' column='1'/>
         <return type-id='0fbf3cfd'/>
       </function-decl>
-      <function-decl name='napi_disable' mangled-name='napi_disable' filepath='net/core/dev.c' line='6711' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_disable'>
-        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6711' column='1'/>
+      <function-decl name='napi_disable' mangled-name='napi_disable' filepath='net/core/dev.c' line='6712' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_disable'>
+        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6712' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='__netif_napi_del' mangled-name='__netif_napi_del' filepath='net/core/dev.c' line='6741' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__netif_napi_del'>
-        <parameter type-id='c50361c5' name='napi' filepath='net/core/dev.c' line='6741' column='1'/>
+      <function-decl name='__netif_napi_del' mangled-name='__netif_napi_del' filepath='net/core/dev.c' line='6742' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__netif_napi_del'>
+        <parameter type-id='c50361c5' name='napi' filepath='net/core/dev.c' line='6742' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='napi_gro_receive' mangled-name='napi_gro_receive' filepath='net/core/dev.c' line='6096' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_gro_receive'>
-        <parameter type-id='c50361c5' name='napi' filepath='net/core/dev.c' line='6096' column='1'/>
-        <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/dev.c' line='6096' column='1'/>
+      <function-decl name='napi_gro_receive' mangled-name='napi_gro_receive' filepath='net/core/dev.c' line='6097' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_gro_receive'>
+        <parameter type-id='c50361c5' name='napi' filepath='net/core/dev.c' line='6097' column='1'/>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/dev.c' line='6097' column='1'/>
         <return type-id='dc1b1685'/>
       </function-decl>
-      <function-decl name='napi_complete_done' mangled-name='napi_complete_done' filepath='net/core/dev.c' line='6424' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_complete_done'>
-        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6424' column='1'/>
-        <parameter type-id='95e97e5e' name='work_done' filepath='net/core/dev.c' line='6424' column='1'/>
+      <function-decl name='napi_complete_done' mangled-name='napi_complete_done' filepath='net/core/dev.c' line='6425' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_complete_done'>
+        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6425' column='1'/>
+        <parameter type-id='95e97e5e' name='work_done' filepath='net/core/dev.c' line='6425' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='napi_schedule_prep' mangled-name='napi_schedule_prep' filepath='net/core/dev.c' line='6388' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_schedule_prep'>
-        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6388' column='1'/>
+      <function-decl name='napi_schedule_prep' mangled-name='napi_schedule_prep' filepath='net/core/dev.c' line='6389' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_schedule_prep'>
+        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6389' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='__napi_schedule' mangled-name='__napi_schedule' filepath='net/core/dev.c' line='6369' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__napi_schedule'>
-        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6369' column='1'/>
+      <function-decl name='__napi_schedule' mangled-name='__napi_schedule' filepath='net/core/dev.c' line='6370' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__napi_schedule'>
+        <parameter type-id='c50361c5' name='n' filepath='net/core/dev.c' line='6370' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='dev_get_by_name' mangled-name='dev_get_by_name' filepath='net/core/dev.c' line='903' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_get_by_name'>
@@ -157812,9 +157874,9 @@
         <parameter type-id='35b28c4f' name='dev_queue' filepath='net/core/dev.c' line='3081' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netdev_info' mangled-name='netdev_info' filepath='net/core/dev.c' line='11077' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_info'>
-        <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11077' column='1'/>
-        <parameter type-id='80f4b756' name='fmt' filepath='net/core/dev.c' line='11077' column='1'/>
+      <function-decl name='netdev_info' mangled-name='netdev_info' filepath='net/core/dev.c' line='11078' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_info'>
+        <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11078' column='1'/>
+        <parameter type-id='80f4b756' name='fmt' filepath='net/core/dev.c' line='11078' column='1'/>
         <parameter is-variadic='yes'/>
         <return type-id='48b5725f'/>
       </function-decl>
@@ -157822,9 +157884,9 @@
         <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/dev.c' line='4827' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='netdev_err' mangled-name='netdev_err' filepath='net/core/dev.c' line='11074' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_err'>
-        <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11074' column='1'/>
-        <parameter type-id='80f4b756' name='fmt' filepath='net/core/dev.c' line='11074' column='1'/>
+      <function-decl name='netdev_err' mangled-name='netdev_err' filepath='net/core/dev.c' line='11075' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_err'>
+        <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11075' column='1'/>
+        <parameter type-id='80f4b756' name='fmt' filepath='net/core/dev.c' line='11075' column='1'/>
         <parameter is-variadic='yes'/>
         <return type-id='48b5725f'/>
       </function-decl>
@@ -157836,12 +157898,12 @@
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='1470' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netdev_update_features' mangled-name='netdev_update_features' filepath='net/core/dev.c' line='9770' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_update_features'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9770' column='1'/>
+      <function-decl name='netdev_update_features' mangled-name='netdev_update_features' filepath='net/core/dev.c' line='9771' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_update_features'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9771' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='unregister_netdevice_many' mangled-name='unregister_netdevice_many' filepath='net/core/dev.c' line='10697' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_netdevice_many'>
-        <parameter type-id='e84b031a' name='head' filepath='net/core/dev.c' line='10697' column='1'/>
+      <function-decl name='unregister_netdevice_many' mangled-name='unregister_netdevice_many' filepath='net/core/dev.c' line='10698' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_netdevice_many'>
+        <parameter type-id='e84b031a' name='head' filepath='net/core/dev.c' line='10698' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='netif_device_detach' mangled-name='netif_device_detach' filepath='net/core/dev.c' line='3132' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_device_detach'>
@@ -157852,20 +157914,20 @@
         <parameter type-id='35b28c4f' name='txq' filepath='net/core/dev.c' line='3069' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='dev_get_stats' mangled-name='dev_get_stats' filepath='net/core/dev.c' line='10391' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_get_stats'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10391' column='1'/>
-        <parameter type-id='bd3860fe' name='storage' filepath='net/core/dev.c' line='10392' column='1'/>
+      <function-decl name='dev_get_stats' mangled-name='dev_get_stats' filepath='net/core/dev.c' line='10392' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_get_stats'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10392' column='1'/>
+        <parameter type-id='bd3860fe' name='storage' filepath='net/core/dev.c' line='10393' column='1'/>
         <return type-id='bd3860fe'/>
       </function-decl>
-      <function-decl name='unregister_netdev' mangled-name='unregister_netdev' filepath='net/core/dev.c' line='10721' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_netdev'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10721' column='1'/>
+      <function-decl name='unregister_netdev' mangled-name='unregister_netdev' filepath='net/core/dev.c' line='10722' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_netdev'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10722' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='synchronize_net' mangled-name='synchronize_net' filepath='net/core/dev.c' line='10653' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='synchronize_net'>
+      <function-decl name='synchronize_net' mangled-name='synchronize_net' filepath='net/core/dev.c' line='10654' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='synchronize_net'>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='register_netdev' mangled-name='register_netdev' filepath='net/core/dev.c' line='10169' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='register_netdev'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10169' column='1'/>
+      <function-decl name='register_netdev' mangled-name='register_netdev' filepath='net/core/dev.c' line='10170' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='register_netdev'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10170' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='passthru_features_check' mangled-name='passthru_features_check' filepath='net/core/dev.c' line='3486' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='passthru_features_check'>
@@ -157874,13 +157936,13 @@
         <parameter type-id='f9f4b16f' name='features' filepath='net/core/dev.c' line='3488' column='1'/>
         <return type-id='f9f4b16f'/>
       </function-decl>
-      <function-decl name='netif_tx_stop_all_queues' mangled-name='netif_tx_stop_all_queues' filepath='net/core/dev.c' line='9911' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_tx_stop_all_queues'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9911' column='1'/>
+      <function-decl name='netif_tx_stop_all_queues' mangled-name='netif_tx_stop_all_queues' filepath='net/core/dev.c' line='9912' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_tx_stop_all_queues'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9912' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netif_stacked_transfer_operstate' mangled-name='netif_stacked_transfer_operstate' filepath='net/core/dev.c' line='9803' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_stacked_transfer_operstate'>
-        <parameter type-id='2ce52478' name='rootdev' filepath='net/core/dev.c' line='9803' column='1'/>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9804' column='1'/>
+      <function-decl name='netif_stacked_transfer_operstate' mangled-name='netif_stacked_transfer_operstate' filepath='net/core/dev.c' line='9804' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_stacked_transfer_operstate'>
+        <parameter type-id='2ce52478' name='rootdev' filepath='net/core/dev.c' line='9804' column='1'/>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9805' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='netif_rx_ni' mangled-name='netif_rx_ni' filepath='net/core/dev.c' line='4840' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_rx_ni'>
@@ -157901,15 +157963,15 @@
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='3147' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netdev_upper_dev_unlink' mangled-name='netdev_upper_dev_unlink' filepath='net/core/dev.c' line='7928' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_upper_dev_unlink'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='7928' column='1'/>
-        <parameter type-id='68a2d05b' name='upper_dev' filepath='net/core/dev.c' line='7929' column='1'/>
+      <function-decl name='netdev_upper_dev_unlink' mangled-name='netdev_upper_dev_unlink' filepath='net/core/dev.c' line='7929' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_upper_dev_unlink'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='7929' column='1'/>
+        <parameter type-id='68a2d05b' name='upper_dev' filepath='net/core/dev.c' line='7930' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netdev_upper_dev_link' mangled-name='netdev_upper_dev_link' filepath='net/core/dev.c' line='7845' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_upper_dev_link'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='7845' column='1'/>
-        <parameter type-id='68a2d05b' name='upper_dev' filepath='net/core/dev.c' line='7846' column='1'/>
-        <parameter type-id='5799dc94' name='extack' filepath='net/core/dev.c' line='7847' column='1'/>
+      <function-decl name='netdev_upper_dev_link' mangled-name='netdev_upper_dev_link' filepath='net/core/dev.c' line='7846' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_upper_dev_link'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='7846' column='1'/>
+        <parameter type-id='68a2d05b' name='upper_dev' filepath='net/core/dev.c' line='7847' column='1'/>
+        <parameter type-id='5799dc94' name='extack' filepath='net/core/dev.c' line='7848' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='netdev_rx_handler_register' mangled-name='netdev_rx_handler_register' filepath='net/core/dev.c' line='5036' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_rx_handler_register'>
@@ -157922,22 +157984,22 @@
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='1494' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='netdev_master_upper_dev_link' mangled-name='netdev_master_upper_dev_link' filepath='net/core/dev.c' line='7873' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_master_upper_dev_link'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='7873' column='1'/>
-        <parameter type-id='68a2d05b' name='upper_dev' filepath='net/core/dev.c' line='7874' column='1'/>
-        <parameter type-id='eaa32e2f' name='upper_priv' filepath='net/core/dev.c' line='7875' column='1'/>
-        <parameter type-id='eaa32e2f' name='upper_info' filepath='net/core/dev.c' line='7875' column='1'/>
-        <parameter type-id='5799dc94' name='extack' filepath='net/core/dev.c' line='7876' column='1'/>
+      <function-decl name='netdev_master_upper_dev_link' mangled-name='netdev_master_upper_dev_link' filepath='net/core/dev.c' line='7874' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_master_upper_dev_link'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='7874' column='1'/>
+        <parameter type-id='68a2d05b' name='upper_dev' filepath='net/core/dev.c' line='7875' column='1'/>
+        <parameter type-id='eaa32e2f' name='upper_priv' filepath='net/core/dev.c' line='7876' column='1'/>
+        <parameter type-id='eaa32e2f' name='upper_info' filepath='net/core/dev.c' line='7876' column='1'/>
+        <parameter type-id='5799dc94' name='extack' filepath='net/core/dev.c' line='7877' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='netdev_increment_features' mangled-name='netdev_increment_features' filepath='net/core/dev.c' line='10938' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_increment_features'>
-        <parameter type-id='f9f4b16f' name='all' filepath='net/core/dev.c' line='10938' column='1'/>
-        <parameter type-id='f9f4b16f' name='one' filepath='net/core/dev.c' line='10939' column='1'/>
-        <parameter type-id='f9f4b16f' name='mask' filepath='net/core/dev.c' line='10939' column='1'/>
+      <function-decl name='netdev_increment_features' mangled-name='netdev_increment_features' filepath='net/core/dev.c' line='10939' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_increment_features'>
+        <parameter type-id='f9f4b16f' name='all' filepath='net/core/dev.c' line='10939' column='1'/>
+        <parameter type-id='f9f4b16f' name='one' filepath='net/core/dev.c' line='10940' column='1'/>
+        <parameter type-id='f9f4b16f' name='mask' filepath='net/core/dev.c' line='10940' column='1'/>
         <return type-id='f9f4b16f'/>
       </function-decl>
-      <function-decl name='netdev_change_features' mangled-name='netdev_change_features' filepath='net/core/dev.c' line='9787' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_change_features'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9787' column='1'/>
+      <function-decl name='netdev_change_features' mangled-name='netdev_change_features' filepath='net/core/dev.c' line='9788' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_change_features'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='9788' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='napi_gro_flush' mangled-name='napi_gro_flush' filepath='net/core/dev.c' line='5809' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='napi_gro_flush'>
@@ -157945,13 +158007,13 @@
         <parameter type-id='b50a4934' name='flush_old' filepath='net/core/dev.c' line='5809' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='init_dummy_netdev' mangled-name='init_dummy_netdev' filepath='net/core/dev.c' line='10122' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='init_dummy_netdev'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10122' column='1'/>
+      <function-decl name='init_dummy_netdev' mangled-name='init_dummy_netdev' filepath='net/core/dev.c' line='10123' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='init_dummy_netdev'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10123' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dev_set_mtu' mangled-name='dev_set_mtu' filepath='net/core/dev.c' line='8591' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_set_mtu'>
-        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='8591' column='1'/>
-        <parameter type-id='95e97e5e' name='new_mtu' filepath='net/core/dev.c' line='8591' column='1'/>
+      <function-decl name='dev_set_mtu' mangled-name='dev_set_mtu' filepath='net/core/dev.c' line='8592' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_set_mtu'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='8592' column='1'/>
+        <parameter type-id='95e97e5e' name='new_mtu' filepath='net/core/dev.c' line='8592' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='dev_queue_xmit' mangled-name='dev_queue_xmit' filepath='net/core/dev.c' line='4184' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_queue_xmit'>
@@ -161368,8 +161430,8 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='net/mac80211/cfg.c' language='LANG_C89'>
-      <function-decl name='ieee80211_csa_finish' mangled-name='ieee80211_csa_finish' filepath='net/mac80211/cfg.c' line='3107' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ieee80211_csa_finish'>
-        <parameter type-id='3a1577c5' name='vif' filepath='net/mac80211/cfg.c' line='3107' column='1'/>
+      <function-decl name='ieee80211_csa_finish' mangled-name='ieee80211_csa_finish' filepath='net/mac80211/cfg.c' line='3109' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ieee80211_csa_finish'>
+        <parameter type-id='3a1577c5' name='vif' filepath='net/mac80211/cfg.c' line='3109' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
     </abi-instr>
@@ -175628,6 +175690,17 @@
       <typedef-decl name='snd_pcm_access_t' type-id='95e97e5e' filepath='include/uapi/sound/asound.h' line='186' column='1' id='6459083c'/>
       <typedef-decl name='snd_pcm_format_t' type-id='95e97e5e' filepath='include/uapi/sound/asound.h' line='194' column='1' id='67fa9bd5'/>
       <typedef-decl name='snd_pcm_subformat_t' type-id='95e97e5e' filepath='include/uapi/sound/asound.h' line='277' column='1' id='2bc87435'/>
+      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
+        <data-member access='public'>
+          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='snd_pcm_mmap_status' size-in-bits='448' is-struct='yes' visibility='default' filepath='include/uapi/sound/asound.h' line='566' column='1' id='6ae96bbe'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='state' type-id='33158de9' visibility='default' filepath='include/uapi/sound/asound.h' line='567' column='1'/>
@@ -175680,17 +175753,6 @@
           <var-decl name='__pad4' type-id='7e3959e3' visibility='default' filepath='include/uapi/sound/asound.h' line='585' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
-        <data-member access='public'>
-          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
-        </data-member>
-      </union-decl>
       <class-decl name='snd_pcm_hardware' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/sound/pcm.h' line='31' column='1' id='eacd353c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='info' type-id='f0981eeb' visibility='default' filepath='include/sound/pcm.h' line='32' column='1'/>
