@@ -4277,6 +4277,8 @@
       <elf-symbol name='xhci_address_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x41da7c8'/>
       <elf-symbol name='xhci_alloc_command' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3414f951'/>
       <elf-symbol name='xhci_alloc_erst' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeada72d'/>
+      <elf-symbol name='xhci_bus_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6fcc8a71'/>
+      <elf-symbol name='xhci_bus_suspend' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf55b857e'/>
       <elf-symbol name='xhci_check_trb_in_td_math' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9cf2168d'/>
       <elf-symbol name='xhci_free_command' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1f35e4ad'/>
       <elf-symbol name='xhci_free_erst' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc8ffd56a'/>
@@ -96623,12 +96625,12 @@
       <pointer-type-def type-id='17d4a823' size-in-bits='64' id='71399c6f'/>
       <pointer-type-def type-id='05cc5338' size-in-bits='64' id='98dbb7da'/>
       <pointer-type-def type-id='4d5c3e51' size-in-bits='64' id='7a3863fd'/>
-      <function-decl name='__sdhci_add_host' mangled-name='__sdhci_add_host' filepath='drivers/mmc/host/sdhci.c' line='4673' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__sdhci_add_host'>
-        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4673' column='1'/>
+      <function-decl name='__sdhci_add_host' mangled-name='__sdhci_add_host' filepath='drivers/mmc/host/sdhci.c' line='4675' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__sdhci_add_host'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4675' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='sdhci_setup_host' mangled-name='sdhci_setup_host' filepath='drivers/mmc/host/sdhci.c' line='4102' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_setup_host'>
-        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4102' column='1'/>
+      <function-decl name='sdhci_setup_host' mangled-name='sdhci_setup_host' filepath='drivers/mmc/host/sdhci.c' line='4104' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_setup_host'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4104' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='sdhci_set_power_noreg' mangled-name='sdhci_set_power_noreg' filepath='drivers/mmc/host/sdhci.c' line='2018' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_power_noreg'>
@@ -96647,9 +96649,9 @@
         <parameter type-id='f9b06939' name='mask' filepath='drivers/mmc/host/sdhci.c' line='203' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='sdhci_remove_host' mangled-name='sdhci_remove_host' filepath='drivers/mmc/host/sdhci.c' line='4763' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_remove_host'>
-        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4763' column='1'/>
-        <parameter type-id='95e97e5e' name='dead' filepath='drivers/mmc/host/sdhci.c' line='4763' column='1'/>
+      <function-decl name='sdhci_remove_host' mangled-name='sdhci_remove_host' filepath='drivers/mmc/host/sdhci.c' line='4765' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_remove_host'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4765' column='1'/>
+        <parameter type-id='95e97e5e' name='dead' filepath='drivers/mmc/host/sdhci.c' line='4765' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='sdhci_enable_clk' mangled-name='sdhci_enable_clk' filepath='drivers/mmc/host/sdhci.c' line='1937' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_enable_clk'>
@@ -96657,28 +96659,28 @@
         <parameter type-id='1dc6a898' name='clk' filepath='drivers/mmc/host/sdhci.c' line='1937' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='sdhci_cqe_irq' mangled-name='sdhci_cqe_irq' filepath='drivers/mmc/host/sdhci.c' line='3855' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cqe_irq'>
-        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='3855' column='1'/>
-        <parameter type-id='19c2251e' name='intmask' filepath='drivers/mmc/host/sdhci.c' line='3855' column='1'/>
-        <parameter type-id='7292109c' name='cmd_error' filepath='drivers/mmc/host/sdhci.c' line='3855' column='1'/>
-        <parameter type-id='7292109c' name='data_error' filepath='drivers/mmc/host/sdhci.c' line='3856' column='1'/>
+      <function-decl name='sdhci_cqe_irq' mangled-name='sdhci_cqe_irq' filepath='drivers/mmc/host/sdhci.c' line='3857' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cqe_irq'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='3857' column='1'/>
+        <parameter type-id='19c2251e' name='intmask' filepath='drivers/mmc/host/sdhci.c' line='3857' column='1'/>
+        <parameter type-id='7292109c' name='cmd_error' filepath='drivers/mmc/host/sdhci.c' line='3857' column='1'/>
+        <parameter type-id='7292109c' name='data_error' filepath='drivers/mmc/host/sdhci.c' line='3858' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='sdhci_cqe_enable' mangled-name='sdhci_cqe_enable' filepath='drivers/mmc/host/sdhci.c' line='3787' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cqe_enable'>
-        <parameter type-id='dd575c43' name='mmc' filepath='drivers/mmc/host/sdhci.c' line='3787' column='1'/>
+      <function-decl name='sdhci_cqe_enable' mangled-name='sdhci_cqe_enable' filepath='drivers/mmc/host/sdhci.c' line='3789' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cqe_enable'>
+        <parameter type-id='dd575c43' name='mmc' filepath='drivers/mmc/host/sdhci.c' line='3789' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='sdhci_cqe_disable' mangled-name='sdhci_cqe_disable' filepath='drivers/mmc/host/sdhci.c' line='3831' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cqe_disable'>
-        <parameter type-id='dd575c43' name='mmc' filepath='drivers/mmc/host/sdhci.c' line='3831' column='1'/>
-        <parameter type-id='b50a4934' name='recovery' filepath='drivers/mmc/host/sdhci.c' line='3831' column='1'/>
+      <function-decl name='sdhci_cqe_disable' mangled-name='sdhci_cqe_disable' filepath='drivers/mmc/host/sdhci.c' line='3833' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cqe_disable'>
+        <parameter type-id='dd575c43' name='mmc' filepath='drivers/mmc/host/sdhci.c' line='3833' column='1'/>
+        <parameter type-id='b50a4934' name='recovery' filepath='drivers/mmc/host/sdhci.c' line='3833' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='sdhci_cleanup_host' mangled-name='sdhci_cleanup_host' filepath='drivers/mmc/host/sdhci.c' line='4653' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cleanup_host'>
-        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4653' column='1'/>
+      <function-decl name='sdhci_cleanup_host' mangled-name='sdhci_cleanup_host' filepath='drivers/mmc/host/sdhci.c' line='4655' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cleanup_host'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4655' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='sdhci_add_host' mangled-name='sdhci_add_host' filepath='drivers/mmc/host/sdhci.c' line='4742' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_add_host'>
-        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4742' column='1'/>
+      <function-decl name='sdhci_add_host' mangled-name='sdhci_add_host' filepath='drivers/mmc/host/sdhci.c' line='4744' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_add_host'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4744' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-type size-in-bits='64' id='d3baf253'>
@@ -118093,6 +118095,16 @@
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/usb/host/pci-quirks.c' line='194' column='1'/>
         <parameter type-id='95e97e5e' name='on' filepath='drivers/usb/host/pci-quirks.c' line='194' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+    </abi-instr>
+    <abi-instr address-size='64' path='drivers/usb/host/xhci-hub.c' language='LANG_C89'>
+      <function-decl name='xhci_bus_suspend' mangled-name='xhci_bus_suspend' filepath='drivers/usb/host/xhci-hub.c' line='1597' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_bus_suspend'>
+        <parameter type-id='fc4f83c1' name='hcd' filepath='drivers/usb/host/xhci-hub.c' line='1597' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='xhci_bus_resume' mangled-name='xhci_bus_resume' filepath='drivers/usb/host/xhci-hub.c' line='1756' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_bus_resume'>
+        <parameter type-id='fc4f83c1' name='hcd' filepath='drivers/usb/host/xhci-hub.c' line='1756' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='drivers/usb/host/xhci-mem.c' language='LANG_C89'>
