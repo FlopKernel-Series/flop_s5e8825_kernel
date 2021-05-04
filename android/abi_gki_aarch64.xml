@@ -776,6 +776,7 @@
       <elf-symbol name='cpufreq_disable_fast_switch' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe07e68f9'/>
       <elf-symbol name='cpufreq_driver_fast_switch' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8bb00cb4'/>
       <elf-symbol name='cpufreq_driver_resolve_freq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92983df0'/>
+      <elf-symbol name='cpufreq_driver_target' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbe046317'/>
       <elf-symbol name='cpufreq_enable_boost_support' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf30a5502'/>
       <elf-symbol name='cpufreq_enable_fast_switch' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x16914e37'/>
       <elf-symbol name='cpufreq_freq_transition_begin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x49ce6de7'/>
@@ -784,6 +785,7 @@
       <elf-symbol name='cpufreq_generic_frequency_table_verify' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc289e46d'/>
       <elf-symbol name='cpufreq_generic_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba2b7f64'/>
       <elf-symbol name='cpufreq_generic_suspend' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9370f6a3'/>
+      <elf-symbol name='cpufreq_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9305f8e6'/>
       <elf-symbol name='cpufreq_get_driver_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x553b49a4'/>
       <elf-symbol name='cpufreq_get_policy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x22e81810'/>
       <elf-symbol name='cpufreq_policy_transition_delay_us' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1b21ccc8'/>
@@ -14686,7 +14688,7 @@
           <var-decl name='callback_head' type-id='e3d8ce29' visibility='default' filepath='include/linux/mm_types.h' line='179' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__17' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/cred.h' line='149' column='1' id='0a97cc35'>
+      <union-decl name='__anonymous_union__1' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/cred.h' line='149' column='1' id='0a97cc35'>
         <data-member access='public'>
           <var-decl name='non_rcu' type-id='95e97e5e' visibility='default' filepath='include/linux/cred.h' line='150' column='1'/>
         </data-member>
@@ -15465,32 +15467,7 @@
           <var-decl name='wait' type-id='b5ab048f' visibility='default' filepath='include/linux/mempool.h' line='25' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='mmu_notifier_subscriptions' size-in-bits='640' is-struct='yes' visibility='default' filepath='mm/mmu_notifier.c' line='37' column='1' id='b7e6b484'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='list' type-id='e151255a' visibility='default' filepath='mm/mmu_notifier.c' line='39' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='has_itree' type-id='b50a4934' visibility='default' filepath='mm/mmu_notifier.c' line='40' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='mm/mmu_notifier.c' line='42' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='invalidate_seq' type-id='7359adad' visibility='default' filepath='mm/mmu_notifier.c' line='43' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='active_invalidate_ranges' type-id='7359adad' visibility='default' filepath='mm/mmu_notifier.c' line='44' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='itree' type-id='6fe1603d' visibility='default' filepath='mm/mmu_notifier.c' line='45' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='wq' type-id='b5ab048f' visibility='default' filepath='mm/mmu_notifier.c' line='46' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='deferred_list' type-id='e151255a' visibility='default' filepath='mm/mmu_notifier.c' line='47' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='mmu_notifier_subscriptions' is-struct='yes' visibility='default' is-declaration-only='yes' id='b7e6b484'/>
       <class-decl name='net_device' size-in-bits='18944' is-struct='yes' visibility='default' filepath='include/linux/netdevice.h' line='1898' column='1' id='5a9929eb'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='name' type-id='ac1fa8c0' visibility='default' filepath='include/linux/netdevice.h' line='1899' column='1'/>
@@ -17996,7 +17973,7 @@
           <var-decl name='ipi_list' type-id='72f469ec' visibility='default' filepath='include/linux/blkdev.h' line='156' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/iocontext.h' line='87' column='1' id='eb20ccf0'>
+      <union-decl name='__anonymous_union__8' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/iocontext.h' line='87' column='1' id='eb20ccf0'>
         <data-member access='public'>
           <var-decl name='ioc_node' type-id='03a4a074' visibility='default' filepath='include/linux/iocontext.h' line='88' column='1'/>
         </data-member>
@@ -18012,7 +17989,7 @@
           <var-decl name='d_wait' type-id='03d48e96' visibility='default' filepath='include/linux/dcache.h' line='109' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__9' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/iocontext.h' line='83' column='1' id='df248743'>
+      <union-decl name='__anonymous_union__7' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/iocontext.h' line='83' column='1' id='df248743'>
         <data-member access='public'>
           <var-decl name='q_node' type-id='72f469ec' visibility='default' filepath='include/linux/iocontext.h' line='84' column='1'/>
         </data-member>
@@ -56621,6 +56598,10 @@
       <function-decl name='cpufreq_get_driver_data' mangled-name='cpufreq_get_driver_data' filepath='drivers/cpufreq/cpufreq.c' line='1955' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_get_driver_data'>
         <return type-id='eaa32e2f'/>
       </function-decl>
+      <function-decl name='cpufreq_get' mangled-name='cpufreq_get' filepath='drivers/cpufreq/cpufreq.c' line='1795' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_get'>
+        <parameter type-id='f0981eeb' name='cpu' filepath='drivers/cpufreq/cpufreq.c' line='1795' column='1'/>
+        <return type-id='f0981eeb'/>
+      </function-decl>
       <function-decl name='cpufreq_generic_suspend' mangled-name='cpufreq_generic_suspend' filepath='drivers/cpufreq/cpufreq.c' line='1824' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_generic_suspend'>
         <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq.c' line='1824' column='1'/>
         <return type-id='95e97e5e'/>
@@ -56630,6 +56611,12 @@
         <return type-id='f0981eeb'/>
       </function-decl>
       <function-decl name='cpufreq_enable_boost_support' mangled-name='cpufreq_enable_boost_support' filepath='drivers/cpufreq/cpufreq.c' line='2673' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_enable_boost_support'>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='cpufreq_driver_target' mangled-name='cpufreq_driver_target' filepath='drivers/cpufreq/cpufreq.c' line='2234' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_driver_target'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq.c' line='2234' column='1'/>
+        <parameter type-id='f0981eeb' name='target_freq' filepath='drivers/cpufreq/cpufreq.c' line='2235' column='1'/>
+        <parameter type-id='f0981eeb' name='relation' filepath='drivers/cpufreq/cpufreq.c' line='2236' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='cpufreq_cpu_put' mangled-name='cpufreq_cpu_put' filepath='drivers/cpufreq/cpufreq.c' line='248' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_cpu_put'>
@@ -60308,7 +60295,7 @@
         <parameter type-id='94411a61'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -83345,21 +83332,21 @@
         <return type-id='d9fbdc06'/>
       </function-decl>
       <pointer-type-def type-id='df80a1e0' size-in-bits='64' id='d9fbdc06'/>
-      <class-decl name='frame_vector' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/mm.h' line='1899' column='1' id='df80a1e0'>
+      <class-decl name='frame_vector' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/mm.h' line='1902' column='1' id='df80a1e0'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='nr_allocated' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1900' column='1'/>
+          <var-decl name='nr_allocated' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1903' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='nr_frames' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1901' column='1'/>
+          <var-decl name='nr_frames' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1904' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='got_ref' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1902' column='1'/>
+          <var-decl name='got_ref' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1905' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='72'>
-          <var-decl name='is_pfns' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1903' column='1'/>
+          <var-decl name='is_pfns' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1906' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='ptrs' type-id='baf98fd3' visibility='default' filepath='include/linux/mm.h' line='1904' column='1'/>
+          <var-decl name='ptrs' type-id='baf98fd3' visibility='default' filepath='include/linux/mm.h' line='1907' column='1'/>
         </data-member>
       </class-decl>
     </abi-instr>
@@ -117856,7 +117843,7 @@
           <var-decl name='buf' type-id='5e6516ee' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -126930,32 +126917,7 @@
         </data-member>
       </class-decl>
       <class-decl name='mem_cgroup' is-struct='yes' visibility='default' is-declaration-only='yes' id='11c8601b'/>
-      <class-decl name='mmu_notifier_subscriptions' size-in-bits='640' is-struct='yes' visibility='default' filepath='mm/mmu_notifier.c' line='37' column='1' id='b7e6b484'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='list' type-id='e151255a' visibility='default' filepath='mm/mmu_notifier.c' line='39' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='has_itree' type-id='b50a4934' visibility='default' filepath='mm/mmu_notifier.c' line='40' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='mm/mmu_notifier.c' line='42' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='invalidate_seq' type-id='7359adad' visibility='default' filepath='mm/mmu_notifier.c' line='43' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='active_invalidate_ranges' type-id='7359adad' visibility='default' filepath='mm/mmu_notifier.c' line='44' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='itree' type-id='6fe1603d' visibility='default' filepath='mm/mmu_notifier.c' line='45' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='wq' type-id='b5ab048f' visibility='default' filepath='mm/mmu_notifier.c' line='46' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='deferred_list' type-id='e151255a' visibility='default' filepath='mm/mmu_notifier.c' line='47' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='mmu_notifier_subscriptions' is-struct='yes' visibility='default' is-declaration-only='yes' id='b7e6b484'/>
       <class-decl name='module_notes_attrs' size-in-bits='128' is-struct='yes' visibility='default' filepath='kernel/module.c' line='1666' column='1' id='96b6b914'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='dir' type-id='d30bdc51' visibility='default' filepath='kernel/module.c' line='1667' column='1'/>
@@ -130441,6 +130403,14 @@
           <var-decl name='bv_offset' type-id='f0981eeb' visibility='default' filepath='include/linux/bvec.h' line='34' column='1'/>
         </data-member>
       </class-decl>
+      <union-decl name='key_payload' size-in-bits='256' visibility='default' filepath='include/linux/key.h' line='128' column='1' id='2888d74a'>
+        <data-member access='public'>
+          <var-decl name='rcu_data0' type-id='eaa32e2f' visibility='default' filepath='include/linux/key.h' line='129' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='data' type-id='209ef23f' visibility='default' filepath='include/linux/key.h' line='130' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='fasync_struct' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/fs.h' line='1314' column='1' id='70c545cd'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='fa_lock' type-id='ac16795b' visibility='default' filepath='include/linux/fs.h' line='1315' column='1'/>
@@ -130960,14 +130930,6 @@
         </data-member>
         <data-member access='public'>
           <var-decl name='' type-id='607bacb1' visibility='default' filepath='include/linux/key.h' line='256' column='1'/>
-        </data-member>
-      </union-decl>
-      <union-decl name='key_payload' size-in-bits='256' visibility='default' filepath='include/linux/key.h' line='128' column='1' id='2888d74a'>
-        <data-member access='public'>
-          <var-decl name='rcu_data0' type-id='eaa32e2f' visibility='default' filepath='include/linux/key.h' line='129' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='data' type-id='209ef23f' visibility='default' filepath='include/linux/key.h' line='130' column='1'/>
         </data-member>
       </union-decl>
       <class-decl name='__anonymous_struct__19' size-in-bits='256' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/key.h' line='256' column='1' id='607bacb1'>
@@ -160155,21 +160117,21 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='mm/frame_vector.c' language='LANG_C89'>
-      <class-decl name='frame_vector' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/mm.h' line='1899' column='1' id='df80a1e0'>
+      <class-decl name='frame_vector' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/mm.h' line='1902' column='1' id='df80a1e0'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='nr_allocated' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1900' column='1'/>
+          <var-decl name='nr_allocated' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1903' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='nr_frames' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1901' column='1'/>
+          <var-decl name='nr_frames' type-id='f0981eeb' visibility='default' filepath='include/linux/mm.h' line='1904' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='got_ref' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1902' column='1'/>
+          <var-decl name='got_ref' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1905' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='72'>
-          <var-decl name='is_pfns' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1903' column='1'/>
+          <var-decl name='is_pfns' type-id='b50a4934' visibility='default' filepath='include/linux/mm.h' line='1906' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='ptrs' type-id='baf98fd3' visibility='default' filepath='include/linux/mm.h' line='1904' column='1'/>
+          <var-decl name='ptrs' type-id='baf98fd3' visibility='default' filepath='include/linux/mm.h' line='1907' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='df80a1e0' size-in-bits='64' id='d9fbdc06'/>
@@ -160428,12 +160390,12 @@
         <parameter type-id='95e97e5e' name='even_cows' filepath='mm/memory.c' line='3506' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='access_process_vm' mangled-name='access_process_vm' filepath='mm/memory.c' line='5506' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='access_process_vm'>
-        <parameter type-id='f23e2572' name='tsk' filepath='mm/memory.c' line='5506' column='1'/>
-        <parameter type-id='7359adad' name='addr' filepath='mm/memory.c' line='5506' column='1'/>
-        <parameter type-id='eaa32e2f' name='buf' filepath='mm/memory.c' line='5507' column='1'/>
-        <parameter type-id='95e97e5e' name='len' filepath='mm/memory.c' line='5507' column='1'/>
-        <parameter type-id='f0981eeb' name='gup_flags' filepath='mm/memory.c' line='5507' column='1'/>
+      <function-decl name='access_process_vm' mangled-name='access_process_vm' filepath='mm/memory.c' line='5508' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='access_process_vm'>
+        <parameter type-id='f23e2572' name='tsk' filepath='mm/memory.c' line='5508' column='1'/>
+        <parameter type-id='7359adad' name='addr' filepath='mm/memory.c' line='5508' column='1'/>
+        <parameter type-id='eaa32e2f' name='buf' filepath='mm/memory.c' line='5509' column='1'/>
+        <parameter type-id='95e97e5e' name='len' filepath='mm/memory.c' line='5509' column='1'/>
+        <parameter type-id='f0981eeb' name='gup_flags' filepath='mm/memory.c' line='5509' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
     </abi-instr>
