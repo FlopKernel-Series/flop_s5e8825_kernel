@@ -6889,7 +6889,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu, int sy
 	unsigned long cpu_cap, util, base_energy = 0;
 	bool boosted, latency_sensitive = false;
 	unsigned int min_exit_lat = UINT_MAX;
-	int cpu, best_energy_cpu = prev_cpu;
+	int cpu, best_energy_cpu = prev_cpu, target = -1;
 	struct cpuidle_state *idle;
 	struct sched_domain *sd;
 	struct perf_domain *pd;
@@ -6903,7 +6903,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu, int sy
 	rcu_read_lock();
 	pd = rcu_dereference(rd->pd);
 	if (!pd || READ_ONCE(rd->overutilized))
-		goto fail;
+		goto unlock;
 
 	cpu = smp_processor_id();
 	if (sync && cpu_rq(cpu)->nr_running == 1 &&
@@ -6921,7 +6921,9 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu, int sy
 	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
 		sd = sd->parent;
 	if (!sd)
-		goto fail;
+		goto unlock;
+
+	target = prev_cpu;
 
 	if (!task_util_est(p) && p_util_min == 0)
 		goto unlock;
@@ -6982,6 +6984,8 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu, int sy
 			/* Always use prev_cpu as a candidate. */
 			if (!latency_sensitive && cpu == prev_cpu) {
 				prev_delta = compute_energy(p, prev_cpu, pd);
+				if (prev_delta < base_energy_pd)
+					goto unlock;
 				prev_delta -= base_energy_pd;
 				best_delta = min(best_delta, prev_delta);
 			}
@@ -7023,6 +7027,8 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu, int sy
 		if (!latency_sensitive && max_spare_cap_cpu >= 0 &&
 						max_spare_cap_cpu != prev_cpu) {
 			cur_delta = compute_energy(p, max_spare_cap_cpu, pd);
+			if (cur_delta < base_energy_pd)
+				goto unlock;
 			cur_delta -= base_energy_pd;
 			if (cur_delta < best_delta) {
 				best_delta = cur_delta;
@@ -7030,7 +7036,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu, int sy
 			}
 		}
 	}
-unlock:
 	rcu_read_unlock();
 
 	if (latency_sensitive)
@@ -7040,18 +7045,16 @@ unlock:
 	 * Pick the best CPU if prev_cpu cannot be used, or if it saves at
 	 * least 6% of the energy used by prev_cpu.
 	 */
-	if (prev_delta == ULONG_MAX)
-		return best_energy_cpu;
+	if ((prev_delta == ULONG_MAX) ||
+	    (prev_delta - best_delta) > ((prev_delta + base_energy) >> 4))
+		target = best_energy_cpu;
 
-	if ((prev_delta - best_delta) > ((prev_delta + base_energy) >> 4))
-		return best_energy_cpu;
+	return target;
 
-	return prev_cpu;
-
-fail:
+unlock:
 	rcu_read_unlock();
 
-	return -1;
+	return target;
 }
 
 /*
