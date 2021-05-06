@@ -6387,8 +6387,10 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
 	avg_idle = this_rq()->avg_idle / 512;
 	avg_cost = this_sd->avg_scan_cost + 1;
 
-	if (sched_feat(SIS_AVG_CPU) && avg_idle < avg_cost)
-		return -1;
+#ifdef SCHED_FEAT_SIS_AVG_CPU
+		if (avg_idle < avg_cost)
+			return -1;
+#endif
 
 	if (sched_feat(SIS_PROP)) {
 		u64 span_avg = sd->span_weight * avg_idle;
