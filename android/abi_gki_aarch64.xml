@@ -239,6 +239,7 @@
       <elf-symbol name='__traceiter_android_rvh_new_task_stats' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x52517f32'/>
       <elf-symbol name='__traceiter_android_rvh_pick_next_entity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c4b8ada'/>
       <elf-symbol name='__traceiter_android_rvh_place_entity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf9f0725'/>
+      <elf-symbol name='__traceiter_android_rvh_post_init_entity_util_avg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfcfea98e'/>
       <elf-symbol name='__traceiter_android_rvh_preempt_disable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1585c762'/>
       <elf-symbol name='__traceiter_android_rvh_preempt_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3235e37a'/>
       <elf-symbol name='__traceiter_android_rvh_replace_next_task_fair' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4a8be107'/>
@@ -4338,6 +4339,7 @@
       <elf-symbol name='__tracepoint_android_rvh_new_task_stats' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x798d7748'/>
       <elf-symbol name='__tracepoint_android_rvh_pick_next_entity' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x99d20b2c'/>
       <elf-symbol name='__tracepoint_android_rvh_place_entity' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8b5c0688'/>
+      <elf-symbol name='__tracepoint_android_rvh_post_init_entity_util_avg' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa967c441'/>
       <elf-symbol name='__tracepoint_android_rvh_preempt_disable' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb4ec0da4'/>
       <elf-symbol name='__tracepoint_android_rvh_preempt_enable' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x86d490a6'/>
       <elf-symbol name='__tracepoint_android_rvh_replace_next_task_fair' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa95004c7'/>
@@ -44077,6 +44079,7 @@
       <var-decl name='__tracepoint_android_rvh_uclamp_eff_get' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_uclamp_eff_get' visibility='default' filepath='include/trace/hooks/sched.h' line='273' column='1' elf-symbol-id='__tracepoint_android_rvh_uclamp_eff_get'/>
       <var-decl name='__tracepoint_android_rvh_replace_next_task_fair' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_replace_next_task_fair' visibility='default' filepath='include/trace/hooks/sched.h' line='289' column='1' elf-symbol-id='__tracepoint_android_rvh_replace_next_task_fair'/>
       <var-decl name='__tracepoint_android_rvh_util_est_update' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_util_est_update' visibility='default' filepath='include/trace/hooks/sched.h' line='294' column='1' elf-symbol-id='__tracepoint_android_rvh_util_est_update'/>
+      <var-decl name='__tracepoint_android_rvh_post_init_entity_util_avg' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_post_init_entity_util_avg' visibility='default' filepath='include/trace/hooks/sched.h' line='302' column='1' elf-symbol-id='__tracepoint_android_rvh_post_init_entity_util_avg'/>
       <var-decl name='__tracepoint_android_vh_binder_transaction_init' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_transaction_init' visibility='default' filepath='include/trace/hooks/binder.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_binder_transaction_init'/>
       <var-decl name='__tracepoint_android_vh_binder_set_priority' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_set_priority' visibility='default' filepath='include/trace/hooks/binder.h' line='26' column='1' elf-symbol-id='__tracepoint_android_vh_binder_set_priority'/>
       <var-decl name='__tracepoint_android_vh_binder_restore_priority' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_restore_priority' visibility='default' filepath='include/trace/hooks/binder.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_binder_restore_priority'/>
@@ -44300,6 +44303,11 @@
         <parameter type-id='f23e2572' name='curr' filepath='include/trace/hooks/sched.h' line='177' column='1'/>
         <parameter type-id='95e97e5e' name='cpu' filepath='include/trace/hooks/sched.h' line='177' column='1'/>
         <parameter type-id='9b7c55ef' name='delta' filepath='include/trace/hooks/sched.h' line='177' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_rvh_post_init_entity_util_avg' mangled-name='__traceiter_android_rvh_post_init_entity_util_avg' filepath='include/trace/hooks/sched.h' line='302' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_post_init_entity_util_avg'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='302' column='1'/>
+        <parameter type-id='ff2b3d10' name='se' filepath='include/trace/hooks/sched.h' line='302' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_set_iowait' mangled-name='__traceiter_android_rvh_set_iowait' filepath='include/trace/hooks/sched.h' line='116' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_set_iowait'>
@@ -166817,7 +166825,7 @@
           <var-decl name='drv_priv' type-id='29c3368c' visibility='default' filepath='include/net/mac80211.h' line='2162' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__5' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
+      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='params' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='695' column='1'/>
         </data-member>
@@ -167029,7 +167037,7 @@
       <array-type-def dimensions='1' type-id='53a31c26' size-in-bits='192' id='b7cdf388'>
         <subrange length='4' type-id='7ff19f0f' id='16fe7105'/>
       </array-type-def>
-      <class-decl name='__anonymous_struct__4' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
+      <class-decl name='__anonymous_struct__2' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='idx' type-id='fdbf7a0f' visibility='default' filepath='include/net/mac80211.h' line='1996' column='1'/>
         </data-member>
@@ -167209,7 +167217,7 @@
           <var-decl name='smps_mode' type-id='5e2794d2' visibility='default' filepath='include/net/mac80211.h' line='1585' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
+      <class-decl name='__anonymous_struct__1' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='units_pos' type-id='95e97e5e' visibility='default' filepath='include/net/mac80211.h' line='2597' column='1'/>
         </data-member>
@@ -167409,7 +167417,7 @@
         <enumerator name='IEEE80211_SMPS_DYNAMIC' value='3'/>
         <enumerator name='IEEE80211_SMPS_NUM_MODES' value='4'/>
       </enum-decl>
-      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
+      <class-decl name='__anonymous_struct__1' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='2596' column='1' id='cbf4d865'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='units_pos' type-id='95e97e5e' visibility='default' filepath='include/net/mac80211.h' line='2597' column='1'/>
         </data-member>
@@ -167863,7 +167871,7 @@
           <var-decl name='rate' type-id='b7cdf388' visibility='default' filepath='include/net/mac80211.h' line='2001' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__4' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
+      <class-decl name='__anonymous_struct__2' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1995' column='1' id='53a31c26'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='idx' type-id='fdbf7a0f' visibility='default' filepath='include/net/mac80211.h' line='1996' column='1'/>
         </data-member>
@@ -168196,7 +168204,7 @@
           <var-decl name='civicloc_len' type-id='b59d7dce' visibility='default' filepath='include/net/mac80211.h' line='495' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__5' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
+      <class-decl name='__anonymous_struct__3' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='694' column='1' id='0f94ff8c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='params' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='695' column='1'/>
         </data-member>
@@ -168307,7 +168315,7 @@
           <var-decl name='' type-id='eb542e10' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__17' size-in-bits='160' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1' id='eb542e10'>
+      <union-decl name='__anonymous_union__7' size-in-bits='160' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1882' column='1' id='eb542e10'>
         <data-member access='public'>
           <var-decl name='tkip' type-id='5a0ae575' visibility='default' filepath='include/net/mac80211.h' line='1886' column='1'/>
         </data-member>
@@ -168327,7 +168335,7 @@
           <var-decl name='hw' type-id='ea135534' visibility='default' filepath='include/net/mac80211.h' line='1902' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__6' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1883' column='1' id='5a0ae575'>
+      <class-decl name='__anonymous_struct__4' size-in-bits='64' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1883' column='1' id='5a0ae575'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='iv32' type-id='19c2251e' visibility='default' filepath='include/net/mac80211.h' line='1884' column='1'/>
         </data-member>
@@ -168335,12 +168343,12 @@
           <var-decl name='iv16' type-id='1dc6a898' visibility='default' filepath='include/net/mac80211.h' line='1885' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__7' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1887' column='1' id='71c656e5'>
+      <class-decl name='__anonymous_struct__5' size-in-bits='48' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1887' column='1' id='71c656e5'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='pn' type-id='cf1a4160' visibility='default' filepath='include/net/mac80211.h' line='1888' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__11' size-in-bits='136' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1899' column='1' id='ea135534'>
+      <class-decl name='__anonymous_struct__9' size-in-bits='136' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='1899' column='1' id='ea135534'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='seq' type-id='0d8415b5' visibility='default' filepath='include/net/mac80211.h' line='1900' column='1'/>
         </data-member>
@@ -168471,7 +168479,7 @@
         <enumerator name='BAR_RX_EVENT' value='2'/>
         <enumerator name='BA_FRAME_TIMEOUT' value='3'/>
       </enum-decl>
-      <union-decl name='__anonymous_union__18' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='463' column='1' id='2a1a3e21'>
+      <union-decl name='__anonymous_union__8' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/mac80211.h' line='463' column='1' id='2a1a3e21'>
         <data-member access='public'>
           <var-decl name='rssi' type-id='1569e170' visibility='default' filepath='include/net/mac80211.h' line='464' column='1'/>
         </data-member>
