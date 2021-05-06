@@ -2158,6 +2158,7 @@
       <elf-symbol name='irq_create_mapping_affinity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd5ea6995'/>
       <elf-symbol name='irq_create_of_mapping' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1bdd15b0'/>
       <elf-symbol name='irq_dispose_mapping' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2c7db649'/>
+      <elf-symbol name='irq_do_set_affinity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8c9556e8'/>
       <elf-symbol name='irq_domain_alloc_irqs_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x75ecb50c'/>
       <elf-symbol name='irq_domain_create_hierarchy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xae776844'/>
       <elf-symbol name='irq_domain_free_irqs_common' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf740086d'/>
@@ -24179,7 +24180,7 @@
           <var-decl name='' type-id='0c30e35e' visibility='default' filepath='include/linux/perf_event.h' line='230' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
+      <union-decl name='__anonymous_union__1' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
         <data-member access='public'>
           <var-decl name='s' type-id='88d8a388' visibility='default' filepath='include/net/netns/generic.h' line='33' column='1'/>
         </data-member>
@@ -26431,7 +26432,7 @@
           <var-decl name='reverse' type-id='9b105293' visibility='default' filepath='include/linux/user_namespace.h' line='30' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='30' column='1' id='88d8a388'>
+      <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='30' column='1' id='88d8a388'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='len' type-id='f0981eeb' visibility='default' filepath='include/net/netns/generic.h' line='31' column='1'/>
         </data-member>
@@ -144815,96 +144816,102 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='kernel/irq/manage.c' language='LANG_C89'>
-      <function-decl name='enable_percpu_irq' mangled-name='enable_percpu_irq' filepath='kernel/irq/manage.c' line='2228' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='enable_percpu_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2228' column='1'/>
-        <parameter type-id='f0981eeb' name='type' filepath='kernel/irq/manage.c' line='2228' column='1'/>
-        <return type-id='48b5725f'/>
-      </function-decl>
-      <function-decl name='disable_percpu_irq' mangled-name='disable_percpu_irq' filepath='kernel/irq/manage.c' line='2292' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='disable_percpu_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2292' column='1'/>
-        <return type-id='48b5725f'/>
-      </function-decl>
-      <function-decl name='__request_percpu_irq' mangled-name='__request_percpu_irq' filepath='kernel/irq/manage.c' line='2454' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__request_percpu_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2454' column='1'/>
-        <parameter type-id='29591c9a' name='handler' filepath='kernel/irq/manage.c' line='2454' column='1'/>
-        <parameter type-id='7359adad' name='flags' filepath='kernel/irq/manage.c' line='2455' column='1'/>
-        <parameter type-id='80f4b756' name='devname' filepath='kernel/irq/manage.c' line='2455' column='1'/>
-        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2456' column='1'/>
+      <function-decl name='irq_do_set_affinity' mangled-name='irq_do_set_affinity' filepath='kernel/irq/manage.c' line='221' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_do_set_affinity'>
+        <parameter type-id='1c475548' name='data' filepath='kernel/irq/manage.c' line='221' column='1'/>
+        <parameter type-id='5f8a1ac4' name='mask' filepath='kernel/irq/manage.c' line='221' column='1'/>
+        <parameter type-id='b50a4934' name='force' filepath='kernel/irq/manage.c' line='222' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='free_percpu_irq' mangled-name='free_percpu_irq' filepath='kernel/irq/manage.c' line='2384' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_percpu_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2384' column='1'/>
-        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2384' column='1'/>
+      <function-decl name='enable_percpu_irq' mangled-name='enable_percpu_irq' filepath='kernel/irq/manage.c' line='2229' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='enable_percpu_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2229' column='1'/>
+        <parameter type-id='f0981eeb' name='type' filepath='kernel/irq/manage.c' line='2229' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='request_threaded_irq' mangled-name='request_threaded_irq' filepath='kernel/irq/manage.c' line='2006' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='request_threaded_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2006' column='1'/>
-        <parameter type-id='29591c9a' name='handler' filepath='kernel/irq/manage.c' line='2006' column='1'/>
-        <parameter type-id='29591c9a' name='thread_fn' filepath='kernel/irq/manage.c' line='2007' column='1'/>
-        <parameter type-id='7359adad' name='irqflags' filepath='kernel/irq/manage.c' line='2007' column='1'/>
-        <parameter type-id='80f4b756' name='devname' filepath='kernel/irq/manage.c' line='2008' column='1'/>
-        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2008' column='1'/>
+      <function-decl name='disable_percpu_irq' mangled-name='disable_percpu_irq' filepath='kernel/irq/manage.c' line='2293' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='disable_percpu_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2293' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='__request_percpu_irq' mangled-name='__request_percpu_irq' filepath='kernel/irq/manage.c' line='2455' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__request_percpu_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2455' column='1'/>
+        <parameter type-id='29591c9a' name='handler' filepath='kernel/irq/manage.c' line='2455' column='1'/>
+        <parameter type-id='7359adad' name='flags' filepath='kernel/irq/manage.c' line='2456' column='1'/>
+        <parameter type-id='80f4b756' name='devname' filepath='kernel/irq/manage.c' line='2456' column='1'/>
+        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2457' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='disable_irq_nosync' mangled-name='disable_irq_nosync' filepath='kernel/irq/manage.c' line='603' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='disable_irq_nosync'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='603' column='1'/>
+      <function-decl name='free_percpu_irq' mangled-name='free_percpu_irq' filepath='kernel/irq/manage.c' line='2385' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_percpu_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2385' column='1'/>
+        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2385' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='free_irq' mangled-name='free_irq' filepath='kernel/irq/manage.c' line='1886' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='1886' column='1'/>
-        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='1886' column='1'/>
+      <function-decl name='request_threaded_irq' mangled-name='request_threaded_irq' filepath='kernel/irq/manage.c' line='2007' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='request_threaded_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2007' column='1'/>
+        <parameter type-id='29591c9a' name='handler' filepath='kernel/irq/manage.c' line='2007' column='1'/>
+        <parameter type-id='29591c9a' name='thread_fn' filepath='kernel/irq/manage.c' line='2008' column='1'/>
+        <parameter type-id='7359adad' name='irqflags' filepath='kernel/irq/manage.c' line='2008' column='1'/>
+        <parameter type-id='80f4b756' name='devname' filepath='kernel/irq/manage.c' line='2009' column='1'/>
+        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2009' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='disable_irq_nosync' mangled-name='disable_irq_nosync' filepath='kernel/irq/manage.c' line='604' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='disable_irq_nosync'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='604' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='free_irq' mangled-name='free_irq' filepath='kernel/irq/manage.c' line='1887' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='free_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='1887' column='1'/>
+        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='1887' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
-      <function-decl name='enable_irq' mangled-name='enable_irq' filepath='kernel/irq/manage.c' line='708' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='enable_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='708' column='1'/>
+      <function-decl name='enable_irq' mangled-name='enable_irq' filepath='kernel/irq/manage.c' line='709' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='enable_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='709' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='synchronize_irq' mangled-name='synchronize_irq' filepath='kernel/irq/manage.c' line='127' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='synchronize_irq'>
         <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='127' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='request_any_context_irq' mangled-name='request_any_context_irq' filepath='kernel/irq/manage.c' line='2109' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='request_any_context_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2109' column='1'/>
-        <parameter type-id='29591c9a' name='handler' filepath='kernel/irq/manage.c' line='2109' column='1'/>
-        <parameter type-id='7359adad' name='flags' filepath='kernel/irq/manage.c' line='2110' column='1'/>
-        <parameter type-id='80f4b756' name='name' filepath='kernel/irq/manage.c' line='2110' column='1'/>
-        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2110' column='1'/>
+      <function-decl name='request_any_context_irq' mangled-name='request_any_context_irq' filepath='kernel/irq/manage.c' line='2110' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='request_any_context_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2110' column='1'/>
+        <parameter type-id='29591c9a' name='handler' filepath='kernel/irq/manage.c' line='2110' column='1'/>
+        <parameter type-id='7359adad' name='flags' filepath='kernel/irq/manage.c' line='2111' column='1'/>
+        <parameter type-id='80f4b756' name='name' filepath='kernel/irq/manage.c' line='2111' column='1'/>
+        <parameter type-id='eaa32e2f' name='dev_id' filepath='kernel/irq/manage.c' line='2111' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='irq_set_parent' mangled-name='irq_set_parent' filepath='kernel/irq/manage.c' line='895' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_parent'>
-        <parameter type-id='95e97e5e' name='irq' filepath='kernel/irq/manage.c' line='895' column='1'/>
-        <parameter type-id='95e97e5e' name='parent_irq' filepath='kernel/irq/manage.c' line='895' column='1'/>
+      <function-decl name='irq_set_parent' mangled-name='irq_set_parent' filepath='kernel/irq/manage.c' line='896' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_parent'>
+        <parameter type-id='95e97e5e' name='irq' filepath='kernel/irq/manage.c' line='896' column='1'/>
+        <parameter type-id='95e97e5e' name='parent_irq' filepath='kernel/irq/manage.c' line='896' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='irq_set_irqchip_state' mangled-name='irq_set_irqchip_state' filepath='kernel/irq/manage.c' line='2721' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_irqchip_state'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2721' column='1'/>
-        <parameter type-id='0187da1b' name='which' filepath='kernel/irq/manage.c' line='2721' column='1'/>
-        <parameter type-id='b50a4934' name='val' filepath='kernel/irq/manage.c' line='2722' column='1'/>
+      <function-decl name='irq_set_irqchip_state' mangled-name='irq_set_irqchip_state' filepath='kernel/irq/manage.c' line='2722' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_irqchip_state'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2722' column='1'/>
+        <parameter type-id='0187da1b' name='which' filepath='kernel/irq/manage.c' line='2722' column='1'/>
+        <parameter type-id='b50a4934' name='val' filepath='kernel/irq/manage.c' line='2723' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='irq_set_irq_wake' mangled-name='irq_set_irq_wake' filepath='kernel/irq/manage.c' line='772' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_irq_wake'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='772' column='1'/>
-        <parameter type-id='f0981eeb' name='on' filepath='kernel/irq/manage.c' line='772' column='1'/>
+      <function-decl name='irq_set_irq_wake' mangled-name='irq_set_irq_wake' filepath='kernel/irq/manage.c' line='773' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_irq_wake'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='773' column='1'/>
+        <parameter type-id='f0981eeb' name='on' filepath='kernel/irq/manage.c' line='773' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='irq_set_affinity_notifier' mangled-name='irq_set_affinity_notifier' filepath='kernel/irq/manage.c' line='442' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_affinity_notifier'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='442' column='1'/>
-        <parameter type-id='7ca8e198' name='notify' filepath='kernel/irq/manage.c' line='442' column='1'/>
+      <function-decl name='irq_set_affinity_notifier' mangled-name='irq_set_affinity_notifier' filepath='kernel/irq/manage.c' line='443' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_affinity_notifier'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='443' column='1'/>
+        <parameter type-id='7ca8e198' name='notify' filepath='kernel/irq/manage.c' line='443' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='irq_set_affinity_hint' mangled-name='irq_set_affinity_hint' filepath='kernel/irq/manage.c' line='389' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_affinity_hint'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='389' column='1'/>
-        <parameter type-id='5f8a1ac4' name='m' filepath='kernel/irq/manage.c' line='389' column='1'/>
+      <function-decl name='irq_set_affinity_hint' mangled-name='irq_set_affinity_hint' filepath='kernel/irq/manage.c' line='390' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_set_affinity_hint'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='390' column='1'/>
+        <parameter type-id='5f8a1ac4' name='m' filepath='kernel/irq/manage.c' line='390' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='irq_get_irqchip_state' mangled-name='irq_get_irqchip_state' filepath='kernel/irq/manage.c' line='2688' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_get_irqchip_state'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2688' column='1'/>
-        <parameter type-id='0187da1b' name='which' filepath='kernel/irq/manage.c' line='2688' column='1'/>
-        <parameter type-id='d8e6b335' name='state' filepath='kernel/irq/manage.c' line='2689' column='1'/>
+      <function-decl name='irq_get_irqchip_state' mangled-name='irq_get_irqchip_state' filepath='kernel/irq/manage.c' line='2689' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_get_irqchip_state'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='2689' column='1'/>
+        <parameter type-id='0187da1b' name='which' filepath='kernel/irq/manage.c' line='2689' column='1'/>
+        <parameter type-id='d8e6b335' name='state' filepath='kernel/irq/manage.c' line='2690' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='disable_irq' mangled-name='disable_irq' filepath='kernel/irq/manage.c' line='621' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='disable_irq'>
-        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='621' column='1'/>
+      <function-decl name='disable_irq' mangled-name='disable_irq' filepath='kernel/irq/manage.c' line='622' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='disable_irq'>
+        <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/manage.c' line='622' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
     </abi-instr>
@@ -164605,7 +164612,7 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='net/core/net_namespace.c' language='LANG_C89'>
-      <union-decl name='__anonymous_union__10' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
+      <union-decl name='__anonymous_union__1' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
         <data-member access='public'>
           <var-decl name='s' type-id='88d8a388' visibility='default' filepath='include/net/netns/generic.h' line='33' column='1'/>
         </data-member>
@@ -164613,7 +164620,7 @@
           <var-decl name='ptr' type-id='baf98fd3' visibility='default' filepath='include/net/netns/generic.h' line='35' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='30' column='1' id='88d8a388'>
+      <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='30' column='1' id='88d8a388'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='len' type-id='f0981eeb' visibility='default' filepath='include/net/netns/generic.h' line='31' column='1'/>
         </data-member>
@@ -181932,17 +181939,17 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='sound/core/pcm_native.c' language='LANG_C89'>
-      <function-decl name='snd_pcm_stream_unlock_irqrestore' mangled-name='snd_pcm_stream_unlock_irqrestore' filepath='sound/core/pcm_native.c' line='182' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_stream_unlock_irqrestore'>
-        <parameter type-id='06b2cd14' name='substream' filepath='sound/core/pcm_native.c' line='182' column='1'/>
-        <parameter type-id='7359adad' name='flags' filepath='sound/core/pcm_native.c' line='183' column='1'/>
+      <function-decl name='snd_pcm_stream_lock' mangled-name='snd_pcm_stream_lock' filepath='sound/core/pcm_native.c' line='108' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_stream_lock'>
+        <parameter type-id='06b2cd14' name='substream' filepath='sound/core/pcm_native.c' line='108' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='snd_pcm_stream_unlock' mangled-name='snd_pcm_stream_unlock' filepath='sound/core/pcm_native.c' line='120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_stream_unlock'>
         <parameter type-id='06b2cd14' name='substream' filepath='sound/core/pcm_native.c' line='120' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='snd_pcm_stream_lock' mangled-name='snd_pcm_stream_lock' filepath='sound/core/pcm_native.c' line='108' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_stream_lock'>
-        <parameter type-id='06b2cd14' name='substream' filepath='sound/core/pcm_native.c' line='108' column='1'/>
+      <function-decl name='snd_pcm_stream_unlock_irqrestore' mangled-name='snd_pcm_stream_unlock_irqrestore' filepath='sound/core/pcm_native.c' line='182' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_stream_unlock_irqrestore'>
+        <parameter type-id='06b2cd14' name='substream' filepath='sound/core/pcm_native.c' line='182' column='1'/>
+        <parameter type-id='7359adad' name='flags' filepath='sound/core/pcm_native.c' line='183' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='snd_pcm_lib_default_mmap' mangled-name='snd_pcm_lib_default_mmap' filepath='sound/core/pcm_native.c' line='3716' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_lib_default_mmap'>
