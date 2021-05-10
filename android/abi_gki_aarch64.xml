@@ -221,6 +221,7 @@
       <elf-symbol name='__traceiter_android_rvh_account_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x14cfd2f2'/>
       <elf-symbol name='__traceiter_android_rvh_build_perf_domains' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4b4a53af'/>
       <elf-symbol name='__traceiter_android_rvh_can_migrate_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6c5ccc1e'/>
+      <elf-symbol name='__traceiter_android_rvh_cgroup_force_kthread_migration' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x31a237f4'/>
       <elf-symbol name='__traceiter_android_rvh_check_preempt_wakeup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc36d8ea'/>
       <elf-symbol name='__traceiter_android_rvh_cpu_cgroup_attach' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c6027e9'/>
       <elf-symbol name='__traceiter_android_rvh_cpu_cgroup_can_attach' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x85e7ee1b'/>
@@ -4322,6 +4323,7 @@
       <elf-symbol name='__tracepoint_android_rvh_account_irq' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf0f46523'/>
       <elf-symbol name='__tracepoint_android_rvh_build_perf_domains' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ff307b5'/>
       <elf-symbol name='__tracepoint_android_rvh_can_migrate_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89ef9455'/>
+      <elf-symbol name='__tracepoint_android_rvh_cgroup_force_kthread_migration' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc180285'/>
       <elf-symbol name='__tracepoint_android_rvh_check_preempt_wakeup' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7e34ad6c'/>
       <elf-symbol name='__tracepoint_android_rvh_cpu_cgroup_attach' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe5107ad0'/>
       <elf-symbol name='__tracepoint_android_rvh_cpu_cgroup_can_attach' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x85cf6bd2'/>
@@ -40226,7 +40228,7 @@
           <var-decl name='' type-id='e91837c2' visibility='default' filepath='include/linux/uio.h' line='44' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__1' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/uio.h' line='38' column='1' id='9b26deed'>
+      <union-decl name='__anonymous_union__5' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/uio.h' line='38' column='1' id='9b26deed'>
         <data-member access='public'>
           <var-decl name='iov' type-id='2c556848' visibility='default' filepath='include/linux/uio.h' line='39' column='1'/>
         </data-member>
@@ -40240,7 +40242,7 @@
           <var-decl name='pipe' type-id='15d29710' visibility='default' filepath='include/linux/uio.h' line='42' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__2' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/uio.h' line='44' column='1' id='e91837c2'>
+      <union-decl name='__anonymous_union__6' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/uio.h' line='44' column='1' id='e91837c2'>
         <data-member access='public'>
           <var-decl name='nr_segs' type-id='7359adad' visibility='default' filepath='include/linux/uio.h' line='45' column='1'/>
         </data-member>
@@ -41444,128 +41446,128 @@
       <pointer-type-def type-id='ec180093' size-in-bits='64' id='887112a7'/>
     </abi-instr>
     <abi-instr address-size='64' path='block/blk-mq.c' language='LANG_C89'>
-      <function-decl name='blk_mq_alloc_tag_set' mangled-name='blk_mq_alloc_tag_set' filepath='block/blk-mq.c' line='3384' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_alloc_tag_set'>
-        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3384' column='1'/>
+      <function-decl name='blk_mq_alloc_tag_set' mangled-name='blk_mq_alloc_tag_set' filepath='block/blk-mq.c' line='3385' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_alloc_tag_set'>
+        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3385' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='blk_poll' mangled-name='blk_poll' filepath='block/blk-mq.c' line='3847' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_poll'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='3847' column='1'/>
-        <parameter type-id='041bc907' name='cookie' filepath='block/blk-mq.c' line='3847' column='1'/>
-        <parameter type-id='b50a4934' name='spin' filepath='block/blk-mq.c' line='3847' column='1'/>
+      <function-decl name='blk_poll' mangled-name='blk_poll' filepath='block/blk-mq.c' line='3848' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_poll'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='3848' column='1'/>
+        <parameter type-id='041bc907' name='cookie' filepath='block/blk-mq.c' line='3848' column='1'/>
+        <parameter type-id='b50a4934' name='spin' filepath='block/blk-mq.c' line='3848' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='blk_mq_free_request' mangled-name='blk_mq_free_request' filepath='block/blk-mq.c' line='504' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_free_request'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='504' column='1'/>
+      <function-decl name='blk_mq_free_request' mangled-name='blk_mq_free_request' filepath='block/blk-mq.c' line='505' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_free_request'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='505' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_freeze_queue_start' mangled-name='blk_freeze_queue_start' filepath='block/blk-mq.c' line='133' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_freeze_queue_start'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='133' column='1'/>
+      <function-decl name='blk_freeze_queue_start' mangled-name='blk_freeze_queue_start' filepath='block/blk-mq.c' line='134' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_freeze_queue_start'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='134' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_freeze_queue_wait' mangled-name='blk_mq_freeze_queue_wait' filepath='block/blk-mq.c' line='147' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_freeze_queue_wait'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='147' column='1'/>
+      <function-decl name='blk_mq_freeze_queue_wait' mangled-name='blk_mq_freeze_queue_wait' filepath='block/blk-mq.c' line='148' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_freeze_queue_wait'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='148' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_quiesce_queue' mangled-name='blk_mq_quiesce_queue' filepath='block/blk-mq.c' line='221' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_quiesce_queue'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='221' column='1'/>
+      <function-decl name='blk_mq_quiesce_queue' mangled-name='blk_mq_quiesce_queue' filepath='block/blk-mq.c' line='222' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_quiesce_queue'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='222' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_unfreeze_queue' mangled-name='blk_mq_unfreeze_queue' filepath='block/blk-mq.c' line='189' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_unfreeze_queue'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='189' column='1'/>
+      <function-decl name='blk_mq_unfreeze_queue' mangled-name='blk_mq_unfreeze_queue' filepath='block/blk-mq.c' line='190' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_unfreeze_queue'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='190' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='__blk_mq_end_request' mangled-name='__blk_mq_end_request' filepath='block/blk-mq.c' line='535' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__blk_mq_end_request'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='535' column='1'/>
-        <parameter type-id='f4e2facd' name='error' filepath='block/blk-mq.c' line='535' column='1'/>
+      <function-decl name='__blk_mq_end_request' mangled-name='__blk_mq_end_request' filepath='block/blk-mq.c' line='536' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__blk_mq_end_request'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='536' column='1'/>
+        <parameter type-id='f4e2facd' name='error' filepath='block/blk-mq.c' line='536' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_update_nr_hw_queues' mangled-name='blk_mq_update_nr_hw_queues' filepath='block/blk-mq.c' line='3683' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_update_nr_hw_queues'>
-        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3683' column='1'/>
-        <parameter type-id='95e97e5e' name='nr_hw_queues' filepath='block/blk-mq.c' line='3683' column='1'/>
+      <function-decl name='blk_mq_update_nr_hw_queues' mangled-name='blk_mq_update_nr_hw_queues' filepath='block/blk-mq.c' line='3684' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_update_nr_hw_queues'>
+        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3684' column='1'/>
+        <parameter type-id='95e97e5e' name='nr_hw_queues' filepath='block/blk-mq.c' line='3684' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_unquiesce_queue' mangled-name='blk_mq_unquiesce_queue' filepath='block/blk-mq.c' line='247' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_unquiesce_queue'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='247' column='1'/>
+      <function-decl name='blk_mq_unquiesce_queue' mangled-name='blk_mq_unquiesce_queue' filepath='block/blk-mq.c' line='248' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_unquiesce_queue'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='248' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_tag_to_rq' mangled-name='blk_mq_tag_to_rq' filepath='block/blk-mq.c' line='858' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_tag_to_rq'>
-        <parameter type-id='0461ecf5' name='tags' filepath='block/blk-mq.c' line='858' column='1'/>
-        <parameter type-id='f0981eeb' name='tag' filepath='block/blk-mq.c' line='858' column='1'/>
+      <function-decl name='blk_mq_tag_to_rq' mangled-name='blk_mq_tag_to_rq' filepath='block/blk-mq.c' line='859' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_tag_to_rq'>
+        <parameter type-id='0461ecf5' name='tags' filepath='block/blk-mq.c' line='859' column='1'/>
+        <parameter type-id='f0981eeb' name='tag' filepath='block/blk-mq.c' line='859' column='1'/>
         <return type-id='3dad1a48'/>
       </function-decl>
-      <function-decl name='blk_mq_stop_hw_queue' mangled-name='blk_mq_stop_hw_queue' filepath='block/blk-mq.c' line='1733' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_stop_hw_queue'>
-        <parameter type-id='a47d3467' name='hctx' filepath='block/blk-mq.c' line='1733' column='1'/>
+      <function-decl name='blk_mq_stop_hw_queue' mangled-name='blk_mq_stop_hw_queue' filepath='block/blk-mq.c' line='1734' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_stop_hw_queue'>
+        <parameter type-id='a47d3467' name='hctx' filepath='block/blk-mq.c' line='1734' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_start_stopped_hw_queues' mangled-name='blk_mq_start_stopped_hw_queues' filepath='block/blk-mq.c' line='1788' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_start_stopped_hw_queues'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='1788' column='1'/>
-        <parameter type-id='b50a4934' name='async' filepath='block/blk-mq.c' line='1788' column='1'/>
+      <function-decl name='blk_mq_start_stopped_hw_queues' mangled-name='blk_mq_start_stopped_hw_queues' filepath='block/blk-mq.c' line='1789' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_start_stopped_hw_queues'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='1789' column='1'/>
+        <parameter type-id='b50a4934' name='async' filepath='block/blk-mq.c' line='1789' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_start_request' mangled-name='blk_mq_start_request' filepath='block/blk-mq.c' line='730' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_start_request'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='730' column='1'/>
+      <function-decl name='blk_mq_start_request' mangled-name='blk_mq_start_request' filepath='block/blk-mq.c' line='731' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_start_request'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='731' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_run_hw_queues' mangled-name='blk_mq_run_hw_queues' filepath='block/blk-mq.c' line='1671' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_run_hw_queues'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='1671' column='1'/>
-        <parameter type-id='b50a4934' name='async' filepath='block/blk-mq.c' line='1671' column='1'/>
+      <function-decl name='blk_mq_run_hw_queues' mangled-name='blk_mq_run_hw_queues' filepath='block/blk-mq.c' line='1672' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_run_hw_queues'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='1672' column='1'/>
+        <parameter type-id='b50a4934' name='async' filepath='block/blk-mq.c' line='1672' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_rq_cpu' mangled-name='blk_mq_rq_cpu' filepath='block/blk-mq.c' line='3901' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_rq_cpu'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='3901' column='1'/>
+      <function-decl name='blk_mq_rq_cpu' mangled-name='blk_mq_rq_cpu' filepath='block/blk-mq.c' line='3902' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_rq_cpu'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='3902' column='1'/>
         <return type-id='f0981eeb'/>
       </function-decl>
-      <function-decl name='blk_mq_requeue_request' mangled-name='blk_mq_requeue_request' filepath='block/blk-mq.c' line='770' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_requeue_request'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='770' column='1'/>
-        <parameter type-id='b50a4934' name='kick_requeue_list' filepath='block/blk-mq.c' line='770' column='1'/>
+      <function-decl name='blk_mq_requeue_request' mangled-name='blk_mq_requeue_request' filepath='block/blk-mq.c' line='771' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_requeue_request'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='771' column='1'/>
+        <parameter type-id='b50a4934' name='kick_requeue_list' filepath='block/blk-mq.c' line='771' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_init_queue' mangled-name='blk_mq_init_queue' filepath='block/blk-mq.c' line='3033' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_init_queue'>
-        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3033' column='1'/>
+      <function-decl name='blk_mq_init_queue' mangled-name='blk_mq_init_queue' filepath='block/blk-mq.c' line='3034' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_init_queue'>
+        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3034' column='1'/>
         <return type-id='e7d2a5fc'/>
       </function-decl>
-      <function-decl name='blk_mq_freeze_queue_wait_timeout' mangled-name='blk_mq_freeze_queue_wait_timeout' filepath='block/blk-mq.c' line='153' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_freeze_queue_wait_timeout'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='153' column='1'/>
-        <parameter type-id='7359adad' name='timeout' filepath='block/blk-mq.c' line='154' column='1'/>
+      <function-decl name='blk_mq_freeze_queue_wait_timeout' mangled-name='blk_mq_freeze_queue_wait_timeout' filepath='block/blk-mq.c' line='154' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_freeze_queue_wait_timeout'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='154' column='1'/>
+        <parameter type-id='7359adad' name='timeout' filepath='block/blk-mq.c' line='155' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='blk_mq_freeze_queue' mangled-name='blk_mq_freeze_queue' filepath='block/blk-mq.c' line='179' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_freeze_queue'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='179' column='1'/>
+      <function-decl name='blk_mq_freeze_queue' mangled-name='blk_mq_freeze_queue' filepath='block/blk-mq.c' line='180' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_freeze_queue'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='180' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_free_tag_set' mangled-name='blk_mq_free_tag_set' filepath='block/blk-mq.c' line='3480' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_free_tag_set'>
-        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3480' column='1'/>
+      <function-decl name='blk_mq_free_tag_set' mangled-name='blk_mq_free_tag_set' filepath='block/blk-mq.c' line='3481' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_free_tag_set'>
+        <parameter type-id='cc26d15f' name='set' filepath='block/blk-mq.c' line='3481' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_end_request' mangled-name='blk_mq_end_request' filepath='block/blk-mq.c' line='560' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_end_request'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='560' column='1'/>
-        <parameter type-id='f4e2facd' name='error' filepath='block/blk-mq.c' line='560' column='1'/>
+      <function-decl name='blk_mq_end_request' mangled-name='blk_mq_end_request' filepath='block/blk-mq.c' line='561' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_end_request'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='561' column='1'/>
+        <parameter type-id='f4e2facd' name='error' filepath='block/blk-mq.c' line='561' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_delay_kick_requeue_list' mangled-name='blk_mq_delay_kick_requeue_list' filepath='block/blk-mq.c' line='850' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_delay_kick_requeue_list'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='850' column='1'/>
-        <parameter type-id='7359adad' name='msecs' filepath='block/blk-mq.c' line='851' column='1'/>
+      <function-decl name='blk_mq_delay_kick_requeue_list' mangled-name='blk_mq_delay_kick_requeue_list' filepath='block/blk-mq.c' line='851' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_delay_kick_requeue_list'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='851' column='1'/>
+        <parameter type-id='7359adad' name='msecs' filepath='block/blk-mq.c' line='852' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_complete_request_remote' mangled-name='blk_mq_complete_request_remote' filepath='block/blk-mq.c' line='662' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_complete_request_remote'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='662' column='1'/>
+      <function-decl name='blk_mq_complete_request_remote' mangled-name='blk_mq_complete_request_remote' filepath='block/blk-mq.c' line='663' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_complete_request_remote'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='663' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='blk_mq_complete_request' mangled-name='blk_mq_complete_request' filepath='block/blk-mq.c' line='695' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_complete_request'>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='695' column='1'/>
+      <function-decl name='blk_mq_complete_request' mangled-name='blk_mq_complete_request' filepath='block/blk-mq.c' line='696' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_complete_request'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-mq.c' line='696' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='blk_mq_alloc_request_hctx' mangled-name='blk_mq_alloc_request_hctx' filepath='block/blk-mq.c' line='427' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_alloc_request_hctx'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='427' column='1'/>
-        <parameter type-id='f0981eeb' name='op' filepath='block/blk-mq.c' line='428' column='1'/>
-        <parameter type-id='346d62be' name='flags' filepath='block/blk-mq.c' line='428' column='1'/>
-        <parameter type-id='f0981eeb' name='hctx_idx' filepath='block/blk-mq.c' line='428' column='1'/>
+      <function-decl name='blk_mq_alloc_request_hctx' mangled-name='blk_mq_alloc_request_hctx' filepath='block/blk-mq.c' line='428' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_alloc_request_hctx'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='428' column='1'/>
+        <parameter type-id='f0981eeb' name='op' filepath='block/blk-mq.c' line='429' column='1'/>
+        <parameter type-id='346d62be' name='flags' filepath='block/blk-mq.c' line='429' column='1'/>
+        <parameter type-id='f0981eeb' name='hctx_idx' filepath='block/blk-mq.c' line='429' column='1'/>
         <return type-id='3dad1a48'/>
       </function-decl>
-      <function-decl name='blk_mq_alloc_request' mangled-name='blk_mq_alloc_request' filepath='block/blk-mq.c' line='399' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_alloc_request'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='399' column='1'/>
-        <parameter type-id='f0981eeb' name='op' filepath='block/blk-mq.c' line='399' column='1'/>
-        <parameter type-id='346d62be' name='flags' filepath='block/blk-mq.c' line='400' column='1'/>
+      <function-decl name='blk_mq_alloc_request' mangled-name='blk_mq_alloc_request' filepath='block/blk-mq.c' line='400' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_alloc_request'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='400' column='1'/>
+        <parameter type-id='f0981eeb' name='op' filepath='block/blk-mq.c' line='400' column='1'/>
+        <parameter type-id='346d62be' name='flags' filepath='block/blk-mq.c' line='401' column='1'/>
         <return type-id='3dad1a48'/>
       </function-decl>
     </abi-instr>
@@ -43921,7 +43923,7 @@
           <var-decl name='async_todo' type-id='72f469ec' visibility='default' filepath='drivers/android/binder_internal.h' line='291' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__3' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='drivers/android/binder_internal.h' line='258' column='1' id='707ccb72'>
+      <union-decl name='__anonymous_union__1' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='drivers/android/binder_internal.h' line='258' column='1' id='707ccb72'>
         <data-member access='public'>
           <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='drivers/android/binder_internal.h' line='259' column='1'/>
         </data-member>
@@ -44178,6 +44180,7 @@
       <var-decl name='__tracepoint_android_vh_ufs_send_uic_command' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_send_uic_command' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='40' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_send_uic_command'/>
       <var-decl name='__tracepoint_android_vh_ufs_send_tm_command' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_send_tm_command' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='45' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_send_tm_command'/>
       <var-decl name='__tracepoint_android_vh_ufs_check_int_errors' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_check_int_errors' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='49' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_check_int_errors'/>
+      <var-decl name='__tracepoint_android_rvh_cgroup_force_kthread_migration' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_cgroup_force_kthread_migration' visibility='default' filepath='include/trace/hooks/cgroup.h' line='18' column='1' elf-symbol-id='__tracepoint_android_rvh_cgroup_force_kthread_migration'/>
       <var-decl name='__tracepoint_android_vh_typec_tcpci_override_toggling' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_typec_tcpci_override_toggling' visibility='default' filepath='include/trace/hooks/typec.h' line='28' column='1' elf-symbol-id='__tracepoint_android_vh_typec_tcpci_override_toggling'/>
       <var-decl name='__tracepoint_android_rvh_typec_tcpci_chk_contaminant' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_typec_tcpci_chk_contaminant' visibility='default' filepath='include/trace/hooks/typec.h' line='32' column='1' elf-symbol-id='__tracepoint_android_rvh_typec_tcpci_chk_contaminant'/>
       <var-decl name='__tracepoint_android_rvh_typec_tcpci_get_vbus' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_typec_tcpci_get_vbus' visibility='default' filepath='include/trace/hooks/typec.h' line='43' column='1' elf-symbol-id='__tracepoint_android_rvh_typec_tcpci_get_vbus'/>
@@ -44557,6 +44560,13 @@
       <function-decl name='__traceiter_android_vh_show_resume_epoch_val' mangled-name='__traceiter_android_vh_show_resume_epoch_val' filepath='include/trace/hooks/epoch.h' line='17' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_show_resume_epoch_val'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/epoch.h' line='17' column='1'/>
         <parameter type-id='91ce1af9' name='resume_cycles' filepath='include/trace/hooks/epoch.h' line='17' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_rvh_cgroup_force_kthread_migration' mangled-name='__traceiter_android_rvh_cgroup_force_kthread_migration' filepath='include/trace/hooks/cgroup.h' line='18' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_cgroup_force_kthread_migration'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/cgroup.h' line='18' column='1'/>
+        <parameter type-id='f23e2572' name='tsk' filepath='include/trace/hooks/cgroup.h' line='18' column='1'/>
+        <parameter type-id='46ff135d' name='dst_cgrp' filepath='include/trace/hooks/cgroup.h' line='18' column='1'/>
+        <parameter type-id='d8e6b335' name='force_migration' filepath='include/trace/hooks/cgroup.h' line='18' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_update_cpus_allowed' mangled-name='__traceiter_android_rvh_update_cpus_allowed' filepath='include/trace/hooks/sched.h' line='128' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_update_cpus_allowed'>
@@ -181029,6 +181039,17 @@
           <var-decl name='dev' type-id='66e487eb' visibility='default' filepath='include/sound/pcm.h' line='506' column='1'/>
         </data-member>
       </class-decl>
+      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
+        <data-member access='public'>
+          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='snd_pcm_substream' size-in-bits='2816' is-struct='yes' visibility='default' filepath='include/sound/pcm.h' line='442' column='1' id='362eec9e'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='pcm' type-id='4c9f335b' visibility='default' filepath='include/sound/pcm.h' line='443' column='1'/>
@@ -181505,17 +181526,6 @@
           <var-decl name='__pad4' type-id='7e3959e3' visibility='default' filepath='include/uapi/sound/asound.h' line='585' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
-        <data-member access='public'>
-          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
-        </data-member>
-      </union-decl>
       <class-decl name='snd_pcm_hardware' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/sound/pcm.h' line='31' column='1' id='eacd353c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='info' type-id='f0981eeb' visibility='default' filepath='include/sound/pcm.h' line='32' column='1'/>
