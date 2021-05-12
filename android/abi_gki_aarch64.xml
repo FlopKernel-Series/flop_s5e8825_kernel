@@ -1203,6 +1203,7 @@
       <elf-symbol name='dma_fence_remove_callback' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3b20fb95'/>
       <elf-symbol name='dma_fence_signal' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x731c4a9c'/>
       <elf-symbol name='dma_fence_signal_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3d02cd70'/>
+      <elf-symbol name='dma_fence_signal_timestamp_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8455e3a7'/>
       <elf-symbol name='dma_fence_wait_any_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x51d58e8'/>
       <elf-symbol name='dma_fence_wait_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x98c039dc'/>
       <elf-symbol name='dma_free_attrs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x52eb36a6'/>
@@ -57633,6 +57634,11 @@
         <parameter type-id='bd54fe1a' name='timeout' filepath='drivers/dma-buf/dma-fence.c' line='730' column='1'/>
         <return type-id='bd54fe1a'/>
       </function-decl>
+      <function-decl name='dma_fence_signal_timestamp_locked' mangled-name='dma_fence_signal_timestamp_locked' filepath='drivers/dma-buf/dma-fence.c' line='332' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_signal_timestamp_locked'>
+        <parameter type-id='28271da3' name='fence' filepath='drivers/dma-buf/dma-fence.c' line='332' column='1'/>
+        <parameter type-id='fbc017ef' name='timestamp' filepath='drivers/dma-buf/dma-fence.c' line='333' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='dma_fence_wait_any_timeout' mangled-name='dma_fence_wait_any_timeout' filepath='drivers/dma-buf/dma-fence.c' line='820' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_fence_wait_any_timeout'>
         <parameter type-id='be937eab' name='fences' filepath='drivers/dma-buf/dma-fence.c' line='820' column='1'/>
         <parameter type-id='8f92235e' name='count' filepath='drivers/dma-buf/dma-fence.c' line='820' column='1'/>
@@ -60432,7 +60438,7 @@
         <parameter type-id='94411a61'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__15' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -118039,7 +118045,7 @@
           <var-decl name='buf' type-id='5e6516ee' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__15' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -181809,6 +181815,17 @@
           <var-decl name='__pad4' type-id='7e3959e3' visibility='default' filepath='include/uapi/sound/asound.h' line='585' column='1'/>
         </data-member>
       </class-decl>
+      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
+        <data-member access='public'>
+          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='snd_pcm_hardware' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/sound/pcm.h' line='31' column='1' id='eacd353c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='info' type-id='f0981eeb' visibility='default' filepath='include/sound/pcm.h' line='32' column='1'/>
@@ -181885,17 +181902,6 @@
         </data-member>
       </class-decl>
       <typedef-decl name='snd_pcm_hw_rule_func_t' type-id='657a5cf1' filepath='include/sound/pcm.h' line='226' column='1' id='58d3b2a5'/>
-      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
-        <data-member access='public'>
-          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
-        </data-member>
-      </union-decl>
       <class-decl name='snd_timer' size-in-bits='3456' is-struct='yes' visibility='default' filepath='include/sound/timer.h' line='57' column='1' id='73595e52'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='tmr_class' type-id='95e97e5e' visibility='default' filepath='include/sound/timer.h' line='58' column='1'/>
