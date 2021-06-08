@@ -319,6 +319,7 @@
       <elf-symbol name='__traceiter_android_vh_ipi_stop' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x250fcbba'/>
       <elf-symbol name='__traceiter_android_vh_jiffies_update' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x67d76d04'/>
       <elf-symbol name='__traceiter_android_vh_logbuf' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7e160169'/>
+      <elf-symbol name='__traceiter_android_vh_meminfo_proc_show' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x95307046'/>
       <elf-symbol name='__traceiter_android_vh_of_i2c_get_board_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe0b893ab'/>
       <elf-symbol name='__traceiter_android_vh_pagecache_get_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7df2ea0'/>
       <elf-symbol name='__traceiter_android_vh_printk_hotplug' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5728d98f'/>
@@ -4691,6 +4692,7 @@
       <elf-symbol name='__tracepoint_android_vh_ipi_stop' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8064d573'/>
       <elf-symbol name='__tracepoint_android_vh_jiffies_update' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5415675e'/>
       <elf-symbol name='__tracepoint_android_vh_logbuf' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8bf980ca'/>
+      <elf-symbol name='__tracepoint_android_vh_meminfo_proc_show' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb3a8654d'/>
       <elf-symbol name='__tracepoint_android_vh_of_i2c_get_board_info' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb3bfdc5'/>
       <elf-symbol name='__tracepoint_android_vh_pagecache_get_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbcb3c40e'/>
       <elf-symbol name='__tracepoint_android_vh_printk_hotplug' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe329d35d'/>
@@ -29876,7 +29878,7 @@
           <var-decl name='u6_addr32' type-id='30180d4b' visibility='default' filepath='include/uapi/linux/in6.h' line='38' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__4' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/fsnotify_backend.h' line='360' column='1' id='9114ebb7'>
+      <union-decl name='__anonymous_union__' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/fsnotify_backend.h' line='360' column='1' id='9114ebb7'>
         <data-member access='public'>
           <var-decl name='obj' type-id='c66f5ec5' visibility='default' filepath='include/linux/fsnotify_backend.h' line='362' column='1'/>
         </data-member>
@@ -44668,6 +44670,7 @@
       <var-decl name='__tracepoint_android_vh_cma_alloc_finish' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cma_alloc_finish' visibility='default' filepath='include/trace/hooks/mm.h' line='31' column='1' elf-symbol-id='__tracepoint_android_vh_cma_alloc_finish'/>
       <var-decl name='__tracepoint_android_vh_rmqueue' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rmqueue' visibility='default' filepath='include/trace/hooks/mm.h' line='35' column='1' elf-symbol-id='__tracepoint_android_vh_rmqueue'/>
       <var-decl name='__tracepoint_android_vh_pagecache_get_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_pagecache_get_page' visibility='default' filepath='include/trace/hooks/mm.h' line='41' column='1' elf-symbol-id='__tracepoint_android_vh_pagecache_get_page'/>
+      <var-decl name='__tracepoint_android_vh_meminfo_proc_show' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_meminfo_proc_show' visibility='default' filepath='include/trace/hooks/mm.h' line='45' column='1' elf-symbol-id='__tracepoint_android_vh_meminfo_proc_show'/>
       <var-decl name='__tracepoint_android_rvh_preempt_disable' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_preempt_disable' visibility='default' filepath='include/trace/hooks/preemptirq.h' line='14' column='1' elf-symbol-id='__tracepoint_android_rvh_preempt_disable'/>
       <var-decl name='__tracepoint_android_rvh_preempt_enable' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_preempt_enable' visibility='default' filepath='include/trace/hooks/preemptirq.h' line='18' column='1' elf-symbol-id='__tracepoint_android_rvh_preempt_enable'/>
       <var-decl name='__tracepoint_android_rvh_irqs_disable' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_irqs_disable' visibility='default' filepath='include/trace/hooks/preemptirq.h' line='22' column='1' elf-symbol-id='__tracepoint_android_rvh_irqs_disable'/>
@@ -45278,6 +45281,11 @@
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/fs.h' line='17' column='1'/>
         <parameter type-id='26a90f95' name='name' filepath='include/trace/hooks/fs.h' line='17' column='1'/>
         <parameter type-id='95e97e5e' name='len' filepath='include/trace/hooks/fs.h' line='17' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_meminfo_proc_show' mangled-name='__traceiter_android_vh_meminfo_proc_show' filepath='include/trace/hooks/mm.h' line='45' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_meminfo_proc_show'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='45' column='1'/>
+        <parameter type-id='f8dc9def' name='m' filepath='include/trace/hooks/mm.h' line='45' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_gic_v3_set_affinity' mangled-name='__traceiter_android_rvh_gic_v3_set_affinity' filepath='include/trace/hooks/gic_v3.h' line='18' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_gic_v3_set_affinity'>
@@ -129267,7 +129275,7 @@
           <var-decl name='val' type-id='e4266c7e' visibility='default' filepath='include/uapi/asm-generic/posix_types.h' line='80' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__4' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/fsnotify_backend.h' line='360' column='1' id='9114ebb7'>
+      <union-decl name='__anonymous_union__' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/fsnotify_backend.h' line='360' column='1' id='9114ebb7'>
         <data-member access='public'>
           <var-decl name='obj' type-id='c66f5ec5' visibility='default' filepath='include/linux/fsnotify_backend.h' line='362' column='1'/>
         </data-member>
@@ -148137,16 +148145,16 @@
       </function-type>
     </abi-instr>
     <abi-instr address-size='64' path='kernel/freezer.c' language='LANG_C89'>
-      <var-decl name='system_freezing_cnt' type-id='49178f86' mangled-name='system_freezing_cnt' visibility='default' filepath='kernel/freezer.c' line='17' column='1' elf-symbol-id='system_freezing_cnt'/>
-      <function-decl name='__refrigerator' mangled-name='__refrigerator' filepath='kernel/freezer.c' line='57' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__refrigerator'>
-        <parameter type-id='b50a4934' name='check_kthr_stop' filepath='kernel/freezer.c' line='57' column='1'/>
+      <var-decl name='system_freezing_cnt' type-id='49178f86' mangled-name='system_freezing_cnt' visibility='default' filepath='kernel/freezer.c' line='20' column='1' elf-symbol-id='system_freezing_cnt'/>
+      <function-decl name='__refrigerator' mangled-name='__refrigerator' filepath='kernel/freezer.c' line='60' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__refrigerator'>
+        <parameter type-id='b50a4934' name='check_kthr_stop' filepath='kernel/freezer.c' line='60' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='set_freezable' mangled-name='set_freezable' filepath='kernel/freezer.c' line='169' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='set_freezable'>
+      <function-decl name='set_freezable' mangled-name='set_freezable' filepath='kernel/freezer.c' line='173' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='set_freezable'>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='freezing_slow_path' mangled-name='freezing_slow_path' filepath='kernel/freezer.c' line='38' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='freezing_slow_path'>
-        <parameter type-id='f23e2572' name='p' filepath='kernel/freezer.c' line='38' column='1'/>
+      <function-decl name='freezing_slow_path' mangled-name='freezing_slow_path' filepath='kernel/freezer.c' line='41' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='freezing_slow_path'>
+        <parameter type-id='f23e2572' name='p' filepath='kernel/freezer.c' line='41' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
     </abi-instr>
