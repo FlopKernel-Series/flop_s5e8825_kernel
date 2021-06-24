@@ -193,6 +193,7 @@
       <elf-symbol name='__request_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xca39ba0'/>
       <elf-symbol name='__rht_bucket_nested' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd0d156e9'/>
       <elf-symbol name='__rtc_register_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5a6923b8'/>
+      <elf-symbol name='__sbitmap_queue_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd116ad0'/>
       <elf-symbol name='__scsi_add_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb87054a0'/>
       <elf-symbol name='__scsi_execute' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x91847d3e'/>
       <elf-symbol name='__scsi_iterate_devices' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa5ff23ab'/>
@@ -573,6 +574,7 @@
       <elf-symbol name='bgpio_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdc611427'/>
       <elf-symbol name='bin2hex' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd45cc6ca'/>
       <elf-symbol name='bio_add_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x877c0176'/>
+      <elf-symbol name='bio_add_pc_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfa2346bb'/>
       <elf-symbol name='bio_alloc_bioset' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x61ecc056'/>
       <elf-symbol name='bio_associate_blkg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6ab4faaa'/>
       <elf-symbol name='bio_chain' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1e35752b'/>
@@ -580,6 +582,7 @@
       <elf-symbol name='bio_endio' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbabb585e'/>
       <elf-symbol name='bio_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6297978d'/>
       <elf-symbol name='bio_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x16be900b'/>
+      <elf-symbol name='bio_reset' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2e0402c0'/>
       <elf-symbol name='bioset_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8714f8d3'/>
       <elf-symbol name='bioset_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x284effdd'/>
       <elf-symbol name='bitmap_allocate_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdac4913a'/>
@@ -625,6 +628,7 @@
       <elf-symbol name='blk_mq_requeue_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7c71e734'/>
       <elf-symbol name='blk_mq_rq_cpu' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x28731ee0'/>
       <elf-symbol name='blk_mq_run_hw_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4a959c2'/>
+      <elf-symbol name='blk_mq_sched_mark_restart_hctx' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc036a095'/>
       <elf-symbol name='blk_mq_start_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x179606f1'/>
       <elf-symbol name='blk_mq_start_stopped_hw_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xedde060b'/>
       <elf-symbol name='blk_mq_stop_hw_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xecc70f2e'/>
@@ -662,6 +666,7 @@
       <elf-symbol name='blk_queue_virt_boundary' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbbb44236'/>
       <elf-symbol name='blk_queue_write_cache' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x75950fbe'/>
       <elf-symbol name='blk_register_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe68315d4'/>
+      <elf-symbol name='blk_rq_append_bio' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x66494dd'/>
       <elf-symbol name='blk_rq_map_kern' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x81a7761b'/>
       <elf-symbol name='blk_rq_map_user' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9b13504e'/>
       <elf-symbol name='blk_rq_map_user_iov' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeae3434c'/>
@@ -15302,7 +15307,7 @@
           <var-decl name='callback_head' type-id='e3d8ce29' visibility='default' filepath='include/linux/mm_types.h' line='179' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__18' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/cred.h' line='149' column='1' id='0a97cc35'>
+      <union-decl name='__anonymous_union__17' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/cred.h' line='149' column='1' id='0a97cc35'>
         <data-member access='public'>
           <var-decl name='non_rcu' type-id='95e97e5e' visibility='default' filepath='include/linux/cred.h' line='150' column='1'/>
         </data-member>
@@ -24966,7 +24971,7 @@
           <var-decl name='proc_dir_ops' type-id='61758ee5' visibility='default' filepath='fs/proc/internal.h' line='44' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='fs/proc/internal.h' line='47' column='1' id='1371a02f'>
+      <union-decl name='__anonymous_union__8' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='fs/proc/internal.h' line='47' column='1' id='1371a02f'>
         <data-member access='public'>
           <var-decl name='seq_ops' type-id='943a1b48' visibility='default' filepath='fs/proc/internal.h' line='48' column='1'/>
         </data-member>
@@ -39980,6 +39985,10 @@
         <parameter type-id='fb55efa1' name='bio' filepath='block/bio.c' line='1146' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='bio_reset' mangled-name='bio_reset' filepath='block/bio.c' line='300' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bio_reset'>
+        <parameter type-id='fb55efa1' name='bio' filepath='block/bio.c' line='300' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='bio_init' mangled-name='bio_init' filepath='block/bio.c' line='278' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bio_init'>
         <parameter type-id='fb55efa1' name='bio' filepath='block/bio.c' line='278' column='1'/>
         <parameter type-id='cddcb53e' name='table' filepath='block/bio.c' line='278' column='1'/>
@@ -39990,6 +39999,14 @@
         <parameter type-id='fb55efa1' name='bio' filepath='block/bio.c' line='338' column='1'/>
         <parameter type-id='fb55efa1' name='parent' filepath='block/bio.c' line='338' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='bio_add_pc_page' mangled-name='bio_add_pc_page' filepath='block/bio.c' line='845' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bio_add_pc_page'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/bio.c' line='845' column='1'/>
+        <parameter type-id='fb55efa1' name='bio' filepath='block/bio.c' line='845' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='block/bio.c' line='846' column='1'/>
+        <parameter type-id='f0981eeb' name='len' filepath='block/bio.c' line='846' column='1'/>
+        <parameter type-id='f0981eeb' name='offset' filepath='block/bio.c' line='846' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='block/blk-cgroup.c' language='LANG_C89'>
@@ -40550,6 +40567,7 @@
           <var-decl name='from_user' type-id='95e97e5e' visibility='default' filepath='include/linux/blkdev.h' line='877' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='fb55efa1' size-in-bits='64' id='334817d1'/>
       <qualified-type-def type-id='f2b4d088' const='yes' id='7f60130d'/>
       <pointer-type-def type-id='7f60130d' size-in-bits='64' id='ab3e2665'/>
       <pointer-type-def type-id='9a6e6516' size-in-bits='64' id='9c9d090c'/>
@@ -40563,6 +40581,11 @@
         <parameter type-id='9c9d090c' name='map_data' filepath='block/blk-map.c' line='579' column='1'/>
         <parameter type-id='ab3e2665' name='iter' filepath='block/blk-map.c' line='580' column='1'/>
         <parameter type-id='3eb7c31c' name='gfp_mask' filepath='block/blk-map.c' line='580' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='blk_rq_append_bio' mangled-name='blk_rq_append_bio' filepath='block/blk-map.c' line='524' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_rq_append_bio'>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-map.c' line='524' column='1'/>
+        <parameter type-id='334817d1' name='bio' filepath='block/blk-map.c' line='524' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='blk_rq_map_user' mangled-name='blk_rq_map_user' filepath='block/blk-map.c' line='620' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_rq_map_user'>
@@ -40653,7 +40676,6 @@
       </class-decl>
     </abi-instr>
     <abi-instr address-size='64' path='block/blk-merge.c' language='LANG_C89'>
-      <pointer-type-def type-id='fb55efa1' size-in-bits='64' id='334817d1'/>
       <pointer-type-def type-id='bf3ef905' size-in-bits='64' id='3f2244fd'/>
       <function-decl name='blk_queue_split' mangled-name='blk_queue_split' filepath='block/blk-merge.c' line='357' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_queue_split'>
         <parameter type-id='334817d1' name='bio' filepath='block/blk-merge.c' line='357' column='1'/>
@@ -41686,6 +41708,12 @@
       <pointer-type-def type-id='9d9db488' size-in-bits='64' id='b3f54aba'/>
       <pointer-type-def type-id='025c78c3' size-in-bits='64' id='4b81d8e7'/>
       <pointer-type-def type-id='ad4c5814' size-in-bits='64' id='db02d786'/>
+    </abi-instr>
+    <abi-instr address-size='64' path='block/blk-mq-sched.c' language='LANG_C89'>
+      <function-decl name='blk_mq_sched_mark_restart_hctx' mangled-name='blk_mq_sched_mark_restart_hctx' filepath='block/blk-mq-sched.c' line='51' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_sched_mark_restart_hctx'>
+        <parameter type-id='a47d3467' name='hctx' filepath='block/blk-mq-sched.c' line='51' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='block/blk-mq-tag.c' language='LANG_C89'>
       <typedef-decl name='busy_tag_iter_fn' type-id='784e7aa9' filepath='include/linux/blk-mq.h' line='280' column='1' id='f8a88be2'/>
@@ -131703,7 +131731,7 @@
           <var-decl name='proc_get_unmapped_area' type-id='d44a8cec' visibility='default' filepath='include/linux/proc_fs.h' line='43' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='fs/proc/internal.h' line='47' column='1' id='1371a02f'>
+      <union-decl name='__anonymous_union__8' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='fs/proc/internal.h' line='47' column='1' id='1371a02f'>
         <data-member access='public'>
           <var-decl name='seq_ops' type-id='943a1b48' visibility='default' filepath='fs/proc/internal.h' line='48' column='1'/>
         </data-member>
@@ -135306,6 +135334,14 @@
       <array-type-def dimensions='1' type-id='9b61d1a6' size-in-bits='384' id='bd1ec77b'>
         <subrange length='3' type-id='7ff19f0f' id='56f209d2'/>
       </array-type-def>
+      <union-decl name='key_payload' size-in-bits='256' visibility='default' filepath='include/linux/key.h' line='128' column='1' id='2888d74a'>
+        <data-member access='public'>
+          <var-decl name='rcu_data0' type-id='eaa32e2f' visibility='default' filepath='include/linux/key.h' line='129' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='data' type-id='209ef23f' visibility='default' filepath='include/linux/key.h' line='130' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='__anonymous_struct__' size-in-bits='7360' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/mm_types.h' line='408' column='1' id='b684f22e'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='mmap' type-id='2ae08426' visibility='default' filepath='include/linux/mm_types.h' line='409' column='1'/>
@@ -136769,14 +136805,6 @@
           <var-decl name='mode' type-id='2594b00f' visibility='default' filepath='include/linux/sysfs.h' line='32' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='key_payload' size-in-bits='256' visibility='default' filepath='include/linux/key.h' line='128' column='1' id='2888d74a'>
-        <data-member access='public'>
-          <var-decl name='rcu_data0' type-id='eaa32e2f' visibility='default' filepath='include/linux/key.h' line='129' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='data' type-id='209ef23f' visibility='default' filepath='include/linux/key.h' line='130' column='1'/>
-        </data-member>
-      </union-decl>
       <class-decl name='attribute_group' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/sysfs.h' line='84' column='1' id='e4af473b'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='name' type-id='80f4b756' visibility='default' filepath='include/linux/sysfs.h' line='85' column='1'/>
@@ -166792,6 +166820,12 @@
       <function-decl name='rhashtable_destroy' mangled-name='rhashtable_destroy' filepath='lib/rhashtable.c' line='1168' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='rhashtable_destroy'>
         <parameter type-id='e6726ce3' name='ht' filepath='lib/rhashtable.c' line='1168' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+    </abi-instr>
+    <abi-instr address-size='64' path='lib/sbitmap.c' language='LANG_C89'>
+      <function-decl name='__sbitmap_queue_get' mangled-name='__sbitmap_queue_get' filepath='lib/sbitmap.c' line='424' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__sbitmap_queue_get'>
+        <parameter type-id='75396bad' name='sbq' filepath='lib/sbitmap.c' line='424' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='lib/scatterlist.c' language='LANG_C89'>
