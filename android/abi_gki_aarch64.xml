@@ -388,6 +388,7 @@
       <elf-symbol name='__traceiter_android_vh_typec_tcpm_get_timer' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa264e589'/>
       <elf-symbol name='__traceiter_android_vh_typec_tcpm_log' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd8a5e0bf'/>
       <elf-symbol name='__traceiter_android_vh_ufs_check_int_errors' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfea98e28'/>
+      <elf-symbol name='__traceiter_android_vh_ufs_clock_scaling' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xce9715cc'/>
       <elf-symbol name='__traceiter_android_vh_ufs_compl_command' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x704d014'/>
       <elf-symbol name='__traceiter_android_vh_ufs_fill_prdt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3ebec6eb'/>
       <elf-symbol name='__traceiter_android_vh_ufs_prepare_command' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56b84cc'/>
@@ -4949,6 +4950,7 @@
       <elf-symbol name='__tracepoint_android_vh_typec_tcpm_get_timer' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac9783b6'/>
       <elf-symbol name='__tracepoint_android_vh_typec_tcpm_log' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x381957ca'/>
       <elf-symbol name='__tracepoint_android_vh_ufs_check_int_errors' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x73ea45fb'/>
+      <elf-symbol name='__tracepoint_android_vh_ufs_clock_scaling' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf675fc6f'/>
       <elf-symbol name='__tracepoint_android_vh_ufs_compl_command' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6d6c7e35'/>
       <elf-symbol name='__tracepoint_android_vh_ufs_fill_prdt' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xec87d81c'/>
       <elf-symbol name='__tracepoint_android_vh_ufs_prepare_command' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25558c8f'/>
@@ -45880,6 +45882,7 @@
       <var-decl name='__tracepoint_android_vh_ufs_send_tm_command' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_send_tm_command' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='45' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_send_tm_command'/>
       <var-decl name='__tracepoint_android_vh_ufs_check_int_errors' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_check_int_errors' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='49' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_check_int_errors'/>
       <var-decl name='__tracepoint_android_vh_ufs_update_sdev' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_update_sdev' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='54' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_update_sdev'/>
+      <var-decl name='__tracepoint_android_vh_ufs_clock_scaling' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_clock_scaling' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='58' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_clock_scaling'/>
       <var-decl name='__tracepoint_android_vh_cgroup_set_task' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cgroup_set_task' visibility='default' filepath='include/trace/hooks/cgroup.h' line='12' column='1' elf-symbol-id='__tracepoint_android_vh_cgroup_set_task'/>
       <var-decl name='__tracepoint_android_rvh_cgroup_force_kthread_migration' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_cgroup_force_kthread_migration' visibility='default' filepath='include/trace/hooks/cgroup.h' line='18' column='1' elf-symbol-id='__tracepoint_android_rvh_cgroup_force_kthread_migration'/>
       <var-decl name='__tracepoint_android_vh_syscall_prctl_finished' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_syscall_prctl_finished' visibility='default' filepath='include/trace/hooks/sys.h' line='12' column='1' elf-symbol-id='__tracepoint_android_vh_syscall_prctl_finished'/>
@@ -46773,6 +46776,14 @@
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/ufshcd.h' line='49' column='1'/>
         <parameter type-id='442b8d89' name='hba' filepath='include/trace/hooks/ufshcd.h' line='49' column='1'/>
         <parameter type-id='b50a4934' name='queue_eh_work' filepath='include/trace/hooks/ufshcd.h' line='49' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_ufs_clock_scaling' mangled-name='__traceiter_android_vh_ufs_clock_scaling' filepath='include/trace/hooks/ufshcd.h' line='58' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_ufs_clock_scaling'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/ufshcd.h' line='58' column='1'/>
+        <parameter type-id='442b8d89' name='hba' filepath='include/trace/hooks/ufshcd.h' line='58' column='1'/>
+        <parameter type-id='d8e6b335' name='force_out' filepath='include/trace/hooks/ufshcd.h' line='58' column='1'/>
+        <parameter type-id='d8e6b335' name='force_scaling' filepath='include/trace/hooks/ufshcd.h' line='58' column='1'/>
+        <parameter type-id='d8e6b335' name='scale_up' filepath='include/trace/hooks/ufshcd.h' line='58' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_ufs_update_sysfs' mangled-name='__traceiter_android_vh_ufs_update_sysfs' filepath='include/trace/hooks/ufshcd.h' line='27' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_ufs_update_sysfs'>
