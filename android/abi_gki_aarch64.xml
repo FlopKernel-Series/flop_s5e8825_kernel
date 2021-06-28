@@ -3284,6 +3284,7 @@
       <elf-symbol name='rdev_get_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe374d9e0'/>
       <elf-symbol name='rdev_get_drvdata' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeb6fca7e'/>
       <elf-symbol name='rdev_get_id' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7d061592'/>
+      <elf-symbol name='rdev_get_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd7395824'/>
       <elf-symbol name='read_cache_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b26e2e8'/>
       <elf-symbol name='reciprocal_value' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa965ca81'/>
       <elf-symbol name='refcount_dec_and_lock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd9e8aee7'/>
@@ -3384,6 +3385,7 @@
       <elf-symbol name='regulator_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xceb7df42'/>
       <elf-symbol name='regulator_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xed062f39'/>
       <elf-symbol name='regulator_register_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x91ad099a'/>
+      <elf-symbol name='regulator_set_active_discharge_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x276c180a'/>
       <elf-symbol name='regulator_set_current_limit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x11f86b03'/>
       <elf-symbol name='regulator_set_current_limit_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7653f7a6'/>
       <elf-symbol name='regulator_set_load' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x98b6ab56'/>
@@ -4222,6 +4224,7 @@
       <elf-symbol name='ufshcd_get_local_unipro_ver' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbc8ef767'/>
       <elf-symbol name='ufshcd_get_pwr_dev_param' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xff85cd6b'/>
       <elf-symbol name='ufshcd_hba_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdc5bbc42'/>
+      <elf-symbol name='ufshcd_hba_stop' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd3e02757'/>
       <elf-symbol name='ufshcd_hold' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x43f69386'/>
       <elf-symbol name='ufshcd_link_recovery' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x306d8a74'/>
       <elf-symbol name='ufshcd_make_hba_operational' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1ea4ba7c'/>
@@ -27505,7 +27508,7 @@
           <var-decl name='skc_tw_dr' type-id='b7ab21fc' visibility='default' filepath='include/net/sock.h' line='216' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__22' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/net/ip.h' line='125' column='1' id='4fa91678'>
+      <union-decl name='__anonymous_union__24' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/net/ip.h' line='125' column='1' id='4fa91678'>
         <data-member access='public'>
           <var-decl name='destructor' type-id='841969d0' visibility='default' filepath='include/net/ip.h' line='126' column='1'/>
         </data-member>
@@ -45725,10 +45728,10 @@
       <var-decl name='__tracepoint_android_vh_force_compatible_post' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_force_compatible_post' visibility='default' filepath='include/trace/hooks/sched.h' line='377' column='1' elf-symbol-id='__tracepoint_android_vh_force_compatible_post'/>
       <var-decl name='__tracepoint_android_rvh_force_compatible_pre' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_force_compatible_pre' visibility='default' filepath='include/trace/hooks/sched.h' line='381' column='1' elf-symbol-id='__tracepoint_android_rvh_force_compatible_pre'/>
       <var-decl name='__tracepoint_android_rvh_force_compatible_post' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_force_compatible_post' visibility='default' filepath='include/trace/hooks/sched.h' line='385' column='1' elf-symbol-id='__tracepoint_android_rvh_force_compatible_post'/>
-      <var-decl name='__tracepoint_android_vh_binder_transaction_init' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_transaction_init' visibility='default' filepath='include/trace/hooks/binder.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_binder_transaction_init'/>
-      <var-decl name='__tracepoint_android_vh_binder_set_priority' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_set_priority' visibility='default' filepath='include/trace/hooks/binder.h' line='26' column='1' elf-symbol-id='__tracepoint_android_vh_binder_set_priority'/>
-      <var-decl name='__tracepoint_android_vh_binder_restore_priority' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_restore_priority' visibility='default' filepath='include/trace/hooks/binder.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_binder_restore_priority'/>
-      <var-decl name='__tracepoint_android_vh_binder_wakeup_ilocked' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_wakeup_ilocked' visibility='default' filepath='include/trace/hooks/binder.h' line='34' column='1' elf-symbol-id='__tracepoint_android_vh_binder_wakeup_ilocked'/>
+      <var-decl name='__tracepoint_android_vh_binder_transaction_init' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_transaction_init' visibility='default' filepath='include/trace/hooks/binder.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_binder_transaction_init'/>
+      <var-decl name='__tracepoint_android_vh_binder_set_priority' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_set_priority' visibility='default' filepath='include/trace/hooks/binder.h' line='27' column='1' elf-symbol-id='__tracepoint_android_vh_binder_set_priority'/>
+      <var-decl name='__tracepoint_android_vh_binder_restore_priority' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_restore_priority' visibility='default' filepath='include/trace/hooks/binder.h' line='30' column='1' elf-symbol-id='__tracepoint_android_vh_binder_restore_priority'/>
+      <var-decl name='__tracepoint_android_vh_binder_wakeup_ilocked' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_wakeup_ilocked' visibility='default' filepath='include/trace/hooks/binder.h' line='35' column='1' elf-symbol-id='__tracepoint_android_vh_binder_wakeup_ilocked'/>
       <var-decl name='__tracepoint_android_vh_rwsem_init' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rwsem_init' visibility='default' filepath='include/trace/hooks/rwsem.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_rwsem_init'/>
       <var-decl name='__tracepoint_android_vh_rwsem_wake' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rwsem_wake' visibility='default' filepath='include/trace/hooks/rwsem.h' line='18' column='1' elf-symbol-id='__tracepoint_android_vh_rwsem_wake'/>
       <var-decl name='__tracepoint_android_vh_rwsem_write_finished' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rwsem_write_finished' visibility='default' filepath='include/trace/hooks/rwsem.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_rwsem_write_finished'/>
@@ -46773,28 +46776,28 @@
         <parameter type-id='b50a4934' name='s2idle' filepath='include/trace/hooks/cpuidle_psci.h' line='19' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_binder_wakeup_ilocked' mangled-name='__traceiter_android_vh_binder_wakeup_ilocked' filepath='include/trace/hooks/binder.h' line='34' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_wakeup_ilocked'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='34' column='1'/>
-        <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/binder.h' line='34' column='1'/>
-        <parameter type-id='b50a4934' name='sync' filepath='include/trace/hooks/binder.h' line='34' column='1'/>
-        <parameter type-id='d1cf113c' name='proc' filepath='include/trace/hooks/binder.h' line='34' column='1'/>
+      <function-decl name='__traceiter_android_vh_binder_wakeup_ilocked' mangled-name='__traceiter_android_vh_binder_wakeup_ilocked' filepath='include/trace/hooks/binder.h' line='35' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_wakeup_ilocked'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='35' column='1'/>
+        <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/binder.h' line='35' column='1'/>
+        <parameter type-id='b50a4934' name='sync' filepath='include/trace/hooks/binder.h' line='35' column='1'/>
+        <parameter type-id='d1cf113c' name='proc' filepath='include/trace/hooks/binder.h' line='35' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_binder_restore_priority' mangled-name='__traceiter_android_vh_binder_restore_priority' filepath='include/trace/hooks/binder.h' line='29' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_restore_priority'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='29' column='1'/>
-        <parameter type-id='f4c3bb4c' name='t' filepath='include/trace/hooks/binder.h' line='29' column='1'/>
-        <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/binder.h' line='29' column='1'/>
+      <function-decl name='__traceiter_android_vh_binder_restore_priority' mangled-name='__traceiter_android_vh_binder_restore_priority' filepath='include/trace/hooks/binder.h' line='30' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_restore_priority'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='30' column='1'/>
+        <parameter type-id='f4c3bb4c' name='t' filepath='include/trace/hooks/binder.h' line='30' column='1'/>
+        <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/binder.h' line='30' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_binder_set_priority' mangled-name='__traceiter_android_vh_binder_set_priority' filepath='include/trace/hooks/binder.h' line='26' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_set_priority'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='26' column='1'/>
-        <parameter type-id='f4c3bb4c' name='t' filepath='include/trace/hooks/binder.h' line='26' column='1'/>
-        <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/binder.h' line='26' column='1'/>
+      <function-decl name='__traceiter_android_vh_binder_set_priority' mangled-name='__traceiter_android_vh_binder_set_priority' filepath='include/trace/hooks/binder.h' line='27' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_set_priority'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='27' column='1'/>
+        <parameter type-id='f4c3bb4c' name='t' filepath='include/trace/hooks/binder.h' line='27' column='1'/>
+        <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/binder.h' line='27' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_binder_transaction_init' mangled-name='__traceiter_android_vh_binder_transaction_init' filepath='include/trace/hooks/binder.h' line='20' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_transaction_init'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='20' column='1'/>
-        <parameter type-id='f4c3bb4c' name='t' filepath='include/trace/hooks/binder.h' line='20' column='1'/>
+      <function-decl name='__traceiter_android_vh_binder_transaction_init' mangled-name='__traceiter_android_vh_binder_transaction_init' filepath='include/trace/hooks/binder.h' line='21' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_binder_transaction_init'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/binder.h' line='21' column='1'/>
+        <parameter type-id='f4c3bb4c' name='t' filepath='include/trace/hooks/binder.h' line='21' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_preempt_enable' mangled-name='__traceiter_android_rvh_preempt_enable' filepath='include/trace/hooks/preemptirq.h' line='18' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_preempt_enable'>
@@ -48869,12 +48872,12 @@
       <pointer-type-def type-id='f81b67f4' size-in-bits='64' id='d43dc76d'/>
       <pointer-type-def type-id='15d562ba' size-in-bits='64' id='aec2c278'/>
       <pointer-type-def type-id='c372d726' size-in-bits='64' id='696df79c'/>
-      <union-decl name='ufs_crypto_capabilities' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='307' column='1' id='4721c843'>
+      <union-decl name='ufs_crypto_capabilities' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='306' column='1' id='4721c843'>
         <data-member access='public'>
-          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='308' column='1'/>
+          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='307' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='' type-id='e15f514f' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='309' column='1'/>
+          <var-decl name='' type-id='e15f514f' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='308' column='1'/>
         </data-member>
       </union-decl>
       <union-decl name='__anonymous_union__' size-in-bits='384' is-anonymous='yes' visibility='default' filepath='include/linux/pm_domain.h' line='155' column='1' id='d4d3f8b8'>
@@ -50349,18 +50352,18 @@
           <var-decl name='is_valid' type-id='b50a4934' visibility='default' filepath='drivers/scsi/ufs/ufshcd.h' line='399' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='ufshcd_sg_entry' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='421' column='1' id='c372d726'>
+      <class-decl name='ufshcd_sg_entry' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='420' column='1' id='c372d726'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='base_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='422' column='1'/>
+          <var-decl name='base_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='421' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='upper_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='423' column='1'/>
+          <var-decl name='upper_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='422' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='reserved' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='424' column='1'/>
+          <var-decl name='reserved' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='423' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='size' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='425' column='1'/>
+          <var-decl name='size' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='424' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='usb_role_switch' size-in-bits='7232' is-struct='yes' visibility='default' filepath='drivers/usb/roles/class.c' line='19' column='1' id='3b2a0df7'>
@@ -50392,70 +50395,70 @@
           <var-decl name='allow_userspace_control' type-id='b50a4934' visibility='default' filepath='drivers/usb/roles/class.c' line='30' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='utp_task_req_desc' size-in-bits='640' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='493' column='1' id='a73e5d15'>
+      <class-decl name='utp_task_req_desc' size-in-bits='640' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='492' column='1' id='a73e5d15'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='495' column='1'/>
+          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='494' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='req_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='498' column='1'/>
+          <var-decl name='req_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='497' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='input_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='499' column='1'/>
+          <var-decl name='input_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='498' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='input_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='500' column='1'/>
+          <var-decl name='input_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='499' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='288'>
-          <var-decl name='input_param3' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='501' column='1'/>
+          <var-decl name='input_param3' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='500' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='__reserved1' type-id='f41331a9' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='502' column='1'/>
+          <var-decl name='__reserved1' type-id='f41331a9' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='501' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='rsp_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='505' column='1'/>
+          <var-decl name='rsp_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='504' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='480'>
-          <var-decl name='output_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='506' column='1'/>
+          <var-decl name='output_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='505' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='output_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='507' column='1'/>
+          <var-decl name='output_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='506' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='544'>
-          <var-decl name='__reserved2' type-id='3015ceb4' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='508' column='1'/>
+          <var-decl name='__reserved2' type-id='3015ceb4' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='507' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='utp_transfer_cmd_desc' size-in-bits='8192' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='439' column='1' id='f660d147'>
+      <class-decl name='utp_transfer_cmd_desc' size-in-bits='8192' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='438' column='1' id='f660d147'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='command_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='440' column='1'/>
+          <var-decl name='command_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='439' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4096'>
-          <var-decl name='response_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='441' column='1'/>
+          <var-decl name='response_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='440' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8192'>
-          <var-decl name='prd_table' type-id='29c3368c' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='442' column='1'/>
+          <var-decl name='prd_table' type-id='29c3368c' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='441' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='utp_transfer_req_desc' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='472' column='1' id='20f0d8ff'>
+      <class-decl name='utp_transfer_req_desc' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='471' column='1' id='20f0d8ff'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='475' column='1'/>
+          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='474' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='command_desc_base_addr_lo' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='478' column='1'/>
+          <var-decl name='command_desc_base_addr_lo' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='477' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='command_desc_base_addr_hi' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='479' column='1'/>
+          <var-decl name='command_desc_base_addr_hi' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='478' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='response_upiu_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='482' column='1'/>
+          <var-decl name='response_upiu_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='481' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='208'>
-          <var-decl name='response_upiu_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='483' column='1'/>
+          <var-decl name='response_upiu_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='482' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='prd_table_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='486' column='1'/>
+          <var-decl name='prd_table_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='485' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='240'>
-          <var-decl name='prd_table_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='487' column='1'/>
+          <var-decl name='prd_table_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='486' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='utp_upiu_req' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/uapi/scsi/scsi_bsg_ufs.h' line='73' column='1' id='f3866749'>
@@ -50482,18 +50485,18 @@
           <var-decl name='lock_flags' type-id='7359adad' visibility='default' filepath='include/linux/pm_domain.h' line='159' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='309' column='1' id='e15f514f'>
+      <class-decl name='__anonymous_struct__1' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='308' column='1' id='e15f514f'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='num_crypto_cap' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='310' column='1'/>
+          <var-decl name='num_crypto_cap' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='309' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='config_count' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='311' column='1'/>
+          <var-decl name='config_count' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='310' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='312' column='1'/>
+          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='311' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='24'>
-          <var-decl name='config_array_ptr' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='313' column='1'/>
+          <var-decl name='config_array_ptr' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='312' column='1'/>
         </data-member>
       </class-decl>
       <qualified-type-def type-id='4c993ea6' const='yes' id='3cc19423'/>
@@ -50588,12 +50591,12 @@
         <subrange length='13' type-id='7ff19f0f' id='487fded1'/>
       </array-type-def>
       <pointer-type-def type-id='d6b2bd0c' size-in-bits='64' id='ae670bfa'/>
-      <union-decl name='ufs_crypto_cap_entry' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='333' column='1' id='f81b67f4'>
+      <union-decl name='ufs_crypto_cap_entry' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='332' column='1' id='f81b67f4'>
         <data-member access='public'>
-          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='334' column='1'/>
+          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='333' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='' type-id='7db2e6af' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='335' column='1'/>
+          <var-decl name='' type-id='7db2e6af' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='334' column='1'/>
         </data-member>
       </union-decl>
       <pointer-type-def type-id='57bfbe05' size-in-bits='64' id='09dbca85'/>
@@ -50724,18 +50727,18 @@
           <var-decl name='parse_inplace' type-id='b7f9d8e6' visibility='default' filepath='drivers/base/regmap/internal.h' line='40' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='request_desc_header' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='455' column='1' id='746bbed6'>
+      <class-decl name='request_desc_header' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='454' column='1' id='746bbed6'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='dword_0' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='456' column='1'/>
+          <var-decl name='dword_0' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='455' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='dword_1' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='457' column='1'/>
+          <var-decl name='dword_1' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='456' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='dword_2' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='458' column='1'/>
+          <var-decl name='dword_2' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='457' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='dword_3' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='459' column='1'/>
+          <var-decl name='dword_3' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='458' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='scsi_data_buffer' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/scsi/scsi_cmnd.h' line='35' column='1' id='9f8b0d0f'>
@@ -50987,18 +50990,18 @@
           <var-decl name='dword_2' type-id='78a133c2' visibility='default' filepath='include/uapi/scsi/scsi_bsg_ufs.h' line='30' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='__anonymous_struct__2' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='335' column='1' id='7db2e6af'>
+      <class-decl name='__anonymous_struct__2' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='334' column='1' id='7db2e6af'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='algorithm_id' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='336' column='1'/>
+          <var-decl name='algorithm_id' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='335' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='sdus_mask' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='337' column='1'/>
+          <var-decl name='sdus_mask' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='336' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='key_size' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='338' column='1'/>
+          <var-decl name='key_size' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='337' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='24'>
-          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='339' column='1'/>
+          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='338' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='e5e56b24' size-in-bits='64' id='f627870a'/>
@@ -111119,6 +111122,10 @@
         <parameter type-id='b50a4934' name='enable' filepath='drivers/regulator/core.c' line='4475' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='rdev_get_regmap' mangled-name='rdev_get_regmap' filepath='drivers/regulator/core.c' line='5577' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='rdev_get_regmap'>
+        <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/core.c' line='5577' column='1'/>
+        <return type-id='29af9a71'/>
+      </function-decl>
       <function-decl name='rdev_get_id' mangled-name='rdev_get_id' filepath='drivers/regulator/core.c' line='5565' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='rdev_get_id'>
         <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/core.c' line='5565' column='1'/>
         <return type-id='95e97e5e'/>
@@ -111284,6 +111291,11 @@
         <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/helpers.c' line='775' column='1'/>
         <parameter type-id='95e97e5e' name='min_uA' filepath='drivers/regulator/helpers.c' line='776' column='1'/>
         <parameter type-id='95e97e5e' name='max_uA' filepath='drivers/regulator/helpers.c' line='776' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='regulator_set_active_discharge_regmap' mangled-name='regulator_set_active_discharge_regmap' filepath='drivers/regulator/helpers.c' line='748' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_active_discharge_regmap'>
+        <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/helpers.c' line='748' column='1'/>
+        <parameter type-id='b50a4934' name='enable' filepath='drivers/regulator/helpers.c' line='749' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='regulator_map_voltage_linear' mangled-name='regulator_map_voltage_linear' filepath='drivers/regulator/helpers.c' line='361' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_map_voltage_linear'>
@@ -114415,84 +114427,84 @@
           <var-decl name='debugfs_root' type-id='27675065' visibility='default' filepath='drivers/scsi/ufs/ufshcd.h' line='875' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='utp_transfer_cmd_desc' size-in-bits='8192' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='439' column='1' id='f660d147'>
+      <class-decl name='utp_transfer_cmd_desc' size-in-bits='8192' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='438' column='1' id='f660d147'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='command_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='440' column='1'/>
+          <var-decl name='command_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='439' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4096'>
-          <var-decl name='response_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='441' column='1'/>
+          <var-decl name='response_upiu' type-id='d1f32e0e' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='440' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8192'>
-          <var-decl name='prd_table' type-id='29c3368c' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='442' column='1'/>
+          <var-decl name='prd_table' type-id='29c3368c' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='441' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='utp_transfer_req_desc' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='472' column='1' id='20f0d8ff'>
+      <class-decl name='utp_transfer_req_desc' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='471' column='1' id='20f0d8ff'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='475' column='1'/>
+          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='474' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='command_desc_base_addr_lo' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='478' column='1'/>
+          <var-decl name='command_desc_base_addr_lo' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='477' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='command_desc_base_addr_hi' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='479' column='1'/>
+          <var-decl name='command_desc_base_addr_hi' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='478' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='response_upiu_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='482' column='1'/>
+          <var-decl name='response_upiu_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='481' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='208'>
-          <var-decl name='response_upiu_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='483' column='1'/>
+          <var-decl name='response_upiu_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='482' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='prd_table_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='486' column='1'/>
+          <var-decl name='prd_table_length' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='485' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='240'>
-          <var-decl name='prd_table_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='487' column='1'/>
+          <var-decl name='prd_table_offset' type-id='23119536' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='486' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='request_desc_header' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='455' column='1' id='746bbed6'>
+      <class-decl name='request_desc_header' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='454' column='1' id='746bbed6'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='dword_0' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='456' column='1'/>
+          <var-decl name='dword_0' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='455' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='dword_1' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='457' column='1'/>
+          <var-decl name='dword_1' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='456' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='dword_2' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='458' column='1'/>
+          <var-decl name='dword_2' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='457' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='dword_3' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='459' column='1'/>
+          <var-decl name='dword_3' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='458' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='utp_task_req_desc' size-in-bits='640' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='493' column='1' id='a73e5d15'>
+      <class-decl name='utp_task_req_desc' size-in-bits='640' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='492' column='1' id='a73e5d15'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='495' column='1'/>
+          <var-decl name='header' type-id='746bbed6' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='494' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='req_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='498' column='1'/>
+          <var-decl name='req_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='497' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='input_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='499' column='1'/>
+          <var-decl name='input_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='498' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='input_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='500' column='1'/>
+          <var-decl name='input_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='499' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='288'>
-          <var-decl name='input_param3' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='501' column='1'/>
+          <var-decl name='input_param3' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='500' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='__reserved1' type-id='f41331a9' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='502' column='1'/>
+          <var-decl name='__reserved1' type-id='f41331a9' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='501' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='rsp_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='505' column='1'/>
+          <var-decl name='rsp_header' type-id='b010cb22' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='504' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='480'>
-          <var-decl name='output_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='506' column='1'/>
+          <var-decl name='output_param1' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='505' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='output_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='507' column='1'/>
+          <var-decl name='output_param2' type-id='78a133c2' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='506' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='544'>
-          <var-decl name='__reserved2' type-id='3015ceb4' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='508' column='1'/>
+          <var-decl name='__reserved2' type-id='3015ceb4' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='507' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='utp_upiu_header' size-in-bits='96' is-struct='yes' visibility='default' filepath='include/uapi/scsi/scsi_bsg_ufs.h' line='27' column='1' id='b010cb22'>
@@ -114677,18 +114689,18 @@
           <var-decl name='sense_data' type-id='09617d27' visibility='default' filepath='drivers/scsi/ufs/ufs.h' line='460' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='ufshcd_sg_entry' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='421' column='1' id='c372d726'>
+      <class-decl name='ufshcd_sg_entry' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='420' column='1' id='c372d726'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='base_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='422' column='1'/>
+          <var-decl name='base_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='421' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='upper_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='423' column='1'/>
+          <var-decl name='upper_addr' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='422' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='reserved' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='424' column='1'/>
+          <var-decl name='reserved' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='423' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='size' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='425' column='1'/>
+          <var-decl name='size' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='424' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='ufs_hba_variant_ops' size-in-bits='1472' is-struct='yes' visibility='default' filepath='drivers/scsi/ufs/ufshcd.h' line='320' column='1' id='ee22abe8'>
@@ -114790,7 +114802,7 @@
           <var-decl name='hs_rate' type-id='19c2251e' visibility='default' filepath='drivers/scsi/ufs/ufshcd.h' line='282' column='1'/>
         </data-member>
       </class-decl>
-      <enum-decl name='uic_cmd_dme' filepath='drivers/scsi/ufs/ufshci.h' line='256' column='1' id='47e46889'>
+      <enum-decl name='uic_cmd_dme' filepath='drivers/scsi/ufs/ufshci.h' line='255' column='1' id='47e46889'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='UIC_CMD_DME_GET' value='1'/>
         <enumerator name='UIC_CMD_DME_SET' value='2'/>
@@ -114861,41 +114873,41 @@
           <var-decl name='private_data' type-id='eaa32e2f' visibility='default' filepath='include/linux/devfreq.h' line='64' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='ufs_crypto_cfg_entry' size-in-bits='1024' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='346' column='1' id='a722d386'>
+      <union-decl name='ufs_crypto_cfg_entry' size-in-bits='1024' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='345' column='1' id='a722d386'>
         <data-member access='public'>
-          <var-decl name='reg_val' type-id='28645bde' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='347' column='1'/>
+          <var-decl name='reg_val' type-id='28645bde' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='346' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='' type-id='335c32d9' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='348' column='1'/>
+          <var-decl name='' type-id='335c32d9' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='347' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__' size-in-bits='1024' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='348' column='1' id='335c32d9'>
+      <class-decl name='__anonymous_struct__' size-in-bits='1024' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='347' column='1' id='335c32d9'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='crypto_key' type-id='47ba3182' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='349' column='1'/>
+          <var-decl name='crypto_key' type-id='47ba3182' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='348' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='data_unit_size' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='350' column='1'/>
+          <var-decl name='data_unit_size' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='349' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='520'>
-          <var-decl name='crypto_cap_idx' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='351' column='1'/>
+          <var-decl name='crypto_cap_idx' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='350' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='528'>
-          <var-decl name='reserved_1' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='352' column='1'/>
+          <var-decl name='reserved_1' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='351' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='536'>
-          <var-decl name='config_enable' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='353' column='1'/>
+          <var-decl name='config_enable' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='352' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='544'>
-          <var-decl name='reserved_multi_host' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='354' column='1'/>
+          <var-decl name='reserved_multi_host' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='353' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='552'>
-          <var-decl name='reserved_2' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='355' column='1'/>
+          <var-decl name='reserved_2' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='354' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='560'>
-          <var-decl name='vsb' type-id='cf114704' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='356' column='1'/>
+          <var-decl name='vsb' type-id='cf114704' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='355' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='reserved_3' type-id='01f8d131' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='357' column='1'/>
+          <var-decl name='reserved_3' type-id='01f8d131' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='356' column='1'/>
         </data-member>
       </class-decl>
       <enum-decl name='ufs_event_type' filepath='drivers/scsi/ufs/ufshcd.h' line='61' column='1' id='a9f16f78'>
@@ -115353,48 +115365,48 @@
           <var-decl name='enabled' type-id='b50a4934' visibility='default' filepath='drivers/scsi/ufs/ufshcd.h' line='672' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='ufs_crypto_capabilities' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='307' column='1' id='4721c843'>
+      <union-decl name='ufs_crypto_capabilities' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='306' column='1' id='4721c843'>
         <data-member access='public'>
-          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='308' column='1'/>
+          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='307' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='' type-id='e15f514f' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='309' column='1'/>
+          <var-decl name='' type-id='e15f514f' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='308' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__1' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='309' column='1' id='e15f514f'>
+      <class-decl name='__anonymous_struct__1' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='308' column='1' id='e15f514f'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='num_crypto_cap' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='310' column='1'/>
+          <var-decl name='num_crypto_cap' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='309' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='config_count' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='311' column='1'/>
+          <var-decl name='config_count' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='310' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='312' column='1'/>
+          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='311' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='24'>
-          <var-decl name='config_array_ptr' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='313' column='1'/>
+          <var-decl name='config_array_ptr' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='312' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='ufs_crypto_cap_entry' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='333' column='1' id='f81b67f4'>
+      <union-decl name='ufs_crypto_cap_entry' size-in-bits='32' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='332' column='1' id='f81b67f4'>
         <data-member access='public'>
-          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='334' column='1'/>
+          <var-decl name='reg_val' type-id='2f162548' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='333' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='' type-id='7db2e6af' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='335' column='1'/>
+          <var-decl name='' type-id='7db2e6af' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='334' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='__anonymous_struct__2' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='335' column='1' id='7db2e6af'>
+      <class-decl name='__anonymous_struct__2' size-in-bits='32' is-struct='yes' is-anonymous='yes' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='334' column='1' id='7db2e6af'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='algorithm_id' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='336' column='1'/>
+          <var-decl name='algorithm_id' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='335' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='sdus_mask' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='337' column='1'/>
+          <var-decl name='sdus_mask' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='336' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='key_size' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='338' column='1'/>
+          <var-decl name='key_size' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='337' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='24'>
-          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='339' column='1'/>
+          <var-decl name='reserved' type-id='f9b06939' visibility='default' filepath='drivers/scsi/ufs/ufshci.h' line='338' column='1'/>
         </data-member>
       </class-decl>
       <enum-decl name='query_opcode' filepath='drivers/scsi/ufs/ufs.h' line='366' column='1' id='5f757f13'>
@@ -115523,23 +115535,23 @@
       <pointer-type-def type-id='7d117ac5' size-in-bits='64' id='4ec7a2d9'/>
       <pointer-type-def type-id='b1c57c88' size-in-bits='64' id='a06238fa'/>
       <pointer-type-def type-id='d59c0ecf' size-in-bits='64' id='ed89b003'/>
-      <function-decl name='ufshcd_dme_set_attr' mangled-name='ufshcd_dme_set_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3819' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_set_attr'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3819' column='1'/>
-        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3819' column='1'/>
-        <parameter type-id='f9b06939' name='attr_set' filepath='drivers/scsi/ufs/ufshcd.c' line='3820' column='1'/>
-        <parameter type-id='19c2251e' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3820' column='1'/>
-        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3820' column='1'/>
+      <function-decl name='ufshcd_dme_set_attr' mangled-name='ufshcd_dme_set_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3806' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_set_attr'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3806' column='1'/>
+        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3806' column='1'/>
+        <parameter type-id='f9b06939' name='attr_set' filepath='drivers/scsi/ufs/ufshcd.c' line='3807' column='1'/>
+        <parameter type-id='19c2251e' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3807' column='1'/>
+        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3807' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_dme_get_attr' mangled-name='ufshcd_dme_get_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3863' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_get_attr'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3863' column='1'/>
-        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3863' column='1'/>
-        <parameter type-id='f9409001' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3864' column='1'/>
-        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3864' column='1'/>
+      <function-decl name='ufshcd_dme_get_attr' mangled-name='ufshcd_dme_get_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3850' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_get_attr'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3850' column='1'/>
+        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3850' column='1'/>
+        <parameter type-id='f9409001' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3851' column='1'/>
+        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3851' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_uic_hibern8_exit' mangled-name='ufshcd_uic_hibern8_exit' filepath='drivers/scsi/ufs/ufshcd.c' line='4116' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_exit'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4116' column='1'/>
+      <function-decl name='ufshcd_uic_hibern8_exit' mangled-name='ufshcd_uic_hibern8_exit' filepath='drivers/scsi/ufs/ufshcd.c' line='4103' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_exit'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4103' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='ufshcd_dump_regs' mangled-name='ufshcd_dump_regs' filepath='drivers/scsi/ufs/ufshcd.c' line='101' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dump_regs'>
@@ -115549,12 +115561,12 @@
         <parameter type-id='80f4b756' name='prefix' filepath='drivers/scsi/ufs/ufshcd.c' line='102' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_uic_hibern8_enter' mangled-name='ufshcd_uic_hibern8_enter' filepath='drivers/scsi/ufs/ufshcd.c' line='4092' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_enter'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4092' column='1'/>
+      <function-decl name='ufshcd_uic_hibern8_enter' mangled-name='ufshcd_uic_hibern8_enter' filepath='drivers/scsi/ufs/ufshcd.c' line='4079' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_enter'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4079' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_system_suspend' mangled-name='ufshcd_system_suspend' filepath='drivers/scsi/ufs/ufshcd.c' line='9010' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_suspend'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9010' column='1'/>
+      <function-decl name='ufshcd_system_suspend' mangled-name='ufshcd_system_suspend' filepath='drivers/scsi/ufs/ufshcd.c' line='8992' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_suspend'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='8992' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='ufshcd_hold' mangled-name='ufshcd_hold' filepath='drivers/scsi/ufs/ufshcd.c' line='1646' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hold'>
@@ -115562,105 +115574,109 @@
         <parameter type-id='b50a4934' name='async' filepath='drivers/scsi/ufs/ufshcd.c' line='1646' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_bkops_ctrl' mangled-name='ufshcd_bkops_ctrl' filepath='drivers/scsi/ufs/ufshcd.c' line='5445' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_bkops_ctrl'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='5445' column='1'/>
-        <parameter type-id='462d2624' name='status' filepath='drivers/scsi/ufs/ufshcd.c' line='5446' column='1'/>
+      <function-decl name='ufshcd_bkops_ctrl' mangled-name='ufshcd_bkops_ctrl' filepath='drivers/scsi/ufs/ufshcd.c' line='5395' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_bkops_ctrl'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='5395' column='1'/>
+        <parameter type-id='462d2624' name='status' filepath='drivers/scsi/ufs/ufshcd.c' line='5396' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_query_attr' mangled-name='ufshcd_query_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3101' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_attr'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3101' column='1'/>
-        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3101' column='1'/>
-        <parameter type-id='75eb1735' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3102' column='1'/>
-        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3102' column='1'/>
-        <parameter type-id='f9b06939' name='selector' filepath='drivers/scsi/ufs/ufshcd.c' line='3102' column='1'/>
-        <parameter type-id='f9409001' name='attr_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3102' column='1'/>
+      <function-decl name='ufshcd_query_attr' mangled-name='ufshcd_query_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3088' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_attr'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3088' column='1'/>
+        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3088' column='1'/>
+        <parameter type-id='75eb1735' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3089' column='1'/>
+        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3089' column='1'/>
+        <parameter type-id='f9b06939' name='selector' filepath='drivers/scsi/ufs/ufshcd.c' line='3089' column='1'/>
+        <parameter type-id='f9409001' name='attr_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3089' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_query_flag' mangled-name='ufshcd_query_flag' filepath='drivers/scsi/ufs/ufshcd.c' line='3031' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_flag'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3031' column='1'/>
-        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3031' column='1'/>
-        <parameter type-id='92ace17c' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3032' column='1'/>
-        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3032' column='1'/>
-        <parameter type-id='d8e6b335' name='flag_res' filepath='drivers/scsi/ufs/ufshcd.c' line='3032' column='1'/>
+      <function-decl name='ufshcd_query_flag' mangled-name='ufshcd_query_flag' filepath='drivers/scsi/ufs/ufshcd.c' line='3018' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_flag'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3018' column='1'/>
+        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3018' column='1'/>
+        <parameter type-id='92ace17c' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3019' column='1'/>
+        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3019' column='1'/>
+        <parameter type-id='d8e6b335' name='flag_res' filepath='drivers/scsi/ufs/ufshcd.c' line='3019' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_hba_enable' mangled-name='ufshcd_hba_enable' filepath='drivers/scsi/ufs/ufshcd.c' line='4563' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_enable'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4563' column='1'/>
+      <function-decl name='ufshcd_hba_stop' mangled-name='ufshcd_hba_stop' filepath='drivers/scsi/ufs/ufshcd.c' line='4464' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_stop'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4464' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='ufshcd_hba_enable' mangled-name='ufshcd_hba_enable' filepath='drivers/scsi/ufs/ufshcd.c' line='4550' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_enable'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4550' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_read_desc_param' mangled-name='ufshcd_read_desc_param' filepath='drivers/scsi/ufs/ufshcd.c' line='3333' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_read_desc_param'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3333' column='1'/>
-        <parameter type-id='32c9d5cb' name='desc_id' filepath='drivers/scsi/ufs/ufshcd.c' line='3334' column='1'/>
-        <parameter type-id='95e97e5e' name='desc_index' filepath='drivers/scsi/ufs/ufshcd.c' line='3335' column='1'/>
-        <parameter type-id='f9b06939' name='param_offset' filepath='drivers/scsi/ufs/ufshcd.c' line='3336' column='1'/>
-        <parameter type-id='8bff8096' name='param_read_buf' filepath='drivers/scsi/ufs/ufshcd.c' line='3337' column='1'/>
-        <parameter type-id='f9b06939' name='param_size' filepath='drivers/scsi/ufs/ufshcd.c' line='3338' column='1'/>
+      <function-decl name='ufshcd_read_desc_param' mangled-name='ufshcd_read_desc_param' filepath='drivers/scsi/ufs/ufshcd.c' line='3320' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_read_desc_param'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3320' column='1'/>
+        <parameter type-id='32c9d5cb' name='desc_id' filepath='drivers/scsi/ufs/ufshcd.c' line='3321' column='1'/>
+        <parameter type-id='95e97e5e' name='desc_index' filepath='drivers/scsi/ufs/ufshcd.c' line='3322' column='1'/>
+        <parameter type-id='f9b06939' name='param_offset' filepath='drivers/scsi/ufs/ufshcd.c' line='3323' column='1'/>
+        <parameter type-id='8bff8096' name='param_read_buf' filepath='drivers/scsi/ufs/ufshcd.c' line='3324' column='1'/>
+        <parameter type-id='f9b06939' name='param_size' filepath='drivers/scsi/ufs/ufshcd.c' line='3325' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_make_hba_operational' mangled-name='ufshcd_make_hba_operational' filepath='drivers/scsi/ufs/ufshcd.c' line='4427' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_make_hba_operational'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4427' column='1'/>
+      <function-decl name='ufshcd_make_hba_operational' mangled-name='ufshcd_make_hba_operational' filepath='drivers/scsi/ufs/ufshcd.c' line='4414' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_make_hba_operational'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4414' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_query_descriptor_retry' mangled-name='ufshcd_query_descriptor_retry' filepath='drivers/scsi/ufs/ufshcd.c' line='3271' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_descriptor_retry'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3271' column='1'/>
-        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3272' column='1'/>
-        <parameter type-id='32c9d5cb' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3273' column='1'/>
-        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3273' column='1'/>
-        <parameter type-id='f9b06939' name='selector' filepath='drivers/scsi/ufs/ufshcd.c' line='3274' column='1'/>
-        <parameter type-id='8bff8096' name='desc_buf' filepath='drivers/scsi/ufs/ufshcd.c' line='3275' column='1'/>
-        <parameter type-id='7292109c' name='buf_len' filepath='drivers/scsi/ufs/ufshcd.c' line='3275' column='1'/>
+      <function-decl name='ufshcd_query_descriptor_retry' mangled-name='ufshcd_query_descriptor_retry' filepath='drivers/scsi/ufs/ufshcd.c' line='3258' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_descriptor_retry'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3258' column='1'/>
+        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3259' column='1'/>
+        <parameter type-id='32c9d5cb' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3260' column='1'/>
+        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3260' column='1'/>
+        <parameter type-id='f9b06939' name='selector' filepath='drivers/scsi/ufs/ufshcd.c' line='3261' column='1'/>
+        <parameter type-id='8bff8096' name='desc_buf' filepath='drivers/scsi/ufs/ufshcd.c' line='3262' column='1'/>
+        <parameter type-id='7292109c' name='buf_len' filepath='drivers/scsi/ufs/ufshcd.c' line='3262' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_system_resume' mangled-name='ufshcd_system_resume' filepath='drivers/scsi/ufs/ufshcd.c' line='9064' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_resume'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9064' column='1'/>
+      <function-decl name='ufshcd_system_resume' mangled-name='ufshcd_system_resume' filepath='drivers/scsi/ufs/ufshcd.c' line='9046' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_resume'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9046' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_shutdown' mangled-name='ufshcd_shutdown' filepath='drivers/scsi/ufs/ufshcd.c' line='9165' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_shutdown'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9165' column='1'/>
+      <function-decl name='ufshcd_shutdown' mangled-name='ufshcd_shutdown' filepath='drivers/scsi/ufs/ufshcd.c' line='9147' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_shutdown'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9147' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_remove' mangled-name='ufshcd_remove' filepath='drivers/scsi/ufs/ufshcd.c' line='9196' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_remove'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9196' column='1'/>
+      <function-decl name='ufshcd_remove' mangled-name='ufshcd_remove' filepath='drivers/scsi/ufs/ufshcd.c' line='9178' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_remove'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9178' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='ufshcd_release' mangled-name='ufshcd_release' filepath='drivers/scsi/ufs/ufshcd.c' line='1824' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_release'>
         <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='1824' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_query_flag_retry' mangled-name='ufshcd_query_flag_retry' filepath='drivers/scsi/ufs/ufshcd.c' line='2997' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_flag_retry'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='2997' column='1'/>
-        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='2998' column='1'/>
-        <parameter type-id='92ace17c' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='2998' column='1'/>
-        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='2998' column='1'/>
-        <parameter type-id='d8e6b335' name='flag_res' filepath='drivers/scsi/ufs/ufshcd.c' line='2998' column='1'/>
+      <function-decl name='ufshcd_query_flag_retry' mangled-name='ufshcd_query_flag_retry' filepath='drivers/scsi/ufs/ufshcd.c' line='2984' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_flag_retry'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='2984' column='1'/>
+        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='2985' column='1'/>
+        <parameter type-id='92ace17c' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='2985' column='1'/>
+        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='2985' column='1'/>
+        <parameter type-id='d8e6b335' name='flag_res' filepath='drivers/scsi/ufs/ufshcd.c' line='2985' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_query_attr_retry' mangled-name='ufshcd_query_attr_retry' filepath='drivers/scsi/ufs/ufshcd.c' line='3168' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_attr_retry'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3168' column='1'/>
-        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3169' column='1'/>
-        <parameter type-id='75eb1735' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3169' column='1'/>
-        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3169' column='1'/>
-        <parameter type-id='f9b06939' name='selector' filepath='drivers/scsi/ufs/ufshcd.c' line='3169' column='1'/>
-        <parameter type-id='f9409001' name='attr_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3170' column='1'/>
+      <function-decl name='ufshcd_query_attr_retry' mangled-name='ufshcd_query_attr_retry' filepath='drivers/scsi/ufs/ufshcd.c' line='3155' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_query_attr_retry'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3155' column='1'/>
+        <parameter type-id='5f757f13' name='opcode' filepath='drivers/scsi/ufs/ufshcd.c' line='3156' column='1'/>
+        <parameter type-id='75eb1735' name='idn' filepath='drivers/scsi/ufs/ufshcd.c' line='3156' column='1'/>
+        <parameter type-id='f9b06939' name='index' filepath='drivers/scsi/ufs/ufshcd.c' line='3156' column='1'/>
+        <parameter type-id='f9b06939' name='selector' filepath='drivers/scsi/ufs/ufshcd.c' line='3156' column='1'/>
+        <parameter type-id='f9409001' name='attr_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3157' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_map_desc_id_to_length' mangled-name='ufshcd_map_desc_id_to_length' filepath='drivers/scsi/ufs/ufshcd.c' line='3297' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_map_desc_id_to_length'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3297' column='1'/>
-        <parameter type-id='32c9d5cb' name='desc_id' filepath='drivers/scsi/ufs/ufshcd.c' line='3297' column='1'/>
-        <parameter type-id='7292109c' name='desc_len' filepath='drivers/scsi/ufs/ufshcd.c' line='3298' column='1'/>
+      <function-decl name='ufshcd_map_desc_id_to_length' mangled-name='ufshcd_map_desc_id_to_length' filepath='drivers/scsi/ufs/ufshcd.c' line='3284' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_map_desc_id_to_length'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3284' column='1'/>
+        <parameter type-id='32c9d5cb' name='desc_id' filepath='drivers/scsi/ufs/ufshcd.c' line='3284' column='1'/>
+        <parameter type-id='7292109c' name='desc_len' filepath='drivers/scsi/ufs/ufshcd.c' line='3285' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_link_recovery' mangled-name='ufshcd_link_recovery' filepath='drivers/scsi/ufs/ufshcd.c' line='4061' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_link_recovery'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4061' column='1'/>
+      <function-decl name='ufshcd_link_recovery' mangled-name='ufshcd_link_recovery' filepath='drivers/scsi/ufs/ufshcd.c' line='4048' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_link_recovery'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4048' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='ufshcd_get_local_unipro_ver' mangled-name='ufshcd_get_local_unipro_ver' filepath='drivers/scsi/ufs/ufshcd.c' line='900' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_get_local_unipro_ver'>
         <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='900' column='1'/>
         <return type-id='19c2251e'/>
       </function-decl>
-      <function-decl name='ufshcd_fixup_dev_quirks' mangled-name='ufshcd_fixup_dev_quirks' filepath='drivers/scsi/ufs/ufshcd.c' line='7409' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_fixup_dev_quirks'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='7409' column='1'/>
-        <parameter type-id='c5251c27' name='fixups' filepath='drivers/scsi/ufs/ufshcd.c' line='7409' column='1'/>
+      <function-decl name='ufshcd_fixup_dev_quirks' mangled-name='ufshcd_fixup_dev_quirks' filepath='drivers/scsi/ufs/ufshcd.c' line='7391' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_fixup_dev_quirks'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='7391' column='1'/>
+        <parameter type-id='c5251c27' name='fixups' filepath='drivers/scsi/ufs/ufshcd.c' line='7391' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='ufshcd_delay_us' mangled-name='ufshcd_delay_us' filepath='drivers/scsi/ufs/ufshcd.c' line='586' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_delay_us'>
@@ -115668,23 +115684,23 @@
         <parameter type-id='7359adad' name='tolerance' filepath='drivers/scsi/ufs/ufshcd.c' line='586' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_dealloc_host' mangled-name='ufshcd_dealloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9215' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dealloc_host'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9215' column='1'/>
+      <function-decl name='ufshcd_dealloc_host' mangled-name='ufshcd_dealloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9197' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dealloc_host'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9197' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_config_pwr_mode' mangled-name='ufshcd_config_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4352' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_config_pwr_mode'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4352' column='1'/>
-        <parameter type-id='35f4156d' name='desired_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4353' column='1'/>
+      <function-decl name='ufshcd_config_pwr_mode' mangled-name='ufshcd_config_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4339' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_config_pwr_mode'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4339' column='1'/>
+        <parameter type-id='35f4156d' name='desired_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4340' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_auto_hibern8_update' mangled-name='ufshcd_auto_hibern8_update' filepath='drivers/scsi/ufs/ufshcd.c' line='4143' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_auto_hibern8_update'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4143' column='1'/>
-        <parameter type-id='19c2251e' name='ahit' filepath='drivers/scsi/ufs/ufshcd.c' line='4143' column='1'/>
+      <function-decl name='ufshcd_auto_hibern8_update' mangled-name='ufshcd_auto_hibern8_update' filepath='drivers/scsi/ufs/ufshcd.c' line='4130' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_auto_hibern8_update'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4130' column='1'/>
+        <parameter type-id='19c2251e' name='ahit' filepath='drivers/scsi/ufs/ufshcd.c' line='4130' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_alloc_host' mangled-name='ufshcd_alloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9243' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_alloc_host'>
-        <parameter type-id='fa0b179b' name='dev' filepath='drivers/scsi/ufs/ufshcd.c' line='9243' column='1'/>
-        <parameter type-id='f38ff799' name='hba_handle' filepath='drivers/scsi/ufs/ufshcd.c' line='9243' column='1'/>
+      <function-decl name='ufshcd_alloc_host' mangled-name='ufshcd_alloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9225' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_alloc_host'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/scsi/ufs/ufshcd.c' line='9225' column='1'/>
+        <parameter type-id='f38ff799' name='hba_handle' filepath='drivers/scsi/ufs/ufshcd.c' line='9225' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-type size-in-bits='64' id='2873dcbb'>
@@ -130403,6 +130419,14 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='fs/kernfs/dir.c' language='LANG_C89'>
+      <class-decl name='simple_xattrs' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/linux/xattr.h' line='73' column='1' id='00ed5110'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='head' type-id='72f469ec' visibility='default' filepath='include/linux/xattr.h' line='74' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/linux/xattr.h' line='75' column='1'/>
+        </data-member>
+      </class-decl>
       <function-decl name='kernfs_put' mangled-name='kernfs_put' filepath='fs/kernfs/dir.c' line='506' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kernfs_put'>
         <parameter type-id='150efd3f' name='kn' filepath='fs/kernfs/dir.c' line='506' column='1'/>
         <return type-id='48b5725f'/>
@@ -130422,14 +130446,6 @@
       </function-decl>
     </abi-instr>
     <abi-instr address-size='64' path='fs/kernfs/file.c' language='LANG_C89'>
-      <class-decl name='simple_xattrs' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/linux/xattr.h' line='73' column='1' id='00ed5110'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='head' type-id='72f469ec' visibility='default' filepath='include/linux/xattr.h' line='74' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/linux/xattr.h' line='75' column='1'/>
-        </data-member>
-      </class-decl>
       <function-decl name='kernfs_notify' mangled-name='kernfs_notify' filepath='fs/kernfs/file.c' line='913' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kernfs_notify'>
         <parameter type-id='150efd3f' name='kn' filepath='fs/kernfs/file.c' line='913' column='1'/>
         <return type-id='48b5725f'/>
@@ -177902,6 +177918,54 @@
           <var-decl name='owner' type-id='2730d015' visibility='default' filepath='include/linux/net.h' line='221' column='1'/>
         </data-member>
       </class-decl>
+      <typedef-decl name='iw_handler' type-id='2c8ff697' filepath='include/net/iw_handler.h' line='315' column='1' id='bcc5cab3'/>
+      <class-decl name='iw_request_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/net/iw_handler.h' line='304' column='1' id='e90b3b44'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='cmd' type-id='d315442e' visibility='default' filepath='include/net/iw_handler.h' line='305' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='16'>
+          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/net/iw_handler.h' line='306' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='iw_point' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='691' column='1' id='db4e746c'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='pointer' type-id='eaa32e2f' visibility='default' filepath='include/uapi/linux/wireless.h' line='692' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='length' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='693' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='80'>
+          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='694' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='iw_param' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='680' column='1' id='b024252b'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='value' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='681' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='fixed' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='682' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='40'>
+          <var-decl name='disabled' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='683' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='48'>
+          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='684' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='iw_freq' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='706' column='1' id='bc1ac22c'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='m' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='707' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='e' type-id='b55def60' visibility='default' filepath='include/uapi/linux/wireless.h' line='708' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='48'>
+          <var-decl name='i' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='709' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='56'>
+          <var-decl name='flags' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='710' column='1'/>
+        </data-member>
+      </class-decl>
       <union-decl name='iwreq_data' size-in-bits='128' visibility='default' filepath='include/uapi/linux/wireless.h' line='902' column='1' id='ed626d0d'>
         <data-member access='public'>
           <var-decl name='name' type-id='ac1fa8c0' visibility='default' filepath='include/uapi/linux/wireless.h' line='904' column='1'/>
@@ -177958,109 +178022,6 @@
           <var-decl name='data' type-id='db4e746c' visibility='default' filepath='include/uapi/linux/wireless.h' line='930' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='request_sock' size-in-bits='1920' is-struct='yes' visibility='default' filepath='include/net/request_sock.h' line='53' column='1' id='1c03d197'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='__req_common' type-id='5999c5f7' visibility='default' filepath='include/net/request_sock.h' line='54' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='dl_next' type-id='94c948ef' visibility='default' filepath='include/net/request_sock.h' line='61' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='mss' type-id='1dc6a898' visibility='default' filepath='include/net/request_sock.h' line='62' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1168'>
-          <var-decl name='num_retrans' type-id='f9b06939' visibility='default' filepath='include/net/request_sock.h' line='63' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='syncookie' type-id='f9b06939' visibility='default' filepath='include/net/request_sock.h' line='64' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='num_timeout' type-id='f9b06939' visibility='default' filepath='include/net/request_sock.h' line='65' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1184'>
-          <var-decl name='ts_recent' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='66' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1216'>
-          <var-decl name='rsk_timer' type-id='abe41e67' visibility='default' filepath='include/net/request_sock.h' line='67' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1664'>
-          <var-decl name='rsk_ops' type-id='e7c1a985' visibility='default' filepath='include/net/request_sock.h' line='68' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1728'>
-          <var-decl name='sk' type-id='f772df6d' visibility='default' filepath='include/net/request_sock.h' line='69' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1792'>
-          <var-decl name='saved_syn' type-id='be9aaa19' visibility='default' filepath='include/net/request_sock.h' line='70' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1856'>
-          <var-decl name='secid' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='71' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='1888'>
-          <var-decl name='peer_secid' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='72' column='1'/>
-        </data-member>
-      </class-decl>
-      <class-decl name='saved_syn' size-in-bits='96' is-struct='yes' visibility='default' filepath='include/net/request_sock.h' line='44' column='1' id='9949f2d1'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='mac_hdrlen' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='45' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='network_hdrlen' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='46' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='tcp_hdrlen' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='47' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='data' type-id='29c3368c' visibility='default' filepath='include/net/request_sock.h' line='48' column='1'/>
-        </data-member>
-      </class-decl>
-      <typedef-decl name='iw_handler' type-id='2c8ff697' filepath='include/net/iw_handler.h' line='315' column='1' id='bcc5cab3'/>
-      <class-decl name='iw_request_info' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/net/iw_handler.h' line='304' column='1' id='e90b3b44'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='cmd' type-id='d315442e' visibility='default' filepath='include/net/iw_handler.h' line='305' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/net/iw_handler.h' line='306' column='1'/>
-        </data-member>
-      </class-decl>
-      <class-decl name='iw_point' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='691' column='1' id='db4e746c'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='pointer' type-id='eaa32e2f' visibility='default' filepath='include/uapi/linux/wireless.h' line='692' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='length' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='693' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='80'>
-          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='694' column='1'/>
-        </data-member>
-      </class-decl>
-      <class-decl name='iw_param' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='680' column='1' id='b024252b'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='value' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='681' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='fixed' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='682' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='40'>
-          <var-decl name='disabled' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='683' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='48'>
-          <var-decl name='flags' type-id='d315442e' visibility='default' filepath='include/uapi/linux/wireless.h' line='684' column='1'/>
-        </data-member>
-      </class-decl>
-      <class-decl name='iw_freq' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='706' column='1' id='bc1ac22c'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='m' type-id='3158a266' visibility='default' filepath='include/uapi/linux/wireless.h' line='707' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='e' type-id='b55def60' visibility='default' filepath='include/uapi/linux/wireless.h' line='708' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='48'>
-          <var-decl name='i' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='709' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='56'>
-          <var-decl name='flags' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='710' column='1'/>
-        </data-member>
-      </class-decl>
       <class-decl name='iw_quality' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/uapi/linux/wireless.h' line='716' column='1' id='aa80c027'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='qual' type-id='8f048e17' visibility='default' filepath='include/uapi/linux/wireless.h' line='717' column='1'/>
@@ -178519,7 +178480,62 @@
         </data-member>
       </class-decl>
       <typedef-decl name='u_int8_t' type-id='f9b06939' filepath='include/linux/types.h' line='93' column='1' id='892641a4'/>
-      <union-decl name='__anonymous_union__22' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/net/ip.h' line='125' column='1' id='4fa91678'>
+      <class-decl name='request_sock' size-in-bits='1920' is-struct='yes' visibility='default' filepath='include/net/request_sock.h' line='53' column='1' id='1c03d197'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='__req_common' type-id='5999c5f7' visibility='default' filepath='include/net/request_sock.h' line='54' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1088'>
+          <var-decl name='dl_next' type-id='94c948ef' visibility='default' filepath='include/net/request_sock.h' line='61' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1152'>
+          <var-decl name='mss' type-id='1dc6a898' visibility='default' filepath='include/net/request_sock.h' line='62' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1168'>
+          <var-decl name='num_retrans' type-id='f9b06939' visibility='default' filepath='include/net/request_sock.h' line='63' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='syncookie' type-id='f9b06939' visibility='default' filepath='include/net/request_sock.h' line='64' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1'>
+          <var-decl name='num_timeout' type-id='f9b06939' visibility='default' filepath='include/net/request_sock.h' line='65' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1184'>
+          <var-decl name='ts_recent' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='66' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1216'>
+          <var-decl name='rsk_timer' type-id='abe41e67' visibility='default' filepath='include/net/request_sock.h' line='67' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1664'>
+          <var-decl name='rsk_ops' type-id='e7c1a985' visibility='default' filepath='include/net/request_sock.h' line='68' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='sk' type-id='f772df6d' visibility='default' filepath='include/net/request_sock.h' line='69' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1792'>
+          <var-decl name='saved_syn' type-id='be9aaa19' visibility='default' filepath='include/net/request_sock.h' line='70' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1856'>
+          <var-decl name='secid' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='71' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1888'>
+          <var-decl name='peer_secid' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='72' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='saved_syn' size-in-bits='96' is-struct='yes' visibility='default' filepath='include/net/request_sock.h' line='44' column='1' id='9949f2d1'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='mac_hdrlen' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='45' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='network_hdrlen' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='46' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='tcp_hdrlen' type-id='19c2251e' visibility='default' filepath='include/net/request_sock.h' line='47' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='data' type-id='29c3368c' visibility='default' filepath='include/net/request_sock.h' line='48' column='1'/>
+        </data-member>
+      </class-decl>
+      <union-decl name='__anonymous_union__24' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/net/ip.h' line='125' column='1' id='4fa91678'>
         <data-member access='public'>
           <var-decl name='destructor' type-id='841969d0' visibility='default' filepath='include/net/ip.h' line='126' column='1'/>
         </data-member>
@@ -188182,17 +188198,6 @@
           <var-decl name='__pad4' type-id='7e3959e3' visibility='default' filepath='include/uapi/sound/asound.h' line='585' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
-        <data-member access='public'>
-          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
-        </data-member>
-        <data-member access='public'>
-          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
-        </data-member>
-      </union-decl>
       <class-decl name='snd_pcm_hardware' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/sound/pcm.h' line='31' column='1' id='eacd353c'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='info' type-id='f0981eeb' visibility='default' filepath='include/sound/pcm.h' line='32' column='1'/>
@@ -188268,6 +188273,17 @@
           <var-decl name='private' type-id='eaa32e2f' visibility='default' filepath='include/sound/pcm.h' line='235' column='1'/>
         </data-member>
       </class-decl>
+      <union-decl name='snd_pcm_sync_id' size-in-bits='128' visibility='default' filepath='include/uapi/sound/asound.h' line='337' column='1' id='85b4e5de'>
+        <data-member access='public'>
+          <var-decl name='id' type-id='92a46553' visibility='default' filepath='include/uapi/sound/asound.h' line='338' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id16' type-id='ff13edc1' visibility='default' filepath='include/uapi/sound/asound.h' line='339' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='id32' type-id='49580a63' visibility='default' filepath='include/uapi/sound/asound.h' line='340' column='1'/>
+        </data-member>
+      </union-decl>
       <typedef-decl name='snd_pcm_hw_rule_func_t' type-id='657a5cf1' filepath='include/sound/pcm.h' line='226' column='1' id='58d3b2a5'/>
       <class-decl name='snd_timer' size-in-bits='3456' is-struct='yes' visibility='default' filepath='include/sound/timer.h' line='57' column='1' id='73595e52'>
         <data-member access='public' layout-offset-in-bits='0'>
