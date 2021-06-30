@@ -457,9 +457,7 @@ static void panfrost_job_timedout(struct drm_sched_job *sched_job)
 	if (!panfrost_scheduler_stop(&pfdev->js->queue[js], sched_job))
 		return;
 
-	/* Schedule a reset if there's no reset in progress. */
-	if (!atomic_xchg(&pfdev->reset.pending, 1))
-		schedule_work(&pfdev->reset.work);
+	panfrost_device_schedule_reset(pfdev);
 }
 
 static const struct drm_sched_backend_ops panfrost_sched_ops = {
