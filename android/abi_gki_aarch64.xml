@@ -2734,6 +2734,7 @@
       <elf-symbol name='netif_device_detach' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x146579ec'/>
       <elf-symbol name='netif_napi_add' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9fbf51e0'/>
       <elf-symbol name='netif_receive_skb' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe2cd6714'/>
+      <elf-symbol name='netif_receive_skb_core' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ab4da32'/>
       <elf-symbol name='netif_receive_skb_list' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b8bf149'/>
       <elf-symbol name='netif_rx' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x37c4b4a5'/>
       <elf-symbol name='netif_rx_ni' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7d9cb5db'/>
@@ -32527,7 +32528,7 @@
           <var-decl name='nulls_head' type-id='af86905d' visibility='default' filepath='include/net/inet_hashtables.h' line='117' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/xfrm.h' line='151' column='1' id='fc320d58'>
+      <union-decl name='__anonymous_union__10' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/xfrm.h' line='151' column='1' id='fc320d58'>
         <data-member access='public'>
           <var-decl name='gclist' type-id='03a4a074' visibility='default' filepath='include/net/xfrm.h' line='152' column='1'/>
         </data-member>
@@ -172321,6 +172322,10 @@
         <parameter type-id='a2bff676' name='net' filepath='net/core/dev.c' line='977' column='1'/>
         <parameter type-id='95e97e5e' name='ifindex' filepath='net/core/dev.c' line='977' column='1'/>
         <return type-id='68a2d05b'/>
+      </function-decl>
+      <function-decl name='netif_receive_skb_core' mangled-name='netif_receive_skb_core' filepath='net/core/dev.c' line='5364' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_receive_skb_core'>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/dev.c' line='5364' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='netdev_warn' mangled-name='netdev_warn' filepath='net/core/dev.c' line='11095' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netdev_warn'>
         <parameter type-id='2ce52478' name='dev' filepath='net/core/dev.c' line='11095' column='1'/>
