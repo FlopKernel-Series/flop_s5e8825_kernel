@@ -1946,6 +1946,11 @@
       <elf-symbol name='freq_qos_add_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x28498a88'/>
       <elf-symbol name='freq_qos_remove_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x894967be'/>
       <elf-symbol name='freq_qos_update_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2eec24ef'/>
+      <elf-symbol name='fsg_common_create_luns' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd1a3e8e0'/>
+      <elf-symbol name='fsg_common_set_cdev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5709b9f3'/>
+      <elf-symbol name='fsg_common_set_inquiry_string' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6acb4179'/>
+      <elf-symbol name='fsg_common_set_sysfs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7e26d4a5'/>
+      <elf-symbol name='fsg_config_from_params' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xab6c68ac'/>
       <elf-symbol name='fsync_bdev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1161ea68'/>
       <elf-symbol name='ftrace_dump' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaaa918c9'/>
       <elf-symbol name='full_name_hash' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd6eaaea1'/>
@@ -4304,6 +4309,7 @@
       <elf-symbol name='up_write' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x20d81059'/>
       <elf-symbol name='update_devfreq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9864c655'/>
       <elf-symbol name='update_rq_clock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x34496658'/>
+      <elf-symbol name='usb_add_config' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1b2613ca'/>
       <elf-symbol name='usb_add_function' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd3d097dd'/>
       <elf-symbol name='usb_add_gadget' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa2bae484'/>
       <elf-symbol name='usb_add_gadget_udc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x16721ac8'/>
@@ -4326,7 +4332,9 @@
       <elf-symbol name='usb_bulk_msg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2bea6475'/>
       <elf-symbol name='usb_calc_bus_time' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7e64181d'/>
       <elf-symbol name='usb_choose_configuration' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3e484d85'/>
+      <elf-symbol name='usb_composite_probe' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa20676ea'/>
       <elf-symbol name='usb_composite_setup_continue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x699658cc'/>
+      <elf-symbol name='usb_composite_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x95a12591'/>
       <elf-symbol name='usb_control_msg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4c06d6b8'/>
       <elf-symbol name='usb_copy_descriptors' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2e09263f'/>
       <elf-symbol name='usb_create_hcd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x567b53f5'/>
@@ -4356,10 +4364,13 @@
       <elf-symbol name='usb_free_urb' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa33cc4cb'/>
       <elf-symbol name='usb_function_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb3a3f142'/>
       <elf-symbol name='usb_function_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5cc84447'/>
+      <elf-symbol name='usb_gadget_connect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf4c1bca2'/>
+      <elf-symbol name='usb_gadget_disconnect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x51d80df3'/>
       <elf-symbol name='usb_gadget_giveback_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7be89624'/>
       <elf-symbol name='usb_gadget_map_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe14698dd'/>
       <elf-symbol name='usb_gadget_map_request_by_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf8eac8a8'/>
       <elf-symbol name='usb_gadget_probe_driver' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd709c4b9'/>
+      <elf-symbol name='usb_gadget_set_selfpowered' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x24cf7b65'/>
       <elf-symbol name='usb_gadget_set_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b964a06'/>
       <elf-symbol name='usb_gadget_udc_reset' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1b417fa1'/>
       <elf-symbol name='usb_gadget_unmap_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5f5afe89'/>
@@ -4370,6 +4381,8 @@
       <elf-symbol name='usb_gadget_vbus_draw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1d7744cb'/>
       <elf-symbol name='usb_gadget_wakeup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x38b96043'/>
       <elf-symbol name='usb_get_dr_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4ff18a60'/>
+      <elf-symbol name='usb_get_function' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe4b0961b'/>
+      <elf-symbol name='usb_get_function_instance' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa52e1053'/>
       <elf-symbol name='usb_get_gadget_udc_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x50b88f41'/>
       <elf-symbol name='usb_get_maximum_speed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d5d39dc'/>
       <elf-symbol name='usb_get_urb' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba54ef29'/>
@@ -4401,10 +4414,12 @@
       <elf-symbol name='usb_phy_set_charger_current' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3e929e49'/>
       <elf-symbol name='usb_poison_urb' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x667d597b'/>
       <elf-symbol name='usb_put_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdea9df28'/>
+      <elf-symbol name='usb_put_function' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7df3c9eb'/>
       <elf-symbol name='usb_put_function_instance' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd369b8a1'/>
       <elf-symbol name='usb_put_hcd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x546b45fa'/>
       <elf-symbol name='usb_register_driver' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc3768270'/>
       <elf-symbol name='usb_register_notify' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89bbafc6'/>
+      <elf-symbol name='usb_remove_function' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf627cde1'/>
       <elf-symbol name='usb_remove_hcd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbce38100'/>
       <elf-symbol name='usb_remove_phy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe6264aed'/>
       <elf-symbol name='usb_role_switch_find_by_fwnode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf9cd4ab2'/>
@@ -25011,7 +25026,7 @@
           <var-decl name='' type-id='0c30e35e' visibility='default' filepath='include/linux/perf_event.h' line='230' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
+      <union-decl name='__anonymous_union__9' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
         <data-member access='public'>
           <var-decl name='s' type-id='88d8a388' visibility='default' filepath='include/net/netns/generic.h' line='33' column='1'/>
         </data-member>
@@ -32528,7 +32543,7 @@
           <var-decl name='nulls_head' type-id='af86905d' visibility='default' filepath='include/net/inet_hashtables.h' line='117' column='1'/>
         </data-member>
       </union-decl>
-      <union-decl name='__anonymous_union__10' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/xfrm.h' line='151' column='1' id='fc320d58'>
+      <union-decl name='__anonymous_union__7' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/net/xfrm.h' line='151' column='1' id='fc320d58'>
         <data-member access='public'>
           <var-decl name='gclist' type-id='03a4a074' visibility='default' filepath='include/net/xfrm.h' line='152' column='1'/>
         </data-member>
@@ -63062,7 +63077,7 @@
         <parameter type-id='94411a61'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__5' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -124012,9 +124027,15 @@
       </function-type>
     </abi-instr>
     <abi-instr address-size='64' path='drivers/usb/gadget/composite.c' language='LANG_C89'>
+      <pointer-type-def type-id='371f2e98' size-in-bits='64' id='82b599aa'/>
       <function-decl name='usb_string_id' mangled-name='usb_string_id' filepath='drivers/usb/gadget/composite.c' line='1271' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_string_id'>
         <parameter type-id='2a895c01' name='cdev' filepath='drivers/usb/gadget/composite.c' line='1271' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='usb_remove_function' mangled-name='usb_remove_function' filepath='drivers/usb/gadget/composite.c' line='354' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_remove_function'>
+        <parameter type-id='ee27b7c6' name='c' filepath='drivers/usb/gadget/composite.c' line='354' column='1'/>
+        <parameter type-id='e5411c2c' name='f' filepath='drivers/usb/gadget/composite.c' line='354' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='usb_interface_id' mangled-name='usb_interface_id' filepath='drivers/usb/gadget/composite.c' line='466' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_interface_id'>
         <parameter type-id='ee27b7c6' name='config' filepath='drivers/usb/gadget/composite.c' line='466' column='1'/>
@@ -124027,13 +124048,27 @@
         <parameter type-id='f0981eeb' name='n_strings' filepath='drivers/usb/gadget/composite.c' line='1385' column='1'/>
         <return type-id='3b7e997b'/>
       </function-decl>
+      <function-decl name='usb_composite_unregister' mangled-name='usb_composite_unregister' filepath='drivers/usb/gadget/composite.c' line='2485' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_composite_unregister'>
+        <parameter type-id='c64e62ba' name='driver' filepath='drivers/usb/gadget/composite.c' line='2485' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='usb_composite_setup_continue' mangled-name='usb_composite_setup_continue' filepath='drivers/usb/gadget/composite.c' line='2501' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_composite_setup_continue'>
         <parameter type-id='2a895c01' name='cdev' filepath='drivers/usb/gadget/composite.c' line='2501' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='usb_composite_probe' mangled-name='usb_composite_probe' filepath='drivers/usb/gadget/composite.c' line='2457' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_composite_probe'>
+        <parameter type-id='c64e62ba' name='driver' filepath='drivers/usb/gadget/composite.c' line='2457' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='usb_add_function' mangled-name='usb_add_function' filepath='drivers/usb/gadget/composite.c' line='301' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_add_function'>
         <parameter type-id='ee27b7c6' name='config' filepath='drivers/usb/gadget/composite.c' line='301' column='1'/>
         <parameter type-id='e5411c2c' name='function' filepath='drivers/usb/gadget/composite.c' line='302' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='usb_add_config' mangled-name='usb_add_config' filepath='drivers/usb/gadget/composite.c' line='996' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_add_config'>
+        <parameter type-id='2a895c01' name='cdev' filepath='drivers/usb/gadget/composite.c' line='996' column='1'/>
+        <parameter type-id='ee27b7c6' name='config' filepath='drivers/usb/gadget/composite.c' line='997' column='1'/>
+        <parameter type-id='82b599aa' name='bind' filepath='drivers/usb/gadget/composite.c' line='998' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='config_ep_by_speed' mangled-name='config_ep_by_speed' filepath='drivers/usb/gadget/composite.c' line='279' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='config_ep_by_speed'>
@@ -124042,7 +124077,12 @@
         <parameter type-id='63a08bf7' name='_ep' filepath='drivers/usb/gadget/composite.c' line='281' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-type size-in-bits='64' id='371f2e98'>
+        <parameter type-id='ee27b7c6'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <pointer-type-def type-id='e9546509' size-in-bits='64' id='2a895c01'/>
+      <pointer-type-def type-id='692fa8cc' size-in-bits='64' id='c64e62ba'/>
       <pointer-type-def type-id='85c151d0' size-in-bits='64' id='ee27b7c6'/>
       <pointer-type-def type-id='d6a54726' size-in-bits='64' id='e5411c2c'/>
       <pointer-type-def type-id='9a9cf0bf' size-in-bits='64' id='fa0eba8f'/>
@@ -124107,6 +124147,41 @@
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
           <var-decl name='os_desc_pending' type-id='f0981eeb' visibility='default' filepath='include/linux/usb/composite.h' line='516' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='usb_composite_driver' size-in-bits='2560' is-struct='yes' visibility='default' filepath='include/linux/usb/composite.h' line='388' column='1' id='692fa8cc'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='name' type-id='80f4b756' visibility='default' filepath='include/linux/usb/composite.h' line='389' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='dev' type-id='b5c13ec7' visibility='default' filepath='include/linux/usb/composite.h' line='390' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='strings' type-id='fa0eba8f' visibility='default' filepath='include/linux/usb/composite.h' line='391' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='max_speed' type-id='4e532009' visibility='default' filepath='include/linux/usb/composite.h' line='392' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='needs_serial' type-id='f0981eeb' visibility='default' filepath='include/linux/usb/composite.h' line='393' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='bind' type-id='ced7d449' visibility='default' filepath='include/linux/usb/composite.h' line='395' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='unbind' type-id='ced7d449' visibility='default' filepath='include/linux/usb/composite.h' line='396' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='disconnect' type-id='b2a3307c' visibility='default' filepath='include/linux/usb/composite.h' line='398' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='448'>
+          <var-decl name='suspend' type-id='b2a3307c' visibility='default' filepath='include/linux/usb/composite.h' line='401' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='512'>
+          <var-decl name='resume' type-id='b2a3307c' visibility='default' filepath='include/linux/usb/composite.h' line='402' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='gadget_driver' type-id='b718d3f9' visibility='default' filepath='include/linux/usb/composite.h' line='403' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='usb_configuration' size-in-bits='1792' is-struct='yes' visibility='default' filepath='include/linux/usb/composite.h' line='302' column='1' id='85c151d0'>
@@ -124263,7 +124338,9 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='9e6bb89c' size-in-bits='64' id='1993c682'/>
+      <pointer-type-def type-id='d4f1de57' size-in-bits='64' id='b5c13ec7'/>
       <pointer-type-def type-id='1a56399f' size-in-bits='64' id='2abcd7ef'/>
+      <pointer-type-def type-id='9a22e8f5' size-in-bits='64' id='ced7d449'/>
       <pointer-type-def type-id='f154f192' size-in-bits='64' id='04b7616c'/>
       <pointer-type-def type-id='7c02f62f' size-in-bits='64' id='3b615603'/>
       <pointer-type-def type-id='0965e7f8' size-in-bits='64' id='58d59612'/>
@@ -124272,50 +124349,15 @@
       <pointer-type-def type-id='6c6f1c36' size-in-bits='64' id='01481038'/>
       <pointer-type-def type-id='476ef610' size-in-bits='64' id='addd4a1a'/>
       <pointer-type-def type-id='16eae85b' size-in-bits='64' id='dc59a00f'/>
-      <pointer-type-def type-id='692fa8cc' size-in-bits='64' id='c64e62ba'/>
       <pointer-type-def type-id='5948074d' size-in-bits='64' id='f363a725'/>
       <array-type-def dimensions='1' type-id='e5411c2c' size-in-bits='1024' id='9c207f89'>
         <subrange length='16' type-id='7ff19f0f' id='848d0938'/>
       </array-type-def>
       <pointer-type-def type-id='ee0eb9bb' size-in-bits='64' id='fed2517b'/>
+      <pointer-type-def type-id='90df3e0a' size-in-bits='64' id='b2a3307c'/>
       <pointer-type-def type-id='faebaea7' size-in-bits='64' id='b7daa1eb'/>
       <pointer-type-def type-id='b86ce2e2' size-in-bits='64' id='d44ba07c'/>
       <pointer-type-def type-id='d7b840f9' size-in-bits='64' id='0da78fa5'/>
-      <class-decl name='usb_composite_driver' size-in-bits='2560' is-struct='yes' visibility='default' filepath='include/linux/usb/composite.h' line='388' column='1' id='692fa8cc'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='name' type-id='80f4b756' visibility='default' filepath='include/linux/usb/composite.h' line='389' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='dev' type-id='b5c13ec7' visibility='default' filepath='include/linux/usb/composite.h' line='390' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='strings' type-id='fa0eba8f' visibility='default' filepath='include/linux/usb/composite.h' line='391' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='max_speed' type-id='4e532009' visibility='default' filepath='include/linux/usb/composite.h' line='392' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='needs_serial' type-id='f0981eeb' visibility='default' filepath='include/linux/usb/composite.h' line='393' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='bind' type-id='ced7d449' visibility='default' filepath='include/linux/usb/composite.h' line='395' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='unbind' type-id='ced7d449' visibility='default' filepath='include/linux/usb/composite.h' line='396' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='disconnect' type-id='b2a3307c' visibility='default' filepath='include/linux/usb/composite.h' line='398' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='suspend' type-id='b2a3307c' visibility='default' filepath='include/linux/usb/composite.h' line='401' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='resume' type-id='b2a3307c' visibility='default' filepath='include/linux/usb/composite.h' line='402' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='gadget_driver' type-id='b718d3f9' visibility='default' filepath='include/linux/usb/composite.h' line='403' column='1'/>
-        </data-member>
-      </class-decl>
       <class-decl name='usb_os_desc_table' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/usb/composite.h' line='113' column='1' id='ee0eb9bb'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='if_id' type-id='95e97e5e' visibility='default' filepath='include/linux/usb/composite.h' line='114' column='1'/>
@@ -124325,6 +124367,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='5352365e' size-in-bits='64' id='9e6bb89c'/>
+      <qualified-type-def type-id='582de67c' const='yes' id='d4f1de57'/>
       <qualified-type-def type-id='364ef168' const='yes' id='1a56399f'/>
       <pointer-type-def type-id='4cd738bd' size-in-bits='64' id='5948074d'/>
       <class-decl name='usb_descriptor_header' size-in-bits='16' is-struct='yes' visibility='default' filepath='include/uapi/linux/usb/ch9.h' line='280' column='1' id='4cd738bd'>
@@ -124356,10 +124399,7 @@
         </data-member>
       </class-decl>
       <qualified-type-def type-id='4cd738bd' const='yes' id='5352365e'/>
-      <pointer-type-def type-id='d4f1de57' size-in-bits='64' id='b5c13ec7'/>
-      <pointer-type-def type-id='9a22e8f5' size-in-bits='64' id='ced7d449'/>
       <pointer-type-def type-id='e5af4d64' size-in-bits='64' id='5260af22'/>
-      <pointer-type-def type-id='90df3e0a' size-in-bits='64' id='b2a3307c'/>
       <class-decl name='config_group' size-in-bits='1088' is-struct='yes' visibility='default' filepath='include/linux/configfs.h' line='79' column='1' id='f05eea43'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='cg_item' type-id='79236ccf' visibility='default' filepath='include/linux/configfs.h' line='80' column='1'/>
@@ -124400,7 +124440,6 @@
           <var-decl name='owner' type-id='2730d015' visibility='default' filepath='include/linux/usb/composite.h' line='100' column='1'/>
         </data-member>
       </class-decl>
-      <qualified-type-def type-id='582de67c' const='yes' id='d4f1de57'/>
       <pointer-type-def type-id='306fcd19' size-in-bits='64' id='f0f4c2cd'/>
       <pointer-type-def type-id='38df0539' size-in-bits='64' id='f666bcc1'/>
       <pointer-type-def type-id='b297b72f' size-in-bits='64' id='f16bd93b'/>
@@ -125026,6 +125065,401 @@
         <return type-id='63a08bf7'/>
       </function-decl>
     </abi-instr>
+    <abi-instr address-size='64' path='drivers/usb/gadget/function/f_mass_storage.c' language='LANG_C89'>
+      <array-type-def dimensions='1' type-id='b50a4934' size-in-bits='128' id='84b1e060'>
+        <subrange length='16' type-id='7ff19f0f' id='848d0938'/>
+      </array-type-def>
+      <array-type-def dimensions='1' type-id='26a90f95' size-in-bits='1024' id='04959838'>
+        <subrange length='16' type-id='7ff19f0f' id='848d0938'/>
+      </array-type-def>
+      <array-type-def dimensions='1' type-id='a84c031d' size-in-bits='232' id='aa60f212'>
+        <subrange length='29' type-id='7ff19f0f' id='01b8f6fa'/>
+      </array-type-def>
+      <class-decl name='fsg_operations' is-struct='yes' visibility='default' is-declaration-only='yes' id='bbaaef8a'/>
+      <array-type-def dimensions='1' type-id='5b450efb' size-in-bits='1024' id='11a65fb6'>
+        <subrange length='16' type-id='7ff19f0f' id='848d0938'/>
+      </array-type-def>
+      <array-type-def dimensions='1' type-id='62d6a83a' size-in-bits='6144' id='eab1661f'>
+        <subrange length='16' type-id='7ff19f0f' id='848d0938'/>
+      </array-type-def>
+      <class-decl name='fsg_config' size-in-bits='6528' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='96' column='1' id='4f56f8e2'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='nluns' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='97' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='luns' type-id='eab1661f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='98' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6208'>
+          <var-decl name='ops' type-id='b68210c7' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='101' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6272'>
+          <var-decl name='private_data' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='103' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6336'>
+          <var-decl name='vendor_name' type-id='80f4b756' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='105' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6400'>
+          <var-decl name='product_name' type-id='80f4b756' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='106' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6464'>
+          <var-decl name='can_stall' type-id='a84c031d' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='108' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6496'>
+          <var-decl name='fsg_num_buffers' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='109' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='fsg_lun_config' size-in-bits='384' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='87' column='1' id='62d6a83a'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='filename' type-id='80f4b756' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='88' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='ro' type-id='a84c031d' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='89' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='72'>
+          <var-decl name='removable' type-id='a84c031d' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='90' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='80'>
+          <var-decl name='cdrom' type-id='a84c031d' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='91' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='88'>
+          <var-decl name='nofua' type-id='a84c031d' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='92' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='inquiry_string' type-id='aa60f212' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='93' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='fsg_module_parameters' size-in-bits='1792' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='8' column='1' id='cbbd46cd'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='file' type-id='04959838' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='9' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1024'>
+          <var-decl name='ro' type-id='84b1e060' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='10' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1152'>
+          <var-decl name='removable' type-id='84b1e060' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='11' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1280'>
+          <var-decl name='cdrom' type-id='84b1e060' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='12' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='nofua' type-id='84b1e060' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='13' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1536'>
+          <var-decl name='file_count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='15' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1568'>
+          <var-decl name='ro_count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='15' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1600'>
+          <var-decl name='removable_count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='15' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1632'>
+          <var-decl name='cdrom_count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='15' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1664'>
+          <var-decl name='nofua_count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='16' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1696'>
+          <var-decl name='luns' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='17' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='stall' type-id='b50a4934' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.h' line='18' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='fsg_common' size-in-bits='3968' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='262' column='1' id='660986b5'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='gadget' type-id='49a58c0c' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='263' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='cdev' type-id='2a895c01' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='264' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='fsg' type-id='bdd84dab' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='265' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='io_wait' type-id='b5ab048f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='266' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='fsg_wait' type-id='b5ab048f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='267' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='filesem' type-id='f19fdb93' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='270' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1088'>
+          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='273' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1152'>
+          <var-decl name='ep0' type-id='63a08bf7' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='275' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1216'>
+          <var-decl name='ep0req' type-id='1a494567' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='276' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1280'>
+          <var-decl name='ep0_req_tag' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='277' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1344'>
+          <var-decl name='next_buffhd_to_fill' type-id='63657a49' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='279' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='next_buffhd_to_drain' type-id='63657a49' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='280' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1472'>
+          <var-decl name='buffhds' type-id='63657a49' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='281' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1536'>
+          <var-decl name='fsg_num_buffers' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='282' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1568'>
+          <var-decl name='cmnd_size' type-id='95e97e5e' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='284' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1600'>
+          <var-decl name='cmnd' type-id='0d8415b5' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='285' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='lun' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='287' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1792'>
+          <var-decl name='luns' type-id='11a65fb6' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='288' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2816'>
+          <var-decl name='curlun' type-id='5b450efb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='289' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2880'>
+          <var-decl name='bulk_out_maxpacket' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='291' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2912'>
+          <var-decl name='state' type-id='1b61257a' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='292' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2944'>
+          <var-decl name='exception_req_tag' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='293' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3008'>
+          <var-decl name='exception_arg' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='294' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3072'>
+          <var-decl name='data_dir' type-id='c03cb3da' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='296' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3104'>
+          <var-decl name='data_size' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='297' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3136'>
+          <var-decl name='data_size_from_cmnd' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='298' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3168'>
+          <var-decl name='tag' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='299' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3200'>
+          <var-decl name='residue' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='300' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3232'>
+          <var-decl name='usb_amount_left' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='301' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='can_stall' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='303' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1'>
+          <var-decl name='free_storage_on_release' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='304' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2'>
+          <var-decl name='phase_error' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='305' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3'>
+          <var-decl name='short_packet_received' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='306' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='4'>
+          <var-decl name='bad_lun_okay' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='307' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='5'>
+          <var-decl name='running' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='308' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6'>
+          <var-decl name='sysfs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='309' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3328'>
+          <var-decl name='thread_notifier' type-id='f9fef04f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='311' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3584'>
+          <var-decl name='thread_task' type-id='f23e2572' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='312' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3648'>
+          <var-decl name='private_data' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='315' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3712'>
+          <var-decl name='inquiry_string' type-id='aa60f212' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='317' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='fsg_dev' size-in-bits='2112' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='320' column='1' id='9832842b'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='function' type-id='d6a54726' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='321' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='gadget' type-id='49a58c0c' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='322' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1792'>
+          <var-decl name='common' type-id='8f32e025' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='323' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1856'>
+          <var-decl name='interface_number' type-id='1dc6a898' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='325' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='16'>
+          <var-decl name='bulk_in_enabled' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='327' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='17'>
+          <var-decl name='bulk_out_enabled' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='328' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1920'>
+          <var-decl name='atomic_bitflags' type-id='7359adad' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='330' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1984'>
+          <var-decl name='bulk_in' type-id='63a08bf7' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='333' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2048'>
+          <var-decl name='bulk_out' type-id='63a08bf7' visibility='default' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='334' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='fsg_buffhd' size-in-bits='384' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='143' column='1' id='81645a21'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='buf' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='144' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='state' type-id='33e6bdc5' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='145' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='next' type-id='63657a49' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='146' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='bulk_out_intended_length' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='153' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='inreq' type-id='1a494567' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='155' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='outreq' type-id='1a494567' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='156' column='1'/>
+        </data-member>
+      </class-decl>
+      <enum-decl name='fsg_buffer_state' filepath='drivers/usb/gadget/function/storage_common.h' line='136' column='1' id='33e6bdc5'>
+        <underlying-type type-id='9cac1fee'/>
+        <enumerator name='BUF_STATE_SENDING' value='-2'/>
+        <enumerator name='BUF_STATE_RECEIVING' value='-1'/>
+        <enumerator name='BUF_STATE_EMPTY' value='0'/>
+        <enumerator name='BUF_STATE_FULL' value='1'/>
+      </enum-decl>
+      <class-decl name='fsg_lun' size-in-bits='7168' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='98' column='1' id='0741cbfb'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='filp' type-id='77e79a4b' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='99' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='file_length' type-id='69bf7bee' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='100' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='num_sectors' type-id='69bf7bee' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='101' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='initially_ro' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='103' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1'>
+          <var-decl name='ro' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='104' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='2'>
+          <var-decl name='removable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='105' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3'>
+          <var-decl name='cdrom' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='106' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='4'>
+          <var-decl name='prevent_medium_removal' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='107' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='5'>
+          <var-decl name='registered' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='108' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6'>
+          <var-decl name='info_valid' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='109' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='7'>
+          <var-decl name='nofua' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='110' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='224'>
+          <var-decl name='sense_data' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='112' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='sense_data_info' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='113' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='288'>
+          <var-decl name='unit_attention_data' type-id='19c2251e' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='114' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='blkbits' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='116' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='352'>
+          <var-decl name='blksize' type-id='f0981eeb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='118' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='dev' type-id='66e487eb' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='119' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6784'>
+          <var-decl name='name' type-id='80f4b756' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='120' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6848'>
+          <var-decl name='name_pfx' type-id='7d3cd834' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='121' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='6912'>
+          <var-decl name='inquiry_string' type-id='aa60f212' visibility='default' filepath='drivers/usb/gadget/function/storage_common.h' line='122' column='1'/>
+        </data-member>
+      </class-decl>
+      <enum-decl name='fsg_state' filepath='drivers/usb/gadget/function/storage_common.h' line='159' column='1' id='1b61257a'>
+        <underlying-type type-id='9cac1fee'/>
+        <enumerator name='FSG_STATE_NORMAL' value='0'/>
+        <enumerator name='FSG_STATE_ABORT_BULK_OUT' value='1'/>
+        <enumerator name='FSG_STATE_PROTOCOL_RESET' value='2'/>
+        <enumerator name='FSG_STATE_CONFIG_CHANGE' value='3'/>
+        <enumerator name='FSG_STATE_EXIT' value='4'/>
+        <enumerator name='FSG_STATE_TERMINATED' value='5'/>
+      </enum-decl>
+      <enum-decl name='data_direction' filepath='drivers/usb/gadget/function/storage_common.h' line='168' column='1' id='c03cb3da'>
+        <underlying-type type-id='9cac1fee'/>
+        <enumerator name='DATA_DIR_UNKNOWN' value='0'/>
+        <enumerator name='DATA_DIR_FROM_HOST' value='1'/>
+        <enumerator name='DATA_DIR_TO_HOST' value='2'/>
+        <enumerator name='DATA_DIR_NONE' value='3'/>
+      </enum-decl>
+      <qualified-type-def type-id='cbbd46cd' const='yes' id='04f1443e'/>
+      <pointer-type-def type-id='04f1443e' size-in-bits='64' id='dbce2b7c'/>
+      <qualified-type-def type-id='bbaaef8a' const='yes' id='79790457'/>
+      <pointer-type-def type-id='79790457' size-in-bits='64' id='b68210c7'/>
+      <pointer-type-def type-id='81645a21' size-in-bits='64' id='63657a49'/>
+      <pointer-type-def type-id='660986b5' size-in-bits='64' id='8f32e025'/>
+      <pointer-type-def type-id='4f56f8e2' size-in-bits='64' id='ddc27a70'/>
+      <pointer-type-def type-id='9832842b' size-in-bits='64' id='bdd84dab'/>
+      <pointer-type-def type-id='0741cbfb' size-in-bits='64' id='5b450efb'/>
+      <function-decl name='fsg_config_from_params' mangled-name='fsg_config_from_params' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='3444' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fsg_config_from_params'>
+        <parameter type-id='ddc27a70' name='cfg' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='3444' column='1'/>
+        <parameter type-id='dbce2b7c' name='params' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='3445' column='1'/>
+        <parameter type-id='f0981eeb' name='fsg_num_buffers' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='3446' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='fsg_common_set_sysfs' mangled-name='fsg_common_set_sysfs' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2588' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fsg_common_set_sysfs'>
+        <parameter type-id='8f32e025' name='common' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2588' column='1'/>
+        <parameter type-id='b50a4934' name='sysfs' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2588' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='fsg_common_set_inquiry_string' mangled-name='fsg_common_set_inquiry_string' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2849' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fsg_common_set_inquiry_string'>
+        <parameter type-id='8f32e025' name='common' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2849' column='1'/>
+        <parameter type-id='80f4b756' name='vn' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2849' column='1'/>
+        <parameter type-id='80f4b756' name='pn' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2850' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='fsg_common_set_cdev' mangled-name='fsg_common_set_cdev' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2679' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fsg_common_set_cdev'>
+        <parameter type-id='8f32e025' name='common' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2679' column='1'/>
+        <parameter type-id='2a895c01' name='cdev' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2680' column='1'/>
+        <parameter type-id='b50a4934' name='can_stall' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2680' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='fsg_common_create_luns' mangled-name='fsg_common_create_luns' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2825' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fsg_common_create_luns'>
+        <parameter type-id='8f32e025' name='common' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2825' column='1'/>
+        <parameter type-id='ddc27a70' name='cfg' filepath='drivers/usb/gadget/function/f_mass_storage.c' line='2825' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+    </abi-instr>
     <abi-instr address-size='64' path='drivers/usb/gadget/function/rndis.c' language='LANG_C89'>
       <class-decl name='rndis_params' size-in-bits='768' is-struct='yes' visibility='default' filepath='drivers/usb/gadget/function/rndis.h' line='159' column='1' id='62872b5a'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -125234,7 +125668,7 @@
           <var-decl name='buf' type-id='5e6516ee' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__7' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
+      <union-decl name='__anonymous_union__5' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1' id='df24571d'>
         <data-member access='public'>
           <var-decl name='kfifo' type-id='bbbc6c1e' visibility='default' filepath='include/linux/kfifo.h' line='83' column='1'/>
         </data-member>
@@ -125301,6 +125735,18 @@
         <parameter type-id='6614aa5e' name='fi' filepath='drivers/usb/gadget/functions.c' line='69' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='usb_put_function' mangled-name='usb_put_function' filepath='drivers/usb/gadget/functions.c' line='82' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_put_function'>
+        <parameter type-id='e5411c2c' name='f' filepath='drivers/usb/gadget/functions.c' line='82' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='usb_get_function_instance' mangled-name='usb_get_function_instance' filepath='drivers/usb/gadget/functions.c' line='39' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_get_function_instance'>
+        <parameter type-id='80f4b756' name='name' filepath='drivers/usb/gadget/functions.c' line='39' column='1'/>
+        <return type-id='6614aa5e'/>
+      </function-decl>
+      <function-decl name='usb_get_function' mangled-name='usb_get_function' filepath='drivers/usb/gadget/functions.c' line='57' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_get_function'>
+        <parameter type-id='6614aa5e' name='fi' filepath='drivers/usb/gadget/functions.c' line='57' column='1'/>
+        <return type-id='e5411c2c'/>
+      </function-decl>
       <function-decl name='usb_function_unregister' mangled-name='usb_function_unregister' filepath='drivers/usb/gadget/functions.c' line='111' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_function_unregister'>
         <parameter type-id='f666bcc1' name='fd' filepath='drivers/usb/gadget/functions.c' line='111' column='1'/>
         <return type-id='48b5725f'/>
@@ -125342,15 +125788,18 @@
         <parameter type-id='9762ede1' name='driver' filepath='drivers/usb/gadget/udc/core.c' line='1068' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='usb_gadget_unregister_driver' mangled-name='usb_gadget_unregister_driver' filepath='drivers/usb/gadget/udc/core.c' line='1509' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_unregister_driver'>
+        <parameter type-id='9762ede1' name='driver' filepath='drivers/usb/gadget/udc/core.c' line='1509' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='usb_ep_queue' mangled-name='usb_ep_queue' filepath='drivers/usb/gadget/udc/core.c' line='273' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_ep_queue'>
         <parameter type-id='63a08bf7' name='ep' filepath='drivers/usb/gadget/udc/core.c' line='273' column='1'/>
         <parameter type-id='1a494567' name='req' filepath='drivers/usb/gadget/udc/core.c' line='274' column='1'/>
         <parameter type-id='3eb7c31c' name='gfp_flags' filepath='drivers/usb/gadget/udc/core.c' line='274' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='usb_gadget_vbus_draw' mangled-name='usb_gadget_vbus_draw' filepath='drivers/usb/gadget/udc/core.c' line='609' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_vbus_draw'>
-        <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='609' column='1'/>
-        <parameter type-id='f0981eeb' name='mA' filepath='drivers/usb/gadget/udc/core.c' line='609' column='1'/>
+      <function-decl name='usb_gadget_probe_driver' mangled-name='usb_gadget_probe_driver' filepath='drivers/usb/gadget/udc/core.c' line='1462' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_probe_driver'>
+        <parameter type-id='9762ede1' name='driver' filepath='drivers/usb/gadget/udc/core.c' line='1462' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='usb_ep_alloc_request' mangled-name='usb_ep_alloc_request' filepath='drivers/usb/gadget/udc/core.c' line='175' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_ep_alloc_request'>
@@ -125363,17 +125812,18 @@
         <parameter type-id='1a494567' name='req' filepath='drivers/usb/gadget/udc/core.c' line='198' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='usb_gadget_vbus_draw' mangled-name='usb_gadget_vbus_draw' filepath='drivers/usb/gadget/udc/core.c' line='609' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_vbus_draw'>
+        <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='609' column='1'/>
+        <parameter type-id='f0981eeb' name='mA' filepath='drivers/usb/gadget/udc/core.c' line='609' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='usb_gadget_set_selfpowered' mangled-name='usb_gadget_set_selfpowered' filepath='drivers/usb/gadget/udc/core.c' line='520' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_set_selfpowered'>
+        <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='520' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='usb_ep_dequeue' mangled-name='usb_ep_dequeue' filepath='drivers/usb/gadget/udc/core.c' line='309' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_ep_dequeue'>
         <parameter type-id='63a08bf7' name='ep' filepath='drivers/usb/gadget/udc/core.c' line='309' column='1'/>
         <parameter type-id='1a494567' name='req' filepath='drivers/usb/gadget/udc/core.c' line='309' column='1'/>
-        <return type-id='95e97e5e'/>
-      </function-decl>
-      <function-decl name='usb_gadget_probe_driver' mangled-name='usb_gadget_probe_driver' filepath='drivers/usb/gadget/udc/core.c' line='1462' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_probe_driver'>
-        <parameter type-id='9762ede1' name='driver' filepath='drivers/usb/gadget/udc/core.c' line='1462' column='1'/>
-        <return type-id='95e97e5e'/>
-      </function-decl>
-      <function-decl name='usb_gadget_unregister_driver' mangled-name='usb_gadget_unregister_driver' filepath='drivers/usb/gadget/udc/core.c' line='1509' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_unregister_driver'>
-        <parameter type-id='9762ede1' name='driver' filepath='drivers/usb/gadget/udc/core.c' line='1509' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='usb_initialize_gadget' mangled-name='usb_initialize_gadget' filepath='drivers/usb/gadget/udc/core.c' line='1204' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_initialize_gadget'>
@@ -125395,6 +125845,14 @@
       </function-decl>
       <function-decl name='usb_gadget_vbus_connect' mangled-name='usb_gadget_vbus_connect' filepath='drivers/usb/gadget/udc/core.c' line='579' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_vbus_connect'>
         <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='579' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='usb_gadget_disconnect' mangled-name='usb_gadget_disconnect' filepath='drivers/usb/gadget/udc/core.c' line='711' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_disconnect'>
+        <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='711' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='usb_gadget_connect' mangled-name='usb_gadget_connect' filepath='drivers/usb/gadget/udc/core.c' line='669' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_connect'>
+        <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='669' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='usb_gadget_unmap_request' mangled-name='usb_gadget_unmap_request' filepath='drivers/usb/gadget/udc/core.c' line='886' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_gadget_unmap_request'>
@@ -173556,7 +174014,7 @@
       <var-decl name='net_ns_type_operations' type-id='a4a37730' mangled-name='net_ns_type_operations' visibility='default' filepath='net/core/net-sysfs.c' line='1784' column='1' elf-symbol-id='net_ns_type_operations'/>
     </abi-instr>
     <abi-instr address-size='64' path='net/core/net_namespace.c' language='LANG_C89'>
-      <union-decl name='__anonymous_union__10' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
+      <union-decl name='__anonymous_union__9' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/net/netns/generic.h' line='29' column='1' id='1a99b3b8'>
         <data-member access='public'>
           <var-decl name='s' type-id='88d8a388' visibility='default' filepath='include/net/netns/generic.h' line='33' column='1'/>
         </data-member>
