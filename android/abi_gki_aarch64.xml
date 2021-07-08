@@ -1527,6 +1527,7 @@
       <elf-symbol name='drm_atomic_set_fb_for_plane' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xea51029e'/>
       <elf-symbol name='drm_atomic_set_fence_for_plane' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x149945c5'/>
       <elf-symbol name='drm_atomic_set_mode_for_crtc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf43269dc'/>
+      <elf-symbol name='drm_atomic_set_mode_prop_for_crtc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1d66b15c'/>
       <elf-symbol name='drm_atomic_state_alloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89833d81'/>
       <elf-symbol name='drm_atomic_state_clear' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x53a1bdc0'/>
       <elf-symbol name='drm_atomic_state_default_clear' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6d431ac'/>
@@ -114240,6 +114241,11 @@
       <function-decl name='drm_atomic_set_mode_for_crtc' mangled-name='drm_atomic_set_mode_for_crtc' filepath='include/drm/drm_atomic_uapi.h' line='42' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_atomic_set_mode_for_crtc'>
         <parameter type-id='35078cb9'/>
         <parameter type-id='745b39e8'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='drm_atomic_set_mode_prop_for_crtc' mangled-name='drm_atomic_set_mode_prop_for_crtc' filepath='include/drm/drm_atomic_uapi.h' line='45' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_atomic_set_mode_prop_for_crtc'>
+        <parameter type-id='35078cb9'/>
+        <parameter type-id='c4126d52'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='drm_atomic_state_alloc' mangled-name='drm_atomic_state_alloc' filepath='include/drm/drm_atomic.h' line='410' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_atomic_state_alloc'>
