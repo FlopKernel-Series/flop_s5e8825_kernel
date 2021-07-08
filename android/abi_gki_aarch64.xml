@@ -948,6 +948,7 @@
       <elf-symbol name='crypto_alloc_sync_skcipher' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6adbbe42'/>
       <elf-symbol name='crypto_attr_alg_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9a11a0fc'/>
       <elf-symbol name='crypto_check_attr_type' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4934bdd0'/>
+      <elf-symbol name='crypto_cipher_decrypt_one' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa122da44'/>
       <elf-symbol name='crypto_cipher_encrypt_one' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb06c0638'/>
       <elf-symbol name='crypto_cipher_setkey' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3f7520ac'/>
       <elf-symbol name='crypto_comp_compress' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5428a43c'/>
@@ -981,6 +982,7 @@
       <elf-symbol name='crypto_remove_final' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3de9cae1'/>
       <elf-symbol name='crypto_remove_spawns' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d5d3af8'/>
       <elf-symbol name='crypto_req_done' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfd8d285b'/>
+      <elf-symbol name='crypto_rng_reset' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x28702c1a'/>
       <elf-symbol name='crypto_sha1_finup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x133d4800'/>
       <elf-symbol name='crypto_sha1_update' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x37c900ce'/>
       <elf-symbol name='crypto_shash_alg_has_setkey' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x65845d3a'/>
@@ -110988,6 +110990,12 @@
         <parameter type-id='f9409001' name='mask_ret' filepath='crypto/algapi.c' line='837' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='crypto_cipher_decrypt_one' mangled-name='crypto_cipher_decrypt_one' filepath='crypto/cipher.c' line='87' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='crypto_cipher_decrypt_one'>
+        <parameter type-id='75f72758' name='tfm' filepath='crypto/cipher.c' line='87' column='1'/>
+        <parameter type-id='8bff8096' name='dst' filepath='crypto/cipher.c' line='88' column='1'/>
+        <parameter type-id='bbaf3419' name='src' filepath='crypto/cipher.c' line='88' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='crypto_cipher_encrypt_one' mangled-name='crypto_cipher_encrypt_one' filepath='crypto/cipher.c' line='80' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='crypto_cipher_encrypt_one'>
         <parameter type-id='75f72758' name='tfm' filepath='crypto/cipher.c' line='80' column='1'/>
         <parameter type-id='8bff8096' name='dst' filepath='crypto/cipher.c' line='81' column='1'/>
@@ -111163,6 +111171,12 @@
         <parameter type-id='af5eeab9' name='req' filepath='crypto/api.c' line='592' column='1'/>
         <parameter type-id='95e97e5e' name='err' filepath='crypto/api.c' line='592' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='crypto_rng_reset' mangled-name='crypto_rng_reset' filepath='crypto/rng.c' line='31' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='crypto_rng_reset'>
+        <parameter type-id='5474f420' name='tfm' filepath='crypto/rng.c' line='31' column='1'/>
+        <parameter type-id='bbaf3419' name='seed' filepath='crypto/rng.c' line='31' column='1'/>
+        <parameter type-id='f0981eeb' name='slen' filepath='crypto/rng.c' line='31' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='crypto_sha1_finup' mangled-name='crypto_sha1_finup' filepath='crypto/sha1_generic.c' line='55' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='crypto_sha1_finup'>
         <parameter type-id='32efad44' name='desc' filepath='crypto/sha1_generic.c' line='55' column='1'/>
