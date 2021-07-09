@@ -145,6 +145,7 @@
       <elf-symbol name='__mmc_claim_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf49d51bf'/>
       <elf-symbol name='__mmc_send_status' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1324ae6'/>
       <elf-symbol name='__mmdrop' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x30122801'/>
+      <elf-symbol name='__mod_node_page_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa97db34c'/>
       <elf-symbol name='__mod_zone_page_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7adb3995'/>
       <elf-symbol name='__module_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x69b2bc4'/>
       <elf-symbol name='__msecs_to_jiffies' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7f02188f'/>
@@ -5007,6 +5008,7 @@
       <elf-symbol name='__tracepoint_android_vh_set_wake_flags' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b9fe557'/>
       <elf-symbol name='__tracepoint_android_vh_setscheduler_uclamp' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ae79b81'/>
       <elf-symbol name='__tracepoint_android_vh_sha256' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x890676c3'/>
+      <elf-symbol name='__tracepoint_android_vh_shmem_alloc_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf528a71b'/>
       <elf-symbol name='__tracepoint_android_vh_show_max_freq' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8965f857'/>
       <elf-symbol name='__tracepoint_android_vh_show_mem' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4520b6b9'/>
       <elf-symbol name='__tracepoint_android_vh_show_resume_epoch_val' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5c575c4a'/>
@@ -105768,6 +105770,12 @@
         <parameter type-id='df4b7819' name='mm' filepath='kernel/fork.c' line='711' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='__mod_node_page_state' mangled-name='__mod_node_page_state' filepath='mm/vmstat.c' line='336' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__mod_node_page_state'>
+        <parameter type-id='c876a7a5' name='pgdat' filepath='mm/vmstat.c' line='336' column='1'/>
+        <parameter type-id='93f9c3d3' name='item' filepath='mm/vmstat.c' line='336' column='1'/>
+        <parameter type-id='bd54fe1a' name='delta' filepath='mm/vmstat.c' line='337' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='__mod_zone_page_state' mangled-name='__mod_zone_page_state' filepath='mm/vmstat.c' line='316' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__mod_zone_page_state'>
         <parameter type-id='0a0aff97' name='zone' filepath='mm/vmstat.c' line='316' column='1'/>
         <parameter type-id='a1f2d9a1' name='item' filepath='mm/vmstat.c' line='316' column='1'/>
@@ -107695,6 +107703,7 @@
       <var-decl name='__tracepoint_android_vh_set_wake_flags' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_wake_flags' visibility='default' filepath='include/trace/hooks/sched.h' line='267' column='1' elf-symbol-id='__tracepoint_android_vh_set_wake_flags'/>
       <var-decl name='__tracepoint_android_vh_setscheduler_uclamp' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_setscheduler_uclamp' visibility='default' filepath='include/trace/hooks/sched.h' line='381' column='1' elf-symbol-id='__tracepoint_android_vh_setscheduler_uclamp'/>
       <var-decl name='__tracepoint_android_vh_sha256' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sha256' visibility='default' filepath='include/trace/hooks/fips140.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_sha256'/>
+      <var-decl name='__tracepoint_android_vh_shmem_alloc_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_shmem_alloc_page' visibility='default' filepath='include/trace/hooks/shmem_fs.h' line='12' column='1' elf-symbol-id='__tracepoint_android_vh_shmem_alloc_page'/>
       <var-decl name='__tracepoint_android_vh_show_max_freq' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_show_max_freq' visibility='default' filepath='include/trace/hooks/cpufreq.h' line='14' column='1' elf-symbol-id='__tracepoint_android_vh_show_max_freq'/>
       <var-decl name='__tracepoint_android_vh_show_mem' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_show_mem' visibility='default' filepath='include/trace/hooks/mm.h' line='68' column='1' elf-symbol-id='__tracepoint_android_vh_show_mem'/>
       <var-decl name='__tracepoint_android_vh_show_resume_epoch_val' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_show_resume_epoch_val' visibility='default' filepath='include/trace/hooks/epoch.h' line='17' column='1' elf-symbol-id='__tracepoint_android_vh_show_resume_epoch_val'/>
