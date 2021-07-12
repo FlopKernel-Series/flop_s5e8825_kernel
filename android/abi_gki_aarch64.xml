@@ -1430,6 +1430,7 @@
       <elf-symbol name='dma_sync_sg_for_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48b43a39'/>
       <elf-symbol name='dma_sync_single_for_cpu' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x271169e1'/>
       <elf-symbol name='dma_sync_single_for_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd02f5c33'/>
+      <elf-symbol name='dma_sync_wait' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe1a25e7'/>
       <elf-symbol name='dma_unmap_page_attrs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa83f7b03'/>
       <elf-symbol name='dma_unmap_resource' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c6f100c'/>
       <elf-symbol name='dma_unmap_sg_attrs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4856dd5c'/>
@@ -1437,6 +1438,7 @@
       <elf-symbol name='dmabuf_page_pool_create' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7ca016b'/>
       <elf-symbol name='dmabuf_page_pool_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa1f4f3d0'/>
       <elf-symbol name='dmabuf_page_pool_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd97f73e7'/>
+      <elf-symbol name='dmaengine_get_unmap_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x976eb016'/>
       <elf-symbol name='dmaengine_unmap_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb77a091d'/>
       <elf-symbol name='dmam_alloc_attrs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa127315a'/>
       <elf-symbol name='dmam_free_coherent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45f4dd8e'/>
@@ -1564,6 +1566,7 @@
       <elf-symbol name='drm_connector_list_iter_end' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x153fa34e'/>
       <elf-symbol name='drm_connector_list_iter_next' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc6df353f'/>
       <elf-symbol name='drm_connector_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1394e0d7'/>
+      <elf-symbol name='drm_connector_set_path_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45f97942'/>
       <elf-symbol name='drm_connector_set_tile_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaa702873'/>
       <elf-symbol name='drm_connector_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x23e95955'/>
       <elf-symbol name='drm_connector_update_edid_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x81c5ce96'/>
@@ -1734,6 +1737,7 @@
       <elf-symbol name='drm_helper_force_disable_all' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b0c2ce9'/>
       <elf-symbol name='drm_helper_hpd_irq_event' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x24215922'/>
       <elf-symbol name='drm_helper_mode_fill_fb_struct' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x24fb32e8'/>
+      <elf-symbol name='drm_helper_probe_detect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf9aae35d'/>
       <elf-symbol name='drm_helper_probe_single_connector_modes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2033711b'/>
       <elf-symbol name='drm_helper_resume_force_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8d2f444'/>
       <elf-symbol name='drm_ioctl' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5d5dcdf4'/>
@@ -2878,7 +2882,6 @@
       <elf-symbol name='of_get_cpu_node' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa2c2e686'/>
       <elf-symbol name='of_get_display_timings' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x886c22c'/>
       <elf-symbol name='of_get_dma_window' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39bed165'/>
-      <elf-symbol name='of_get_drm_display_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x46d38846'/>
       <elf-symbol name='of_get_mac_address' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56316a61'/>
       <elf-symbol name='of_get_named_gpio_flags' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xab15a0b0'/>
       <elf-symbol name='of_get_next_available_child' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6218ea7'/>
@@ -2889,6 +2892,7 @@
       <elf-symbol name='of_get_regulator_init_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2db904cd'/>
       <elf-symbol name='of_get_videomode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3faf2d74'/>
       <elf-symbol name='of_graph_get_endpoint_by_regs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x78d71c74'/>
+      <elf-symbol name='of_graph_get_endpoint_count' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x329c8fbb'/>
       <elf-symbol name='of_graph_get_next_endpoint' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x84ebc151'/>
       <elf-symbol name='of_graph_get_port_by_id' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x77113862'/>
       <elf-symbol name='of_graph_get_port_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1d44063f'/>
@@ -4323,7 +4327,6 @@
       <elf-symbol name='ufshcd_hba_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5b049991'/>
       <elf-symbol name='ufshcd_hba_stop' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x63565516'/>
       <elf-symbol name='ufshcd_hold' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x291411f1'/>
-      <elf-symbol name='ufshcd_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x244114b8'/>
       <elf-symbol name='ufshcd_link_recovery' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2b0c03c1'/>
       <elf-symbol name='ufshcd_make_hba_operational' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x850f51ad'/>
       <elf-symbol name='ufshcd_map_desc_id_to_length' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1013951b'/>
@@ -113617,6 +113620,11 @@
         <parameter type-id='eea6b025' name='dir' filepath='kernel/dma/mapping.c' line='269' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='dma_sync_wait' mangled-name='dma_sync_wait' filepath='drivers/dma/dmaengine.c' line='519' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_sync_wait'>
+        <parameter type-id='27f3f5d8' name='chan' filepath='drivers/dma/dmaengine.c' line='519' column='1'/>
+        <parameter type-id='6478ea0a' name='cookie' filepath='drivers/dma/dmaengine.c' line='519' column='1'/>
+        <return type-id='02ac9d9d'/>
+      </function-decl>
       <function-decl name='dma_unmap_page_attrs' mangled-name='dma_unmap_page_attrs' filepath='kernel/dma/mapping.c' line='162' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dma_unmap_page_attrs'>
         <parameter type-id='fa0b179b' name='dev' filepath='kernel/dma/mapping.c' line='162' column='1'/>
         <parameter type-id='cf29c9b3' name='addr' filepath='kernel/dma/mapping.c' line='162' column='1'/>
@@ -113658,6 +113666,12 @@
         <parameter type-id='586a9713' name='pool' filepath='drivers/dma-buf/heaps/page_pool.c' line='95' column='1'/>
         <parameter type-id='02f11ed4' name='page' filepath='drivers/dma-buf/heaps/page_pool.c' line='95' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='dmaengine_get_unmap_data' mangled-name='dmaengine_get_unmap_data' filepath='drivers/dma/dmaengine.c' line='1480' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dmaengine_get_unmap_data'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/dma/dmaengine.c' line='1480' column='1'/>
+        <parameter type-id='95e97e5e' name='nr' filepath='drivers/dma/dmaengine.c' line='1480' column='1'/>
+        <parameter type-id='3eb7c31c' name='flags' filepath='drivers/dma/dmaengine.c' line='1480' column='1'/>
+        <return type-id='e220a5e2'/>
       </function-decl>
       <function-decl name='dmaengine_unmap_put' mangled-name='dmaengine_unmap_put' filepath='drivers/dma/dmaengine.c' line='1431' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dmaengine_unmap_put'>
         <parameter type-id='e220a5e2' name='unmap' filepath='drivers/dma/dmaengine.c' line='1431' column='1'/>
@@ -114296,6 +114310,11 @@
       </function-decl>
       <function-decl name='drm_connector_register' mangled-name='drm_connector_register' filepath='drivers/gpu/drm/drm_connector.c' line='502' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_connector_register'>
         <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_connector.c' line='502' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='drm_connector_set_path_property' mangled-name='drm_connector_set_path_property' filepath='drivers/gpu/drm/drm_connector.c' line='1947' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_connector_set_path_property'>
+        <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_connector.c' line='1947' column='1'/>
+        <parameter type-id='80f4b756' name='path' filepath='drivers/gpu/drm/drm_connector.c' line='1948' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='drm_connector_set_tile_property' mangled-name='drm_connector_set_tile_property' filepath='drivers/gpu/drm/drm_connector.c' line='1976' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_connector_set_tile_property'>
@@ -115167,6 +115186,12 @@
         <parameter type-id='7b332e1c' name='fb' filepath='drivers/gpu/drm/drm_modeset_helper.c' line='80' column='1'/>
         <parameter type-id='92ed24a5' name='mode_cmd' filepath='drivers/gpu/drm/drm_modeset_helper.c' line='81' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='drm_helper_probe_detect' mangled-name='drm_helper_probe_detect' filepath='drivers/gpu/drm/drm_probe_helper.c' line='328' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_helper_probe_detect'>
+        <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_probe_helper.c' line='328' column='1'/>
+        <parameter type-id='d1499e71' name='ctx' filepath='drivers/gpu/drm/drm_probe_helper.c' line='329' column='1'/>
+        <parameter type-id='b50a4934' name='force' filepath='drivers/gpu/drm/drm_probe_helper.c' line='330' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='drm_helper_probe_single_connector_modes' mangled-name='drm_helper_probe_single_connector_modes' filepath='drivers/gpu/drm/drm_probe_helper.c' line='416' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_helper_probe_single_connector_modes'>
         <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_probe_helper.c' line='416' column='1'/>
@@ -119297,8 +119322,8 @@
         <parameter type-id='2aee9912' name='ap' filepath='lib/kasprintf.c' line='15' column='1'/>
         <return type-id='26a90f95'/>
       </function-decl>
-      <function-decl name='kvfree' mangled-name='kvfree' filepath='mm/util.c' line='603' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kvfree'>
-        <parameter type-id='eaa32e2f' name='addr' filepath='mm/util.c' line='603' column='1'/>
+      <function-decl name='kvfree' mangled-name='kvfree' filepath='mm/util.c' line='604' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kvfree'>
+        <parameter type-id='eaa32e2f' name='addr' filepath='mm/util.c' line='604' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='kvfree_call_rcu' mangled-name='kvfree_call_rcu' filepath='kernel/rcu/tree.c' line='3464' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kvfree_call_rcu'>
@@ -119306,10 +119331,10 @@
         <parameter type-id='4edd56e3' name='func' filepath='kernel/rcu/tree.c' line='3464' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='kvmalloc_node' mangled-name='kvmalloc_node' filepath='mm/util.c' line='553' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kvmalloc_node'>
-        <parameter type-id='b59d7dce' name='size' filepath='mm/util.c' line='553' column='1'/>
-        <parameter type-id='3eb7c31c' name='flags' filepath='mm/util.c' line='553' column='1'/>
-        <parameter type-id='95e97e5e' name='node' filepath='mm/util.c' line='553' column='1'/>
+      <function-decl name='kvmalloc_node' mangled-name='kvmalloc_node' filepath='mm/util.c' line='554' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kvmalloc_node'>
+        <parameter type-id='b59d7dce' name='size' filepath='mm/util.c' line='554' column='1'/>
+        <parameter type-id='3eb7c31c' name='flags' filepath='mm/util.c' line='554' column='1'/>
+        <parameter type-id='95e97e5e' name='node' filepath='mm/util.c' line='554' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
       <function-decl name='led_classdev_flash_register_ext' mangled-name='led_classdev_flash_register_ext' filepath='drivers/leds/led-class-flash.c' line='285' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_classdev_flash_register_ext'>
@@ -121024,13 +121049,6 @@
         <parameter type-id='78c01427' name='size' filepath='drivers/iommu/of_iommu.c' line='37' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='of_get_drm_display_mode' mangled-name='of_get_drm_display_mode' filepath='drivers/gpu/drm/drm_modes.c' line='708' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_get_drm_display_mode'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/gpu/drm/drm_modes.c' line='708' column='1'/>
-        <parameter type-id='11e02f83' name='dmode' filepath='drivers/gpu/drm/drm_modes.c' line='709' column='1'/>
-        <parameter type-id='f9409001' name='bus_flags' filepath='drivers/gpu/drm/drm_modes.c' line='709' column='1'/>
-        <parameter type-id='95e97e5e' name='index' filepath='drivers/gpu/drm/drm_modes.c' line='710' column='1'/>
-        <return type-id='95e97e5e'/>
-      </function-decl>
       <function-decl name='of_get_mac_address' mangled-name='of_get_mac_address' filepath='drivers/of/of_net.c' line='103' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_get_mac_address'>
         <parameter type-id='9a537bbe' name='np' filepath='drivers/of/of_net.c' line='103' column='1'/>
         <return type-id='eaa32e2f'/>
@@ -121083,6 +121101,10 @@
         <parameter type-id='95e97e5e' name='port_reg' filepath='drivers/of/property.c' line='690' column='1'/>
         <parameter type-id='95e97e5e' name='reg' filepath='drivers/of/property.c' line='690' column='1'/>
         <return type-id='9a537bbe'/>
+      </function-decl>
+      <function-decl name='of_graph_get_endpoint_count' mangled-name='of_graph_get_endpoint_count' filepath='drivers/of/property.c' line='792' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_graph_get_endpoint_count'>
+        <parameter type-id='0afa6ea3' name='np' filepath='drivers/of/property.c' line='792' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='of_graph_get_next_endpoint' mangled-name='of_graph_get_next_endpoint' filepath='drivers/of/property.c' line='620' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_graph_get_next_endpoint'>
         <parameter type-id='0afa6ea3' name='parent' filepath='drivers/of/property.c' line='620' column='1'/>
@@ -121462,8 +121484,8 @@
         <parameter type-id='95e97e5e' name='err' filepath='mm/filemap.c' line='1516' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='page_mapping' mangled-name='page_mapping' filepath='mm/util.c' line='681' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='page_mapping'>
-        <parameter type-id='02f11ed4' name='page' filepath='mm/util.c' line='681' column='1'/>
+      <function-decl name='page_mapping' mangled-name='page_mapping' filepath='mm/util.c' line='682' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='page_mapping'>
+        <parameter type-id='02f11ed4' name='page' filepath='mm/util.c' line='682' column='1'/>
         <return type-id='f57039f0'/>
       </function-decl>
       <function-decl name='page_reporting_register' mangled-name='page_reporting_register' filepath='mm/page_reporting.c' line='315' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='page_reporting_register'>
@@ -128461,12 +128483,6 @@
         <parameter type-id='b50a4934' name='async' filepath='drivers/scsi/ufs/ufshcd.c' line='1652' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_init' mangled-name='ufshcd_init' filepath='drivers/scsi/ufs/ufshcd.c' line='9353' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_init'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9353' column='1'/>
-        <parameter type-id='eaa32e2f' name='mmio_base' filepath='drivers/scsi/ufs/ufshcd.c' line='9353' column='1'/>
-        <parameter type-id='f0981eeb' name='irq' filepath='drivers/scsi/ufs/ufshcd.c' line='9353' column='1'/>
-        <return type-id='95e97e5e'/>
-      </function-decl>
       <function-decl name='ufshcd_link_recovery' mangled-name='ufshcd_link_recovery' filepath='drivers/scsi/ufs/ufshcd.c' line='4060' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_link_recovery'>
         <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4060' column='1'/>
         <return type-id='95e97e5e'/>
@@ -128843,12 +128859,12 @@
         <parameter type-id='f363a725' name='ssp' filepath='drivers/usb/gadget/config.c' line='163' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='usb_autopm_get_interface' mangled-name='usb_autopm_get_interface' filepath='drivers/usb/core/driver.c' line='1813' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_autopm_get_interface'>
-        <parameter type-id='8bf48c31' name='intf' filepath='drivers/usb/core/driver.c' line='1813' column='1'/>
+      <function-decl name='usb_autopm_get_interface' mangled-name='usb_autopm_get_interface' filepath='drivers/usb/core/driver.c' line='1825' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_autopm_get_interface'>
+        <parameter type-id='8bf48c31' name='intf' filepath='drivers/usb/core/driver.c' line='1825' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='usb_autopm_put_interface' mangled-name='usb_autopm_put_interface' filepath='drivers/usb/core/driver.c' line='1735' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_autopm_put_interface'>
-        <parameter type-id='8bf48c31' name='intf' filepath='drivers/usb/core/driver.c' line='1735' column='1'/>
+      <function-decl name='usb_autopm_put_interface' mangled-name='usb_autopm_put_interface' filepath='drivers/usb/core/driver.c' line='1747' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_autopm_put_interface'>
+        <parameter type-id='8bf48c31' name='intf' filepath='drivers/usb/core/driver.c' line='1747' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='usb_bulk_msg' mangled-name='usb_bulk_msg' filepath='drivers/usb/core/message.c' line='367' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_bulk_msg'>
@@ -128926,8 +128942,8 @@
         <parameter type-id='49a58c0c' name='gadget' filepath='drivers/usb/gadget/udc/core.c' line='1418' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='usb_deregister' mangled-name='usb_deregister' filepath='drivers/usb/core/driver.c' line='1099' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_deregister'>
-        <parameter type-id='46ae908a' name='driver' filepath='drivers/usb/core/driver.c' line='1099' column='1'/>
+      <function-decl name='usb_deregister' mangled-name='usb_deregister' filepath='drivers/usb/core/driver.c' line='1100' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_deregister'>
+        <parameter type-id='46ae908a' name='driver' filepath='drivers/usb/core/driver.c' line='1100' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='usb_disable_xhci_ports' mangled-name='usb_disable_xhci_ports' filepath='drivers/usb/host/pci-quirks.c' line='1124' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_disable_xhci_ports'>
@@ -128937,8 +128953,8 @@
       <function-decl name='usb_disabled' mangled-name='usb_disabled' filepath='drivers/usb/core/usb.c' line='59' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_disabled'>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='usb_enable_autosuspend' mangled-name='usb_enable_autosuspend' filepath='drivers/usb/core/driver.c' line='1637' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_enable_autosuspend'>
-        <parameter type-id='25e60cb2' name='udev' filepath='drivers/usb/core/driver.c' line='1637' column='1'/>
+      <function-decl name='usb_enable_autosuspend' mangled-name='usb_enable_autosuspend' filepath='drivers/usb/core/driver.c' line='1649' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_enable_autosuspend'>
+        <parameter type-id='25e60cb2' name='udev' filepath='drivers/usb/core/driver.c' line='1649' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='usb_enable_intel_xhci_ports' mangled-name='usb_enable_intel_xhci_ports' filepath='drivers/usb/host/pci-quirks.c' line='1039' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_enable_intel_xhci_ports'>
@@ -129277,10 +129293,10 @@
         <parameter type-id='fc4f83c1' name='hcd' filepath='drivers/usb/core/hcd.c' line='2557' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='usb_register_driver' mangled-name='usb_register_driver' filepath='drivers/usb/core/driver.c' line='1046' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_register_driver'>
-        <parameter type-id='46ae908a' name='new_driver' filepath='drivers/usb/core/driver.c' line='1046' column='1'/>
-        <parameter type-id='2730d015' name='owner' filepath='drivers/usb/core/driver.c' line='1046' column='1'/>
-        <parameter type-id='80f4b756' name='mod_name' filepath='drivers/usb/core/driver.c' line='1047' column='1'/>
+      <function-decl name='usb_register_driver' mangled-name='usb_register_driver' filepath='drivers/usb/core/driver.c' line='1047' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_register_driver'>
+        <parameter type-id='46ae908a' name='new_driver' filepath='drivers/usb/core/driver.c' line='1047' column='1'/>
+        <parameter type-id='2730d015' name='owner' filepath='drivers/usb/core/driver.c' line='1047' column='1'/>
+        <parameter type-id='80f4b756' name='mod_name' filepath='drivers/usb/core/driver.c' line='1048' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='usb_register_notify' mangled-name='usb_register_notify' filepath='drivers/usb/core/notify.c' line='29' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_register_notify'>
@@ -130576,16 +130592,16 @@
         <parameter type-id='95e97e5e' name='node' filepath='mm/vmalloc.c' line='1844' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
-      <function-decl name='vm_memory_committed' mangled-name='vm_memory_committed' filepath='mm/util.c' line='842' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_memory_committed'>
+      <function-decl name='vm_memory_committed' mangled-name='vm_memory_committed' filepath='mm/util.c' line='843' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_memory_committed'>
         <return type-id='7359adad'/>
       </function-decl>
-      <function-decl name='vm_mmap' mangled-name='vm_mmap' filepath='mm/util.c' line='521' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_mmap'>
-        <parameter type-id='77e79a4b' name='file' filepath='mm/util.c' line='521' column='1'/>
-        <parameter type-id='7359adad' name='addr' filepath='mm/util.c' line='521' column='1'/>
-        <parameter type-id='7359adad' name='len' filepath='mm/util.c' line='522' column='1'/>
-        <parameter type-id='7359adad' name='prot' filepath='mm/util.c' line='522' column='1'/>
-        <parameter type-id='7359adad' name='flag' filepath='mm/util.c' line='523' column='1'/>
-        <parameter type-id='7359adad' name='offset' filepath='mm/util.c' line='523' column='1'/>
+      <function-decl name='vm_mmap' mangled-name='vm_mmap' filepath='mm/util.c' line='522' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_mmap'>
+        <parameter type-id='77e79a4b' name='file' filepath='mm/util.c' line='522' column='1'/>
+        <parameter type-id='7359adad' name='addr' filepath='mm/util.c' line='522' column='1'/>
+        <parameter type-id='7359adad' name='len' filepath='mm/util.c' line='523' column='1'/>
+        <parameter type-id='7359adad' name='prot' filepath='mm/util.c' line='523' column='1'/>
+        <parameter type-id='7359adad' name='flag' filepath='mm/util.c' line='524' column='1'/>
+        <parameter type-id='7359adad' name='offset' filepath='mm/util.c' line='524' column='1'/>
         <return type-id='7359adad'/>
       </function-decl>
       <function-decl name='vm_munmap' mangled-name='vm_munmap' filepath='mm/mmap.c' line='3049' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_munmap'>
