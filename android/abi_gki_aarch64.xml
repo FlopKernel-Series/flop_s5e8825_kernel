@@ -240,6 +240,7 @@
       <elf-symbol name='__trace_printk' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x133969d7'/>
       <elf-symbol name='__trace_puts' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2d41e6f5'/>
       <elf-symbol name='__traceiter_android_rvh_account_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xad40ce9c'/>
+      <elf-symbol name='__traceiter_android_rvh_after_dequeue_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3e7816dd'/>
       <elf-symbol name='__traceiter_android_rvh_after_enqueue_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf3381861'/>
       <elf-symbol name='__traceiter_android_rvh_build_perf_domains' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4b4a53af'/>
       <elf-symbol name='__traceiter_android_rvh_can_migrate_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x44f6f339'/>
@@ -4933,6 +4934,7 @@
       <elf-symbol name='__per_cpu_offset' size='256' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x280f9f14'/>
       <elf-symbol name='__stack_chk_guard' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f678b07'/>
       <elf-symbol name='__tracepoint_android_rvh_account_irq' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf0f46523'/>
+      <elf-symbol name='__tracepoint_android_rvh_after_dequeue_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9ad4f5ba'/>
       <elf-symbol name='__tracepoint_android_rvh_after_enqueue_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x36d08831'/>
       <elf-symbol name='__tracepoint_android_rvh_build_perf_domains' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ff307b5'/>
       <elf-symbol name='__tracepoint_android_rvh_can_migrate_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89ef9455'/>
@@ -61797,6 +61799,9 @@
         <parameter type-id='78c01427'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <array-type-def dimensions='1' type-id='95e97e5e' size-in-bits='2048' id='93e41790'>
+        <subrange length='64' type-id='7ff19f0f' id='b10be967'/>
+      </array-type-def>
       <array-type-def dimensions='1' type-id='3b0abfc6' size-in-bits='768' id='93f82aba'>
         <subrange length='6' type-id='7ff19f0f' id='52fa524b'/>
       </array-type-def>
@@ -71465,7 +71470,11 @@
       <pointer-type-def type-id='512ac7cc' size-in-bits='64' id='ac58af12'/>
       <pointer-type-def type-id='b254b8db' size-in-bits='64' id='ac5f2363'/>
       <pointer-type-def type-id='49a0ad34' size-in-bits='64' id='ac6963b2'/>
-      <class-decl name='prot_inuse' is-struct='yes' visibility='default' is-declaration-only='yes' id='ac763c5d'/>
+      <class-decl name='prot_inuse' size-in-bits='2048' is-struct='yes' visibility='default' filepath='net/core/sock.c' line='3311' column='1' id='ac763c5d'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='val' type-id='93e41790' visibility='default' filepath='net/core/sock.c' line='3312' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='ac765b39'>
         <parameter type-id='2ba25712'/>
         <parameter type-id='14bde5bf'/>
@@ -108462,9 +108471,9 @@
         <parameter type-id='2730d015' name='owner' filepath='drivers/net/phy/mdio_bus.c' line='518' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__media_device_register' mangled-name='__media_device_register' filepath='drivers/media/mc/mc-device.c' line='737' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__media_device_register'>
-        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='737' column='1'/>
-        <parameter type-id='2730d015' name='owner' filepath='drivers/media/mc/mc-device.c' line='738' column='1'/>
+      <function-decl name='__media_device_register' mangled-name='__media_device_register' filepath='drivers/media/mc/mc-device.c' line='738' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__media_device_register'>
+        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='738' column='1'/>
+        <parameter type-id='2730d015' name='owner' filepath='drivers/media/mc/mc-device.c' line='739' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__media_entity_setup_link' mangled-name='__media_entity_setup_link' filepath='drivers/media/mc/mc-entity.c' line='830' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__media_entity_setup_link'>
@@ -109040,6 +109049,12 @@
         <parameter type-id='f23e2572' name='curr' filepath='include/trace/hooks/sched.h' line='177' column='1'/>
         <parameter type-id='95e97e5e' name='cpu' filepath='include/trace/hooks/sched.h' line='177' column='1'/>
         <parameter type-id='9b7c55ef' name='delta' filepath='include/trace/hooks/sched.h' line='177' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_rvh_after_dequeue_task' mangled-name='__traceiter_android_rvh_after_dequeue_task' filepath='include/trace/hooks/sched.h' line='326' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_after_dequeue_task'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='326' column='1'/>
+        <parameter type-id='6ed6b432' name='rq' filepath='include/trace/hooks/sched.h' line='326' column='1'/>
+        <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/sched.h' line='326' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_after_enqueue_task' mangled-name='__traceiter_android_rvh_after_enqueue_task' filepath='include/trace/hooks/sched.h' line='322' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_after_enqueue_task'>
@@ -110397,6 +110412,7 @@
         <return type-id='95e97e5e'/>
       </function-decl>
       <var-decl name='__tracepoint_android_rvh_account_irq' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_account_irq' visibility='default' filepath='include/trace/hooks/sched.h' line='177' column='1' elf-symbol-id='__tracepoint_android_rvh_account_irq'/>
+      <var-decl name='__tracepoint_android_rvh_after_dequeue_task' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_after_dequeue_task' visibility='default' filepath='include/trace/hooks/sched.h' line='326' column='1' elf-symbol-id='__tracepoint_android_rvh_after_dequeue_task'/>
       <var-decl name='__tracepoint_android_rvh_after_enqueue_task' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_after_enqueue_task' visibility='default' filepath='include/trace/hooks/sched.h' line='322' column='1' elf-symbol-id='__tracepoint_android_rvh_after_enqueue_task'/>
       <var-decl name='__tracepoint_android_rvh_build_perf_domains' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_build_perf_domains' visibility='default' filepath='include/trace/hooks/sched.h' line='186' column='1' elf-symbol-id='__tracepoint_android_rvh_build_perf_domains'/>
       <var-decl name='__tracepoint_android_rvh_can_migrate_task' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_can_migrate_task' visibility='default' filepath='include/trace/hooks/sched.h' line='39' column='1' elf-symbol-id='__tracepoint_android_rvh_can_migrate_task'/>
@@ -122054,21 +122070,21 @@
         <parameter type-id='19c2251e' name='flags' filepath='drivers/media/mc/mc-entity.c' line='660' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='media_device_cleanup' mangled-name='media_device_cleanup' filepath='drivers/media/mc/mc-device.c' line='727' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_cleanup'>
-        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='727' column='1'/>
+      <function-decl name='media_device_cleanup' mangled-name='media_device_cleanup' filepath='drivers/media/mc/mc-device.c' line='728' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_cleanup'>
+        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='728' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='media_device_init' mangled-name='media_device_init' filepath='drivers/media/mc/mc-device.c' line='709' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_init'>
-        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='709' column='1'/>
+      <function-decl name='media_device_init' mangled-name='media_device_init' filepath='drivers/media/mc/mc-device.c' line='710' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_init'>
+        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='710' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='media_device_register_entity' mangled-name='media_device_register_entity' filepath='drivers/media/mc/mc-device.c' line='621' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_register_entity'>
-        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='621' column='1'/>
-        <parameter type-id='19e05b5f' name='entity' filepath='drivers/media/mc/mc-device.c' line='622' column='1'/>
+      <function-decl name='media_device_register_entity' mangled-name='media_device_register_entity' filepath='drivers/media/mc/mc-device.c' line='622' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_register_entity'>
+        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='622' column='1'/>
+        <parameter type-id='19e05b5f' name='entity' filepath='drivers/media/mc/mc-device.c' line='623' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='media_device_unregister' mangled-name='media_device_unregister' filepath='drivers/media/mc/mc-device.c' line='806' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_unregister'>
-        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='806' column='1'/>
+      <function-decl name='media_device_unregister' mangled-name='media_device_unregister' filepath='drivers/media/mc/mc-device.c' line='807' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_device_unregister'>
+        <parameter type-id='e2929c1c' name='mdev' filepath='drivers/media/mc/mc-device.c' line='807' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='media_devnode_create' mangled-name='media_devnode_create' filepath='drivers/media/mc/mc-entity.c' line='939' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_devnode_create'>
@@ -130894,28 +130910,28 @@
         <parameter type-id='78a133c2' name='dst' filepath='net/ipv4/udp.c' line='806' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_alloc_host' mangled-name='ufshcd_alloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9300' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_alloc_host'>
-        <parameter type-id='fa0b179b' name='dev' filepath='drivers/scsi/ufs/ufshcd.c' line='9300' column='1'/>
-        <parameter type-id='f38ff799' name='hba_handle' filepath='drivers/scsi/ufs/ufshcd.c' line='9300' column='1'/>
+      <function-decl name='ufshcd_alloc_host' mangled-name='ufshcd_alloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9302' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_alloc_host'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/scsi/ufs/ufshcd.c' line='9302' column='1'/>
+        <parameter type-id='f38ff799' name='hba_handle' filepath='drivers/scsi/ufs/ufshcd.c' line='9302' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_auto_hibern8_update' mangled-name='ufshcd_auto_hibern8_update' filepath='drivers/scsi/ufs/ufshcd.c' line='4142' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_auto_hibern8_update'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4142' column='1'/>
-        <parameter type-id='19c2251e' name='ahit' filepath='drivers/scsi/ufs/ufshcd.c' line='4142' column='1'/>
+      <function-decl name='ufshcd_auto_hibern8_update' mangled-name='ufshcd_auto_hibern8_update' filepath='drivers/scsi/ufs/ufshcd.c' line='4144' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_auto_hibern8_update'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4144' column='1'/>
+        <parameter type-id='19c2251e' name='ahit' filepath='drivers/scsi/ufs/ufshcd.c' line='4144' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_bkops_ctrl' mangled-name='ufshcd_bkops_ctrl' filepath='drivers/scsi/ufs/ufshcd.c' line='5472' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_bkops_ctrl'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='5472' column='1'/>
-        <parameter type-id='462d2624' name='status' filepath='drivers/scsi/ufs/ufshcd.c' line='5473' column='1'/>
+      <function-decl name='ufshcd_bkops_ctrl' mangled-name='ufshcd_bkops_ctrl' filepath='drivers/scsi/ufs/ufshcd.c' line='5474' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_bkops_ctrl'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='5474' column='1'/>
+        <parameter type-id='462d2624' name='status' filepath='drivers/scsi/ufs/ufshcd.c' line='5475' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_config_pwr_mode' mangled-name='ufshcd_config_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4351' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_config_pwr_mode'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4351' column='1'/>
-        <parameter type-id='35f4156d' name='desired_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4352' column='1'/>
+      <function-decl name='ufshcd_config_pwr_mode' mangled-name='ufshcd_config_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4353' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_config_pwr_mode'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4353' column='1'/>
+        <parameter type-id='35f4156d' name='desired_pwr_mode' filepath='drivers/scsi/ufs/ufshcd.c' line='4354' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_dealloc_host' mangled-name='ufshcd_dealloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9272' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dealloc_host'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9272' column='1'/>
+      <function-decl name='ufshcd_dealloc_host' mangled-name='ufshcd_dealloc_host' filepath='drivers/scsi/ufs/ufshcd.c' line='9274' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dealloc_host'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9274' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='ufshcd_delay_us' mangled-name='ufshcd_delay_us' filepath='drivers/scsi/ufs/ufshcd.c' line='587' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_delay_us'>
@@ -130923,19 +130939,19 @@
         <parameter type-id='7359adad' name='tolerance' filepath='drivers/scsi/ufs/ufshcd.c' line='587' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_dme_get_attr' mangled-name='ufshcd_dme_get_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3862' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_get_attr'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3862' column='1'/>
-        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3862' column='1'/>
-        <parameter type-id='f9409001' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3863' column='1'/>
-        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3863' column='1'/>
+      <function-decl name='ufshcd_dme_get_attr' mangled-name='ufshcd_dme_get_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3864' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_get_attr'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3864' column='1'/>
+        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3864' column='1'/>
+        <parameter type-id='f9409001' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3865' column='1'/>
+        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3865' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_dme_set_attr' mangled-name='ufshcd_dme_set_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3818' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_set_attr'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3818' column='1'/>
-        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3818' column='1'/>
-        <parameter type-id='f9b06939' name='attr_set' filepath='drivers/scsi/ufs/ufshcd.c' line='3819' column='1'/>
-        <parameter type-id='19c2251e' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3819' column='1'/>
-        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3819' column='1'/>
+      <function-decl name='ufshcd_dme_set_attr' mangled-name='ufshcd_dme_set_attr' filepath='drivers/scsi/ufs/ufshcd.c' line='3820' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dme_set_attr'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='3820' column='1'/>
+        <parameter type-id='19c2251e' name='attr_sel' filepath='drivers/scsi/ufs/ufshcd.c' line='3820' column='1'/>
+        <parameter type-id='f9b06939' name='attr_set' filepath='drivers/scsi/ufs/ufshcd.c' line='3821' column='1'/>
+        <parameter type-id='19c2251e' name='mib_val' filepath='drivers/scsi/ufs/ufshcd.c' line='3821' column='1'/>
+        <parameter type-id='f9b06939' name='peer' filepath='drivers/scsi/ufs/ufshcd.c' line='3821' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='ufshcd_dump_regs' mangled-name='ufshcd_dump_regs' filepath='drivers/scsi/ufs/ufshcd.c' line='102' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_dump_regs'>
@@ -130945,9 +130961,9 @@
         <parameter type-id='80f4b756' name='prefix' filepath='drivers/scsi/ufs/ufshcd.c' line='103' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_fixup_dev_quirks' mangled-name='ufshcd_fixup_dev_quirks' filepath='drivers/scsi/ufs/ufshcd.c' line='7429' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_fixup_dev_quirks'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='7429' column='1'/>
-        <parameter type-id='c5251c27' name='fixups' filepath='drivers/scsi/ufs/ufshcd.c' line='7429' column='1'/>
+      <function-decl name='ufshcd_fixup_dev_quirks' mangled-name='ufshcd_fixup_dev_quirks' filepath='drivers/scsi/ufs/ufshcd.c' line='7431' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_fixup_dev_quirks'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='7431' column='1'/>
+        <parameter type-id='c5251c27' name='fixups' filepath='drivers/scsi/ufs/ufshcd.c' line='7431' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='ufshcd_get_local_unipro_ver' mangled-name='ufshcd_get_local_unipro_ver' filepath='drivers/scsi/ufs/ufshcd.c' line='901' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_get_local_unipro_ver'>
@@ -130960,12 +130976,12 @@
         <parameter type-id='35f4156d' name='agreed_pwr' filepath='drivers/scsi/ufs/ufshcd-pltfrm.c' line='254' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_hba_enable' mangled-name='ufshcd_hba_enable' filepath='drivers/scsi/ufs/ufshcd.c' line='4562' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_enable'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4562' column='1'/>
+      <function-decl name='ufshcd_hba_enable' mangled-name='ufshcd_hba_enable' filepath='drivers/scsi/ufs/ufshcd.c' line='4564' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_enable'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4564' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_hba_stop' mangled-name='ufshcd_hba_stop' filepath='drivers/scsi/ufs/ufshcd.c' line='4476' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_stop'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4476' column='1'/>
+      <function-decl name='ufshcd_hba_stop' mangled-name='ufshcd_hba_stop' filepath='drivers/scsi/ufs/ufshcd.c' line='4478' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hba_stop'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4478' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='ufshcd_hold' mangled-name='ufshcd_hold' filepath='drivers/scsi/ufs/ufshcd.c' line='1652' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_hold'>
@@ -130973,12 +130989,12 @@
         <parameter type-id='b50a4934' name='async' filepath='drivers/scsi/ufs/ufshcd.c' line='1652' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_link_recovery' mangled-name='ufshcd_link_recovery' filepath='drivers/scsi/ufs/ufshcd.c' line='4060' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_link_recovery'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4060' column='1'/>
+      <function-decl name='ufshcd_link_recovery' mangled-name='ufshcd_link_recovery' filepath='drivers/scsi/ufs/ufshcd.c' line='4062' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_link_recovery'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4062' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_make_hba_operational' mangled-name='ufshcd_make_hba_operational' filepath='drivers/scsi/ufs/ufshcd.c' line='4426' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_make_hba_operational'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4426' column='1'/>
+      <function-decl name='ufshcd_make_hba_operational' mangled-name='ufshcd_make_hba_operational' filepath='drivers/scsi/ufs/ufshcd.c' line='4428' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_make_hba_operational'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4428' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='ufshcd_map_desc_id_to_length' mangled-name='ufshcd_map_desc_id_to_length' filepath='drivers/scsi/ufs/ufshcd.c' line='3296' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_map_desc_id_to_length'>
@@ -131073,28 +131089,28 @@
         <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='1830' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_remove' mangled-name='ufshcd_remove' filepath='drivers/scsi/ufs/ufshcd.c' line='9252' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_remove'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9252' column='1'/>
+      <function-decl name='ufshcd_remove' mangled-name='ufshcd_remove' filepath='drivers/scsi/ufs/ufshcd.c' line='9254' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_remove'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9254' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='ufshcd_shutdown' mangled-name='ufshcd_shutdown' filepath='drivers/scsi/ufs/ufshcd.c' line='9221' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_shutdown'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9221' column='1'/>
+      <function-decl name='ufshcd_shutdown' mangled-name='ufshcd_shutdown' filepath='drivers/scsi/ufs/ufshcd.c' line='9223' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_shutdown'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9223' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_system_resume' mangled-name='ufshcd_system_resume' filepath='drivers/scsi/ufs/ufshcd.c' line='9120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_resume'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9120' column='1'/>
+      <function-decl name='ufshcd_system_resume' mangled-name='ufshcd_system_resume' filepath='drivers/scsi/ufs/ufshcd.c' line='9122' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_resume'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9122' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_system_suspend' mangled-name='ufshcd_system_suspend' filepath='drivers/scsi/ufs/ufshcd.c' line='9066' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_suspend'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9066' column='1'/>
+      <function-decl name='ufshcd_system_suspend' mangled-name='ufshcd_system_suspend' filepath='drivers/scsi/ufs/ufshcd.c' line='9068' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_system_suspend'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='9068' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_uic_hibern8_enter' mangled-name='ufshcd_uic_hibern8_enter' filepath='drivers/scsi/ufs/ufshcd.c' line='4091' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_enter'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4091' column='1'/>
+      <function-decl name='ufshcd_uic_hibern8_enter' mangled-name='ufshcd_uic_hibern8_enter' filepath='drivers/scsi/ufs/ufshcd.c' line='4093' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_enter'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4093' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='ufshcd_uic_hibern8_exit' mangled-name='ufshcd_uic_hibern8_exit' filepath='drivers/scsi/ufs/ufshcd.c' line='4115' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_exit'>
-        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4115' column='1'/>
+      <function-decl name='ufshcd_uic_hibern8_exit' mangled-name='ufshcd_uic_hibern8_exit' filepath='drivers/scsi/ufs/ufshcd.c' line='4117' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_uic_hibern8_exit'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='4117' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='uio_unregister_device' mangled-name='uio_unregister_device' filepath='drivers/uio/uio.c' line='1042' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='uio_unregister_device'>
@@ -132520,20 +132536,20 @@
         <return type-id='95e97e5e'/>
       </function-decl>
       <var-decl name='v4l2_subdev_call_wrappers' type-id='3a7813d3' mangled-name='v4l2_subdev_call_wrappers' visibility='default' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='350' column='1' elf-symbol-id='v4l2_subdev_call_wrappers'/>
-      <function-decl name='v4l2_subdev_init' mangled-name='v4l2_subdev_init' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='912' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_subdev_init'>
-        <parameter type-id='f5438ac7' name='sd' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='912' column='1'/>
-        <parameter type-id='040770fb' name='ops' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='912' column='1'/>
+      <function-decl name='v4l2_subdev_init' mangled-name='v4l2_subdev_init' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='917' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_subdev_init'>
+        <parameter type-id='f5438ac7' name='sd' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='917' column='1'/>
+        <parameter type-id='040770fb' name='ops' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='917' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='v4l2_subdev_link_validate' mangled-name='v4l2_subdev_link_validate' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='853' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_subdev_link_validate'>
-        <parameter type-id='b4de78ea' name='link' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='853' column='1'/>
+      <function-decl name='v4l2_subdev_link_validate' mangled-name='v4l2_subdev_link_validate' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='858' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_subdev_link_validate'>
+        <parameter type-id='b4de78ea' name='link' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='858' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='v4l2_subdev_link_validate_default' mangled-name='v4l2_subdev_link_validate_default' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='810' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_subdev_link_validate_default'>
-        <parameter type-id='f5438ac7' name='sd' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='810' column='1'/>
-        <parameter type-id='b4de78ea' name='link' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='811' column='1'/>
-        <parameter type-id='cdea97c3' name='source_fmt' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='812' column='1'/>
-        <parameter type-id='cdea97c3' name='sink_fmt' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='813' column='1'/>
+      <function-decl name='v4l2_subdev_link_validate_default' mangled-name='v4l2_subdev_link_validate_default' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='815' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_subdev_link_validate_default'>
+        <parameter type-id='f5438ac7' name='sd' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='815' column='1'/>
+        <parameter type-id='b4de78ea' name='link' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='816' column='1'/>
+        <parameter type-id='cdea97c3' name='source_fmt' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='817' column='1'/>
+        <parameter type-id='cdea97c3' name='sink_fmt' filepath='drivers/media/v4l2-core/v4l2-subdev.c' line='818' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='v4l_bound_align_image' mangled-name='v4l_bound_align_image' filepath='drivers/media/v4l2-core/v4l2-common.c' line='119' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l_bound_align_image'>
