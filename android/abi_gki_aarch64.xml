@@ -2222,6 +2222,14 @@
       <elf-symbol name='i2c_unregister_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x631a9eb2'/>
       <elf-symbol name='i2c_verify_adapter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa935a491'/>
       <elf-symbol name='i2c_verify_client' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x642751ed'/>
+      <elf-symbol name='i3c_device_disable_ibi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3db08043'/>
+      <elf-symbol name='i3c_device_do_priv_xfers' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x31bd8b49'/>
+      <elf-symbol name='i3c_device_enable_ibi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5bd94ec1'/>
+      <elf-symbol name='i3c_device_free_ibi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f921b1f'/>
+      <elf-symbol name='i3c_device_get_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb5f9a031'/>
+      <elf-symbol name='i3c_device_request_ibi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x43c65ba'/>
+      <elf-symbol name='i3c_driver_register_with_owner' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeef478af'/>
+      <elf-symbol name='i3c_driver_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6a3dca7f'/>
       <elf-symbol name='i3c_generic_ibi_alloc_pool' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9256784e'/>
       <elf-symbol name='i3c_generic_ibi_free_pool' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x76fe3e05'/>
       <elf-symbol name='i3c_generic_ibi_get_free_slot' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb133f9ea'/>
@@ -2236,6 +2244,7 @@
       <elf-symbol name='i3c_master_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x785009dd'/>
       <elf-symbol name='i3c_master_set_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5cd7229f'/>
       <elf-symbol name='i3c_master_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x682c06ff'/>
+      <elf-symbol name='i3cdev_to_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x526b0572'/>
       <elf-symbol name='icc_disable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x60defb88'/>
       <elf-symbol name='icc_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7b72aad'/>
       <elf-symbol name='icc_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4f3ed226'/>
@@ -18233,6 +18242,26 @@
         <enumerator name='CPUHP_ANDROID_RESERVED_4' value='221'/>
         <enumerator name='CPUHP_ONLINE' value='222'/>
       </enum-decl>
+      <class-decl name='i3c_device_id' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/mod_devicetable.h' line='479' column='1' id='2464be13'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='match_flags' type-id='8f048e17' visibility='default' filepath='include/linux/mod_devicetable.h' line='480' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='8'>
+          <var-decl name='dcr' type-id='8f048e17' visibility='default' filepath='include/linux/mod_devicetable.h' line='481' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='16'>
+          <var-decl name='manuf_id' type-id='d315442e' visibility='default' filepath='include/linux/mod_devicetable.h' line='482' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='part_id' type-id='d315442e' visibility='default' filepath='include/linux/mod_devicetable.h' line='483' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='48'>
+          <var-decl name='extra_info' type-id='d315442e' visibility='default' filepath='include/linux/mod_devicetable.h' line='484' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='data' type-id='eaa32e2f' visibility='default' filepath='include/linux/mod_devicetable.h' line='486' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='3e33342a' size-in-bits='64' id='24725b0c'/>
       <pointer-type-def type-id='6d54709d' size-in-bits='64' id='247297cd'/>
       <class-decl name='i2c_timings' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/linux/i2c.h' line='576' column='1' id='24734c8f'>
@@ -19792,6 +19821,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='a87c488a' size-in-bits='64' id='2869bb38'/>
+      <pointer-type-def type-id='3bd0350e' size-in-bits='64' id='28714cc4'/>
       <pointer-type-def type-id='605b61bb' size-in-bits='64' id='2871909b'/>
       <function-type size-in-bits='64' id='2873dcbb'>
         <parameter type-id='fa0b179b'/>
@@ -22971,6 +23001,7 @@
           <var-decl name='wait_lock' type-id='641c41d1' visibility='default' filepath='include/asm-generic/qrwlock_types.h' line='26' column='1'/>
         </data-member>
       </class-decl>
+      <qualified-type-def type-id='2464be13' const='yes' id='319f13b8'/>
       <class-decl name='snd_hwdep' size-in-bits='9984' is-struct='yes' visibility='default' filepath='include/sound/hwdep.h' line='42' column='1' id='31b13f91'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='card' type-id='52704eb7' visibility='default' filepath='include/sound/hwdep.h' line='43' column='1'/>
@@ -36152,6 +36183,7 @@
           <var-decl name='skc_tw_snd_nxt' type-id='19c2251e' visibility='default' filepath='include/net/sock.h' line='246' column='1'/>
         </data-member>
       </union-decl>
+      <pointer-type-def type-id='c1a65a65' size-in-bits='64' id='554d9945'/>
       <class-decl name='ethtool_ringparam' size-in-bits='288' is-struct='yes' visibility='default' filepath='include/uapi/linux/ethtool.h' line='513' column='1' id='555033d2'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='cmd' type-id='3f1a6b60' visibility='default' filepath='include/uapi/linux/ethtool.h' line='514' column='1'/>
@@ -39597,6 +39629,7 @@
           <var-decl name='pad2' type-id='f9b06939' visibility='default' filepath='include/linux/efi.h' line='192' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='e4357afb' size-in-bits='64' id='5c9680e7'/>
       <pointer-type-def type-id='337862e8' size-in-bits='64' id='5c9f2a92'/>
       <function-type size-in-bits='64' id='5ca87d9a'>
         <parameter type-id='67d012a2'/>
@@ -42725,12 +42758,12 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='99438dcd' size-in-bits='64' id='64c391d1'/>
-      <class-decl name='__anonymous_struct__' size-in-bits='256' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/i3c/master.h' line='341' column='1' id='64c74b8a'>
+      <class-decl name='__anonymous_struct__' size-in-bits='256' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/i3c/master.h' line='490' column='1' id='64c74b8a'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='i3c' type-id='72f469ec' visibility='default' filepath='include/linux/i3c/master.h' line='342' column='1'/>
+          <var-decl name='i3c' type-id='72f469ec' visibility='default' filepath='include/linux/i3c/master.h' line='491' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='i2c' type-id='72f469ec' visibility='default' filepath='include/linux/i3c/master.h' line='343' column='1'/>
+          <var-decl name='i2c' type-id='72f469ec' visibility='default' filepath='include/linux/i3c/master.h' line='492' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='64ec45e8'>
@@ -72818,6 +72851,7 @@
       <pointer-type-def type-id='5c18a8e2' size-in-bits='64' id='af5a73b0'/>
       <pointer-type-def type-id='5e6083f1' size-in-bits='64' id='af5eeab9'/>
       <pointer-type-def type-id='4c110a85' size-in-bits='64' id='af60ef81'/>
+      <pointer-type-def type-id='319f13b8' size-in-bits='64' id='af6bced6'/>
       <function-type size-in-bits='64' id='af6e35e9'>
         <parameter type-id='d02f4143'/>
         <parameter type-id='5555b4b4'/>
@@ -81645,6 +81679,20 @@
         <parameter type-id='43c38462'/>
         <return type-id='f0981eeb'/>
       </function-type>
+      <class-decl name='i3c_driver' size-in-bits='1600' is-struct='yes' visibility='default' filepath='include/linux/i3c/device.h' line='176' column='1' id='c1a65a65'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='driver' type-id='fe007c02' visibility='default' filepath='include/linux/i3c/device.h' line='177' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='probe' type-id='5c9680e7' visibility='default' filepath='include/linux/i3c/device.h' line='178' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1472'>
+          <var-decl name='remove' type-id='5c9680e7' visibility='default' filepath='include/linux/i3c/device.h' line='179' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1536'>
+          <var-decl name='id_table' type-id='af6bced6' visibility='default' filepath='include/linux/i3c/device.h' line='180' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='c1a677af'>
         <parameter type-id='8f4bc7f1'/>
         <parameter type-id='8f4bc7f1'/>
@@ -96471,6 +96519,10 @@
       </array-type-def>
       <typedef-decl name='tracepoint_ptr_t' type-id='2448a865' filepath='include/linux/tracepoint-defs.h' line='44' column='1' id='e431ac27'/>
       <pointer-type-def type-id='879dea4a' size-in-bits='64' id='e4330308'/>
+      <function-type size-in-bits='64' id='e4357afb'>
+        <parameter type-id='c062d7a5'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='v4l2_vp8_loopfilter_header' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/media/vp8-ctrls.h' line='37' column='1' id='e4362873'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='ref_frm_delta' type-id='87ce7f1e' visibility='default' filepath='include/media/vp8-ctrls.h' line='38' column='1'/>
@@ -105199,7 +105251,7 @@
       </class-decl>
       <pointer-type-def type-id='0d3f29fc' size-in-bits='64' id='fa2519a6'/>
       <function-type size-in-bits='64' id='fa255d5a'>
-        <parameter type-id='0ac68794' name='master'/>
+        <parameter type-id='0ac68794'/>
         <return type-id='95e97e5e'/>
       </function-type>
       <class-decl name='cec_pin' is-struct='yes' visibility='default' is-declaration-only='yes' id='fa296b96'/>
@@ -119975,6 +120027,43 @@
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/i2c/i2c-core-base.c' line='655' column='1'/>
         <return type-id='3e31633b'/>
       </function-decl>
+      <function-decl name='i3c_device_disable_ibi' mangled-name='i3c_device_disable_ibi' filepath='drivers/i3c/device.c' line='83' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_device_disable_ibi'>
+        <parameter type-id='c062d7a5' name='dev' filepath='drivers/i3c/device.c' line='83' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='i3c_device_do_priv_xfers' mangled-name='i3c_device_do_priv_xfers' filepath='drivers/i3c/device.c' line='31' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_device_do_priv_xfers'>
+        <parameter type-id='c062d7a5' name='dev' filepath='drivers/i3c/device.c' line='31' column='1'/>
+        <parameter type-id='ffef58ec' name='xfers' filepath='drivers/i3c/device.c' line='32' column='1'/>
+        <parameter type-id='95e97e5e' name='nxfers' filepath='drivers/i3c/device.c' line='33' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='i3c_device_enable_ibi' mangled-name='i3c_device_enable_ibi' filepath='drivers/i3c/device.c' line='112' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_device_enable_ibi'>
+        <parameter type-id='c062d7a5' name='dev' filepath='drivers/i3c/device.c' line='112' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='i3c_device_free_ibi' mangled-name='i3c_device_free_ibi' filepath='drivers/i3c/device.c' line='167' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_device_free_ibi'>
+        <parameter type-id='c062d7a5' name='dev' filepath='drivers/i3c/device.c' line='167' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='i3c_device_get_info' mangled-name='i3c_device_get_info' filepath='drivers/i3c/device.c' line='61' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_device_get_info'>
+        <parameter type-id='c062d7a5' name='dev' filepath='drivers/i3c/device.c' line='61' column='1'/>
+        <parameter type-id='28714cc4' name='info' filepath='drivers/i3c/device.c' line='62' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='i3c_device_request_ibi' mangled-name='i3c_device_request_ibi' filepath='drivers/i3c/device.c' line='139' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_device_request_ibi'>
+        <parameter type-id='c062d7a5' name='dev' filepath='drivers/i3c/device.c' line='139' column='1'/>
+        <parameter type-id='d0ddd4b8' name='req' filepath='drivers/i3c/device.c' line='140' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='i3c_driver_register_with_owner' mangled-name='i3c_driver_register_with_owner' filepath='drivers/i3c/device.c' line='260' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_driver_register_with_owner'>
+        <parameter type-id='554d9945' name='drv' filepath='drivers/i3c/device.c' line='260' column='1'/>
+        <parameter type-id='2730d015' name='owner' filepath='drivers/i3c/device.c' line='260' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='i3c_driver_unregister' mangled-name='i3c_driver_unregister' filepath='drivers/i3c/device.c' line='276' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_driver_unregister'>
+        <parameter type-id='554d9945' name='drv' filepath='drivers/i3c/device.c' line='276' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='i3c_generic_ibi_alloc_pool' mangled-name='i3c_generic_ibi_alloc_pool' filepath='drivers/i3c/master.c' line='2328' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_generic_ibi_alloc_pool'>
         <parameter type-id='e9b5d134' name='dev' filepath='drivers/i3c/master.c' line='2328' column='1'/>
         <parameter type-id='d0ddd4b8' name='req' filepath='drivers/i3c/master.c' line='2329' column='1'/>
@@ -120043,6 +120132,10 @@
       <function-decl name='i3c_master_unregister' mangled-name='i3c_master_unregister' filepath='drivers/i3c/master.c' line='2586' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_master_unregister'>
         <parameter type-id='0ac68794' name='master' filepath='drivers/i3c/master.c' line='2586' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='i3cdev_to_dev' mangled-name='i3cdev_to_dev' filepath='drivers/i3c/device.c' line='185' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3cdev_to_dev'>
+        <parameter type-id='c062d7a5' name='i3cdev' filepath='drivers/i3c/device.c' line='185' column='1'/>
+        <return type-id='fa0b179b'/>
       </function-decl>
       <function-decl name='icc_disable' mangled-name='icc_disable' filepath='drivers/interconnect/core.c' line='702' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='icc_disable'>
         <parameter type-id='b5fdec5e' name='path' filepath='drivers/interconnect/core.c' line='702' column='1'/>
