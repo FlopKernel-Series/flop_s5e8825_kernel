@@ -99,6 +99,7 @@
       <elf-symbol name='__free_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5a095c99'/>
       <elf-symbol name='__get_free_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6a5cb5ee'/>
       <elf-symbol name='__get_task_comm' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc2a656d9'/>
+      <elf-symbol name='__get_vm_area_caller' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x87eb7b44'/>
       <elf-symbol name='__getblk_gfp' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4c9af7f2'/>
       <elf-symbol name='__hrtimer_get_remaining' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xed269ad2'/>
       <elf-symbol name='__hvc_resize' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb7ef2ce8'/>
@@ -2247,6 +2248,7 @@
       <elf-symbol name='i3c_generic_ibi_get_free_slot' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb133f9ea'/>
       <elf-symbol name='i3c_generic_ibi_recycle_slot' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9a7ee19f'/>
       <elf-symbol name='i3c_master_add_i3c_dev_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x19e78db7'/>
+      <elf-symbol name='i3c_master_defslvs_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x37d1f1b2'/>
       <elf-symbol name='i3c_master_disec_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29131c93'/>
       <elf-symbol name='i3c_master_do_daa' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf936af1'/>
       <elf-symbol name='i3c_master_enec_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c443f42'/>
@@ -2638,6 +2640,7 @@
       <elf-symbol name='lzo1x_decompress_safe' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4df8fbc'/>
       <elf-symbol name='lzorle1x_1_compress' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x79f697e4'/>
       <elf-symbol name='mac_pton' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x652032cb'/>
+      <elf-symbol name='map_kernel_range' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1aab1c07'/>
       <elf-symbol name='match_hex' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xad0413d4'/>
       <elf-symbol name='match_int' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e3567f7'/>
       <elf-symbol name='match_string' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x81188c30'/>
@@ -108331,6 +108334,14 @@
         <parameter type-id='f23e2572' name='tsk' filepath='fs/exec.c' line='1212' column='1'/>
         <return type-id='26a90f95'/>
       </function-decl>
+      <function-decl name='__get_vm_area_caller' mangled-name='__get_vm_area_caller' filepath='mm/vmalloc.c' line='2097' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__get_vm_area_caller'>
+        <parameter type-id='7359adad' name='size' filepath='mm/vmalloc.c' line='2097' column='1'/>
+        <parameter type-id='7359adad' name='flags' filepath='mm/vmalloc.c' line='2097' column='1'/>
+        <parameter type-id='7359adad' name='start' filepath='mm/vmalloc.c' line='2098' column='1'/>
+        <parameter type-id='7359adad' name='end' filepath='mm/vmalloc.c' line='2098' column='1'/>
+        <parameter type-id='eaa32e2f' name='caller' filepath='mm/vmalloc.c' line='2099' column='1'/>
+        <return type-id='d295dab2'/>
+      </function-decl>
       <function-decl name='__getblk_gfp' mangled-name='__getblk_gfp' filepath='fs/buffer.c' line='1356' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__getblk_gfp'>
         <parameter type-id='b88dd945' name='bdev' filepath='fs/buffer.c' line='1356' column='1'/>
         <parameter type-id='a42536cd' name='block' filepath='fs/buffer.c' line='1356' column='1'/>
@@ -120195,6 +120206,10 @@
         <parameter type-id='f9b06939' name='addr' filepath='drivers/i3c/master.c' line='1854' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='i3c_master_defslvs_locked' mangled-name='i3c_master_defslvs_locked' filepath='drivers/i3c/master.c' line='897' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_master_defslvs_locked'>
+        <parameter type-id='0ac68794' name='master' filepath='drivers/i3c/master.c' line='897' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='i3c_master_disec_locked' mangled-name='i3c_master_disec_locked' filepath='drivers/i3c/master.c' line='850' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='i3c_master_disec_locked'>
         <parameter type-id='0ac68794' name='master' filepath='drivers/i3c/master.c' line='850' column='1'/>
         <parameter type-id='f9b06939' name='addr' filepath='drivers/i3c/master.c' line='850' column='1'/>
@@ -122209,6 +122224,13 @@
         <parameter type-id='80f4b756' name='s' filepath='lib/net_utils.c' line='7' column='1'/>
         <parameter type-id='8bff8096' name='mac' filepath='lib/net_utils.c' line='7' column='1'/>
         <return type-id='b50a4934'/>
+      </function-decl>
+      <function-decl name='map_kernel_range' mangled-name='map_kernel_range' filepath='mm/vmalloc.c' line='321' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='map_kernel_range'>
+        <parameter type-id='7359adad' name='start' filepath='mm/vmalloc.c' line='321' column='1'/>
+        <parameter type-id='7359adad' name='size' filepath='mm/vmalloc.c' line='321' column='1'/>
+        <parameter type-id='2e2dcbd3' name='prot' filepath='mm/vmalloc.c' line='321' column='1'/>
+        <parameter type-id='9f93c9da' name='pages' filepath='mm/vmalloc.c' line='322' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='match_hex' mangled-name='match_hex' filepath='lib/parser.c' line='232' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='match_hex'>
         <parameter type-id='4d03589b' name='s' filepath='lib/parser.c' line='232' column='1'/>
