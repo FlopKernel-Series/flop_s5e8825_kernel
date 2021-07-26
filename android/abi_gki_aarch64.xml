@@ -491,6 +491,7 @@
       <elf-symbol name='__v4l2_device_register_subdev_nodes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa8408d5e'/>
       <elf-symbol name='__v4l2_find_nearest_size' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe2822320'/>
       <elf-symbol name='__video_register_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x52a1f6ef'/>
+      <elf-symbol name='__vmalloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xae04012c'/>
       <elf-symbol name='__wait_on_buffer' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x85b483a3'/>
       <elf-symbol name='__wait_rcu_gp' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbfed2cd9'/>
       <elf-symbol name='__wake_up' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3eeb2322'/>
@@ -1292,6 +1293,7 @@
       <elf-symbol name='devm_fwnode_pwm_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8908fa5'/>
       <elf-symbol name='devm_gen_pool_create' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdcbbade4'/>
       <elf-symbol name='devm_get_clk_from_child' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x31a0ef95'/>
+      <elf-symbol name='devm_get_free_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe47d7ebc'/>
       <elf-symbol name='devm_gpio_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5abd3951'/>
       <elf-symbol name='devm_gpio_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42f1b276'/>
       <elf-symbol name='devm_gpio_request_one' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x613844ff'/>
@@ -111231,6 +111233,11 @@
         <parameter type-id='2730d015' name='owner' filepath='drivers/media/v4l2-core/v4l2-dev.c' line='879' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__vmalloc' mangled-name='__vmalloc' filepath='mm/vmalloc.c' line='2620' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__vmalloc'>
+        <parameter type-id='7359adad' name='size' filepath='mm/vmalloc.c' line='2620' column='1'/>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/vmalloc.c' line='2620' column='1'/>
+        <return type-id='eaa32e2f'/>
+      </function-decl>
       <function-decl name='__wait_on_buffer' mangled-name='__wait_on_buffer' filepath='fs/buffer.c' line='120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__wait_on_buffer'>
         <parameter type-id='c485c22c' name='bh' filepath='fs/buffer.c' line='120' column='1'/>
         <return type-id='48b5725f'/>
@@ -115464,6 +115471,12 @@
         <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk-devres.c' line='140' column='1'/>
         <parameter type-id='80f4b756' name='con_id' filepath='drivers/clk/clk-devres.c' line='140' column='1'/>
         <return type-id='7d0bc0eb'/>
+      </function-decl>
+      <function-decl name='devm_get_free_pages' mangled-name='devm_get_free_pages' filepath='drivers/base/devres.c' line='1127' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_get_free_pages'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/base/devres.c' line='1127' column='1'/>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='drivers/base/devres.c' line='1128' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='drivers/base/devres.c' line='1128' column='1'/>
+        <return type-id='7359adad'/>
       </function-decl>
       <function-decl name='devm_gpio_free' mangled-name='devm_gpio_free' filepath='drivers/gpio/gpiolib-devres.c' line='474' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_gpio_free'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/gpio/gpiolib-devres.c' line='474' column='1'/>
