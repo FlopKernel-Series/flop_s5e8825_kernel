@@ -331,6 +331,9 @@
       <elf-symbol name='__traceiter_android_vh_binder_wakeup_ilocked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x418a26b2'/>
       <elf-symbol name='__traceiter_android_vh_cgroup_attach' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5ce3c902'/>
       <elf-symbol name='__traceiter_android_vh_cgroup_set_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x91f54b24'/>
+      <elf-symbol name='__traceiter_android_vh_check_bpf_syscall' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7b8a66b'/>
+      <elf-symbol name='__traceiter_android_vh_check_file_open' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6264fdb2'/>
+      <elf-symbol name='__traceiter_android_vh_check_mmap_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3ede6b04'/>
       <elf-symbol name='__traceiter_android_vh_clear_mask_adjust' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcbeb1478'/>
       <elf-symbol name='__traceiter_android_vh_clear_reserved_fmt_fields' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3409706a'/>
       <elf-symbol name='__traceiter_android_vh_cma_alloc_finish' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9f7a01cf'/>
@@ -5052,6 +5055,9 @@
       <elf-symbol name='__tracepoint_android_vh_binder_wakeup_ilocked' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45c1c15b'/>
       <elf-symbol name='__tracepoint_android_vh_cgroup_attach' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x83be6a33'/>
       <elf-symbol name='__tracepoint_android_vh_cgroup_set_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x68d747fd'/>
+      <elf-symbol name='__tracepoint_android_vh_check_bpf_syscall' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x54e1dee3'/>
+      <elf-symbol name='__tracepoint_android_vh_check_file_open' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbc70be66'/>
+      <elf-symbol name='__tracepoint_android_vh_check_mmap_file' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7bbb2a05'/>
       <elf-symbol name='__tracepoint_android_vh_check_uninterruptible_tasks' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x63a6e496'/>
       <elf-symbol name='__tracepoint_android_vh_check_uninterruptible_tasks_dn' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbfea98d1'/>
       <elf-symbol name='__tracepoint_android_vh_clear_mask_adjust' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4b0c9da7'/>
@@ -18883,6 +18889,14 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <pointer-type-def type-id='117b6b23' size-in-bits='64' id='25c6126f'/>
+      <union-decl name='__anonymous_union__' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/net/cfg802154.h' line='233' column='1' id='25cb4d60'>
+        <data-member access='public'>
+          <var-decl name='short_addr' type-id='23119536' visibility='default' filepath='include/net/cfg802154.h' line='234' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='extended_addr' type-id='a30e8d1f' visibility='default' filepath='include/net/cfg802154.h' line='235' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='xhci_ep_ctx' size-in-bits='256' is-struct='yes' visibility='default' filepath='drivers/usb/host/xhci.h' line='701' column='1' id='25cf7d45'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='ep_info' type-id='2f162548' visibility='default' filepath='drivers/usb/host/xhci.h' line='702' column='1'/>
@@ -37087,6 +37101,17 @@
       <pointer-type-def type-id='92a295b4' size-in-bits='64' id='57c9915e'/>
       <pointer-type-def type-id='f2dcb698' size-in-bits='64' id='57ca5882'/>
       <pointer-type-def type-id='2b4e6dbe' size-in-bits='64' id='57d10d30'/>
+      <class-decl name='ieee802154_addr' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/cfg802154.h' line='230' column='1' id='57d8dd3d'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='mode' type-id='f9b06939' visibility='default' filepath='include/net/cfg802154.h' line='231' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='16'>
+          <var-decl name='pan_id' type-id='23119536' visibility='default' filepath='include/net/cfg802154.h' line='232' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='' type-id='25cb4d60' visibility='default' filepath='include/net/cfg802154.h' line='233' column='1'/>
+        </data-member>
+      </class-decl>
       <enum-decl name='thermal_trip_type' filepath='include/uapi/linux/thermal.h' line='12' column='1' id='57e8e954'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='THERMAL_TRIP_ACTIVE' value='0'/>
@@ -38821,6 +38846,7 @@
         <return type-id='48b5725f'/>
       </function-type>
       <pointer-type-def type-id='86607661' size-in-bits='64' id='5afa70dd'/>
+      <pointer-type-def type-id='bb1a67f7' size-in-bits='64' id='5afbd3c3'/>
       <pointer-type-def type-id='537d88b1' size-in-bits='64' id='5afdaa66'/>
       <array-type-def dimensions='1' type-id='7799da43' size-in-bits='256' id='5b02a6fc'>
         <subrange length='2' type-id='7ff19f0f' id='52efc4ef'/>
@@ -50528,6 +50554,7 @@
       <pointer-type-def type-id='70084cf7' size-in-bits='64' id='78efe913'/>
       <pointer-type-def type-id='cf081899' size-in-bits='64' id='78faece1'/>
       <qualified-type-def type-id='8a1bdab0' const='yes' id='78fc3761'/>
+      <pointer-type-def type-id='ff37489f' size-in-bits='64' id='790774ef'/>
       <function-type size-in-bits='64' id='7908d890'>
         <parameter type-id='5e4f599b'/>
         <return type-id='48b5725f'/>
@@ -58126,7 +58153,65 @@
           <var-decl name='vtd' type-id='8b85ffcf' visibility='default' filepath='include/uapi/linux/iommu.h' line='337' column='1'/>
         </data-member>
       </union-decl>
-      <class-decl name='wpan_dev' is-struct='yes' visibility='default' is-declaration-only='yes' id='8ae2fb1d'/>
+      <class-decl name='wpan_dev' size-in-bits='704' is-struct='yes' visibility='default' filepath='include/net/cfg802154.h' line='326' column='1' id='8ae2fb1d'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='wpan_phy' type-id='82398c35' visibility='default' filepath='include/net/cfg802154.h' line='327' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='iftype' type-id='95e97e5e' visibility='default' filepath='include/net/cfg802154.h' line='328' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='list' type-id='72f469ec' visibility='default' filepath='include/net/cfg802154.h' line='331' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='netdev' type-id='68a2d05b' visibility='default' filepath='include/net/cfg802154.h' line='332' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='header_ops' type-id='790774ef' visibility='default' filepath='include/net/cfg802154.h' line='334' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='lowpan_dev' type-id='68a2d05b' visibility='default' filepath='include/net/cfg802154.h' line='337' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='448'>
+          <var-decl name='identifier' type-id='19c2251e' visibility='default' filepath='include/net/cfg802154.h' line='339' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='480'>
+          <var-decl name='pan_id' type-id='23119536' visibility='default' filepath='include/net/cfg802154.h' line='342' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='496'>
+          <var-decl name='short_addr' type-id='23119536' visibility='default' filepath='include/net/cfg802154.h' line='343' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='512'>
+          <var-decl name='extended_addr' type-id='a30e8d1f' visibility='default' filepath='include/net/cfg802154.h' line='344' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='bsn' type-id='49178f86' visibility='default' filepath='include/net/cfg802154.h' line='347' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='608'>
+          <var-decl name='dsn' type-id='49178f86' visibility='default' filepath='include/net/cfg802154.h' line='349' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='640'>
+          <var-decl name='min_be' type-id='f9b06939' visibility='default' filepath='include/net/cfg802154.h' line='351' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='648'>
+          <var-decl name='max_be' type-id='f9b06939' visibility='default' filepath='include/net/cfg802154.h' line='352' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='656'>
+          <var-decl name='csma_retries' type-id='f9b06939' visibility='default' filepath='include/net/cfg802154.h' line='353' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='664'>
+          <var-decl name='frame_retries' type-id='fdbf7a0f' visibility='default' filepath='include/net/cfg802154.h' line='354' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='672'>
+          <var-decl name='lbt' type-id='b50a4934' visibility='default' filepath='include/net/cfg802154.h' line='356' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='680'>
+          <var-decl name='promiscuous_mode' type-id='b50a4934' visibility='default' filepath='include/net/cfg802154.h' line='358' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='688'>
+          <var-decl name='ackreq' type-id='b50a4934' visibility='default' filepath='include/net/cfg802154.h' line='361' column='1'/>
+        </data-member>
+      </class-decl>
       <enum-decl name='dma_desc_metadata_mode' filepath='include/linux/dmaengine.h' line='289' column='1' id='8ae66bc4'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='DESC_METADATA_NONE' value='0'/>
@@ -62575,6 +62660,11 @@
       </function-type>
       <pointer-type-def type-id='21767af6' size-in-bits='64' id='95e6deec'/>
       <type-decl name='int' size-in-bits='32' id='95e97e5e'/>
+      <class-decl name='wpan_dev_header_ops' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/cfg802154.h' line='315' column='1' id='95fcbc94'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='create' type-id='5afbd3c3' visibility='default' filepath='include/net/cfg802154.h' line='320' column='1'/>
+        </data-member>
+      </class-decl>
       <union-decl name='__anonymous_union__' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/if.h' line='241' column='1' id='95fd560f'>
         <data-member access='public'>
           <var-decl name='ifru_addr' type-id='5221b18a' visibility='default' filepath='include/uapi/linux/if.h' line='242' column='1'/>
@@ -77390,6 +77480,7 @@
         </data-member>
       </union-decl>
       <pointer-type-def type-id='43489bca' size-in-bits='64' id='ba18e248'/>
+      <pointer-type-def type-id='d37aa9fa' size-in-bits='64' id='ba195270'/>
       <pointer-type-def type-id='d9609309' size-in-bits='64' id='ba1d878d'/>
       <pointer-type-def type-id='e82a9f1d' size-in-bits='64' id='ba21bbb1'/>
       <pointer-type-def type-id='636cc9ab' size-in-bits='64' id='ba21e62b'/>
@@ -77913,6 +78004,14 @@
       </class-decl>
       <pointer-type-def type-id='a9ab8935' size-in-bits='64' id='bb0baf11'/>
       <pointer-type-def type-id='9bc083a1' size-in-bits='64' id='bb0f13d1'/>
+      <function-type size-in-bits='64' id='bb1a67f7'>
+        <parameter type-id='0fbf3cfd'/>
+        <parameter type-id='68a2d05b'/>
+        <parameter type-id='ba195270'/>
+        <parameter type-id='ba195270'/>
+        <parameter type-id='f0981eeb'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <qualified-type-def type-id='32858f34' const='yes' id='bb21a21f'/>
       <pointer-type-def type-id='ecbaa04a' size-in-bits='64' id='bb28da1c'/>
       <pointer-type-def type-id='02c44ccf' size-in-bits='64' id='bb2cb7cb'/>
@@ -88783,6 +88882,7 @@
       <pointer-type-def type-id='0ad12489' size-in-bits='64' id='d3769ffd'/>
       <pointer-type-def type-id='4dedc1bb' size-in-bits='64' id='d379869f'/>
       <pointer-type-def type-id='08dd4249' size-in-bits='64' id='d37a2705'/>
+      <qualified-type-def type-id='57d8dd3d' const='yes' id='d37aa9fa'/>
       <pointer-type-def type-id='7e8ddfae' size-in-bits='64' id='d3807eb0'/>
       <function-type size-in-bits='64' id='d385bfac'>
         <parameter type-id='b9af02c3'/>
@@ -107573,6 +107673,7 @@
           <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/fdtable.h' line='33' column='1'/>
         </data-member>
       </class-decl>
+      <qualified-type-def type-id='95fcbc94' const='yes' id='ff37489f'/>
       <class-decl name='timerqueue_head' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/timerqueue.h' line='14' column='1' id='ff3c7f20'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='rb_root' type-id='6fe1603d' visibility='default' filepath='include/linux/timerqueue.h' line='15' column='1'/>
@@ -109737,6 +109838,26 @@
         <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/cgroup.h' line='12' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_check_bpf_syscall' mangled-name='__traceiter_android_vh_check_bpf_syscall' filepath='include/trace/hooks/syscall_check.h' line='25' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_check_bpf_syscall'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/syscall_check.h' line='25' column='1'/>
+        <parameter type-id='95e97e5e' name='cmd' filepath='include/trace/hooks/syscall_check.h' line='25' column='1'/>
+        <parameter type-id='2d14cfd8' name='attr' filepath='include/trace/hooks/syscall_check.h' line='25' column='1'/>
+        <parameter type-id='f0981eeb' name='size' filepath='include/trace/hooks/syscall_check.h' line='25' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_check_file_open' mangled-name='__traceiter_android_vh_check_file_open' filepath='include/trace/hooks/syscall_check.h' line='21' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_check_file_open'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/syscall_check.h' line='21' column='1'/>
+        <parameter type-id='5d92c9e0' name='file' filepath='include/trace/hooks/syscall_check.h' line='21' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_check_mmap_file' mangled-name='__traceiter_android_vh_check_mmap_file' filepath='include/trace/hooks/syscall_check.h' line='16' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_check_mmap_file'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/syscall_check.h' line='16' column='1'/>
+        <parameter type-id='5d92c9e0' name='file' filepath='include/trace/hooks/syscall_check.h' line='16' column='1'/>
+        <parameter type-id='7359adad' name='prot' filepath='include/trace/hooks/syscall_check.h' line='16' column='1'/>
+        <parameter type-id='7359adad' name='flag' filepath='include/trace/hooks/syscall_check.h' line='16' column='1'/>
+        <parameter type-id='7359adad' name='ret' filepath='include/trace/hooks/syscall_check.h' line='16' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_clear_mask_adjust' mangled-name='__traceiter_android_vh_clear_mask_adjust' filepath='include/trace/hooks/v4l2core.h' line='23' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_clear_mask_adjust'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/v4l2core.h' line='23' column='1'/>
         <parameter type-id='f0981eeb' name='ctrl' filepath='include/trace/hooks/v4l2core.h' line='23' column='1'/>
@@ -110699,6 +110820,9 @@
       <var-decl name='__tracepoint_android_vh_binder_wakeup_ilocked' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_binder_wakeup_ilocked' visibility='default' filepath='include/trace/hooks/binder.h' line='35' column='1' elf-symbol-id='__tracepoint_android_vh_binder_wakeup_ilocked'/>
       <var-decl name='__tracepoint_android_vh_cgroup_attach' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cgroup_attach' visibility='default' filepath='include/trace/hooks/cgroup.h' line='27' column='1' elf-symbol-id='__tracepoint_android_vh_cgroup_attach'/>
       <var-decl name='__tracepoint_android_vh_cgroup_set_task' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cgroup_set_task' visibility='default' filepath='include/trace/hooks/cgroup.h' line='12' column='1' elf-symbol-id='__tracepoint_android_vh_cgroup_set_task'/>
+      <var-decl name='__tracepoint_android_vh_check_bpf_syscall' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_check_bpf_syscall' visibility='default' filepath='include/trace/hooks/syscall_check.h' line='25' column='1' elf-symbol-id='__tracepoint_android_vh_check_bpf_syscall'/>
+      <var-decl name='__tracepoint_android_vh_check_file_open' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_check_file_open' visibility='default' filepath='include/trace/hooks/syscall_check.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_check_file_open'/>
+      <var-decl name='__tracepoint_android_vh_check_mmap_file' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_check_mmap_file' visibility='default' filepath='include/trace/hooks/syscall_check.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_check_mmap_file'/>
       <var-decl name='__tracepoint_android_vh_check_uninterruptible_tasks' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_check_uninterruptible_tasks' visibility='default' filepath='include/trace/hooks/hung_task.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_check_uninterruptible_tasks'/>
       <var-decl name='__tracepoint_android_vh_check_uninterruptible_tasks_dn' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_check_uninterruptible_tasks_dn' visibility='default' filepath='include/trace/hooks/hung_task.h' line='18' column='1' elf-symbol-id='__tracepoint_android_vh_check_uninterruptible_tasks_dn'/>
       <var-decl name='__tracepoint_android_vh_clear_mask_adjust' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_clear_mask_adjust' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='23' column='1' elf-symbol-id='__tracepoint_android_vh_clear_mask_adjust'/>
