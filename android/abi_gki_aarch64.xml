@@ -1796,6 +1796,7 @@
       <elf-symbol name='drm_get_format_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e095f11'/>
       <elf-symbol name='drm_handle_vblank' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x291fccd0'/>
       <elf-symbol name='drm_hdmi_avi_infoframe_from_display_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4dd70d27'/>
+      <elf-symbol name='drm_hdmi_infoframe_set_hdr_metadata' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x64e6a070'/>
       <elf-symbol name='drm_helper_connector_dpms' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6f514c73'/>
       <elf-symbol name='drm_helper_disable_unused_functions' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbde04239'/>
       <elf-symbol name='drm_helper_force_disable_all' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b897c78'/>
@@ -2217,6 +2218,7 @@
       <elf-symbol name='hdmi_audio_infoframe_pack' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29e1e204'/>
       <elf-symbol name='hdmi_avi_infoframe_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25e58a09'/>
       <elf-symbol name='hdmi_avi_infoframe_pack' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x809712ff'/>
+      <elf-symbol name='hdmi_drm_infoframe_pack_only' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd0bd487b'/>
       <elf-symbol name='hdmi_infoframe_pack' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x609b2853'/>
       <elf-symbol name='hex2bin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2edbeaf7'/>
       <elf-symbol name='hex_dump_to_buffer' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfe916dc6'/>
@@ -4010,6 +4012,7 @@
       <elf-symbol name='snd_pcm_hw_constraint_eld' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1375206e'/>
       <elf-symbol name='snd_pcm_hw_constraint_integer' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa4ff36b7'/>
       <elf-symbol name='snd_pcm_hw_constraint_list' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeec87728'/>
+      <elf-symbol name='snd_pcm_hw_constraint_mask64' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c514236'/>
       <elf-symbol name='snd_pcm_hw_constraint_minmax' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd79671c4'/>
       <elf-symbol name='snd_pcm_hw_constraint_msbits' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x21f14945'/>
       <elf-symbol name='snd_pcm_hw_constraint_step' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x88c6303f'/>
@@ -11655,6 +11658,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='53f069ac' size-in-bits='64' id='12884b9a'/>
+      <pointer-type-def type-id='7085bcda' size-in-bits='64' id='12886dd0'/>
       <class-decl name='key' size-in-bits='1920' is-struct='yes' visibility='default' filepath='include/linux/key.h' line='189' column='1' id='128d0ac4'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='usage' type-id='64615833' visibility='default' filepath='include/linux/key.h' line='190' column='1'/>
@@ -46671,6 +46675,7 @@
         <parameter type-id='0e3f80d9'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <pointer-type-def type-id='9ebab137' size-in-bits='64' id='6ddb149f'/>
       <function-type size-in-bits='64' id='6ddd203f'>
         <parameter type-id='a2bff676' name='net'/>
         <return type-id='48b5725f'/>
@@ -47384,6 +47389,7 @@
           <var-decl name='name_prefix' type-id='80f4b756' visibility='default' filepath='include/sound/soc.h' line='970' column='1'/>
         </data-member>
       </class-decl>
+      <qualified-type-def type-id='9ebab137' const='yes' id='7085bcda'/>
       <pointer-type-def type-id='85c172d2' size-in-bits='64' id='708ae4d0'/>
       <class-decl name='blocking_notifier_head' size-in-bits='576' is-struct='yes' visibility='default' filepath='include/linux/notifier.h' line='65' column='1' id='708c2394'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -111558,9 +111564,9 @@
         <parameter type-id='80f4b756' name='name' filepath='fs/char_dev.c' line='336' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='__update_load_avg_blocked_se' mangled-name='__update_load_avg_blocked_se' filepath='kernel/sched/pelt.c' line='335' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__update_load_avg_blocked_se'>
-        <parameter type-id='91ce1af9' name='now' filepath='kernel/sched/pelt.c' line='335' column='1'/>
-        <parameter type-id='ff2b3d10' name='se' filepath='kernel/sched/pelt.c' line='335' column='1'/>
+      <function-decl name='__update_load_avg_blocked_se' mangled-name='__update_load_avg_blocked_se' filepath='kernel/sched/pelt.c' line='358' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__update_load_avg_blocked_se'>
+        <parameter type-id='91ce1af9' name='now' filepath='kernel/sched/pelt.c' line='358' column='1'/>
+        <parameter type-id='ff2b3d10' name='se' filepath='kernel/sched/pelt.c' line='358' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__usb_create_hcd' mangled-name='__usb_create_hcd' filepath='drivers/usb/core/hcd.c' line='2416' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__usb_create_hcd'>
@@ -113897,8 +113903,8 @@
       </function-decl>
       <var-decl name='cpu_all_bits' type-id='afe549fd' mangled-name='cpu_all_bits' visibility='default' filepath='kernel/cpu.c' line='2700' column='1' elf-symbol-id='cpu_all_bits'/>
       <var-decl name='cpu_bit_bitmap' type-id='f959706c' mangled-name='cpu_bit_bitmap' visibility='default' filepath='kernel/cpu.c' line='2689' column='1' elf-symbol-id='cpu_bit_bitmap'/>
-      <function-decl name='cpu_have_feature' mangled-name='cpu_have_feature' filepath='arch/arm64/kernel/cpufeature.c' line='2844' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpu_have_feature'>
-        <parameter type-id='f0981eeb' name='num' filepath='arch/arm64/kernel/cpufeature.c' line='2844' column='1'/>
+      <function-decl name='cpu_have_feature' mangled-name='cpu_have_feature' filepath='arch/arm64/kernel/cpufeature.c' line='2847' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpu_have_feature'>
+        <parameter type-id='f0981eeb' name='num' filepath='arch/arm64/kernel/cpufeature.c' line='2847' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
       <function-decl name='cpu_hotplug_disable' mangled-name='cpu_hotplug_disable' filepath='kernel/cpu.c' line='358' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpu_hotplug_disable'>
@@ -118489,6 +118495,11 @@
         <parameter type-id='745b39e8' name='mode' filepath='drivers/gpu/drm/drm_edid.c' line='5597' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='drm_hdmi_infoframe_set_hdr_metadata' mangled-name='drm_hdmi_infoframe_set_hdr_metadata' filepath='drivers/gpu/drm/drm_edid.c' line='5484' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_hdmi_infoframe_set_hdr_metadata'>
+        <parameter type-id='6ddb149f' name='frame' filepath='drivers/gpu/drm/drm_edid.c' line='5484' column='1'/>
+        <parameter type-id='c9ecdb13' name='conn_state' filepath='drivers/gpu/drm/drm_edid.c' line='5485' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='drm_helper_connector_dpms' mangled-name='drm_helper_connector_dpms' filepath='drivers/gpu/drm/drm_crtc_helper.c' line='867' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_helper_connector_dpms'>
         <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_crtc_helper.c' line='867' column='1'/>
         <parameter type-id='95e97e5e' name='mode' filepath='drivers/gpu/drm/drm_crtc_helper.c' line='867' column='1'/>
@@ -119253,10 +119264,10 @@
         <parameter type-id='f9841541' name='params' filepath='drivers/usb/dwc3/gadget.c' line='273' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dwc3_stop_active_transfer' mangled-name='dwc3_stop_active_transfer' filepath='drivers/usb/dwc3/gadget.c' line='3524' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dwc3_stop_active_transfer'>
-        <parameter type-id='b31af340' name='dep' filepath='drivers/usb/dwc3/gadget.c' line='3524' column='1'/>
-        <parameter type-id='b50a4934' name='force' filepath='drivers/usb/dwc3/gadget.c' line='3524' column='1'/>
-        <parameter type-id='b50a4934' name='interrupt' filepath='drivers/usb/dwc3/gadget.c' line='3525' column='1'/>
+      <function-decl name='dwc3_stop_active_transfer' mangled-name='dwc3_stop_active_transfer' filepath='drivers/usb/dwc3/gadget.c' line='3549' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dwc3_stop_active_transfer'>
+        <parameter type-id='b31af340' name='dep' filepath='drivers/usb/dwc3/gadget.c' line='3549' column='1'/>
+        <parameter type-id='b50a4934' name='force' filepath='drivers/usb/dwc3/gadget.c' line='3549' column='1'/>
+        <parameter type-id='b50a4934' name='interrupt' filepath='drivers/usb/dwc3/gadget.c' line='3550' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='edac_device_add_device' mangled-name='edac_device_add_device' filepath='drivers/edac/edac_device.c' line='448' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='edac_device_add_device'>
@@ -119329,14 +119340,14 @@
         <parameter type-id='a42536cd' name='sector' filepath='block/elevator.c' line='283' column='1'/>
         <return type-id='3dad1a48'/>
       </function-decl>
-      <function-decl name='elv_rb_former_request' mangled-name='elv_rb_former_request' filepath='block/elevator.c' line='805' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='elv_rb_former_request'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/elevator.c' line='805' column='1'/>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/elevator.c' line='806' column='1'/>
+      <function-decl name='elv_rb_former_request' mangled-name='elv_rb_former_request' filepath='block/elevator.c' line='808' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='elv_rb_former_request'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/elevator.c' line='808' column='1'/>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/elevator.c' line='809' column='1'/>
         <return type-id='3dad1a48'/>
       </function-decl>
-      <function-decl name='elv_rb_latter_request' mangled-name='elv_rb_latter_request' filepath='block/elevator.c' line='817' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='elv_rb_latter_request'>
-        <parameter type-id='e7d2a5fc' name='q' filepath='block/elevator.c' line='817' column='1'/>
-        <parameter type-id='3dad1a48' name='rq' filepath='block/elevator.c' line='818' column='1'/>
+      <function-decl name='elv_rb_latter_request' mangled-name='elv_rb_latter_request' filepath='block/elevator.c' line='820' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='elv_rb_latter_request'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/elevator.c' line='820' column='1'/>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/elevator.c' line='821' column='1'/>
         <return type-id='3dad1a48'/>
       </function-decl>
       <function-decl name='elv_register' mangled-name='elv_register' filepath='block/elevator.c' line='523' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='elv_register'>
@@ -120656,6 +120667,12 @@
         <parameter type-id='19ddc3a6' name='frame' filepath='drivers/video/hdmi.c' line='200' column='1'/>
         <parameter type-id='eaa32e2f' name='buffer' filepath='drivers/video/hdmi.c' line='201' column='1'/>
         <parameter type-id='b59d7dce' name='size' filepath='drivers/video/hdmi.c' line='201' column='1'/>
+        <return type-id='79a0948f'/>
+      </function-decl>
+      <function-decl name='hdmi_drm_infoframe_pack_only' mangled-name='hdmi_drm_infoframe_pack_only' filepath='drivers/video/hdmi.c' line='707' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='hdmi_drm_infoframe_pack_only'>
+        <parameter type-id='12886dd0' name='frame' filepath='drivers/video/hdmi.c' line='707' column='1'/>
+        <parameter type-id='eaa32e2f' name='buffer' filepath='drivers/video/hdmi.c' line='708' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='drivers/video/hdmi.c' line='708' column='1'/>
         <return type-id='79a0948f'/>
       </function-decl>
       <function-decl name='hdmi_infoframe_pack' mangled-name='hdmi_infoframe_pack' filepath='drivers/video/hdmi.c' line='944' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='hdmi_infoframe_pack'>
@@ -129788,6 +129805,12 @@
         <parameter type-id='f0981eeb' name='cond' filepath='sound/core/pcm_lib.c' line='1271' column='1'/>
         <parameter type-id='6b55ba25' name='var' filepath='sound/core/pcm_lib.c' line='1272' column='1'/>
         <parameter type-id='a5cedbd3' name='l' filepath='sound/core/pcm_lib.c' line='1273' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='snd_pcm_hw_constraint_mask64' mangled-name='snd_pcm_hw_constraint_mask64' filepath='sound/core/pcm_lib.c' line='1195' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_hw_constraint_mask64'>
+        <parameter type-id='17a05af6' name='runtime' filepath='sound/core/pcm_lib.c' line='1195' column='1'/>
+        <parameter type-id='6b55ba25' name='var' filepath='sound/core/pcm_lib.c' line='1195' column='1'/>
+        <parameter type-id='f1f7b9a4' name='mask' filepath='sound/core/pcm_lib.c' line='1196' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='snd_pcm_hw_constraint_minmax' mangled-name='snd_pcm_hw_constraint_minmax' filepath='sound/core/pcm_lib.c' line='1238' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_pcm_hw_constraint_minmax'>
