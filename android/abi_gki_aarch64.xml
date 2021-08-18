@@ -373,6 +373,9 @@
       <elf-symbol name='__traceiter_android_vh_fill_ext_fmtdesc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8fbdd9c8'/>
       <elf-symbol name='__traceiter_android_vh_finish_update_load_avg_se' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcf8573d8'/>
       <elf-symbol name='__traceiter_android_vh_free_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e6d4c7'/>
+      <elf-symbol name='__traceiter_android_vh_freq_qos_add_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2337c613'/>
+      <elf-symbol name='__traceiter_android_vh_freq_qos_remove_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x332e571d'/>
+      <elf-symbol name='__traceiter_android_vh_freq_qos_update_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe802443d'/>
       <elf-symbol name='__traceiter_android_vh_freq_table_limits' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe0dee6a6'/>
       <elf-symbol name='__traceiter_android_vh_ftrace_dump_buffer' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x47509209'/>
       <elf-symbol name='__traceiter_android_vh_ftrace_format_check' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f89ea93'/>
@@ -5204,6 +5207,9 @@
       <elf-symbol name='__tracepoint_android_vh_fill_ext_fmtdesc' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb53bb92b'/>
       <elf-symbol name='__tracepoint_android_vh_finish_update_load_avg_se' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa9691213'/>
       <elf-symbol name='__tracepoint_android_vh_free_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25db8da7'/>
+      <elf-symbol name='__tracepoint_android_vh_freq_qos_add_request' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x20f6db7a'/>
+      <elf-symbol name='__tracepoint_android_vh_freq_qos_remove_request' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc15e1ec8'/>
+      <elf-symbol name='__tracepoint_android_vh_freq_qos_update_request' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8e8623e4'/>
       <elf-symbol name='__tracepoint_android_vh_freq_table_limits' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2eef122d'/>
       <elf-symbol name='__tracepoint_android_vh_ftrace_dump_buffer' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x86ca15d4'/>
       <elf-symbol name='__tracepoint_android_vh_ftrace_format_check' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd707ac7b'/>
@@ -110946,6 +110952,26 @@
         <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/sched.h' line='318' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_freq_qos_add_request' mangled-name='__traceiter_android_vh_freq_qos_add_request' filepath='include/trace/hooks/power.h' line='27' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_freq_qos_add_request'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/power.h' line='27' column='1'/>
+        <parameter type-id='1351457a' name='qos' filepath='include/trace/hooks/power.h' line='27' column='1'/>
+        <parameter type-id='3fdf7ca3' name='req' filepath='include/trace/hooks/power.h' line='27' column='1'/>
+        <parameter type-id='1df5cca8' name='type' filepath='include/trace/hooks/power.h' line='27' column='1'/>
+        <parameter type-id='95e97e5e' name='value' filepath='include/trace/hooks/power.h' line='27' column='1'/>
+        <parameter type-id='95e97e5e' name='ret' filepath='include/trace/hooks/power.h' line='27' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_freq_qos_remove_request' mangled-name='__traceiter_android_vh_freq_qos_remove_request' filepath='include/trace/hooks/power.h' line='36' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_freq_qos_remove_request'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/power.h' line='36' column='1'/>
+        <parameter type-id='3fdf7ca3' name='req' filepath='include/trace/hooks/power.h' line='36' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_freq_qos_update_request' mangled-name='__traceiter_android_vh_freq_qos_update_request' filepath='include/trace/hooks/power.h' line='32' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_freq_qos_update_request'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/power.h' line='32' column='1'/>
+        <parameter type-id='3fdf7ca3' name='req' filepath='include/trace/hooks/power.h' line='32' column='1'/>
+        <parameter type-id='95e97e5e' name='value' filepath='include/trace/hooks/power.h' line='32' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_freq_table_limits' mangled-name='__traceiter_android_vh_freq_table_limits' filepath='include/trace/hooks/cpufreq.h' line='22' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_freq_table_limits'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/cpufreq.h' line='22' column='1'/>
         <parameter type-id='343c3ae4' name='policy' filepath='include/trace/hooks/cpufreq.h' line='22' column='1'/>
@@ -111888,6 +111914,9 @@
       <var-decl name='__tracepoint_android_vh_fill_ext_fmtdesc' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_fill_ext_fmtdesc' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_fill_ext_fmtdesc'/>
       <var-decl name='__tracepoint_android_vh_finish_update_load_avg_se' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_finish_update_load_avg_se' visibility='default' filepath='include/trace/hooks/sched.h' line='357' column='1' elf-symbol-id='__tracepoint_android_vh_finish_update_load_avg_se'/>
       <var-decl name='__tracepoint_android_vh_free_task' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_free_task' visibility='default' filepath='include/trace/hooks/sched.h' line='318' column='1' elf-symbol-id='__tracepoint_android_vh_free_task'/>
+      <var-decl name='__tracepoint_android_vh_freq_qos_add_request' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_freq_qos_add_request' visibility='default' filepath='include/trace/hooks/power.h' line='27' column='1' elf-symbol-id='__tracepoint_android_vh_freq_qos_add_request'/>
+      <var-decl name='__tracepoint_android_vh_freq_qos_remove_request' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_freq_qos_remove_request' visibility='default' filepath='include/trace/hooks/power.h' line='36' column='1' elf-symbol-id='__tracepoint_android_vh_freq_qos_remove_request'/>
+      <var-decl name='__tracepoint_android_vh_freq_qos_update_request' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_freq_qos_update_request' visibility='default' filepath='include/trace/hooks/power.h' line='32' column='1' elf-symbol-id='__tracepoint_android_vh_freq_qos_update_request'/>
       <var-decl name='__tracepoint_android_vh_freq_table_limits' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_freq_table_limits' visibility='default' filepath='include/trace/hooks/cpufreq.h' line='22' column='1' elf-symbol-id='__tracepoint_android_vh_freq_table_limits'/>
       <var-decl name='__tracepoint_android_vh_ftrace_dump_buffer' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_dump_buffer' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='32' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_dump_buffer'/>
       <var-decl name='__tracepoint_android_vh_ftrace_format_check' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_format_check' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='28' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_format_check'/>
