@@ -365,6 +365,7 @@
       <elf-symbol name='__traceiter_android_vh_cpuidle_psci_enter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6cbffc19'/>
       <elf-symbol name='__traceiter_android_vh_cpuidle_psci_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9e5cd40b'/>
       <elf-symbol name='__traceiter_android_vh_do_send_sig_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9d17560f'/>
+      <elf-symbol name='__traceiter_android_vh_do_wake_up_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7565179c'/>
       <elf-symbol name='__traceiter_android_vh_dump_throttled_rt_tasks' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1a34d1a3'/>
       <elf-symbol name='__traceiter_android_vh_em_cpu_energy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd60a0819'/>
       <elf-symbol name='__traceiter_android_vh_enable_thermal_genl_check' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc39a1e16'/>
@@ -530,6 +531,7 @@
       <elf-symbol name='__wake_up_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2773c485'/>
       <elf-symbol name='__wake_up_locked_key' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9337cd0'/>
       <elf-symbol name='__wake_up_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb8273d0b'/>
+      <elf-symbol name='__wake_up_sync_key' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba220db7'/>
       <elf-symbol name='__warn_printk' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56470118'/>
       <elf-symbol name='__xa_alloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf40e7a73'/>
       <elf-symbol name='__xa_insert' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x296cb509'/>
@@ -5199,6 +5201,7 @@
       <elf-symbol name='__tracepoint_android_vh_cpuidle_psci_enter' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x137e6ebe'/>
       <elf-symbol name='__tracepoint_android_vh_cpuidle_psci_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaaacb3b6'/>
       <elf-symbol name='__tracepoint_android_vh_do_send_sig_info' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6db82691'/>
+      <elf-symbol name='__tracepoint_android_vh_do_wake_up_sync' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x24bef402'/>
       <elf-symbol name='__tracepoint_android_vh_dump_throttled_rt_tasks' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd29bebac'/>
       <elf-symbol name='__tracepoint_android_vh_em_cpu_energy' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ce74918'/>
       <elf-symbol name='__tracepoint_android_vh_enable_thermal_genl_check' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x901a2c7c'/>
@@ -110899,6 +110902,12 @@
         <parameter type-id='f23e2572' name='dst' filepath='include/trace/hooks/signal.h' line='12' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_do_wake_up_sync' mangled-name='__traceiter_android_vh_do_wake_up_sync' filepath='include/trace/hooks/sched.h' line='263' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_do_wake_up_sync'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='263' column='1'/>
+        <parameter type-id='3f8b2ed3' name='wq_head' filepath='include/trace/hooks/sched.h' line='263' column='1'/>
+        <parameter type-id='7292109c' name='done' filepath='include/trace/hooks/sched.h' line='263' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_dump_throttled_rt_tasks' mangled-name='__traceiter_android_vh_dump_throttled_rt_tasks' filepath='include/trace/hooks/sched.h' line='73' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_dump_throttled_rt_tasks'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='73' column='1'/>
         <parameter type-id='95e97e5e' name='cpu' filepath='include/trace/hooks/sched.h' line='73' column='1'/>
@@ -111906,6 +111915,7 @@
       <var-decl name='__tracepoint_android_vh_cpuidle_psci_enter' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpuidle_psci_enter' visibility='default' filepath='include/trace/hooks/cpuidle_psci.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_cpuidle_psci_enter'/>
       <var-decl name='__tracepoint_android_vh_cpuidle_psci_exit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpuidle_psci_exit' visibility='default' filepath='include/trace/hooks/cpuidle_psci.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_cpuidle_psci_exit'/>
       <var-decl name='__tracepoint_android_vh_do_send_sig_info' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_send_sig_info' visibility='default' filepath='include/trace/hooks/signal.h' line='12' column='1' elf-symbol-id='__tracepoint_android_vh_do_send_sig_info'/>
+      <var-decl name='__tracepoint_android_vh_do_wake_up_sync' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_wake_up_sync' visibility='default' filepath='include/trace/hooks/sched.h' line='263' column='1' elf-symbol-id='__tracepoint_android_vh_do_wake_up_sync'/>
       <var-decl name='__tracepoint_android_vh_dump_throttled_rt_tasks' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_dump_throttled_rt_tasks' visibility='default' filepath='include/trace/hooks/sched.h' line='73' column='1' elf-symbol-id='__tracepoint_android_vh_dump_throttled_rt_tasks'/>
       <var-decl name='__tracepoint_android_vh_em_cpu_energy' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_em_cpu_energy' visibility='default' filepath='include/trace/hooks/sched.h' line='236' column='1' elf-symbol-id='__tracepoint_android_vh_em_cpu_energy'/>
       <var-decl name='__tracepoint_android_vh_enable_thermal_genl_check' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_enable_thermal_genl_check' visibility='default' filepath='include/trace/hooks/thermal.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_enable_thermal_genl_check'/>
@@ -112171,6 +112181,12 @@
       <function-decl name='__wake_up_sync' mangled-name='__wake_up_sync' filepath='kernel/sched/wait.c' line='224' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__wake_up_sync'>
         <parameter type-id='3f8b2ed3' name='wq_head' filepath='kernel/sched/wait.c' line='224' column='1'/>
         <parameter type-id='f0981eeb' name='mode' filepath='kernel/sched/wait.c' line='224' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='__wake_up_sync_key' mangled-name='__wake_up_sync_key' filepath='kernel/sched/wait.c' line='185' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__wake_up_sync_key'>
+        <parameter type-id='3f8b2ed3' name='wq_head' filepath='kernel/sched/wait.c' line='185' column='1'/>
+        <parameter type-id='f0981eeb' name='mode' filepath='kernel/sched/wait.c' line='185' column='1'/>
+        <parameter type-id='eaa32e2f' name='key' filepath='kernel/sched/wait.c' line='186' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='__warn_printk' mangled-name='__warn_printk' filepath='kernel/panic.c' line='640' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__warn_printk'>
