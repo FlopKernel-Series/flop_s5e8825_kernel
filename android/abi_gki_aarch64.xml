@@ -24584,6 +24584,11 @@
         <enumerator name='MEDIA_ENTITY_TYPE_VIDEO_DEVICE' value='1'/>
         <enumerator name='MEDIA_ENTITY_TYPE_V4L2_SUBDEV' value='2'/>
       </enum-decl>
+      <function-type size-in-bits='64' id='33f50c8e'>
+        <parameter type-id='ef706860'/>
+        <parameter type-id='f0981eeb'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <function-type size-in-bits='64' id='33f6a667'>
         <parameter type-id='1c936db9'/>
         <parameter type-id='95e97e5e'/>
@@ -33791,42 +33796,42 @@
         <parameter type-id='aa29ecab'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <class-decl name='spi_message' size-in-bits='896' is-struct='yes' visibility='default' filepath='include/linux/spi/spi.h' line='1010' column='1' id='4dd90c3d'>
+      <class-decl name='spi_message' size-in-bits='896' is-struct='yes' visibility='default' filepath='include/linux/spi/spi.h' line='1017' column='1' id='4dd90c3d'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='transfers' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='1011' column='1'/>
+          <var-decl name='transfers' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='1018' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='spi' type-id='e90f4666' visibility='default' filepath='include/linux/spi/spi.h' line='1013' column='1'/>
+          <var-decl name='spi' type-id='e90f4666' visibility='default' filepath='include/linux/spi/spi.h' line='1020' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='is_dma_mapped' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='1015' column='1'/>
+          <var-decl name='is_dma_mapped' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='1022' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='complete' type-id='b7f9d8e6' visibility='default' filepath='include/linux/spi/spi.h' line='1029' column='1'/>
+          <var-decl name='complete' type-id='b7f9d8e6' visibility='default' filepath='include/linux/spi/spi.h' line='1036' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='context' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='1030' column='1'/>
+          <var-decl name='context' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='1037' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='frame_length' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='1031' column='1'/>
+          <var-decl name='frame_length' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='1038' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='416'>
-          <var-decl name='actual_length' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='1032' column='1'/>
+          <var-decl name='actual_length' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='1039' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='status' type-id='95e97e5e' visibility='default' filepath='include/linux/spi/spi.h' line='1033' column='1'/>
+          <var-decl name='status' type-id='95e97e5e' visibility='default' filepath='include/linux/spi/spi.h' line='1040' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='queue' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='1039' column='1'/>
+          <var-decl name='queue' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='1046' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='state' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='1040' column='1'/>
+          <var-decl name='state' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='1047' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='resources' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='1043' column='1'/>
+          <var-decl name='resources' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='1050' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='1045' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='1052' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='d39c42ab' size-in-bits='64' id='4dec003b'/>
@@ -66260,78 +66265,78 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <typedef-decl name='s16' type-id='b55def60' filepath='include/asm-generic/int-ll64.h' line='18' column='1' id='9b7e9486'/>
-      <class-decl name='spi_transfer' size-in-bits='1216' is-struct='yes' visibility='default' filepath='include/linux/spi/spi.h' line='935' column='1' id='9b7f1a95'>
+      <class-decl name='spi_transfer' size-in-bits='1216' is-struct='yes' visibility='default' filepath='include/linux/spi/spi.h' line='942' column='1' id='9b7f1a95'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='tx_buf' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='941' column='1'/>
+          <var-decl name='tx_buf' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='948' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='rx_buf' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='942' column='1'/>
+          <var-decl name='rx_buf' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='949' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='len' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='943' column='1'/>
+          <var-decl name='len' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='950' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='tx_dma' type-id='cf29c9b3' visibility='default' filepath='include/linux/spi/spi.h' line='945' column='1'/>
+          <var-decl name='tx_dma' type-id='cf29c9b3' visibility='default' filepath='include/linux/spi/spi.h' line='952' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='rx_dma' type-id='cf29c9b3' visibility='default' filepath='include/linux/spi/spi.h' line='946' column='1'/>
+          <var-decl name='rx_dma' type-id='cf29c9b3' visibility='default' filepath='include/linux/spi/spi.h' line='953' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='tx_sg' type-id='c59e4f4c' visibility='default' filepath='include/linux/spi/spi.h' line='947' column='1'/>
+          <var-decl name='tx_sg' type-id='c59e4f4c' visibility='default' filepath='include/linux/spi/spi.h' line='954' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='rx_sg' type-id='c59e4f4c' visibility='default' filepath='include/linux/spi/spi.h' line='948' column='1'/>
+          <var-decl name='rx_sg' type-id='c59e4f4c' visibility='default' filepath='include/linux/spi/spi.h' line='955' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='cs_change' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='950' column='1'/>
+          <var-decl name='cs_change' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='957' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='tx_nbits' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='951' column='1'/>
+          <var-decl name='tx_nbits' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='958' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4'>
-          <var-decl name='rx_nbits' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='952' column='1'/>
+          <var-decl name='rx_nbits' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='959' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='584'>
-          <var-decl name='bits_per_word' type-id='f9b06939' visibility='default' filepath='include/linux/spi/spi.h' line='956' column='1'/>
+          <var-decl name='bits_per_word' type-id='f9b06939' visibility='default' filepath='include/linux/spi/spi.h' line='963' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='592'>
-          <var-decl name='delay_usecs' type-id='1dc6a898' visibility='default' filepath='include/linux/spi/spi.h' line='957' column='1'/>
+          <var-decl name='delay_usecs' type-id='1dc6a898' visibility='default' filepath='include/linux/spi/spi.h' line='964' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='608'>
-          <var-decl name='delay' type-id='5a467bb1' visibility='default' filepath='include/linux/spi/spi.h' line='958' column='1'/>
+          <var-decl name='delay' type-id='5a467bb1' visibility='default' filepath='include/linux/spi/spi.h' line='965' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='cs_change_delay' type-id='5a467bb1' visibility='default' filepath='include/linux/spi/spi.h' line='959' column='1'/>
+          <var-decl name='cs_change_delay' type-id='5a467bb1' visibility='default' filepath='include/linux/spi/spi.h' line='966' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='672'>
-          <var-decl name='word_delay' type-id='5a467bb1' visibility='default' filepath='include/linux/spi/spi.h' line='960' column='1'/>
+          <var-decl name='word_delay' type-id='5a467bb1' visibility='default' filepath='include/linux/spi/spi.h' line='967' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='speed_hz' type-id='19c2251e' visibility='default' filepath='include/linux/spi/spi.h' line='961' column='1'/>
+          <var-decl name='speed_hz' type-id='19c2251e' visibility='default' filepath='include/linux/spi/spi.h' line='968' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='736'>
-          <var-decl name='effective_speed_hz' type-id='19c2251e' visibility='default' filepath='include/linux/spi/spi.h' line='963' column='1'/>
+          <var-decl name='effective_speed_hz' type-id='19c2251e' visibility='default' filepath='include/linux/spi/spi.h' line='970' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='ptp_sts_word_pre' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='965' column='1'/>
+          <var-decl name='ptp_sts_word_pre' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='972' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='800'>
-          <var-decl name='ptp_sts_word_post' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='966' column='1'/>
+          <var-decl name='ptp_sts_word_post' type-id='f0981eeb' visibility='default' filepath='include/linux/spi/spi.h' line='973' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='ptp_sts' type-id='89a8217c' visibility='default' filepath='include/linux/spi/spi.h' line='968' column='1'/>
+          <var-decl name='ptp_sts' type-id='89a8217c' visibility='default' filepath='include/linux/spi/spi.h' line='975' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='timestamped' type-id='b50a4934' visibility='default' filepath='include/linux/spi/spi.h' line='970' column='1'/>
+          <var-decl name='timestamped' type-id='b50a4934' visibility='default' filepath='include/linux/spi/spi.h' line='977' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='960'>
-          <var-decl name='transfer_list' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='972' column='1'/>
+          <var-decl name='transfer_list' type-id='72f469ec' visibility='default' filepath='include/linux/spi/spi.h' line='979' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='error' type-id='1dc6a898' visibility='default' filepath='include/linux/spi/spi.h' line='975' column='1'/>
+          <var-decl name='error' type-id='1dc6a898' visibility='default' filepath='include/linux/spi/spi.h' line='982' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='977' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='984' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='xhci_root_port_bw_info' size-in-bits='5504' is-struct='yes' visibility='default' filepath='drivers/usb/host/xhci.h' line='1046' column='1' id='9b863e03'>
@@ -71203,6 +71208,26 @@
         <parameter type-id='69a3afa7'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='nf_queue_entry' size-in-bits='704' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='12' column='1' id='a73b7dc2'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='list' type-id='72f469ec' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='13' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='skb' type-id='0fbf3cfd' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='14' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='id' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='15' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='224'>
+          <var-decl name='hook_index' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='16' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='state' type-id='89d4ce3f' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='21' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='640'>
+          <var-decl name='size' type-id='1dc6a898' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='22' column='1'/>
+        </data-member>
+      </class-decl>
       <class-decl name='cgroup_rstat_cpu' size-in-bits='512' is-struct='yes' visibility='default' filepath='include/linux/cgroup-defs.h' line='309' column='1' id='a73d96cf'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='bsync' type-id='e4d85780' visibility='default' filepath='include/linux/cgroup-defs.h' line='314' column='1'/>
@@ -78250,7 +78275,14 @@
           <var-decl name='' type-id='21fca59c' visibility='default' filepath='include/net/nexthop.h' line='101' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='nf_queue_handler' is-struct='yes' visibility='default' is-declaration-only='yes' id='b77325d2'/>
+      <class-decl name='nf_queue_handler' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='30' column='1' id='b77325d2'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='outfn' type-id='c2147f48' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='31' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='nf_hook_drop' type-id='9b92b29b' visibility='default' filepath='include/net/netfilter/nf_queue.h' line='33' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='b774cf8c'>
         <parameter type-id='807b7702'/>
         <parameter type-id='06b2cd14'/>
@@ -84287,6 +84319,7 @@
       <array-type-def dimensions='1' type-id='8f048e17' size-in-bits='32' id='c213d3d4'>
         <subrange length='4' type-id='7ff19f0f' id='16fe7105'/>
       </array-type-def>
+      <pointer-type-def type-id='33f50c8e' size-in-bits='64' id='c2147f48'/>
       <enum-decl name='dmaengine_tx_result' filepath='include/linux/dmaengine.h' line='539' column='1' id='c2154237'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='DMA_TRANS_NOERROR' value='0'/>
@@ -94388,40 +94421,40 @@
           <var-decl name='use_gpio_descriptors' type-id='b50a4934' visibility='default' filepath='include/linux/spi/spi.h' line='651' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10952'>
-          <var-decl name='unused_native_cs' type-id='f9b06939' visibility='default' filepath='include/linux/spi/spi.h' line='652' column='1'/>
+          <var-decl name='unused_native_cs' type-id='fdbf7a0f' visibility='default' filepath='include/linux/spi/spi.h' line='658' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10960'>
-          <var-decl name='max_native_cs' type-id='f9b06939' visibility='default' filepath='include/linux/spi/spi.h' line='653' column='1'/>
+          <var-decl name='max_native_cs' type-id='fdbf7a0f' visibility='default' filepath='include/linux/spi/spi.h' line='659' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='11008'>
-          <var-decl name='statistics' type-id='bf41d149' visibility='default' filepath='include/linux/spi/spi.h' line='656' column='1'/>
+          <var-decl name='statistics' type-id='bf41d149' visibility='default' filepath='include/linux/spi/spi.h' line='663' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='12864'>
-          <var-decl name='dma_tx' type-id='27f3f5d8' visibility='default' filepath='include/linux/spi/spi.h' line='659' column='1'/>
+          <var-decl name='dma_tx' type-id='27f3f5d8' visibility='default' filepath='include/linux/spi/spi.h' line='666' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='12928'>
-          <var-decl name='dma_rx' type-id='27f3f5d8' visibility='default' filepath='include/linux/spi/spi.h' line='660' column='1'/>
+          <var-decl name='dma_rx' type-id='27f3f5d8' visibility='default' filepath='include/linux/spi/spi.h' line='667' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='12992'>
-          <var-decl name='dummy_rx' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='663' column='1'/>
+          <var-decl name='dummy_rx' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='670' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13056'>
-          <var-decl name='dummy_tx' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='664' column='1'/>
+          <var-decl name='dummy_tx' type-id='eaa32e2f' visibility='default' filepath='include/linux/spi/spi.h' line='671' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13120'>
-          <var-decl name='fw_translate_cs' type-id='aaa6c630' visibility='default' filepath='include/linux/spi/spi.h' line='666' column='1'/>
+          <var-decl name='fw_translate_cs' type-id='aaa6c630' visibility='default' filepath='include/linux/spi/spi.h' line='673' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13184'>
-          <var-decl name='ptp_sts_supported' type-id='b50a4934' visibility='default' filepath='include/linux/spi/spi.h' line='672' column='1'/>
+          <var-decl name='ptp_sts_supported' type-id='b50a4934' visibility='default' filepath='include/linux/spi/spi.h' line='679' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13248'>
-          <var-decl name='irq_flags' type-id='7359adad' visibility='default' filepath='include/linux/spi/spi.h' line='675' column='1'/>
+          <var-decl name='irq_flags' type-id='7359adad' visibility='default' filepath='include/linux/spi/spi.h' line='682' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13312'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='677' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='684' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13376'>
-          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='678' column='1'/>
+          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='include/linux/spi/spi.h' line='685' column='1'/>
         </data-member>
       </class-decl>
       <qualified-type-def type-id='62465d3d' const='yes' id='db1c1b36'/>
@@ -103926,6 +103959,7 @@
           <var-decl name='type' type-id='57e8e954' visibility='default' filepath='drivers/thermal/thermal_core.h' line='85' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='a73b7dc2' size-in-bits='64' id='ef706860'/>
       <pointer-type-def type-id='4f0fdafb' size-in-bits='64' id='ef75df1f'/>
       <pointer-type-def type-id='c0d6093d' size-in-bits='64' id='ef76b4f1'/>
       <array-type-def dimensions='1' type-id='91ce1af9' size-in-bits='2048' id='ef7c8fe9'>
@@ -122948,7 +122982,7 @@
         <parameter type-id='42c8f564' name='sb' filepath='fs/super.c' line='442' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='generic_write_checks' mangled-name='generic_write_checks' filepath='include/linux/fs.h' line='3018' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='generic_write_checks'>
+      <function-decl name='generic_write_checks' mangled-name='generic_write_checks' filepath='include/linux/fs.h' line='3023' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='generic_write_checks'>
         <parameter type-id='80f25feb'/>
         <parameter type-id='4fa10f9e'/>
         <return type-id='bd54fe1a'/>
@@ -123097,7 +123131,7 @@
         <parameter type-id='587f89d2' name='pid' filepath='net/core/net_namespace.c' line='693' column='1'/>
         <return type-id='a2bff676'/>
       </function-decl>
-      <function-decl name='get_next_ino' mangled-name='get_next_ino' filepath='include/linux/fs.h' line='2970' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_next_ino'>
+      <function-decl name='get_next_ino' mangled-name='get_next_ino' filepath='include/linux/fs.h' line='2975' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_next_ino'>
         <return type-id='f0981eeb'/>
       </function-decl>
       <function-decl name='get_option' mangled-name='get_option' filepath='include/linux/kernel.h' line='498' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_option'>
@@ -127384,7 +127418,7 @@
         <parameter type-id='d504f73d' name='nb' filepath='net/netlink/af_netlink.c' line='2740' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='new_inode' mangled-name='new_inode' filepath='include/linux/fs.h' line='2993' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='new_inode'>
+      <function-decl name='new_inode' mangled-name='new_inode' filepath='include/linux/fs.h' line='2998' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='new_inode'>
         <parameter type-id='42c8f564'/>
         <return type-id='7e666abe'/>
       </function-decl>
@@ -132839,7 +132873,7 @@
         <parameter type-id='8567d8b0'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='simple_attr_open' mangled-name='simple_attr_open' filepath='include/linux/fs.h' line='3409' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='simple_attr_open'>
+      <function-decl name='simple_attr_open' mangled-name='simple_attr_open' filepath='include/linux/fs.h' line='3414' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='simple_attr_open'>
         <parameter type-id='7e666abe'/>
         <parameter type-id='77e79a4b'/>
         <parameter type-id='498d7045'/>
@@ -132873,7 +132907,7 @@
         <parameter type-id='77e79a4b' name='file' filepath='fs/libfs.c' line='385' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='simple_read_from_buffer' mangled-name='simple_read_from_buffer' filepath='include/linux/fs.h' line='3244' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='simple_read_from_buffer'>
+      <function-decl name='simple_read_from_buffer' mangled-name='simple_read_from_buffer' filepath='include/linux/fs.h' line='3249' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='simple_read_from_buffer'>
         <parameter type-id='eaa32e2f'/>
         <parameter type-id='7359adad'/>
         <parameter type-id='8b97c2dc'/>
@@ -134427,7 +134461,7 @@
         <parameter type-id='e90f4666' name='spi' filepath='drivers/spi/spi.c' line='3344' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='spi_sync' mangled-name='spi_sync' filepath='include/linux/spi/spi.h' line='1249' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_sync'>
+      <function-decl name='spi_sync' mangled-name='spi_sync' filepath='include/linux/spi/spi.h' line='1256' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_sync'>
         <parameter type-id='e90f4666'/>
         <parameter type-id='bb7889ed'/>
         <return type-id='95e97e5e'/>
