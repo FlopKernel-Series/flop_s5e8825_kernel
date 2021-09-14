@@ -486,6 +486,8 @@
       <elf-symbol name='__traceiter_android_vh_ufs_update_sdev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5afd339e'/>
       <elf-symbol name='__traceiter_android_vh_ufs_update_sysfs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x68f34378'/>
       <elf-symbol name='__traceiter_android_vh_update_topology_flags_workfn' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf9046f81'/>
+      <elf-symbol name='__traceiter_android_vh_usb_dev_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc81c1592'/>
+      <elf-symbol name='__traceiter_android_vh_usb_dev_suspend' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8da0b48e'/>
       <elf-symbol name='__traceiter_android_vh_v4l2subdev_set_fmt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x966f8717'/>
       <elf-symbol name='__traceiter_android_vh_v4l2subdev_set_frame_interval' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56062d28'/>
       <elf-symbol name='__traceiter_android_vh_v4l2subdev_set_selection' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x841c50e9'/>
@@ -5596,6 +5598,8 @@
       <elf-symbol name='__tracepoint_android_vh_ufs_update_sdev' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xff48ed3d'/>
       <elf-symbol name='__tracepoint_android_vh_ufs_update_sysfs' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd1493d2e'/>
       <elf-symbol name='__tracepoint_android_vh_update_topology_flags_workfn' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd28119e8'/>
+      <elf-symbol name='__tracepoint_android_vh_usb_dev_resume' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0b00d33'/>
+      <elf-symbol name='__tracepoint_android_vh_usb_dev_suspend' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x686c4071'/>
       <elf-symbol name='__tracepoint_android_vh_v4l2subdev_set_fmt' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x82ce28ec'/>
       <elf-symbol name='__tracepoint_android_vh_v4l2subdev_set_frame_interval' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x26ad531b'/>
       <elf-symbol name='__tracepoint_android_vh_v4l2subdev_set_selection' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd163b93e'/>
@@ -113265,6 +113269,20 @@
         <parameter type-id='eaa32e2f' name='unused' filepath='include/trace/hooks/topology.h' line='19' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_usb_dev_resume' mangled-name='__traceiter_android_vh_usb_dev_resume' filepath='include/trace/hooks/usb.h' line='20' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_usb_dev_resume'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/usb.h' line='20' column='1'/>
+        <parameter type-id='25e60cb2' name='udev' filepath='include/trace/hooks/usb.h' line='20' column='1'/>
+        <parameter type-id='08496218' name='msg' filepath='include/trace/hooks/usb.h' line='20' column='1'/>
+        <parameter type-id='7292109c' name='bypass' filepath='include/trace/hooks/usb.h' line='20' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_usb_dev_suspend' mangled-name='__traceiter_android_vh_usb_dev_suspend' filepath='include/trace/hooks/usb.h' line='16' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_usb_dev_suspend'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/usb.h' line='16' column='1'/>
+        <parameter type-id='25e60cb2' name='udev' filepath='include/trace/hooks/usb.h' line='16' column='1'/>
+        <parameter type-id='08496218' name='msg' filepath='include/trace/hooks/usb.h' line='16' column='1'/>
+        <parameter type-id='7292109c' name='bypass' filepath='include/trace/hooks/usb.h' line='16' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_v4l2subdev_set_fmt' mangled-name='__traceiter_android_vh_v4l2subdev_set_fmt' filepath='include/trace/hooks/v4l2core.h' line='36' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_v4l2subdev_set_fmt'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/v4l2core.h' line='36' column='1'/>
         <parameter type-id='f5438ac7' name='sd' filepath='include/trace/hooks/v4l2core.h' line='36' column='1'/>
@@ -113821,6 +113839,8 @@
       <var-decl name='__tracepoint_android_vh_ufs_update_sdev' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_update_sdev' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='58' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_update_sdev'/>
       <var-decl name='__tracepoint_android_vh_ufs_update_sysfs' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_update_sysfs' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='31' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_update_sysfs'/>
       <var-decl name='__tracepoint_android_vh_update_topology_flags_workfn' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_update_topology_flags_workfn' visibility='default' filepath='include/trace/hooks/topology.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_update_topology_flags_workfn'/>
+      <var-decl name='__tracepoint_android_vh_usb_dev_resume' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_usb_dev_resume' visibility='default' filepath='include/trace/hooks/usb.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_usb_dev_resume'/>
+      <var-decl name='__tracepoint_android_vh_usb_dev_suspend' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_usb_dev_suspend' visibility='default' filepath='include/trace/hooks/usb.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_usb_dev_suspend'/>
       <var-decl name='__tracepoint_android_vh_v4l2subdev_set_fmt' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_v4l2subdev_set_fmt' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='36' column='1' elf-symbol-id='__tracepoint_android_vh_v4l2subdev_set_fmt'/>
       <var-decl name='__tracepoint_android_vh_v4l2subdev_set_frame_interval' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_v4l2subdev_set_frame_interval' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='42' column='1' elf-symbol-id='__tracepoint_android_vh_v4l2subdev_set_frame_interval'/>
       <var-decl name='__tracepoint_android_vh_v4l2subdev_set_selection' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_v4l2subdev_set_selection' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='30' column='1' elf-symbol-id='__tracepoint_android_vh_v4l2subdev_set_selection'/>
