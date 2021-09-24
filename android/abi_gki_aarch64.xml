@@ -551,6 +551,7 @@
       <elf-symbol name='__usecs_to_jiffies' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf1969a8e'/>
       <elf-symbol name='__v4l2_ctrl_modify_range' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9578a8e7'/>
       <elf-symbol name='__v4l2_ctrl_s_ctrl' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x838d88db'/>
+      <elf-symbol name='__v4l2_ctrl_s_ctrl_compound' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6153421'/>
       <elf-symbol name='__v4l2_ctrl_s_ctrl_int64' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x79b8cb1d'/>
       <elf-symbol name='__v4l2_device_register_subdev_nodes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa8408d5e'/>
       <elf-symbol name='__v4l2_find_nearest_size' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe2822320'/>
@@ -113994,6 +113995,12 @@
       <function-decl name='__v4l2_ctrl_s_ctrl' mangled-name='__v4l2_ctrl_s_ctrl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4433' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__v4l2_ctrl_s_ctrl'>
         <parameter type-id='4b8b2cf3' name='ctrl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4433' column='1'/>
         <parameter type-id='a7832498' name='val' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4433' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__v4l2_ctrl_s_ctrl_compound' mangled-name='__v4l2_ctrl_s_ctrl_compound' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4469' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__v4l2_ctrl_s_ctrl_compound'>
+        <parameter type-id='4b8b2cf3' name='ctrl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4469' column='1'/>
+        <parameter type-id='cf13dc99' name='type' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4470' column='1'/>
+        <parameter type-id='eaa32e2f' name='p' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4470' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__v4l2_ctrl_s_ctrl_int64' mangled-name='__v4l2_ctrl_s_ctrl_int64' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4445' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__v4l2_ctrl_s_ctrl_int64'>
