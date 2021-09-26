@@ -3465,6 +3465,7 @@
       <elf-symbol name='pci_set_master' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfba39625'/>
       <elf-symbol name='pci_set_mwi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6c9fdae2'/>
       <elf-symbol name='pci_set_power_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48cb85bc'/>
+      <elf-symbol name='pci_sriov_configure_simple' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x356b977a'/>
       <elf-symbol name='pci_store_saved_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7180a796'/>
       <elf-symbol name='pci_try_set_mwi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc072d8f'/>
       <elf-symbol name='pci_unmap_rom' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93d7a4c2'/>
@@ -131531,6 +131532,11 @@
       <function-decl name='pci_set_power_state' mangled-name='pci_set_power_state' filepath='drivers/pci/pci.c' line='1313' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_set_power_state'>
         <parameter type-id='85196e3f' name='dev' filepath='drivers/pci/pci.c' line='1313' column='1'/>
         <parameter type-id='49c32219' name='state' filepath='drivers/pci/pci.c' line='1313' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='pci_sriov_configure_simple' mangled-name='pci_sriov_configure_simple' filepath='drivers/pci/iov.c' line='1066' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_sriov_configure_simple'>
+        <parameter type-id='85196e3f' name='dev' filepath='drivers/pci/iov.c' line='1066' column='1'/>
+        <parameter type-id='95e97e5e' name='nr_virtfn' filepath='drivers/pci/iov.c' line='1066' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='pci_store_saved_state' mangled-name='pci_store_saved_state' filepath='drivers/pci/pci.c' line='1716' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_store_saved_state'>
