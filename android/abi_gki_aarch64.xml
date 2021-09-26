@@ -1035,6 +1035,11 @@
       <elf-symbol name='cpufreq_cpu_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xefeb0f57'/>
       <elf-symbol name='cpufreq_cpu_get_raw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfd2aed80'/>
       <elf-symbol name='cpufreq_cpu_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7557e528'/>
+      <elf-symbol name='cpufreq_dbs_governor_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9f006ac0'/>
+      <elf-symbol name='cpufreq_dbs_governor_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdc7d6823'/>
+      <elf-symbol name='cpufreq_dbs_governor_limits' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3a4c16b9'/>
+      <elf-symbol name='cpufreq_dbs_governor_start' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4393f881'/>
+      <elf-symbol name='cpufreq_dbs_governor_stop' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba566982'/>
       <elf-symbol name='cpufreq_disable_fast_switch' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdcd38056'/>
       <elf-symbol name='cpufreq_driver_fast_switch' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb9bd4cb'/>
       <elf-symbol name='cpufreq_driver_resolve_freq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2ddef6c8'/>
@@ -1180,6 +1185,7 @@
       <elf-symbol name='dapm_pinctrl_event' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa5bbfa59'/>
       <elf-symbol name='dapm_regulator_event' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5e67cb12'/>
       <elf-symbol name='datagram_poll' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x23ece91d'/>
+      <elf-symbol name='dbs_update' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf9aee372'/>
       <elf-symbol name='deactivate_locked_super' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74c7c4'/>
       <elf-symbol name='deactivate_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3d03b2a4'/>
       <elf-symbol name='debug_locks_off' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc575c737'/>
@@ -2332,6 +2338,7 @@
       <elf-symbol name='gov_attr_set_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1effeca'/>
       <elf-symbol name='gov_attr_set_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac10b46f'/>
       <elf-symbol name='gov_attr_set_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd6de6d04'/>
+      <elf-symbol name='gov_update_cpu_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb182536'/>
       <elf-symbol name='gpio_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfe990052'/>
       <elf-symbol name='gpio_free_array' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0d1656c'/>
       <elf-symbol name='gpio_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x47229b5c'/>
@@ -4583,6 +4590,7 @@
       <elf-symbol name='static_key_slow_inc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8e92f7c4'/>
       <elf-symbol name='stop_machine' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdfc04014'/>
       <elf-symbol name='stop_one_cpu_nowait' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb4465d4'/>
+      <elf-symbol name='store_sampling_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa91801be'/>
       <elf-symbol name='stpcpy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf4db35bc'/>
       <elf-symbol name='strcasecmp' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaafdc258'/>
       <elf-symbol name='strcat' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x61651be'/>
@@ -21038,6 +21046,7 @@
         <parameter type-id='00aa6a0e'/>
         <return type-id='48b5725f'/>
       </function-type>
+      <pointer-type-def type-id='94ac9155' size-in-bits='64' id='280461d5'/>
       <typedef-decl name='drm_ioctl_t' type-id='4e407315' filepath='include/drm/drm_ioctl.h' line='54' column='1' id='28063720'/>
       <function-type size-in-bits='64' id='280730d4'>
         <parameter type-id='77e79a4b'/>
@@ -41133,7 +41142,26 @@
           <var-decl name='reg_rules' type-id='9195bab1' visibility='default' filepath='include/net/regulatory.h' line='231' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='input_dev_poller' is-struct='yes' visibility='default' is-declaration-only='yes' id='5c32afaa'/>
+      <class-decl name='input_dev_poller' size-in-bits='1344' is-struct='yes' visibility='default' filepath='drivers/input/input-poller.c' line='15' column='1' id='5c32afaa'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='poll' type-id='b44880ea' visibility='default' filepath='drivers/input/input-poller.c' line='16' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='poll_interval' type-id='f0981eeb' visibility='default' filepath='drivers/input/input-poller.c' line='18' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='poll_interval_max' type-id='f0981eeb' visibility='default' filepath='drivers/input/input-poller.c' line='19' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='poll_interval_min' type-id='f0981eeb' visibility='default' filepath='drivers/input/input-poller.c' line='20' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='input' type-id='74b427eb' visibility='default' filepath='drivers/input/input-poller.c' line='22' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='work' type-id='5ad6e0ef' visibility='default' filepath='drivers/input/input-poller.c' line='23' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='5c3855b6'>
         <parameter type-id='ca9354d1'/>
         <parameter type-id='b50a4934'/>
@@ -64665,6 +64693,29 @@
         </data-member>
       </class-decl>
       <class-decl name='scsi_host_cmd_pool' is-struct='yes' visibility='default' is-declaration-only='yes' id='94982f58'/>
+      <class-decl name='dbs_data' size-in-bits='1600' is-struct='yes' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='38' column='1' id='94ac9155'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='attr_set' type-id='32d20c8c' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='39' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1344'>
+          <var-decl name='tuners' type-id='eaa32e2f' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='40' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='ignore_nice_load' type-id='f0981eeb' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='41' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1440'>
+          <var-decl name='sampling_rate' type-id='f0981eeb' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='42' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1472'>
+          <var-decl name='sampling_down_factor' type-id='f0981eeb' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='43' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1504'>
+          <var-decl name='up_threshold' type-id='f0981eeb' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='44' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1536'>
+          <var-decl name='io_is_busy' type-id='f0981eeb' visibility='default' filepath='drivers/cpufreq/cpufreq_governor.h' line='45' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='404f4f30' size-in-bits='64' id='94b3d6fa'/>
       <class-decl name='fib_rule' size-in-bits='1216' is-struct='yes' visibility='default' filepath='include/net/fib_rules.h' line='20' column='1' id='94b5478d'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -118869,6 +118920,26 @@
         <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq.c' line='248' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='cpufreq_dbs_governor_exit' mangled-name='cpufreq_dbs_governor_exit' filepath='drivers/cpufreq/cpufreq_governor.c' line='477' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_dbs_governor_exit'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq_governor.c' line='477' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='cpufreq_dbs_governor_init' mangled-name='cpufreq_dbs_governor_init' filepath='drivers/cpufreq/cpufreq_governor.c' line='391' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_dbs_governor_init'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq_governor.c' line='391' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='cpufreq_dbs_governor_limits' mangled-name='cpufreq_dbs_governor_limits' filepath='drivers/cpufreq/cpufreq_governor.c' line='555' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_dbs_governor_limits'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq_governor.c' line='555' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='cpufreq_dbs_governor_start' mangled-name='cpufreq_dbs_governor_start' filepath='drivers/cpufreq/cpufreq_governor.c' line='505' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_dbs_governor_start'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq_governor.c' line='505' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='cpufreq_dbs_governor_stop' mangled-name='cpufreq_dbs_governor_stop' filepath='drivers/cpufreq/cpufreq_governor.c' line='543' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_dbs_governor_stop'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq_governor.c' line='543' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='cpufreq_disable_fast_switch' mangled-name='cpufreq_disable_fast_switch' filepath='drivers/cpufreq/cpufreq.c' line='520' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cpufreq_disable_fast_switch'>
         <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq.c' line='520' column='1'/>
         <return type-id='48b5725f'/>
@@ -119600,6 +119671,10 @@
         <parameter type-id='13103032' name='sock' filepath='net/core/datagram.c' line='797' column='1'/>
         <parameter type-id='a54c778f' name='wait' filepath='net/core/datagram.c' line='798' column='1'/>
         <return type-id='8f254b08'/>
+      </function-decl>
+      <function-decl name='dbs_update' mangled-name='dbs_update' filepath='drivers/cpufreq/cpufreq_governor.c' line='114' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dbs_update'>
+        <parameter type-id='343c3ae4' name='policy' filepath='drivers/cpufreq/cpufreq_governor.c' line='114' column='1'/>
+        <return type-id='f0981eeb'/>
       </function-decl>
       <function-decl name='deactivate_locked_super' mangled-name='deactivate_locked_super' filepath='fs/super.c' line='329' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='deactivate_locked_super'>
         <parameter type-id='42c8f564' name='s' filepath='fs/super.c' line='329' column='1'/>
@@ -125712,6 +125787,10 @@
         <parameter type-id='902fed1a' name='attr_set' filepath='drivers/cpufreq/cpufreq_governor_attr_set.c' line='66' column='1'/>
         <parameter type-id='e84b031a' name='list_node' filepath='drivers/cpufreq/cpufreq_governor_attr_set.c' line='66' column='1'/>
         <return type-id='f0981eeb'/>
+      </function-decl>
+      <function-decl name='gov_update_cpu_data' mangled-name='gov_update_cpu_data' filepath='drivers/cpufreq/cpufreq_governor.c' line='95' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gov_update_cpu_data'>
+        <parameter type-id='280461d5' name='dbs_data' filepath='drivers/cpufreq/cpufreq_governor.c' line='95' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <var-decl name='governor_sysfs_ops' type-id='0f840455' mangled-name='governor_sysfs_ops' visibility='default' filepath='drivers/cpufreq/cpufreq_governor_attr_set.c' line='42' column='1' elf-symbol-id='governor_sysfs_ops'/>
       <function-decl name='gpio_free' mangled-name='gpio_free' filepath='drivers/gpio/gpiolib-legacy.c' line='9' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gpio_free'>
@@ -137246,6 +137325,12 @@
         <parameter type-id='eaa32e2f' name='arg' filepath='kernel/stop_machine.c' line='358' column='1'/>
         <parameter type-id='cc8decc0' name='work_buf' filepath='kernel/stop_machine.c' line='359' column='1'/>
         <return type-id='b50a4934'/>
+      </function-decl>
+      <function-decl name='store_sampling_rate' mangled-name='store_sampling_rate' filepath='drivers/cpufreq/cpufreq_governor.c' line='44' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='store_sampling_rate'>
+        <parameter type-id='902fed1a' name='attr_set' filepath='drivers/cpufreq/cpufreq_governor.c' line='44' column='1'/>
+        <parameter type-id='80f4b756' name='buf' filepath='drivers/cpufreq/cpufreq_governor.c' line='44' column='1'/>
+        <parameter type-id='b59d7dce' name='count' filepath='drivers/cpufreq/cpufreq_governor.c' line='45' column='1'/>
+        <return type-id='79a0948f'/>
       </function-decl>
       <function-decl name='stpcpy' mangled-name='stpcpy' filepath='lib/string.c' line='291' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='stpcpy'>
         <parameter type-id='266fe297' name='dest' filepath='lib/string.c' line='291' column='1'/>
