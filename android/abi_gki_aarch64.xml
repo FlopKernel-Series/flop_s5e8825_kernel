@@ -5161,6 +5161,7 @@
       <elf-symbol name='v4l2_ctrl_handler_setup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfe70f9dd'/>
       <elf-symbol name='v4l2_ctrl_log_status' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8aa2828c'/>
       <elf-symbol name='v4l2_ctrl_new_custom' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbef09d5c'/>
+      <elf-symbol name='v4l2_ctrl_new_int_menu' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa6beb5d9'/>
       <elf-symbol name='v4l2_ctrl_new_std' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3da5d575'/>
       <elf-symbol name='v4l2_ctrl_new_std_menu' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x663d2402'/>
       <elf-symbol name='v4l2_ctrl_new_std_menu_items' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdbdd5c77'/>
@@ -140162,6 +140163,15 @@
         <parameter type-id='2b59fa5e' name='hdl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='2882' column='1'/>
         <parameter type-id='45c81897' name='cfg' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='2883' column='1'/>
         <parameter type-id='eaa32e2f' name='priv' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='2883' column='1'/>
+        <return type-id='4b8b2cf3'/>
+      </function-decl>
+      <function-decl name='v4l2_ctrl_new_int_menu' mangled-name='v4l2_ctrl_new_int_menu' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3035' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_ctrl_new_int_menu'>
+        <parameter type-id='2b59fa5e' name='hdl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3035' column='1'/>
+        <parameter type-id='1086b623' name='ops' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3036' column='1'/>
+        <parameter type-id='19c2251e' name='id' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3037' column='1'/>
+        <parameter type-id='f9b06939' name='_max' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3037' column='1'/>
+        <parameter type-id='f9b06939' name='_def' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3037' column='1'/>
+        <parameter type-id='43ae54cf' name='qmenu_int' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3037' column='1'/>
         <return type-id='4b8b2cf3'/>
       </function-decl>
       <function-decl name='v4l2_ctrl_new_std' mangled-name='v4l2_ctrl_new_std' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='2926' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_ctrl_new_std'>
