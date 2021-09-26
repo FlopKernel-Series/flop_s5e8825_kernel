@@ -2160,7 +2160,9 @@
       <elf-symbol name='extcon_register_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x38e5e394'/>
       <elf-symbol name='extcon_set_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ec996af'/>
       <elf-symbol name='extcon_set_property_capability' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeb795f74'/>
+      <elf-symbol name='extcon_set_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42e7846b'/>
       <elf-symbol name='extcon_set_state_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xafb7a5e0'/>
+      <elf-symbol name='extcon_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6850da2f'/>
       <elf-symbol name='extcon_unregister_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c6a9657'/>
       <elf-symbol name='fasync_helper' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x868ee60d'/>
       <elf-symbol name='fd_install' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7dbab506'/>
@@ -3340,6 +3342,7 @@
       <elf-symbol name='of_thermal_get_trip_points' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaeda21a1'/>
       <elf-symbol name='of_thermal_is_trip_valid' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4755a2c2'/>
       <elf-symbol name='of_translate_address' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x36f6c2b3'/>
+      <elf-symbol name='of_usb_get_dr_mode_by_phy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7533b285'/>
       <elf-symbol name='of_usb_get_phy_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x930245b'/>
       <elf-symbol name='of_usb_host_tpl_support' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3a0a609e'/>
       <elf-symbol name='of_usb_update_otg_caps' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f7ac68'/>
@@ -3525,6 +3528,7 @@
       <elf-symbol name='phy_init_hw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29163f18'/>
       <elf-symbol name='phy_mac_interrupt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8cdf747a'/>
       <elf-symbol name='phy_mii_ioctl' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8a0f5c2d'/>
+      <elf-symbol name='phy_mipi_dphy_config_validate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x881bad5e'/>
       <elf-symbol name='phy_mipi_dphy_get_default_config' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4848cfb1'/>
       <elf-symbol name='phy_modify' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd82d5460'/>
       <elf-symbol name='phy_modify_changed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x67d7a10b'/>
@@ -124802,10 +124806,21 @@
         <parameter type-id='f0981eeb' name='prop' filepath='drivers/extcon/extcon.c' line='817' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='extcon_set_state' mangled-name='extcon_set_state' filepath='drivers/extcon/extcon.c' line='522' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='extcon_set_state'>
+        <parameter type-id='c0d6fada' name='edev' filepath='drivers/extcon/extcon.c' line='522' column='1'/>
+        <parameter type-id='f0981eeb' name='id' filepath='drivers/extcon/extcon.c' line='522' column='1'/>
+        <parameter type-id='b50a4934' name='state' filepath='drivers/extcon/extcon.c' line='522' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='extcon_set_state_sync' mangled-name='extcon_set_state_sync' filepath='drivers/extcon/extcon.c' line='577' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='extcon_set_state_sync'>
         <parameter type-id='c0d6fada' name='edev' filepath='drivers/extcon/extcon.c' line='577' column='1'/>
         <parameter type-id='f0981eeb' name='id' filepath='drivers/extcon/extcon.c' line='577' column='1'/>
         <parameter type-id='b50a4934' name='state' filepath='drivers/extcon/extcon.c' line='577' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='extcon_sync' mangled-name='extcon_sync' filepath='drivers/extcon/extcon.c' line='408' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='extcon_sync'>
+        <parameter type-id='c0d6fada' name='edev' filepath='drivers/extcon/extcon.c' line='408' column='1'/>
+        <parameter type-id='f0981eeb' name='id' filepath='drivers/extcon/extcon.c' line='408' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='extcon_unregister_notifier' mangled-name='extcon_unregister_notifier' filepath='drivers/extcon/extcon.c' line='928' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='extcon_unregister_notifier'>
@@ -130829,6 +130844,11 @@
         <parameter type-id='90144368' name='in_addr' filepath='drivers/of/address.c' line='613' column='1'/>
         <return type-id='91ce1af9'/>
       </function-decl>
+      <function-decl name='of_usb_get_dr_mode_by_phy' mangled-name='of_usb_get_dr_mode_by_phy' filepath='drivers/usb/common/common.c' line='256' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_usb_get_dr_mode_by_phy'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/usb/common/common.c' line='256' column='1'/>
+        <parameter type-id='95e97e5e' name='arg0' filepath='drivers/usb/common/common.c' line='256' column='1'/>
+        <return type-id='d291aaf1'/>
+      </function-decl>
       <function-decl name='of_usb_get_phy_mode' mangled-name='of_usb_get_phy_mode' filepath='drivers/usb/phy/of.c' line='28' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_usb_get_phy_mode'>
         <parameter type-id='9a537bbe' name='np' filepath='drivers/usb/phy/of.c' line='28' column='1'/>
         <return type-id='46b5771e'/>
@@ -131776,6 +131796,10 @@
         <parameter type-id='7efbcaaf' name='phydev' filepath='drivers/net/phy/phy.c' line='350' column='1'/>
         <parameter type-id='d494b97c' name='ifr' filepath='drivers/net/phy/phy.c' line='350' column='1'/>
         <parameter type-id='95e97e5e' name='cmd' filepath='drivers/net/phy/phy.c' line='350' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='phy_mipi_dphy_config_validate' mangled-name='phy_mipi_dphy_config_validate' filepath='drivers/phy/phy-core-mipi-dphy.c' line='86' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phy_mipi_dphy_config_validate'>
+        <parameter type-id='37cfc122' name='cfg' filepath='drivers/phy/phy-core-mipi-dphy.c' line='86' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='phy_mipi_dphy_get_default_config' mangled-name='phy_mipi_dphy_get_default_config' filepath='drivers/phy/phy-core-mipi-dphy.c' line='22' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phy_mipi_dphy_get_default_config'>
