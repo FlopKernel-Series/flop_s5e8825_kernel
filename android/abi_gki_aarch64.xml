@@ -2548,6 +2548,7 @@
       <elf-symbol name='iio_channel_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x35b59c88'/>
       <elf-symbol name='iio_channel_get_all' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe6898a3a'/>
       <elf-symbol name='iio_channel_release' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd7c406eb'/>
+      <elf-symbol name='iio_channel_release_all' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xea7eb67c'/>
       <elf-symbol name='iio_convert_raw_to_processed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xabec8d67'/>
       <elf-symbol name='iio_dealloc_pollfunc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2c27d423'/>
       <elf-symbol name='iio_device_alloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x739b1eb3'/>
@@ -2561,6 +2562,7 @@
       <elf-symbol name='iio_read_channel_processed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e863092'/>
       <elf-symbol name='iio_read_channel_raw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7fdcbbc0'/>
       <elf-symbol name='iio_trigger_notify_done' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x32c17b35'/>
+      <elf-symbol name='iio_update_buffers' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6304f8c5'/>
       <elf-symbol name='import_iovec' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29ae814e'/>
       <elf-symbol name='in4_pton' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac5fcec0'/>
       <elf-symbol name='in6_dev_finish_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x76a2324c'/>
@@ -11945,6 +11947,7 @@
           <var-decl name='beacon_int_min_gcd' type-id='19c2251e' visibility='default' filepath='include/net/cfg80211.h' line='4508' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='ad974870' size-in-bits='64' id='117abbea'/>
       <function-type size-in-bits='64' id='117b6b23'>
         <parameter type-id='572fbdca'/>
         <parameter type-id='f8dc9def'/>
@@ -14156,6 +14159,7 @@
         <parameter type-id='91d0de51' name='_vq'/>
         <return type-id='b50a4934'/>
       </function-type>
+      <pointer-type-def type-id='2c98045e' size-in-bits='64' id='16990944'/>
       <pointer-type-def type-id='1d86628a' size-in-bits='64' id='16a27d24'/>
       <pointer-type-def type-id='2aa44dc9' size-in-bits='64' id='16ab0351'/>
       <class-decl name='keyring_index_key' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/key.h' line='108' column='1' id='16ab8749'>
@@ -20951,6 +20955,11 @@
           <var-decl name='base' type-id='85c172d2' visibility='default' filepath='include/crypto/internal/hash.h' line='48' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='27ca88ce'>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='16990944'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='shrinker' size-in-bits='512' is-struct='yes' visibility='default' filepath='include/linux/shrinker.h' line='63' column='1' id='27cb404f'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='count_objects' type-id='cd2cc9e1' visibility='default' filepath='include/linux/shrinker.h' line='64' column='1'/>
@@ -22835,6 +22844,17 @@
       </function-type>
       <pointer-type-def type-id='97488913' size-in-bits='64' id='2c8ff697'/>
       <pointer-type-def type-id='3a97b64f' size-in-bits='64' id='2c927837'/>
+      <class-decl name='nf_exp_event' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='155' column='1' id='2c98045e'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='exp' type-id='b7982cd5' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='156' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='portid' type-id='19c2251e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='157' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='report' type-id='95e97e5e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='158' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='2ca9725a'>
         <parameter type-id='0343ce83'/>
         <parameter type-id='63e171df'/>
@@ -24259,6 +24279,7 @@
       </function-type>
       <pointer-type-def type-id='d3130597' size-in-bits='64' id='30dcd536'/>
       <pointer-type-def type-id='f1415d4d' size-in-bits='64' id='30e60925'/>
+      <pointer-type-def type-id='63e171df' size-in-bits='64' id='30e664af'/>
       <function-type size-in-bits='64' id='30e75f3e'>
         <parameter type-id='77e79a4b'/>
         <parameter type-id='eaa32e2f'/>
@@ -32080,7 +32101,32 @@
           <var-decl name='dup_xol_addr' type-id='7359adad' visibility='default' filepath='include/linux/uprobes.h' line='72' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='xt_table' is-struct='yes' visibility='default' is-declaration-only='yes' id='469df90e'/>
+      <class-decl name='xt_table' size-in-bits='704' is-struct='yes' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='223' column='1' id='469df90e'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='list' type-id='72f469ec' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='224' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='valid_hooks' type-id='f0981eeb' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='227' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='private' type-id='b6316a7f' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='230' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='me' type-id='2730d015' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='233' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='af' type-id='892641a4' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='235' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='352'>
+          <var-decl name='priority' type-id='95e97e5e' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='236' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='table_init' type-id='e83d6bbe' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='239' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='448'>
+          <var-decl name='name' type-id='639bec1b' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='242' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='9b087887' size-in-bits='64' id='469e947f'/>
       <class-decl name='dma_fence_chain' size-in-bits='1152' is-struct='yes' visibility='default' filepath='include/linux/dma-fence-chain.h' line='26' column='1' id='46a08c7d'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -34484,6 +34530,9 @@
           <var-decl name='' type-id='9329c56a' visibility='default' filepath='include/uapi/sound/asoc.h' line='254' column='1'/>
         </data-member>
       </class-decl>
+      <array-type-def dimensions='1' type-id='f0981eeb' size-in-bits='160' id='4d5a4f46'>
+        <subrange length='5' type-id='7ff19f0f' id='53010e10'/>
+      </array-type-def>
       <function-type size-in-bits='64' id='4d5c3e51'>
         <parameter type-id='2661e0d9'/>
         <parameter type-id='63e171df'/>
@@ -42985,7 +43034,11 @@
       <pointer-type-def type-id='aac6e642' size-in-bits='64' id='601d7eac'/>
       <pointer-type-def type-id='818799b4' size-in-bits='64' id='60219102'/>
       <qualified-type-def type-id='74191d27' const='yes' id='60263890'/>
-      <class-decl name='nf_exp_event_notifier' is-struct='yes' visibility='default' is-declaration-only='yes' id='602fd1a9'/>
+      <class-decl name='nf_exp_event_notifier' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='161' column='1' id='602fd1a9'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='fcn' type-id='c8fa3070' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='162' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='603a76bb'>
         <parameter type-id='33c599da'/>
         <parameter type-id='a42536cd'/>
@@ -44428,6 +44481,9 @@
           <var-decl name='completing_ep' type-id='15adb516' visibility='default' filepath='include/linux/usb/hcd.h' line='73' column='1'/>
         </data-member>
       </class-decl>
+      <array-type-def dimensions='1' type-id='9b45d938' size-in-bits='256' id='639bec1b'>
+        <subrange length='32' type-id='7ff19f0f' id='ae5bde82'/>
+      </array-type-def>
       <pointer-type-def type-id='8005701f' size-in-bits='64' id='63a08bf7'/>
       <class-decl name='iio_channel' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/linux/iio/consumer.h' line='23' column='1' id='63a6e12c'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -46666,6 +46722,32 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='5a9929eb' size-in-bits='64' id='68a2d05b'/>
+      <class-decl name='xt_table_info' size-in-bits='512' is-struct='yes' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='248' column='1' id='68a72cd7'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='size' type-id='f0981eeb' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='250' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='number' type-id='f0981eeb' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='252' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='initial_entries' type-id='f0981eeb' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='254' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='hook_entry' type-id='4d5a4f46' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='257' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='underflow' type-id='4d5a4f46' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='258' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='416'>
+          <var-decl name='stacksize' type-id='f0981eeb' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='264' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='448'>
+          <var-decl name='jumpstack' type-id='30e664af' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='265' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='512'>
+          <var-decl name='entries' type-id='5e6516ee' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='267' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='9e22fc50' size-in-bits='64' id='68a88aaa'/>
       <function-type size-in-bits='64' id='68aac70a'>
         <parameter type-id='e90f4666'/>
@@ -48158,6 +48240,7 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <pointer-type-def type-id='e0f7a7a4' size-in-bits='64' id='6c781266'/>
+      <pointer-type-def type-id='75c2ad3b' size-in-bits='64' id='6c8c82c7'/>
       <function-type size-in-bits='64' id='6c99ab8f'>
         <parameter type-id='fa0b179b'/>
         <parameter type-id='bff05edb'/>
@@ -51543,6 +51626,11 @@
       <pointer-type-def type-id='7dccafaf' size-in-bits='64' id='75adfaf3'/>
       <pointer-type-def type-id='7a35a8fe' size-in-bits='64' id='75ae4804'/>
       <pointer-type-def type-id='171b0f6c' size-in-bits='64' id='75b9415a'/>
+      <function-type size-in-bits='64' id='75c2ad3b'>
+        <parameter type-id='8c493d8a'/>
+        <parameter type-id='b7982cd5'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <enum-decl name='hdmi_audio_sample_frequency' filepath='include/linux/hdmi.h' line='286' column='1' id='75c2c977'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM' value='0'/>
@@ -63271,6 +63359,14 @@
         <parameter type-id='49a58c0c'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='__anonymous_struct__' size-in-bits='160' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='76' column='1' id='90eb4133'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='u3' type-id='8c17f46b' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='77' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='u' type-id='cfd75634' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='78' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='90f4cdc0'>
         <parameter type-id='809cdefc'/>
         <parameter type-id='1b0e1d00'/>
@@ -65614,6 +65710,11 @@
         <parameter type-id='8c46546a'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='nf_conntrack_tuple_mask' size-in-bits='160' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='75' column='1' id='97e29523'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='src' type-id='90eb4133' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='79' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='97e3fb6c'>
         <parameter type-id='7ac48c21'/>
         <parameter type-id='f0981eeb'/>
@@ -69610,6 +69711,7 @@
         <return type-id='48b5725f'/>
       </function-type>
       <qualified-type-def type-id='aa3fd2fc' const='yes' id='a19d369d'/>
+      <pointer-type-def type-id='c54a70ec' size-in-bits='64' id='a1a282ea'/>
       <function-type size-in-bits='64' id='a1aadc50'>
         <parameter type-id='7544e824'/>
         <parameter type-id='fa0b179b'/>
@@ -70273,7 +70375,11 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='6161d888' size-in-bits='64' id='a2782ece'/>
-      <class-decl name='nf_ct_event_notifier' is-struct='yes' visibility='default' is-declaration-only='yes' id='a27aef61'/>
+      <class-decl name='nf_ct_event_notifier' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='75' column='1' id='a27aef61'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='fcn' type-id='117abbea' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='76' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='a2802dd0'>
         <parameter type-id='7e666abe'/>
         <parameter type-id='95e97e5e'/>
@@ -74954,6 +75060,11 @@
           <var-decl name='info' type-id='a54793a9' visibility='default' filepath='include/sound/soc-topology.h' line='85' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='ad974870'>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='bccf9b1c'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='load_weight' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/sched.h' line='327' column='1' id='ad979632'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='weight' type-id='7359adad' visibility='default' filepath='include/linux/sched.h' line='328' column='1'/>
@@ -78796,6 +78907,7 @@
         </data-member>
       </class-decl>
       <class-decl name='devlink_port' is-struct='yes' visibility='default' is-declaration-only='yes' id='b62ee7e2'/>
+      <pointer-type-def type-id='68a72cd7' size-in-bits='64' id='b6316a7f'/>
       <pointer-type-def type-id='5260af22' size-in-bits='64' id='b6338998'/>
       <class-decl name='sync_file' size-in-bits='960' is-struct='yes' visibility='default' filepath='include/linux/sync_file.h' line='35' column='1' id='b6352c99'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -79362,6 +79474,7 @@
       <pointer-type-def type-id='2a13094b' size-in-bits='64' id='b78e1fbb'/>
       <pointer-type-def type-id='4d3ea3f3' size-in-bits='64' id='b78e9a0f'/>
       <pointer-type-def type-id='e4e53fc0' size-in-bits='64' id='b797ac06'/>
+      <pointer-type-def type-id='c2dc4615' size-in-bits='64' id='b7982cd5'/>
       <union-decl name='ethtool_flow_union' size-in-bits='416' visibility='default' filepath='include/uapi/linux/ethtool.h' line='939' column='1' id='b79b5da2'>
         <data-member access='public'>
           <var-decl name='tcp_ip4_spec' type-id='51bf1175' visibility='default' filepath='include/uapi/linux/ethtool.h' line='940' column='1'/>
@@ -81426,6 +81539,12 @@
           <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/net/xdp_sock.h' line='34' column='1'/>
         </data-member>
       </class-decl>
+      <enum-decl name='ip_conntrack_dir' filepath='include/uapi/linux/netfilter/nf_conntrack_tuple_common.h' line='11' column='1' id='bbbf8507'>
+        <underlying-type type-id='9cac1fee'/>
+        <enumerator name='IP_CT_DIR_ORIGINAL' value='0'/>
+        <enumerator name='IP_CT_DIR_REPLY' value='1'/>
+        <enumerator name='IP_CT_DIR_MAX' value='2'/>
+      </enum-decl>
       <qualified-type-def type-id='0b8ea949' const='yes' id='bbc46580'/>
       <function-type size-in-bits='64' id='bbe0df86'>
         <parameter type-id='27f3f5d8'/>
@@ -83232,6 +83351,7 @@
           <var-decl name='fd_array' type-id='d2c516bd' visibility='default' filepath='include/linux/fdtable.h' line='67' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='d3056556' size-in-bits='64' id='bccf9b1c'/>
       <pointer-type-def type-id='d6a7cd6f' size-in-bits='64' id='bcd28457'/>
       <class-decl name='aead_instance' size-in-bits='6144' is-struct='yes' visibility='default' filepath='include/crypto/internal/aead.h' line='18' column='1' id='bcdbd578'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -85759,6 +85879,53 @@
         <enumerator name='TYPEC_CC_RP_3_0' value='5'/>
       </enum-decl>
       <pointer-type-def type-id='7c1f247e' size-in-bits='64' id='c2d2a400'/>
+      <class-decl name='nf_conntrack_expect' size-in-bits='1856' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='18' column='1' id='c2dc4615'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='lnode' type-id='03a4a074' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='20' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='hnode' type-id='03a4a074' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='23' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='tuple' type-id='9805d802' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='26' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='mask' type-id='97e29523' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='27' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='768'>
+          <var-decl name='expectfn' type-id='6c8c82c7' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='30' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='832'>
+          <var-decl name='helper' type-id='a1a282ea' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='34' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='896'>
+          <var-decl name='master' type-id='8c493d8a' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='37' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='960'>
+          <var-decl name='timeout' type-id='abe41e67' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='40' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='use' type-id='64615833' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='43' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1440'>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='46' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1472'>
+          <var-decl name='class' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='49' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1504'>
+          <var-decl name='saved_addr' type-id='8c17f46b' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='52' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1632'>
+          <var-decl name='saved_proto' type-id='cfd75634' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='55' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1664'>
+          <var-decl name='dir' type-id='bbbf8507' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='57' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='60' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='c2ddabb8'>
         <parameter type-id='ac2666b2'/>
         <parameter type-id='eaa32e2f'/>
@@ -87242,6 +87409,7 @@
       </function-type>
       <pointer-type-def type-id='350f4182' size-in-bits='64' id='c5417630'/>
       <pointer-type-def type-id='b9675e9f' size-in-bits='64' id='c5491077'/>
+      <class-decl name='nf_conntrack_helper' is-struct='yes' visibility='default' is-declaration-only='yes' id='c54a70ec'/>
       <function-type size-in-bits='64' id='c551f1b5'>
         <parameter type-id='6ed6b432'/>
         <parameter type-id='f23e2572'/>
@@ -88427,6 +88595,7 @@
       </class-decl>
       <pointer-type-def type-id='6aebc4a7' size-in-bits='64' id='c8f5869f'/>
       <pointer-type-def type-id='0331c4d6' size-in-bits='64' id='c8f8b049'/>
+      <pointer-type-def type-id='27ca88ce' size-in-bits='64' id='c8fa3070'/>
       <function-type size-in-bits='64' id='c90a6da1'>
         <parameter type-id='bff05edb'/>
         <parameter type-id='7359adad'/>
@@ -92296,6 +92465,17 @@
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
           <var-decl name='try_compose' type-id='3dbd4e78' visibility='default' filepath='include/media/v4l2-subdev.h' line='623' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='nf_ct_event' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='69' column='1' id='d3056556'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='ct' type-id='8c493d8a' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='70' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='portid' type-id='19c2251e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='71' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='report' type-id='95e97e5e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='72' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='b6ab8849' size-in-bits='64' id='d30bdc51'/>
@@ -126654,6 +126834,10 @@
         <parameter type-id='2712709a' name='channel' filepath='drivers/iio/inkern.c' line='347' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='iio_channel_release_all' mangled-name='iio_channel_release_all' filepath='drivers/iio/inkern.c' line='458' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iio_channel_release_all'>
+        <parameter type-id='2712709a' name='channels' filepath='drivers/iio/inkern.c' line='458' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='iio_convert_raw_to_processed' mangled-name='iio_convert_raw_to_processed' filepath='drivers/iio/inkern.c' line='617' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iio_convert_raw_to_processed'>
         <parameter type-id='2712709a' name='chan' filepath='drivers/iio/inkern.c' line='617' column='1'/>
         <parameter type-id='95e97e5e' name='raw' filepath='drivers/iio/inkern.c' line='617' column='1'/>
@@ -126717,6 +126901,12 @@
       <function-decl name='iio_trigger_notify_done' mangled-name='iio_trigger_notify_done' filepath='drivers/iio/industrialio-trigger.c' line='203' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iio_trigger_notify_done'>
         <parameter type-id='54e54fbb' name='trig' filepath='drivers/iio/industrialio-trigger.c' line='203' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='iio_update_buffers' mangled-name='iio_update_buffers' filepath='drivers/iio/industrialio-buffer.c' line='1113' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iio_update_buffers'>
+        <parameter type-id='226853d2' name='indio_dev' filepath='drivers/iio/industrialio-buffer.c' line='1113' column='1'/>
+        <parameter type-id='aa9ea333' name='insert_buffer' filepath='drivers/iio/industrialio-buffer.c' line='1114' column='1'/>
+        <parameter type-id='aa9ea333' name='remove_buffer' filepath='drivers/iio/industrialio-buffer.c' line='1115' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='import_iovec' mangled-name='import_iovec' filepath='lib/iov_iter.c' line='1809' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='import_iovec'>
         <parameter type-id='95e97e5e' name='type' filepath='lib/iov_iter.c' line='1809' column='1'/>
