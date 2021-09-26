@@ -942,6 +942,7 @@
       <elf-symbol name='clk_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x815588a6'/>
       <elf-symbol name='clk_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb770a9bd'/>
       <elf-symbol name='clk_get_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x63150e06'/>
+      <elf-symbol name='clk_get_phase' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c5ff742'/>
       <elf-symbol name='clk_get_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x556e4390'/>
       <elf-symbol name='clk_hw_get_flags' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xee3aa642'/>
       <elf-symbol name='clk_hw_get_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb62ec837'/>
@@ -976,6 +977,7 @@
       <elf-symbol name='clk_register_gate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92295424'/>
       <elf-symbol name='clk_round_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x43f81957'/>
       <elf-symbol name='clk_set_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2396c7f0'/>
+      <elf-symbol name='clk_set_phase' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb7329c06'/>
       <elf-symbol name='clk_set_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x76d9b876'/>
       <elf-symbol name='clk_sync_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x266dca8b'/>
       <elf-symbol name='clk_unprepare' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb077e70a'/>
@@ -4125,6 +4127,7 @@
       <elf-symbol name='scsi_unblock_requests' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4c66d363'/>
       <elf-symbol name='sdev_prefix_printk' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc3100a76'/>
       <elf-symbol name='sdhci_add_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa2e903f8'/>
+      <elf-symbol name='sdhci_adma_write_desc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x55e8da2f'/>
       <elf-symbol name='sdhci_cleanup_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x37490426'/>
       <elf-symbol name='sdhci_cqe_disable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xad1e8eb8'/>
       <elf-symbol name='sdhci_cqe_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x52047ddb'/>
@@ -4134,6 +4137,7 @@
       <elf-symbol name='sdhci_enable_v4_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x51c10e74'/>
       <elf-symbol name='sdhci_execute_tuning' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb79a663'/>
       <elf-symbol name='sdhci_get_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe615e6fb'/>
+      <elf-symbol name='sdhci_pltfm_clk_get_max_clock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf48ac8b0'/>
       <elf-symbol name='sdhci_pltfm_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xef15dce2'/>
       <elf-symbol name='sdhci_pltfm_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x388347e8'/>
       <elf-symbol name='sdhci_remove_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x546c283b'/>
@@ -4144,6 +4148,7 @@
       <elf-symbol name='sdhci_runtime_resume_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x458eb912'/>
       <elf-symbol name='sdhci_runtime_suspend_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x164a5bca'/>
       <elf-symbol name='sdhci_set_bus_width' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xab28f19d'/>
+      <elf-symbol name='sdhci_set_clock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc3be945b'/>
       <elf-symbol name='sdhci_set_power_noreg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x12344b39'/>
       <elf-symbol name='sdhci_setup_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c562f4c'/>
       <elf-symbol name='sdhci_suspend_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x247c8b7b'/>
@@ -118434,6 +118439,10 @@
         <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='2489' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
+      <function-decl name='clk_get_phase' mangled-name='clk_get_phase' filepath='drivers/clk/clk.c' line='2773' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_get_phase'>
+        <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='2773' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='clk_get_rate' mangled-name='clk_get_rate' filepath='drivers/clk/clk.c' line='1673' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_get_rate'>
         <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='1673' column='1'/>
         <return type-id='7359adad'/>
@@ -118634,6 +118643,11 @@
       <function-decl name='clk_set_parent' mangled-name='clk_set_parent' filepath='drivers/clk/clk.c' line='2653' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_set_parent'>
         <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='2653' column='1'/>
         <parameter type-id='7d0bc0eb' name='parent' filepath='drivers/clk/clk.c' line='2653' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='clk_set_phase' mangled-name='clk_set_phase' filepath='drivers/clk/clk.c' line='2722' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_set_phase'>
+        <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='2722' column='1'/>
+        <parameter type-id='95e97e5e' name='degrees' filepath='drivers/clk/clk.c' line='2722' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='clk_set_rate' mangled-name='clk_set_rate' filepath='drivers/clk/clk.c' line='2309' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_set_rate'>
@@ -134817,6 +134831,14 @@
         <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4751' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='sdhci_adma_write_desc' mangled-name='sdhci_adma_write_desc' filepath='drivers/mmc/host/sdhci.c' line='688' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_adma_write_desc'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='688' column='1'/>
+        <parameter type-id='63e171df' name='desc' filepath='drivers/mmc/host/sdhci.c' line='688' column='1'/>
+        <parameter type-id='cf29c9b3' name='addr' filepath='drivers/mmc/host/sdhci.c' line='689' column='1'/>
+        <parameter type-id='95e97e5e' name='len' filepath='drivers/mmc/host/sdhci.c' line='689' column='1'/>
+        <parameter type-id='f0981eeb' name='cmd' filepath='drivers/mmc/host/sdhci.c' line='689' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='sdhci_cleanup_host' mangled-name='sdhci_cleanup_host' filepath='drivers/mmc/host/sdhci.c' line='4662' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_cleanup_host'>
         <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4662' column='1'/>
         <return type-id='48b5725f'/>
@@ -134858,6 +134880,10 @@
       <function-decl name='sdhci_get_property' mangled-name='sdhci_get_property' filepath='drivers/mmc/host/sdhci-pltfm.c' line='79' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_get_property'>
         <parameter type-id='db362995' name='pdev' filepath='drivers/mmc/host/sdhci-pltfm.c' line='79' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='sdhci_pltfm_clk_get_max_clock' mangled-name='sdhci_pltfm_clk_get_max_clock' filepath='drivers/mmc/host/sdhci-pltfm.c' line='28' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_pltfm_clk_get_max_clock'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci-pltfm.c' line='28' column='1'/>
+        <return type-id='f0981eeb'/>
       </function-decl>
       <function-decl name='sdhci_pltfm_free' mangled-name='sdhci_pltfm_free' filepath='drivers/mmc/host/sdhci-pltfm.c' line='165' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_pltfm_free'>
         <parameter type-id='db362995' name='pdev' filepath='drivers/mmc/host/sdhci-pltfm.c' line='165' column='1'/>
@@ -134905,6 +134931,11 @@
       <function-decl name='sdhci_set_bus_width' mangled-name='sdhci_set_bus_width' filepath='drivers/mmc/host/sdhci.c' line='2195' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_bus_width'>
         <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='2195' column='1'/>
         <parameter type-id='95e97e5e' name='width' filepath='drivers/mmc/host/sdhci.c' line='2195' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='sdhci_set_clock' mangled-name='sdhci_set_clock' filepath='drivers/mmc/host/sdhci.c' line='1991' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_clock'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='1991' column='1'/>
+        <parameter type-id='f0981eeb' name='clock' filepath='drivers/mmc/host/sdhci.c' line='1991' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='sdhci_set_power_noreg' mangled-name='sdhci_set_power_noreg' filepath='drivers/mmc/host/sdhci.c' line='2020' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_power_noreg'>
