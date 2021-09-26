@@ -3910,6 +3910,7 @@
       <elf-symbol name='regulator_set_current_limit_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x13adf665'/>
       <elf-symbol name='regulator_set_load' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbdb1494f'/>
       <elf-symbol name='regulator_set_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac092213'/>
+      <elf-symbol name='regulator_set_pull_down_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x891c7fe2'/>
       <elf-symbol name='regulator_set_voltage' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8f258f19'/>
       <elf-symbol name='regulator_set_voltage_sel_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x50ba0d14'/>
       <elf-symbol name='regulator_set_voltage_time' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd508d68a'/>
@@ -133684,6 +133685,10 @@
       <function-decl name='regulator_set_mode' mangled-name='regulator_set_mode' filepath='drivers/regulator/core.c' line='4310' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_mode'>
         <parameter type-id='850c13f6' name='regulator' filepath='drivers/regulator/core.c' line='4310' column='1'/>
         <parameter type-id='f0981eeb' name='mode' filepath='drivers/regulator/core.c' line='4310' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='regulator_set_pull_down_regmap' mangled-name='regulator_set_pull_down_regmap' filepath='drivers/regulator/helpers.c' line='703' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_pull_down_regmap'>
+        <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/helpers.c' line='703' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='regulator_set_voltage' mangled-name='regulator_set_voltage' filepath='drivers/regulator/core.c' line='3924' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_voltage'>
