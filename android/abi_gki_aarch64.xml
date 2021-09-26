@@ -579,6 +579,8 @@
       <elf-symbol name='__xfrm_decode_session' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x41b76380'/>
       <elf-symbol name='__xfrm_state_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c30e2e1'/>
       <elf-symbol name='_atomic_dec_and_lock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcf4fdd4d'/>
+      <elf-symbol name='_bcd2bin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb6936ffe'/>
+      <elf-symbol name='_bin2bcd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x80ca5026'/>
       <elf-symbol name='_copy_from_iter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39448fe2'/>
       <elf-symbol name='_copy_from_iter_full' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x96ccf3d6'/>
       <elf-symbol name='_copy_to_iter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe0fb5dfb'/>
@@ -66859,20 +66861,7 @@
           <var-decl name='private_value' type-id='7359adad' visibility='default' filepath='include/sound/control.h' line='56' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='udp_table' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/net/udp.h' line='72' column='1' id='9a516b13'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='hash' type-id='9cc41107' visibility='default' filepath='include/net/udp.h' line='73' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='hash2' type-id='9cc41107' visibility='default' filepath='include/net/udp.h' line='74' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='mask' type-id='f0981eeb' visibility='default' filepath='include/net/udp.h' line='75' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='log' type-id='f0981eeb' visibility='default' filepath='include/net/udp.h' line='76' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='udp_table' is-struct='yes' visibility='default' is-declaration-only='yes' id='9a516b13'/>
       <pointer-type-def type-id='6661a698' size-in-bits='64' id='9a537bbe'/>
       <pointer-type-def type-id='2bc6669b' size-in-bits='64' id='9a53a8a3'/>
       <function-type size-in-bits='64' id='9a54e634'>
@@ -67750,7 +67739,6 @@
       <array-type-def dimensions='1' type-id='00205383' size-in-bits='3072' id='9cc39ce1'>
         <subrange length='24' type-id='7ff19f0f' id='fdd3342b'/>
       </array-type-def>
-      <pointer-type-def type-id='fa07ab8f' size-in-bits='64' id='9cc41107'/>
       <class-decl name='snd_kcontrol_volatile' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/sound/control.h' line='59' column='1' id='9cd807f4'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='owner' type-id='ed27ccc9' visibility='default' filepath='include/sound/control.h' line='60' column='1'/>
@@ -109993,17 +109981,6 @@
       </class-decl>
       <pointer-type-def type-id='12506762' size-in-bits='64' id='fa013de0'/>
       <pointer-type-def type-id='91f77fa3' size-in-bits='64' id='fa058983'/>
-      <class-decl name='udp_hslot' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/udp.h' line='58' column='1' id='fa07ab8f'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='head' type-id='e151255a' visibility='default' filepath='include/net/udp.h' line='59' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='count' type-id='95e97e5e' visibility='default' filepath='include/net/udp.h' line='60' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/net/udp.h' line='61' column='1'/>
-        </data-member>
-      </class-decl>
       <array-type-def dimensions='2' type-id='8f048e17' size-in-bits='304' id='fa0a1f4c'>
         <subrange length='2' type-id='7ff19f0f' id='52efc4ef'/>
         <subrange length='19' type-id='7ff19f0f' id='448ee30f'/>
@@ -116513,6 +116490,14 @@
         <parameter type-id='8a47abc3' name='atomic' filepath='lib/dec_and_lock.c' line='21' column='1'/>
         <parameter type-id='cff2d845' name='lock' filepath='lib/dec_and_lock.c' line='21' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='_bcd2bin' mangled-name='_bcd2bin' filepath='lib/bcd.c' line='5' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_bcd2bin'>
+        <parameter type-id='002ac4a6' name='val' filepath='lib/bcd.c' line='5' column='1'/>
+        <return type-id='f0981eeb'/>
+      </function-decl>
+      <function-decl name='_bin2bcd' mangled-name='_bin2bcd' filepath='lib/bcd.c' line='11' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_bin2bcd'>
+        <parameter type-id='f0981eeb' name='val' filepath='lib/bcd.c' line='11' column='1'/>
+        <return type-id='002ac4a6'/>
       </function-decl>
       <function-decl name='_copy_from_iter' mangled-name='_copy_from_iter' filepath='lib/iov_iter.c' line='765' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_copy_from_iter'>
         <parameter type-id='eaa32e2f' name='addr' filepath='lib/iov_iter.c' line='765' column='1'/>
