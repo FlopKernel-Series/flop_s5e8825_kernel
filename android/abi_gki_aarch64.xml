@@ -5893,6 +5893,7 @@
       <elf-symbol name='dma_contiguous_default_area' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4fd950ed'/>
       <elf-symbol name='dma_fence_array_ops' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe03a689d'/>
       <elf-symbol name='drm_gem_cma_vm_ops' size='144' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7a22aac0'/>
+      <elf-symbol name='dummy_irq_chip' size='288' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x77cb60af'/>
       <elf-symbol name='efi' size='256' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x190a48a9'/>
       <elf-symbol name='efi_tpm_final_log_size' size='4' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe9e8faeb'/>
       <elf-symbol name='failure_tracking' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x23f6655a'/>
@@ -124770,6 +124771,7 @@
         <parameter type-id='141b6427' name='dst' filepath='net/core/dst.c' line='169' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <var-decl name='dummy_irq_chip' type-id='0f5f7920' mangled-name='dummy_irq_chip' visibility='default' filepath='kernel/irq/dummychip.c' line='53' column='1' elf-symbol-id='dummy_irq_chip'/>
       <function-decl name='dump_backtrace' mangled-name='dump_backtrace' filepath='arch/arm64/kernel/stacktrace.c' line='140' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dump_backtrace'>
         <parameter type-id='4616a179' name='regs' filepath='arch/arm64/kernel/stacktrace.c' line='140' column='1'/>
         <parameter type-id='f23e2572' name='tsk' filepath='arch/arm64/kernel/stacktrace.c' line='140' column='1'/>
