@@ -127,6 +127,7 @@
       <elf-symbol name='__iowrite32_copy' type='func-type' binding='weak-binding' visibility='default-visibility' is-defined='yes' crc='0x2dba276a'/>
       <elf-symbol name='__ipv6_addr_type' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd542439'/>
       <elf-symbol name='__irq_alloc_descs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5db075d0'/>
+      <elf-symbol name='__irq_alloc_domain_generic_chips' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd9b5c1a'/>
       <elf-symbol name='__irq_domain_add' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x73d2ee76'/>
       <elf-symbol name='__irq_set_handler' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x49a38900'/>
       <elf-symbol name='__kfifo_alloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x139f2189'/>
@@ -2718,6 +2719,8 @@
       <elf-symbol name='irq_gc_ack_set_bit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb8ee2fca'/>
       <elf-symbol name='irq_gc_mask_clr_bit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf7b775be'/>
       <elf-symbol name='irq_gc_mask_set_bit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa3c1a7a7'/>
+      <elf-symbol name='irq_gc_set_wake' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x23972238'/>
+      <elf-symbol name='irq_get_domain_generic_chip' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe423bd07'/>
       <elf-symbol name='irq_get_irq_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd67517d1'/>
       <elf-symbol name='irq_get_irqchip_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1d222ced'/>
       <elf-symbol name='irq_modify_status' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7522f3ba'/>
@@ -3331,6 +3334,7 @@
       <elf-symbol name='of_phy_is_fixed_link' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc5a2ca53'/>
       <elf-symbol name='of_phy_register_fixed_link' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe48431b7'/>
       <elf-symbol name='of_phy_simple_xlate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa2094183'/>
+      <elf-symbol name='of_pinctrl_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdca7c17d'/>
       <elf-symbol name='of_platform_depopulate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6fb0100'/>
       <elf-symbol name='of_platform_device_create' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74cd6e1c'/>
       <elf-symbol name='of_platform_device_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8c9f49e7'/>
@@ -5885,6 +5889,7 @@
       <elf-symbol name='iomem_resource' size='96' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7da062f'/>
       <elf-symbol name='ipv6_stub' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8b9e89a5'/>
       <elf-symbol name='irq_domain_simple_ops' size='80' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd460cbd6'/>
+      <elf-symbol name='irq_generic_chip_ops' size='80' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9ea99b47'/>
       <elf-symbol name='irq_stat' size='64' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2391f725'/>
       <elf-symbol name='jiffies' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x15ba50a6'/>
       <elf-symbol name='jiffies_64' size='8' type='object-type' binding='global-binding' visibility='default-visibility' alias='jiffies' is-defined='yes' crc='0x55e77e8'/>
@@ -25425,7 +25430,7 @@
       <pointer-type-def type-id='2c3bbc0e' size-in-bits='64' id='342f43d1'/>
       <pointer-type-def type-id='014fe25e' size-in-bits='64' id='3434e051'/>
       <function-type size-in-bits='64' id='3434ed92'>
-        <parameter type-id='8bf48c31'/>
+        <parameter type-id='8bf48c31' name='intf'/>
         <return type-id='48b5725f'/>
       </function-type>
       <pointer-type-def type-id='07b58648' size-in-bits='64' id='343c05fa'/>
@@ -58052,8 +58057,8 @@
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='84e4381f'>
-        <parameter type-id='8bf48c31'/>
-        <parameter type-id='bc57058f'/>
+        <parameter type-id='8bf48c31' name='interface'/>
+        <parameter type-id='bc57058f' name='id'/>
         <return type-id='95e97e5e'/>
       </function-type>
       <function-type size-in-bits='64' id='84ec62b0'>
@@ -113405,6 +113410,17 @@
         <parameter type-id='07779cd9' name='affinity' filepath='kernel/irq/irqdesc.c' line='780' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__irq_alloc_domain_generic_chips' mangled-name='__irq_alloc_domain_generic_chips' filepath='kernel/irq/generic-chip.c' line='283' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__irq_alloc_domain_generic_chips'>
+        <parameter type-id='7544e824' name='d' filepath='kernel/irq/generic-chip.c' line='283' column='1'/>
+        <parameter type-id='95e97e5e' name='irqs_per_chip' filepath='kernel/irq/generic-chip.c' line='283' column='1'/>
+        <parameter type-id='95e97e5e' name='num_ct' filepath='kernel/irq/generic-chip.c' line='284' column='1'/>
+        <parameter type-id='80f4b756' name='name' filepath='kernel/irq/generic-chip.c' line='284' column='1'/>
+        <parameter type-id='cdb741d3' name='handler' filepath='kernel/irq/generic-chip.c' line='285' column='1'/>
+        <parameter type-id='f0981eeb' name='clr' filepath='kernel/irq/generic-chip.c' line='286' column='1'/>
+        <parameter type-id='f0981eeb' name='set' filepath='kernel/irq/generic-chip.c' line='286' column='1'/>
+        <parameter type-id='7a1ec3b1' name='gcflags' filepath='kernel/irq/generic-chip.c' line='287' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__irq_domain_add' mangled-name='__irq_domain_add' filepath='kernel/irq/irqdomain.c' line='130' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__irq_domain_add'>
         <parameter type-id='4a935625' name='fwnode' filepath='kernel/irq/irqdomain.c' line='130' column='1'/>
         <parameter type-id='95e97e5e' name='size' filepath='kernel/irq/irqdomain.c' line='130' column='1'/>
@@ -127750,6 +127766,17 @@
         <parameter type-id='1c475548' name='d' filepath='kernel/irq/generic-chip.c' line='55' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='irq_gc_set_wake' mangled-name='irq_gc_set_wake' filepath='kernel/irq/generic-chip.c' line='187' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_gc_set_wake'>
+        <parameter type-id='1c475548' name='d' filepath='kernel/irq/generic-chip.c' line='187' column='1'/>
+        <parameter type-id='f0981eeb' name='on' filepath='kernel/irq/generic-chip.c' line='187' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <var-decl name='irq_generic_chip_ops' type-id='0926e4bd' mangled-name='irq_generic_chip_ops' visibility='default' filepath='kernel/irq/generic-chip.c' line='448' column='1' elf-symbol-id='irq_generic_chip_ops'/>
+      <function-decl name='irq_get_domain_generic_chip' mangled-name='irq_get_domain_generic_chip' filepath='kernel/irq/generic-chip.c' line='360' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_get_domain_generic_chip'>
+        <parameter type-id='7544e824' name='d' filepath='kernel/irq/generic-chip.c' line='360' column='1'/>
+        <parameter type-id='f0981eeb' name='hw_irq' filepath='kernel/irq/generic-chip.c' line='360' column='1'/>
+        <return type-id='e53d7a90'/>
+      </function-decl>
       <function-decl name='irq_get_irq_data' mangled-name='irq_get_irq_data' filepath='kernel/irq/chip.c' line='159' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='irq_get_irq_data'>
         <parameter type-id='f0981eeb' name='irq' filepath='kernel/irq/chip.c' line='159' column='1'/>
         <return type-id='1c475548'/>
@@ -130829,6 +130856,10 @@
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/phy/phy-core.c' line='633' column='1'/>
         <parameter type-id='51a94113' name='args' filepath='drivers/phy/phy-core.c' line='634' column='1'/>
         <return type-id='503ff1ba'/>
+      </function-decl>
+      <function-decl name='of_pinctrl_get' mangled-name='of_pinctrl_get' filepath='drivers/pinctrl/devicetree.c' line='103' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_pinctrl_get'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/pinctrl/devicetree.c' line='103' column='1'/>
+        <return type-id='10216dc5'/>
       </function-decl>
       <function-decl name='of_platform_depopulate' mangled-name='of_platform_depopulate' filepath='drivers/of/platform.c' line='588' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_platform_depopulate'>
         <parameter type-id='fa0b179b' name='parent' filepath='drivers/of/platform.c' line='588' column='1'/>
