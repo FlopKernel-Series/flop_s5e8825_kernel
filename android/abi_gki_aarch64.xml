@@ -1294,6 +1294,7 @@
       <elf-symbol name='dev_pm_opp_remove_all_dynamic' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x58d2164f'/>
       <elf-symbol name='dev_pm_opp_set_bw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xee324f7f'/>
       <elf-symbol name='dev_pm_opp_set_clkname' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x808c3e51'/>
+      <elf-symbol name='dev_pm_opp_set_prop_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeaad849d'/>
       <elf-symbol name='dev_pm_opp_set_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x49f9212d'/>
       <elf-symbol name='dev_pm_opp_set_regulators' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7f3109f'/>
       <elf-symbol name='dev_pm_opp_set_sharing_cpus' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3ef005c1'/>
@@ -1326,6 +1327,7 @@
       <elf-symbol name='devfreq_event_enable_edev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb723f5e0'/>
       <elf-symbol name='devfreq_event_get_edev_by_phandle' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x324c4492'/>
       <elf-symbol name='devfreq_event_get_edev_count' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7382d02'/>
+      <elf-symbol name='devfreq_event_get_event' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf8386da6'/>
       <elf-symbol name='devfreq_get_devfreq_by_node' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdf603074'/>
       <elf-symbol name='devfreq_get_devfreq_by_phandle' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc4d3b5fc'/>
       <elf-symbol name='devfreq_monitor_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x51d51cf8'/>
@@ -1408,6 +1410,7 @@
       <elf-symbol name='devm_devfreq_add_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa11123ba'/>
       <elf-symbol name='devm_devfreq_event_add_edev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3054cdd5'/>
       <elf-symbol name='devm_devfreq_register_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1054639'/>
+      <elf-symbol name='devm_devfreq_register_opp_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9bc08c7f'/>
       <elf-symbol name='devm_devfreq_remove_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d73b869'/>
       <elf-symbol name='devm_devfreq_unregister_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xde51fdbf'/>
       <elf-symbol name='devm_device_add_group' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x71021beb'/>
@@ -120358,6 +120361,11 @@
         <parameter type-id='80f4b756' name='name' filepath='drivers/opp/core.c' line='1865' column='1'/>
         <return type-id='e62a60bd'/>
       </function-decl>
+      <function-decl name='dev_pm_opp_set_prop_name' mangled-name='dev_pm_opp_set_prop_name' filepath='drivers/opp/core.c' line='1665' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_pm_opp_set_prop_name'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/opp/core.c' line='1665' column='1'/>
+        <parameter type-id='80f4b756' name='name' filepath='drivers/opp/core.c' line='1665' column='1'/>
+        <return type-id='e62a60bd'/>
+      </function-decl>
       <function-decl name='dev_pm_opp_set_rate' mangled-name='dev_pm_opp_set_rate' filepath='drivers/opp/core.c' line='914' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_pm_opp_set_rate'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/opp/core.c' line='914' column='1'/>
         <parameter type-id='7359adad' name='target_freq' filepath='drivers/opp/core.c' line='914' column='1'/>
@@ -120525,6 +120533,11 @@
       <function-decl name='devfreq_event_get_edev_count' mangled-name='devfreq_event_get_edev_count' filepath='drivers/devfreq/devfreq-event.c' line='266' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devfreq_event_get_edev_count'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/devfreq/devfreq-event.c' line='266' column='1'/>
         <parameter type-id='80f4b756' name='phandle_name' filepath='drivers/devfreq/devfreq-event.c' line='266' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='devfreq_event_get_event' mangled-name='devfreq_event_get_event' filepath='drivers/devfreq/devfreq-event.c' line='160' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devfreq_event_get_event'>
+        <parameter type-id='88146159' name='edev' filepath='drivers/devfreq/devfreq-event.c' line='160' column='1'/>
+        <parameter type-id='d6184118' name='edata' filepath='drivers/devfreq/devfreq-event.c' line='161' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='devfreq_get_devfreq_by_node' mangled-name='devfreq_get_devfreq_by_node' filepath='drivers/devfreq/devfreq.c' line='993' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devfreq_get_devfreq_by_node'>
@@ -120955,6 +120968,11 @@
         <parameter type-id='f66fa7f4' name='devfreq' filepath='drivers/devfreq/devfreq.c' line='2079' column='1'/>
         <parameter type-id='d504f73d' name='nb' filepath='drivers/devfreq/devfreq.c' line='2080' column='1'/>
         <parameter type-id='f0981eeb' name='list' filepath='drivers/devfreq/devfreq.c' line='2081' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='devm_devfreq_register_opp_notifier' mangled-name='devm_devfreq_register_opp_notifier' filepath='drivers/devfreq/devfreq.c' line='1964' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_devfreq_register_opp_notifier'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/devfreq/devfreq.c' line='1964' column='1'/>
+        <parameter type-id='f66fa7f4' name='devfreq' filepath='drivers/devfreq/devfreq.c' line='1965' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='devm_devfreq_remove_device' mangled-name='devm_devfreq_remove_device' filepath='drivers/devfreq/devfreq.c' line='1063' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_devfreq_remove_device'>
