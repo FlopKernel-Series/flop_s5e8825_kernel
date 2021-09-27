@@ -4159,6 +4159,7 @@
       <elf-symbol name='sdhci_pltfm_clk_get_max_clock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf48ac8b0'/>
       <elf-symbol name='sdhci_pltfm_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xef15dce2'/>
       <elf-symbol name='sdhci_pltfm_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x388347e8'/>
+      <elf-symbol name='sdhci_pltfm_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ece9464'/>
       <elf-symbol name='sdhci_remove_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x546c283b'/>
       <elf-symbol name='sdhci_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x95267c66'/>
       <elf-symbol name='sdhci_request_atomic' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2b38beca'/>
@@ -4168,7 +4169,9 @@
       <elf-symbol name='sdhci_runtime_suspend_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x164a5bca'/>
       <elf-symbol name='sdhci_set_bus_width' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xab28f19d'/>
       <elf-symbol name='sdhci_set_clock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc3be945b'/>
+      <elf-symbol name='sdhci_set_power_and_bus_voltage' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x40e4a79f'/>
       <elf-symbol name='sdhci_set_power_noreg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x12344b39'/>
+      <elf-symbol name='sdhci_set_uhs_signaling' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x185dcb11'/>
       <elf-symbol name='sdhci_setup_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c562f4c'/>
       <elf-symbol name='sdhci_suspend_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x247c8b7b'/>
       <elf-symbol name='sdio_claim_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9b3810bc'/>
@@ -135094,6 +135097,10 @@
         <parameter type-id='b59d7dce' name='priv_size' filepath='drivers/mmc/host/sdhci-pltfm.c' line='118' column='1'/>
         <return type-id='2661e0d9'/>
       </function-decl>
+      <function-decl name='sdhci_pltfm_unregister' mangled-name='sdhci_pltfm_unregister' filepath='drivers/mmc/host/sdhci-pltfm.c' line='194' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_pltfm_unregister'>
+        <parameter type-id='db362995' name='pdev' filepath='drivers/mmc/host/sdhci-pltfm.c' line='194' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='sdhci_remove_host' mangled-name='sdhci_remove_host' filepath='drivers/mmc/host/sdhci.c' line='4772' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_remove_host'>
         <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='4772' column='1'/>
         <parameter type-id='95e97e5e' name='dead' filepath='drivers/mmc/host/sdhci.c' line='4772' column='1'/>
@@ -135137,10 +135144,21 @@
         <parameter type-id='f0981eeb' name='clock' filepath='drivers/mmc/host/sdhci.c' line='1991' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='sdhci_set_power_and_bus_voltage' mangled-name='sdhci_set_power_and_bus_voltage' filepath='drivers/mmc/host/sdhci.c' line='2110' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_power_and_bus_voltage'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='2110' column='1'/>
+        <parameter type-id='002ac4a6' name='mode' filepath='drivers/mmc/host/sdhci.c' line='2111' column='1'/>
+        <parameter type-id='8efea9e5' name='vdd' filepath='drivers/mmc/host/sdhci.c' line='2112' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='sdhci_set_power_noreg' mangled-name='sdhci_set_power_noreg' filepath='drivers/mmc/host/sdhci.c' line='2020' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_power_noreg'>
         <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='2020' column='1'/>
         <parameter type-id='002ac4a6' name='mode' filepath='drivers/mmc/host/sdhci.c' line='2020' column='1'/>
         <parameter type-id='8efea9e5' name='vdd' filepath='drivers/mmc/host/sdhci.c' line='2021' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='sdhci_set_uhs_signaling' mangled-name='sdhci_set_uhs_signaling' filepath='drivers/mmc/host/sdhci.c' line='2215' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_set_uhs_signaling'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='2215' column='1'/>
+        <parameter type-id='f0981eeb' name='timing' filepath='drivers/mmc/host/sdhci.c' line='2215' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='sdhci_setup_host' mangled-name='sdhci_setup_host' filepath='drivers/mmc/host/sdhci.c' line='4111' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_setup_host'>
