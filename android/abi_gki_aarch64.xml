@@ -3651,6 +3651,7 @@
       <elf-symbol name='platform_msi_domain_free_irqs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xebf6e58b'/>
       <elf-symbol name='platform_unregister_drivers' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb047000d'/>
       <elf-symbol name='pm_clk_add' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbde959ec'/>
+      <elf-symbol name='pm_clk_add_clk' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x807ac0bf'/>
       <elf-symbol name='pm_clk_create' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe449fa38'/>
       <elf-symbol name='pm_clk_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x78eb2755'/>
       <elf-symbol name='pm_clk_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6a180e54'/>
@@ -132503,6 +132504,11 @@
       <function-decl name='pm_clk_add' mangled-name='pm_clk_add' filepath='drivers/base/power/clock_ops.c' line='123' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pm_clk_add'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/base/power/clock_ops.c' line='123' column='1'/>
         <parameter type-id='80f4b756' name='con_id' filepath='drivers/base/power/clock_ops.c' line='123' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='pm_clk_add_clk' mangled-name='pm_clk_add_clk' filepath='drivers/base/power/clock_ops.c' line='139' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pm_clk_add_clk'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/base/power/clock_ops.c' line='139' column='1'/>
+        <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/base/power/clock_ops.c' line='139' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='pm_clk_create' mangled-name='pm_clk_create' filepath='drivers/base/power/clock_ops.c' line='350' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pm_clk_create'>
