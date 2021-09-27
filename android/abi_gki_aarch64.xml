@@ -1478,6 +1478,7 @@
       <elf-symbol name='devm_of_platform_populate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcf1001c0'/>
       <elf-symbol name='devm_of_pwm_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8d795e56'/>
       <elf-symbol name='devm_pci_alloc_host_bridge' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6ede5728'/>
+      <elf-symbol name='devm_pci_remap_cfg_resource' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x73e37e20'/>
       <elf-symbol name='devm_phy_create' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6797d82d'/>
       <elf-symbol name='devm_phy_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8016a6c4'/>
       <elf-symbol name='devm_phy_optional_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd1d7e13'/>
@@ -3335,6 +3336,7 @@
       <elf-symbol name='of_parse_phandle' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x79746f10'/>
       <elf-symbol name='of_parse_phandle_with_args' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3cbbcd88'/>
       <elf-symbol name='of_parse_phandle_with_fixed_args' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd01477fb'/>
+      <elf-symbol name='of_pci_get_max_link_speed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9dc1ad8f'/>
       <elf-symbol name='of_phandle_iterator_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1d3d2daf'/>
       <elf-symbol name='of_phandle_iterator_next' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6a7d162c'/>
       <elf-symbol name='of_phy_connect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74c7e2ef'/>
@@ -3468,6 +3470,7 @@
       <elf-symbol name='pci_release_regions' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4a05faa'/>
       <elf-symbol name='pci_release_resource' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf0b788cd'/>
       <elf-symbol name='pci_release_selected_regions' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd0b1c8dd'/>
+      <elf-symbol name='pci_remove_root_bus' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb402a5da'/>
       <elf-symbol name='pci_request_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74da130c'/>
       <elf-symbol name='pci_request_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb6d818c'/>
       <elf-symbol name='pci_request_regions' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd26ee740'/>
@@ -3483,6 +3486,7 @@
       <elf-symbol name='pci_set_mwi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6c9fdae2'/>
       <elf-symbol name='pci_set_power_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48cb85bc'/>
       <elf-symbol name='pci_sriov_configure_simple' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x356b977a'/>
+      <elf-symbol name='pci_stop_root_bus' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfce1d90e'/>
       <elf-symbol name='pci_store_saved_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7180a796'/>
       <elf-symbol name='pci_try_set_mwi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc072d8f'/>
       <elf-symbol name='pci_unmap_rom' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93d7a4c2'/>
@@ -4988,6 +4992,7 @@
       <elf-symbol name='usb_add_gadget' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ed67fe3'/>
       <elf-symbol name='usb_add_gadget_udc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xde6d5c6f'/>
       <elf-symbol name='usb_add_hcd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe7b94b3f'/>
+      <elf-symbol name='usb_add_phy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x86f48f44'/>
       <elf-symbol name='usb_add_phy_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcfba1162'/>
       <elf-symbol name='usb_alloc_coherent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe2ceddab'/>
       <elf-symbol name='usb_alloc_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd97c0fff'/>
@@ -5253,6 +5258,7 @@
       <elf-symbol name='v4l2_m2m_unregister_media_controller' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf13ff84d'/>
       <elf-symbol name='v4l2_match_dv_timings' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd034392d'/>
       <elf-symbol name='v4l2_pipeline_link_notify' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8b4f4749'/>
+      <elf-symbol name='v4l2_querymenu' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xae9f2785'/>
       <elf-symbol name='v4l2_s_ctrl' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x81f0747c'/>
       <elf-symbol name='v4l2_s_parm_cap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb1e6233e'/>
       <elf-symbol name='v4l2_spi_subdev_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd7f32d29'/>
@@ -121374,6 +121380,11 @@
         <parameter type-id='b59d7dce' name='priv' filepath='drivers/pci/probe.c' line='622' column='1'/>
         <return type-id='cb0dbc3c'/>
       </function-decl>
+      <function-decl name='devm_pci_remap_cfg_resource' mangled-name='devm_pci_remap_cfg_resource' filepath='drivers/pci/pci.c' line='4184' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_pci_remap_cfg_resource'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/pci/pci.c' line='4184' column='1'/>
+        <parameter type-id='c9d64c0d' name='res' filepath='drivers/pci/pci.c' line='4185' column='1'/>
+        <return type-id='eaa32e2f'/>
+      </function-decl>
       <function-decl name='devm_phy_create' mangled-name='devm_phy_create' filepath='drivers/phy/phy-core.c' line='943' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_phy_create'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/phy/phy-core.c' line='943' column='1'/>
         <parameter type-id='9a537bbe' name='node' filepath='drivers/phy/phy-core.c' line='943' column='1'/>
@@ -130945,6 +130956,10 @@
         <parameter type-id='51a94113' name='out_args' filepath='drivers/of/base.c' line='1714' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='of_pci_get_max_link_speed' mangled-name='of_pci_get_max_link_speed' filepath='drivers/pci/of.c' line='591' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_pci_get_max_link_speed'>
+        <parameter type-id='9a537bbe' name='node' filepath='drivers/pci/of.c' line='591' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='of_phandle_iterator_init' mangled-name='of_phandle_iterator_init' filepath='drivers/of/base.c' line='1240' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_phandle_iterator_init'>
         <parameter type-id='58cfaa0e' name='it' filepath='drivers/of/base.c' line='1240' column='1'/>
         <parameter type-id='0afa6ea3' name='np' filepath='drivers/of/base.c' line='1241' column='1'/>
@@ -131662,6 +131677,10 @@
         <parameter type-id='95e97e5e' name='bars' filepath='drivers/pci/pci.c' line='3875' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='pci_remove_root_bus' mangled-name='pci_remove_root_bus' filepath='drivers/pci/remove.c' line='147' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_remove_root_bus'>
+        <parameter type-id='d1feb554' name='bus' filepath='drivers/pci/remove.c' line='147' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='pci_request_irq' mangled-name='pci_request_irq' filepath='drivers/pci/irq.c' line='33' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_request_irq'>
         <parameter type-id='85196e3f' name='dev' filepath='drivers/pci/irq.c' line='33' column='1'/>
         <parameter type-id='f0981eeb' name='nr' filepath='drivers/pci/irq.c' line='33' column='1'/>
@@ -131737,6 +131756,10 @@
         <parameter type-id='85196e3f' name='dev' filepath='drivers/pci/iov.c' line='1066' column='1'/>
         <parameter type-id='95e97e5e' name='nr_virtfn' filepath='drivers/pci/iov.c' line='1066' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='pci_stop_root_bus' mangled-name='pci_stop_root_bus' filepath='drivers/pci/remove.c' line='129' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_stop_root_bus'>
+        <parameter type-id='d1feb554' name='bus' filepath='drivers/pci/remove.c' line='129' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='pci_store_saved_state' mangled-name='pci_store_saved_state' filepath='drivers/pci/pci.c' line='1716' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_store_saved_state'>
         <parameter type-id='85196e3f' name='dev' filepath='drivers/pci/pci.c' line='1716' column='1'/>
@@ -139426,6 +139449,11 @@
         <parameter type-id='7359adad' name='irqflags' filepath='drivers/usb/core/hcd.c' line='2639' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='usb_add_phy' mangled-name='usb_add_phy' filepath='drivers/usb/phy/phy.c' line='626' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_add_phy'>
+        <parameter type-id='ca9354d1' name='x' filepath='drivers/usb/phy/phy.c' line='626' column='1'/>
+        <parameter type-id='d95f4827' name='type' filepath='drivers/usb/phy/phy.c' line='626' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='usb_add_phy_dev' mangled-name='usb_add_phy_dev' filepath='drivers/usb/phy/phy.c' line='672' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_add_phy_dev'>
         <parameter type-id='ca9354d1' name='x' filepath='drivers/usb/phy/phy.c' line='672' column='1'/>
         <return type-id='95e97e5e'/>
@@ -140763,6 +140791,11 @@
         <parameter type-id='b4de78ea' name='link' filepath='drivers/media/v4l2-core/v4l2-mc.c' line='556' column='1'/>
         <parameter type-id='19c2251e' name='flags' filepath='drivers/media/v4l2-core/v4l2-mc.c' line='556' column='1'/>
         <parameter type-id='f0981eeb' name='notification' filepath='drivers/media/v4l2-core/v4l2-mc.c' line='557' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='v4l2_querymenu' mangled-name='v4l2_querymenu' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3446' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_querymenu'>
+        <parameter type-id='2b59fa5e' name='hdl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3446' column='1'/>
+        <parameter type-id='4394e2c1' name='qm' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='3446' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='v4l2_s_ctrl' mangled-name='v4l2_s_ctrl' filepath='drivers/media/v4l2-core/v4l2-ctrls.c' line='4413' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_s_ctrl'>
