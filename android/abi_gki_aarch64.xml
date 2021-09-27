@@ -977,6 +977,7 @@
       <elf-symbol name='clk_register_fixed_factor' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf4e26a8a'/>
       <elf-symbol name='clk_register_fixed_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1594f658'/>
       <elf-symbol name='clk_register_gate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92295424'/>
+      <elf-symbol name='clk_register_mux_table' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x556d2606'/>
       <elf-symbol name='clk_round_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x43f81957'/>
       <elf-symbol name='clk_set_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2396c7f0'/>
       <elf-symbol name='clk_set_phase' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb7329c06'/>
@@ -5818,11 +5819,13 @@
       <elf-symbol name='balloon_aops' size='208' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x71fb77bb'/>
       <elf-symbol name='bpf_stats_enabled_key' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf84bd6ee'/>
       <elf-symbol name='clk_divider_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4ed3c288'/>
+      <elf-symbol name='clk_divider_ro_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xae330045'/>
       <elf-symbol name='clk_fixed_factor_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x274e799a'/>
       <elf-symbol name='clk_fixed_rate_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd484b507'/>
       <elf-symbol name='clk_fractional_divider_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcdcf81f5'/>
       <elf-symbol name='clk_gate_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5442693f'/>
       <elf-symbol name='clk_mux_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3348edd8'/>
+      <elf-symbol name='clk_mux_ro_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb74e5c29'/>
       <elf-symbol name='console_drivers' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4822584'/>
       <elf-symbol name='console_printk' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2592fc6c'/>
       <elf-symbol name='console_suspend_enabled' size='1' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x366307a'/>
@@ -118431,6 +118434,7 @@
         <return type-id='48b5725f'/>
       </function-decl>
       <var-decl name='clk_divider_ops' type-id='92072f8b' mangled-name='clk_divider_ops' visibility='default' filepath='drivers/clk/clk-divider.c' line='453' column='1' elf-symbol-id='clk_divider_ops'/>
+      <var-decl name='clk_divider_ro_ops' type-id='92072f8b' mangled-name='clk_divider_ro_ops' visibility='default' filepath='drivers/clk/clk-divider.c' line='460' column='1' elf-symbol-id='clk_divider_ro_ops'/>
       <function-decl name='clk_enable' mangled-name='clk_enable' filepath='drivers/clk/clk.c' line='1160' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_enable'>
         <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='1160' column='1'/>
         <return type-id='95e97e5e'/>
@@ -118560,6 +118564,7 @@
         <return type-id='f0981eeb'/>
       </function-decl>
       <var-decl name='clk_mux_ops' type-id='92072f8b' mangled-name='clk_mux_ops' visibility='default' filepath='drivers/clk/clk-mux.c' line='136' column='1' elf-symbol-id='clk_mux_ops'/>
+      <var-decl name='clk_mux_ro_ops' type-id='92072f8b' mangled-name='clk_mux_ro_ops' visibility='default' filepath='drivers/clk/clk-mux.c' line='143' column='1' elf-symbol-id='clk_mux_ro_ops'/>
       <function-decl name='clk_notifier_register' mangled-name='clk_notifier_register' filepath='drivers/clk/clk.c' line='4396' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_notifier_register'>
         <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='4396' column='1'/>
         <parameter type-id='d504f73d' name='nb' filepath='drivers/clk/clk.c' line='4396' column='1'/>
@@ -118642,6 +118647,20 @@
         <parameter type-id='f9b06939' name='bit_idx' filepath='drivers/clk/clk-gate.c' line='186' column='1'/>
         <parameter type-id='f9b06939' name='clk_gate_flags' filepath='drivers/clk/clk-gate.c' line='187' column='1'/>
         <parameter type-id='cff2d845' name='lock' filepath='drivers/clk/clk-gate.c' line='187' column='1'/>
+        <return type-id='7d0bc0eb'/>
+      </function-decl>
+      <function-decl name='clk_register_mux_table' mangled-name='clk_register_mux_table' filepath='drivers/clk/clk-mux.c' line='209' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_register_mux_table'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/clk/clk-mux.c' line='209' column='1'/>
+        <parameter type-id='80f4b756' name='name' filepath='drivers/clk/clk-mux.c' line='209' column='1'/>
+        <parameter type-id='13956559' name='parent_names' filepath='drivers/clk/clk-mux.c' line='210' column='1'/>
+        <parameter type-id='f9b06939' name='num_parents' filepath='drivers/clk/clk-mux.c' line='210' column='1'/>
+        <parameter type-id='7359adad' name='flags' filepath='drivers/clk/clk-mux.c' line='211' column='1'/>
+        <parameter type-id='eaa32e2f' name='reg' filepath='drivers/clk/clk-mux.c' line='211' column='1'/>
+        <parameter type-id='f9b06939' name='shift' filepath='drivers/clk/clk-mux.c' line='211' column='1'/>
+        <parameter type-id='19c2251e' name='mask' filepath='drivers/clk/clk-mux.c' line='211' column='1'/>
+        <parameter type-id='f9b06939' name='clk_mux_flags' filepath='drivers/clk/clk-mux.c' line='212' column='1'/>
+        <parameter type-id='f9409001' name='table' filepath='drivers/clk/clk-mux.c' line='212' column='1'/>
+        <parameter type-id='cff2d845' name='lock' filepath='drivers/clk/clk-mux.c' line='212' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
       <function-decl name='clk_round_rate' mangled-name='clk_round_rate' filepath='drivers/clk/clk.c' line='1479' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_round_rate'>
