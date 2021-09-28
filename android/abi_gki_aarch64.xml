@@ -5976,6 +5976,7 @@
       <elf-symbol name='pm_power_off_prepare' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1f0cb5bf'/>
       <elf-symbol name='pm_suspend_global_flags' size='4' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42635d55'/>
       <elf-symbol name='pm_wq' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7d59dd46'/>
+      <elf-symbol name='power_supply_class' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdba05b80'/>
       <elf-symbol name='rcu_cpu_stall_suppress' size='4' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0747ed2'/>
       <elf-symbol name='rcu_cpu_stall_suppress_at_boot' size='4' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x789c73d9'/>
       <elf-symbol name='reboot_mode' size='4' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x429c3f9c'/>
@@ -133000,6 +133001,7 @@
         <parameter type-id='c0c93c9e' name='psy' filepath='drivers/power/supply/power_supply_core.c' line='121' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <var-decl name='power_supply_class' type-id='67aca04f' mangled-name='power_supply_class' visibility='default' filepath='drivers/power/supply/power_supply_core.c' line='27' column='1' elf-symbol-id='power_supply_class'/>
       <function-decl name='power_supply_find_ocv2cap_table' mangled-name='power_supply_find_ocv2cap_table' filepath='drivers/power/supply/power_supply_core.c' line='905' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='power_supply_find_ocv2cap_table'>
         <parameter type-id='78ba63ff' name='info' filepath='drivers/power/supply/power_supply_core.c' line='905' column='1'/>
         <parameter type-id='95e97e5e' name='temp' filepath='drivers/power/supply/power_supply_core.c' line='906' column='1'/>
