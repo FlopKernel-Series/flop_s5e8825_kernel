@@ -3266,6 +3266,7 @@
       <elf-symbol name='of_devfreq_cooling_register_power' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x94156ced'/>
       <elf-symbol name='of_device_get_match_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x882c7dd6'/>
       <elf-symbol name='of_device_is_available' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5cf87584'/>
+      <elf-symbol name='of_device_is_big_endian' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x63a8db92'/>
       <elf-symbol name='of_device_is_compatible' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xef4b763b'/>
       <elf-symbol name='of_device_modalias' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa826bf37'/>
       <elf-symbol name='of_device_request_module' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfe315543'/>
@@ -4248,16 +4249,22 @@
       <elf-symbol name='serdev_device_wait_until_sent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe1dc8427'/>
       <elf-symbol name='serdev_device_write' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6e88025f'/>
       <elf-symbol name='serdev_device_write_wakeup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xce338a35'/>
+      <elf-symbol name='serial8250_clear_and_reinit_fifos' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcfb65600'/>
+      <elf-symbol name='serial8250_do_pm' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc03f8e'/>
+      <elf-symbol name='serial8250_do_set_divisor' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2b951206'/>
+      <elf-symbol name='serial8250_do_set_ldisc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x90d384b4'/>
       <elf-symbol name='serial8250_do_set_termios' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x87a6cb20'/>
       <elf-symbol name='serial8250_do_shutdown' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcca83862'/>
       <elf-symbol name='serial8250_do_startup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x264a50bd'/>
       <elf-symbol name='serial8250_get_port' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8e14e2f'/>
+      <elf-symbol name='serial8250_handle_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdcf52568'/>
       <elf-symbol name='serial8250_register_8250_port' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xebcd3ec8'/>
       <elf-symbol name='serial8250_resume_port' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7208c3a'/>
       <elf-symbol name='serial8250_rpm_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5759155a'/>
       <elf-symbol name='serial8250_rpm_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc2f35b93'/>
       <elf-symbol name='serial8250_suspend_port' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc248d26'/>
       <elf-symbol name='serial8250_unregister_port' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcefcd99a'/>
+      <elf-symbol name='serial8250_update_uartclk' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5b262c64'/>
       <elf-symbol name='serio_close' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeb90fd3a'/>
       <elf-symbol name='serio_interrupt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5487ff78'/>
       <elf-symbol name='serio_open' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89aaf775'/>
@@ -130663,6 +130670,10 @@
         <parameter type-id='0afa6ea3' name='device' filepath='drivers/of/base.c' line='617' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
+      <function-decl name='of_device_is_big_endian' mangled-name='of_device_is_big_endian' filepath='include/linux/of.h' line='348' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_device_is_big_endian'>
+        <parameter type-id='0afa6ea3'/>
+        <return type-id='c894953d'/>
+      </function-decl>
       <function-decl name='of_device_is_compatible' mangled-name='of_device_is_compatible' filepath='drivers/of/base.c' line='525' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_device_is_compatible'>
         <parameter type-id='0afa6ea3' name='device' filepath='drivers/of/base.c' line='525' column='1'/>
         <parameter type-id='80f4b756' name='compat' filepath='drivers/of/base.c' line='526' column='1'/>
@@ -135640,6 +135651,28 @@
         <parameter type-id='97fbef77' name='serdev' filepath='drivers/tty/serdev/core.c' line='237' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='serial8250_clear_and_reinit_fifos' mangled-name='serial8250_clear_and_reinit_fifos' filepath='drivers/tty/serial/8250/8250_port.c' line='564' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_clear_and_reinit_fifos'>
+        <parameter type-id='b26c7631' name='p' filepath='drivers/tty/serial/8250/8250_port.c' line='564' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='serial8250_do_pm' mangled-name='serial8250_do_pm' filepath='drivers/tty/serial/8250/8250_port.c' line='2868' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_do_pm'>
+        <parameter type-id='af051c69' name='port' filepath='drivers/tty/serial/8250/8250_port.c' line='2868' column='1'/>
+        <parameter type-id='f0981eeb' name='state' filepath='drivers/tty/serial/8250/8250_port.c' line='2868' column='1'/>
+        <parameter type-id='f0981eeb' name='oldstate' filepath='drivers/tty/serial/8250/8250_port.c' line='2869' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='serial8250_do_set_divisor' mangled-name='serial8250_do_set_divisor' filepath='drivers/tty/serial/8250/8250_port.c' line='2597' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_do_set_divisor'>
+        <parameter type-id='af051c69' name='port' filepath='drivers/tty/serial/8250/8250_port.c' line='2597' column='1'/>
+        <parameter type-id='f0981eeb' name='baud' filepath='drivers/tty/serial/8250/8250_port.c' line='2597' column='1'/>
+        <parameter type-id='f0981eeb' name='quot' filepath='drivers/tty/serial/8250/8250_port.c' line='2598' column='1'/>
+        <parameter type-id='f0981eeb' name='quot_frac' filepath='drivers/tty/serial/8250/8250_port.c' line='2598' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='serial8250_do_set_ldisc' mangled-name='serial8250_do_set_ldisc' filepath='drivers/tty/serial/8250/8250_port.c' line='2841' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_do_set_ldisc'>
+        <parameter type-id='af051c69' name='port' filepath='drivers/tty/serial/8250/8250_port.c' line='2841' column='1'/>
+        <parameter type-id='e55856e5' name='termios' filepath='drivers/tty/serial/8250/8250_port.c' line='2841' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='serial8250_do_set_termios' mangled-name='serial8250_do_set_termios' filepath='drivers/tty/serial/8250/8250_port.c' line='2694' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_do_set_termios'>
         <parameter type-id='af051c69' name='port' filepath='drivers/tty/serial/8250/8250_port.c' line='2694' column='1'/>
         <parameter type-id='e55856e5' name='termios' filepath='drivers/tty/serial/8250/8250_port.c' line='2694' column='1'/>
@@ -135657,6 +135690,11 @@
       <function-decl name='serial8250_get_port' mangled-name='serial8250_get_port' filepath='drivers/tty/serial/8250/8250_core.c' line='411' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_get_port'>
         <parameter type-id='95e97e5e' name='line' filepath='drivers/tty/serial/8250/8250_core.c' line='411' column='1'/>
         <return type-id='b26c7631'/>
+      </function-decl>
+      <function-decl name='serial8250_handle_irq' mangled-name='serial8250_handle_irq' filepath='drivers/tty/serial/8250/8250_port.c' line='1897' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_handle_irq'>
+        <parameter type-id='af051c69' name='port' filepath='drivers/tty/serial/8250/8250_port.c' line='1897' column='1'/>
+        <parameter type-id='f0981eeb' name='iir' filepath='drivers/tty/serial/8250/8250_port.c' line='1897' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='serial8250_register_8250_port' mangled-name='serial8250_register_8250_port' filepath='drivers/tty/serial/8250/8250_core.c' line='983' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_register_8250_port'>
         <parameter type-id='b26c7631' name='up' filepath='drivers/tty/serial/8250/8250_core.c' line='983' column='1'/>
@@ -135680,6 +135718,11 @@
       </function-decl>
       <function-decl name='serial8250_unregister_port' mangled-name='serial8250_unregister_port' filepath='drivers/tty/serial/8250/8250_core.c' line='1137' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_unregister_port'>
         <parameter type-id='95e97e5e' name='line' filepath='drivers/tty/serial/8250/8250_core.c' line='1137' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='serial8250_update_uartclk' mangled-name='serial8250_update_uartclk' filepath='drivers/tty/serial/8250/8250_port.c' line='2722' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serial8250_update_uartclk'>
+        <parameter type-id='af051c69' name='port' filepath='drivers/tty/serial/8250/8250_port.c' line='2722' column='1'/>
+        <parameter type-id='f0981eeb' name='uartclk' filepath='drivers/tty/serial/8250/8250_port.c' line='2722' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='serio_close' mangled-name='serio_close' filepath='drivers/input/serio/serio.c' line='984' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='serio_close'>
