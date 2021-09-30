@@ -3827,6 +3827,7 @@
       <elf-symbol name='register_pernet_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3c95853b'/>
       <elf-symbol name='register_pernet_subsys' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc89f14b4'/>
       <elf-symbol name='register_pm_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9cc4f70a'/>
+      <elf-symbol name='register_qdisc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe918f6f3'/>
       <elf-symbol name='register_reboot_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3517383e'/>
       <elf-symbol name='register_restart_handler' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd9d8fd16'/>
       <elf-symbol name='register_shrinker' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x11269594'/>
@@ -4916,6 +4917,7 @@
       <elf-symbol name='unregister_pernet_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x327ee4c5'/>
       <elf-symbol name='unregister_pernet_subsys' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc674754a'/>
       <elf-symbol name='unregister_pm_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7681946c'/>
+      <elf-symbol name='unregister_qdisc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e2798c0'/>
       <elf-symbol name='unregister_reboot_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac1a55be'/>
       <elf-symbol name='unregister_restart_handler' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x40d59096'/>
       <elf-symbol name='unregister_rpmsg_driver' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x31c8e272'/>
@@ -133243,6 +133245,10 @@
         <parameter type-id='d504f73d' name='nb' filepath='kernel/power/main.c' line='71' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='register_qdisc' mangled-name='register_qdisc' filepath='net/sched/sch_api.c' line='130' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='register_qdisc'>
+        <parameter type-id='d6369c88' name='qops' filepath='net/sched/sch_api.c' line='130' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='register_reboot_notifier' mangled-name='register_reboot_notifier' filepath='kernel/reboot.c' line='91' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='register_reboot_notifier'>
         <parameter type-id='d504f73d' name='nb' filepath='kernel/reboot.c' line='91' column='1'/>
         <return type-id='95e97e5e'/>
@@ -138897,6 +138903,10 @@
       </function-decl>
       <function-decl name='unregister_pm_notifier' mangled-name='unregister_pm_notifier' filepath='kernel/power/main.c' line='77' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_pm_notifier'>
         <parameter type-id='d504f73d' name='nb' filepath='kernel/power/main.c' line='77' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='unregister_qdisc' mangled-name='unregister_qdisc' filepath='net/sched/sch_api.c' line='174' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_qdisc'>
+        <parameter type-id='d6369c88' name='qops' filepath='net/sched/sch_api.c' line='174' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='unregister_reboot_notifier' mangled-name='unregister_reboot_notifier' filepath='kernel/reboot.c' line='106' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='unregister_reboot_notifier'>
