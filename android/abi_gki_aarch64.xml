@@ -4799,6 +4799,7 @@
       <elf-symbol name='tracing_off' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7944e0fc'/>
       <elf-symbol name='try_module_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x36505ade'/>
       <elf-symbol name='try_to_del_timer_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfaf9e645'/>
+      <elf-symbol name='try_to_free_mem_cgroup_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb15d792'/>
       <elf-symbol name='try_wait_for_completion' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x21ef374c'/>
       <elf-symbol name='tso_build_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf1a9d575'/>
       <elf-symbol name='tso_build_hdr' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa8551457'/>
@@ -138543,6 +138544,13 @@
       <function-decl name='try_to_del_timer_sync' mangled-name='try_to_del_timer_sync' filepath='kernel/time/timer.c' line='1227' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='try_to_del_timer_sync'>
         <parameter type-id='9248e67f' name='timer' filepath='kernel/time/timer.c' line='1227' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='try_to_free_mem_cgroup_pages' mangled-name='try_to_free_mem_cgroup_pages' filepath='mm/vmscan.c' line='3385' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='try_to_free_mem_cgroup_pages'>
+        <parameter type-id='223696fb' name='memcg' filepath='mm/vmscan.c' line='3385' column='1'/>
+        <parameter type-id='7359adad' name='nr_pages' filepath='mm/vmscan.c' line='3386' column='1'/>
+        <parameter type-id='3eb7c31c' name='gfp_mask' filepath='mm/vmscan.c' line='3387' column='1'/>
+        <parameter type-id='b50a4934' name='may_swap' filepath='mm/vmscan.c' line='3388' column='1'/>
+        <return type-id='7359adad'/>
       </function-decl>
       <function-decl name='try_wait_for_completion' mangled-name='try_wait_for_completion' filepath='kernel/sched/completion.c' line='282' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='try_wait_for_completion'>
         <parameter type-id='389faaf7' name='x' filepath='kernel/sched/completion.c' line='282' column='1'/>
