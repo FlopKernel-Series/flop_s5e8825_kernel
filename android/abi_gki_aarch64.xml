@@ -1290,9 +1290,11 @@
       <elf-symbol name='dev_pm_opp_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe695dd5e'/>
       <elf-symbol name='dev_pm_opp_put_clkname' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x57ff9b8d'/>
       <elf-symbol name='dev_pm_opp_put_opp_table' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74c12cec'/>
+      <elf-symbol name='dev_pm_opp_put_prop_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3cbc7257'/>
       <elf-symbol name='dev_pm_opp_put_regulators' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x130c2d49'/>
       <elf-symbol name='dev_pm_opp_put_supported_hw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4bdda8fc'/>
       <elf-symbol name='dev_pm_opp_register_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa570cc96'/>
+      <elf-symbol name='dev_pm_opp_register_set_opp_helper' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x160848ed'/>
       <elf-symbol name='dev_pm_opp_remove' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xce2ad915'/>
       <elf-symbol name='dev_pm_opp_remove_all_dynamic' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x58d2164f'/>
       <elf-symbol name='dev_pm_opp_set_bw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xee324f7f'/>
@@ -120420,6 +120422,10 @@
         <parameter type-id='e62a60bd' name='opp_table' filepath='drivers/opp/core.c' line='1223' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='dev_pm_opp_put_prop_name' mangled-name='dev_pm_opp_put_prop_name' filepath='drivers/opp/core.c' line='1698' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_pm_opp_put_prop_name'>
+        <parameter type-id='e62a60bd' name='opp_table' filepath='drivers/opp/core.c' line='1698' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='dev_pm_opp_put_regulators' mangled-name='dev_pm_opp_put_regulators' filepath='drivers/opp/core.c' line='1824' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_pm_opp_put_regulators'>
         <parameter type-id='e62a60bd' name='opp_table' filepath='drivers/opp/core.c' line='1824' column='1'/>
         <return type-id='48b5725f'/>
@@ -120432,6 +120438,11 @@
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/opp/core.c' line='2388' column='1'/>
         <parameter type-id='d504f73d' name='nb' filepath='drivers/opp/core.c' line='2388' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='dev_pm_opp_register_set_opp_helper' mangled-name='dev_pm_opp_register_set_opp_helper' filepath='drivers/opp/core.c' line='1930' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_pm_opp_register_set_opp_helper'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/opp/core.c' line='1930' column='1'/>
+        <parameter type-id='c1433076' name='set_opp' filepath='drivers/opp/core.c' line='1931' column='1'/>
+        <return type-id='e62a60bd'/>
       </function-decl>
       <function-decl name='dev_pm_opp_remove' mangled-name='dev_pm_opp_remove' filepath='drivers/opp/core.c' line='1290' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_pm_opp_remove'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/opp/core.c' line='1290' column='1'/>
