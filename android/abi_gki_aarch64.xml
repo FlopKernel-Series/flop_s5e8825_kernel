@@ -913,6 +913,7 @@
       <elf-symbol name='cec_notifier_conn_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaee236c6'/>
       <elf-symbol name='cec_notifier_set_phys_addr' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa01fbb6b'/>
       <elf-symbol name='cec_notifier_set_phys_addr_from_edid' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf8c99364'/>
+      <elf-symbol name='cec_queue_pin_hpd_event' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd64e16b5'/>
       <elf-symbol name='cec_received_msg_ts' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25df15b4'/>
       <elf-symbol name='cec_register_adapter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xded0a2d5'/>
       <elf-symbol name='cec_s_log_addrs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x158a211f'/>
@@ -1862,6 +1863,8 @@
       <elf-symbol name='drm_dp_mst_topology_mgr_set_mst' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7900cdaf'/>
       <elf-symbol name='drm_dp_send_power_updown_phy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3d653bba'/>
       <elf-symbol name='drm_dp_set_subconnector_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45ec2b24'/>
+      <elf-symbol name='drm_dp_start_crc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7e6af968'/>
+      <elf-symbol name='drm_dp_stop_crc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe83f0f17'/>
       <elf-symbol name='drm_dp_update_payload_part1' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9aaf8f65'/>
       <elf-symbol name='drm_dp_update_payload_part2' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x47472d09'/>
       <elf-symbol name='drm_dsc_compute_rc_parameters' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfe12bcb9'/>
@@ -2008,6 +2011,7 @@
       <elf-symbol name='drm_mode_equal_no_clocks' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3ab87110'/>
       <elf-symbol name='drm_mode_find_dmt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8448d44a'/>
       <elf-symbol name='drm_mode_get_tile_group' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1e2ca73c'/>
+      <elf-symbol name='drm_mode_is_420' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf5dae06b'/>
       <elf-symbol name='drm_mode_is_420_also' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5efc6fd0'/>
       <elf-symbol name='drm_mode_is_420_only' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x403bd3ea'/>
       <elf-symbol name='drm_mode_match' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9b95c885'/>
@@ -2044,6 +2048,7 @@
       <elf-symbol name='drm_open' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4ceab6a7'/>
       <elf-symbol name='drm_panel_add' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeacb5bb2'/>
       <elf-symbol name='drm_panel_bridge_add_typed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6d183663'/>
+      <elf-symbol name='drm_panel_bridge_connector' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa331bd6a'/>
       <elf-symbol name='drm_panel_bridge_remove' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x442a0d17'/>
       <elf-symbol name='drm_panel_disable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xffd760a2'/>
       <elf-symbol name='drm_panel_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9863de77'/>
@@ -2080,6 +2085,7 @@
       <elf-symbol name='drm_property_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf933d35f'/>
       <elf-symbol name='drm_property_lookup_blob' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x16e56081'/>
       <elf-symbol name='drm_property_replace_blob' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbd4f954e'/>
+      <elf-symbol name='drm_property_replace_global_blob' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3bd421c9'/>
       <elf-symbol name='drm_puts' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x521ad6d0'/>
       <elf-symbol name='drm_read' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe0db97f8'/>
       <elf-symbol name='drm_rect_calc_hscale' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2d50570f'/>
@@ -4307,6 +4313,7 @@
       <elf-symbol name='sget_fc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2d8c2e8'/>
       <elf-symbol name='sgl_alloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3a13f54a'/>
       <elf-symbol name='sgl_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x840342c6'/>
+      <elf-symbol name='sha1_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x50624917'/>
       <elf-symbol name='sha1_transform' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5e0ccb9f'/>
       <elf-symbol name='sha224_final' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa3fea172'/>
       <elf-symbol name='sha256' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe39b2ea5'/>
@@ -118462,6 +118469,12 @@
         <parameter type-id='776adf76' name='edid' filepath='drivers/media/cec/core/cec-notifier.c' line='198' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='cec_queue_pin_hpd_event' mangled-name='cec_queue_pin_hpd_event' filepath='drivers/media/cec/core/cec-adap.c' line='190' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_queue_pin_hpd_event'>
+        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='190' column='1'/>
+        <parameter type-id='b50a4934' name='is_high' filepath='drivers/media/cec/core/cec-adap.c' line='190' column='1'/>
+        <parameter type-id='fbc017ef' name='ts' filepath='drivers/media/cec/core/cec-adap.c' line='190' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='cec_received_msg_ts' mangled-name='cec_received_msg_ts' filepath='drivers/media/cec/core/cec-adap.c' line='1041' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_received_msg_ts'>
         <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1041' column='1'/>
         <parameter type-id='ffb3cc6e' name='msg' filepath='drivers/media/cec/core/cec-adap.c' line='1042' column='1'/>
@@ -123489,6 +123502,15 @@
         <parameter type-id='bbaf3419' name='port_cap' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1098' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='drm_dp_start_crc' mangled-name='drm_dp_start_crc' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1736' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_start_crc'>
+        <parameter type-id='7c5f8cd8' name='aux' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1736' column='1'/>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1736' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='drm_dp_stop_crc' mangled-name='drm_dp_stop_crc' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1763' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_stop_crc'>
+        <parameter type-id='7c5f8cd8' name='aux' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1763' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='drm_dp_update_payload_part1' mangled-name='drm_dp_update_payload_part1' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3384' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_update_payload_part1'>
         <parameter type-id='88a6d23d' name='mgr' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3384' column='1'/>
         <return type-id='95e97e5e'/>
@@ -124225,6 +124247,11 @@
         <parameter type-id='80f4b756' name='topology' filepath='drivers/gpu/drm/drm_connector.c' line='2508' column='1'/>
         <return type-id='c6c44b9f'/>
       </function-decl>
+      <function-decl name='drm_mode_is_420' mangled-name='drm_mode_is_420' filepath='drivers/gpu/drm/drm_modes.c' line='2071' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_mode_is_420'>
+        <parameter type-id='f3b1f9bd' name='display' filepath='drivers/gpu/drm/drm_modes.c' line='2071' column='1'/>
+        <parameter type-id='745b39e8' name='mode' filepath='drivers/gpu/drm/drm_modes.c' line='2072' column='1'/>
+        <return type-id='b50a4934'/>
+      </function-decl>
       <function-decl name='drm_mode_is_420_also' mangled-name='drm_mode_is_420_also' filepath='drivers/gpu/drm/drm_modes.c' line='2052' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_mode_is_420_also'>
         <parameter type-id='f3b1f9bd' name='display' filepath='drivers/gpu/drm/drm_modes.c' line='2052' column='1'/>
         <parameter type-id='745b39e8' name='mode' filepath='drivers/gpu/drm/drm_modes.c' line='2053' column='1'/>
@@ -124403,6 +124430,10 @@
         <parameter type-id='c5491077' name='panel' filepath='drivers/gpu/drm/bridge/panel.c' line='201' column='1'/>
         <parameter type-id='19c2251e' name='connector_type' filepath='drivers/gpu/drm/bridge/panel.c' line='202' column='1'/>
         <return type-id='8582e5ec'/>
+      </function-decl>
+      <function-decl name='drm_panel_bridge_connector' mangled-name='drm_panel_bridge_connector' filepath='drivers/gpu/drm/bridge/panel.c' line='326' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_panel_bridge_connector'>
+        <parameter type-id='8582e5ec' name='bridge' filepath='drivers/gpu/drm/bridge/panel.c' line='326' column='1'/>
+        <return type-id='4db02c58'/>
       </function-decl>
       <function-decl name='drm_panel_bridge_remove' mangled-name='drm_panel_bridge_remove' filepath='drivers/gpu/drm/bridge/panel.c' line='236' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_panel_bridge_remove'>
         <parameter type-id='8582e5ec' name='bridge' filepath='drivers/gpu/drm/bridge/panel.c' line='236' column='1'/>
@@ -124601,6 +124632,15 @@
         <parameter type-id='210253e8' name='blob' filepath='drivers/gpu/drm/drm_property.c' line='741' column='1'/>
         <parameter type-id='c4126d52' name='new_blob' filepath='drivers/gpu/drm/drm_property.c' line='742' column='1'/>
         <return type-id='b50a4934'/>
+      </function-decl>
+      <function-decl name='drm_property_replace_global_blob' mangled-name='drm_property_replace_global_blob' filepath='drivers/gpu/drm/drm_property.c' line='693' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_property_replace_global_blob'>
+        <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_property.c' line='693' column='1'/>
+        <parameter type-id='210253e8' name='replace' filepath='drivers/gpu/drm/drm_property.c' line='694' column='1'/>
+        <parameter type-id='b59d7dce' name='length' filepath='drivers/gpu/drm/drm_property.c' line='695' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/gpu/drm/drm_property.c' line='696' column='1'/>
+        <parameter type-id='c5417630' name='obj_holds_id' filepath='drivers/gpu/drm/drm_property.c' line='697' column='1'/>
+        <parameter type-id='26ea5d4c' name='prop_holds_id' filepath='drivers/gpu/drm/drm_property.c' line='698' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='drm_puts' mangled-name='drm_puts' filepath='drivers/gpu/drm/drm_print.c' line='183' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_puts'>
         <parameter type-id='7ac48c21' name='p' filepath='drivers/gpu/drm/drm_print.c' line='183' column='1'/>
@@ -135954,6 +135994,10 @@
       </function-decl>
       <function-decl name='sgl_free' mangled-name='sgl_free' filepath='lib/scatterlist.c' line='673' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sgl_free'>
         <parameter type-id='bf3ef905' name='sgl' filepath='lib/scatterlist.c' line='673' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='sha1_init' mangled-name='sha1_init' filepath='lib/sha1.c' line='196' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sha1_init'>
+        <parameter type-id='cd1b45ab' name='buf' filepath='lib/sha1.c' line='196' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='sha1_transform' mangled-name='sha1_transform' filepath='lib/sha1.c' line='84' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sha1_transform'>
