@@ -2993,6 +2993,7 @@
       <elf-symbol name='media_entity_pads_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x744b735'/>
       <elf-symbol name='media_entity_remote_pad' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe6f06077'/>
       <elf-symbol name='media_entity_remove_links' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc05c23c9'/>
+      <elf-symbol name='media_entity_setup_link' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x38a478f'/>
       <elf-symbol name='media_graph_walk_cleanup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbaa670a1'/>
       <elf-symbol name='media_graph_walk_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x17ac12d2'/>
       <elf-symbol name='media_graph_walk_next' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2c3cb6d9'/>
@@ -80964,9 +80965,6 @@
         <parameter type-id='cd1b45ab'/>
         <return type-id='3f1a6b60'/>
       </function-type>
-      <array-type-def dimensions='1' type-id='e151255a' size-in-bits='131072' id='b9cedcb8'>
-        <subrange length='2048' type-id='7ff19f0f' id='e5323efb'/>
-      </array-type-def>
       <function-type size-in-bits='64' id='b9d8dce4'>
         <parameter type-id='807b7702'/>
         <parameter type-id='95e97e5e'/>
@@ -89747,9 +89745,6 @@
       <pointer-type-def type-id='c9196d18' size-in-bits='64' id='cba10b6e'/>
       <pointer-type-def type-id='4b7a84f4' size-in-bits='64' id='cba114b6'/>
       <pointer-type-def type-id='284260b8' size-in-bits='64' id='cba1f2de'/>
-      <array-type-def dimensions='1' type-id='e151255a' size-in-bits='65536' id='cba3052b'>
-        <subrange length='1024' type-id='7ff19f0f' id='c60446f8'/>
-      </array-type-def>
       <function-type size-in-bits='64' id='cba59087'>
         <parameter type-id='eaa32e2f'/>
         <parameter type-id='91ce1af9'/>
@@ -102800,20 +102795,7 @@
           <var-decl name='branch_reg' type-id='a80839c0' visibility='default' filepath='include/linux/perf_event.h' line='148' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='can_dev_rcv_lists' size-in-bits='196928' is-struct='yes' visibility='default' filepath='include/linux/can/can-ml.h' line='55' column='1' id='e82476af'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='rx' type-id='fc3a8480' visibility='default' filepath='include/linux/can/can-ml.h' line='56' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='rx_sff' type-id='b9cedcb8' visibility='default' filepath='include/linux/can/can-ml.h' line='57' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='131328'>
-          <var-decl name='rx_eff' type-id='cba3052b' visibility='default' filepath='include/linux/can/can-ml.h' line='58' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='196864'>
-          <var-decl name='entries' type-id='95e97e5e' visibility='default' filepath='include/linux/can/can-ml.h' line='59' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='can_dev_rcv_lists' is-struct='yes' visibility='default' is-declaration-only='yes' id='e82476af'/>
       <function-type size-in-bits='64' id='e82a9f1d'>
         <parameter type-id='77e79a4b'/>
         <parameter type-id='eaa32e2f'/>
@@ -129349,6 +129331,11 @@
       <function-decl name='media_entity_remove_links' mangled-name='media_entity_remove_links' filepath='drivers/media/mc/mc-entity.c' line='792' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_entity_remove_links'>
         <parameter type-id='19e05b5f' name='entity' filepath='drivers/media/mc/mc-entity.c' line='792' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='media_entity_setup_link' mangled-name='media_entity_setup_link' filepath='drivers/media/mc/mc-entity.c' line='876' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_entity_setup_link'>
+        <parameter type-id='b4de78ea' name='link' filepath='drivers/media/mc/mc-entity.c' line='876' column='1'/>
+        <parameter type-id='19c2251e' name='flags' filepath='drivers/media/mc/mc-entity.c' line='876' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='media_graph_walk_cleanup' mangled-name='media_graph_walk_cleanup' filepath='drivers/media/mc/mc-entity.c' line='288' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='media_graph_walk_cleanup'>
         <parameter type-id='375e0126' name='graph' filepath='drivers/media/mc/mc-entity.c' line='288' column='1'/>
