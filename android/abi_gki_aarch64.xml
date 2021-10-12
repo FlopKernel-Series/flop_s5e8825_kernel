@@ -3161,6 +3161,7 @@
       <elf-symbol name='napi_schedule_prep' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd2891832'/>
       <elf-symbol name='neigh_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd987c7c'/>
       <elf-symbol name='neigh_lookup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x129807f3'/>
+      <elf-symbol name='neigh_resolve_output' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4355980e'/>
       <elf-symbol name='neigh_xmit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x239fef6e'/>
       <elf-symbol name='net_ratelimit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf6ebc03b'/>
       <elf-symbol name='netdev_alert' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6e0c1889'/>
@@ -70388,7 +70389,14 @@
           <var-decl name='android_oem_data1' type-id='91ce1af9' visibility='default' filepath='include/net/sock.h' line='535' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='unicode_map' is-struct='yes' visibility='default' is-declaration-only='yes' id='a24978a1'/>
+      <class-decl name='unicode_map' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/unicode.h' line='8' column='1' id='a24978a1'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='charset' type-id='80f4b756' visibility='default' filepath='include/linux/unicode.h' line='9' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='version' type-id='95e97e5e' visibility='default' filepath='include/linux/unicode.h' line='10' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='a249930e'>
         <parameter type-id='b9608bfc'/>
         <parameter type-id='8efea9e5'/>
@@ -130132,6 +130140,11 @@
         <parameter type-id='eaa32e2f' name='pkey' filepath='net/core/neighbour.c' line='528' column='1'/>
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/neighbour.c' line='529' column='1'/>
         <return type-id='3c330066'/>
+      </function-decl>
+      <function-decl name='neigh_resolve_output' mangled-name='neigh_resolve_output' filepath='net/core/neighbour.c' line='1477' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='neigh_resolve_output'>
+        <parameter type-id='3c330066' name='neigh' filepath='net/core/neighbour.c' line='1477' column='1'/>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/neighbour.c' line='1477' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='neigh_xmit' mangled-name='neigh_xmit' filepath='net/core/neighbour.c' line='2994' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='neigh_xmit'>
         <parameter type-id='95e97e5e' name='index' filepath='net/core/neighbour.c' line='2994' column='1'/>
