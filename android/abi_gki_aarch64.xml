@@ -836,11 +836,16 @@
       <elf-symbol name='blk_unregister_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5c4265f6'/>
       <elf-symbol name='blk_update_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdfbc3e16'/>
       <elf-symbol name='blk_verify_command' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x27639220'/>
+      <elf-symbol name='blkcg_activate_policy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xffb4345b'/>
+      <elf-symbol name='blkcg_deactivate_policy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x95e0f7e4'/>
+      <elf-symbol name='blkcg_policy_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2679bfca'/>
+      <elf-symbol name='blkcg_policy_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf3d8b077'/>
       <elf-symbol name='blkdev_fsync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x653dfdd4'/>
       <elf-symbol name='blkdev_get_by_dev' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1aa5f837'/>
       <elf-symbol name='blkdev_get_by_path' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xedd07e1a'/>
       <elf-symbol name='blkdev_issue_flush' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5b099adb'/>
       <elf-symbol name='blkdev_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc8dd823c'/>
+      <elf-symbol name='blkg_lookup_slowpath' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56d57f6e'/>
       <elf-symbol name='blocking_notifier_call_chain' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8317ad7c'/>
       <elf-symbol name='blocking_notifier_chain_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb0c86a5'/>
       <elf-symbol name='blocking_notifier_chain_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x963aa2a9'/>
@@ -1182,6 +1187,7 @@
       <elf-symbol name='crypto_unregister_template' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd037b854'/>
       <elf-symbol name='crypto_unregister_templates' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdabc6bb5'/>
       <elf-symbol name='css_next_child' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc84ca822'/>
+      <elf-symbol name='css_next_descendant_pre' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa073b9e2'/>
       <elf-symbol name='csum_ipv6_magic' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d65cbd5'/>
       <elf-symbol name='csum_partial' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe113bbbc'/>
       <elf-symbol name='csum_tcpudp_nofold' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd25bc5d4'/>
@@ -2127,7 +2133,9 @@
       <elf-symbol name='drmm_kmalloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7c7f55db'/>
       <elf-symbol name='drmm_mode_config_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93227e53'/>
       <elf-symbol name='dst_release' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x66a269cc'/>
+      <elf-symbol name='dump_align' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb99cbedb'/>
       <elf-symbol name='dump_backtrace' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfe5887b6'/>
+      <elf-symbol name='dump_emit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc5737e39'/>
       <elf-symbol name='dump_stack' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b2dc060'/>
       <elf-symbol name='dup_iter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x49b54fda'/>
       <elf-symbol name='dw_handle_msi_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93cbd452'/>
@@ -2884,6 +2892,7 @@
       <elf-symbol name='ksys_sync_helper' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x55c76a23'/>
       <elf-symbol name='kthread_bind' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x18af30df'/>
       <elf-symbol name='kthread_bind_mask' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4408b30'/>
+      <elf-symbol name='kthread_blkcg' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac14d997'/>
       <elf-symbol name='kthread_cancel_delayed_work_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa6c560c8'/>
       <elf-symbol name='kthread_cancel_work_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2190f89'/>
       <elf-symbol name='kthread_create_on_node' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd9aa98a4'/>
@@ -3276,6 +3285,7 @@
       <elf-symbol name='of_count_phandle_with_args' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39846f3f'/>
       <elf-symbol name='of_cpu_node_to_id' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x32d03c7'/>
       <elf-symbol name='of_cpufreq_cooling_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x13699fd2'/>
+      <elf-symbol name='of_css' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf2a4ad58'/>
       <elf-symbol name='of_devfreq_cooling_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xef19ce8b'/>
       <elf-symbol name='of_devfreq_cooling_register_power' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x94156ced'/>
       <elf-symbol name='of_device_get_match_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x882c7dd6'/>
@@ -5902,6 +5912,7 @@
       <elf-symbol name='arp_tbl' size='568' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8cf42e34'/>
       <elf-symbol name='avenrun' size='24' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf1e98c74'/>
       <elf-symbol name='balloon_aops' size='208' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x71fb77bb'/>
+      <elf-symbol name='blkcg_root' size='344' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd1cca611'/>
       <elf-symbol name='bpf_stats_enabled_key' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf84bd6ee'/>
       <elf-symbol name='clk_divider_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4ed3c288'/>
       <elf-symbol name='clk_divider_ro_ops' size='216' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xae330045'/>
@@ -6201,6 +6212,12 @@
         <parameter type-id='dd575c43'/>
         <parameter type-id='3b590e48'/>
         <return type-id='95e97e5e'/>
+      </function-type>
+      <function-type size-in-bits='64' id='00a44be4'>
+        <parameter type-id='3213e875'/>
+        <parameter type-id='26a90f95'/>
+        <parameter type-id='b59d7dce'/>
+        <return type-id='b59d7dce'/>
       </function-type>
       <pointer-type-def type-id='982f66c8' size-in-bits='64' id='00aa6a0e'/>
       <pointer-type-def type-id='8d7ff53e' size-in-bits='64' id='00aa9c6d'/>
@@ -8508,6 +8525,7 @@
         <parameter type-id='249ef586'/>
         <return type-id='48b5725f'/>
       </function-type>
+      <typedef-decl name='blkcg_pol_online_pd_fn' type-id='c8ffa4a2' filepath='include/linux/blk-cgroup.h' line='146' column='1' id='07c80a4b'/>
       <function-type size-in-bits='64' id='07c93537'>
         <parameter type-id='f0981eeb'/>
         <parameter type-id='3620a178'/>
@@ -10372,6 +10390,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='1b04dce5' size-in-bits='64' id='0c6d12d5'/>
+      <pointer-type-def type-id='07c80a4b' size-in-bits='64' id='0c707328'/>
       <function-type size-in-bits='64' id='0c71d025'>
         <parameter type-id='f22e4524'/>
         <parameter type-id='bb7889ed'/>
@@ -10648,6 +10667,7 @@
         </data-member>
       </class-decl>
       <typedef-decl name='kprobe_fault_handler_t' type-id='c4b8f13f' filepath='include/linux/kprobes.h' line='55' column='1' id='0d874fa6'/>
+      <pointer-type-def type-id='f9b748d8' size-in-bits='64' id='0d87d4f6'/>
       <pointer-type-def type-id='02b70d8e' size-in-bits='64' id='0d8953a0'/>
       <function-type size-in-bits='64' id='0d8f8c87'>
         <parameter type-id='a2bff676'/>
@@ -15086,6 +15106,7 @@
         <parameter type-id='3c330066'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <pointer-type-def type-id='9de900c3' size-in-bits='64' id='183d114e'/>
       <class-decl name='input_handle' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/linux/input.h' line='345' column='1' id='18448baa'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='private' type-id='eaa32e2f' visibility='default' filepath='include/linux/input.h' line='347' column='1'/>
@@ -16445,6 +16466,7 @@
         <return type-id='02f11ed4'/>
       </function-type>
       <pointer-type-def type-id='7e019027' size-in-bits='64' id='1b64445b'/>
+      <typedef-decl name='blkcg_pol_free_cpd_fn' type-id='6cb73a29' filepath='include/linux/blk-cgroup.h' line='141' column='1' id='1b7bde03'/>
       <class-decl name='icmpv6_mib_device' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/net/snmp.h' line='75' column='1' id='1b8801b2'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='mibs' type-id='72bb5580' visibility='default' filepath='include/net/snmp.h' line='76' column='1'/>
@@ -22521,6 +22543,50 @@
         <parameter type-id='0817f042'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='blkcg_policy' size-in-bits='896' is-struct='yes' visibility='default' filepath='include/linux/blk-cgroup.h' line='153' column='1' id='2aaa0129'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='plid' type-id='95e97e5e' visibility='default' filepath='include/linux/blk-cgroup.h' line='154' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='dfl_cftypes' type-id='03054cfa' visibility='default' filepath='include/linux/blk-cgroup.h' line='156' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='legacy_cftypes' type-id='03054cfa' visibility='default' filepath='include/linux/blk-cgroup.h' line='157' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='cpd_alloc_fn' type-id='c50f5163' visibility='default' filepath='include/linux/blk-cgroup.h' line='160' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='cpd_init_fn' type-id='183d114e' visibility='default' filepath='include/linux/blk-cgroup.h' line='161' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='cpd_free_fn' type-id='3f32f1d2' visibility='default' filepath='include/linux/blk-cgroup.h' line='162' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='cpd_bind_fn' type-id='406bf30f' visibility='default' filepath='include/linux/blk-cgroup.h' line='163' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='448'>
+          <var-decl name='pd_alloc_fn' type-id='d116742c' visibility='default' filepath='include/linux/blk-cgroup.h' line='165' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='512'>
+          <var-decl name='pd_init_fn' type-id='71f57b27' visibility='default' filepath='include/linux/blk-cgroup.h' line='166' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='pd_online_fn' type-id='0c707328' visibility='default' filepath='include/linux/blk-cgroup.h' line='167' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='640'>
+          <var-decl name='pd_offline_fn' type-id='ec000d8e' visibility='default' filepath='include/linux/blk-cgroup.h' line='168' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='704'>
+          <var-decl name='pd_free_fn' type-id='fa4d54c3' visibility='default' filepath='include/linux/blk-cgroup.h' line='169' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='768'>
+          <var-decl name='pd_reset_stats_fn' type-id='630307fa' visibility='default' filepath='include/linux/blk-cgroup.h' line='170' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='832'>
+          <var-decl name='pd_stat_fn' type-id='e3cc7b73' visibility='default' filepath='include/linux/blk-cgroup.h' line='171' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='2ab93737'>
         <parameter type-id='43c38462'/>
         <parameter type-id='b50a4934'/>
@@ -25744,6 +25810,10 @@
           <var-decl name='irq_drv_data' type-id='eaa32e2f' visibility='default' filepath='include/linux/regmap.h' line='1431' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='34a21b12'>
+        <parameter type-id='3eb7c31c'/>
+        <return type-id='0f8f80b0'/>
+      </function-type>
       <typedef-decl name='probes_handler_t' type-id='ae26a81a' filepath='arch/arm64/include/asm/probes.h' line='13' column='1' id='34a2420f'/>
       <pointer-type-def type-id='ee6561a9' size-in-bits='64' id='34aa5735'/>
       <pointer-type-def type-id='7fc6cf35' size-in-bits='64' id='34b38511'/>
@@ -29589,6 +29659,7 @@
       </class-decl>
       <pointer-type-def type-id='849373e7' size-in-bits='64' id='3f29b13b'/>
       <pointer-type-def type-id='889b9d08' size-in-bits='64' id='3f2d9c8e'/>
+      <pointer-type-def type-id='1b7bde03' size-in-bits='64' id='3f32f1d2'/>
       <pointer-type-def type-id='09d6e909' size-in-bits='64' id='3f40b771'/>
       <pointer-type-def type-id='b43b0dce' size-in-bits='64' id='3f4455c4'/>
       <pointer-type-def type-id='b2d67803' size-in-bits='64' id='3f45614f'/>
@@ -30232,6 +30303,7 @@
       <pointer-type-def type-id='2f04a816' size-in-bits='64' id='4054d674'/>
       <pointer-type-def type-id='0eae882e' size-in-bits='64' id='40629354'/>
       <pointer-type-def type-id='b4db8337' size-in-bits='64' id='40672f7b'/>
+      <pointer-type-def type-id='9c19dcfc' size-in-bits='64' id='406bf30f'/>
       <qualified-type-def type-id='164a08b2' const='yes' id='406e1a09'/>
       <pointer-type-def type-id='3a3f2b05' size-in-bits='64' id='40735a95'/>
       <class-decl name='sdio_func' size-in-bits='7808' is-struct='yes' visibility='default' filepath='include/linux/mmc/sdio_func.h' line='34' column='1' id='4073d265'>
@@ -35057,6 +35129,7 @@
         <parameter type-id='0c65b409'/>
         <return type-id='48b5725f'/>
       </function-type>
+      <typedef-decl name='blkcg_pol_free_pd_fn' type-id='c8ffa4a2' filepath='include/linux/blk-cgroup.h' line='148' column='1' id='4e0b8246'/>
       <function-type size-in-bits='64' id='4e0e413a'>
         <parameter type-id='74d89ebd'/>
         <parameter type-id='745b39e8'/>
@@ -40189,6 +40262,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='46816f8f' size-in-bits='64' id='5a1281ab'/>
+      <typedef-decl name='blkcg_pol_init_pd_fn' type-id='c8ffa4a2' filepath='include/linux/blk-cgroup.h' line='145' column='1' id='5a1da206'/>
       <pointer-type-def type-id='f0feedf7' size-in-bits='64' id='5a1f42f3'/>
       <pointer-type-def type-id='464bcd6b' size-in-bits='64' id='5a32bd4b'/>
       <class-decl name='tcpci' size-in-bits='1856' is-struct='yes' visibility='default' filepath='drivers/usb/typec/tcpm/tcpci.c' line='46' column='1' id='5a3ac168'>
@@ -44421,6 +44495,7 @@
       </function-type>
       <pointer-type-def type-id='f01e85cf' size-in-bits='64' id='62fa2ea7'/>
       <pointer-type-def type-id='64249e24' size-in-bits='64' id='6301fad2'/>
+      <pointer-type-def type-id='ebb2cb2f' size-in-bits='64' id='630307fa'/>
       <class-decl name='uprobes_state' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/linux/uprobes.h' line='101' column='1' id='6308a819'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='xol_area' type-id='3d15880e' visibility='default' filepath='include/linux/uprobes.h' line='102' column='1'/>
@@ -48468,6 +48543,10 @@
           <var-decl name='driver_data' type-id='0791d6c8' visibility='default' filepath='include/linux/mod_devicetable.h' line='42' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='6cb73a29'>
+        <parameter type-id='0f8f80b0'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <function-type size-in-bits='64' id='6cb7d4e4'>
         <parameter type-id='6dca061b'/>
         <parameter type-id='b50a4934'/>
@@ -50079,6 +50158,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='77dc8383' size-in-bits='64' id='71f2e203'/>
+      <pointer-type-def type-id='5a1da206' size-in-bits='64' id='71f57b27'/>
       <pointer-type-def type-id='0ed9f201' size-in-bits='64' id='71f7eca5'/>
       <function-type size-in-bits='64' id='71fa1210'>
         <parameter type-id='10216dc5'/>
@@ -53546,6 +53626,7 @@
         <parameter type-id='b59d7dce'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <typedef-decl name='blkcg_pol_stat_pd_fn' type-id='00a44be4' filepath='include/linux/blk-cgroup.h' line='150' column='1' id='7a664606'/>
       <pointer-type-def type-id='19db78f1' size-in-bits='64' id='7a66877d'/>
       <pointer-type-def type-id='c29a9f0b' size-in-bits='64' id='7a6880f3'/>
       <pointer-type-def type-id='68d3e576' size-in-bits='64' id='7a6c9108'/>
@@ -56614,6 +56695,12 @@
         <subrange length='16' type-id='7ff19f0f' id='848d0938'/>
       </array-type-def>
       <pointer-type-def type-id='9b45d938' size-in-bits='64' id='80f4b756'/>
+      <function-type size-in-bits='64' id='80febe8b'>
+        <parameter type-id='3eb7c31c'/>
+        <parameter type-id='e7d2a5fc'/>
+        <parameter type-id='11bff950'/>
+        <return type-id='3213e875'/>
+      </function-type>
       <pointer-type-def type-id='f780d556' size-in-bits='64' id='810606ec'/>
       <pointer-type-def type-id='ef266a3b' size-in-bits='64' id='8106240b'/>
       <pointer-type-def type-id='857ecf83' size-in-bits='64' id='81068c97'/>
@@ -67788,6 +67875,7 @@
       </class-decl>
       <pointer-type-def type-id='e0c79ce2' size-in-bits='64' id='9c1150bc'/>
       <typedef-decl name='dma_fence_func_t' type-id='75d065d2' filepath='include/linux/dma-fence.h' line='105' column='1' id='9c175524'/>
+      <typedef-decl name='blkcg_pol_bind_cpd_fn' type-id='6cb73a29' filepath='include/linux/blk-cgroup.h' line='142' column='1' id='9c19dcfc'/>
       <function-type size-in-bits='64' id='9c1f445d'>
         <parameter type-id='fa0b179b'/>
         <parameter type-id='d9d65b21'/>
@@ -68633,6 +68721,7 @@
         <parameter type-id='10216dc5'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <typedef-decl name='blkcg_pol_init_cpd_fn' type-id='6cb73a29' filepath='include/linux/blk-cgroup.h' line='140' column='1' id='9de900c3'/>
       <function-type size-in-bits='64' id='9defd450'>
         <parameter type-id='d91dfd7a'/>
         <return type-id='95e97e5e'/>
@@ -71206,6 +71295,7 @@
       <pointer-type-def type-id='6557550d' size-in-bits='64' id='a3c69469'/>
       <pointer-type-def type-id='52d21874' size-in-bits='64' id='a3c6fb36'/>
       <pointer-type-def type-id='cecfa2ad' size-in-bits='64' id='a3cb28f1'/>
+      <typedef-decl name='blkcg_pol_alloc_pd_fn' type-id='80febe8b' filepath='include/linux/blk-cgroup.h' line='143' column='1' id='a3d58f0d'/>
       <pointer-type-def type-id='4b349f6a' size-in-bits='64' id='a3d6b1c0'/>
       <class-decl name='tlbflush_unmap_batch' is-struct='yes' visibility='default' filepath='include/linux/mm_types_task.h' line='76' column='1' id='a3d9f566'/>
       <class-decl name='arch_timer_erratum_workaround' size-in-bits='640' is-struct='yes' visibility='default' filepath='arch/arm64/include/asm/arch_timer.h' line='51' column='1' id='a3e4c395'>
@@ -71975,6 +72065,7 @@
           <var-decl name='drop_link' type-id='63faaa44' visibility='default' filepath='include/linux/configfs.h' line='215' column='1'/>
         </data-member>
       </class-decl>
+      <typedef-decl name='blkcg_pol_alloc_cpd_fn' type-id='34a21b12' filepath='include/linux/blk-cgroup.h' line='139' column='1' id='a6042196'/>
       <union-decl name='__sifields' size-in-bits='256' visibility='default' filepath='include/uapi/asm-generic/siginfo.h' line='32' column='1' id='a60646cb'>
         <data-member access='public'>
           <var-decl name='_kill' type-id='35888a92' visibility='default' filepath='include/uapi/asm-generic/siginfo.h' line='37' column='1'/>
@@ -77687,6 +77778,7 @@
       </class-decl>
       <pointer-type-def type-id='3ad2f92f' size-in-bits='64' id='b3002d4b'/>
       <pointer-type-def type-id='02244303' size-in-bits='64' id='b316d9a3'/>
+      <pointer-type-def type-id='2aaa0129' size-in-bits='64' id='b31a5ea1'/>
       <pointer-type-def type-id='dc1b9a32' size-in-bits='64' id='b31af340'/>
       <pointer-type-def type-id='4e83077d' size-in-bits='64' id='b31b5e29'/>
       <class-decl name='bus_type' size-in-bits='1664' is-struct='yes' visibility='default' filepath='include/linux/device/bus.h' line='82' column='1' id='b31bfc8a'>
@@ -87574,6 +87666,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='c2b07168' size-in-bits='64' id='c509dbc2'/>
+      <pointer-type-def type-id='a6042196' size-in-bits='64' id='c50f5163'/>
       <pointer-type-def type-id='4b8b2cf3' size-in-bits='64' id='c517999b'/>
       <class-decl name='snd_compressed_buffer' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/uapi/sound/compress_offload.h' line='40' column='1' id='c51dce37'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -88788,6 +88881,10 @@
       <pointer-type-def type-id='6aebc4a7' size-in-bits='64' id='c8f5869f'/>
       <pointer-type-def type-id='0331c4d6' size-in-bits='64' id='c8f8b049'/>
       <pointer-type-def type-id='27ca88ce' size-in-bits='64' id='c8fa3070'/>
+      <function-type size-in-bits='64' id='c8ffa4a2'>
+        <parameter type-id='3213e875'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <function-type size-in-bits='64' id='c90a6da1'>
         <parameter type-id='bff05edb'/>
         <parameter type-id='7359adad'/>
@@ -91948,6 +92045,7 @@
           <var-decl name='seqno' type-id='b50a4934' visibility='default' filepath='include/drm/drm_dp_mst_helper.h' line='177' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='a3d58f0d' size-in-bits='64' id='d116742c'/>
       <function-type size-in-bits='64' id='d1194a8d'>
         <parameter type-id='442b8d89'/>
         <parameter type-id='a9f16f78'/>
@@ -101202,6 +101300,7 @@
       </class-decl>
       <pointer-type-def type-id='9a25f4b0' size-in-bits='64' id='e3ba02e6'/>
       <pointer-type-def type-id='1c590219' size-in-bits='64' id='e3be65f1'/>
+      <pointer-type-def type-id='7a664606' size-in-bits='64' id='e3cc7b73'/>
       <function-type size-in-bits='64' id='e3d2455d'>
         <parameter type-id='f5438ac7'/>
         <parameter type-id='cc2ef0d1'/>
@@ -104594,6 +104693,7 @@
         <subrange length='infinite' type-id='7ff19f0f' id='031f2035'/>
       </array-type-def>
       <pointer-type-def type-id='aa7f03f2' size-in-bits='64' id='ebae9a6c'/>
+      <typedef-decl name='blkcg_pol_reset_pd_stats_fn' type-id='c8ffa4a2' filepath='include/linux/blk-cgroup.h' line='149' column='1' id='ebb2cb2f'/>
       <function-type size-in-bits='64' id='ebb550f0'>
         <parameter type-id='89b70200'/>
         <parameter type-id='d30bdc51'/>
@@ -104844,6 +104944,7 @@
         <parameter type-id='d8e6b335'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <pointer-type-def type-id='feaf774f' size-in-bits='64' id='ec000d8e'/>
       <pointer-type-def type-id='839b249b' size-in-bits='64' id='ec00acfb'/>
       <pointer-type-def type-id='c8eb0f4f' size-in-bits='64' id='ec037527'/>
       <qualified-type-def type-id='a7db2a27' const='yes' id='ec05f10e'/>
@@ -110086,6 +110187,7 @@
           <var-decl name='flags' type-id='95e97e5e' visibility='default' filepath='include/linux/trace.h' line='28' column='1'/>
         </data-member>
       </class-decl>
+      <qualified-type-def type-id='2aaa0129' const='yes' id='f9b748d8'/>
       <class-decl name='snd_info_entry_ops' size-in-bits='576' is-struct='yes' visibility='default' filepath='include/sound/info.h' line='37' column='1' id='f9b9a795'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='open' type-id='1aa763a8' visibility='default' filepath='include/sound/info.h' line='38' column='1'/>
@@ -110339,6 +110441,7 @@
       <qualified-type-def type-id='f5f6e55e' const='yes' id='fa3724eb'/>
       <pointer-type-def type-id='7d43ac00' size-in-bits='64' id='fa3ed3a2'/>
       <pointer-type-def type-id='038d05bd' size-in-bits='64' id='fa43ef1d'/>
+      <pointer-type-def type-id='4e0b8246' size-in-bits='64' id='fa4d54c3'/>
       <class-decl name='usb_bus' size-in-bits='1408' is-struct='yes' visibility='default' filepath='include/linux/usb.h' line='435' column='1' id='fa4d7704'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='controller' type-id='fa0b179b' visibility='default' filepath='include/linux/usb.h' line='436' column='1'/>
@@ -112347,6 +112450,7 @@
       </function-type>
       <pointer-type-def type-id='a796a301' size-in-bits='64' id='fea4b945'/>
       <pointer-type-def type-id='ce076883' size-in-bits='64' id='fea9c20b'/>
+      <typedef-decl name='blkcg_pol_offline_pd_fn' type-id='c8ffa4a2' filepath='include/linux/blk-cgroup.h' line='147' column='1' id='feaf774f'/>
       <pointer-type-def type-id='103ba521' size-in-bits='64' id='feb3b3dd'/>
       <pointer-type-def type-id='f4f25674' size-in-bits='64' id='feb59272'/>
       <function-type size-in-bits='64' id='febb5b52'>
@@ -118060,6 +118164,25 @@
         <parameter type-id='2665334e' name='mode' filepath='block/scsi_ioctl.c' line='200' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='blkcg_activate_policy' mangled-name='blkcg_activate_policy' filepath='block/blk-cgroup.c' line='1314' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blkcg_activate_policy'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-cgroup.c' line='1314' column='1'/>
+        <parameter type-id='0d87d4f6' name='pol' filepath='block/blk-cgroup.c' line='1315' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='blkcg_deactivate_policy' mangled-name='blkcg_deactivate_policy' filepath='block/blk-cgroup.c' line='1413' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blkcg_deactivate_policy'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-cgroup.c' line='1413' column='1'/>
+        <parameter type-id='0d87d4f6' name='pol' filepath='block/blk-cgroup.c' line='1414' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='blkcg_policy_register' mangled-name='blkcg_policy_register' filepath='block/blk-cgroup.c' line='1451' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blkcg_policy_register'>
+        <parameter type-id='b31a5ea1' name='pol' filepath='block/blk-cgroup.c' line='1451' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='blkcg_policy_unregister' mangled-name='blkcg_policy_unregister' filepath='block/blk-cgroup.c' line='1530' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blkcg_policy_unregister'>
+        <parameter type-id='b31a5ea1' name='pol' filepath='block/blk-cgroup.c' line='1530' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <var-decl name='blkcg_root' type-id='19b26952' mangled-name='blkcg_root' visibility='default' filepath='block/blk-cgroup.c' line='48' column='1' elf-symbol-id='blkcg_root'/>
       <function-decl name='blkdev_fsync' mangled-name='blkdev_fsync' filepath='fs/block_dev.c' line='691' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blkdev_fsync'>
         <parameter type-id='77e79a4b' name='filp' filepath='fs/block_dev.c' line='691' column='1'/>
         <parameter type-id='69bf7bee' name='start' filepath='fs/block_dev.c' line='691' column='1'/>
@@ -118088,6 +118211,12 @@
         <parameter type-id='b88dd945' name='bdev' filepath='fs/block_dev.c' line='1817' column='1'/>
         <parameter type-id='2665334e' name='mode' filepath='fs/block_dev.c' line='1817' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='blkg_lookup_slowpath' mangled-name='blkg_lookup_slowpath' filepath='block/blk-cgroup.c' line='204' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blkg_lookup_slowpath'>
+        <parameter type-id='11bff950' name='blkcg' filepath='block/blk-cgroup.c' line='204' column='1'/>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-cgroup.c' line='205' column='1'/>
+        <parameter type-id='b50a4934' name='update_hint' filepath='block/blk-cgroup.c' line='205' column='1'/>
+        <return type-id='1146dea3'/>
       </function-decl>
       <function-decl name='blocking_notifier_call_chain' mangled-name='blocking_notifier_call_chain' filepath='kernel/notifier.c' line='325' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blocking_notifier_call_chain'>
         <parameter type-id='282b7312' name='nh' filepath='kernel/notifier.c' line='325' column='1'/>
@@ -119909,6 +120038,11 @@
       <function-decl name='css_next_child' mangled-name='css_next_child' filepath='kernel/cgroup/cgroup.c' line='4170' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='css_next_child'>
         <parameter type-id='cfff5953' name='pos' filepath='kernel/cgroup/cgroup.c' line='4170' column='1'/>
         <parameter type-id='cfff5953' name='parent' filepath='kernel/cgroup/cgroup.c' line='4171' column='1'/>
+        <return type-id='cfff5953'/>
+      </function-decl>
+      <function-decl name='css_next_descendant_pre' mangled-name='css_next_descendant_pre' filepath='kernel/cgroup/cgroup.c' line='4240' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='css_next_descendant_pre'>
+        <parameter type-id='cfff5953' name='pos' filepath='kernel/cgroup/cgroup.c' line='4240' column='1'/>
+        <parameter type-id='cfff5953' name='root' filepath='kernel/cgroup/cgroup.c' line='4241' column='1'/>
         <return type-id='cfff5953'/>
       </function-decl>
       <function-decl name='csum_ipv6_magic' mangled-name='csum_ipv6_magic' filepath='arch/arm64/lib/csum.c' line='132' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='csum_ipv6_magic'>
@@ -124935,11 +125069,22 @@
         <return type-id='48b5725f'/>
       </function-decl>
       <var-decl name='dummy_irq_chip' type-id='0f5f7920' mangled-name='dummy_irq_chip' visibility='default' filepath='kernel/irq/dummychip.c' line='53' column='1' elf-symbol-id='dummy_irq_chip'/>
+      <function-decl name='dump_align' mangled-name='dump_align' filepath='fs/coredump.c' line='914' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dump_align'>
+        <parameter type-id='581abdef' name='cprm' filepath='fs/coredump.c' line='914' column='1'/>
+        <parameter type-id='95e97e5e' name='align' filepath='fs/coredump.c' line='914' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='dump_backtrace' mangled-name='dump_backtrace' filepath='arch/arm64/kernel/stacktrace.c' line='140' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dump_backtrace'>
         <parameter type-id='4616a179' name='regs' filepath='arch/arm64/kernel/stacktrace.c' line='140' column='1'/>
         <parameter type-id='f23e2572' name='tsk' filepath='arch/arm64/kernel/stacktrace.c' line='140' column='1'/>
         <parameter type-id='80f4b756' name='loglvl' filepath='arch/arm64/kernel/stacktrace.c' line='141' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='dump_emit' mangled-name='dump_emit' filepath='fs/coredump.c' line='837' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dump_emit'>
+        <parameter type-id='581abdef' name='cprm' filepath='fs/coredump.c' line='837' column='1'/>
+        <parameter type-id='eaa32e2f' name='addr' filepath='fs/coredump.c' line='837' column='1'/>
+        <parameter type-id='95e97e5e' name='nr' filepath='fs/coredump.c' line='837' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='dump_stack' mangled-name='dump_stack' filepath='lib/dump_stack.c' line='133' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dump_stack'>
         <return type-id='48b5725f'/>
@@ -128897,6 +129042,9 @@
         <parameter type-id='5f8a1ac4' name='mask' filepath='kernel/kthread.c' line='475' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='kthread_blkcg' mangled-name='kthread_blkcg' filepath='kernel/kthread.c' line='1422' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kthread_blkcg'>
+        <return type-id='cfff5953'/>
+      </function-decl>
       <function-decl name='kthread_cancel_delayed_work_sync' mangled-name='kthread_cancel_delayed_work_sync' filepath='kernel/kthread.c' line='1278' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='kthread_cancel_delayed_work_sync'>
         <parameter type-id='d56697f1' name='dwork' filepath='kernel/kthread.c' line='1278' column='1'/>
         <return type-id='b50a4934'/>
@@ -130798,6 +130946,10 @@
       <function-decl name='of_cpufreq_cooling_register' mangled-name='of_cpufreq_cooling_register' filepath='drivers/thermal/cpufreq_cooling.c' line='626' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_cpufreq_cooling_register'>
         <parameter type-id='343c3ae4' name='policy' filepath='drivers/thermal/cpufreq_cooling.c' line='626' column='1'/>
         <return type-id='2feec21f'/>
+      </function-decl>
+      <function-decl name='of_css' mangled-name='of_css' filepath='kernel/cgroup/cgroup.c' line='642' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_css'>
+        <parameter type-id='8212a608' name='of' filepath='kernel/cgroup/cgroup.c' line='642' column='1'/>
+        <return type-id='cfff5953'/>
       </function-decl>
       <function-decl name='of_devfreq_cooling_register' mangled-name='of_devfreq_cooling_register' filepath='drivers/thermal/devfreq_cooling.c' line='537' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_devfreq_cooling_register'>
         <parameter type-id='9a537bbe' name='np' filepath='drivers/thermal/devfreq_cooling.c' line='537' column='1'/>
