@@ -395,6 +395,8 @@
       <elf-symbol name='__traceiter_android_vh_exclude_reserved_zone' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x697a6684'/>
       <elf-symbol name='__traceiter_android_vh_exit_creds' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1002fcf3'/>
       <elf-symbol name='__traceiter_android_vh_exit_mm' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89978f8d'/>
+      <elf-symbol name='__traceiter_android_vh_filemap_fault_cache_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf2c329c2'/>
+      <elf-symbol name='__traceiter_android_vh_filemap_fault_get_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4bfc2d63'/>
       <elf-symbol name='__traceiter_android_vh_fill_ext_fmtdesc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8fbdd9c8'/>
       <elf-symbol name='__traceiter_android_vh_finish_update_load_avg_se' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcf8573d8'/>
       <elf-symbol name='__traceiter_android_vh_free_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e6d4c7'/>
@@ -5735,6 +5737,8 @@
       <elf-symbol name='__tracepoint_android_vh_exclude_reserved_zone' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8750976e'/>
       <elf-symbol name='__tracepoint_android_vh_exit_creds' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf358872'/>
       <elf-symbol name='__tracepoint_android_vh_exit_mm' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7cc736a1'/>
+      <elf-symbol name='__tracepoint_android_vh_filemap_fault_cache_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfcc31765'/>
+      <elf-symbol name='__tracepoint_android_vh_filemap_fault_get_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdf494880'/>
       <elf-symbol name='__tracepoint_android_vh_fill_ext_fmtdesc' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb53bb92b'/>
       <elf-symbol name='__tracepoint_android_vh_finish_update_load_avg_se' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa9691213'/>
       <elf-symbol name='__tracepoint_android_vh_free_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25db8da7'/>
@@ -115401,6 +115405,19 @@
         <parameter type-id='df4b7819' name='mm' filepath='include/trace/hooks/mm.h' line='54' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_filemap_fault_cache_page' mangled-name='__traceiter_android_vh_filemap_fault_cache_page' filepath='include/trace/hooks/mm.h' line='48' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_filemap_fault_cache_page'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='48' column='1'/>
+        <parameter type-id='d02f4143' name='vmf' filepath='include/trace/hooks/mm.h' line='48' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='48' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_filemap_fault_get_page' mangled-name='__traceiter_android_vh_filemap_fault_get_page' filepath='include/trace/hooks/mm.h' line='45' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_filemap_fault_get_page'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='45' column='1'/>
+        <parameter type-id='d02f4143' name='vmf' filepath='include/trace/hooks/mm.h' line='45' column='1'/>
+        <parameter type-id='9f93c9da' name='page' filepath='include/trace/hooks/mm.h' line='45' column='1'/>
+        <parameter type-id='d8e6b335' name='retry' filepath='include/trace/hooks/mm.h' line='45' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_fill_ext_fmtdesc' mangled-name='__traceiter_android_vh_fill_ext_fmtdesc' filepath='include/trace/hooks/v4l2core.h' line='19' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_fill_ext_fmtdesc'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/v4l2core.h' line='19' column='1'/>
         <parameter type-id='3c28582e' name='fmtd' filepath='include/trace/hooks/v4l2core.h' line='19' column='1'/>
@@ -116571,6 +116588,8 @@
       <var-decl name='__tracepoint_android_vh_exclude_reserved_zone' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_exclude_reserved_zone' visibility='default' filepath='include/trace/hooks/mm.h' line='61' column='1' elf-symbol-id='__tracepoint_android_vh_exclude_reserved_zone'/>
       <var-decl name='__tracepoint_android_vh_exit_creds' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_exit_creds' visibility='default' filepath='include/trace/hooks/creds.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_exit_creds'/>
       <var-decl name='__tracepoint_android_vh_exit_mm' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_exit_mm' visibility='default' filepath='include/trace/hooks/mm.h' line='54' column='1' elf-symbol-id='__tracepoint_android_vh_exit_mm'/>
+      <var-decl name='__tracepoint_android_vh_filemap_fault_cache_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_filemap_fault_cache_page' visibility='default' filepath='include/trace/hooks/mm.h' line='48' column='1' elf-symbol-id='__tracepoint_android_vh_filemap_fault_cache_page'/>
+      <var-decl name='__tracepoint_android_vh_filemap_fault_get_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_filemap_fault_get_page' visibility='default' filepath='include/trace/hooks/mm.h' line='45' column='1' elf-symbol-id='__tracepoint_android_vh_filemap_fault_get_page'/>
       <var-decl name='__tracepoint_android_vh_fill_ext_fmtdesc' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_fill_ext_fmtdesc' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_fill_ext_fmtdesc'/>
       <var-decl name='__tracepoint_android_vh_finish_update_load_avg_se' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_finish_update_load_avg_se' visibility='default' filepath='include/trace/hooks/sched.h' line='357' column='1' elf-symbol-id='__tracepoint_android_vh_finish_update_load_avg_se'/>
       <var-decl name='__tracepoint_android_vh_free_task' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_free_task' visibility='default' filepath='include/trace/hooks/sched.h' line='318' column='1' elf-symbol-id='__tracepoint_android_vh_free_task'/>
