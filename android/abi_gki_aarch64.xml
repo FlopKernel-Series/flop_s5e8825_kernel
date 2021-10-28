@@ -231,6 +231,7 @@
       <elf-symbol name='__sg_page_iter_dma_next' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc445ceb'/>
       <elf-symbol name='__sg_page_iter_next' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7c9ca58f'/>
       <elf-symbol name='__sg_page_iter_start' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xccd4c999'/>
+      <elf-symbol name='__skb_checksum_complete' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa4638b91'/>
       <elf-symbol name='__skb_ext_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42e61877'/>
       <elf-symbol name='__skb_flow_dissect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x677510ed'/>
       <elf-symbol name='__skb_get_hash' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc21ad650'/>
@@ -2738,7 +2739,10 @@
       <elf-symbol name='iounmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xedc03953'/>
       <elf-symbol name='iov_iter_bvec' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3be97d66'/>
       <elf-symbol name='iov_iter_kvec' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x90b83c6f'/>
+      <elf-symbol name='ip6_local_out' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x69f82b7b'/>
+      <elf-symbol name='ip6_route_me_harder' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3582321b'/>
       <elf-symbol name='ip_compute_csum' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x20eadeb6'/>
+      <elf-symbol name='ip_local_out' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdd515a79'/>
       <elf-symbol name='ip_route_me_harder' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1ef510bf'/>
       <elf-symbol name='ip_route_output_flow' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xee46abeb'/>
       <elf-symbol name='ip_send_check' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2124474'/>
@@ -3250,6 +3254,7 @@
       <elf-symbol name='netlink_unregister_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdf54a8f7'/>
       <elf-symbol name='new_inode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5f7bcd36'/>
       <elf-symbol name='nf_conntrack_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2a18c74'/>
+      <elf-symbol name='nf_ct_attach' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe4d558e6'/>
       <elf-symbol name='nf_ct_delete' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x781d4346'/>
       <elf-symbol name='nf_register_net_hooks' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd6e9ba4a'/>
       <elf-symbol name='nf_unregister_net_hooks' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd379ff8f'/>
@@ -4399,6 +4404,7 @@
       <elf-symbol name='skb_copy_ubufs' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x87b7c32d'/>
       <elf-symbol name='skb_dequeue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6632d00d'/>
       <elf-symbol name='skb_dequeue_tail' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdc9fe5fe'/>
+      <elf-symbol name='skb_dump' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa8748fad'/>
       <elf-symbol name='skb_ensure_writable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3ec7c9ca'/>
       <elf-symbol name='skb_free_datagram' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8245616'/>
       <elf-symbol name='skb_page_frag_refill' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x19578bb6'/>
@@ -114156,6 +114162,10 @@
         <parameter type-id='7359adad' name='pgoffset' filepath='lib/scatterlist.c' line='683' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='__skb_checksum_complete' mangled-name='__skb_checksum_complete' filepath='net/core/skbuff.c' line='2854' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__skb_checksum_complete'>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/skbuff.c' line='2854' column='1'/>
+        <return type-id='7dac1e36'/>
+      </function-decl>
       <function-decl name='__skb_ext_put' mangled-name='__skb_ext_put' filepath='net/core/skbuff.c' line='6366' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__skb_ext_put'>
         <parameter type-id='374692c7' name='ext' filepath='net/core/skbuff.c' line='6366' column='1'/>
         <return type-id='48b5725f'/>
@@ -128026,10 +128036,28 @@
         <parameter type-id='b59d7dce' name='count' filepath='lib/iov_iter.c' line='1177' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='ip6_local_out' mangled-name='ip6_local_out' filepath='net/ipv6/output_core.c' line='155' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ip6_local_out'>
+        <parameter type-id='a2bff676' name='net' filepath='net/ipv6/output_core.c' line='155' column='1'/>
+        <parameter type-id='f772df6d' name='sk' filepath='net/ipv6/output_core.c' line='155' column='1'/>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/ipv6/output_core.c' line='155' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='ip6_route_me_harder' mangled-name='ip6_route_me_harder' filepath='net/ipv6/netfilter.c' line='23' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ip6_route_me_harder'>
+        <parameter type-id='a2bff676' name='net' filepath='net/ipv6/netfilter.c' line='23' column='1'/>
+        <parameter type-id='f772df6d' name='sk_partial' filepath='net/ipv6/netfilter.c' line='23' column='1'/>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/ipv6/netfilter.c' line='23' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='ip_compute_csum' mangled-name='ip_compute_csum' filepath='lib/checksum.c' line='142' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ip_compute_csum'>
         <parameter type-id='eaa32e2f' name='buff' filepath='lib/checksum.c' line='142' column='1'/>
         <parameter type-id='95e97e5e' name='len' filepath='lib/checksum.c' line='142' column='1'/>
         <return type-id='7dac1e36'/>
+      </function-decl>
+      <function-decl name='ip_local_out' mangled-name='ip_local_out' filepath='net/ipv4/ip_output.c' line='120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ip_local_out'>
+        <parameter type-id='a2bff676' name='net' filepath='net/ipv4/ip_output.c' line='120' column='1'/>
+        <parameter type-id='f772df6d' name='sk' filepath='net/ipv4/ip_output.c' line='120' column='1'/>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='net/ipv4/ip_output.c' line='120' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='ip_route_me_harder' mangled-name='ip_route_me_harder' filepath='net/ipv4/netfilter.c' line='20' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ip_route_me_harder'>
         <parameter type-id='a2bff676' name='net' filepath='net/ipv4/netfilter.c' line='20' column='1'/>
@@ -130605,6 +130633,11 @@
       </function-decl>
       <function-decl name='nf_conntrack_destroy' mangled-name='nf_conntrack_destroy' filepath='net/netfilter/core.c' line='670' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='nf_conntrack_destroy'>
         <parameter type-id='96b07343' name='nfct' filepath='net/netfilter/core.c' line='670' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='nf_ct_attach' mangled-name='nf_ct_attach' filepath='net/netfilter/core.c' line='656' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='nf_ct_attach'>
+        <parameter type-id='0fbf3cfd' name='new' filepath='net/netfilter/core.c' line='656' column='1'/>
+        <parameter type-id='11f4a000' name='skb' filepath='net/netfilter/core.c' line='656' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='nf_ct_delete' mangled-name='nf_ct_delete' filepath='net/netfilter/nf_conntrack_core.c' line='652' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='nf_ct_delete'>
@@ -136464,6 +136497,12 @@
       <function-decl name='skb_dequeue_tail' mangled-name='skb_dequeue_tail' filepath='net/core/skbuff.c' line='3075' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='skb_dequeue_tail'>
         <parameter type-id='03c386c6' name='list' filepath='net/core/skbuff.c' line='3075' column='1'/>
         <return type-id='0fbf3cfd'/>
+      </function-decl>
+      <function-decl name='skb_dump' mangled-name='skb_dump' filepath='net/core/skbuff.c' line='734' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='skb_dump'>
+        <parameter type-id='80f4b756' name='level' filepath='net/core/skbuff.c' line='734' column='1'/>
+        <parameter type-id='11f4a000' name='skb' filepath='net/core/skbuff.c' line='734' column='1'/>
+        <parameter type-id='b50a4934' name='full_pkt' filepath='net/core/skbuff.c' line='734' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='skb_ensure_writable' mangled-name='skb_ensure_writable' filepath='net/core/skbuff.c' line='5506' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='skb_ensure_writable'>
         <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/skbuff.c' line='5506' column='1'/>
