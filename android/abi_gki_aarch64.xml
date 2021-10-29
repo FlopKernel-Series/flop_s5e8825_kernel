@@ -384,6 +384,7 @@
       <elf-symbol name='__traceiter_android_vh_commit_creds' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9177823e'/>
       <elf-symbol name='__traceiter_android_vh_cpu_idle_enter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbdc34d2e'/>
       <elf-symbol name='__traceiter_android_vh_cpu_idle_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd966796c'/>
+      <elf-symbol name='__traceiter_android_vh_cpu_up' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa6d87b6a'/>
       <elf-symbol name='__traceiter_android_vh_cpuidle_psci_enter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6cbffc19'/>
       <elf-symbol name='__traceiter_android_vh_cpuidle_psci_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9e5cd40b'/>
       <elf-symbol name='__traceiter_android_vh_do_send_sig_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9d17560f'/>
@@ -5735,6 +5736,7 @@
       <elf-symbol name='__tracepoint_android_vh_commit_creds' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8defd009'/>
       <elf-symbol name='__tracepoint_android_vh_cpu_idle_enter' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xefbedb90'/>
       <elf-symbol name='__tracepoint_android_vh_cpu_idle_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd391e1ed'/>
+      <elf-symbol name='__tracepoint_android_vh_cpu_up' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8bc81124'/>
       <elf-symbol name='__tracepoint_android_vh_cpuidle_psci_enter' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x137e6ebe'/>
       <elf-symbol name='__tracepoint_android_vh_cpuidle_psci_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaaacb3b6'/>
       <elf-symbol name='__tracepoint_android_vh_do_send_sig_info' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6db82691'/>
@@ -115132,6 +115134,11 @@
         <parameter type-id='1b0e1d00' name='dev' filepath='include/trace/hooks/cpuidle.h' line='18' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_cpu_up' mangled-name='__traceiter_android_vh_cpu_up' filepath='include/trace/hooks/cpu.h' line='13' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_cpu_up'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/cpu.h' line='13' column='1'/>
+        <parameter type-id='f0981eeb' name='cpu' filepath='include/trace/hooks/cpu.h' line='13' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_cpuidle_psci_enter' mangled-name='__traceiter_android_vh_cpuidle_psci_enter' filepath='include/trace/hooks/cpuidle_psci.h' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_cpuidle_psci_enter'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/cpuidle_psci.h' line='15' column='1'/>
         <parameter type-id='1b0e1d00' name='dev' filepath='include/trace/hooks/cpuidle_psci.h' line='15' column='1'/>
@@ -116385,6 +116392,7 @@
       <var-decl name='__tracepoint_android_vh_commit_creds' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_commit_creds' visibility='default' filepath='include/trace/hooks/creds.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_commit_creds'/>
       <var-decl name='__tracepoint_android_vh_cpu_idle_enter' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpu_idle_enter' visibility='default' filepath='include/trace/hooks/cpuidle.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_cpu_idle_enter'/>
       <var-decl name='__tracepoint_android_vh_cpu_idle_exit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpu_idle_exit' visibility='default' filepath='include/trace/hooks/cpuidle.h' line='18' column='1' elf-symbol-id='__tracepoint_android_vh_cpu_idle_exit'/>
+      <var-decl name='__tracepoint_android_vh_cpu_up' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpu_up' visibility='default' filepath='include/trace/hooks/cpu.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_cpu_up'/>
       <var-decl name='__tracepoint_android_vh_cpuidle_psci_enter' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpuidle_psci_enter' visibility='default' filepath='include/trace/hooks/cpuidle_psci.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_cpuidle_psci_enter'/>
       <var-decl name='__tracepoint_android_vh_cpuidle_psci_exit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpuidle_psci_exit' visibility='default' filepath='include/trace/hooks/cpuidle_psci.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_cpuidle_psci_exit'/>
       <var-decl name='__tracepoint_android_vh_do_send_sig_info' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_send_sig_info' visibility='default' filepath='include/trace/hooks/signal.h' line='12' column='1' elf-symbol-id='__tracepoint_android_vh_do_send_sig_info'/>
