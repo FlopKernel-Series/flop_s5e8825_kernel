@@ -1282,6 +1282,7 @@
       <elf-symbol name='desc_to_gpio' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe3a4b762'/>
       <elf-symbol name='destroy_workqueue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8c03d20c'/>
       <elf-symbol name='dev_alloc_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6dfd7d3c'/>
+      <elf-symbol name='dev_change_flags' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdf57e2aa'/>
       <elf-symbol name='dev_change_net_namespace' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5e67ce0f'/>
       <elf-symbol name='dev_close' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc0ace41f'/>
       <elf-symbol name='dev_coredumpm' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf7ac4e77'/>
@@ -120440,6 +120441,12 @@
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='10797' column='1'/>
         <parameter type-id='a2bff676' name='net' filepath='net/core/dev.c' line='10797' column='1'/>
         <parameter type-id='80f4b756' name='pat' filepath='net/core/dev.c' line='10797' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='dev_change_flags' mangled-name='dev_change_flags' filepath='net/core/dev.c' line='8526' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_change_flags'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='8526' column='1'/>
+        <parameter type-id='f0981eeb' name='flags' filepath='net/core/dev.c' line='8526' column='1'/>
+        <parameter type-id='5799dc94' name='extack' filepath='net/core/dev.c' line='8527' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='dev_close' mangled-name='dev_close' filepath='net/core/dev.c' line='1671' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dev_close'>
