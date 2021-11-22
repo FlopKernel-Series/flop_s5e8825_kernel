@@ -280,6 +280,7 @@
       <elf-symbol name='__traceiter_android_rvh_dequeue_task_fair' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x37a9a528'/>
       <elf-symbol name='__traceiter_android_rvh_die_kernel_fault' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x91f68209'/>
       <elf-symbol name='__traceiter_android_rvh_do_mem_abort' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x669812d6'/>
+      <elf-symbol name='__traceiter_android_rvh_do_sched_yield' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe0fb88e'/>
       <elf-symbol name='__traceiter_android_rvh_do_sp_pc_abort' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x47243dfd'/>
       <elf-symbol name='__traceiter_android_rvh_enqueue_entity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0c4e55d'/>
       <elf-symbol name='__traceiter_android_rvh_enqueue_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x58dae35a'/>
@@ -5680,6 +5681,7 @@
       <elf-symbol name='__tracepoint_android_rvh_dequeue_task_idle' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x82ae67dd'/>
       <elf-symbol name='__tracepoint_android_rvh_die_kernel_fault' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x33c9af1e'/>
       <elf-symbol name='__tracepoint_android_rvh_do_mem_abort' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xadec6b55'/>
+      <elf-symbol name='__tracepoint_android_rvh_do_sched_yield' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe4ee9cad'/>
       <elf-symbol name='__tracepoint_android_rvh_do_sea' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x23501356'/>
       <elf-symbol name='__tracepoint_android_rvh_do_sp_pc_abort' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1ed564a9'/>
       <elf-symbol name='__tracepoint_android_rvh_do_undefinstr' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48a1e8c'/>
@@ -114561,6 +114563,11 @@
         <parameter type-id='80f4b756' name='msg' filepath='include/trace/hooks/fault.h' line='23' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_rvh_do_sched_yield' mangled-name='__traceiter_android_rvh_do_sched_yield' filepath='include/trace/hooks/sched.h' line='294' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_do_sched_yield'>
+	<parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='294' column='1'/>
+	<parameter type-id='6ed6b432' name='rq' filepath='include/trace/hooks/sched.h' line='294' column='1'/>
+	<return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_rvh_do_sp_pc_abort' mangled-name='__traceiter_android_rvh_do_sp_pc_abort' filepath='include/trace/hooks/fault.h' line='27' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_do_sp_pc_abort'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/fault.h' line='27' column='1'/>
         <parameter type-id='4616a179' name='regs' filepath='include/trace/hooks/fault.h' line='27' column='1'/>
@@ -116568,6 +116575,7 @@
       <var-decl name='__tracepoint_android_rvh_dequeue_task_idle' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_dequeue_task_idle' visibility='default' filepath='include/trace/hooks/sched.h' line='246' column='1' elf-symbol-id='__tracepoint_android_rvh_dequeue_task_idle'/>
       <var-decl name='__tracepoint_android_rvh_die_kernel_fault' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_die_kernel_fault' visibility='default' filepath='include/trace/hooks/fault.h' line='15' column='1' elf-symbol-id='__tracepoint_android_rvh_die_kernel_fault'/>
       <var-decl name='__tracepoint_android_rvh_do_mem_abort' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_mem_abort' visibility='default' filepath='include/trace/hooks/fault.h' line='23' column='1' elf-symbol-id='__tracepoint_android_rvh_do_mem_abort'/>
+      <var-decl name='__tracepoint_android_rvh_do_sched_yield' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_sched_yield' visibility='default' filepath='include/trace/hooks/sched.h' line='294' column='1' elf-symbol-id='__tracepoint_android_rvh_do_sched_yield'/>
       <var-decl name='__tracepoint_android_rvh_do_sea' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_sea' visibility='default' filepath='include/trace/hooks/fault.h' line='19' column='1' elf-symbol-id='__tracepoint_android_rvh_do_sea'/>
       <var-decl name='__tracepoint_android_rvh_do_sp_pc_abort' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_sp_pc_abort' visibility='default' filepath='include/trace/hooks/fault.h' line='27' column='1' elf-symbol-id='__tracepoint_android_rvh_do_sp_pc_abort'/>
       <var-decl name='__tracepoint_android_rvh_do_undefinstr' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_undefinstr' visibility='default' filepath='include/trace/hooks/traps.h' line='15' column='1' elf-symbol-id='__tracepoint_android_rvh_do_undefinstr'/>
