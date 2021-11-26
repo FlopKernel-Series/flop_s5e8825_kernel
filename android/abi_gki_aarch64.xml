@@ -1591,6 +1591,7 @@
       <elf-symbol name='devm_snd_dmaengine_pcm_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8eb8014d'/>
       <elf-symbol name='devm_snd_soc_register_card' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9558ca00'/>
       <elf-symbol name='devm_snd_soc_register_component' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7f902e84'/>
+      <elf-symbol name='devm_spi_mem_dirmap_create' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74165ec1'/>
       <elf-symbol name='devm_spi_register_controller' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7f02af8'/>
       <elf-symbol name='devm_thermal_of_cooling_device_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x70d8857d'/>
       <elf-symbol name='devm_thermal_zone_of_sensor_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xffee951c'/>
@@ -4721,6 +4722,16 @@
       <elf-symbol name='spi_finalize_current_transfer' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x928c3401'/>
       <elf-symbol name='spi_get_device_id' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x99fbbd18'/>
       <elf-symbol name='spi_get_next_queued_message' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd057ae3e'/>
+      <elf-symbol name='spi_mem_adjust_op_size' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x76d0ab09'/>
+      <elf-symbol name='spi_mem_default_supports_op' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x27e83798'/>
+      <elf-symbol name='spi_mem_dirmap_read' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5f44843f'/>
+      <elf-symbol name='spi_mem_dirmap_write' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x89cab1d'/>
+      <elf-symbol name='spi_mem_driver_register_with_owner' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29c5fb03'/>
+      <elf-symbol name='spi_mem_driver_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7371975c'/>
+      <elf-symbol name='spi_mem_dtr_supports_op' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1bf6780c'/>
+      <elf-symbol name='spi_mem_exec_op' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5d21db3'/>
+      <elf-symbol name='spi_mem_get_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba46268d'/>
+      <elf-symbol name='spi_mem_supports_op' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3e8bd610'/>
       <elf-symbol name='spi_register_controller' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1a9bb3d9'/>
       <elf-symbol name='spi_setup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92680418'/>
       <elf-symbol name='spi_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaa554c78'/>
@@ -15709,6 +15720,7 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <pointer-type-def type-id='aa1606dd' size-in-bits='64' id='198dd6d9'/>
+      <qualified-type-def type-id='bec3f688' const='yes' id='199208f7'/>
       <pointer-type-def type-id='9e6bb89c' size-in-bits='64' id='1993c682'/>
       <pointer-type-def type-id='e1f906a3' size-in-bits='64' id='19a26ee3'/>
       <function-type size-in-bits='64' id='19b22092'>
@@ -17385,6 +17397,7 @@
         <parameter type-id='2e6aa127'/>
         <return type-id='b50a4934'/>
       </function-type>
+      <pointer-type-def type-id='199208f7' size-in-bits='64' id='1de3f3e7'/>
       <array-type-def dimensions='1' type-id='a84c031d' size-in-bits='488' id='1de7616e'>
         <subrange length='61' type-id='7ff19f0f' id='b51728a6'/>
       </array-type-def>
@@ -22638,6 +22651,20 @@
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
           <var-decl name='write_wakeup' type-id='7e5b379d' visibility='default' filepath='include/linux/tty.h' line='228' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='spi_mem_driver' size-in-bits='1920' is-struct='yes' visibility='default' filepath='include/linux/spi/spi-mem.h' line='295' column='1' id='2a9bc482'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='spidrv' type-id='29290a00' visibility='default' filepath='include/linux/spi/spi-mem.h' line='296' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='probe' type-id='a50949ab' visibility='default' filepath='include/linux/spi/spi-mem.h' line='297' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1792'>
+          <var-decl name='remove' type-id='a50949ab' visibility='default' filepath='include/linux/spi/spi-mem.h' line='298' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1856'>
+          <var-decl name='shutdown' type-id='a7c79516' visibility='default' filepath='include/linux/spi/spi-mem.h' line='299' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='a5007ad0' size-in-bits='64' id='2aa2e156'/>
@@ -50149,6 +50176,10 @@
           <var-decl name='copy_timestamp' type-id='35cea26b' visibility='default' filepath='include/media/videobuf2-core.h' line='461' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='71d89257'>
+        <parameter type-id='33dc3b1b'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <pointer-type-def type-id='3e448446' size-in-bits='64' id='71dc7604'/>
       <function-type size-in-bits='64' id='71e3f969'>
         <parameter type-id='29af9a71'/>
@@ -61064,6 +61095,10 @@
         <enumerator name='MEM_TYPE_MAX' value='4'/>
       </enum-decl>
       <pointer-type-def type-id='4e407315' size-in-bits='64' id='8ac1c0d9'/>
+      <function-type size-in-bits='64' id='8ac5f9fc'>
+        <parameter type-id='33dc3b1b'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <pointer-type-def type-id='5183f61d' size-in-bits='64' id='8ace4add'/>
       <union-decl name='__anonymous_union__' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/uapi/linux/iommu.h' line='336' column='1' id='8ad7a2f1'>
         <data-member access='public'>
@@ -67070,17 +67105,7 @@
         </data-member>
       </class-decl>
       <qualified-type-def type-id='88ef330b' const='yes' id='99cf04a8'/>
-      <class-decl name='blk_queue_stats' size-in-bits='192' is-struct='yes' visibility='default' filepath='block/blk-stat.c' line='15' column='1' id='99d089ec'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='callbacks' type-id='72f469ec' visibility='default' filepath='block/blk-stat.c' line='16' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='block/blk-stat.c' line='17' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='enable_accounting' type-id='b50a4934' visibility='default' filepath='block/blk-stat.c' line='18' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='blk_queue_stats' is-struct='yes' visibility='default' is-declaration-only='yes' id='99d089ec'/>
       <pointer-type-def type-id='86768fbb' size-in-bits='64' id='99dc8ee7'/>
       <pointer-type-def type-id='de28612c' size-in-bits='64' id='99dd2b5e'/>
       <pointer-type-def type-id='f58c1a1b' size-in-bits='64' id='99dd37d7'/>
@@ -71348,6 +71373,7 @@
           <var-decl name='node' type-id='425436e6' visibility='default' filepath='include/linux/slub_def.h' line='135' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='2a9bc482' size-in-bits='64' id='a31786f0'/>
       <class-decl name='pwm_ops' size-in-bits='768' is-struct='yes' visibility='default' filepath='include/linux/pwm.h' line='284' column='1' id='a31cf734'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='request' type-id='45fc9a43' visibility='default' filepath='include/linux/pwm.h' line='285' column='1'/>
@@ -71995,6 +72021,7 @@
       </class-decl>
       <pointer-type-def type-id='2a02b07c' size-in-bits='64' id='a50616ee'/>
       <pointer-type-def type-id='3642b004' size-in-bits='64' id='a506a456'/>
+      <pointer-type-def type-id='71d89257' size-in-bits='64' id='a50949ab'/>
       <pointer-type-def type-id='0a77e414' size-in-bits='64' id='a50a69f6'/>
       <pointer-type-def type-id='8b7bbbae' size-in-bits='64' id='a50c1d00'/>
       <qualified-type-def type-id='4e25a330' const='yes' id='a50e69e9'/>
@@ -73290,6 +73317,7 @@
         <return type-id='52a50596'/>
       </function-type>
       <pointer-type-def type-id='ca10d3ca' size-in-bits='64' id='a7c6e908'/>
+      <pointer-type-def type-id='8ac5f9fc' size-in-bits='64' id='a7c79516'/>
       <class-decl name='i3c_device_ibi_info' size-in-bits='448' is-struct='yes' visibility='default' filepath='include/linux/i3c/master.h' line='148' column='1' id='a7d28b59'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='all_ibis_handled' type-id='f9fef04f' visibility='default' filepath='include/linux/i3c/master.h' line='149' column='1'/>
@@ -122504,6 +122532,12 @@
         <parameter type-id='95e97e5e'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='devm_spi_mem_dirmap_create' mangled-name='devm_spi_mem_dirmap_create' filepath='drivers/spi/spi-mem.c' line='599' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_spi_mem_dirmap_create'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/spi/spi-mem.c' line='599' column='1'/>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='599' column='1'/>
+        <parameter type-id='1de3f3e7' name='info' filepath='drivers/spi/spi-mem.c' line='600' column='1'/>
+        <return type-id='4f4f2d55'/>
+      </function-decl>
       <function-decl name='devm_spi_register_controller' mangled-name='devm_spi_register_controller' filepath='drivers/spi/spi.c' line='2828' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_spi_register_controller'>
         <parameter type-id='fa0b179b' name='dev' filepath='drivers/spi/spi.c' line='2828' column='1'/>
         <parameter type-id='f22e4524' name='ctlr' filepath='drivers/spi/spi.c' line='2829' column='1'/>
@@ -138643,6 +138677,58 @@
       <function-decl name='spi_get_next_queued_message' mangled-name='spi_get_next_queued_message' filepath='drivers/spi/spi.c' line='1702' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_get_next_queued_message'>
         <parameter type-id='f22e4524' name='ctlr' filepath='drivers/spi/spi.c' line='1702' column='1'/>
         <return type-id='bb7889ed'/>
+      </function-decl>
+      <function-decl name='spi_mem_adjust_op_size' mangled-name='spi_mem_adjust_op_size' filepath='drivers/spi/spi-mem.c' line='440' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_adjust_op_size'>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='440' column='1'/>
+        <parameter type-id='1cf47bfb' name='op' filepath='drivers/spi/spi-mem.c' line='440' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='spi_mem_default_supports_op' mangled-name='spi_mem_default_supports_op' filepath='drivers/spi/spi-mem.c' line='172' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_default_supports_op'>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='172' column='1'/>
+        <parameter type-id='10593a44' name='op' filepath='drivers/spi/spi-mem.c' line='173' column='1'/>
+        <return type-id='b50a4934'/>
+      </function-decl>
+      <function-decl name='spi_mem_dirmap_read' mangled-name='spi_mem_dirmap_read' filepath='drivers/spi/spi-mem.c' line='664' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_dirmap_read'>
+        <parameter type-id='4f4f2d55' name='desc' filepath='drivers/spi/spi-mem.c' line='664' column='1'/>
+        <parameter type-id='91ce1af9' name='offs' filepath='drivers/spi/spi-mem.c' line='665' column='1'/>
+        <parameter type-id='b59d7dce' name='len' filepath='drivers/spi/spi-mem.c' line='665' column='1'/>
+        <parameter type-id='eaa32e2f' name='buf' filepath='drivers/spi/spi-mem.c' line='665' column='1'/>
+        <return type-id='79a0948f'/>
+      </function-decl>
+      <function-decl name='spi_mem_dirmap_write' mangled-name='spi_mem_dirmap_write' filepath='drivers/spi/spi-mem.c' line='710' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_dirmap_write'>
+        <parameter type-id='4f4f2d55' name='desc' filepath='drivers/spi/spi-mem.c' line='710' column='1'/>
+        <parameter type-id='91ce1af9' name='offs' filepath='drivers/spi/spi-mem.c' line='711' column='1'/>
+        <parameter type-id='b59d7dce' name='len' filepath='drivers/spi/spi-mem.c' line='711' column='1'/>
+        <parameter type-id='eaa32e2f' name='buf' filepath='drivers/spi/spi-mem.c' line='711' column='1'/>
+        <return type-id='79a0948f'/>
+      </function-decl>
+      <function-decl name='spi_mem_driver_register_with_owner' mangled-name='spi_mem_driver_register_with_owner' filepath='drivers/spi/spi-mem.c' line='800' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_driver_register_with_owner'>
+        <parameter type-id='a31786f0' name='memdrv' filepath='drivers/spi/spi-mem.c' line='800' column='1'/>
+        <parameter type-id='2730d015' name='owner' filepath='drivers/spi/spi-mem.c' line='801' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='spi_mem_driver_unregister' mangled-name='spi_mem_driver_unregister' filepath='drivers/spi/spi-mem.c' line='817' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_driver_unregister'>
+        <parameter type-id='a31786f0' name='memdrv' filepath='drivers/spi/spi-mem.c' line='817' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='spi_mem_dtr_supports_op' mangled-name='spi_mem_dtr_supports_op' filepath='drivers/spi/spi-mem.c' line='162' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_dtr_supports_op'>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='162' column='1'/>
+        <parameter type-id='10593a44' name='op' filepath='drivers/spi/spi-mem.c' line='163' column='1'/>
+        <return type-id='b50a4934'/>
+      </function-decl>
+      <function-decl name='spi_mem_exec_op' mangled-name='spi_mem_exec_op' filepath='drivers/spi/spi-mem.c' line='298' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_exec_op'>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='298' column='1'/>
+        <parameter type-id='10593a44' name='op' filepath='drivers/spi/spi-mem.c' line='298' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='spi_mem_get_name' mangled-name='spi_mem_get_name' filepath='drivers/spi/spi-mem.c' line='419' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_get_name'>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='419' column='1'/>
+        <return type-id='80f4b756'/>
+      </function-decl>
+      <function-decl name='spi_mem_supports_op' mangled-name='spi_mem_supports_op' filepath='drivers/spi/spi-mem.c' line='238' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_mem_supports_op'>
+        <parameter type-id='33dc3b1b' name='mem' filepath='drivers/spi/spi-mem.c' line='238' column='1'/>
+        <parameter type-id='10593a44' name='op' filepath='drivers/spi/spi-mem.c' line='238' column='1'/>
+        <return type-id='b50a4934'/>
       </function-decl>
       <function-decl name='spi_register_controller' mangled-name='spi_register_controller' filepath='drivers/spi/spi.c' line='2670' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='spi_register_controller'>
         <parameter type-id='f22e4524' name='ctlr' filepath='drivers/spi/spi.c' line='2670' column='1'/>
