@@ -9615,174 +9615,174 @@
           <var-decl name='abort_completion' type-id='b50a4934' visibility='default' filepath='include/drm/drm_atomic.h' line='155' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='bpf_prog_aux' size-in-bits='5504' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='784' column='1' id='09d9fab9'>
+      <class-decl name='bpf_prog_aux' size-in-bits='5504' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='791' column='1' id='09d9fab9'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='refcnt' type-id='28ee064c' visibility='default' filepath='include/linux/bpf.h' line='785' column='1'/>
+          <var-decl name='refcnt' type-id='28ee064c' visibility='default' filepath='include/linux/bpf.h' line='792' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='used_map_cnt' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='786' column='1'/>
+          <var-decl name='used_map_cnt' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='793' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='max_ctx_offset' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='787' column='1'/>
+          <var-decl name='max_ctx_offset' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='794' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='max_pkt_offset' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='788' column='1'/>
+          <var-decl name='max_pkt_offset' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='795' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='max_tp_access' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='789' column='1'/>
+          <var-decl name='max_tp_access' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='796' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='stack_depth' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='790' column='1'/>
+          <var-decl name='stack_depth' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='797' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='791' column='1'/>
+          <var-decl name='id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='798' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='func_cnt' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='792' column='1'/>
+          <var-decl name='func_cnt' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='799' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='288'>
-          <var-decl name='func_idx' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='793' column='1'/>
+          <var-decl name='func_idx' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='800' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='attach_btf_id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='794' column='1'/>
+          <var-decl name='attach_btf_id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='801' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='352'>
-          <var-decl name='ctx_arg_info_size' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='795' column='1'/>
+          <var-decl name='ctx_arg_info_size' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='802' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='max_rdonly_access' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='796' column='1'/>
+          <var-decl name='max_rdonly_access' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='803' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='416'>
-          <var-decl name='max_rdwr_access' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='797' column='1'/>
+          <var-decl name='max_rdwr_access' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='804' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='ctx_arg_info' type-id='2dd1b3d2' visibility='default' filepath='include/linux/bpf.h' line='798' column='1'/>
+          <var-decl name='ctx_arg_info' type-id='2dd1b3d2' visibility='default' filepath='include/linux/bpf.h' line='805' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='dst_mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='799' column='1'/>
+          <var-decl name='dst_mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='806' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='dst_prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='800' column='1'/>
+          <var-decl name='dst_prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='807' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='960'>
-          <var-decl name='dst_trampoline' type-id='3014966f' visibility='default' filepath='include/linux/bpf.h' line='801' column='1'/>
+          <var-decl name='dst_trampoline' type-id='3014966f' visibility='default' filepath='include/linux/bpf.h' line='808' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1024'>
-          <var-decl name='saved_dst_prog_type' type-id='b80df76a' visibility='default' filepath='include/linux/bpf.h' line='802' column='1'/>
+          <var-decl name='saved_dst_prog_type' type-id='b80df76a' visibility='default' filepath='include/linux/bpf.h' line='809' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1056'>
-          <var-decl name='saved_dst_attach_type' type-id='67ce11ed' visibility='default' filepath='include/linux/bpf.h' line='803' column='1'/>
+          <var-decl name='saved_dst_attach_type' type-id='67ce11ed' visibility='default' filepath='include/linux/bpf.h' line='810' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='verifier_zext' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='804' column='1'/>
+          <var-decl name='verifier_zext' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='811' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1096'>
-          <var-decl name='offload_requested' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='805' column='1'/>
+          <var-decl name='offload_requested' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='812' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1104'>
-          <var-decl name='attach_btf_trace' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='806' column='1'/>
+          <var-decl name='attach_btf_trace' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='813' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1112'>
-          <var-decl name='func_proto_unreliable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='807' column='1'/>
+          <var-decl name='func_proto_unreliable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='814' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1120'>
-          <var-decl name='sleepable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='808' column='1'/>
+          <var-decl name='sleepable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='815' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1128'>
-          <var-decl name='tail_call_reachable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='809' column='1'/>
+          <var-decl name='tail_call_reachable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='816' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='tramp_hlist' type-id='03a4a074' visibility='default' filepath='include/linux/bpf.h' line='810' column='1'/>
+          <var-decl name='tramp_hlist' type-id='03a4a074' visibility='default' filepath='include/linux/bpf.h' line='817' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='attach_func_proto' type-id='28379b39' visibility='default' filepath='include/linux/bpf.h' line='812' column='1'/>
+          <var-decl name='attach_func_proto' type-id='28379b39' visibility='default' filepath='include/linux/bpf.h' line='819' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1344'>
-          <var-decl name='attach_func_name' type-id='80f4b756' visibility='default' filepath='include/linux/bpf.h' line='814' column='1'/>
+          <var-decl name='attach_func_name' type-id='80f4b756' visibility='default' filepath='include/linux/bpf.h' line='821' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1408'>
-          <var-decl name='func' type-id='50b674cc' visibility='default' filepath='include/linux/bpf.h' line='815' column='1'/>
+          <var-decl name='func' type-id='50b674cc' visibility='default' filepath='include/linux/bpf.h' line='822' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1472'>
-          <var-decl name='jit_data' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='816' column='1'/>
+          <var-decl name='jit_data' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='823' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1536'>
-          <var-decl name='poke_tab' type-id='02b2042b' visibility='default' filepath='include/linux/bpf.h' line='817' column='1'/>
+          <var-decl name='poke_tab' type-id='02b2042b' visibility='default' filepath='include/linux/bpf.h' line='824' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1600'>
-          <var-decl name='size_poke_tab' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='818' column='1'/>
+          <var-decl name='size_poke_tab' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='825' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1664'>
-          <var-decl name='ksym' type-id='466449bc' visibility='default' filepath='include/linux/bpf.h' line='819' column='1'/>
+          <var-decl name='ksym' type-id='466449bc' visibility='default' filepath='include/linux/bpf.h' line='826' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3392'>
-          <var-decl name='ops' type-id='330c0db4' visibility='default' filepath='include/linux/bpf.h' line='820' column='1'/>
+          <var-decl name='ops' type-id='330c0db4' visibility='default' filepath='include/linux/bpf.h' line='827' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3456'>
-          <var-decl name='used_maps' type-id='0928d5d6' visibility='default' filepath='include/linux/bpf.h' line='821' column='1'/>
+          <var-decl name='used_maps' type-id='0928d5d6' visibility='default' filepath='include/linux/bpf.h' line='828' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3520'>
-          <var-decl name='used_maps_mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='822' column='1'/>
+          <var-decl name='used_maps_mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='829' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3904'>
-          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='823' column='1'/>
+          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='830' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3968'>
-          <var-decl name='user' type-id='273a7d34' visibility='default' filepath='include/linux/bpf.h' line='824' column='1'/>
+          <var-decl name='user' type-id='273a7d34' visibility='default' filepath='include/linux/bpf.h' line='831' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4032'>
-          <var-decl name='load_time' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='825' column='1'/>
+          <var-decl name='load_time' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='832' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4096'>
-          <var-decl name='cgroup_storage' type-id='f57e9a44' visibility='default' filepath='include/linux/bpf.h' line='826' column='1'/>
+          <var-decl name='cgroup_storage' type-id='f57e9a44' visibility='default' filepath='include/linux/bpf.h' line='833' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4224'>
-          <var-decl name='name' type-id='ac1fa8c0' visibility='default' filepath='include/linux/bpf.h' line='827' column='1'/>
+          <var-decl name='name' type-id='ac1fa8c0' visibility='default' filepath='include/linux/bpf.h' line='834' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4352'>
-          <var-decl name='security' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='829' column='1'/>
+          <var-decl name='security' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='836' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4416'>
-          <var-decl name='offload' type-id='11f19dd0' visibility='default' filepath='include/linux/bpf.h' line='831' column='1'/>
+          <var-decl name='offload' type-id='11f19dd0' visibility='default' filepath='include/linux/bpf.h' line='838' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4480'>
-          <var-decl name='btf' type-id='a469220f' visibility='default' filepath='include/linux/bpf.h' line='832' column='1'/>
+          <var-decl name='btf' type-id='a469220f' visibility='default' filepath='include/linux/bpf.h' line='839' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4544'>
-          <var-decl name='func_info' type-id='368d43d3' visibility='default' filepath='include/linux/bpf.h' line='833' column='1'/>
+          <var-decl name='func_info' type-id='368d43d3' visibility='default' filepath='include/linux/bpf.h' line='840' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4608'>
-          <var-decl name='func_info_aux' type-id='9ee77e60' visibility='default' filepath='include/linux/bpf.h' line='834' column='1'/>
+          <var-decl name='func_info_aux' type-id='9ee77e60' visibility='default' filepath='include/linux/bpf.h' line='841' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4672'>
-          <var-decl name='linfo' type-id='2fcb9b17' visibility='default' filepath='include/linux/bpf.h' line='841' column='1'/>
+          <var-decl name='linfo' type-id='2fcb9b17' visibility='default' filepath='include/linux/bpf.h' line='848' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4736'>
-          <var-decl name='jited_linfo' type-id='63e171df' visibility='default' filepath='include/linux/bpf.h' line='849' column='1'/>
+          <var-decl name='jited_linfo' type-id='63e171df' visibility='default' filepath='include/linux/bpf.h' line='856' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4800'>
-          <var-decl name='func_info_cnt' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='850' column='1'/>
+          <var-decl name='func_info_cnt' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='857' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4832'>
-          <var-decl name='nr_linfo' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='851' column='1'/>
+          <var-decl name='nr_linfo' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='858' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4864'>
-          <var-decl name='linfo_idx' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='856' column='1'/>
+          <var-decl name='linfo_idx' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='863' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4896'>
-          <var-decl name='num_exentries' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='857' column='1'/>
+          <var-decl name='num_exentries' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='864' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4928'>
-          <var-decl name='extable' type-id='7f0eb64c' visibility='default' filepath='include/linux/bpf.h' line='858' column='1'/>
+          <var-decl name='extable' type-id='7f0eb64c' visibility='default' filepath='include/linux/bpf.h' line='865' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4992'>
-          <var-decl name='stats' type-id='fbf2ba3a' visibility='default' filepath='include/linux/bpf.h' line='859' column='1'/>
+          <var-decl name='stats' type-id='fbf2ba3a' visibility='default' filepath='include/linux/bpf.h' line='866' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='5056'>
-          <var-decl name='' type-id='b597c0fa' visibility='default' filepath='include/linux/bpf.h' line='860' column='1'/>
+          <var-decl name='' type-id='b597c0fa' visibility='default' filepath='include/linux/bpf.h' line='867' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='5440'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='864' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='871' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='57bfbe05' size-in-bits='64' id='09dbca85'/>
@@ -14188,21 +14188,21 @@
         <parameter type-id='5799dc94'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <class-decl name='bpf_offloaded_map' size-in-bits='2560' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='229' column='1' id='15ac14d5'>
+      <class-decl name='bpf_offloaded_map' size-in-bits='2560' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='236' column='1' id='15ac14d5'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='map' type-id='9e4acc7a' visibility='default' filepath='include/linux/bpf.h' line='230' column='1'/>
+          <var-decl name='map' type-id='9e4acc7a' visibility='default' filepath='include/linux/bpf.h' line='237' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2048'>
-          <var-decl name='netdev' type-id='68a2d05b' visibility='default' filepath='include/linux/bpf.h' line='231' column='1'/>
+          <var-decl name='netdev' type-id='68a2d05b' visibility='default' filepath='include/linux/bpf.h' line='238' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2112'>
-          <var-decl name='dev_ops' type-id='2ce97450' visibility='default' filepath='include/linux/bpf.h' line='232' column='1'/>
+          <var-decl name='dev_ops' type-id='2ce97450' visibility='default' filepath='include/linux/bpf.h' line='239' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2176'>
-          <var-decl name='dev_priv' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='233' column='1'/>
+          <var-decl name='dev_priv' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='240' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2240'>
-          <var-decl name='offloads' type-id='72f469ec' visibility='default' filepath='include/linux/bpf.h' line='234' column='1'/>
+          <var-decl name='offloads' type-id='72f469ec' visibility='default' filepath='include/linux/bpf.h' line='241' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='325f6f30' size-in-bits='64' id='15adb516'/>
@@ -14988,21 +14988,21 @@
       <pointer-type-def type-id='78719a99' size-in-bits='64' id='1767a135'/>
       <pointer-type-def type-id='0f7f118a' size-in-bits='64' id='1768bf8c'/>
       <pointer-type-def type-id='891a6859' size-in-bits='64' id='176d60a1'/>
-      <class-decl name='bpf_map_dev_ops' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='217' column='1' id='1779ab9d'>
+      <class-decl name='bpf_map_dev_ops' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='224' column='1' id='1779ab9d'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='map_get_next_key' type-id='ef2b6bf5' visibility='default' filepath='include/linux/bpf.h' line='218' column='1'/>
+          <var-decl name='map_get_next_key' type-id='ef2b6bf5' visibility='default' filepath='include/linux/bpf.h' line='225' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='map_lookup_elem' type-id='ef2b6bf5' visibility='default' filepath='include/linux/bpf.h' line='220' column='1'/>
+          <var-decl name='map_lookup_elem' type-id='ef2b6bf5' visibility='default' filepath='include/linux/bpf.h' line='227' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='map_update_elem' type-id='bedcc9eb' visibility='default' filepath='include/linux/bpf.h' line='222' column='1'/>
+          <var-decl name='map_update_elem' type-id='bedcc9eb' visibility='default' filepath='include/linux/bpf.h' line='229' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='map_delete_elem' type-id='e24c55c9' visibility='default' filepath='include/linux/bpf.h' line='224' column='1'/>
+          <var-decl name='map_delete_elem' type-id='e24c55c9' visibility='default' filepath='include/linux/bpf.h' line='231' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='226' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='233' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='ecd721d1' size-in-bits='64' id='1779e61d'/>
@@ -25128,15 +25128,15 @@
         <enumerator name='DRM_COLOR_YCBCR_FULL_RANGE' value='1'/>
         <enumerator name='DRM_COLOR_RANGE_MAX' value='2'/>
       </enum-decl>
-      <class-decl name='btf_func_model' size-in-bits='112' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='518' column='1' id='323174d0'>
+      <class-decl name='btf_func_model' size-in-bits='112' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='525' column='1' id='323174d0'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='ret_size' type-id='f9b06939' visibility='default' filepath='include/linux/bpf.h' line='519' column='1'/>
+          <var-decl name='ret_size' type-id='f9b06939' visibility='default' filepath='include/linux/bpf.h' line='526' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='nr_args' type-id='f9b06939' visibility='default' filepath='include/linux/bpf.h' line='520' column='1'/>
+          <var-decl name='nr_args' type-id='f9b06939' visibility='default' filepath='include/linux/bpf.h' line='527' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='arg_size' type-id='4d79ed19' visibility='default' filepath='include/linux/bpf.h' line='521' column='1'/>
+          <var-decl name='arg_size' type-id='4d79ed19' visibility='default' filepath='include/linux/bpf.h' line='528' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='dst_ops' size-in-bits='1536' is-struct='yes' visibility='default' filepath='include/net/dst_ops.h' line='15' column='1' id='32358857'>
@@ -32517,24 +32517,24 @@
       </union-decl>
       <pointer-type-def type-id='309421a5' size-in-bits='64' id='465e35b9'/>
       <pointer-type-def type-id='4e0a6ade' size-in-bits='64' id='465f7e18'/>
-      <class-decl name='bpf_ksym' size-in-bits='1728' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='583' column='1' id='466449bc'>
+      <class-decl name='bpf_ksym' size-in-bits='1728' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='590' column='1' id='466449bc'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='start' type-id='7359adad' visibility='default' filepath='include/linux/bpf.h' line='584' column='1'/>
+          <var-decl name='start' type-id='7359adad' visibility='default' filepath='include/linux/bpf.h' line='591' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='end' type-id='7359adad' visibility='default' filepath='include/linux/bpf.h' line='585' column='1'/>
+          <var-decl name='end' type-id='7359adad' visibility='default' filepath='include/linux/bpf.h' line='592' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='name' type-id='e3204322' visibility='default' filepath='include/linux/bpf.h' line='586' column='1'/>
+          <var-decl name='name' type-id='e3204322' visibility='default' filepath='include/linux/bpf.h' line='593' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='lnode' type-id='72f469ec' visibility='default' filepath='include/linux/bpf.h' line='587' column='1'/>
+          <var-decl name='lnode' type-id='72f469ec' visibility='default' filepath='include/linux/bpf.h' line='594' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='tnode' type-id='dc9cc7c7' visibility='default' filepath='include/linux/bpf.h' line='588' column='1'/>
+          <var-decl name='tnode' type-id='dc9cc7c7' visibility='default' filepath='include/linux/bpf.h' line='595' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1664'>
-          <var-decl name='prog' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='589' column='1'/>
+          <var-decl name='prog' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='596' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='4666032d'>
@@ -40196,7 +40196,7 @@
       <array-type-def dimensions='1' type-id='a84c031d' size-in-bits='480' id='59e5814b'>
         <subrange length='60' type-id='7ff19f0f' id='b114e3c3'/>
       </array-type-def>
-      <enum-decl name='nl802154_cca_modes' filepath='include/net/nl802154.h' line='234' column='1' id='59ec32df'>
+      <enum-decl name='nl802154_cca_modes' filepath='include/net/nl802154.h' line='235' column='1' id='59ec32df'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='__NL802154_CCA_INVALID' value='0'/>
         <enumerator name='NL802154_CCA_ENERGY' value='1'/>
@@ -48140,9 +48140,9 @@
           <var-decl name='tail' type-id='a150e667' visibility='default' filepath='include/linux/tty.h' line='95' column='1'/>
         </data-member>
       </class-decl>
-      <union-decl name='__anonymous_union__' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='765' column='1' id='6b217604'>
+      <union-decl name='__anonymous_union__' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='772' column='1' id='6b217604'>
         <data-member access='public'>
-          <var-decl name='tail_call' type-id='d60eb7fb' visibility='default' filepath='include/linux/bpf.h' line='769' column='1'/>
+          <var-decl name='tail_call' type-id='d60eb7fb' visibility='default' filepath='include/linux/bpf.h' line='776' column='1'/>
         </data-member>
       </union-decl>
       <qualified-type-def type-id='1354385d' const='yes' id='6b2a4486'/>
@@ -49386,15 +49386,15 @@
         <parameter type-id='19c2251e'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <class-decl name='__anonymous_struct__' size-in-bits='256' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='619' column='1' id='6e530776'>
+      <class-decl name='__anonymous_struct__' size-in-bits='256' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='626' column='1' id='6e530776'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='model' type-id='323174d0' visibility='default' filepath='include/linux/bpf.h' line='620' column='1'/>
+          <var-decl name='model' type-id='323174d0' visibility='default' filepath='include/linux/bpf.h' line='627' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='addr' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='621' column='1'/>
+          <var-decl name='addr' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='628' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='ftrace_managed' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='622' column='1'/>
+          <var-decl name='ftrace_managed' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='629' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='ff_rumble_effect' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/uapi/linux/input.h' line='422' column='1' id='6e5c8c15'>
@@ -54106,15 +54106,15 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='c44bfbeb' size-in-bits='64' id='7af12c47'/>
-      <class-decl name='bpf_prog_stats' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='512' column='1' id='7af446cc'>
+      <class-decl name='bpf_prog_stats' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='519' column='1' id='7af446cc'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='cnt' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='513' column='1'/>
+          <var-decl name='cnt' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='520' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='nsecs' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='514' column='1'/>
+          <var-decl name='nsecs' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='521' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='syncp' type-id='e4d85780' visibility='default' filepath='include/linux/bpf.h' line='515' column='1'/>
+          <var-decl name='syncp' type-id='e4d85780' visibility='default' filepath='include/linux/bpf.h' line='522' column='1'/>
         </data-member>
       </class-decl>
       <array-type-def dimensions='1' type-id='84a5c3d4' size-in-bits='32' id='7af92037'>
@@ -55819,24 +55819,24 @@
         <return type-id='48b5725f'/>
       </function-type>
       <qualified-type-def type-id='f69b84e9' const='yes' id='7ebeca6e'/>
-      <class-decl name='bpf_tramp_image' size-in-bits='2432' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='600' column='1' id='7ec1f60a'>
+      <class-decl name='bpf_tramp_image' size-in-bits='2432' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='607' column='1' id='7ec1f60a'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='image' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='601' column='1'/>
+          <var-decl name='image' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='608' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='ksym' type-id='466449bc' visibility='default' filepath='include/linux/bpf.h' line='602' column='1'/>
+          <var-decl name='ksym' type-id='466449bc' visibility='default' filepath='include/linux/bpf.h' line='609' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1792'>
-          <var-decl name='pcref' type-id='818799b4' visibility='default' filepath='include/linux/bpf.h' line='603' column='1'/>
+          <var-decl name='pcref' type-id='818799b4' visibility='default' filepath='include/linux/bpf.h' line='610' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1920'>
-          <var-decl name='ip_after_call' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='604' column='1'/>
+          <var-decl name='ip_after_call' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='611' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1984'>
-          <var-decl name='ip_epilogue' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='605' column='1'/>
+          <var-decl name='ip_epilogue' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='612' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2048'>
-          <var-decl name='' type-id='ae58df2c' visibility='default' filepath='include/linux/bpf.h' line='606' column='1'/>
+          <var-decl name='' type-id='ae58df2c' visibility='default' filepath='include/linux/bpf.h' line='613' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='7ec379e7'>
@@ -60567,12 +60567,12 @@
           <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/linux/rtc.h' line='147' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='bpf_func_info_aux' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='751' column='1' id='89aea402'>
+      <class-decl name='bpf_func_info_aux' size-in-bits='32' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='758' column='1' id='89aea402'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='linkage' type-id='1dc6a898' visibility='default' filepath='include/linux/bpf.h' line='752' column='1'/>
+          <var-decl name='linkage' type-id='1dc6a898' visibility='default' filepath='include/linux/bpf.h' line='759' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='unreliable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='753' column='1'/>
+          <var-decl name='unreliable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='760' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='89af975c'>
@@ -65441,9 +65441,9 @@
         <parameter type-id='b50a4934'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <class-decl name='bpf_iter_aux_info' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='1325' column='1' id='952798b4'>
+      <class-decl name='bpf_iter_aux_info' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='1333' column='1' id='952798b4'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='map' type-id='00ee50b8' visibility='default' filepath='include/linux/bpf.h' line='1326' column='1'/>
+          <var-decl name='map' type-id='00ee50b8' visibility='default' filepath='include/linux/bpf.h' line='1334' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='48288128' size-in-bits='64' id='952cef4e'/>
@@ -67056,9 +67056,9 @@
       <array-type-def dimensions='1' type-id='c6a1f4c6' size-in-bits='360' id='9a1c3c10'>
         <subrange length='15' type-id='7ff19f0f' id='8484ba73'/>
       </array-type-def>
-      <class-decl name='bpf_prog_ops' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='439' column='1' id='9a1fed7b'>
+      <class-decl name='bpf_prog_ops' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='446' column='1' id='9a1fed7b'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='test_run' type-id='eddbe2ad' visibility='default' filepath='include/linux/bpf.h' line='440' column='1'/>
+          <var-decl name='test_run' type-id='eddbe2ad' visibility='default' filepath='include/linux/bpf.h' line='447' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='xa_node' size-in-bits='4608' is-struct='yes' visibility='default' filepath='include/linux/xarray.h' line='1122' column='1' id='9a218d2f'>
@@ -69158,7 +69158,7 @@
           <var-decl name='freeze_mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='179' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1920'>
-          <var-decl name='writecnt' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='180' column='1'/>
+          <var-decl name='writecnt' type-id='28ee064c' visibility='default' filepath='include/linux/bpf.h' line='186' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='3e497762' size-in-bits='64' id='9e5416b4'/>
@@ -75158,15 +75158,15 @@
         <parameter type-id='b59d7dce'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <class-decl name='bpf_ctx_arg_aux' size-in-bits='96' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='778' column='1' id='ac12d63f'>
+      <class-decl name='bpf_ctx_arg_aux' size-in-bits='96' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='785' column='1' id='ac12d63f'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='offset' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='779' column='1'/>
+          <var-decl name='offset' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='786' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='reg_type' type-id='e830436a' visibility='default' filepath='include/linux/bpf.h' line='780' column='1'/>
+          <var-decl name='reg_type' type-id='e830436a' visibility='default' filepath='include/linux/bpf.h' line='787' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='btf_id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='781' column='1'/>
+          <var-decl name='btf_id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='788' column='1'/>
         </data-member>
       </class-decl>
       <array-type-def dimensions='1' type-id='a84c031d' size-in-bits='96' id='ac151b64'>
@@ -75263,36 +75263,36 @@
         </data-member>
       </class-decl>
       <typedef-decl name='__kernel_fsid_t' type-id='b55219f8' filepath='include/uapi/asm-generic/posix_types.h' line='81' column='1' id='ac895711'/>
-      <class-decl name='bpf_trampoline' size-in-bits='1408' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='612' column='1' id='ac8c8ac7'>
+      <class-decl name='bpf_trampoline' size-in-bits='1408' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='619' column='1' id='ac8c8ac7'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='hlist' type-id='03a4a074' visibility='default' filepath='include/linux/bpf.h' line='614' column='1'/>
+          <var-decl name='hlist' type-id='03a4a074' visibility='default' filepath='include/linux/bpf.h' line='621' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='616' column='1'/>
+          <var-decl name='mutex' type-id='925167dc' visibility='default' filepath='include/linux/bpf.h' line='623' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='refcnt' type-id='64615833' visibility='default' filepath='include/linux/bpf.h' line='617' column='1'/>
+          <var-decl name='refcnt' type-id='64615833' visibility='default' filepath='include/linux/bpf.h' line='624' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='key' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='618' column='1'/>
+          <var-decl name='key' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='625' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='func' type-id='6e530776' visibility='default' filepath='include/linux/bpf.h' line='623' column='1'/>
+          <var-decl name='func' type-id='6e530776' visibility='default' filepath='include/linux/bpf.h' line='630' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='extension_prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='628' column='1'/>
+          <var-decl name='extension_prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='635' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='960'>
-          <var-decl name='progs_hlist' type-id='fc293b5f' visibility='default' filepath='include/linux/bpf.h' line='630' column='1'/>
+          <var-decl name='progs_hlist' type-id='fc293b5f' visibility='default' filepath='include/linux/bpf.h' line='637' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='progs_cnt' type-id='e024279b' visibility='default' filepath='include/linux/bpf.h' line='632' column='1'/>
+          <var-decl name='progs_cnt' type-id='e024279b' visibility='default' filepath='include/linux/bpf.h' line='639' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='cur_image' type-id='c2123138' visibility='default' filepath='include/linux/bpf.h' line='634' column='1'/>
+          <var-decl name='cur_image' type-id='c2123138' visibility='default' filepath='include/linux/bpf.h' line='641' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1344'>
-          <var-decl name='selector' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='635' column='1'/>
+          <var-decl name='selector' type-id='91ce1af9' visibility='default' filepath='include/linux/bpf.h' line='642' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='ec9f1e6a' size-in-bits='64' id='ac9d10e4'/>
@@ -75759,12 +75759,12 @@
         <parameter type-id='67bbaeda'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <union-decl name='__anonymous_union__' size-in-bits='384' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='606' column='1' id='ae58df2c'>
+      <union-decl name='__anonymous_union__' size-in-bits='384' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='613' column='1' id='ae58df2c'>
         <data-member access='public'>
-          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/bpf.h' line='607' column='1'/>
+          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/bpf.h' line='614' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/linux/bpf.h' line='608' column='1'/>
+          <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/linux/bpf.h' line='615' column='1'/>
         </data-member>
       </union-decl>
       <function-type size-in-bits='64' id='ae5a8333'>
@@ -79269,12 +79269,12 @@
         <parameter type-id='7359adad'/>
         <return type-id='f9409001'/>
       </function-type>
-      <union-decl name='__anonymous_union__' size-in-bits='384' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='860' column='1' id='b597c0fa'>
+      <union-decl name='__anonymous_union__' size-in-bits='384' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='867' column='1' id='b597c0fa'>
         <data-member access='public'>
-          <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/linux/bpf.h' line='861' column='1'/>
+          <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/linux/bpf.h' line='868' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/bpf.h' line='862' column='1'/>
+          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/bpf.h' line='869' column='1'/>
         </data-member>
       </union-decl>
       <class-decl name='pinctrl_dev' size-in-bits='1664' is-struct='yes' visibility='default' filepath='drivers/pinctrl/core.h' line='42' column='1' id='b5990c25'>
@@ -83465,24 +83465,24 @@
           <var-decl name='driver_tstamp' type-id='40a816ad' visibility='default' filepath='include/sound/pcm.h' line='425' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='bpf_link_ops' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='894' column='1' id='bc84eba7'>
+      <class-decl name='bpf_link_ops' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='901' column='1' id='bc84eba7'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='release' type-id='42861783' visibility='default' filepath='include/linux/bpf.h' line='895' column='1'/>
+          <var-decl name='release' type-id='42861783' visibility='default' filepath='include/linux/bpf.h' line='902' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='dealloc' type-id='42861783' visibility='default' filepath='include/linux/bpf.h' line='896' column='1'/>
+          <var-decl name='dealloc' type-id='42861783' visibility='default' filepath='include/linux/bpf.h' line='903' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='detach' type-id='32271368' visibility='default' filepath='include/linux/bpf.h' line='897' column='1'/>
+          <var-decl name='detach' type-id='32271368' visibility='default' filepath='include/linux/bpf.h' line='904' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='update_prog' type-id='1f1dd1be' visibility='default' filepath='include/linux/bpf.h' line='898' column='1'/>
+          <var-decl name='update_prog' type-id='1f1dd1be' visibility='default' filepath='include/linux/bpf.h' line='905' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='show_fdinfo' type-id='e3a7f506' visibility='default' filepath='include/linux/bpf.h' line='900' column='1'/>
+          <var-decl name='show_fdinfo' type-id='e3a7f506' visibility='default' filepath='include/linux/bpf.h' line='907' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='fill_link_info' type-id='9e2873bb' visibility='default' filepath='include/linux/bpf.h' line='901' column='1'/>
+          <var-decl name='fill_link_info' type-id='9e2873bb' visibility='default' filepath='include/linux/bpf.h' line='908' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='df042c09' size-in-bits='64' id='bc9b7fcd'/>
@@ -88436,12 +88436,12 @@
         <parameter type-id='95e97e5e'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <class-decl name='bpf_prog_array' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='1067' column='1' id='c75c7b06'>
+      <class-decl name='bpf_prog_array' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='1074' column='1' id='c75c7b06'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/bpf.h' line='1068' column='1'/>
+          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/linux/bpf.h' line='1075' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='items' type-id='3f814540' visibility='default' filepath='include/linux/bpf.h' line='1069' column='1'/>
+          <var-decl name='items' type-id='3f814540' visibility='default' filepath='include/linux/bpf.h' line='1076' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='c763c2ea'>
@@ -88488,7 +88488,7 @@
         <parameter type-id='b64ad7cb'/>
         <return type-id='19c2251e'/>
       </function-type>
-      <enum-decl name='nl802154_supported_bool_states' filepath='include/net/nl802154.h' line='273' column='1' id='c78c6f33'>
+      <enum-decl name='nl802154_supported_bool_states' filepath='include/net/nl802154.h' line='274' column='1' id='c78c6f33'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='NL802154_SUPPORTED_BOOL_FALSE' value='0'/>
         <enumerator name='NL802154_SUPPORTED_BOOL_TRUE' value='1'/>
@@ -93568,30 +93568,30 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <qualified-type-def type-id='582de67c' const='yes' id='d4f1de57'/>
-      <class-decl name='bpf_jit_poke_descriptor' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='761' column='1' id='d4f2184b'>
+      <class-decl name='bpf_jit_poke_descriptor' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='768' column='1' id='d4f2184b'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='tailcall_target' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='762' column='1'/>
+          <var-decl name='tailcall_target' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='769' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='tailcall_bypass' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='763' column='1'/>
+          <var-decl name='tailcall_bypass' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='770' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='bypass_addr' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='764' column='1'/>
+          <var-decl name='bypass_addr' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='771' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='' type-id='6b217604' visibility='default' filepath='include/linux/bpf.h' line='765' column='1'/>
+          <var-decl name='' type-id='6b217604' visibility='default' filepath='include/linux/bpf.h' line='772' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='tailcall_target_stable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='771' column='1'/>
+          <var-decl name='tailcall_target_stable' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='778' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='328'>
-          <var-decl name='adj_off' type-id='f9b06939' visibility='default' filepath='include/linux/bpf.h' line='772' column='1'/>
+          <var-decl name='adj_off' type-id='f9b06939' visibility='default' filepath='include/linux/bpf.h' line='779' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='336'>
-          <var-decl name='reason' type-id='1dc6a898' visibility='default' filepath='include/linux/bpf.h' line='773' column='1'/>
+          <var-decl name='reason' type-id='1dc6a898' visibility='default' filepath='include/linux/bpf.h' line='780' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='352'>
-          <var-decl name='insn_idx' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='774' column='1'/>
+          <var-decl name='insn_idx' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='781' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='a388c264' size-in-bits='64' id='d4f2b9b2'/>
@@ -94285,12 +94285,12 @@
       <pointer-type-def type-id='e2da4ade' size-in-bits='64' id='d5f76b20'/>
       <pointer-type-def type-id='62d1e232' size-in-bits='64' id='d601a214'/>
       <pointer-type-def type-id='c393ee9b' size-in-bits='64' id='d60d5a0f'/>
-      <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='766' column='1' id='d60eb7fb'>
+      <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/bpf.h' line='773' column='1' id='d60eb7fb'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='map' type-id='00ee50b8' visibility='default' filepath='include/linux/bpf.h' line='767' column='1'/>
+          <var-decl name='map' type-id='00ee50b8' visibility='default' filepath='include/linux/bpf.h' line='774' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='key' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='768' column='1'/>
+          <var-decl name='key' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='775' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='de031042' size-in-bits='64' id='d60f4f10'/>
@@ -99712,24 +99712,24 @@
           <var-decl name='freq1_offset' type-id='1dc6a898' visibility='default' filepath='include/net/cfg80211.h' line='698' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='bpf_link' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='885' column='1' id='e07e9784'>
+      <class-decl name='bpf_link' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='892' column='1' id='e07e9784'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='refcnt' type-id='28ee064c' visibility='default' filepath='include/linux/bpf.h' line='886' column='1'/>
+          <var-decl name='refcnt' type-id='28ee064c' visibility='default' filepath='include/linux/bpf.h' line='893' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='887' column='1'/>
+          <var-decl name='id' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='894' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='type' type-id='b0467036' visibility='default' filepath='include/linux/bpf.h' line='888' column='1'/>
+          <var-decl name='type' type-id='b0467036' visibility='default' filepath='include/linux/bpf.h' line='895' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='ops' type-id='747013e8' visibility='default' filepath='include/linux/bpf.h' line='889' column='1'/>
+          <var-decl name='ops' type-id='747013e8' visibility='default' filepath='include/linux/bpf.h' line='896' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='890' column='1'/>
+          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='897' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/linux/bpf.h' line='891' column='1'/>
+          <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/linux/bpf.h' line='898' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='e093b8f6'>
@@ -103058,7 +103058,7 @@
         <parameter type-id='eaa32e2f'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <enum-decl name='bpf_reg_type' filepath='include/linux/bpf.h' line='376' column='1' id='e830436a'>
+      <enum-decl name='bpf_reg_type' filepath='include/linux/bpf.h' line='383' column='1' id='e830436a'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='NOT_INIT' value='0'/>
         <enumerator name='SCALAR_VALUE' value='1'/>
@@ -106227,33 +106227,33 @@
         <parameter type-id='39341f7e'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <class-decl name='bpf_prog_offload' size-in-bits='576' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='487' column='1' id='eef53362'>
+      <class-decl name='bpf_prog_offload' size-in-bits='576' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='494' column='1' id='eef53362'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='488' column='1'/>
+          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='495' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='netdev' type-id='68a2d05b' visibility='default' filepath='include/linux/bpf.h' line='489' column='1'/>
+          <var-decl name='netdev' type-id='68a2d05b' visibility='default' filepath='include/linux/bpf.h' line='496' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='offdev' type-id='d079c835' visibility='default' filepath='include/linux/bpf.h' line='490' column='1'/>
+          <var-decl name='offdev' type-id='d079c835' visibility='default' filepath='include/linux/bpf.h' line='497' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='dev_priv' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='491' column='1'/>
+          <var-decl name='dev_priv' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='498' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='offloads' type-id='72f469ec' visibility='default' filepath='include/linux/bpf.h' line='492' column='1'/>
+          <var-decl name='offloads' type-id='72f469ec' visibility='default' filepath='include/linux/bpf.h' line='499' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='dev_state' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='493' column='1'/>
+          <var-decl name='dev_state' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='500' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='392'>
-          <var-decl name='opt_failed' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='494' column='1'/>
+          <var-decl name='opt_failed' type-id='b50a4934' visibility='default' filepath='include/linux/bpf.h' line='501' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='jited_image' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='495' column='1'/>
+          <var-decl name='jited_image' type-id='eaa32e2f' visibility='default' filepath='include/linux/bpf.h' line='502' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='jited_len' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='496' column='1'/>
+          <var-decl name='jited_len' type-id='19c2251e' visibility='default' filepath='include/linux/bpf.h' line='503' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='9493d3c9' size-in-bits='64' id='eefd7061'/>
@@ -106263,7 +106263,7 @@
       </array-type-def>
       <pointer-type-def type-id='5df6ba5b' size-in-bits='64' id='ef014987'/>
       <pointer-type-def type-id='c5491077' size-in-bits='64' id='ef04c267'/>
-      <enum-decl name='nl802154_cca_opts' filepath='include/net/nl802154.h' line='254' column='1' id='ef15418f'>
+      <enum-decl name='nl802154_cca_opts' filepath='include/net/nl802154.h' line='255' column='1' id='ef15418f'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='NL802154_CCA_OPT_ENERGY_CARRIER_AND' value='0'/>
         <enumerator name='NL802154_CCA_OPT_ENERGY_CARRIER_OR' value='1'/>
@@ -109016,12 +109016,12 @@
         <return type-id='48b5725f'/>
       </function-type>
       <qualified-type-def type-id='83b59630' const='yes' id='f67ba3ad'/>
-      <class-decl name='bpf_prog_array_item' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='1062' column='1' id='f67e137c'>
+      <class-decl name='bpf_prog_array_item' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/linux/bpf.h' line='1069' column='1' id='f67e137c'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='1063' column='1'/>
+          <var-decl name='prog' type-id='bdcee7ae' visibility='default' filepath='include/linux/bpf.h' line='1070' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='cgroup_storage' type-id='dcd9fb4c' visibility='default' filepath='include/linux/bpf.h' line='1064' column='1'/>
+          <var-decl name='cgroup_storage' type-id='dcd9fb4c' visibility='default' filepath='include/linux/bpf.h' line='1071' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='f680e13e'>
@@ -118639,18 +118639,18 @@
         <parameter type-id='531a7450' name='bpf_func' filepath='net/core/filter.c' line='10286' column='1'/>
         <return type-id='f0981eeb'/>
       </function-decl>
-      <function-decl name='bpf_prog_add' mangled-name='bpf_prog_add' filepath='kernel/bpf/syscall.c' line='1860' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bpf_prog_add'>
-        <parameter type-id='bdcee7ae' name='prog' filepath='kernel/bpf/syscall.c' line='1860' column='1'/>
-        <parameter type-id='95e97e5e' name='i' filepath='kernel/bpf/syscall.c' line='1860' column='1'/>
+      <function-decl name='bpf_prog_add' mangled-name='bpf_prog_add' filepath='kernel/bpf/syscall.c' line='1874' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bpf_prog_add'>
+        <parameter type-id='bdcee7ae' name='prog' filepath='kernel/bpf/syscall.c' line='1874' column='1'/>
+        <parameter type-id='95e97e5e' name='i' filepath='kernel/bpf/syscall.c' line='1874' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='bpf_prog_put' mangled-name='bpf_prog_put' filepath='kernel/bpf/syscall.c' line='1762' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bpf_prog_put'>
-        <parameter type-id='bdcee7ae' name='prog' filepath='kernel/bpf/syscall.c' line='1762' column='1'/>
+      <function-decl name='bpf_prog_put' mangled-name='bpf_prog_put' filepath='kernel/bpf/syscall.c' line='1776' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bpf_prog_put'>
+        <parameter type-id='bdcee7ae' name='prog' filepath='kernel/bpf/syscall.c' line='1776' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='bpf_prog_sub' mangled-name='bpf_prog_sub' filepath='kernel/bpf/syscall.c' line='1866' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bpf_prog_sub'>
-        <parameter type-id='bdcee7ae' name='prog' filepath='kernel/bpf/syscall.c' line='1866' column='1'/>
-        <parameter type-id='95e97e5e' name='i' filepath='kernel/bpf/syscall.c' line='1866' column='1'/>
+      <function-decl name='bpf_prog_sub' mangled-name='bpf_prog_sub' filepath='kernel/bpf/syscall.c' line='1880' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bpf_prog_sub'>
+        <parameter type-id='bdcee7ae' name='prog' filepath='kernel/bpf/syscall.c' line='1880' column='1'/>
+        <parameter type-id='95e97e5e' name='i' filepath='kernel/bpf/syscall.c' line='1880' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <var-decl name='bpf_stats_enabled_key' type-id='237c0d27' mangled-name='bpf_stats_enabled_key' visibility='default' filepath='kernel/bpf/core.c' line='2347' column='1' elf-symbol-id='bpf_stats_enabled_key'/>
@@ -119100,21 +119100,21 @@
         <parameter type-id='fa0b179b' name='parent' filepath='drivers/media/cec/core/cec-core.c' line='319' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='cec_s_log_addrs' mangled-name='cec_s_log_addrs' filepath='drivers/media/cec/core/cec-adap.c' line='1815' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_s_log_addrs'>
-        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1815' column='1'/>
-        <parameter type-id='ebc04a66' name='log_addrs' filepath='drivers/media/cec/core/cec-adap.c' line='1816' column='1'/>
-        <parameter type-id='b50a4934' name='block' filepath='drivers/media/cec/core/cec-adap.c' line='1816' column='1'/>
+      <function-decl name='cec_s_log_addrs' mangled-name='cec_s_log_addrs' filepath='drivers/media/cec/core/cec-adap.c' line='1816' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_s_log_addrs'>
+        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1816' column='1'/>
+        <parameter type-id='ebc04a66' name='log_addrs' filepath='drivers/media/cec/core/cec-adap.c' line='1817' column='1'/>
+        <parameter type-id='b50a4934' name='block' filepath='drivers/media/cec/core/cec-adap.c' line='1817' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='cec_s_phys_addr' mangled-name='cec_s_phys_addr' filepath='drivers/media/cec/core/cec-adap.c' line='1611' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_s_phys_addr'>
-        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1611' column='1'/>
-        <parameter type-id='1dc6a898' name='phys_addr' filepath='drivers/media/cec/core/cec-adap.c' line='1611' column='1'/>
-        <parameter type-id='b50a4934' name='block' filepath='drivers/media/cec/core/cec-adap.c' line='1611' column='1'/>
+      <function-decl name='cec_s_phys_addr' mangled-name='cec_s_phys_addr' filepath='drivers/media/cec/core/cec-adap.c' line='1612' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_s_phys_addr'>
+        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1612' column='1'/>
+        <parameter type-id='1dc6a898' name='phys_addr' filepath='drivers/media/cec/core/cec-adap.c' line='1612' column='1'/>
+        <parameter type-id='b50a4934' name='block' filepath='drivers/media/cec/core/cec-adap.c' line='1612' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='cec_s_phys_addr_from_edid' mangled-name='cec_s_phys_addr_from_edid' filepath='drivers/media/cec/core/cec-adap.c' line='1622' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_s_phys_addr_from_edid'>
-        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1622' column='1'/>
-        <parameter type-id='776adf76' name='edid' filepath='drivers/media/cec/core/cec-adap.c' line='1623' column='1'/>
+      <function-decl name='cec_s_phys_addr_from_edid' mangled-name='cec_s_phys_addr_from_edid' filepath='drivers/media/cec/core/cec-adap.c' line='1623' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_s_phys_addr_from_edid'>
+        <parameter type-id='b94a2f7c' name='adap' filepath='drivers/media/cec/core/cec-adap.c' line='1623' column='1'/>
+        <parameter type-id='776adf76' name='edid' filepath='drivers/media/cec/core/cec-adap.c' line='1624' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='cec_transmit_attempt_done_ts' mangled-name='cec_transmit_attempt_done_ts' filepath='drivers/media/cec/core/cec-adap.c' line='690' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='cec_transmit_attempt_done_ts'>
@@ -125661,10 +125661,10 @@
         <parameter type-id='f9841541' name='params' filepath='drivers/usb/dwc3/gadget.c' line='273' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='dwc3_stop_active_transfer' mangled-name='dwc3_stop_active_transfer' filepath='drivers/usb/dwc3/gadget.c' line='3548' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dwc3_stop_active_transfer'>
-        <parameter type-id='b31af340' name='dep' filepath='drivers/usb/dwc3/gadget.c' line='3548' column='1'/>
-        <parameter type-id='b50a4934' name='force' filepath='drivers/usb/dwc3/gadget.c' line='3548' column='1'/>
-        <parameter type-id='b50a4934' name='interrupt' filepath='drivers/usb/dwc3/gadget.c' line='3549' column='1'/>
+      <function-decl name='dwc3_stop_active_transfer' mangled-name='dwc3_stop_active_transfer' filepath='drivers/usb/dwc3/gadget.c' line='3567' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='dwc3_stop_active_transfer'>
+        <parameter type-id='b31af340' name='dep' filepath='drivers/usb/dwc3/gadget.c' line='3567' column='1'/>
+        <parameter type-id='b50a4934' name='force' filepath='drivers/usb/dwc3/gadget.c' line='3567' column='1'/>
+        <parameter type-id='b50a4934' name='interrupt' filepath='drivers/usb/dwc3/gadget.c' line='3568' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='edac_device_add_device' mangled-name='edac_device_add_device' filepath='drivers/edac/edac_device.c' line='448' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='edac_device_add_device'>
@@ -133382,34 +133382,34 @@
         <parameter type-id='1dc6a898' name='val' filepath='drivers/net/phy/phy-core.c' line='877' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='phylink_connect_phy' mangled-name='phylink_connect_phy' filepath='drivers/net/phy/phylink.c' line='1045' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_connect_phy'>
-        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='1045' column='1'/>
-        <parameter type-id='7efbcaaf' name='phy' filepath='drivers/net/phy/phylink.c' line='1045' column='1'/>
+      <function-decl name='phylink_connect_phy' mangled-name='phylink_connect_phy' filepath='drivers/net/phy/phylink.c' line='1069' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_connect_phy'>
+        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='1069' column='1'/>
+        <parameter type-id='7efbcaaf' name='phy' filepath='drivers/net/phy/phylink.c' line='1069' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='phylink_create' mangled-name='phylink_create' filepath='drivers/net/phy/phylink.c' line='799' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_create'>
-        <parameter type-id='0dc3586b' name='config' filepath='drivers/net/phy/phylink.c' line='799' column='1'/>
-        <parameter type-id='4a935625' name='fwnode' filepath='drivers/net/phy/phylink.c' line='800' column='1'/>
-        <parameter type-id='d61bf978' name='iface' filepath='drivers/net/phy/phylink.c' line='801' column='1'/>
-        <parameter type-id='f6203fc2' name='mac_ops' filepath='drivers/net/phy/phylink.c' line='802' column='1'/>
+      <function-decl name='phylink_create' mangled-name='phylink_create' filepath='drivers/net/phy/phylink.c' line='823' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_create'>
+        <parameter type-id='0dc3586b' name='config' filepath='drivers/net/phy/phylink.c' line='823' column='1'/>
+        <parameter type-id='4a935625' name='fwnode' filepath='drivers/net/phy/phylink.c' line='824' column='1'/>
+        <parameter type-id='d61bf978' name='iface' filepath='drivers/net/phy/phylink.c' line='825' column='1'/>
+        <parameter type-id='f6203fc2' name='mac_ops' filepath='drivers/net/phy/phylink.c' line='826' column='1'/>
         <return type-id='56f3c6ca'/>
       </function-decl>
-      <function-decl name='phylink_destroy' mangled-name='phylink_destroy' filepath='drivers/net/phy/phylink.c' line='899' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_destroy'>
-        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='899' column='1'/>
+      <function-decl name='phylink_destroy' mangled-name='phylink_destroy' filepath='drivers/net/phy/phylink.c' line='923' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_destroy'>
+        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='923' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='phylink_of_phy_connect' mangled-name='phylink_of_phy_connect' filepath='drivers/net/phy/phylink.c' line='1079' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_of_phy_connect'>
-        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='1079' column='1'/>
-        <parameter type-id='9a537bbe' name='dn' filepath='drivers/net/phy/phylink.c' line='1079' column='1'/>
-        <parameter type-id='19c2251e' name='flags' filepath='drivers/net/phy/phylink.c' line='1080' column='1'/>
+      <function-decl name='phylink_of_phy_connect' mangled-name='phylink_of_phy_connect' filepath='drivers/net/phy/phylink.c' line='1103' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_of_phy_connect'>
+        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='1103' column='1'/>
+        <parameter type-id='9a537bbe' name='dn' filepath='drivers/net/phy/phylink.c' line='1103' column='1'/>
+        <parameter type-id='19c2251e' name='flags' filepath='drivers/net/phy/phylink.c' line='1104' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='phylink_set_port_modes' mangled-name='phylink_set_port_modes' filepath='drivers/net/phy/phylink.c' line='122' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_set_port_modes'>
         <parameter type-id='1d2c2b85' name='mask' filepath='drivers/net/phy/phylink.c' line='122' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='phylink_start' mangled-name='phylink_start' filepath='drivers/net/phy/phylink.c' line='1184' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_start'>
-        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='1184' column='1'/>
+      <function-decl name='phylink_start' mangled-name='phylink_start' filepath='drivers/net/phy/phylink.c' line='1208' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='phylink_start'>
+        <parameter type-id='56f3c6ca' name='pl' filepath='drivers/net/phy/phylink.c' line='1208' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='pick_highest_pushable_task' mangled-name='pick_highest_pushable_task' filepath='kernel/sched/rt.c' line='1760' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pick_highest_pushable_task'>
@@ -139542,10 +139542,10 @@
         <parameter type-id='eaa32e2f' name='data' filepath='kernel/trace/trace_events.c' line='287' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='trace_get_event_file' mangled-name='trace_get_event_file' filepath='kernel/trace/trace_events.c' line='2746' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='trace_get_event_file'>
-        <parameter type-id='80f4b756' name='instance' filepath='kernel/trace/trace_events.c' line='2746' column='1'/>
-        <parameter type-id='80f4b756' name='system' filepath='kernel/trace/trace_events.c' line='2747' column='1'/>
-        <parameter type-id='80f4b756' name='event' filepath='kernel/trace/trace_events.c' line='2748' column='1'/>
+      <function-decl name='trace_get_event_file' mangled-name='trace_get_event_file' filepath='kernel/trace/trace_events.c' line='2756' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='trace_get_event_file'>
+        <parameter type-id='80f4b756' name='instance' filepath='kernel/trace/trace_events.c' line='2756' column='1'/>
+        <parameter type-id='80f4b756' name='system' filepath='kernel/trace/trace_events.c' line='2757' column='1'/>
+        <parameter type-id='80f4b756' name='event' filepath='kernel/trace/trace_events.c' line='2758' column='1'/>
         <return type-id='3d4ca6d2'/>
       </function-decl>
       <function-decl name='trace_handle_return' mangled-name='trace_handle_return' filepath='kernel/trace/trace.c' line='2589' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='trace_handle_return'>
@@ -141222,9 +141222,9 @@
         <parameter type-id='ab85b8f2' name='urb' filepath='drivers/usb/core/hub.c' line='864' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='usb_hub_find_child' mangled-name='usb_hub_find_child' filepath='drivers/usb/core/hub.c' line='6105' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_hub_find_child'>
-        <parameter type-id='25e60cb2' name='hdev' filepath='drivers/usb/core/hub.c' line='6105' column='1'/>
-        <parameter type-id='95e97e5e' name='port1' filepath='drivers/usb/core/hub.c' line='6106' column='1'/>
+      <function-decl name='usb_hub_find_child' mangled-name='usb_hub_find_child' filepath='drivers/usb/core/hub.c' line='6117' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_hub_find_child'>
+        <parameter type-id='25e60cb2' name='hdev' filepath='drivers/usb/core/hub.c' line='6117' column='1'/>
+        <parameter type-id='95e97e5e' name='port1' filepath='drivers/usb/core/hub.c' line='6118' column='1'/>
         <return type-id='25e60cb2'/>
       </function-decl>
       <function-decl name='usb_ifnum_to_if' mangled-name='usb_ifnum_to_if' filepath='drivers/usb/core/usb.c' line='272' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_ifnum_to_if'>
@@ -141322,8 +141322,8 @@
         <parameter type-id='8bf48c31' name='intf' filepath='drivers/usb/core/usb.c' line='744' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='usb_queue_reset_device' mangled-name='usb_queue_reset_device' filepath='drivers/usb/core/hub.c' line='6085' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_queue_reset_device'>
-        <parameter type-id='8bf48c31' name='iface' filepath='drivers/usb/core/hub.c' line='6085' column='1'/>
+      <function-decl name='usb_queue_reset_device' mangled-name='usb_queue_reset_device' filepath='drivers/usb/core/hub.c' line='6097' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_queue_reset_device'>
+        <parameter type-id='8bf48c31' name='iface' filepath='drivers/usb/core/hub.c' line='6097' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='usb_register_dev' mangled-name='usb_register_dev' filepath='drivers/usb/core/file.c' line='156' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_register_dev'>
