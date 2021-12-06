@@ -2686,6 +2686,7 @@
       <elf-symbol name='iio_show_mount_matrix' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3fd71ac4'/>
       <elf-symbol name='iio_trigger_notify_done' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x32c17b35'/>
       <elf-symbol name='iio_update_buffers' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6304f8c5'/>
+      <elf-symbol name='iio_write_channel_raw' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfd0c8ed0'/>
       <elf-symbol name='import_iovec' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29ae814e'/>
       <elf-symbol name='in4_pton' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xac5fcec0'/>
       <elf-symbol name='in6_dev_finish_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x76a2324c'/>
@@ -128075,6 +128076,11 @@
         <parameter type-id='226853d2' name='indio_dev' filepath='drivers/iio/industrialio-buffer.c' line='1113' column='1'/>
         <parameter type-id='aa9ea333' name='insert_buffer' filepath='drivers/iio/industrialio-buffer.c' line='1114' column='1'/>
         <parameter type-id='aa9ea333' name='remove_buffer' filepath='drivers/iio/industrialio-buffer.c' line='1115' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='iio_write_channel_raw' mangled-name='iio_write_channel_raw' filepath='drivers/iio/inkern.c' line='854' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iio_write_channel_raw'>
+        <parameter type-id='2712709a' name='chan' filepath='drivers/iio/inkern.c' line='854' column='1'/>
+        <parameter type-id='95e97e5e' name='val' filepath='drivers/iio/inkern.c' line='854' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='import_iovec' mangled-name='import_iovec' filepath='lib/iov_iter.c' line='1812' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='import_iovec'>
