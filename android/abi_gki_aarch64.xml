@@ -425,6 +425,7 @@
       <elf-symbol name='__traceiter_android_vh_ftrace_oops_enter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1f2a1cc1'/>
       <elf-symbol name='__traceiter_android_vh_ftrace_oops_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x351f4988'/>
       <elf-symbol name='__traceiter_android_vh_ftrace_size_check' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd210b7ec'/>
+      <elf-symbol name='__traceiter_android_vh_futex_sleep_start' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x60eb49e2'/>
       <elf-symbol name='__traceiter_android_vh_get_from_fragment_pool' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x59ab5c34'/>
       <elf-symbol name='__traceiter_android_vh_gic_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd99a1ac6'/>
       <elf-symbol name='__traceiter_android_vh_gpio_block_read' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfbb0ca4d'/>
@@ -5884,6 +5885,7 @@
       <elf-symbol name='__tracepoint_android_vh_ftrace_oops_enter' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa485475e'/>
       <elf-symbol name='__tracepoint_android_vh_ftrace_oops_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xecd968c8'/>
       <elf-symbol name='__tracepoint_android_vh_ftrace_size_check' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcbc20ca'/>
+      <elf-symbol name='__tracepoint_android_vh_futex_sleep_start' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc26ab705'/>
       <elf-symbol name='__tracepoint_android_vh_get_from_fragment_pool' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x801cc5b5'/>
       <elf-symbol name='__tracepoint_android_vh_gic_resume' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x80464cd'/>
       <elf-symbol name='__tracepoint_android_vh_gpio_block_read' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4842b6e5'/>
@@ -115680,6 +115682,11 @@
         <parameter type-id='d8e6b335' name='ftrace_check' filepath='include/trace/hooks/ftrace_dump.h' line='24' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_futex_sleep_start' mangled-name='__traceiter_android_vh_futex_sleep_start' filepath='include/trace/hooks/futex.h' line='21' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_sleep_start'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='21' column='1'/>
+        <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/futex.h' line='21' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_get_from_fragment_pool' mangled-name='__traceiter_android_vh_get_from_fragment_pool' filepath='include/trace/hooks/mm.h' line='57' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_get_from_fragment_pool'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='57' column='1'/>
         <parameter type-id='df4b7819' name='mm' filepath='include/trace/hooks/mm.h' line='57' column='1'/>
@@ -116913,6 +116920,7 @@
       <var-decl name='__tracepoint_android_vh_ftrace_oops_enter' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_oops_enter' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_oops_enter'/>
       <var-decl name='__tracepoint_android_vh_ftrace_oops_exit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_oops_exit' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_oops_exit'/>
       <var-decl name='__tracepoint_android_vh_ftrace_size_check' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_size_check' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='24' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_size_check'/>
+      <var-decl name='__tracepoint_android_vh_futex_sleep_start' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_sleep_start' visibility='default' filepath='include/trace/hooks/futex.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_futex_sleep_start'/>
       <var-decl name='__tracepoint_android_vh_get_from_fragment_pool' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_get_from_fragment_pool' visibility='default' filepath='include/trace/hooks/mm.h' line='57' column='1' elf-symbol-id='__tracepoint_android_vh_get_from_fragment_pool'/>
       <var-decl name='__tracepoint_android_vh_gic_resume' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_gic_resume' visibility='default' filepath='include/trace/hooks/gic.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_gic_resume'/>
       <var-decl name='__tracepoint_android_vh_gpio_block_read' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_gpio_block_read' visibility='default' filepath='include/trace/hooks/gpiolib.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_gpio_block_read'/>
