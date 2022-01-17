@@ -311,6 +311,7 @@
       <elf-symbol name='__traceiter_android_rvh_force_compatible_post' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf102d826'/>
       <elf-symbol name='__traceiter_android_rvh_force_compatible_pre' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa0f0a435'/>
       <elf-symbol name='__traceiter_android_rvh_gic_v3_set_affinity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25a6dad6'/>
+      <elf-symbol name='__traceiter_android_rvh_iommu_setup_dma_ops' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x18bdcba6'/>
       <elf-symbol name='__traceiter_android_rvh_irqs_disable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x707d1f10'/>
       <elf-symbol name='__traceiter_android_rvh_irqs_enable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7a345722'/>
       <elf-symbol name='__traceiter_android_rvh_media_device_setup_link' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9fd6e7b6'/>
@@ -5888,6 +5889,7 @@
       <elf-symbol name='__tracepoint_android_rvh_force_compatible_post' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc39802e7'/>
       <elf-symbol name='__tracepoint_android_rvh_force_compatible_pre' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xff8626e2'/>
       <elf-symbol name='__tracepoint_android_rvh_gic_v3_set_affinity' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6ffd12d7'/>
+      <elf-symbol name='__tracepoint_android_rvh_iommu_setup_dma_ops' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2461d175'/>
       <elf-symbol name='__tracepoint_android_rvh_irqs_disable' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x44ac9f4b'/>
       <elf-symbol name='__tracepoint_android_rvh_irqs_enable' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc9d53b36'/>
       <elf-symbol name='__tracepoint_android_rvh_media_device_setup_link' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x60b6e13d'/>
@@ -115312,6 +115314,13 @@
         <parameter type-id='eaa32e2f' name='base' filepath='include/trace/hooks/gic_v3.h' line='18' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_rvh_iommu_setup_dma_ops' mangled-name='__traceiter_android_rvh_iommu_setup_dma_ops' filepath='include/trace/hooks/iommu.h' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_iommu_setup_dma_ops'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
+        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
+        <parameter type-id='91ce1af9' name='dma_base' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
+        <parameter type-id='91ce1af9' name='size' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_rvh_irqs_disable' mangled-name='__traceiter_android_rvh_irqs_disable' filepath='include/trace/hooks/preemptirq.h' line='22' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_irqs_disable'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/preemptirq.h' line='22' column='1'/>
         <parameter type-id='7359adad' name='ip' filepath='include/trace/hooks/preemptirq.h' line='22' column='1'/>
@@ -116223,39 +116232,39 @@
         <parameter type-id='1d2c2b85' name='addr' filepath='include/trace/hooks/mm.h' line='64' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_iommu_alloc_iova' mangled-name='__traceiter_android_vh_iommu_alloc_iova' filepath='include/trace/hooks/iommu.h' line='19' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_alloc_iova'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
-        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
-        <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
-        <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
+      <function-decl name='__traceiter_android_vh_iommu_alloc_iova' mangled-name='__traceiter_android_vh_iommu_alloc_iova' filepath='include/trace/hooks/iommu.h' line='23' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_alloc_iova'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='23' column='1'/>
+        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='23' column='1'/>
+        <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='23' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='23' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_iommu_free_iova' mangled-name='__traceiter_android_vh_iommu_free_iova' filepath='include/trace/hooks/iommu.h' line='29' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_free_iova'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
-        <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
-        <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
-        <return type-id='95e97e5e'/>
-      </function-decl>
-      <function-decl name='__traceiter_android_vh_iommu_iovad_alloc_iova' mangled-name='__traceiter_android_vh_iommu_iovad_alloc_iova' filepath='include/trace/hooks/iommu.h' line='25' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_iovad_alloc_iova'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='25' column='1'/>
-        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='25' column='1'/>
-        <parameter type-id='0c2c419d' name='iovad' filepath='include/trace/hooks/iommu.h' line='25' column='1'/>
-        <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='25' column='1'/>
-        <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='25' column='1'/>
-        <return type-id='95e97e5e'/>
-      </function-decl>
-      <function-decl name='__traceiter_android_vh_iommu_iovad_free_iova' mangled-name='__traceiter_android_vh_iommu_iovad_free_iova' filepath='include/trace/hooks/iommu.h' line='33' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_iovad_free_iova'>
+      <function-decl name='__traceiter_android_vh_iommu_free_iova' mangled-name='__traceiter_android_vh_iommu_free_iova' filepath='include/trace/hooks/iommu.h' line='33' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_free_iova'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='33' column='1'/>
-        <parameter type-id='0c2c419d' name='iovad' filepath='include/trace/hooks/iommu.h' line='33' column='1'/>
         <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='33' column='1'/>
         <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='33' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_iommu_setup_dma_ops' mangled-name='__traceiter_android_vh_iommu_setup_dma_ops' filepath='include/trace/hooks/iommu.h' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_setup_dma_ops'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
-        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
-        <parameter type-id='91ce1af9' name='dma_base' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
-        <parameter type-id='91ce1af9' name='size' filepath='include/trace/hooks/iommu.h' line='15' column='1'/>
+      <function-decl name='__traceiter_android_vh_iommu_iovad_alloc_iova' mangled-name='__traceiter_android_vh_iommu_iovad_alloc_iova' filepath='include/trace/hooks/iommu.h' line='29' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_iovad_alloc_iova'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
+        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
+        <parameter type-id='0c2c419d' name='iovad' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
+        <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='29' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_iommu_iovad_free_iova' mangled-name='__traceiter_android_vh_iommu_iovad_free_iova' filepath='include/trace/hooks/iommu.h' line='37' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_iovad_free_iova'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='37' column='1'/>
+        <parameter type-id='0c2c419d' name='iovad' filepath='include/trace/hooks/iommu.h' line='37' column='1'/>
+        <parameter type-id='cf29c9b3' name='iova' filepath='include/trace/hooks/iommu.h' line='37' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='include/trace/hooks/iommu.h' line='37' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_iommu_setup_dma_ops' mangled-name='__traceiter_android_vh_iommu_setup_dma_ops' filepath='include/trace/hooks/iommu.h' line='19' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_setup_dma_ops'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
+        <parameter type-id='fa0b179b' name='dev' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
+        <parameter type-id='91ce1af9' name='dma_base' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
+        <parameter type-id='91ce1af9' name='size' filepath='include/trace/hooks/iommu.h' line='19' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_ipi_stop' mangled-name='__traceiter_android_vh_ipi_stop' filepath='include/trace/hooks/debug.h' line='16' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_ipi_stop'>
@@ -117303,6 +117312,7 @@
       <var-decl name='__tracepoint_android_rvh_force_compatible_post' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_force_compatible_post' visibility='default' filepath='include/trace/hooks/sched.h' line='378' column='1' elf-symbol-id='__tracepoint_android_rvh_force_compatible_post'/>
       <var-decl name='__tracepoint_android_rvh_force_compatible_pre' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_force_compatible_pre' visibility='default' filepath='include/trace/hooks/sched.h' line='374' column='1' elf-symbol-id='__tracepoint_android_rvh_force_compatible_pre'/>
       <var-decl name='__tracepoint_android_rvh_gic_v3_set_affinity' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_gic_v3_set_affinity' visibility='default' filepath='include/trace/hooks/gic_v3.h' line='18' column='1' elf-symbol-id='__tracepoint_android_rvh_gic_v3_set_affinity'/>
+      <var-decl name='__tracepoint_android_rvh_iommu_setup_dma_ops' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_iommu_setup_dma_ops' visibility='default' filepath='include/trace/hooks/iommu.h' line='15' column='1' elf-symbol-id='__tracepoint_android_rvh_iommu_setup_dma_ops'/>
       <var-decl name='__tracepoint_android_rvh_irqs_disable' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_irqs_disable' visibility='default' filepath='include/trace/hooks/preemptirq.h' line='22' column='1' elf-symbol-id='__tracepoint_android_rvh_irqs_disable'/>
       <var-decl name='__tracepoint_android_rvh_irqs_enable' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_irqs_enable' visibility='default' filepath='include/trace/hooks/preemptirq.h' line='26' column='1' elf-symbol-id='__tracepoint_android_rvh_irqs_enable'/>
       <var-decl name='__tracepoint_android_rvh_media_device_setup_link' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_media_device_setup_link' visibility='default' filepath='include/trace/hooks/v4l2mc.h' line='19' column='1' elf-symbol-id='__tracepoint_android_rvh_media_device_setup_link'/>
@@ -117450,11 +117460,11 @@
       <var-decl name='__tracepoint_android_vh_gic_resume' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_gic_resume' visibility='default' filepath='include/trace/hooks/gic.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_gic_resume'/>
       <var-decl name='__tracepoint_android_vh_gpio_block_read' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_gpio_block_read' visibility='default' filepath='include/trace/hooks/gpiolib.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_gpio_block_read'/>
       <var-decl name='__tracepoint_android_vh_include_reserved_zone' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_include_reserved_zone' visibility='default' filepath='include/trace/hooks/mm.h' line='64' column='1' elf-symbol-id='__tracepoint_android_vh_include_reserved_zone'/>
-      <var-decl name='__tracepoint_android_vh_iommu_alloc_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_alloc_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_alloc_iova'/>
-      <var-decl name='__tracepoint_android_vh_iommu_free_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_free_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_free_iova'/>
-      <var-decl name='__tracepoint_android_vh_iommu_iovad_alloc_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_iovad_alloc_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='25' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_iovad_alloc_iova'/>
-      <var-decl name='__tracepoint_android_vh_iommu_iovad_free_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_iovad_free_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='33' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_iovad_free_iova'/>
-      <var-decl name='__tracepoint_android_vh_iommu_setup_dma_ops' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_setup_dma_ops' visibility='default' filepath='include/trace/hooks/iommu.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_setup_dma_ops'/>
+      <var-decl name='__tracepoint_android_vh_iommu_alloc_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_alloc_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='23' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_alloc_iova'/>
+      <var-decl name='__tracepoint_android_vh_iommu_free_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_free_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='33' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_free_iova'/>
+      <var-decl name='__tracepoint_android_vh_iommu_iovad_alloc_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_iovad_alloc_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_iovad_alloc_iova'/>
+      <var-decl name='__tracepoint_android_vh_iommu_iovad_free_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_iovad_free_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='37' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_iovad_free_iova'/>
+      <var-decl name='__tracepoint_android_vh_iommu_setup_dma_ops' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_setup_dma_ops' visibility='default' filepath='include/trace/hooks/iommu.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_setup_dma_ops'/>
       <var-decl name='__tracepoint_android_vh_ipi_stop' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ipi_stop' visibility='default' filepath='include/trace/hooks/debug.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_ipi_stop'/>
       <var-decl name='__tracepoint_android_vh_ipv6_gen_linklocal_addr' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ipv6_gen_linklocal_addr' visibility='default' filepath='include/trace/hooks/ipv6.h' line='14' column='1' elf-symbol-id='__tracepoint_android_vh_ipv6_gen_linklocal_addr'/>
       <var-decl name='__tracepoint_android_vh_irqtime_account_process_tick' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_irqtime_account_process_tick' visibility='default' filepath='include/trace/hooks/sched.h' line='303' column='1' elf-symbol-id='__tracepoint_android_vh_irqtime_account_process_tick'/>
