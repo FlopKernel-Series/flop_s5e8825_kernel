@@ -591,6 +591,7 @@
       <elf-symbol name='__traceiter_ipi_raise' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb82d26c2'/>
       <elf-symbol name='__traceiter_irq_handler_entry' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39d41d8f'/>
       <elf-symbol name='__traceiter_irq_handler_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb7a8058'/>
+      <elf-symbol name='__traceiter_kfree_skb' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4b7dfb99'/>
       <elf-symbol name='__traceiter_mm_vmscan_direct_reclaim_begin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x803bf202'/>
       <elf-symbol name='__traceiter_mm_vmscan_direct_reclaim_end' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf2520b8a'/>
       <elf-symbol name='__traceiter_pelt_cfs_tp' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc83a44f4'/>
@@ -6200,6 +6201,7 @@
       <elf-symbol name='__tracepoint_ipi_raise' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe612228f'/>
       <elf-symbol name='__tracepoint_irq_handler_entry' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3314215'/>
       <elf-symbol name='__tracepoint_irq_handler_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xadab1f32'/>
+      <elf-symbol name='__tracepoint_kfree_skb' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x72edf918'/>
       <elf-symbol name='__tracepoint_mm_vmscan_direct_reclaim_begin' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc8744'/>
       <elf-symbol name='__tracepoint_mm_vmscan_direct_reclaim_end' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe1130765'/>
       <elf-symbol name='__tracepoint_pelt_cfs_tp' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x64f74abf'/>
@@ -6403,6 +6405,7 @@
       <elf-symbol name='usb_debug_root' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbc6f9adc'/>
       <elf-symbol name='usb_hcd_pci_pm_ops' size='192' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x57b277fa'/>
       <elf-symbol name='usb_hcds_loaded' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc17515d7'/>
+      <elf-symbol name='usb_hid_driver' size='88' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x329af0a3'/>
       <elf-symbol name='uuid_null' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6dcf857f'/>
       <elf-symbol name='v4l2_subdev_call_wrappers' size='64' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x79ef8d9e'/>
       <elf-symbol name='v4l2_type_names' size='120' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x123959a1'/>
@@ -114121,8 +114124,8 @@
         <parameter type-id='70de91e2' name='link_ksettings' filepath='net/ethtool/ioctl.c' line='428' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__fdget' mangled-name='__fdget' filepath='fs/file.c' line='911' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__fdget'>
-        <parameter type-id='f0981eeb' name='fd' filepath='fs/file.c' line='911' column='1'/>
+      <function-decl name='__fdget' mangled-name='__fdget' filepath='fs/file.c' line='915' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__fdget'>
+        <parameter type-id='f0981eeb' name='fd' filepath='fs/file.c' line='915' column='1'/>
         <return type-id='7359adad'/>
       </function-decl>
       <function-decl name='__filemap_set_wb_err' mangled-name='__filemap_set_wb_err' filepath='mm/filemap.c' line='684' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__filemap_set_wb_err'>
@@ -117103,6 +117106,12 @@
         <parameter type-id='95e97e5e' name='ret' filepath='include/trace/events/irq.h' line='83' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_kfree_skb' mangled-name='__traceiter_kfree_skb' filepath='include/trace/events/skb.h' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_kfree_skb'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/events/skb.h' line='15' column='1'/>
+        <parameter type-id='0fbf3cfd' name='skb' filepath='include/trace/events/skb.h' line='15' column='1'/>
+        <parameter type-id='eaa32e2f' name='location' filepath='include/trace/events/skb.h' line='15' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_mm_vmscan_direct_reclaim_begin' mangled-name='__traceiter_mm_vmscan_direct_reclaim_begin' filepath='include/trace/events/vmscan.h' line='122' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_mm_vmscan_direct_reclaim_begin'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/events/vmscan.h' line='122' column='1'/>
         <parameter type-id='95e97e5e' name='order' filepath='include/trace/events/vmscan.h' line='122' column='1'/>
@@ -117632,6 +117641,7 @@
       <var-decl name='__tracepoint_ipi_raise' type-id='4ca0c298' mangled-name='__tracepoint_ipi_raise' visibility='default' filepath='include/trace/events/ipi.h' line='19' column='1' elf-symbol-id='__tracepoint_ipi_raise'/>
       <var-decl name='__tracepoint_irq_handler_entry' type-id='4ca0c298' mangled-name='__tracepoint_irq_handler_entry' visibility='default' filepath='include/trace/events/irq.h' line='53' column='1' elf-symbol-id='__tracepoint_irq_handler_entry'/>
       <var-decl name='__tracepoint_irq_handler_exit' type-id='4ca0c298' mangled-name='__tracepoint_irq_handler_exit' visibility='default' filepath='include/trace/events/irq.h' line='83' column='1' elf-symbol-id='__tracepoint_irq_handler_exit'/>
+      <var-decl name='__tracepoint_kfree_skb' type-id='4ca0c298' mangled-name='__tracepoint_kfree_skb' visibility='default' filepath='include/trace/events/skb.h' line='15' column='1' elf-symbol-id='__tracepoint_kfree_skb'/>
       <var-decl name='__tracepoint_mm_vmscan_direct_reclaim_begin' type-id='4ca0c298' mangled-name='__tracepoint_mm_vmscan_direct_reclaim_begin' visibility='default' filepath='include/trace/events/vmscan.h' line='122' column='1' elf-symbol-id='__tracepoint_mm_vmscan_direct_reclaim_begin'/>
       <var-decl name='__tracepoint_mm_vmscan_direct_reclaim_end' type-id='4ca0c298' mangled-name='__tracepoint_mm_vmscan_direct_reclaim_end' visibility='default' filepath='include/trace/events/vmscan.h' line='162' column='1' elf-symbol-id='__tracepoint_mm_vmscan_direct_reclaim_end'/>
       <var-decl name='__tracepoint_pelt_cfs_tp' type-id='4ca0c298' mangled-name='__tracepoint_pelt_cfs_tp' visibility='default' filepath='include/trace/events/sched.h' line='636' column='1' elf-symbol-id='__tracepoint_pelt_cfs_tp'/>
@@ -126791,8 +126801,8 @@
         <parameter type-id='77e79a4b' name='file' filepath='fs/file.c' line='633' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='fget' mangled-name='fget' filepath='fs/file.c' line='854' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fget'>
-        <parameter type-id='f0981eeb' name='fd' filepath='fs/file.c' line='854' column='1'/>
+      <function-decl name='fget' mangled-name='fget' filepath='fs/file.c' line='858' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fget'>
+        <parameter type-id='f0981eeb' name='fd' filepath='fs/file.c' line='858' column='1'/>
         <return type-id='77e79a4b'/>
       </function-decl>
       <function-decl name='fiemap_fill_next_extent' mangled-name='fiemap_fill_next_extent' filepath='fs/ioctl.c' line='112' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='fiemap_fill_next_extent'>
@@ -130018,11 +130028,11 @@
         <parameter type-id='f0981eeb' name='flags' filepath='fs/splice.c' line='619' column='1'/>
         <return type-id='79a0948f'/>
       </function-decl>
-      <function-decl name='iterate_fd' mangled-name='iterate_fd' filepath='fs/file.c' line='1176' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iterate_fd'>
-        <parameter type-id='16c53416' name='files' filepath='fs/file.c' line='1176' column='1'/>
-        <parameter type-id='f0981eeb' name='n' filepath='fs/file.c' line='1176' column='1'/>
-        <parameter type-id='d092647b' name='f' filepath='fs/file.c' line='1177' column='1'/>
-        <parameter type-id='eaa32e2f' name='p' filepath='fs/file.c' line='1178' column='1'/>
+      <function-decl name='iterate_fd' mangled-name='iterate_fd' filepath='fs/file.c' line='1180' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iterate_fd'>
+        <parameter type-id='16c53416' name='files' filepath='fs/file.c' line='1180' column='1'/>
+        <parameter type-id='f0981eeb' name='n' filepath='fs/file.c' line='1180' column='1'/>
+        <parameter type-id='d092647b' name='f' filepath='fs/file.c' line='1181' column='1'/>
+        <parameter type-id='eaa32e2f' name='p' filepath='fs/file.c' line='1182' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='iunique' mangled-name='iunique' filepath='fs/inode.c' line='1270' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iunique'>
@@ -142485,6 +142495,7 @@
         <return type-id='48b5725f'/>
       </function-decl>
       <var-decl name='usb_hcds_loaded' type-id='7359adad' mangled-name='usb_hcds_loaded' visibility='default' filepath='drivers/usb/core/hcd.c' line='81' column='1' elf-symbol-id='usb_hcds_loaded'/>
+      <var-decl name='usb_hid_driver' type-id='0e5e2ca6' mangled-name='usb_hid_driver' visibility='default' filepath='drivers/hid/usbhid/hid-core.c' line='1316' column='1' elf-symbol-id='usb_hid_driver'/>
       <function-decl name='usb_hub_clear_tt_buffer' mangled-name='usb_hub_clear_tt_buffer' filepath='drivers/usb/core/hub.c' line='864' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='usb_hub_clear_tt_buffer'>
         <parameter type-id='ab85b8f2' name='urb' filepath='drivers/usb/core/hub.c' line='864' column='1'/>
         <return type-id='95e97e5e'/>
