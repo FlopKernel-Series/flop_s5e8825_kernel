@@ -488,6 +488,7 @@
       <elf-symbol name='__traceiter_android_vh_override_creds' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9a373561'/>
       <elf-symbol name='__traceiter_android_vh_page_referenced_check_bypass' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8cedd'/>
       <elf-symbol name='__traceiter_android_vh_pagecache_get_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x57236bba'/>
+      <elf-symbol name='__traceiter_android_vh_pcplist_add_cma_pages_bypass' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1e223464'/>
       <elf-symbol name='__traceiter_android_vh_prepare_update_load_avg_se' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf9429c7b'/>
       <elf-symbol name='__traceiter_android_vh_printk_hotplug' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5728d98f'/>
       <elf-symbol name='__traceiter_android_vh_process_killed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf2abc9b'/>
@@ -6093,6 +6094,7 @@
       <elf-symbol name='__tracepoint_android_vh_override_creds' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x20d4dd3b'/>
       <elf-symbol name='__tracepoint_android_vh_page_referenced_check_bypass' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92dd76f5'/>
       <elf-symbol name='__tracepoint_android_vh_pagecache_get_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbcb3c40e'/>
+      <elf-symbol name='__tracepoint_android_vh_pcplist_add_cma_pages_bypass' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x133564aa'/>
       <elf-symbol name='__tracepoint_android_vh_prepare_update_load_avg_se' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3b73d0f'/>
       <elf-symbol name='__tracepoint_android_vh_printk_hotplug' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe329d35d'/>
       <elf-symbol name='__tracepoint_android_vh_process_killed' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb4b343cc'/>
@@ -116736,6 +116738,12 @@
         <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='41' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_pcplist_add_cma_pages_bypass' mangled-name='__traceiter_android_vh_pcplist_add_cma_pages_bypass' filepath='include/trace/hooks/mm.h' line='128' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_pcplist_add_cma_pages_bypass'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='128' column='1'/>
+        <parameter type-id='95e97e5e' name='migratetype' filepath='include/trace/hooks/mm.h' line='128' column='1'/>
+        <parameter type-id='d8e6b335' name='bypass' filepath='include/trace/hooks/mm.h' line='128' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_prepare_update_load_avg_se' mangled-name='__traceiter_android_vh_prepare_update_load_avg_se' filepath='include/trace/hooks/sched.h' line='350' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_prepare_update_load_avg_se'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='350' column='1'/>
         <parameter type-id='ff2b3d10' name='se' filepath='include/trace/hooks/sched.h' line='350' column='1'/>
@@ -117808,6 +117816,7 @@
       <var-decl name='__tracepoint_android_vh_override_creds' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_override_creds' visibility='default' filepath='include/trace/hooks/creds.h' line='24' column='1' elf-symbol-id='__tracepoint_android_vh_override_creds'/>
       <var-decl name='__tracepoint_android_vh_page_referenced_check_bypass' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_page_referenced_check_bypass' visibility='default' filepath='include/trace/hooks/vmscan.h' line='28' column='1' elf-symbol-id='__tracepoint_android_vh_page_referenced_check_bypass'/>
       <var-decl name='__tracepoint_android_vh_pagecache_get_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_pagecache_get_page' visibility='default' filepath='include/trace/hooks/mm.h' line='41' column='1' elf-symbol-id='__tracepoint_android_vh_pagecache_get_page'/>
+      <var-decl name='__tracepoint_android_vh_pcplist_add_cma_pages_bypass' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_pcplist_add_cma_pages_bypass' visibility='default' filepath='include/trace/hooks/mm.h' line='128' column='1' elf-symbol-id='__tracepoint_android_vh_pcplist_add_cma_pages_bypass'/>
       <var-decl name='__tracepoint_android_vh_prepare_update_load_avg_se' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_prepare_update_load_avg_se' visibility='default' filepath='include/trace/hooks/sched.h' line='350' column='1' elf-symbol-id='__tracepoint_android_vh_prepare_update_load_avg_se'/>
       <var-decl name='__tracepoint_android_vh_printk_hotplug' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_printk_hotplug' visibility='default' filepath='include/trace/hooks/printk.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_printk_hotplug'/>
       <var-decl name='__tracepoint_android_vh_process_killed' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_process_killed' visibility='default' filepath='include/trace/hooks/signal.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_process_killed'/>
