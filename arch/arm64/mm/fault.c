@@ -46,7 +46,7 @@
 #include <trace/hooks/fault.h>
 
 struct fault_info {
-	int	(*fn)(unsigned long far, unsigned int esr,
+	int	(*fn)(unsigned long far, unsigned long esr,
 		      struct pt_regs *regs);
 	int	sig;
 	int	code;
@@ -56,17 +56,17 @@ struct fault_info {
 static const struct fault_info fault_info[];
 static struct fault_info debug_fault_info[];
 
-static inline const struct fault_info *esr_to_fault_info(unsigned int esr)
+static inline const struct fault_info *esr_to_fault_info(unsigned long esr)
 {
 	return fault_info + (esr & ESR_ELx_FSC);
 }
 
-static inline const struct fault_info *esr_to_debug_fault_info(unsigned int esr)
+static inline const struct fault_info *esr_to_debug_fault_info(unsigned long esr)
 {
 	return debug_fault_info + DBG_ESR_EVT(esr);
 }
 
-static void data_abort_decode(unsigned int esr)
+static void data_abort_decode(unsigned long esr)
 {
 	pr_alert("Data abort info:\n");
 
@@ -88,11 +88,11 @@ static void data_abort_decode(unsigned int esr)
 		 (esr & ESR_ELx_WNR) >> ESR_ELx_WNR_SHIFT);
 }
 
-static void mem_abort_decode(unsigned int esr)
+static void mem_abort_decode(unsigned long esr)
 {
 	pr_alert("Mem abort info:\n");
 
-	pr_alert("  ESR = 0x%08x\n", esr);
+	pr_alert("  ESR = 0x%016lx\n", esr);
 	pr_alert("  EC = 0x%02lx: %s, IL = %u bits\n",
 		 ESR_ELx_EC(esr), esr_get_class_string(esr),
 		 (esr & ESR_ELx_IL) ? 32 : 16);
@@ -230,12 +230,12 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
 	return 1;
 }
 
-static bool is_el1_instruction_abort(unsigned int esr)
+static bool is_el1_instruction_abort(unsigned long esr)
 {
 	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_CUR;
 }
 
-static inline bool is_el1_permission_fault(unsigned long addr, unsigned int esr,
+static inline bool is_el1_permission_fault(unsigned long addr, unsigned long esr,
 					   struct pt_regs *regs)
 {
 	unsigned int ec       = ESR_ELx_EC(esr);
@@ -255,7 +255,7 @@ static inline bool is_el1_permission_fault(unsigned long addr, unsigned int esr,
 }
 
 static bool __kprobes is_spurious_el1_translation_fault(unsigned long addr,
-							unsigned int esr,
+							unsigned long esr,
 							struct pt_regs *regs)
 {
 	unsigned long flags;
@@ -287,7 +287,7 @@ static bool __kprobes is_spurious_el1_translation_fault(unsigned long addr,
 }
 
 static void die_kernel_fault(const char *msg, unsigned long addr,
-			     unsigned int esr, struct pt_regs *regs)
+			     unsigned long esr, struct pt_regs *regs)
 {
 	bust_spinlocks(1);
 
@@ -304,7 +304,7 @@ static void die_kernel_fault(const char *msg, unsigned long addr,
 }
 
 #ifdef CONFIG_KASAN_HW_TAGS
-static void report_tag_fault(unsigned long addr, unsigned int esr,
+static void report_tag_fault(unsigned long addr, unsigned long esr,
 			     struct pt_regs *regs)
 {
 	static bool reported;
@@ -329,11 +329,11 @@ static void report_tag_fault(unsigned long addr, unsigned int esr,
 }
 #else
 /* Tag faults aren't enabled without CONFIG_KASAN_HW_TAGS. */
-static inline void report_tag_fault(unsigned long addr, unsigned int esr,
+static inline void report_tag_fault(unsigned long addr, unsigned long esr,
 				    struct pt_regs *regs) { }
 #endif
 
-static void do_tag_recovery(unsigned long addr, unsigned int esr,
+static void do_tag_recovery(unsigned long addr, unsigned long esr,
 			   struct pt_regs *regs)
 {
 
@@ -348,10 +348,10 @@ static void do_tag_recovery(unsigned long addr, unsigned int esr,
 	isb();
 }
 
-static bool is_el1_mte_sync_tag_check_fault(unsigned int esr)
+static bool is_el1_mte_sync_tag_check_fault(unsigned long esr)
 {
-	unsigned int ec = ESR_ELx_EC(esr);
-	unsigned int fsc = esr & ESR_ELx_FSC;
+	unsigned long ec = ESR_ELx_EC(esr);
+	unsigned long fsc = esr & ESR_ELx_FSC;
 
 	if (ec != ESR_ELx_EC_DABT_CUR)
 		return false;
@@ -367,7 +367,7 @@ static bool is_translation_fault(unsigned long esr)
 	return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_FAULT;
 }
 
-static void __do_kernel_fault(unsigned long addr, unsigned int esr,
+static void __do_kernel_fault(unsigned long addr, unsigned long esr,
 			      struct pt_regs *regs)
 {
 	const char *msg;
@@ -409,7 +409,7 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
 	die_kernel_fault(msg, addr, esr, regs);
 }
 
-static void set_thread_esr(unsigned long address, unsigned int esr)
+static void set_thread_esr(unsigned long address, unsigned long esr)
 {
 	current->thread.fault_address = address;
 
@@ -457,7 +457,7 @@ static void set_thread_esr(unsigned long address, unsigned int esr)
 			 * exception level). Fail safe by not providing an ESR
 			 * context record at all.
 			 */
-			WARN(1, "ESR 0x%x is not DABT or IABT from EL0\n", esr);
+			WARN(1, "ESR 0x%lx is not DABT or IABT from EL0\n", esr);
 			esr = 0;
 			break;
 		}
@@ -466,7 +466,7 @@ static void set_thread_esr(unsigned long address, unsigned int esr)
 	current->thread.fault_code = esr;
 }
 
-static void do_bad_area(unsigned long far, unsigned int esr,
+static void do_bad_area(unsigned long far, unsigned long esr,
 			struct pt_regs *regs)
 {
 	unsigned long addr = untagged_addr(far);
@@ -516,7 +516,7 @@ static int __do_page_fault(struct vm_area_struct *vma, unsigned long addr,
 	return handle_mm_fault(vma, addr & PAGE_MASK, mm_flags, regs);
 }
 
-static bool is_el0_instruction_abort(unsigned int esr)
+static bool is_el0_instruction_abort(unsigned long esr)
 {
 	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
 }
@@ -525,12 +525,12 @@ static bool is_el0_instruction_abort(unsigned int esr)
  * Note: not valid for EL1 DC IVAC, but we never use that such that it
  * should fault. EL0 cannot issue DC IVAC (undef).
  */
-static bool is_write_abort(unsigned int esr)
+static bool is_write_abort(unsigned long esr)
 {
 	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
 }
 
-static int __kprobes do_page_fault(unsigned long far, unsigned int esr,
+static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
 				   struct pt_regs *regs)
 {
 	const struct fault_info *inf;
@@ -697,7 +697,7 @@ no_context:
 }
 
 static int __kprobes do_translation_fault(unsigned long far,
-					  unsigned int esr,
+					  unsigned long esr,
 					  struct pt_regs *regs)
 {
 	unsigned long addr = untagged_addr(far);
@@ -709,14 +709,14 @@ static int __kprobes do_translation_fault(unsigned long far,
 	return 0;
 }
 
-static int do_alignment_fault(unsigned long far, unsigned int esr,
+static int do_alignment_fault(unsigned long far, unsigned long esr,
 			      struct pt_regs *regs)
 {
 	do_bad_area(far, esr, regs);
 	return 0;
 }
 
-static int do_bad(unsigned long far, unsigned int esr, struct pt_regs *regs)
+static int do_bad(unsigned long far, unsigned long esr, struct pt_regs *regs)
 {
 	unsigned long addr = untagged_addr(far);
 	int ret = 1;
@@ -739,7 +739,7 @@ static phys_addr_t show_virt_to_phys(unsigned long addr)
 		       offset_in_page(addr);
 }
 
-static int do_sea(unsigned long far, unsigned int esr, struct pt_regs *regs)
+static int do_sea(unsigned long far, unsigned long esr, struct pt_regs *regs)
 {
 	const struct fault_info *inf;
 	unsigned long siaddr;
@@ -784,7 +784,7 @@ static int do_sea(unsigned long far, unsigned int esr, struct pt_regs *regs)
 	return 0;
 }
 
-static int do_tag_check_fault(unsigned long far, unsigned int esr,
+static int do_tag_check_fault(unsigned long far, unsigned long esr,
 			      struct pt_regs *regs)
 {
 	/*
@@ -864,7 +864,7 @@ static const struct fault_info fault_info[] = {
 	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 63"			},
 };
 
-void do_mem_abort(unsigned long far, unsigned int esr, struct pt_regs *regs)
+void do_mem_abort(unsigned long far, unsigned long esr, struct pt_regs *regs)
 {
 	const struct fault_info *inf = esr_to_fault_info(esr);
 	unsigned long addr = untagged_addr(far);
@@ -899,7 +899,7 @@ void do_el0_irq_bp_hardening(void)
 }
 NOKPROBE_SYMBOL(do_el0_irq_bp_hardening);
 
-void do_sp_pc_abort(unsigned long addr, unsigned int esr, struct pt_regs *regs)
+void do_sp_pc_abort(unsigned long addr, unsigned long esr, struct pt_regs *regs)
 {
 	trace_android_rvh_do_sp_pc_abort(regs, esr, addr, user_mode(regs));
 
@@ -913,7 +913,7 @@ void do_sp_pc_abort(unsigned long addr, unsigned int esr, struct pt_regs *regs)
 }
 NOKPROBE_SYMBOL(do_sp_pc_abort);
 
-int __init early_brk64(unsigned long addr, unsigned int esr,
+int __init early_brk64(unsigned long addr, unsigned long esr,
 		       struct pt_regs *regs);
 
 /*
@@ -933,7 +933,7 @@ static struct fault_info __refdata debug_fault_info[] = {
 };
 
 void __init hook_debug_fault_code(int nr,
-				  int (*fn)(unsigned long, unsigned int, struct pt_regs *),
+				  int (*fn)(unsigned long, unsigned long, struct pt_regs *),
 				  int sig, int code, const char *name)
 {
 	BUG_ON(nr < 0 || nr >= ARRAY_SIZE(debug_fault_info));
@@ -995,7 +995,7 @@ static int cortex_a76_erratum_1463225_debug_handler(struct pt_regs *regs)
 #endif /* CONFIG_ARM64_ERRATUM_1463225 */
 NOKPROBE_SYMBOL(cortex_a76_erratum_1463225_debug_handler);
 
-void do_debug_exception(unsigned long addr_if_watchpoint, unsigned int esr,
+void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
 			struct pt_regs *regs)
 {
 	const struct fault_info *inf = esr_to_debug_fault_info(esr);
