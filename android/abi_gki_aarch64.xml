@@ -2662,10 +2662,12 @@
       <elf-symbol name='gpiochip_generic_free' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x55a9ebb2'/>
       <elf-symbol name='gpiochip_generic_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb87c0c9f'/>
       <elf-symbol name='gpiochip_get_data' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x60fe6854'/>
+      <elf-symbol name='gpiochip_irqchip_add_key' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93830a9'/>
       <elf-symbol name='gpiochip_line_is_valid' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe71c5570'/>
       <elf-symbol name='gpiochip_lock_as_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1af638e6'/>
       <elf-symbol name='gpiochip_populate_parent_fwspec_fourcell' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5d9e1c12'/>
       <elf-symbol name='gpiochip_remove' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc4cd666f'/>
+      <elf-symbol name='gpiochip_set_nested_irqchip' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93d33609'/>
       <elf-symbol name='gpiochip_unlock_as_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x918a23c0'/>
       <elf-symbol name='gpiod_cansleep' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc72c995d'/>
       <elf-symbol name='gpiod_count' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd5f7243'/>
@@ -2693,9 +2695,14 @@
       <elf-symbol name='gro_cells_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9f54ead7'/>
       <elf-symbol name='gro_cells_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe6bba9d6'/>
       <elf-symbol name='gro_cells_receive' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdbaa53a7'/>
+      <elf-symbol name='gs_alloc_req' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x43efdaa9'/>
+      <elf-symbol name='gs_free_req' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x29b24be5'/>
       <elf-symbol name='gserial_alloc_line' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x33bfdca2'/>
       <elf-symbol name='gserial_connect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa3cbf4f3'/>
       <elf-symbol name='gserial_disconnect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x15087bcb'/>
+      <elf-symbol name='gserial_free_line' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb6652875'/>
+      <elf-symbol name='gserial_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0f7d9d0'/>
+      <elf-symbol name='gserial_suspend' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x656a0d2c'/>
       <elf-symbol name='guid_gen' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6c3f70e0'/>
       <elf-symbol name='handle_bad_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xee034014'/>
       <elf-symbol name='handle_edge_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x474af077'/>
@@ -129236,6 +129243,17 @@
         <parameter type-id='e324928d' name='gc' filepath='drivers/gpio/gpiolib.c' line='803' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
+      <function-decl name='gpiochip_irqchip_add_key' mangled-name='gpiochip_irqchip_add_key' filepath='drivers/gpio/gpiolib.c' line='1692' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gpiochip_irqchip_add_key'>
+        <parameter type-id='e324928d' name='gc' filepath='drivers/gpio/gpiolib.c' line='1692' column='1'/>
+        <parameter type-id='8846a616' name='irqchip' filepath='drivers/gpio/gpiolib.c' line='1693' column='1'/>
+        <parameter type-id='f0981eeb' name='first_irq' filepath='drivers/gpio/gpiolib.c' line='1694' column='1'/>
+        <parameter type-id='cdb741d3' name='handler' filepath='drivers/gpio/gpiolib.c' line='1695' column='1'/>
+        <parameter type-id='f0981eeb' name='type' filepath='drivers/gpio/gpiolib.c' line='1696' column='1'/>
+        <parameter type-id='b50a4934' name='threaded' filepath='drivers/gpio/gpiolib.c' line='1697' column='1'/>
+        <parameter type-id='a57283f9' name='lock_key' filepath='drivers/gpio/gpiolib.c' line='1698' column='1'/>
+        <parameter type-id='a57283f9' name='request_key' filepath='drivers/gpio/gpiolib.c' line='1699' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='gpiochip_line_is_valid' mangled-name='gpiochip_line_is_valid' filepath='drivers/gpio/gpiolib.c' line='462' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gpiochip_line_is_valid'>
         <parameter type-id='a171e66c' name='gc' filepath='drivers/gpio/gpiolib.c' line='462' column='1'/>
         <parameter type-id='f0981eeb' name='offset' filepath='drivers/gpio/gpiolib.c' line='463' column='1'/>
@@ -129254,6 +129272,12 @@
       </function-decl>
       <function-decl name='gpiochip_remove' mangled-name='gpiochip_remove' filepath='drivers/gpio/gpiolib.c' line='815' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gpiochip_remove'>
         <parameter type-id='e324928d' name='gc' filepath='drivers/gpio/gpiolib.c' line='815' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='gpiochip_set_nested_irqchip' mangled-name='gpiochip_set_nested_irqchip' filepath='drivers/gpio/gpiolib.c' line='1006' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gpiochip_set_nested_irqchip'>
+        <parameter type-id='e324928d' name='gc' filepath='drivers/gpio/gpiolib.c' line='1006' column='1'/>
+        <parameter type-id='8846a616' name='irqchip' filepath='drivers/gpio/gpiolib.c' line='1007' column='1'/>
+        <parameter type-id='f0981eeb' name='parent_irq' filepath='drivers/gpio/gpiolib.c' line='1008' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='gpiochip_unlock_as_irq' mangled-name='gpiochip_unlock_as_irq' filepath='drivers/gpio/gpiolib.c' line='3285' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gpiochip_unlock_as_irq'>
@@ -129383,6 +129407,17 @@
         <parameter type-id='0fbf3cfd' name='skb' filepath='net/core/gro_cells.c' line='12' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='gs_alloc_req' mangled-name='gs_alloc_req' filepath='drivers/usb/gadget/function/u_serial.c' line='162' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gs_alloc_req'>
+        <parameter type-id='63a08bf7' name='ep' filepath='drivers/usb/gadget/function/u_serial.c' line='162' column='1'/>
+        <parameter type-id='f0981eeb' name='len' filepath='drivers/usb/gadget/function/u_serial.c' line='162' column='1'/>
+        <parameter type-id='3eb7c31c' name='kmalloc_flags' filepath='drivers/usb/gadget/function/u_serial.c' line='162' column='1'/>
+        <return type-id='1a494567'/>
+      </function-decl>
+      <function-decl name='gs_free_req' mangled-name='gs_free_req' filepath='drivers/usb/gadget/function/u_serial.c' line='186' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gs_free_req'>
+        <parameter type-id='63a08bf7' name='ep' filepath='drivers/usb/gadget/function/u_serial.c' line='186' column='1'/>
+        <parameter type-id='1a494567' name='req' filepath='drivers/usb/gadget/function/u_serial.c' line='186' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='gserial_alloc_line' mangled-name='gserial_alloc_line' filepath='drivers/usb/gadget/function/u_serial.c' line='1261' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gserial_alloc_line'>
         <parameter type-id='cf536864' name='line_num' filepath='drivers/usb/gadget/function/u_serial.c' line='1261' column='1'/>
         <return type-id='95e97e5e'/>
@@ -129394,6 +129429,18 @@
       </function-decl>
       <function-decl name='gserial_disconnect' mangled-name='gserial_disconnect' filepath='drivers/usb/gadget/function/u_serial.c' line='1369' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gserial_disconnect'>
         <parameter type-id='3921c1a0' name='gser' filepath='drivers/usb/gadget/function/u_serial.c' line='1369' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='gserial_free_line' mangled-name='gserial_free_line' filepath='drivers/usb/gadget/function/u_serial.c' line='1196' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gserial_free_line'>
+        <parameter type-id='002ac4a6' name='port_num' filepath='drivers/usb/gadget/function/u_serial.c' line='1196' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='gserial_resume' mangled-name='gserial_resume' filepath='drivers/usb/gadget/function/u_serial.c' line='1425' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gserial_resume'>
+        <parameter type-id='3921c1a0' name='gser' filepath='drivers/usb/gadget/function/u_serial.c' line='1425' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='gserial_suspend' mangled-name='gserial_suspend' filepath='drivers/usb/gadget/function/u_serial.c' line='1414' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='gserial_suspend'>
+        <parameter type-id='3921c1a0' name='gser' filepath='drivers/usb/gadget/function/u_serial.c' line='1414' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='guid_gen' mangled-name='guid_gen' filepath='lib/uuid.c' line='60' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='guid_gen'>
