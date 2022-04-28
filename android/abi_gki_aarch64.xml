@@ -614,6 +614,7 @@
       <elf-symbol name='__traceiter_irq_handler_entry' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39d41d8f'/>
       <elf-symbol name='__traceiter_irq_handler_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb7a8058'/>
       <elf-symbol name='__traceiter_kfree_skb' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4b7dfb99'/>
+      <elf-symbol name='__traceiter_map' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x71c059d8'/>
       <elf-symbol name='__traceiter_mm_vmscan_direct_reclaim_begin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x803bf202'/>
       <elf-symbol name='__traceiter_mm_vmscan_direct_reclaim_end' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf2520b8a'/>
       <elf-symbol name='__traceiter_pelt_cfs_tp' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc83a44f4'/>
@@ -639,6 +640,7 @@
       <elf-symbol name='__traceiter_suspend_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5883efb'/>
       <elf-symbol name='__traceiter_task_newtask' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48c55435'/>
       <elf-symbol name='__traceiter_task_rename' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x985e9799'/>
+      <elf-symbol name='__traceiter_unmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd3ec851c'/>
       <elf-symbol name='__traceiter_usb_gadget_connect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7b576f56'/>
       <elf-symbol name='__traceiter_usb_gadget_disconnect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa39d4339'/>
       <elf-symbol name='__traceiter_workqueue_execute_end' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfd7ca165'/>
@@ -6388,6 +6390,7 @@
       <elf-symbol name='__tracepoint_irq_handler_entry' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3314215'/>
       <elf-symbol name='__tracepoint_irq_handler_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xadab1f32'/>
       <elf-symbol name='__tracepoint_kfree_skb' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x72edf918'/>
+      <elf-symbol name='__tracepoint_map' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x82bbf30b'/>
       <elf-symbol name='__tracepoint_mm_vmscan_direct_reclaim_begin' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc8744'/>
       <elf-symbol name='__tracepoint_mm_vmscan_direct_reclaim_end' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe1130765'/>
       <elf-symbol name='__tracepoint_pelt_cfs_tp' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x64f74abf'/>
@@ -6413,6 +6416,7 @@
       <elf-symbol name='__tracepoint_suspend_resume' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfede9222'/>
       <elf-symbol name='__tracepoint_task_newtask' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6ba3f1e6'/>
       <elf-symbol name='__tracepoint_task_rename' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x990f1219'/>
+      <elf-symbol name='__tracepoint_unmap' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2c36cc85'/>
       <elf-symbol name='__tracepoint_usb_gadget_connect' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5b9cc4fa'/>
       <elf-symbol name='__tracepoint_usb_gadget_disconnect' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x574ab5a6'/>
       <elf-symbol name='__tracepoint_workqueue_execute_end' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xecbfa711'/>
@@ -117982,6 +117986,13 @@
         <parameter type-id='eaa32e2f' name='location' filepath='include/trace/events/skb.h' line='15' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_map' mangled-name='__traceiter_map' filepath='include/trace/events/iommu.h' line='86' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_map'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/events/iommu.h' line='86' column='1'/>
+        <parameter type-id='7359adad' name='iova' filepath='include/trace/events/iommu.h' line='86' column='1'/>
+        <parameter type-id='2522883d' name='paddr' filepath='include/trace/events/iommu.h' line='86' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='include/trace/events/iommu.h' line='86' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_mm_vmscan_direct_reclaim_begin' mangled-name='__traceiter_mm_vmscan_direct_reclaim_begin' filepath='include/trace/events/vmscan.h' line='122' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_mm_vmscan_direct_reclaim_begin'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/events/vmscan.h' line='122' column='1'/>
         <parameter type-id='95e97e5e' name='order' filepath='include/trace/events/vmscan.h' line='122' column='1'/>
@@ -118128,6 +118139,13 @@
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/events/task.h' line='34' column='1'/>
         <parameter type-id='f23e2572' name='task' filepath='include/trace/events/task.h' line='34' column='1'/>
         <parameter type-id='80f4b756' name='comm' filepath='include/trace/events/task.h' line='34' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_unmap' mangled-name='__traceiter_unmap' filepath='include/trace/events/iommu.h' line='109' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_unmap'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/events/iommu.h' line='109' column='1'/>
+        <parameter type-id='7359adad' name='iova' filepath='include/trace/events/iommu.h' line='109' column='1'/>
+        <parameter type-id='b59d7dce' name='size' filepath='include/trace/events/iommu.h' line='109' column='1'/>
+        <parameter type-id='b59d7dce' name='unmapped_size' filepath='include/trace/events/iommu.h' line='109' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_usb_gadget_connect' mangled-name='__traceiter_usb_gadget_connect' filepath='drivers/usb/gadget/udc/./trace.h' line='119' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_usb_gadget_connect'>
@@ -118517,6 +118535,7 @@
       <var-decl name='__tracepoint_irq_handler_entry' type-id='4ca0c298' mangled-name='__tracepoint_irq_handler_entry' visibility='default' filepath='include/trace/events/irq.h' line='53' column='1' elf-symbol-id='__tracepoint_irq_handler_entry'/>
       <var-decl name='__tracepoint_irq_handler_exit' type-id='4ca0c298' mangled-name='__tracepoint_irq_handler_exit' visibility='default' filepath='include/trace/events/irq.h' line='83' column='1' elf-symbol-id='__tracepoint_irq_handler_exit'/>
       <var-decl name='__tracepoint_kfree_skb' type-id='4ca0c298' mangled-name='__tracepoint_kfree_skb' visibility='default' filepath='include/trace/events/skb.h' line='15' column='1' elf-symbol-id='__tracepoint_kfree_skb'/>
+      <var-decl name='__tracepoint_map' type-id='4ca0c298' mangled-name='__tracepoint_map' visibility='default' filepath='include/trace/events/iommu.h' line='86' column='1' elf-symbol-id='__tracepoint_map'/>
       <var-decl name='__tracepoint_mm_vmscan_direct_reclaim_begin' type-id='4ca0c298' mangled-name='__tracepoint_mm_vmscan_direct_reclaim_begin' visibility='default' filepath='include/trace/events/vmscan.h' line='122' column='1' elf-symbol-id='__tracepoint_mm_vmscan_direct_reclaim_begin'/>
       <var-decl name='__tracepoint_mm_vmscan_direct_reclaim_end' type-id='4ca0c298' mangled-name='__tracepoint_mm_vmscan_direct_reclaim_end' visibility='default' filepath='include/trace/events/vmscan.h' line='162' column='1' elf-symbol-id='__tracepoint_mm_vmscan_direct_reclaim_end'/>
       <var-decl name='__tracepoint_pelt_cfs_tp' type-id='4ca0c298' mangled-name='__tracepoint_pelt_cfs_tp' visibility='default' filepath='include/trace/events/sched.h' line='636' column='1' elf-symbol-id='__tracepoint_pelt_cfs_tp'/>
@@ -118542,6 +118561,7 @@
       <var-decl name='__tracepoint_suspend_resume' type-id='4ca0c298' mangled-name='__tracepoint_suspend_resume' visibility='default' filepath='include/trace/events/power.h' line='226' column='1' elf-symbol-id='__tracepoint_suspend_resume'/>
       <var-decl name='__tracepoint_task_newtask' type-id='4ca0c298' mangled-name='__tracepoint_task_newtask' visibility='default' filepath='include/trace/events/task.h' line='9' column='1' elf-symbol-id='__tracepoint_task_newtask'/>
       <var-decl name='__tracepoint_task_rename' type-id='4ca0c298' mangled-name='__tracepoint_task_rename' visibility='default' filepath='include/trace/events/task.h' line='34' column='1' elf-symbol-id='__tracepoint_task_rename'/>
+      <var-decl name='__tracepoint_unmap' type-id='4ca0c298' mangled-name='__tracepoint_unmap' visibility='default' filepath='include/trace/events/iommu.h' line='109' column='1' elf-symbol-id='__tracepoint_unmap'/>
       <var-decl name='__tracepoint_usb_gadget_connect' type-id='4ca0c298' mangled-name='__tracepoint_usb_gadget_connect' visibility='default' filepath='drivers/usb/gadget/udc/./trace.h' line='119' column='1' elf-symbol-id='__tracepoint_usb_gadget_connect'/>
       <var-decl name='__tracepoint_usb_gadget_disconnect' type-id='4ca0c298' mangled-name='__tracepoint_usb_gadget_disconnect' visibility='default' filepath='drivers/usb/gadget/udc/./trace.h' line='124' column='1' elf-symbol-id='__tracepoint_usb_gadget_disconnect'/>
       <var-decl name='__tracepoint_workqueue_execute_end' type-id='4ca0c298' mangled-name='__tracepoint_workqueue_execute_end' visibility='default' filepath='include/trace/events/workqueue.h' line='108' column='1' elf-symbol-id='__tracepoint_workqueue_execute_end'/>
