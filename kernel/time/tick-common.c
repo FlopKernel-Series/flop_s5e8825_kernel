@@ -558,6 +558,8 @@ void tick_unfreeze(void)
 		touch_softlockup_watchdog();
 		tick_resume_local();
 	}
+	if (tick_do_timer_cpu == TICK_DO_TIMER_NONE)
+		tick_do_timer_cpu = cpu;
 
 	tick_frozen_mask &= ~BIT(cpu);
 
