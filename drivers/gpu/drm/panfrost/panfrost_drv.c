@@ -248,6 +248,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 		struct drm_file *file)
 {
 	struct panfrost_device *pfdev = dev->dev_private;
+	struct panfrost_file_priv *file_priv = file->driver_priv;
 	struct drm_panfrost_submit *args = data;
 	struct drm_syncobj *sync_out = NULL;
 	struct panfrost_job *job;
@@ -277,7 +278,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 	job->jc = args->jc;
 	job->requirements = args->requirements;
 	job->flush_id = panfrost_gpu_get_latest_flush_id(pfdev);
-	job->file_priv = file->driver_priv;
+	job->mmu = file_priv->mmu;
 
 	ret = panfrost_copy_in_sync(dev, file, args, job);
 	if (ret)
@@ -287,7 +288,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 	if (ret)
 		goto fail_job;
 
-	ret = panfrost_job_push(job);
+	ret = panfrost_job_push(job, file_priv);
 	if (ret)
 		goto fail_job;
 
