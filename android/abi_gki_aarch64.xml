@@ -247,6 +247,7 @@
       <elf-symbol name='__request_module' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa24f23d8'/>
       <elf-symbol name='__request_percpu_irq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6d9ee2a0'/>
       <elf-symbol name='__request_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xca39ba0'/>
+      <elf-symbol name='__reset_control_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbcc25d66'/>
       <elf-symbol name='__rht_bucket_nested' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd0d156e9'/>
       <elf-symbol name='__rt_mutex_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x40bbb501'/>
       <elf-symbol name='__rtc_register_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfd8cab20'/>
@@ -115949,6 +115950,15 @@
         <parameter type-id='80f4b756' name='name' filepath='kernel/resource.c' line='1128' column='1'/>
         <parameter type-id='95e97e5e' name='flags' filepath='kernel/resource.c' line='1128' column='1'/>
         <return type-id='c9d64c0d'/>
+      </function-decl>
+      <function-decl name='__reset_control_get' mangled-name='__reset_control_get' filepath='drivers/reset/core.c' line='731' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__reset_control_get'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/reset/core.c' line='731' column='1'/>
+        <parameter type-id='80f4b756' name='id' filepath='drivers/reset/core.c' line='731' column='1'/>
+        <parameter type-id='95e97e5e' name='index' filepath='drivers/reset/core.c' line='732' column='1'/>
+        <parameter type-id='b50a4934' name='shared' filepath='drivers/reset/core.c' line='732' column='1'/>
+        <parameter type-id='b50a4934' name='optional' filepath='drivers/reset/core.c' line='732' column='1'/>
+        <parameter type-id='b50a4934' name='acquired' filepath='drivers/reset/core.c' line='733' column='1'/>
+        <return type-id='9f9b8114'/>
       </function-decl>
       <function-decl name='__rht_bucket_nested' mangled-name='__rht_bucket_nested' filepath='lib/rhashtable.c' line='1174' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__rht_bucket_nested'>
         <parameter type-id='6a4a6779' name='tbl' filepath='lib/rhashtable.c' line='1175' column='1'/>
