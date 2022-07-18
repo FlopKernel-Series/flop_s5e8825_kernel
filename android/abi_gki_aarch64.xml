@@ -1961,6 +1961,8 @@
       <elf-symbol name='drm_bridge_connector_disable_hpd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd45b758d'/>
       <elf-symbol name='drm_bridge_connector_enable_hpd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x210d07ae'/>
       <elf-symbol name='drm_bridge_connector_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8923f169'/>
+      <elf-symbol name='drm_bridge_detect' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x98449755'/>
+      <elf-symbol name='drm_bridge_get_modes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe476fda3'/>
       <elf-symbol name='drm_bridge_hpd_notify' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc7f8fbe'/>
       <elf-symbol name='drm_bridge_remove' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5714b3a'/>
       <elf-symbol name='drm_bus_flags_from_videomode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xad885165'/>
@@ -2049,6 +2051,7 @@
       <elf-symbol name='drm_dp_get_adjust_request_pre_emphasis' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x582f248e'/>
       <elf-symbol name='drm_dp_get_adjust_request_voltage' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc5c99a79'/>
       <elf-symbol name='drm_dp_get_edid_quirks' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa2f5c65b'/>
+      <elf-symbol name='drm_dp_get_phy_test_pattern' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf1b25b57'/>
       <elf-symbol name='drm_dp_link_rate_to_bw_code' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x26815dbc'/>
       <elf-symbol name='drm_dp_link_train_channel_eq_delay' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48b62a57'/>
       <elf-symbol name='drm_dp_link_train_clock_recovery_delay' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa6ff9496'/>
@@ -2064,7 +2067,9 @@
       <elf-symbol name='drm_dp_mst_topology_mgr_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x458dd067'/>
       <elf-symbol name='drm_dp_mst_topology_mgr_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd953636b'/>
       <elf-symbol name='drm_dp_mst_topology_mgr_set_mst' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7900cdaf'/>
+      <elf-symbol name='drm_dp_read_dpcd_caps' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8200cd9'/>
       <elf-symbol name='drm_dp_send_power_updown_phy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3d653bba'/>
+      <elf-symbol name='drm_dp_set_phy_test_pattern' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4a6c39bc'/>
       <elf-symbol name='drm_dp_set_subconnector_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45ec2b24'/>
       <elf-symbol name='drm_dp_start_crc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7e6af968'/>
       <elf-symbol name='drm_dp_stop_crc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe83f0f17'/>
@@ -2302,6 +2307,8 @@
       <elf-symbol name='drm_scdc_set_scrambling' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb33bf9b'/>
       <elf-symbol name='drm_scdc_write' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x14d97a66'/>
       <elf-symbol name='drm_self_refresh_helper_alter_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7b4d0a00'/>
+      <elf-symbol name='drm_self_refresh_helper_cleanup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x827b8e55'/>
+      <elf-symbol name='drm_self_refresh_helper_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x222e1ecd'/>
       <elf-symbol name='drm_send_event' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x685d0d2b'/>
       <elf-symbol name='drm_send_event_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc6ff96a5'/>
       <elf-symbol name='drm_set_preferred_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2e057e52'/>
@@ -27143,6 +27150,26 @@
         <return type-id='48b5725f'/>
       </function-type>
       <pointer-type-def type-id='7e369584' size-in-bits='64' id='368a0122'/>
+      <class-decl name='drm_dp_phy_test_params' size-in-bits='160' is-struct='yes' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1843' column='1' id='368b516f'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='link_rate' type-id='95e97e5e' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1844' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='num_lanes' type-id='f9b06939' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1845' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='40'>
+          <var-decl name='phy_pattern' type-id='f9b06939' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1846' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='48'>
+          <var-decl name='hbr2_reset' type-id='cf114704' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1847' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='custom80' type-id='097504df' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1848' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='144'>
+          <var-decl name='enhanced_frame_cap' type-id='b50a4934' visibility='default' filepath='include/drm/drm_dp_helper.h' line='1849' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='8a1373a3' size-in-bits='64' id='368d43d3'/>
       <class-decl name='snd_enc_vorbis' size-in-bits='160' is-struct='yes' visibility='default' filepath='include/uapi/sound/compress_params.h' line='272' column='1' id='36942ad7'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -80093,6 +80120,7 @@
       </function-type>
       <qualified-type-def type-id='3f4ad3b4' const='yes' id='b421eeb7'/>
       <pointer-type-def type-id='d1ae25b5' size-in-bits='64' id='b425394d'/>
+      <pointer-type-def type-id='368b516f' size-in-bits='64' id='b42b0bd7'/>
       <pointer-type-def type-id='03d44987' size-in-bits='64' id='b42ffb57'/>
       <function-type size-in-bits='64' id='b43302df'>
         <parameter type-id='807b7702'/>
@@ -82751,9 +82779,6 @@
         <parameter type-id='cd1b45ab'/>
         <return type-id='3f1a6b60'/>
       </function-type>
-      <array-type-def dimensions='1' type-id='e151255a' size-in-bits='131072' id='b9cedcb8'>
-        <subrange length='2048' type-id='7ff19f0f' id='e5323efb'/>
-      </array-type-def>
       <function-type size-in-bits='64' id='b9d8dce4'>
         <parameter type-id='807b7702'/>
         <parameter type-id='95e97e5e'/>
@@ -91644,9 +91669,6 @@
       <pointer-type-def type-id='c9196d18' size-in-bits='64' id='cba10b6e'/>
       <pointer-type-def type-id='4b7a84f4' size-in-bits='64' id='cba114b6'/>
       <pointer-type-def type-id='284260b8' size-in-bits='64' id='cba1f2de'/>
-      <array-type-def dimensions='1' type-id='e151255a' size-in-bits='65536' id='cba3052b'>
-        <subrange length='1024' type-id='7ff19f0f' id='c60446f8'/>
-      </array-type-def>
       <function-type size-in-bits='64' id='cba59087'>
         <parameter type-id='eaa32e2f'/>
         <parameter type-id='91ce1af9'/>
@@ -104795,20 +104817,7 @@
           <var-decl name='branch_reg' type-id='a80839c0' visibility='default' filepath='include/linux/perf_event.h' line='148' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='can_dev_rcv_lists' size-in-bits='196928' is-struct='yes' visibility='default' filepath='include/linux/can/can-ml.h' line='55' column='1' id='e82476af'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='rx' type-id='fc3a8480' visibility='default' filepath='include/linux/can/can-ml.h' line='56' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='rx_sff' type-id='b9cedcb8' visibility='default' filepath='include/linux/can/can-ml.h' line='57' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='131328'>
-          <var-decl name='rx_eff' type-id='cba3052b' visibility='default' filepath='include/linux/can/can-ml.h' line='58' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='196864'>
-          <var-decl name='entries' type-id='95e97e5e' visibility='default' filepath='include/linux/can/can-ml.h' line='59' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='can_dev_rcv_lists' is-struct='yes' visibility='default' is-declaration-only='yes' id='e82476af'/>
       <function-type size-in-bits='64' id='e82a9f1d'>
         <parameter type-id='77e79a4b'/>
         <parameter type-id='eaa32e2f'/>
@@ -126321,6 +126330,15 @@
         <parameter type-id='74d89ebd' name='encoder' filepath='drivers/gpu/drm/drm_bridge_connector.c' line='314' column='1'/>
         <return type-id='4db02c58'/>
       </function-decl>
+      <function-decl name='drm_bridge_detect' mangled-name='drm_bridge_detect' filepath='drivers/gpu/drm/drm_bridge.c' line='1054' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_bridge_detect'>
+        <parameter type-id='8582e5ec' name='bridge' filepath='drivers/gpu/drm/drm_bridge.c' line='1054' column='1'/>
+        <return type-id='f7b0e1b4'/>
+      </function-decl>
+      <function-decl name='drm_bridge_get_modes' mangled-name='drm_bridge_get_modes' filepath='drivers/gpu/drm/drm_bridge.c' line='1077' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_bridge_get_modes'>
+        <parameter type-id='8582e5ec' name='bridge' filepath='drivers/gpu/drm/drm_bridge.c' line='1077' column='1'/>
+        <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_bridge.c' line='1078' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='drm_bridge_hpd_notify' mangled-name='drm_bridge_hpd_notify' filepath='drivers/gpu/drm/drm_bridge.c' line='1189' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_bridge_hpd_notify'>
         <parameter type-id='8582e5ec' name='bridge' filepath='drivers/gpu/drm/drm_bridge.c' line='1189' column='1'/>
         <parameter type-id='f7b0e1b4' name='status' filepath='drivers/gpu/drm/drm_bridge.c' line='1190' column='1'/>
@@ -126771,6 +126789,11 @@
         <parameter type-id='776adf76' name='edid' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1912' column='1'/>
         <return type-id='19c2251e'/>
       </function-decl>
+      <function-decl name='drm_dp_get_phy_test_pattern' mangled-name='drm_dp_get_phy_test_pattern' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_get_phy_test_pattern'>
+        <parameter type-id='7c5f8cd8' name='aux' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2120' column='1'/>
+        <parameter type-id='b42b0bd7' name='data' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2121' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='drm_dp_link_rate_to_bw_code' mangled-name='drm_dp_link_rate_to_bw_code' filepath='drivers/gpu/drm/drm_dp_helper.c' line='171' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_link_rate_to_bw_code'>
         <parameter type-id='95e97e5e' name='link_rate' filepath='drivers/gpu/drm/drm_dp_helper.c' line='171' column='1'/>
         <return type-id='f9b06939'/>
@@ -126850,10 +126873,21 @@
         <parameter type-id='b50a4934' name='mst_state' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3700' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='drm_dp_read_dpcd_caps' mangled-name='drm_dp_read_dpcd_caps' filepath='drivers/gpu/drm/drm_dp_helper.c' line='555' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_read_dpcd_caps'>
+        <parameter type-id='7c5f8cd8' name='aux' filepath='drivers/gpu/drm/drm_dp_helper.c' line='555' column='1'/>
+        <parameter type-id='8bff8096' name='dpcd' filepath='drivers/gpu/drm/drm_dp_helper.c' line='556' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='drm_dp_send_power_updown_phy' mangled-name='drm_dp_send_power_updown_phy' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3213' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_send_power_updown_phy'>
         <parameter type-id='88a6d23d' name='mgr' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3213' column='1'/>
         <parameter type-id='c45d1018' name='port' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3214' column='1'/>
         <parameter type-id='b50a4934' name='power_up' filepath='drivers/gpu/drm/drm_dp_mst_topology.c' line='3214' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='drm_dp_set_phy_test_pattern' mangled-name='drm_dp_set_phy_test_pattern' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2171' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_set_phy_test_pattern'>
+        <parameter type-id='7c5f8cd8' name='aux' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2171' column='1'/>
+        <parameter type-id='b42b0bd7' name='data' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2172' column='1'/>
+        <parameter type-id='f9b06939' name='dp_rev' filepath='drivers/gpu/drm/drm_dp_helper.c' line='2172' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='drm_dp_set_subconnector_property' mangled-name='drm_dp_set_subconnector_property' filepath='drivers/gpu/drm/drm_dp_helper.c' line='1102' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_dp_set_subconnector_property'>
@@ -128077,6 +128111,14 @@
       <function-decl name='drm_self_refresh_helper_alter_state' mangled-name='drm_self_refresh_helper_alter_state' filepath='drivers/gpu/drm/drm_self_refresh_helper.c' line='187' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_self_refresh_helper_alter_state'>
         <parameter type-id='e3dd029e' name='state' filepath='drivers/gpu/drm/drm_self_refresh_helper.c' line='187' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='drm_self_refresh_helper_cleanup' mangled-name='drm_self_refresh_helper_cleanup' filepath='drivers/gpu/drm/drm_self_refresh_helper.c' line='268' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_self_refresh_helper_cleanup'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_self_refresh_helper.c' line='268' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='drm_self_refresh_helper_init' mangled-name='drm_self_refresh_helper_init' filepath='drivers/gpu/drm/drm_self_refresh_helper.c' line='232' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_self_refresh_helper_init'>
+        <parameter type-id='b64ad7cb' name='crtc' filepath='drivers/gpu/drm/drm_self_refresh_helper.c' line='232' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='drm_send_event' mangled-name='drm_send_event' filepath='drivers/gpu/drm/drm_file.c' line='878' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_send_event'>
         <parameter type-id='8898134d' name='dev' filepath='drivers/gpu/drm/drm_file.c' line='878' column='1'/>
