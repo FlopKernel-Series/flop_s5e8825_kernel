@@ -4975,6 +4975,7 @@
       <elf-symbol name='snd_soc_dapm_disable_pin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb4dc0197'/>
       <elf-symbol name='snd_soc_dapm_disable_pin_unlocked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6f1b5cb7'/>
       <elf-symbol name='snd_soc_dapm_enable_pin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfbb62918'/>
+      <elf-symbol name='snd_soc_dapm_force_bias_level' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8504e512'/>
       <elf-symbol name='snd_soc_dapm_force_enable_pin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c9248da'/>
       <elf-symbol name='snd_soc_dapm_force_enable_pin_unlocked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x976ffc86'/>
       <elf-symbol name='snd_soc_dapm_get_enum_double' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6c4e91f4'/>
@@ -5012,6 +5013,8 @@
       <elf-symbol name='snd_soc_info_volsw_sx' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xece5dbb9'/>
       <elf-symbol name='snd_soc_info_xr_sx' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa16c1099'/>
       <elf-symbol name='snd_soc_jack_add_gpios' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf99c1d26'/>
+      <elf-symbol name='snd_soc_jack_add_zones' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeaafecb4'/>
+      <elf-symbol name='snd_soc_jack_get_type' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa6a446f1'/>
       <elf-symbol name='snd_soc_jack_notifier_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa6c59cae'/>
       <elf-symbol name='snd_soc_jack_report' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x298bf8c8'/>
       <elf-symbol name='snd_soc_limit_volume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x59806031'/>
@@ -11788,6 +11791,23 @@
       </function-type>
       <pointer-type-def type-id='34a2420f' size-in-bits='64' id='0e87d404'/>
       <pointer-type-def type-id='5f5c9d88' size-in-bits='64' id='0e87f9be'/>
+      <class-decl name='snd_soc_jack_zone' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/sound/soc.h' line='655' column='1' id='0e951989'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='min_mv' type-id='f0981eeb' visibility='default' filepath='include/sound/soc.h' line='656' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='max_mv' type-id='f0981eeb' visibility='default' filepath='include/sound/soc.h' line='657' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='jack_type' type-id='f0981eeb' visibility='default' filepath='include/sound/soc.h' line='658' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='debounce_time' type-id='f0981eeb' visibility='default' filepath='include/sound/soc.h' line='659' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='list' type-id='72f469ec' visibility='default' filepath='include/sound/soc.h' line='660' column='1'/>
+        </data-member>
+      </class-decl>
       <class-decl name='ipv6_devstat' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/net/if_inet6.h' line='156' column='1' id='0e97f526'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='proc_dir_entry' type-id='d077e928' visibility='default' filepath='include/net/if_inet6.h' line='157' column='1'/>
@@ -71756,6 +71776,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='c6fb334e' size-in-bits='64' id='a171e66c'/>
+      <pointer-type-def type-id='0e951989' size-in-bits='64' id='a17398a1'/>
       <pointer-type-def type-id='258baccc' size-in-bits='64' id='a176c78e'/>
       <class-decl name='__anonymous_struct__' size-in-bits='128' is-struct='yes' is-anonymous='yes' naming-typedef-id='7799da43' visibility='default' filepath='include/linux/siphash.h' line='20' column='1' id='a1908dcc'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -141916,6 +141937,11 @@
         <parameter type-id='80f4b756' name='pin' filepath='sound/soc/soc-dapm.c' line='4548' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='snd_soc_dapm_force_bias_level' mangled-name='snd_soc_dapm_force_bias_level' filepath='sound/soc/soc-dapm.c' line='695' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_soc_dapm_force_bias_level'>
+        <parameter type-id='70d004a5' name='dapm' filepath='sound/soc/soc-dapm.c' line='695' column='1'/>
+        <parameter type-id='f078c744' name='level' filepath='sound/soc/soc-dapm.c' line='696' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='snd_soc_dapm_force_enable_pin' mangled-name='snd_soc_dapm_force_enable_pin' filepath='sound/soc/soc-dapm.c' line='4615' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_soc_dapm_force_enable_pin'>
         <parameter type-id='70d004a5' name='dapm' filepath='sound/soc/soc-dapm.c' line='4615' column='1'/>
         <parameter type-id='80f4b756' name='pin' filepath='sound/soc/soc-dapm.c' line='4616' column='1'/>
@@ -142101,6 +142127,17 @@
         <parameter type-id='12a060a4' name='jack' filepath='sound/soc/soc-jack.c' line='312' column='1'/>
         <parameter type-id='95e97e5e' name='count' filepath='sound/soc/soc-jack.c' line='312' column='1'/>
         <parameter type-id='3c269e0e' name='gpios' filepath='sound/soc/soc-jack.c' line='313' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='snd_soc_jack_add_zones' mangled-name='snd_soc_jack_add_zones' filepath='sound/soc/soc-jack.c' line='97' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_soc_jack_add_zones'>
+        <parameter type-id='12a060a4' name='jack' filepath='sound/soc/soc-jack.c' line='97' column='1'/>
+        <parameter type-id='95e97e5e' name='count' filepath='sound/soc/soc-jack.c' line='97' column='1'/>
+        <parameter type-id='a17398a1' name='zones' filepath='sound/soc/soc-jack.c' line='98' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='snd_soc_jack_get_type' mangled-name='snd_soc_jack_get_type' filepath='sound/soc/soc-jack.c' line='120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_soc_jack_get_type'>
+        <parameter type-id='12a060a4' name='jack' filepath='sound/soc/soc-jack.c' line='120' column='1'/>
+        <parameter type-id='95e97e5e' name='micbias_voltage' filepath='sound/soc/soc-jack.c' line='120' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='snd_soc_jack_notifier_register' mangled-name='snd_soc_jack_notifier_register' filepath='sound/soc/soc-jack.c' line='188' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='snd_soc_jack_notifier_register'>
