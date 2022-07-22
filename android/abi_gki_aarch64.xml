@@ -3865,6 +3865,7 @@
       <elf-symbol name='pci_device_group' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2998069f'/>
       <elf-symbol name='pci_device_is_present' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbba71ba0'/>
       <elf-symbol name='pci_disable_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6469305c'/>
+      <elf-symbol name='pci_disable_link_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56e7eb83'/>
       <elf-symbol name='pci_disable_msi' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x28d3798b'/>
       <elf-symbol name='pci_disable_msix' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa0d0262c'/>
       <elf-symbol name='pci_disable_pcie_error_reporting' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x238f464a'/>
@@ -136215,6 +136216,11 @@
       <function-decl name='pci_disable_device' mangled-name='pci_disable_device' filepath='drivers/pci/pci.c' line='2145' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_disable_device'>
         <parameter type-id='85196e3f' name='dev' filepath='drivers/pci/pci.c' line='2145' column='1'/>
         <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='pci_disable_link_state' mangled-name='pci_disable_link_state' filepath='drivers/pci/pcie/aspm.c' line='1137' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_disable_link_state'>
+        <parameter type-id='85196e3f' name='pdev' filepath='drivers/pci/pcie/aspm.c' line='1137' column='1'/>
+        <parameter type-id='95e97e5e' name='state' filepath='drivers/pci/pcie/aspm.c' line='1137' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='pci_disable_msi' mangled-name='pci_disable_msi' filepath='include/linux/pci.h' line='1486' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='pci_disable_msi'>
         <parameter type-id='85196e3f'/>
