@@ -531,6 +531,7 @@
       <elf-symbol name='__traceiter_android_vh_rwsem_write_finished' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd61e47bf'/>
       <elf-symbol name='__traceiter_android_vh_save_track_hash' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9bc3dfb7'/>
       <elf-symbol name='__traceiter_android_vh_save_vmalloc_stack' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdf510618'/>
+      <elf-symbol name='__traceiter_android_vh_sched_pelt_multiplier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb77c8f2d'/>
       <elf-symbol name='__traceiter_android_vh_sched_setaffinity_early' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3a5239a6'/>
       <elf-symbol name='__traceiter_android_vh_sched_stat_runtime_rt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x18567cdf'/>
       <elf-symbol name='__traceiter_android_vh_scheduler_tick' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8c91de8f'/>
@@ -2631,6 +2632,7 @@
       <elf-symbol name='get_option' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0e10781'/>
       <elf-symbol name='get_options' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x868acba5'/>
       <elf-symbol name='get_page_owner_handle' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbdd70345'/>
+      <elf-symbol name='get_pelt_halflife' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x252824e3'/>
       <elf-symbol name='get_pfnblock_flags_mask' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xde8367aa'/>
       <elf-symbol name='get_pid_task' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd15a2984'/>
       <elf-symbol name='get_random_bytes' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x79aa04a2'/>
@@ -6338,6 +6340,7 @@
       <elf-symbol name='__tracepoint_android_vh_rwsem_write_wait_start' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x18bed6ed'/>
       <elf-symbol name='__tracepoint_android_vh_save_track_hash' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2c772ac0'/>
       <elf-symbol name='__tracepoint_android_vh_save_vmalloc_stack' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x36909fb9'/>
+      <elf-symbol name='__tracepoint_android_vh_sched_pelt_multiplier' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8363715e'/>
       <elf-symbol name='__tracepoint_android_vh_sched_setaffinity_early' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcec91b82'/>
       <elf-symbol name='__tracepoint_android_vh_sched_show_task' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd3537ff4'/>
       <elf-symbol name='__tracepoint_android_vh_sched_stat_runtime_rt' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb1b2fe1'/>
@@ -8296,7 +8299,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='51d715c2' size-in-bits='64' id='0588e2f0'/>
-      <enum-decl name='binder_work_type' filepath='include/../drivers/android/binder_internal.h' line='174' column='1' id='058a7b49'>
+      <enum-decl name='binder_work_type' filepath='include/../drivers/android/binder_internal.h' line='152' column='1' id='058a7b49'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='BINDER_WORK_TRANSACTION' value='1'/>
         <enumerator name='BINDER_WORK_TRANSACTION_COMPLETE' value='2'/>
@@ -9710,21 +9713,21 @@
       </class-decl>
       <qualified-type-def type-id='e094094c' const='yes' id='090a4485'/>
       <pointer-type-def type-id='edc58e1f' size-in-bits='64' id='090a6ee7'/>
-      <class-decl name='__anonymous_struct__' size-in-bits='16' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='280' column='1' id='090c230d'>
+      <class-decl name='__anonymous_struct__' size-in-bits='16' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='258' column='1' id='090c230d'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='sched_policy' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='284' column='1'/>
+          <var-decl name='sched_policy' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='262' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2'>
-          <var-decl name='inherit_rt' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='285' column='1'/>
+          <var-decl name='inherit_rt' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='263' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3'>
-          <var-decl name='accept_fds' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='286' column='1'/>
+          <var-decl name='accept_fds' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='264' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4'>
-          <var-decl name='txn_security_ctx' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='287' column='1'/>
+          <var-decl name='txn_security_ctx' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='265' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='min_priority' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='288' column='1'/>
+          <var-decl name='min_priority' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='266' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='09101d01'>
@@ -14880,15 +14883,15 @@
       <pointer-type-def type-id='62e0e7f7' size-in-bits='64' id='1654068f'/>
       <pointer-type-def type-id='869f5d80' size-in-bits='64' id='1654d99a'/>
       <pointer-type-def type-id='4dd76d14' size-in-bits='64' id='16575f26'/>
-      <class-decl name='rq_flags' size-in-bits='128' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1230' column='1' id='16588ac8'>
+      <class-decl name='rq_flags' size-in-bits='128' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1240' column='1' id='16588ac8'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='flags' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1231' column='1'/>
+          <var-decl name='flags' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1241' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='cookie' type-id='3cb90f9b' visibility='default' filepath='kernel/sched/sched.h' line='1232' column='1'/>
+          <var-decl name='cookie' type-id='3cb90f9b' visibility='default' filepath='kernel/sched/sched.h' line='1242' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='clock_update_flags' type-id='f0981eeb' visibility='default' filepath='kernel/sched/sched.h' line='1239' column='1'/>
+          <var-decl name='clock_update_flags' type-id='f0981eeb' visibility='default' filepath='kernel/sched/sched.h' line='1249' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='165b46a0'>
@@ -30568,18 +30571,18 @@
       </function-type>
       <pointer-type-def type-id='bf3ef905' size-in-bits='64' id='3f2244fd'/>
       <pointer-type-def type-id='c3b52303' size-in-bits='64' id='3f26598b'/>
-      <class-decl name='irqtime' size-in-bits='192' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='2375' column='1' id='3f278a28'>
+      <class-decl name='irqtime' size-in-bits='192' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='2385' column='1' id='3f278a28'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='total' type-id='91ce1af9' visibility='default' filepath='kernel/sched/sched.h' line='2376' column='1'/>
+          <var-decl name='total' type-id='91ce1af9' visibility='default' filepath='kernel/sched/sched.h' line='2386' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='tick_delta' type-id='91ce1af9' visibility='default' filepath='kernel/sched/sched.h' line='2377' column='1'/>
+          <var-decl name='tick_delta' type-id='91ce1af9' visibility='default' filepath='kernel/sched/sched.h' line='2387' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='irq_start_time' type-id='91ce1af9' visibility='default' filepath='kernel/sched/sched.h' line='2378' column='1'/>
+          <var-decl name='irq_start_time' type-id='91ce1af9' visibility='default' filepath='kernel/sched/sched.h' line='2388' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='sync' type-id='e4d85780' visibility='default' filepath='kernel/sched/sched.h' line='2379' column='1'/>
+          <var-decl name='sync' type-id='e4d85780' visibility='default' filepath='kernel/sched/sched.h' line='2389' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='849373e7' size-in-bits='64' id='3f29b13b'/>
@@ -43860,7 +43863,23 @@
       <pointer-type-def type-id='d06eb7e7' size-in-bits='64' id='5f0c5b93'/>
       <class-decl name='gic_chip_data' is-struct='yes' visibility='default' is-declaration-only='yes' id='5f0ccb86'/>
       <pointer-type-def type-id='538b7809' size-in-bits='64' id='5f0d472d'/>
-      <class-decl name='fsverity_operations' is-struct='yes' visibility='default' is-declaration-only='yes' id='5f0d764c'/>
+      <class-decl name='fsverity_operations' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/fsverity.h' line='18' column='1' id='5f0d764c'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='begin_enable_verity' type-id='4da4101d' visibility='default' filepath='include/linux/fsverity.h' line='33' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='end_enable_verity' type-id='f3a5c46a' visibility='default' filepath='include/linux/fsverity.h' line='55' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='get_verity_descriptor' type-id='c60354f3' visibility='default' filepath='include/linux/fsverity.h' line='72' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='read_merkle_tree_page' type-id='68b31938' visibility='default' filepath='include/linux/fsverity.h' line='93' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='write_merkle_tree_block' type-id='c748f227' visibility='default' filepath='include/linux/fsverity.h' line='110' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='0caa7082' size-in-bits='64' id='5f29549c'/>
       <class-decl name='configfs_attribute' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/configfs.h' line='117' column='1' id='5f2e9b8f'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -48150,6 +48169,7 @@
         <parameter type-id='5d6479ae'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <pointer-type-def type-id='e151e1f6' size-in-bits='64' id='68b31938'/>
       <class-decl name='module_layout' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/linux/module.h' line='328' column='1' id='68b3d9a8'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='base' type-id='eaa32e2f' visibility='default' filepath='include/linux/module.h' line='330' column='1'/>
@@ -50424,18 +50444,18 @@
       <pointer-type-def type-id='929b60e1' size-in-bits='64' id='6e829429'/>
       <qualified-type-def type-id='bc84eba7' const='yes' id='6e85ad52'/>
       <qualified-type-def type-id='b8e47b1d' const='yes' id='6e88f746'/>
-      <class-decl name='__anonymous_struct__' size-in-bits='8' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='270' column='1' id='6e94dd8f'>
+      <class-decl name='__anonymous_struct__' size-in-bits='8' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='248' column='1' id='6e94dd8f'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='has_strong_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='275' column='1'/>
+          <var-decl name='has_strong_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='253' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='pending_strong_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='276' column='1'/>
+          <var-decl name='pending_strong_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='254' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2'>
-          <var-decl name='has_weak_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='277' column='1'/>
+          <var-decl name='has_weak_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='255' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3'>
-          <var-decl name='pending_weak_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='278' column='1'/>
+          <var-decl name='pending_weak_ref' type-id='f9b06939' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='256' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='v4l2_subdev_video_ops' size-in-bits='1152' is-struct='yes' visibility='default' filepath='include/media/v4l2-subdev.h' line='409' column='1' id='6eadcbe0'>
@@ -50838,12 +50858,12 @@
         <return type-id='4bdecfd7'/>
       </function-type>
       <pointer-type-def type-id='c2e9ee66' size-in-bits='64' id='707be29c'/>
-      <union-decl name='__anonymous_union__' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='258' column='1' id='707ccb72'>
+      <union-decl name='__anonymous_union__' size-in-bits='192' is-anonymous='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='236' column='1' id='707ccb72'>
         <data-member access='public'>
-          <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='259' column='1'/>
+          <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='237' column='1'/>
         </data-member>
         <data-member access='public'>
-          <var-decl name='dead_node' type-id='03a4a074' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='260' column='1'/>
+          <var-decl name='dead_node' type-id='03a4a074' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='238' column='1'/>
         </data-member>
       </union-decl>
       <class-decl name='regulator_ops' size-in-bits='2176' is-struct='yes' visibility='default' filepath='include/linux/regulator/driver.h' line='128' column='1' id='707f0173'>
@@ -52665,81 +52685,81 @@
       <pointer-type-def type-id='1e330b13' size-in-bits='64' id='74005b57'/>
       <pointer-type-def type-id='5cdc243f' size-in-bits='64' id='740a3d8b'/>
       <pointer-type-def type-id='f3d147c3' size-in-bits='64' id='740b5503'/>
-      <class-decl name='sched_class' size-in-bits='1792' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1821' column='1' id='74191d27'>
+      <class-decl name='sched_class' size-in-bits='1792' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1831' column='1' id='74191d27'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='uclamp_enabled' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1824' column='1'/>
+          <var-decl name='uclamp_enabled' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1834' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='enqueue_task' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1827' column='1'/>
+          <var-decl name='enqueue_task' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1837' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='dequeue_task' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1828' column='1'/>
+          <var-decl name='dequeue_task' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1838' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='yield_task' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1829' column='1'/>
+          <var-decl name='yield_task' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1839' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='yield_to_task' type-id='7dfe7cd1' visibility='default' filepath='kernel/sched/sched.h' line='1830' column='1'/>
+          <var-decl name='yield_to_task' type-id='7dfe7cd1' visibility='default' filepath='kernel/sched/sched.h' line='1840' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='check_preempt_curr' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1832' column='1'/>
+          <var-decl name='check_preempt_curr' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1842' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='pick_next_task' type-id='ba703a2c' visibility='default' filepath='kernel/sched/sched.h' line='1834' column='1'/>
+          <var-decl name='pick_next_task' type-id='ba703a2c' visibility='default' filepath='kernel/sched/sched.h' line='1844' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='put_prev_task' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1836' column='1'/>
+          <var-decl name='put_prev_task' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1846' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='set_next_task' type-id='f13b7179' visibility='default' filepath='kernel/sched/sched.h' line='1837' column='1'/>
+          <var-decl name='set_next_task' type-id='f13b7179' visibility='default' filepath='kernel/sched/sched.h' line='1847' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='balance' type-id='5346c726' visibility='default' filepath='kernel/sched/sched.h' line='1840' column='1'/>
+          <var-decl name='balance' type-id='5346c726' visibility='default' filepath='kernel/sched/sched.h' line='1850' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='select_task_rq' type-id='c3408547' visibility='default' filepath='kernel/sched/sched.h' line='1841' column='1'/>
+          <var-decl name='select_task_rq' type-id='c3408547' visibility='default' filepath='kernel/sched/sched.h' line='1851' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='migrate_task_rq' type-id='9d640202' visibility='default' filepath='kernel/sched/sched.h' line='1842' column='1'/>
+          <var-decl name='migrate_task_rq' type-id='9d640202' visibility='default' filepath='kernel/sched/sched.h' line='1852' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='task_woken' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1844' column='1'/>
+          <var-decl name='task_woken' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1854' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='set_cpus_allowed' type-id='54777a92' visibility='default' filepath='kernel/sched/sched.h' line='1846' column='1'/>
+          <var-decl name='set_cpus_allowed' type-id='54777a92' visibility='default' filepath='kernel/sched/sched.h' line='1856' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='rq_online' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1849' column='1'/>
+          <var-decl name='rq_online' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1859' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='960'>
-          <var-decl name='rq_offline' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1850' column='1'/>
+          <var-decl name='rq_offline' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1860' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1024'>
-          <var-decl name='task_tick' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1853' column='1'/>
+          <var-decl name='task_tick' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1863' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='task_fork' type-id='1c9e19fb' visibility='default' filepath='kernel/sched/sched.h' line='1854' column='1'/>
+          <var-decl name='task_fork' type-id='1c9e19fb' visibility='default' filepath='kernel/sched/sched.h' line='1864' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='task_dead' type-id='1c9e19fb' visibility='default' filepath='kernel/sched/sched.h' line='1855' column='1'/>
+          <var-decl name='task_dead' type-id='1c9e19fb' visibility='default' filepath='kernel/sched/sched.h' line='1865' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1216'>
-          <var-decl name='switched_from' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1862' column='1'/>
+          <var-decl name='switched_from' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1872' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='switched_to' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1863' column='1'/>
+          <var-decl name='switched_to' type-id='604374c8' visibility='default' filepath='kernel/sched/sched.h' line='1873' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1344'>
-          <var-decl name='prio_changed' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1864' column='1'/>
+          <var-decl name='prio_changed' type-id='7bca30b7' visibility='default' filepath='kernel/sched/sched.h' line='1874' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1408'>
-          <var-decl name='get_rr_interval' type-id='c79c9f4c' visibility='default' filepath='kernel/sched/sched.h' line='1867' column='1'/>
+          <var-decl name='get_rr_interval' type-id='c79c9f4c' visibility='default' filepath='kernel/sched/sched.h' line='1877' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1472'>
-          <var-decl name='update_curr' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1870' column='1'/>
+          <var-decl name='update_curr' type-id='d846ae3b' visibility='default' filepath='kernel/sched/sched.h' line='1880' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1536'>
-          <var-decl name='task_change_group' type-id='9d640202' visibility='default' filepath='kernel/sched/sched.h' line='1876' column='1'/>
+          <var-decl name='task_change_group' type-id='9d640202' visibility='default' filepath='kernel/sched/sched.h' line='1886' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='c2d135ef' size-in-bits='64' id='741cc96e'/>
@@ -53028,6 +53048,13 @@
         <parameter type-id='8582e5ec'/>
         <parameter type-id='4db02c58'/>
         <return type-id='c91d1bf1'/>
+      </function-type>
+      <function-type size-in-bits='64' id='74fec388'>
+        <parameter type-id='77e79a4b'/>
+        <parameter type-id='eaa32e2f'/>
+        <parameter type-id='b59d7dce'/>
+        <parameter type-id='91ce1af9'/>
+        <return type-id='95e97e5e'/>
       </function-type>
       <function-type size-in-bits='64' id='7506f11b'>
         <parameter type-id='b7c1d7d5'/>
@@ -56590,18 +56617,18 @@
       </function-type>
       <pointer-type-def type-id='bb068c9f' size-in-bits='64' id='7e01f3db'/>
       <pointer-type-def type-id='f92f0413' size-in-bits='64' id='7e03a5bb'/>
-      <class-decl name='binder_stats' size-in-bits='1696' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='157' column='1' id='7e06c299'>
+      <class-decl name='binder_stats' size-in-bits='1696' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='135' column='1' id='7e06c299'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='br' type-id='157c59dd' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='158' column='1'/>
+          <var-decl name='br' type-id='157c59dd' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='136' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='bc' type-id='a8f65929' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='159' column='1'/>
+          <var-decl name='bc' type-id='a8f65929' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='137' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1248'>
-          <var-decl name='obj_created' type-id='6ee1b7b8' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='160' column='1'/>
+          <var-decl name='obj_created' type-id='6ee1b7b8' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='138' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1472'>
-          <var-decl name='obj_deleted' type-id='6ee1b7b8' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='161' column='1'/>
+          <var-decl name='obj_deleted' type-id='6ee1b7b8' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='139' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='f85fb8c6' size-in-bits='64' id='7e17c1b8'/>
@@ -60555,12 +60582,12 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='c0e5af96' size-in-bits='64' id='8734cf20'/>
-      <class-decl name='binder_error' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='186' column='1' id='873851dc'>
+      <class-decl name='binder_error' size-in-bits='256' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='164' column='1' id='873851dc'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='work' type-id='ba2d75bf' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='187' column='1'/>
+          <var-decl name='work' type-id='ba2d75bf' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='165' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='cmd' type-id='8f92235e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='188' column='1'/>
+          <var-decl name='cmd' type-id='8f92235e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='166' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='eed1c4b9' size-in-bits='64' id='87387369'/>
@@ -60735,7 +60762,7 @@
           <var-decl name='size' type-id='acc63fdf' visibility='default' filepath='include/linux/fb.h' line='499' column='1'/>
         </data-member>
       </class-decl>
-      <enum-decl name='schedutil_type' filepath='kernel/sched/sched.h' line='2578' column='1' id='8769acd0'>
+      <enum-decl name='schedutil_type' filepath='kernel/sched/sched.h' line='2588' column='1' id='8769acd0'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='FREQUENCY_UTIL' value='0'/>
         <enumerator name='ENERGY_UTIL' value='1'/>
@@ -62375,24 +62402,24 @@
         <enumerator name='V4L2_PRIORITY_RECORD' value='3'/>
         <enumerator name='V4L2_PRIORITY_DEFAULT' value='2'/>
       </enum-decl>
-      <class-decl name='sched_group' size-in-bits='256' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1514' column='1' id='8b6491f4'>
+      <class-decl name='sched_group' size-in-bits='256' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1524' column='1' id='8b6491f4'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='next' type-id='f3dcd492' visibility='default' filepath='kernel/sched/sched.h' line='1515' column='1'/>
+          <var-decl name='next' type-id='f3dcd492' visibility='default' filepath='kernel/sched/sched.h' line='1525' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='ref' type-id='49178f86' visibility='default' filepath='kernel/sched/sched.h' line='1516' column='1'/>
+          <var-decl name='ref' type-id='49178f86' visibility='default' filepath='kernel/sched/sched.h' line='1526' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='group_weight' type-id='f0981eeb' visibility='default' filepath='kernel/sched/sched.h' line='1518' column='1'/>
+          <var-decl name='group_weight' type-id='f0981eeb' visibility='default' filepath='kernel/sched/sched.h' line='1528' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='sgc' type-id='29a48d3d' visibility='default' filepath='kernel/sched/sched.h' line='1519' column='1'/>
+          <var-decl name='sgc' type-id='29a48d3d' visibility='default' filepath='kernel/sched/sched.h' line='1529' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='asym_prefer_cpu' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1520' column='1'/>
+          <var-decl name='asym_prefer_cpu' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1530' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='cpumask' type-id='c99b5ecd' visibility='default' filepath='kernel/sched/sched.h' line='1529' column='1'/>
+          <var-decl name='cpumask' type-id='c99b5ecd' visibility='default' filepath='kernel/sched/sched.h' line='1539' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='8b66a21e'>
@@ -65589,6 +65616,13 @@
       <typedef-decl name='u64' type-id='d3130597' filepath='include/asm-generic/int-ll64.h' line='23' column='1' id='91ce1af9'/>
       <pointer-type-def type-id='d7c60ba9' size-in-bits='64' id='91d0de51'/>
       <pointer-type-def type-id='d0fea0bb' size-in-bits='64' id='91d6c443'/>
+      <function-type size-in-bits='64' id='91dc7ea3'>
+        <parameter type-id='7e666abe'/>
+        <parameter type-id='eaa32e2f'/>
+        <parameter type-id='91ce1af9'/>
+        <parameter type-id='95e97e5e'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <function-type size-in-bits='64' id='91de15a8'>
         <parameter type-id='7e666abe'/>
         <parameter type-id='cd1b45ab'/>
@@ -73565,54 +73599,54 @@
       <pointer-type-def type-id='26e73b36' size-in-bits='64' id='a5896095'/>
       <pointer-type-def type-id='ff7ec25b' size-in-bits='64' id='a58c17e3'/>
       <pointer-type-def type-id='080ce95f' size-in-bits='64' id='a58e905b'/>
-      <class-decl name='binder_node' size-in-bits='1024' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='254' column='1' id='a59e83d6'>
+      <class-decl name='binder_node' size-in-bits='1024' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='232' column='1' id='a59e83d6'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='debug_id' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='255' column='1'/>
+          <var-decl name='debug_id' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='233' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='256' column='1'/>
+          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='234' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='work' type-id='ba2d75bf' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='257' column='1'/>
+          <var-decl name='work' type-id='ba2d75bf' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='235' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='' type-id='707ccb72' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='258' column='1'/>
+          <var-decl name='' type-id='707ccb72' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='236' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='proc' type-id='d1cf113c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='262' column='1'/>
+          <var-decl name='proc' type-id='d1cf113c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='240' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='refs' type-id='e151255a' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='263' column='1'/>
+          <var-decl name='refs' type-id='e151255a' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='241' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='internal_strong_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='264' column='1'/>
+          <var-decl name='internal_strong_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='242' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='608'>
-          <var-decl name='local_weak_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='265' column='1'/>
+          <var-decl name='local_weak_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='243' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='local_strong_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='266' column='1'/>
+          <var-decl name='local_strong_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='244' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='672'>
-          <var-decl name='tmp_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='267' column='1'/>
+          <var-decl name='tmp_refs' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='245' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='ptr' type-id='6867e656' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='268' column='1'/>
+          <var-decl name='ptr' type-id='6867e656' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='246' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='cookie' type-id='6867e656' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='269' column='1'/>
+          <var-decl name='cookie' type-id='6867e656' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='247' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='' type-id='6e94dd8f' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='270' column='1'/>
+          <var-decl name='' type-id='6e94dd8f' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='248' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='840'>
-          <var-decl name='' type-id='090c230d' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='280' column='1'/>
+          <var-decl name='' type-id='090c230d' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='258' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='856'>
-          <var-decl name='has_async_transaction' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='290' column='1'/>
+          <var-decl name='has_async_transaction' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='268' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='async_todo' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='291' column='1'/>
+          <var-decl name='async_todo' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='269' column='1'/>
         </data-member>
       </class-decl>
       <qualified-type-def type-id='f817de22' const='yes' id='a5b2ff47'/>
@@ -82433,54 +82467,54 @@
           <var-decl name='counters' type-id='9f2cce4b' visibility='default' filepath='include/linux/percpu_counter.h' line='26' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='binder_thread' size-in-bits='3328' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='536' column='1' id='b92ecbfe'>
+      <class-decl name='binder_thread' size-in-bits='3328' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='514' column='1' id='b92ecbfe'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='proc' type-id='d1cf113c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='537' column='1'/>
+          <var-decl name='proc' type-id='d1cf113c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='515' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='538' column='1'/>
+          <var-decl name='rb_node' type-id='2a8a6332' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='516' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='waiting_thread_node' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='539' column='1'/>
+          <var-decl name='waiting_thread_node' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='517' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='pid' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='540' column='1'/>
+          <var-decl name='pid' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='518' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='416'>
-          <var-decl name='looper' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='541' column='1'/>
+          <var-decl name='looper' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='519' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='looper_need_return' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='542' column='1'/>
+          <var-decl name='looper_need_return' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='520' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='transaction_stack' type-id='f4c3bb4c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='543' column='1'/>
+          <var-decl name='transaction_stack' type-id='f4c3bb4c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='521' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='todo' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='544' column='1'/>
+          <var-decl name='todo' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='522' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='process_todo' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='545' column='1'/>
+          <var-decl name='process_todo' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='523' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='return_error' type-id='873851dc' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='546' column='1'/>
+          <var-decl name='return_error' type-id='873851dc' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='524' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1024'>
-          <var-decl name='reply_error' type-id='873851dc' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='547' column='1'/>
+          <var-decl name='reply_error' type-id='873851dc' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='525' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='wait' type-id='b5ab048f' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='548' column='1'/>
+          <var-decl name='wait' type-id='b5ab048f' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='526' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1472'>
-          <var-decl name='stats' type-id='7e06c299' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='549' column='1'/>
+          <var-decl name='stats' type-id='7e06c299' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='527' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3168'>
-          <var-decl name='tmp_ref' type-id='49178f86' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='550' column='1'/>
+          <var-decl name='tmp_ref' type-id='49178f86' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='528' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3200'>
-          <var-decl name='is_dead' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='551' column='1'/>
+          <var-decl name='is_dead' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='529' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3264'>
-          <var-decl name='task' type-id='f23e2572' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='552' column='1'/>
+          <var-decl name='task' type-id='f23e2572' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='530' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='26761b9f' size-in-bits='64' id='b9348c47'/>
@@ -82765,12 +82799,12 @@
         <parameter type-id='30a11035'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <class-decl name='binder_work' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='171' column='1' id='ba2d75bf'>
+      <class-decl name='binder_work' size-in-bits='192' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='149' column='1' id='ba2d75bf'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='entry' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='172' column='1'/>
+          <var-decl name='entry' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='150' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='type' type-id='058a7b49' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='183' column='1'/>
+          <var-decl name='type' type-id='058a7b49' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='161' column='1'/>
         </data-member>
       </class-decl>
       <union-decl name='__anonymous_union__' size-in-bits='128' is-anonymous='yes' visibility='default' filepath='include/linux/dcache.h' line='108' column='1' id='ba311a3a'>
@@ -90060,6 +90094,7 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='e9ec35ef' size-in-bits='64' id='c7432356'/>
+      <pointer-type-def type-id='91dc7ea3' size-in-bits='64' id='c748f227'/>
       <union-decl name='__anonymous_union__' size-in-bits='4096' is-anonymous='yes' visibility='default' filepath='include/uapi/sound/asound.h' line='1054' column='1' id='c74bfd7b'>
         <data-member access='public'>
           <var-decl name='value' type-id='1fd26250' visibility='default' filepath='include/uapi/sound/asound.h' line='1055' column='1'/>
@@ -100054,12 +100089,12 @@
       </function-type>
       <pointer-type-def type-id='c8e0fb8e' size-in-bits='64' id='de2c232c'/>
       <pointer-type-def type-id='30c83839' size-in-bits='64' id='de3045e9'/>
-      <class-decl name='binder_priority' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='365' column='1' id='de30810e'>
+      <class-decl name='binder_priority' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='343' column='1' id='de30810e'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='sched_policy' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='366' column='1'/>
+          <var-decl name='sched_policy' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='344' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='prio' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='367' column='1'/>
+          <var-decl name='prio' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='345' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='de345e44'>
@@ -101691,6 +101726,12 @@
           <var-decl name='first' type-id='08cbad52' visibility='default' filepath='include/linux/types.h' line='183' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='e151e1f6'>
+        <parameter type-id='7e666abe'/>
+        <parameter type-id='7359adad'/>
+        <parameter type-id='7359adad'/>
+        <return type-id='02f11ed4'/>
+      </function-type>
       <pointer-type-def type-id='20b17040' size-in-bits='64' id='e153f6de'/>
       <pointer-type-def type-id='4d94804e' size-in-bits='64' id='e15671b8'/>
       <pointer-type-def type-id='59aa7dba' size-in-bits='64' id='e15aece4'/>
@@ -105709,30 +105750,30 @@
           <var-decl name='poll' type-id='b347e5ac' visibility='default' filepath='include/linux/cgroup-defs.h' line='617' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='sched_group_capacity' size-in-bits='384' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1495' column='1' id='ea3de64d'>
+      <class-decl name='sched_group_capacity' size-in-bits='384' is-struct='yes' visibility='default' filepath='kernel/sched/sched.h' line='1505' column='1' id='ea3de64d'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='ref' type-id='49178f86' visibility='default' filepath='kernel/sched/sched.h' line='1496' column='1'/>
+          <var-decl name='ref' type-id='49178f86' visibility='default' filepath='kernel/sched/sched.h' line='1506' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='capacity' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1501' column='1'/>
+          <var-decl name='capacity' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1511' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='min_capacity' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1502' column='1'/>
+          <var-decl name='min_capacity' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1512' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='max_capacity' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1503' column='1'/>
+          <var-decl name='max_capacity' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1513' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='next_update' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1504' column='1'/>
+          <var-decl name='next_update' type-id='7359adad' visibility='default' filepath='kernel/sched/sched.h' line='1514' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='imbalance' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1505' column='1'/>
+          <var-decl name='imbalance' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1515' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='352'>
-          <var-decl name='id' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1508' column='1'/>
+          <var-decl name='id' type-id='95e97e5e' visibility='default' filepath='kernel/sched/sched.h' line='1518' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='cpumask' type-id='c99b5ecd' visibility='default' filepath='kernel/sched/sched.h' line='1511' column='1'/>
+          <var-decl name='cpumask' type-id='c99b5ecd' visibility='default' filepath='kernel/sched/sched.h' line='1521' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='26f907b0' size-in-bits='64' id='ea44f8d2'/>
@@ -106555,66 +106596,66 @@
           <var-decl name='code' type-id='930ea9f9' visibility='default' filepath='include/drm/drm_edid.h' line='142' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='binder_transaction' size-in-bits='1408' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='572' column='1' id='ebce8e86'>
+      <class-decl name='binder_transaction' size-in-bits='1408' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='550' column='1' id='ebce8e86'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='debug_id' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='573' column='1'/>
+          <var-decl name='debug_id' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='551' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='work' type-id='ba2d75bf' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='574' column='1'/>
+          <var-decl name='work' type-id='ba2d75bf' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='552' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='from' type-id='dd695fa4' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='575' column='1'/>
+          <var-decl name='from' type-id='dd695fa4' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='553' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='from_parent' type-id='f4c3bb4c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='576' column='1'/>
+          <var-decl name='from_parent' type-id='f4c3bb4c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='554' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='to_proc' type-id='d1cf113c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='577' column='1'/>
+          <var-decl name='to_proc' type-id='d1cf113c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='555' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='to_thread' type-id='dd695fa4' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='578' column='1'/>
+          <var-decl name='to_thread' type-id='dd695fa4' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='556' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='to_parent' type-id='f4c3bb4c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='579' column='1'/>
+          <var-decl name='to_parent' type-id='f4c3bb4c' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='557' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='need_reply' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='580' column='1'/>
+          <var-decl name='need_reply' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='558' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='buffer' type-id='5819e862' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='583' column='1'/>
+          <var-decl name='buffer' type-id='5819e862' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='561' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='code' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='584' column='1'/>
+          <var-decl name='code' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='562' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='736'>
-          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='585' column='1'/>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='563' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='priority' type-id='de30810e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='586' column='1'/>
+          <var-decl name='priority' type-id='de30810e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='564' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='saved_priority' type-id='de30810e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='587' column='1'/>
+          <var-decl name='saved_priority' type-id='de30810e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='565' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='set_priority_called' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='588' column='1'/>
+          <var-decl name='set_priority_called' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='566' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='928'>
-          <var-decl name='sender_euid' type-id='d80b72e6' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='589' column='1'/>
+          <var-decl name='sender_euid' type-id='d80b72e6' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='567' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='960'>
-          <var-decl name='fd_fixups' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='590' column='1'/>
+          <var-decl name='fd_fixups' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='568' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='security_ctx' type-id='6867e656' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='591' column='1'/>
+          <var-decl name='security_ctx' type-id='6867e656' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='569' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='598' column='1'/>
+          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='576' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1216'>
-          <var-decl name='android_vendor_data1' type-id='91ce1af9' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='599' column='1'/>
+          <var-decl name='android_vendor_data1' type-id='91ce1af9' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='577' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='android_oem_data1' type-id='24a375b2' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='600' column='1'/>
+          <var-decl name='android_oem_data1' type-id='24a375b2' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='578' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='0f840455' size-in-bits='64' id='ebd313ed'/>
@@ -109876,6 +109917,7 @@
           <var-decl name='memsw' type-id='635c3685' visibility='default' filepath='include/linux/memcontrol.h' line='222' column='1'/>
         </data-member>
       </union-decl>
+      <pointer-type-def type-id='74fec388' size-in-bits='64' id='f3a5c46a'/>
       <class-decl name='rc_scancode_filter' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/media/rc-core.h' line='38' column='1' id='f3a6417e'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='data' type-id='19c2251e' visibility='default' filepath='include/media/rc-core.h' line='39' column='1'/>
@@ -112413,99 +112455,99 @@
         <enumerator name='BPF_OFFLOAD_MAP_FREE' value='3'/>
         <enumerator name='XDP_SETUP_XSK_POOL' value='4'/>
       </enum-decl>
-      <class-decl name='binder_proc' size-in-bits='4800' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='441' column='1' id='fa674076'>
+      <class-decl name='binder_proc' size-in-bits='4800' is-struct='yes' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='419' column='1' id='fa674076'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='proc_node' type-id='03a4a074' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='442' column='1'/>
+          <var-decl name='proc_node' type-id='03a4a074' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='420' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='threads' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='443' column='1'/>
+          <var-decl name='threads' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='421' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='nodes' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='444' column='1'/>
+          <var-decl name='nodes' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='422' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='refs_by_desc' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='445' column='1'/>
+          <var-decl name='refs_by_desc' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='423' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='refs_by_node' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='446' column='1'/>
+          <var-decl name='refs_by_node' type-id='dec44472' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='424' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='waiting_threads' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='447' column='1'/>
+          <var-decl name='waiting_threads' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='425' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='pid' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='448' column='1'/>
+          <var-decl name='pid' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='426' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='tsk' type-id='f23e2572' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='449' column='1'/>
+          <var-decl name='tsk' type-id='f23e2572' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='427' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='deferred_work_node' type-id='03a4a074' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='450' column='1'/>
+          <var-decl name='deferred_work_node' type-id='03a4a074' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='428' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='deferred_work' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='451' column='1'/>
+          <var-decl name='deferred_work' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='429' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='800'>
-          <var-decl name='outstanding_txns' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='452' column='1'/>
+          <var-decl name='outstanding_txns' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='430' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='is_dead' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='453' column='1'/>
+          <var-decl name='is_dead' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='431' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='840'>
-          <var-decl name='is_frozen' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='454' column='1'/>
+          <var-decl name='is_frozen' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='432' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='848'>
-          <var-decl name='sync_recv' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='455' column='1'/>
+          <var-decl name='sync_recv' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='433' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='856'>
-          <var-decl name='async_recv' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='456' column='1'/>
+          <var-decl name='async_recv' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='434' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='freeze_wait' type-id='b5ab048f' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='457' column='1'/>
+          <var-decl name='freeze_wait' type-id='b5ab048f' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='435' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='todo' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='459' column='1'/>
+          <var-decl name='todo' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='437' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1216'>
-          <var-decl name='stats' type-id='7e06c299' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='460' column='1'/>
+          <var-decl name='stats' type-id='7e06c299' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='438' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2944'>
-          <var-decl name='delivered_death' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='461' column='1'/>
+          <var-decl name='delivered_death' type-id='72f469ec' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='439' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3072'>
-          <var-decl name='max_threads' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='462' column='1'/>
+          <var-decl name='max_threads' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='440' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3104'>
-          <var-decl name='requested_threads' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='463' column='1'/>
+          <var-decl name='requested_threads' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='441' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3136'>
-          <var-decl name='requested_threads_started' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='464' column='1'/>
+          <var-decl name='requested_threads_started' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='442' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3168'>
-          <var-decl name='tmp_ref' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='465' column='1'/>
+          <var-decl name='tmp_ref' type-id='95e97e5e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='443' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3200'>
-          <var-decl name='default_priority' type-id='de30810e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='466' column='1'/>
+          <var-decl name='default_priority' type-id='de30810e' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='444' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3264'>
-          <var-decl name='debugfs_entry' type-id='27675065' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='467' column='1'/>
+          <var-decl name='debugfs_entry' type-id='27675065' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='445' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3328'>
-          <var-decl name='alloc' type-id='eb5d0d8b' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='468' column='1'/>
+          <var-decl name='alloc' type-id='eb5d0d8b' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='446' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4544'>
-          <var-decl name='context' type-id='05dc2175' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='469' column='1'/>
+          <var-decl name='context' type-id='05dc2175' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='447' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4608'>
-          <var-decl name='inner_lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='470' column='1'/>
+          <var-decl name='inner_lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='448' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4640'>
-          <var-decl name='outer_lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='471' column='1'/>
+          <var-decl name='outer_lock' type-id='fb4018a0' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='449' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4672'>
-          <var-decl name='binderfs_entry' type-id='27675065' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='472' column='1'/>
+          <var-decl name='binderfs_entry' type-id='27675065' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='450' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4736'>
-          <var-decl name='oneway_spam_detection_enabled' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='473' column='1'/>
+          <var-decl name='oneway_spam_detection_enabled' type-id='b50a4934' visibility='default' filepath='include/../drivers/android/binder_internal.h' line='451' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='fa712c1b'>
@@ -118133,6 +118175,13 @@
         <parameter type-id='d295dab2' name='vm' filepath='include/trace/hooks/mm.h' line='106' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_sched_pelt_multiplier' mangled-name='__traceiter_android_vh_sched_pelt_multiplier' filepath='include/trace/hooks/sched.h' line='402' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_sched_pelt_multiplier'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='402' column='1'/>
+        <parameter type-id='f0981eeb' name='old' filepath='include/trace/hooks/sched.h' line='402' column='1'/>
+        <parameter type-id='f0981eeb' name='cur' filepath='include/trace/hooks/sched.h' line='402' column='1'/>
+        <parameter type-id='7292109c' name='ret' filepath='include/trace/hooks/sched.h' line='402' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_sched_setaffinity_early' mangled-name='__traceiter_android_vh_sched_setaffinity_early' filepath='include/trace/hooks/sched.h' line='328' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_sched_setaffinity_early'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/sched.h' line='328' column='1'/>
         <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/sched.h' line='328' column='1'/>
@@ -119170,6 +119219,7 @@
       <var-decl name='__tracepoint_android_vh_rwsem_write_wait_start' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rwsem_write_wait_start' visibility='default' filepath='include/trace/hooks/dtask.h' line='49' column='1' elf-symbol-id='__tracepoint_android_vh_rwsem_write_wait_start'/>
       <var-decl name='__tracepoint_android_vh_save_track_hash' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_save_track_hash' visibility='default' filepath='include/trace/hooks/mm.h' line='112' column='1' elf-symbol-id='__tracepoint_android_vh_save_track_hash'/>
       <var-decl name='__tracepoint_android_vh_save_vmalloc_stack' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_save_vmalloc_stack' visibility='default' filepath='include/trace/hooks/mm.h' line='106' column='1' elf-symbol-id='__tracepoint_android_vh_save_vmalloc_stack'/>
+      <var-decl name='__tracepoint_android_vh_sched_pelt_multiplier' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sched_pelt_multiplier' visibility='default' filepath='include/trace/hooks/sched.h' line='402' column='1' elf-symbol-id='__tracepoint_android_vh_sched_pelt_multiplier'/>
       <var-decl name='__tracepoint_android_vh_sched_setaffinity_early' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sched_setaffinity_early' visibility='default' filepath='include/trace/hooks/sched.h' line='328' column='1' elf-symbol-id='__tracepoint_android_vh_sched_setaffinity_early'/>
       <var-decl name='__tracepoint_android_vh_sched_show_task' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sched_show_task' visibility='default' filepath='include/trace/hooks/dtask.h' line='56' column='1' elf-symbol-id='__tracepoint_android_vh_sched_show_task'/>
       <var-decl name='__tracepoint_android_vh_sched_stat_runtime_rt' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sched_stat_runtime_rt' visibility='default' filepath='include/trace/hooks/sched.h' line='366' column='1' elf-symbol-id='__tracepoint_android_vh_sched_stat_runtime_rt'/>
@@ -129783,6 +129833,9 @@
         <parameter type-id='459ae684' name='page_ext' filepath='mm/page_owner.c' line='108' column='1'/>
         <parameter type-id='7359adad' name='pfn' filepath='mm/page_owner.c' line='108' column='1'/>
         <return type-id='613ae993'/>
+      </function-decl>
+      <function-decl name='get_pelt_halflife' mangled-name='get_pelt_halflife' filepath='kernel/sched/pelt.c' line='35' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_pelt_halflife'>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='get_pfnblock_flags_mask' mangled-name='get_pfnblock_flags_mask' filepath='mm/page_alloc.c' line='531' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='get_pfnblock_flags_mask'>
         <parameter type-id='02f11ed4' name='page' filepath='mm/page_alloc.c' line='531' column='1'/>
