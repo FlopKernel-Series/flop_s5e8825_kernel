@@ -528,6 +528,10 @@
       <elf-symbol name='__traceiter_android_vh_printk_hotplug' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5728d98f'/>
       <elf-symbol name='__traceiter_android_vh_process_killed' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf2abc9b'/>
       <elf-symbol name='__traceiter_android_vh_ptype_head' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9eb05f'/>
+      <elf-symbol name='__traceiter_android_vh_record_mutex_lock_starttime' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcf74421b'/>
+      <elf-symbol name='__traceiter_android_vh_record_percpu_rwsem_lock_starttime' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb4bf7bc'/>
+      <elf-symbol name='__traceiter_android_vh_record_rtmutex_lock_starttime' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x992012b0'/>
+      <elf-symbol name='__traceiter_android_vh_record_rwsem_lock_starttime' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4fc06808'/>
       <elf-symbol name='__traceiter_android_vh_revert_creds' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd5c61c41'/>
       <elf-symbol name='__traceiter_android_vh_rmqueue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48f52d6c'/>
       <elf-symbol name='__traceiter_android_vh_rproc_recovery' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x91abb8e'/>
@@ -6397,6 +6401,10 @@
       <elf-symbol name='__tracepoint_android_vh_psi_event' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xca4b5959'/>
       <elf-symbol name='__tracepoint_android_vh_psi_group' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x69a13763'/>
       <elf-symbol name='__tracepoint_android_vh_ptype_head' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1491b86a'/>
+      <elf-symbol name='__tracepoint_android_vh_record_mutex_lock_starttime' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x36527e9f'/>
+      <elf-symbol name='__tracepoint_android_vh_record_percpu_rwsem_lock_starttime' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xce36444f'/>
+      <elf-symbol name='__tracepoint_android_vh_record_rtmutex_lock_starttime' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xde497da9'/>
+      <elf-symbol name='__tracepoint_android_vh_record_rwsem_lock_starttime' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x52ac6b6b'/>
       <elf-symbol name='__tracepoint_android_vh_revert_creds' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbedc98e0'/>
       <elf-symbol name='__tracepoint_android_vh_rmqueue' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa8c074b9'/>
       <elf-symbol name='__tracepoint_android_vh_rproc_recovery' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe1337b04'/>
@@ -118305,6 +118313,30 @@
         <parameter type-id='e84b031a' name='vendor_pt' filepath='include/trace/hooks/net.h' line='24' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_record_mutex_lock_starttime' mangled-name='__traceiter_android_vh_record_mutex_lock_starttime' filepath='include/trace/hooks/dtask.h' line='74' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_record_mutex_lock_starttime'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/dtask.h' line='74' column='1'/>
+        <parameter type-id='f23e2572' name='tsk' filepath='include/trace/hooks/dtask.h' line='74' column='1'/>
+        <parameter type-id='7359adad' name='settime_jiffies' filepath='include/trace/hooks/dtask.h' line='74' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_record_percpu_rwsem_lock_starttime' mangled-name='__traceiter_android_vh_record_percpu_rwsem_lock_starttime' filepath='include/trace/hooks/dtask.h' line='83' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_record_percpu_rwsem_lock_starttime'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/dtask.h' line='83' column='1'/>
+        <parameter type-id='f23e2572' name='tsk' filepath='include/trace/hooks/dtask.h' line='83' column='1'/>
+        <parameter type-id='7359adad' name='settime_jiffies' filepath='include/trace/hooks/dtask.h' line='83' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_record_rtmutex_lock_starttime' mangled-name='__traceiter_android_vh_record_rtmutex_lock_starttime' filepath='include/trace/hooks/dtask.h' line='77' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_record_rtmutex_lock_starttime'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/dtask.h' line='77' column='1'/>
+        <parameter type-id='f23e2572' name='tsk' filepath='include/trace/hooks/dtask.h' line='77' column='1'/>
+        <parameter type-id='7359adad' name='settime_jiffies' filepath='include/trace/hooks/dtask.h' line='77' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_record_rwsem_lock_starttime' mangled-name='__traceiter_android_vh_record_rwsem_lock_starttime' filepath='include/trace/hooks/dtask.h' line='80' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_record_rwsem_lock_starttime'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/dtask.h' line='80' column='1'/>
+        <parameter type-id='f23e2572' name='tsk' filepath='include/trace/hooks/dtask.h' line='80' column='1'/>
+        <parameter type-id='7359adad' name='settime_jiffies' filepath='include/trace/hooks/dtask.h' line='80' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_revert_creds' mangled-name='__traceiter_android_vh_revert_creds' filepath='include/trace/hooks/creds.h' line='35' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_revert_creds'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/creds.h' line='35' column='1'/>
         <parameter type-id='b42ffb57' name='task' filepath='include/trace/hooks/creds.h' line='35' column='1'/>
@@ -119436,6 +119468,10 @@
       <var-decl name='__tracepoint_android_vh_psi_event' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_psi_event' visibility='default' filepath='include/trace/hooks/psi.h' line='22' column='1' elf-symbol-id='__tracepoint_android_vh_psi_event'/>
       <var-decl name='__tracepoint_android_vh_psi_group' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_psi_group' visibility='default' filepath='include/trace/hooks/psi.h' line='26' column='1' elf-symbol-id='__tracepoint_android_vh_psi_group'/>
       <var-decl name='__tracepoint_android_vh_ptype_head' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ptype_head' visibility='default' filepath='include/trace/hooks/net.h' line='24' column='1' elf-symbol-id='__tracepoint_android_vh_ptype_head'/>
+      <var-decl name='__tracepoint_android_vh_record_mutex_lock_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_mutex_lock_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='74' column='1' elf-symbol-id='__tracepoint_android_vh_record_mutex_lock_starttime'/>
+      <var-decl name='__tracepoint_android_vh_record_percpu_rwsem_lock_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_percpu_rwsem_lock_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='83' column='1' elf-symbol-id='__tracepoint_android_vh_record_percpu_rwsem_lock_starttime'/>
+      <var-decl name='__tracepoint_android_vh_record_rtmutex_lock_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_rtmutex_lock_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='77' column='1' elf-symbol-id='__tracepoint_android_vh_record_rtmutex_lock_starttime'/>
+      <var-decl name='__tracepoint_android_vh_record_rwsem_lock_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_rwsem_lock_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='80' column='1' elf-symbol-id='__tracepoint_android_vh_record_rwsem_lock_starttime'/>
       <var-decl name='__tracepoint_android_vh_revert_creds' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_revert_creds' visibility='default' filepath='include/trace/hooks/creds.h' line='35' column='1' elf-symbol-id='__tracepoint_android_vh_revert_creds'/>
       <var-decl name='__tracepoint_android_vh_rmqueue' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rmqueue' visibility='default' filepath='include/trace/hooks/mm.h' line='64' column='1' elf-symbol-id='__tracepoint_android_vh_rmqueue'/>
       <var-decl name='__tracepoint_android_vh_rproc_recovery' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rproc_recovery' visibility='default' filepath='include/trace/hooks/remoteproc.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_rproc_recovery'/>
