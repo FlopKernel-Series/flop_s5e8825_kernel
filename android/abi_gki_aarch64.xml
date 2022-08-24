@@ -3657,6 +3657,7 @@
       <elf-symbol name='netif_schedule_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe397f50d'/>
       <elf-symbol name='netif_set_real_num_rx_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe09af44'/>
       <elf-symbol name='netif_set_real_num_tx_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb3a7c447'/>
+      <elf-symbol name='netif_set_xps_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6ff908c6'/>
       <elf-symbol name='netif_stacked_transfer_operstate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf522f10c'/>
       <elf-symbol name='netif_tx_stop_all_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x13b7be4'/>
       <elf-symbol name='netif_tx_wake_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x868b628d'/>
@@ -135427,6 +135428,12 @@
       <function-decl name='netif_set_real_num_tx_queues' mangled-name='netif_set_real_num_tx_queues' filepath='net/core/dev.c' line='2961' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_set_real_num_tx_queues'>
         <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='2961' column='1'/>
         <parameter type-id='f0981eeb' name='txq' filepath='net/core/dev.c' line='2961' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='netif_set_xps_queue' mangled-name='netif_set_xps_queue' filepath='net/core/dev.c' line='2825' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_set_xps_queue'>
+        <parameter type-id='68a2d05b' name='dev' filepath='net/core/dev.c' line='2825' column='1'/>
+        <parameter type-id='5f8a1ac4' name='mask' filepath='net/core/dev.c' line='2825' column='1'/>
+        <parameter type-id='1dc6a898' name='index' filepath='net/core/dev.c' line='2826' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='netif_stacked_transfer_operstate' mangled-name='netif_stacked_transfer_operstate' filepath='net/core/dev.c' line='9873' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='netif_stacked_transfer_operstate'>
