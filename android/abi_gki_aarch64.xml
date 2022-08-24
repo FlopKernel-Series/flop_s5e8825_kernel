@@ -457,6 +457,7 @@
       <elf-symbol name='__traceiter_android_vh_cpuidle_psci_enter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6cbffc19'/>
       <elf-symbol name='__traceiter_android_vh_cpuidle_psci_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9e5cd40b'/>
       <elf-symbol name='__traceiter_android_vh_del_page_from_lrulist' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe35293fd'/>
+      <elf-symbol name='__traceiter_android_vh_do_futex' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdee6d8f'/>
       <elf-symbol name='__traceiter_android_vh_do_page_trylock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xef9d9d8d'/>
       <elf-symbol name='__traceiter_android_vh_do_send_sig_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9d17560f'/>
       <elf-symbol name='__traceiter_android_vh_do_traversal_lruvec' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4be98d2b'/>
@@ -487,6 +488,11 @@
       <elf-symbol name='__traceiter_android_vh_ftrace_oops_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x351f4988'/>
       <elf-symbol name='__traceiter_android_vh_ftrace_size_check' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd210b7ec'/>
       <elf-symbol name='__traceiter_android_vh_futex_sleep_start' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x60eb49e2'/>
+      <elf-symbol name='__traceiter_android_vh_futex_wait_end' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x28d3c668'/>
+      <elf-symbol name='__traceiter_android_vh_futex_wait_start' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5c2035d3'/>
+      <elf-symbol name='__traceiter_android_vh_futex_wake_this' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa1f9d573'/>
+      <elf-symbol name='__traceiter_android_vh_futex_wake_traverse_plist' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x82b46945'/>
+      <elf-symbol name='__traceiter_android_vh_futex_wake_up_q_finish' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba80ee0'/>
       <elf-symbol name='__traceiter_android_vh_get_from_fragment_pool' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x59ab5c34'/>
       <elf-symbol name='__traceiter_android_vh_get_swap_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x997a037a'/>
       <elf-symbol name='__traceiter_android_vh_gic_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd99a1ac6'/>
@@ -6363,6 +6369,7 @@
       <elf-symbol name='__tracepoint_android_vh_cpuidle_psci_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaaacb3b6'/>
       <elf-symbol name='__tracepoint_android_vh_del_page_from_lrulist' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd32d8431'/>
       <elf-symbol name='__tracepoint_android_vh_disable_thermal_cooling_stats' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8d666d'/>
+      <elf-symbol name='__tracepoint_android_vh_do_futex' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x76782dd0'/>
       <elf-symbol name='__tracepoint_android_vh_do_page_trylock' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ed4864a'/>
       <elf-symbol name='__tracepoint_android_vh_do_send_sig_info' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6db82691'/>
       <elf-symbol name='__tracepoint_android_vh_do_traversal_lruvec' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xae7a20c3'/>
@@ -6394,6 +6401,11 @@
       <elf-symbol name='__tracepoint_android_vh_ftrace_oops_exit' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xecd968c8'/>
       <elf-symbol name='__tracepoint_android_vh_ftrace_size_check' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcbc20ca'/>
       <elf-symbol name='__tracepoint_android_vh_futex_sleep_start' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc26ab705'/>
+      <elf-symbol name='__tracepoint_android_vh_futex_wait_end' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x49b606a8'/>
+      <elf-symbol name='__tracepoint_android_vh_futex_wait_start' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x196030ee'/>
+      <elf-symbol name='__tracepoint_android_vh_futex_wake_this' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5301beb4'/>
+      <elf-symbol name='__tracepoint_android_vh_futex_wake_traverse_plist' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaadca4aa'/>
+      <elf-symbol name='__tracepoint_android_vh_futex_wake_up_q_finish' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5bf93e96'/>
       <elf-symbol name='__tracepoint_android_vh_get_from_fragment_pool' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x801cc5b5'/>
       <elf-symbol name='__tracepoint_android_vh_get_swap_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2fc4f080'/>
       <elf-symbol name='__tracepoint_android_vh_gic_resume' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x80464cd'/>
@@ -11253,6 +11265,17 @@
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
           <var-decl name='ssid_len' type-id='f9b06939' visibility='default' filepath='include/net/cfg80211.h' line='2124' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/futex.h' line='33' column='1' id='0c98ac07'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='i_seq' type-id='91ce1af9' visibility='default' filepath='include/linux/futex.h' line='34' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='pgoff' type-id='7359adad' visibility='default' filepath='include/linux/futex.h' line='35' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='offset' type-id='f0981eeb' visibility='default' filepath='include/linux/futex.h' line='36' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='0c98f83d'>
@@ -22679,6 +22702,17 @@
       </function-type>
       <pointer-type-def type-id='63b99761' size-in-bits='64' id='2966de59'/>
       <typedef-decl name='key_perm_t' type-id='8f92235e' filepath='include/linux/key.h' line='31' column='1' id='296adac1'/>
+      <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/futex.h' line='38' column='1' id='296b401c'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='' type-id='7f983608' visibility='default' filepath='include/linux/futex.h' line='39' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='address' type-id='7359adad' visibility='default' filepath='include/linux/futex.h' line='43' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='offset' type-id='f0981eeb' visibility='default' filepath='include/linux/futex.h' line='44' column='1'/>
+        </data-member>
+      </class-decl>
       <qualified-type-def type-id='17a13961' const='yes' id='2974aa72'/>
       <pointer-type-def type-id='7a5054b7' size-in-bits='64' id='29753327'/>
       <function-type size-in-bits='64' id='2976f714'>
@@ -44025,23 +44059,7 @@
       <pointer-type-def type-id='d06eb7e7' size-in-bits='64' id='5f0c5b93'/>
       <class-decl name='gic_chip_data' is-struct='yes' visibility='default' is-declaration-only='yes' id='5f0ccb86'/>
       <pointer-type-def type-id='538b7809' size-in-bits='64' id='5f0d472d'/>
-      <class-decl name='fsverity_operations' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/fsverity.h' line='18' column='1' id='5f0d764c'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='begin_enable_verity' type-id='4da4101d' visibility='default' filepath='include/linux/fsverity.h' line='33' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='end_enable_verity' type-id='f3a5c46a' visibility='default' filepath='include/linux/fsverity.h' line='55' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='get_verity_descriptor' type-id='c60354f3' visibility='default' filepath='include/linux/fsverity.h' line='72' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='read_merkle_tree_page' type-id='68b31938' visibility='default' filepath='include/linux/fsverity.h' line='93' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='write_merkle_tree_block' type-id='c748f227' visibility='default' filepath='include/linux/fsverity.h' line='110' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='fsverity_operations' is-struct='yes' visibility='default' is-declaration-only='yes' id='5f0d764c'/>
       <pointer-type-def type-id='0caa7082' size-in-bits='64' id='5f29549c'/>
       <class-decl name='configfs_attribute' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/configfs.h' line='117' column='1' id='5f2e9b8f'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -48332,7 +48350,6 @@
         <parameter type-id='5d6479ae'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <pointer-type-def type-id='e151e1f6' size-in-bits='64' id='68b31938'/>
       <class-decl name='module_layout' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/linux/module.h' line='328' column='1' id='68b3d9a8'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='base' type-id='eaa32e2f' visibility='default' filepath='include/linux/module.h' line='330' column='1'/>
@@ -53216,13 +53233,6 @@
         <parameter type-id='4db02c58'/>
         <return type-id='c91d1bf1'/>
       </function-type>
-      <function-type size-in-bits='64' id='74fec388'>
-        <parameter type-id='77e79a4b'/>
-        <parameter type-id='eaa32e2f'/>
-        <parameter type-id='b59d7dce'/>
-        <parameter type-id='91ce1af9'/>
-        <return type-id='95e97e5e'/>
-      </function-type>
       <function-type size-in-bits='64' id='7506f11b'>
         <parameter type-id='b7c1d7d5'/>
         <parameter type-id='99baf115'/>
@@ -57417,6 +57427,14 @@
         <enumerator name='fs_value_is_filename' value='4'/>
         <enumerator name='fs_value_is_file' value='5'/>
       </enum-decl>
+      <union-decl name='__anonymous_union__' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/futex.h' line='39' column='1' id='7f983608'>
+        <data-member access='public'>
+          <var-decl name='mm' type-id='df4b7819' visibility='default' filepath='include/linux/futex.h' line='40' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='__tmp' type-id='91ce1af9' visibility='default' filepath='include/linux/futex.h' line='41' column='1'/>
+        </data-member>
+      </union-decl>
       <class-decl name='drm_dp_mst_port' size-in-bits='13184' is-struct='yes' visibility='default' filepath='include/drm/drm_dp_mst_helper.h' line='98' column='1' id='7f985fda'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='topology_kref' type-id='400fb07b' visibility='default' filepath='include/drm/drm_dp_mst_helper.h' line='103' column='1'/>
@@ -65789,13 +65807,6 @@
       <typedef-decl name='u64' type-id='d3130597' filepath='include/asm-generic/int-ll64.h' line='23' column='1' id='91ce1af9'/>
       <pointer-type-def type-id='d7c60ba9' size-in-bits='64' id='91d0de51'/>
       <pointer-type-def type-id='d0fea0bb' size-in-bits='64' id='91d6c443'/>
-      <function-type size-in-bits='64' id='91dc7ea3'>
-        <parameter type-id='7e666abe'/>
-        <parameter type-id='eaa32e2f'/>
-        <parameter type-id='91ce1af9'/>
-        <parameter type-id='95e97e5e'/>
-        <return type-id='95e97e5e'/>
-      </function-type>
       <function-type size-in-bits='64' id='91de15a8'>
         <parameter type-id='7e666abe'/>
         <parameter type-id='cd1b45ab'/>
@@ -77035,6 +77046,17 @@
       <pointer-type-def type-id='b0209526' size-in-bits='64' id='ad0a69fc'/>
       <pointer-type-def type-id='90c1df7f' size-in-bits='64' id='ad13fd93'/>
       <pointer-type-def type-id='fd240b02' size-in-bits='64' id='ad168a80'/>
+      <class-decl name='__anonymous_struct__' size-in-bits='192' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/linux/futex.h' line='46' column='1' id='ad1cdfc0'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='ptr' type-id='91ce1af9' visibility='default' filepath='include/linux/futex.h' line='47' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='word' type-id='7359adad' visibility='default' filepath='include/linux/futex.h' line='48' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='offset' type-id='f0981eeb' visibility='default' filepath='include/linux/futex.h' line='49' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='ad20c773'>
         <parameter type-id='b94a2f7c'/>
         <parameter type-id='ffb3cc6e'/>
@@ -90313,7 +90335,6 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='e9ec35ef' size-in-bits='64' id='c7432356'/>
-      <pointer-type-def type-id='91dc7ea3' size-in-bits='64' id='c748f227'/>
       <union-decl name='__anonymous_union__' size-in-bits='4096' is-anonymous='yes' visibility='default' filepath='include/uapi/sound/asound.h' line='1054' column='1' id='c74bfd7b'>
         <data-member access='public'>
           <var-decl name='value' type-id='1fd26250' visibility='default' filepath='include/uapi/sound/asound.h' line='1055' column='1'/>
@@ -91986,6 +92007,17 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='925ea354' size-in-bits='64' id='cbe8ceae'/>
+      <union-decl name='futex_key' size-in-bits='192' visibility='default' filepath='include/linux/futex.h' line='32' column='1' id='cbf1908e'>
+        <data-member access='public'>
+          <var-decl name='shared' type-id='0c98ac07' visibility='default' filepath='include/linux/futex.h' line='37' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='private' type-id='296b401c' visibility='default' filepath='include/linux/futex.h' line='45' column='1'/>
+        </data-member>
+        <data-member access='public'>
+          <var-decl name='both' type-id='ad1cdfc0' visibility='default' filepath='include/linux/futex.h' line='50' column='1'/>
+        </data-member>
+      </union-decl>
       <pointer-type-def type-id='51ca9086' size-in-bits='64' id='cc036b58'/>
       <union-decl name='__anonymous_union__' size-in-bits='256' is-anonymous='yes' visibility='default' filepath='include/linux/mm_types.h' line='347' column='1' id='cc072175'>
         <data-member access='public'>
@@ -101955,12 +101987,6 @@
           <var-decl name='first' type-id='08cbad52' visibility='default' filepath='include/linux/types.h' line='183' column='1'/>
         </data-member>
       </class-decl>
-      <function-type size-in-bits='64' id='e151e1f6'>
-        <parameter type-id='7e666abe'/>
-        <parameter type-id='7359adad'/>
-        <parameter type-id='7359adad'/>
-        <return type-id='02f11ed4'/>
-      </function-type>
       <pointer-type-def type-id='20b17040' size-in-bits='64' id='e153f6de'/>
       <pointer-type-def type-id='4d94804e' size-in-bits='64' id='e15671b8'/>
       <pointer-type-def type-id='59aa7dba' size-in-bits='64' id='e15aece4'/>
@@ -110197,7 +110223,6 @@
           <var-decl name='memsw' type-id='635c3685' visibility='default' filepath='include/linux/memcontrol.h' line='222' column='1'/>
         </data-member>
       </union-decl>
-      <pointer-type-def type-id='74fec388' size-in-bits='64' id='f3a5c46a'/>
       <class-decl name='rc_scancode_filter' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/media/rc-core.h' line='38' column='1' id='f3a6417e'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='data' type-id='19c2251e' visibility='default' filepath='include/media/rc-core.h' line='39' column='1'/>
@@ -117652,11 +117677,11 @@
         <parameter type-id='d8e6b335' name='allow' filepath='include/trace/hooks/pm_domain.h' line='20' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_alter_futex_plist_add' mangled-name='__traceiter_android_vh_alter_futex_plist_add' filepath='include/trace/hooks/futex.h' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_alter_futex_plist_add'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='15' column='1'/>
-        <parameter type-id='afd8be4a' name='node' filepath='include/trace/hooks/futex.h' line='15' column='1'/>
-        <parameter type-id='63de1ba0' name='head' filepath='include/trace/hooks/futex.h' line='15' column='1'/>
-        <parameter type-id='d8e6b335' name='already_on_hb' filepath='include/trace/hooks/futex.h' line='15' column='1'/>
+      <function-decl name='__traceiter_android_vh_alter_futex_plist_add' mangled-name='__traceiter_android_vh_alter_futex_plist_add' filepath='include/trace/hooks/futex.h' line='19' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_alter_futex_plist_add'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='19' column='1'/>
+        <parameter type-id='afd8be4a' name='node' filepath='include/trace/hooks/futex.h' line='19' column='1'/>
+        <parameter type-id='63de1ba0' name='head' filepath='include/trace/hooks/futex.h' line='19' column='1'/>
+        <parameter type-id='d8e6b335' name='already_on_hb' filepath='include/trace/hooks/futex.h' line='19' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_alter_mutex_list_add' mangled-name='__traceiter_android_vh_alter_mutex_list_add' filepath='include/trace/hooks/dtask.h' line='59' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_alter_mutex_list_add'>
@@ -118016,6 +118041,13 @@
         <parameter type-id='04110eaa' name='lru' filepath='include/trace/hooks/mm.h' line='168' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='__traceiter_android_vh_do_futex' mangled-name='__traceiter_android_vh_do_futex' filepath='include/trace/hooks/futex.h' line='29' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_do_futex'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='29' column='1'/>
+        <parameter type-id='95e97e5e' name='cmd' filepath='include/trace/hooks/futex.h' line='29' column='1'/>
+        <parameter type-id='807869d3' name='flags' filepath='include/trace/hooks/futex.h' line='29' column='1'/>
+        <parameter type-id='f9409001' name='uaddr2' filepath='include/trace/hooks/futex.h' line='29' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='__traceiter_android_vh_do_page_trylock' mangled-name='__traceiter_android_vh_do_page_trylock' filepath='include/trace/hooks/mm.h' line='152' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_do_page_trylock'>
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='152' column='1'/>
         <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='152' column='1'/>
@@ -118204,9 +118236,43 @@
         <parameter type-id='d8e6b335' name='ftrace_check' filepath='include/trace/hooks/ftrace_dump.h' line='24' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_futex_sleep_start' mangled-name='__traceiter_android_vh_futex_sleep_start' filepath='include/trace/hooks/futex.h' line='21' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_sleep_start'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='21' column='1'/>
-        <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/futex.h' line='21' column='1'/>
+      <function-decl name='__traceiter_android_vh_futex_sleep_start' mangled-name='__traceiter_android_vh_futex_sleep_start' filepath='include/trace/hooks/futex.h' line='25' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_sleep_start'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='25' column='1'/>
+        <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/futex.h' line='25' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_futex_wait_end' mangled-name='__traceiter_android_vh_futex_wait_end' filepath='include/trace/hooks/futex.h' line='40' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_wait_end'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='40' column='1'/>
+        <parameter type-id='f0981eeb' name='flags' filepath='include/trace/hooks/futex.h' line='40' column='1'/>
+        <parameter type-id='19c2251e' name='bitset' filepath='include/trace/hooks/futex.h' line='40' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_futex_wait_start' mangled-name='__traceiter_android_vh_futex_wait_start' filepath='include/trace/hooks/futex.h' line='35' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_wait_start'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='35' column='1'/>
+        <parameter type-id='f0981eeb' name='flags' filepath='include/trace/hooks/futex.h' line='35' column='1'/>
+        <parameter type-id='19c2251e' name='bitset' filepath='include/trace/hooks/futex.h' line='35' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_futex_wake_this' mangled-name='__traceiter_android_vh_futex_wake_this' filepath='include/trace/hooks/futex.h' line='50' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_wake_this'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='50' column='1'/>
+        <parameter type-id='95e97e5e' name='ret' filepath='include/trace/hooks/futex.h' line='50' column='1'/>
+        <parameter type-id='95e97e5e' name='nr_wake' filepath='include/trace/hooks/futex.h' line='50' column='1'/>
+        <parameter type-id='95e97e5e' name='target_nr' filepath='include/trace/hooks/futex.h' line='50' column='1'/>
+        <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/futex.h' line='50' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_futex_wake_traverse_plist' mangled-name='__traceiter_android_vh_futex_wake_traverse_plist' filepath='include/trace/hooks/futex.h' line='45' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_wake_traverse_plist'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='45' column='1'/>
+        <parameter type-id='63de1ba0' name='chain' filepath='include/trace/hooks/futex.h' line='45' column='1'/>
+        <parameter type-id='7292109c' name='target_nr' filepath='include/trace/hooks/futex.h' line='45' column='1'/>
+        <parameter type-id='cbf1908e' name='key' filepath='include/trace/hooks/futex.h' line='45' column='1'/>
+        <parameter type-id='19c2251e' name='bitset' filepath='include/trace/hooks/futex.h' line='45' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_futex_wake_up_q_finish' mangled-name='__traceiter_android_vh_futex_wake_up_q_finish' filepath='include/trace/hooks/futex.h' line='55' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_futex_wake_up_q_finish'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/futex.h' line='55' column='1'/>
+        <parameter type-id='95e97e5e' name='nr_wake' filepath='include/trace/hooks/futex.h' line='55' column='1'/>
+        <parameter type-id='95e97e5e' name='target_nr' filepath='include/trace/hooks/futex.h' line='55' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_get_from_fragment_pool' mangled-name='__traceiter_android_vh_get_from_fragment_pool' filepath='include/trace/hooks/mm.h' line='86' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_get_from_fragment_pool'>
@@ -119636,7 +119702,7 @@
       <var-decl name='__tracepoint_android_vh_alloc_si' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_si' visibility='default' filepath='include/trace/hooks/mm.h' line='254' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_si'/>
       <var-decl name='__tracepoint_android_vh_alloc_swap_slot_cache' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_swap_slot_cache' visibility='default' filepath='include/trace/hooks/mm.h' line='229' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_swap_slot_cache'/>
       <var-decl name='__tracepoint_android_vh_allow_domain_state' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_allow_domain_state' visibility='default' filepath='include/trace/hooks/pm_domain.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_allow_domain_state'/>
-      <var-decl name='__tracepoint_android_vh_alter_futex_plist_add' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alter_futex_plist_add' visibility='default' filepath='include/trace/hooks/futex.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_alter_futex_plist_add'/>
+      <var-decl name='__tracepoint_android_vh_alter_futex_plist_add' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alter_futex_plist_add' visibility='default' filepath='include/trace/hooks/futex.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_alter_futex_plist_add'/>
       <var-decl name='__tracepoint_android_vh_alter_mutex_list_add' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alter_mutex_list_add' visibility='default' filepath='include/trace/hooks/dtask.h' line='59' column='1' elf-symbol-id='__tracepoint_android_vh_alter_mutex_list_add'/>
       <var-decl name='__tracepoint_android_vh_alter_rwsem_list_add' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alter_rwsem_list_add' visibility='default' filepath='include/trace/hooks/rwsem.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_alter_rwsem_list_add'/>
       <var-decl name='__tracepoint_android_vh_arch_set_freq_scale' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_arch_set_freq_scale' visibility='default' filepath='include/trace/hooks/topology.h' line='14' column='1' elf-symbol-id='__tracepoint_android_vh_arch_set_freq_scale'/>
@@ -119692,6 +119758,7 @@
       <var-decl name='__tracepoint_android_vh_cpuidle_psci_exit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_cpuidle_psci_exit' visibility='default' filepath='include/trace/hooks/cpuidle_psci.h' line='24' column='1' elf-symbol-id='__tracepoint_android_vh_cpuidle_psci_exit'/>
       <var-decl name='__tracepoint_android_vh_del_page_from_lrulist' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_del_page_from_lrulist' visibility='default' filepath='include/trace/hooks/mm.h' line='168' column='1' elf-symbol-id='__tracepoint_android_vh_del_page_from_lrulist'/>
       <var-decl name='__tracepoint_android_vh_disable_thermal_cooling_stats' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_disable_thermal_cooling_stats' visibility='default' filepath='include/trace/hooks/thermal.h' line='28' column='1' elf-symbol-id='__tracepoint_android_vh_disable_thermal_cooling_stats'/>
+      <var-decl name='__tracepoint_android_vh_do_futex' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_futex' visibility='default' filepath='include/trace/hooks/futex.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_do_futex'/>
       <var-decl name='__tracepoint_android_vh_do_page_trylock' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_page_trylock' visibility='default' filepath='include/trace/hooks/mm.h' line='152' column='1' elf-symbol-id='__tracepoint_android_vh_do_page_trylock'/>
       <var-decl name='__tracepoint_android_vh_do_send_sig_info' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_send_sig_info' visibility='default' filepath='include/trace/hooks/signal.h' line='17' column='1' elf-symbol-id='__tracepoint_android_vh_do_send_sig_info'/>
       <var-decl name='__tracepoint_android_vh_do_traversal_lruvec' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_do_traversal_lruvec' visibility='default' filepath='include/trace/hooks/mm.h' line='174' column='1' elf-symbol-id='__tracepoint_android_vh_do_traversal_lruvec'/>
@@ -119722,7 +119789,12 @@
       <var-decl name='__tracepoint_android_vh_ftrace_oops_enter' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_oops_enter' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='16' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_oops_enter'/>
       <var-decl name='__tracepoint_android_vh_ftrace_oops_exit' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_oops_exit' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_oops_exit'/>
       <var-decl name='__tracepoint_android_vh_ftrace_size_check' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ftrace_size_check' visibility='default' filepath='include/trace/hooks/ftrace_dump.h' line='24' column='1' elf-symbol-id='__tracepoint_android_vh_ftrace_size_check'/>
-      <var-decl name='__tracepoint_android_vh_futex_sleep_start' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_sleep_start' visibility='default' filepath='include/trace/hooks/futex.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_futex_sleep_start'/>
+      <var-decl name='__tracepoint_android_vh_futex_sleep_start' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_sleep_start' visibility='default' filepath='include/trace/hooks/futex.h' line='25' column='1' elf-symbol-id='__tracepoint_android_vh_futex_sleep_start'/>
+      <var-decl name='__tracepoint_android_vh_futex_wait_end' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_wait_end' visibility='default' filepath='include/trace/hooks/futex.h' line='40' column='1' elf-symbol-id='__tracepoint_android_vh_futex_wait_end'/>
+      <var-decl name='__tracepoint_android_vh_futex_wait_start' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_wait_start' visibility='default' filepath='include/trace/hooks/futex.h' line='35' column='1' elf-symbol-id='__tracepoint_android_vh_futex_wait_start'/>
+      <var-decl name='__tracepoint_android_vh_futex_wake_this' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_wake_this' visibility='default' filepath='include/trace/hooks/futex.h' line='50' column='1' elf-symbol-id='__tracepoint_android_vh_futex_wake_this'/>
+      <var-decl name='__tracepoint_android_vh_futex_wake_traverse_plist' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_wake_traverse_plist' visibility='default' filepath='include/trace/hooks/futex.h' line='45' column='1' elf-symbol-id='__tracepoint_android_vh_futex_wake_traverse_plist'/>
+      <var-decl name='__tracepoint_android_vh_futex_wake_up_q_finish' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_futex_wake_up_q_finish' visibility='default' filepath='include/trace/hooks/futex.h' line='55' column='1' elf-symbol-id='__tracepoint_android_vh_futex_wake_up_q_finish'/>
       <var-decl name='__tracepoint_android_vh_get_from_fragment_pool' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_get_from_fragment_pool' visibility='default' filepath='include/trace/hooks/mm.h' line='86' column='1' elf-symbol-id='__tracepoint_android_vh_get_from_fragment_pool'/>
       <var-decl name='__tracepoint_android_vh_get_swap_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_get_swap_page' visibility='default' filepath='include/trace/hooks/mm.h' line='235' column='1' elf-symbol-id='__tracepoint_android_vh_get_swap_page'/>
       <var-decl name='__tracepoint_android_vh_gic_resume' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_gic_resume' visibility='default' filepath='include/trace/hooks/gic.h' line='15' column='1' elf-symbol-id='__tracepoint_android_vh_gic_resume'/>
@@ -134313,12 +134385,12 @@
         <parameter type-id='8efea9e5' name='id' filepath='mm/memcontrol.c' line='5214' column='1'/>
         <return type-id='223696fb'/>
       </function-decl>
-      <function-decl name='memblock_end_of_DRAM' mangled-name='memblock_end_of_DRAM' filepath='mm/memblock.c' line='1631' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='memblock_end_of_DRAM'>
+      <function-decl name='memblock_end_of_DRAM' mangled-name='memblock_end_of_DRAM' filepath='mm/memblock.c' line='1632' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='memblock_end_of_DRAM'>
         <return type-id='2522883d'/>
       </function-decl>
-      <function-decl name='memblock_free' mangled-name='memblock_free' filepath='mm/memblock.c' line='807' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='memblock_free'>
-        <parameter type-id='2522883d' name='base' filepath='mm/memblock.c' line='807' column='1'/>
-        <parameter type-id='2522883d' name='size' filepath='mm/memblock.c' line='807' column='1'/>
+      <function-decl name='memblock_free' mangled-name='memblock_free' filepath='mm/memblock.c' line='808' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='memblock_free'>
+        <parameter type-id='2522883d' name='base' filepath='mm/memblock.c' line='808' column='1'/>
+        <parameter type-id='2522883d' name='size' filepath='mm/memblock.c' line='808' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <var-decl name='memcg_kmem_enabled_key' type-id='237c0d27' mangled-name='memcg_kmem_enabled_key' visibility='default' filepath='mm/memcontrol.c' line='394' column='1' elf-symbol-id='memcg_kmem_enabled_key'/>
