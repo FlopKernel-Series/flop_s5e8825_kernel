@@ -35,6 +35,10 @@ SECTIONS {
 
 	__patchable_function_entries : { *(__patchable_function_entries) }
 
+#ifdef CONFIG_ARCH_USES_CFI_TRAPS
+	__kcfi_traps 		: { KEEP(*(.kcfi_traps)) }
+#endif
+
 #ifdef CONFIG_LTO_CLANG
 	/*
 	 * With CONFIG_LTO_CLANG, LLD always enables -fdata-sections and
@@ -60,14 +64,6 @@ SECTIONS {
 
 	.text : ALIGN(PAGE_SIZE) {
 		*(.text.._start)
-#ifdef CONFIG_CFI_CLANG
-		/*
-		 * With CFI_CLANG, ensure __cfi_check is at the beginning of
-		 * the .text section, and that the section is aligned to page
-		 * size.
-		 */
-		*(.text.__cfi_check)
-#endif
 		*(.text .text.[0-9a-zA-Z_]*)
 		__cfi_jt_start = .;
 		*(.text..L.cfi.jumptable .text..L.cfi.jumptable.*)
