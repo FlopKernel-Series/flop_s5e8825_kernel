@@ -569,4 +569,8 @@ static inline bool v4l2_is_quant_valid(__u8 quantization)
 	       quantization == V4L2_QUANTIZATION_LIM_RANGE;
 }
 
+void v4l2_simplify_fraction(u32 *numerator, u32 *denominator,
+		unsigned int n_terms, unsigned int threshold);
+u32 v4l2_fraction_to_interval(u32 numerator, u32 denominator);
+
 #endif /* V4L2_COMMON_H_ */
