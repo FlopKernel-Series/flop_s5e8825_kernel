@@ -1016,6 +1016,14 @@ config MEMFD_ASHMEM_SHIM
 
 	  Unless you are running Android, say N.
 
+config LRU_GEN
+	bool "Multi-Gen LRU"
+	depends on MMU
+	# make sure page->flags has enough spare bits
+	depends on 64BIT || !SPARSEMEM || SPARSEMEM_VMEMMAP
+	help
+	  A high performance LRU implementation to overcommit memory.
+
 source "mm/damon/Kconfig"
 
 endmenu
