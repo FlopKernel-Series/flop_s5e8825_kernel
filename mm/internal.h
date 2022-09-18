@@ -54,6 +54,7 @@ int mmap_file(struct file *file, struct vm_area_struct *vma);
 void vma_close(struct vm_area_struct *vma);
 
 vm_fault_t do_swap_page(struct vm_fault *vmf);
+void activate_page(struct page *page);
 
 #ifdef CONFIG_SPECULATIVE_PAGE_FAULT
 extern struct vm_area_struct *get_vma(struct mm_struct *mm,
