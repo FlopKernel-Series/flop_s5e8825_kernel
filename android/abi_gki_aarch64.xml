@@ -83107,6 +83107,9 @@
         <parameter type-id='cd1b45ab'/>
         <return type-id='3f1a6b60'/>
       </function-type>
+      <array-type-def dimensions='1' type-id='e151255a' size-in-bits='131072' id='b9cedcb8'>
+        <subrange length='2048' type-id='7ff19f0f' id='e5323efb'/>
+      </array-type-def>
       <function-type size-in-bits='64' id='b9d8dce4'>
         <parameter type-id='807b7702'/>
         <parameter type-id='95e97e5e'/>
@@ -92067,6 +92070,9 @@
       <pointer-type-def type-id='c9196d18' size-in-bits='64' id='cba10b6e'/>
       <pointer-type-def type-id='4b7a84f4' size-in-bits='64' id='cba114b6'/>
       <pointer-type-def type-id='284260b8' size-in-bits='64' id='cba1f2de'/>
+      <array-type-def dimensions='1' type-id='e151255a' size-in-bits='65536' id='cba3052b'>
+        <subrange length='1024' type-id='7ff19f0f' id='c60446f8'/>
+      </array-type-def>
       <function-type size-in-bits='64' id='cba59087'>
         <parameter type-id='eaa32e2f'/>
         <parameter type-id='91ce1af9'/>
@@ -98314,7 +98320,29 @@
         <subrange length='38' type-id='7ff19f0f' id='aa4ccdac'/>
       </array-type-def>
       <pointer-type-def type-id='2a275b06' size-in-bits='64' id='dae07608'/>
-      <class-decl name='page_vma_mapped_walk' is-struct='yes' visibility='default' is-declaration-only='yes' id='dae3142b'/>
+      <class-decl name='page_vma_mapped_walk' size-in-bits='448' is-struct='yes' visibility='default' filepath='include/linux/rmap.h' line='222' column='1' id='dae3142b'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='page' type-id='02f11ed4' visibility='default' filepath='include/linux/rmap.h' line='223' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='vma' type-id='2ae08426' visibility='default' filepath='include/linux/rmap.h' line='224' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='address' type-id='7359adad' visibility='default' filepath='include/linux/rmap.h' line='225' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='pmd' type-id='6d5994d5' visibility='default' filepath='include/linux/rmap.h' line='226' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='pte' type-id='e8d572d7' visibility='default' filepath='include/linux/rmap.h' line='227' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='ptl' type-id='cff2d845' visibility='default' filepath='include/linux/rmap.h' line='228' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='include/linux/rmap.h' line='229' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='dae66efd'>
         <parameter type-id='f772df6d'/>
         <parameter type-id='5c0abad8'/>
@@ -105303,7 +105331,20 @@
           <var-decl name='branch_reg' type-id='a80839c0' visibility='default' filepath='include/linux/perf_event.h' line='148' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='can_dev_rcv_lists' is-struct='yes' visibility='default' is-declaration-only='yes' id='e82476af'/>
+      <class-decl name='can_dev_rcv_lists' size-in-bits='196928' is-struct='yes' visibility='default' filepath='include/linux/can/can-ml.h' line='55' column='1' id='e82476af'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='rx' type-id='fc3a8480' visibility='default' filepath='include/linux/can/can-ml.h' line='56' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='rx_sff' type-id='b9cedcb8' visibility='default' filepath='include/linux/can/can-ml.h' line='57' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='131328'>
+          <var-decl name='rx_eff' type-id='cba3052b' visibility='default' filepath='include/linux/can/can-ml.h' line='58' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='196864'>
+          <var-decl name='entries' type-id='95e97e5e' visibility='default' filepath='include/linux/can/can-ml.h' line='59' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='e82a9f1d'>
         <parameter type-id='77e79a4b'/>
         <parameter type-id='eaa32e2f'/>
@@ -115459,9 +115500,9 @@
       </function-type>
       <pointer-type-def type-id='46f53066' size-in-bits='64' id='fffb07a4'/>
       <qualified-type-def type-id='55efd1a3' const='yes' id='fffdaf52'/>
-      <var-decl name='GKI_struct_gic_chip_data' type-id='d3100295' mangled-name='GKI_struct_gic_chip_data' visibility='default' filepath='drivers/android/vendor_hooks.c' line='465' column='1' elf-symbol-id='GKI_struct_gic_chip_data'/>
+      <var-decl name='GKI_struct_gic_chip_data' type-id='d3100295' mangled-name='GKI_struct_gic_chip_data' visibility='default' filepath='drivers/android/vendor_hooks.c' line='470' column='1' elf-symbol-id='GKI_struct_gic_chip_data'/>
       <var-decl name='GKI_struct_selinux_state' type-id='4ae52763' mangled-name='GKI_struct_selinux_state' visibility='default' filepath='security/selinux/vendor_hooks.c' line='21' column='1' elf-symbol-id='GKI_struct_selinux_state'/>
-      <var-decl name='GKI_struct_swap_slots_cache' type-id='30eaa112' mangled-name='GKI_struct_swap_slots_cache' visibility='default' filepath='drivers/android/vendor_hooks.c' line='470' column='1' elf-symbol-id='GKI_struct_swap_slots_cache'/>
+      <var-decl name='GKI_struct_swap_slots_cache' type-id='30eaa112' mangled-name='GKI_struct_swap_slots_cache' visibility='default' filepath='drivers/android/vendor_hooks.c' line='475' column='1' elf-symbol-id='GKI_struct_swap_slots_cache'/>
       <function-decl name='PDE_DATA' mangled-name='PDE_DATA' filepath='fs/proc/generic.c' line='802' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='PDE_DATA'>
         <parameter type-id='c5a4eb7f' name='inode' filepath='fs/proc/generic.c' line='802' column='1'/>
         <return type-id='eaa32e2f'/>
@@ -117797,10 +117838,10 @@
         <parameter type-id='f23e2572' name='p' filepath='include/trace/hooks/sched.h' line='167' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_account_swap_pages' mangled-name='__traceiter_android_vh_account_swap_pages' filepath='include/trace/hooks/mm.h' line='243' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_account_swap_pages'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='243' column='1'/>
-        <parameter type-id='11e11a61' name='si' filepath='include/trace/hooks/mm.h' line='243' column='1'/>
-        <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='243' column='1'/>
+      <function-decl name='__traceiter_android_vh_account_swap_pages' mangled-name='__traceiter_android_vh_account_swap_pages' filepath='include/trace/hooks/mm.h' line='246' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_account_swap_pages'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='246' column='1'/>
+        <parameter type-id='11e11a61' name='si' filepath='include/trace/hooks/mm.h' line='246' column='1'/>
+        <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='246' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_account_task_time' mangled-name='__traceiter_android_vh_account_task_time' filepath='include/trace/hooks/sched.h' line='312' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_account_task_time'>
@@ -117855,10 +117896,10 @@
         <parameter type-id='7359adad' name='data' filepath='include/trace/hooks/mm.h' line='104' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_alloc_si' mangled-name='__traceiter_android_vh_alloc_si' filepath='include/trace/hooks/mm.h' line='255' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_alloc_si'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='255' column='1'/>
-        <parameter type-id='705c6411' name='p' filepath='include/trace/hooks/mm.h' line='255' column='1'/>
-        <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='255' column='1'/>
+      <function-decl name='__traceiter_android_vh_alloc_si' mangled-name='__traceiter_android_vh_alloc_si' filepath='include/trace/hooks/mm.h' line='258' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_alloc_si'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='258' column='1'/>
+        <parameter type-id='705c6411' name='p' filepath='include/trace/hooks/mm.h' line='258' column='1'/>
+        <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='258' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_alloc_swap_slot_cache' mangled-name='__traceiter_android_vh_alloc_swap_slot_cache' filepath='include/trace/hooks/mm.h' line='230' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_alloc_swap_slot_cache'>
@@ -118368,10 +118409,10 @@
         <parameter type-id='95e97e5e' name='flags' filepath='include/trace/hooks/sched.h' line='370' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_free_pages' mangled-name='__traceiter_android_vh_free_pages' filepath='include/trace/hooks/mm.h' line='258' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_free_pages'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='258' column='1'/>
-        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='258' column='1'/>
-        <parameter type-id='f0981eeb' name='order' filepath='include/trace/hooks/mm.h' line='258' column='1'/>
+      <function-decl name='__traceiter_android_vh_free_pages' mangled-name='__traceiter_android_vh_free_pages' filepath='include/trace/hooks/mm.h' line='261' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_free_pages'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='261' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='261' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='include/trace/hooks/mm.h' line='261' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_free_swap_slot' mangled-name='__traceiter_android_vh_free_swap_slot' filepath='include/trace/hooks/mm.h' line='233' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_free_swap_slot'>
@@ -118531,10 +118572,10 @@
         <parameter type-id='1d2c2b85' name='addr' filepath='include/trace/hooks/mm.h' line='94' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_init_swap_info_struct' mangled-name='__traceiter_android_vh_init_swap_info_struct' filepath='include/trace/hooks/mm.h' line='249' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_init_swap_info_struct'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='249' column='1'/>
-        <parameter type-id='11e11a61' name='p' filepath='include/trace/hooks/mm.h' line='249' column='1'/>
-        <parameter type-id='63de1ba0' name='swap_avail_heads' filepath='include/trace/hooks/mm.h' line='249' column='1'/>
+      <function-decl name='__traceiter_android_vh_init_swap_info_struct' mangled-name='__traceiter_android_vh_init_swap_info_struct' filepath='include/trace/hooks/mm.h' line='252' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_init_swap_info_struct'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='252' column='1'/>
+        <parameter type-id='11e11a61' name='p' filepath='include/trace/hooks/mm.h' line='252' column='1'/>
+        <parameter type-id='63de1ba0' name='swap_avail_heads' filepath='include/trace/hooks/mm.h' line='252' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_iommu_alloc_iova' mangled-name='__traceiter_android_vh_iommu_alloc_iova' filepath='include/trace/hooks/iommu.h' line='29' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_iommu_alloc_iova'>
@@ -118625,18 +118666,18 @@
         <parameter type-id='b59d7dce' name='text_len' filepath='include/trace/hooks/logbuf.h' line='25' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_look_around' mangled-name='__traceiter_android_vh_look_around' filepath='include/trace/hooks/mm.h' line='273' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_look_around'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
-        <parameter type-id='d132145b' name='pvmw' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
-        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
-        <parameter type-id='2ae08426' name='vma' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
-        <parameter type-id='7292109c' name='referenced' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
+      <function-decl name='__traceiter_android_vh_look_around' mangled-name='__traceiter_android_vh_look_around' filepath='include/trace/hooks/mm.h' line='276' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_look_around'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='276' column='1'/>
+        <parameter type-id='d132145b' name='pvmw' filepath='include/trace/hooks/mm.h' line='276' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='276' column='1'/>
+        <parameter type-id='2ae08426' name='vma' filepath='include/trace/hooks/mm.h' line='276' column='1'/>
+        <parameter type-id='7292109c' name='referenced' filepath='include/trace/hooks/mm.h' line='276' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_look_around_migrate_page' mangled-name='__traceiter_android_vh_look_around_migrate_page' filepath='include/trace/hooks/mm.h' line='270' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_look_around_migrate_page'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='270' column='1'/>
-        <parameter type-id='02f11ed4' name='old_page' filepath='include/trace/hooks/mm.h' line='270' column='1'/>
-        <parameter type-id='02f11ed4' name='new_page' filepath='include/trace/hooks/mm.h' line='270' column='1'/>
+      <function-decl name='__traceiter_android_vh_look_around_migrate_page' mangled-name='__traceiter_android_vh_look_around_migrate_page' filepath='include/trace/hooks/mm.h' line='273' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_look_around_migrate_page'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
+        <parameter type-id='02f11ed4' name='old_page' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
+        <parameter type-id='02f11ed4' name='new_page' filepath='include/trace/hooks/mm.h' line='273' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_map_util_freq' mangled-name='__traceiter_android_vh_map_util_freq' filepath='include/trace/hooks/sched.h' line='243' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_map_util_freq'>
@@ -118773,10 +118814,10 @@
         <parameter type-id='bc33861a' name='new' filepath='include/trace/hooks/creds.h' line='31' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_page_isolated_for_reclaim' mangled-name='__traceiter_android_vh_page_isolated_for_reclaim' filepath='include/trace/hooks/mm.h' line='240' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_page_isolated_for_reclaim'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='240' column='1'/>
-        <parameter type-id='df4b7819' name='mm' filepath='include/trace/hooks/mm.h' line='240' column='1'/>
-        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='240' column='1'/>
+      <function-decl name='__traceiter_android_vh_page_isolated_for_reclaim' mangled-name='__traceiter_android_vh_page_isolated_for_reclaim' filepath='include/trace/hooks/mm.h' line='243' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_page_isolated_for_reclaim'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='243' column='1'/>
+        <parameter type-id='df4b7819' name='mm' filepath='include/trace/hooks/mm.h' line='243' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='243' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_page_referenced_check_bypass' mangled-name='__traceiter_android_vh_page_referenced_check_bypass' filepath='include/trace/hooks/vmscan.h' line='28' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_page_referenced_check_bypass'>
@@ -118884,9 +118925,9 @@
         <parameter type-id='7359adad' name='settime_jiffies' filepath='include/trace/hooks/dtask.h' line='77' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_remove_vmalloc_stack' mangled-name='__traceiter_android_vh_remove_vmalloc_stack' filepath='include/trace/hooks/mm.h' line='264' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_remove_vmalloc_stack'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='264' column='1'/>
-        <parameter type-id='d295dab2' name='vm' filepath='include/trace/hooks/mm.h' line='264' column='1'/>
+      <function-decl name='__traceiter_android_vh_remove_vmalloc_stack' mangled-name='__traceiter_android_vh_remove_vmalloc_stack' filepath='include/trace/hooks/mm.h' line='267' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_remove_vmalloc_stack'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='267' column='1'/>
+        <parameter type-id='d295dab2' name='vm' filepath='include/trace/hooks/mm.h' line='267' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_revert_creds' mangled-name='__traceiter_android_vh_revert_creds' filepath='include/trace/hooks/creds.h' line='35' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_revert_creds'>
@@ -119077,9 +119118,9 @@
         <parameter type-id='efc8cc9a' name='mod' filepath='include/trace/hooks/module.h' line='20' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_set_shmem_page_flag' mangled-name='__traceiter_android_vh_set_shmem_page_flag' filepath='include/trace/hooks/mm.h' line='261' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_set_shmem_page_flag'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='261' column='1'/>
-        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='261' column='1'/>
+      <function-decl name='__traceiter_android_vh_set_shmem_page_flag' mangled-name='__traceiter_android_vh_set_shmem_page_flag' filepath='include/trace/hooks/mm.h' line='264' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_set_shmem_page_flag'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='264' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='264' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_set_wake_flags' mangled-name='__traceiter_android_vh_set_wake_flags' filepath='include/trace/hooks/sched.h' line='280' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_set_wake_flags'>
@@ -119152,10 +119193,10 @@
         <parameter type-id='d8e6b335' name='bypass' filepath='include/trace/hooks/vmscan.h' line='19' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_si_swapinfo' mangled-name='__traceiter_android_vh_si_swapinfo' filepath='include/trace/hooks/mm.h' line='252' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_si_swapinfo'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='252' column='1'/>
-        <parameter type-id='11e11a61' name='si' filepath='include/trace/hooks/mm.h' line='252' column='1'/>
-        <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='252' column='1'/>
+      <function-decl name='__traceiter_android_vh_si_swapinfo' mangled-name='__traceiter_android_vh_si_swapinfo' filepath='include/trace/hooks/mm.h' line='255' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_si_swapinfo'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='255' column='1'/>
+        <parameter type-id='11e11a61' name='si' filepath='include/trace/hooks/mm.h' line='255' column='1'/>
+        <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='255' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_snapshot_refaults' mangled-name='__traceiter_android_vh_snapshot_refaults' filepath='include/trace/hooks/vmscan.h' line='50' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_snapshot_refaults'>
@@ -119204,9 +119245,9 @@
         <parameter type-id='f23e2572' name='task' filepath='include/trace/hooks/sys.h' line='17' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_test_clear_look_around_ref' mangled-name='__traceiter_android_vh_test_clear_look_around_ref' filepath='include/trace/hooks/mm.h' line='267' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_test_clear_look_around_ref'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='267' column='1'/>
-        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='267' column='1'/>
+      <function-decl name='__traceiter_android_vh_test_clear_look_around_ref' mangled-name='__traceiter_android_vh_test_clear_look_around_ref' filepath='include/trace/hooks/mm.h' line='270' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_test_clear_look_around_ref'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='270' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='270' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_thermal_pm_notify_suspend' mangled-name='__traceiter_android_vh_thermal_pm_notify_suspend' filepath='include/trace/hooks/thermal.h' line='23' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_thermal_pm_notify_suspend'>
@@ -119354,10 +119395,10 @@
         <parameter type-id='442b8d89' name='hba' filepath='include/trace/hooks/ufshcd.h' line='46' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_vh_unuse_swap_page' mangled-name='__traceiter_android_vh_unuse_swap_page' filepath='include/trace/hooks/mm.h' line='246' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_unuse_swap_page'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='246' column='1'/>
-        <parameter type-id='11e11a61' name='si' filepath='include/trace/hooks/mm.h' line='246' column='1'/>
-        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='246' column='1'/>
+      <function-decl name='__traceiter_android_vh_unuse_swap_page' mangled-name='__traceiter_android_vh_unuse_swap_page' filepath='include/trace/hooks/mm.h' line='249' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_unuse_swap_page'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='249' column='1'/>
+        <parameter type-id='11e11a61' name='si' filepath='include/trace/hooks/mm.h' line='249' column='1'/>
+        <parameter type-id='02f11ed4' name='page' filepath='include/trace/hooks/mm.h' line='249' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_update_page_mapcount' mangled-name='__traceiter_android_vh_update_page_mapcount' filepath='include/trace/hooks/mm.h' line='162' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_update_page_mapcount'>
@@ -119920,7 +119961,7 @@
       <var-decl name='__tracepoint_android_rvh_v4l2subdev_set_frame_interval' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_v4l2subdev_set_frame_interval' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='66' column='1' elf-symbol-id='__tracepoint_android_rvh_v4l2subdev_set_frame_interval'/>
       <var-decl name='__tracepoint_android_rvh_v4l2subdev_set_selection' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_v4l2subdev_set_selection' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='56' column='1' elf-symbol-id='__tracepoint_android_rvh_v4l2subdev_set_selection'/>
       <var-decl name='__tracepoint_android_rvh_wake_up_new_task' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_wake_up_new_task' visibility='default' filepath='include/trace/hooks/sched.h' line='167' column='1' elf-symbol-id='__tracepoint_android_rvh_wake_up_new_task'/>
-      <var-decl name='__tracepoint_android_vh_account_swap_pages' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_account_swap_pages' visibility='default' filepath='include/trace/hooks/mm.h' line='243' column='1' elf-symbol-id='__tracepoint_android_vh_account_swap_pages'/>
+      <var-decl name='__tracepoint_android_vh_account_swap_pages' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_account_swap_pages' visibility='default' filepath='include/trace/hooks/mm.h' line='246' column='1' elf-symbol-id='__tracepoint_android_vh_account_swap_pages'/>
       <var-decl name='__tracepoint_android_vh_account_task_time' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_account_task_time' visibility='default' filepath='include/trace/hooks/sched.h' line='312' column='1' elf-symbol-id='__tracepoint_android_vh_account_task_time'/>
       <var-decl name='__tracepoint_android_vh_add_page_to_lrulist' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_add_page_to_lrulist' visibility='default' filepath='include/trace/hooks/mm.h' line='166' column='1' elf-symbol-id='__tracepoint_android_vh_add_page_to_lrulist'/>
       <var-decl name='__tracepoint_android_vh_aes_decrypt' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_aes_decrypt' visibility='default' filepath='include/trace/hooks/fips140.h' line='46' column='1' elf-symbol-id='__tracepoint_android_vh_aes_decrypt'/>
@@ -119928,7 +119969,7 @@
       <var-decl name='__tracepoint_android_vh_aes_expandkey' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_aes_expandkey' visibility='default' filepath='include/trace/hooks/fips140.h' line='32' column='1' elf-symbol-id='__tracepoint_android_vh_aes_expandkey'/>
       <var-decl name='__tracepoint_android_vh_alloc_pages_slowpath_begin' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_pages_slowpath_begin' visibility='default' filepath='include/trace/hooks/mm.h' line='101' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_pages_slowpath_begin'/>
       <var-decl name='__tracepoint_android_vh_alloc_pages_slowpath_end' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_pages_slowpath_end' visibility='default' filepath='include/trace/hooks/mm.h' line='104' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_pages_slowpath_end'/>
-      <var-decl name='__tracepoint_android_vh_alloc_si' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_si' visibility='default' filepath='include/trace/hooks/mm.h' line='255' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_si'/>
+      <var-decl name='__tracepoint_android_vh_alloc_si' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_si' visibility='default' filepath='include/trace/hooks/mm.h' line='258' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_si'/>
       <var-decl name='__tracepoint_android_vh_alloc_swap_slot_cache' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alloc_swap_slot_cache' visibility='default' filepath='include/trace/hooks/mm.h' line='230' column='1' elf-symbol-id='__tracepoint_android_vh_alloc_swap_slot_cache'/>
       <var-decl name='__tracepoint_android_vh_allow_domain_state' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_allow_domain_state' visibility='default' filepath='include/trace/hooks/pm_domain.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_allow_domain_state'/>
       <var-decl name='__tracepoint_android_vh_alter_futex_plist_add' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_alter_futex_plist_add' visibility='default' filepath='include/trace/hooks/futex.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_alter_futex_plist_add'/>
@@ -120007,7 +120048,7 @@
       <var-decl name='__tracepoint_android_vh_filemap_fault_get_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_filemap_fault_get_page' visibility='default' filepath='include/trace/hooks/mm.h' line='75' column='1' elf-symbol-id='__tracepoint_android_vh_filemap_fault_get_page'/>
       <var-decl name='__tracepoint_android_vh_fill_ext_fmtdesc' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_fill_ext_fmtdesc' visibility='default' filepath='include/trace/hooks/v4l2core.h' line='33' column='1' elf-symbol-id='__tracepoint_android_vh_fill_ext_fmtdesc'/>
       <var-decl name='__tracepoint_android_vh_finish_update_load_avg_se' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_finish_update_load_avg_se' visibility='default' filepath='include/trace/hooks/sched.h' line='370' column='1' elf-symbol-id='__tracepoint_android_vh_finish_update_load_avg_se'/>
-      <var-decl name='__tracepoint_android_vh_free_pages' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_free_pages' visibility='default' filepath='include/trace/hooks/mm.h' line='258' column='1' elf-symbol-id='__tracepoint_android_vh_free_pages'/>
+      <var-decl name='__tracepoint_android_vh_free_pages' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_free_pages' visibility='default' filepath='include/trace/hooks/mm.h' line='261' column='1' elf-symbol-id='__tracepoint_android_vh_free_pages'/>
       <var-decl name='__tracepoint_android_vh_free_swap_slot' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_free_swap_slot' visibility='default' filepath='include/trace/hooks/mm.h' line='233' column='1' elf-symbol-id='__tracepoint_android_vh_free_swap_slot'/>
       <var-decl name='__tracepoint_android_vh_free_task' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_free_task' visibility='default' filepath='include/trace/hooks/sched.h' line='332' column='1' elf-symbol-id='__tracepoint_android_vh_free_task'/>
       <var-decl name='__tracepoint_android_vh_freq_qos_add_request' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_freq_qos_add_request' visibility='default' filepath='include/trace/hooks/power.h' line='34' column='1' elf-symbol-id='__tracepoint_android_vh_freq_qos_add_request'/>
@@ -120034,7 +120075,7 @@
       <var-decl name='__tracepoint_android_vh_handle_tlb_conf' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_handle_tlb_conf' visibility='default' filepath='include/trace/hooks/fault.h' line='37' column='1' elf-symbol-id='__tracepoint_android_vh_handle_tlb_conf'/>
       <var-decl name='__tracepoint_android_vh_inactive_is_low' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_inactive_is_low' visibility='default' filepath='include/trace/hooks/vmscan.h' line='46' column='1' elf-symbol-id='__tracepoint_android_vh_inactive_is_low'/>
       <var-decl name='__tracepoint_android_vh_include_reserved_zone' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_include_reserved_zone' visibility='default' filepath='include/trace/hooks/mm.h' line='94' column='1' elf-symbol-id='__tracepoint_android_vh_include_reserved_zone'/>
-      <var-decl name='__tracepoint_android_vh_init_swap_info_struct' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_init_swap_info_struct' visibility='default' filepath='include/trace/hooks/mm.h' line='249' column='1' elf-symbol-id='__tracepoint_android_vh_init_swap_info_struct'/>
+      <var-decl name='__tracepoint_android_vh_init_swap_info_struct' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_init_swap_info_struct' visibility='default' filepath='include/trace/hooks/mm.h' line='252' column='1' elf-symbol-id='__tracepoint_android_vh_init_swap_info_struct'/>
       <var-decl name='__tracepoint_android_vh_iommu_alloc_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_alloc_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='29' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_alloc_iova'/>
       <var-decl name='__tracepoint_android_vh_iommu_free_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_free_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='38' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_free_iova'/>
       <var-decl name='__tracepoint_android_vh_iommu_iovad_alloc_iova' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_iommu_iovad_alloc_iova' visibility='default' filepath='include/trace/hooks/iommu.h' line='34' column='1' elf-symbol-id='__tracepoint_android_vh_iommu_iovad_alloc_iova'/>
@@ -120050,8 +120091,8 @@
       <var-decl name='__tracepoint_android_vh_kmalloc_slab' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_kmalloc_slab' visibility='default' filepath='include/trace/hooks/mm.h' line='144' column='1' elf-symbol-id='__tracepoint_android_vh_kmalloc_slab'/>
       <var-decl name='__tracepoint_android_vh_logbuf' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_logbuf' visibility='default' filepath='include/trace/hooks/logbuf.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_logbuf'/>
       <var-decl name='__tracepoint_android_vh_logbuf_pr_cont' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_logbuf_pr_cont' visibility='default' filepath='include/trace/hooks/logbuf.h' line='25' column='1' elf-symbol-id='__tracepoint_android_vh_logbuf_pr_cont'/>
-      <var-decl name='__tracepoint_android_vh_look_around' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_look_around' visibility='default' filepath='include/trace/hooks/mm.h' line='273' column='1' elf-symbol-id='__tracepoint_android_vh_look_around'/>
-      <var-decl name='__tracepoint_android_vh_look_around_migrate_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_look_around_migrate_page' visibility='default' filepath='include/trace/hooks/mm.h' line='270' column='1' elf-symbol-id='__tracepoint_android_vh_look_around_migrate_page'/>
+      <var-decl name='__tracepoint_android_vh_look_around' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_look_around' visibility='default' filepath='include/trace/hooks/mm.h' line='276' column='1' elf-symbol-id='__tracepoint_android_vh_look_around'/>
+      <var-decl name='__tracepoint_android_vh_look_around_migrate_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_look_around_migrate_page' visibility='default' filepath='include/trace/hooks/mm.h' line='273' column='1' elf-symbol-id='__tracepoint_android_vh_look_around_migrate_page'/>
       <var-decl name='__tracepoint_android_vh_map_util_freq' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_map_util_freq' visibility='default' filepath='include/trace/hooks/sched.h' line='243' column='1' elf-symbol-id='__tracepoint_android_vh_map_util_freq'/>
       <var-decl name='__tracepoint_android_vh_mark_page_accessed' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_mark_page_accessed' visibility='default' filepath='include/trace/hooks/mm.h' line='181' column='1' elf-symbol-id='__tracepoint_android_vh_mark_page_accessed'/>
       <var-decl name='__tracepoint_android_vh_media_device_setup_link' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_media_device_setup_link' visibility='default' filepath='include/trace/hooks/v4l2mc.h' line='22' column='1' elf-symbol-id='__tracepoint_android_vh_media_device_setup_link'/>
@@ -120075,7 +120116,7 @@
       <var-decl name='__tracepoint_android_vh_of_i2c_get_board_info' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_of_i2c_get_board_info' visibility='default' filepath='include/trace/hooks/i2c.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_of_i2c_get_board_info'/>
       <var-decl name='__tracepoint_android_vh_oom_check_panic' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_oom_check_panic' visibility='default' filepath='include/trace/hooks/mm.h' line='114' column='1' elf-symbol-id='__tracepoint_android_vh_oom_check_panic'/>
       <var-decl name='__tracepoint_android_vh_override_creds' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_override_creds' visibility='default' filepath='include/trace/hooks/creds.h' line='31' column='1' elf-symbol-id='__tracepoint_android_vh_override_creds'/>
-      <var-decl name='__tracepoint_android_vh_page_isolated_for_reclaim' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_page_isolated_for_reclaim' visibility='default' filepath='include/trace/hooks/mm.h' line='240' column='1' elf-symbol-id='__tracepoint_android_vh_page_isolated_for_reclaim'/>
+      <var-decl name='__tracepoint_android_vh_page_isolated_for_reclaim' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_page_isolated_for_reclaim' visibility='default' filepath='include/trace/hooks/mm.h' line='243' column='1' elf-symbol-id='__tracepoint_android_vh_page_isolated_for_reclaim'/>
       <var-decl name='__tracepoint_android_vh_page_referenced_check_bypass' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_page_referenced_check_bypass' visibility='default' filepath='include/trace/hooks/vmscan.h' line='28' column='1' elf-symbol-id='__tracepoint_android_vh_page_referenced_check_bypass'/>
       <var-decl name='__tracepoint_android_vh_page_referenced_one_end' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_page_referenced_one_end' visibility='default' filepath='include/trace/hooks/mm.h' line='211' column='1' elf-symbol-id='__tracepoint_android_vh_page_referenced_one_end'/>
       <var-decl name='__tracepoint_android_vh_page_should_be_protected' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_page_should_be_protected' visibility='default' filepath='include/trace/hooks/mm.h' line='178' column='1' elf-symbol-id='__tracepoint_android_vh_page_should_be_protected'/>
@@ -120095,7 +120136,7 @@
       <var-decl name='__tracepoint_android_vh_record_pcpu_rwsem_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_pcpu_rwsem_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='80' column='1' elf-symbol-id='__tracepoint_android_vh_record_pcpu_rwsem_starttime'/>
       <var-decl name='__tracepoint_android_vh_record_rtmutex_lock_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_rtmutex_lock_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='74' column='1' elf-symbol-id='__tracepoint_android_vh_record_rtmutex_lock_starttime'/>
       <var-decl name='__tracepoint_android_vh_record_rwsem_lock_starttime' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_record_rwsem_lock_starttime' visibility='default' filepath='include/trace/hooks/dtask.h' line='77' column='1' elf-symbol-id='__tracepoint_android_vh_record_rwsem_lock_starttime'/>
-      <var-decl name='__tracepoint_android_vh_remove_vmalloc_stack' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_remove_vmalloc_stack' visibility='default' filepath='include/trace/hooks/mm.h' line='264' column='1' elf-symbol-id='__tracepoint_android_vh_remove_vmalloc_stack'/>
+      <var-decl name='__tracepoint_android_vh_remove_vmalloc_stack' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_remove_vmalloc_stack' visibility='default' filepath='include/trace/hooks/mm.h' line='267' column='1' elf-symbol-id='__tracepoint_android_vh_remove_vmalloc_stack'/>
       <var-decl name='__tracepoint_android_vh_revert_creds' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_revert_creds' visibility='default' filepath='include/trace/hooks/creds.h' line='35' column='1' elf-symbol-id='__tracepoint_android_vh_revert_creds'/>
       <var-decl name='__tracepoint_android_vh_rmqueue' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rmqueue' visibility='default' filepath='include/trace/hooks/mm.h' line='65' column='1' elf-symbol-id='__tracepoint_android_vh_rmqueue'/>
       <var-decl name='__tracepoint_android_vh_rproc_recovery' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_rproc_recovery' visibility='default' filepath='include/trace/hooks/remoteproc.h' line='21' column='1' elf-symbol-id='__tracepoint_android_vh_rproc_recovery'/>
@@ -120136,7 +120177,7 @@
       <var-decl name='__tracepoint_android_vh_set_memory_x' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_memory_x' visibility='default' filepath='include/trace/hooks/memory.h' line='14' column='1' elf-symbol-id='__tracepoint_android_vh_set_memory_x'/>
       <var-decl name='__tracepoint_android_vh_set_module_permit_after_init' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_module_permit_after_init' visibility='default' filepath='include/trace/hooks/module.h' line='24' column='1' elf-symbol-id='__tracepoint_android_vh_set_module_permit_after_init'/>
       <var-decl name='__tracepoint_android_vh_set_module_permit_before_init' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_module_permit_before_init' visibility='default' filepath='include/trace/hooks/module.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_set_module_permit_before_init'/>
-      <var-decl name='__tracepoint_android_vh_set_shmem_page_flag' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_shmem_page_flag' visibility='default' filepath='include/trace/hooks/mm.h' line='261' column='1' elf-symbol-id='__tracepoint_android_vh_set_shmem_page_flag'/>
+      <var-decl name='__tracepoint_android_vh_set_shmem_page_flag' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_shmem_page_flag' visibility='default' filepath='include/trace/hooks/mm.h' line='264' column='1' elf-symbol-id='__tracepoint_android_vh_set_shmem_page_flag'/>
       <var-decl name='__tracepoint_android_vh_set_wake_flags' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_set_wake_flags' visibility='default' filepath='include/trace/hooks/sched.h' line='280' column='1' elf-symbol-id='__tracepoint_android_vh_set_wake_flags'/>
       <var-decl name='__tracepoint_android_vh_setscheduler_uclamp' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_setscheduler_uclamp' visibility='default' filepath='include/trace/hooks/sched.h' line='390' column='1' elf-symbol-id='__tracepoint_android_vh_setscheduler_uclamp'/>
       <var-decl name='__tracepoint_android_vh_sha256' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sha256' visibility='default' filepath='include/trace/hooks/fips140.h' line='25' column='1' elf-symbol-id='__tracepoint_android_vh_sha256'/>
@@ -120149,7 +120190,7 @@
       <var-decl name='__tracepoint_android_vh_show_suspend_epoch_val' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_show_suspend_epoch_val' visibility='default' filepath='include/trace/hooks/epoch.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_show_suspend_epoch_val'/>
       <var-decl name='__tracepoint_android_vh_shrink_node_memcgs' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_shrink_node_memcgs' visibility='default' filepath='include/trace/hooks/vmscan.h' line='43' column='1' elf-symbol-id='__tracepoint_android_vh_shrink_node_memcgs'/>
       <var-decl name='__tracepoint_android_vh_shrink_slab_bypass' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_shrink_slab_bypass' visibility='default' filepath='include/trace/hooks/vmscan.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_shrink_slab_bypass'/>
-      <var-decl name='__tracepoint_android_vh_si_swapinfo' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_si_swapinfo' visibility='default' filepath='include/trace/hooks/mm.h' line='252' column='1' elf-symbol-id='__tracepoint_android_vh_si_swapinfo'/>
+      <var-decl name='__tracepoint_android_vh_si_swapinfo' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_si_swapinfo' visibility='default' filepath='include/trace/hooks/mm.h' line='255' column='1' elf-symbol-id='__tracepoint_android_vh_si_swapinfo'/>
       <var-decl name='__tracepoint_android_vh_snapshot_refaults' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_snapshot_refaults' visibility='default' filepath='include/trace/hooks/vmscan.h' line='50' column='1' elf-symbol-id='__tracepoint_android_vh_snapshot_refaults'/>
       <var-decl name='__tracepoint_android_vh_snd_compr_use_pause_in_drain' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_snd_compr_use_pause_in_drain' visibility='default' filepath='include/trace/hooks/snd_compr.h' line='18' column='1' elf-symbol-id='__tracepoint_android_vh_snd_compr_use_pause_in_drain'/>
       <var-decl name='__tracepoint_android_vh_snd_soc_card_get_comp_chain' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_snd_soc_card_get_comp_chain' visibility='default' filepath='include/trace/hooks/sound.h' line='18' column='1' elf-symbol-id='__tracepoint_android_vh_snd_soc_card_get_comp_chain'/>
@@ -120159,7 +120200,7 @@
       <var-decl name='__tracepoint_android_vh_swapin_add_anon_rmap' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_swapin_add_anon_rmap' visibility='default' filepath='include/trace/hooks/mm.h' line='202' column='1' elf-symbol-id='__tracepoint_android_vh_swapin_add_anon_rmap'/>
       <var-decl name='__tracepoint_android_vh_sync_txn_recvd' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_sync_txn_recvd' visibility='default' filepath='include/trace/hooks/binder.h' line='57' column='1' elf-symbol-id='__tracepoint_android_vh_sync_txn_recvd'/>
       <var-decl name='__tracepoint_android_vh_syscall_prctl_finished' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_syscall_prctl_finished' visibility='default' filepath='include/trace/hooks/sys.h' line='17' column='1' elf-symbol-id='__tracepoint_android_vh_syscall_prctl_finished'/>
-      <var-decl name='__tracepoint_android_vh_test_clear_look_around_ref' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_test_clear_look_around_ref' visibility='default' filepath='include/trace/hooks/mm.h' line='267' column='1' elf-symbol-id='__tracepoint_android_vh_test_clear_look_around_ref'/>
+      <var-decl name='__tracepoint_android_vh_test_clear_look_around_ref' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_test_clear_look_around_ref' visibility='default' filepath='include/trace/hooks/mm.h' line='270' column='1' elf-symbol-id='__tracepoint_android_vh_test_clear_look_around_ref'/>
       <var-decl name='__tracepoint_android_vh_thermal_pm_notify_suspend' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_thermal_pm_notify_suspend' visibility='default' filepath='include/trace/hooks/thermal.h' line='23' column='1' elf-symbol-id='__tracepoint_android_vh_thermal_pm_notify_suspend'/>
       <var-decl name='__tracepoint_android_vh_timer_calc_index' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_timer_calc_index' visibility='default' filepath='include/trace/hooks/timer.h' line='13' column='1' elf-symbol-id='__tracepoint_android_vh_timer_calc_index'/>
       <var-decl name='__tracepoint_android_vh_timerfd_create' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_timerfd_create' visibility='default' filepath='include/trace/hooks/fs.h' line='17' column='1' elf-symbol-id='__tracepoint_android_vh_timerfd_create'/>
@@ -120184,7 +120225,7 @@
       <var-decl name='__tracepoint_android_vh_ufs_send_uic_command' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_send_uic_command' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='58' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_send_uic_command'/>
       <var-decl name='__tracepoint_android_vh_ufs_update_sdev' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_update_sdev' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='71' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_update_sdev'/>
       <var-decl name='__tracepoint_android_vh_ufs_update_sysfs' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_ufs_update_sysfs' visibility='default' filepath='include/trace/hooks/ufshcd.h' line='46' column='1' elf-symbol-id='__tracepoint_android_vh_ufs_update_sysfs'/>
-      <var-decl name='__tracepoint_android_vh_unuse_swap_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_unuse_swap_page' visibility='default' filepath='include/trace/hooks/mm.h' line='246' column='1' elf-symbol-id='__tracepoint_android_vh_unuse_swap_page'/>
+      <var-decl name='__tracepoint_android_vh_unuse_swap_page' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_unuse_swap_page' visibility='default' filepath='include/trace/hooks/mm.h' line='249' column='1' elf-symbol-id='__tracepoint_android_vh_unuse_swap_page'/>
       <var-decl name='__tracepoint_android_vh_update_page_mapcount' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_update_page_mapcount' visibility='default' filepath='include/trace/hooks/mm.h' line='162' column='1' elf-symbol-id='__tracepoint_android_vh_update_page_mapcount'/>
       <var-decl name='__tracepoint_android_vh_update_topology_flags_workfn' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_update_topology_flags_workfn' visibility='default' filepath='include/trace/hooks/topology.h' line='19' column='1' elf-symbol-id='__tracepoint_android_vh_update_topology_flags_workfn'/>
       <var-decl name='__tracepoint_android_vh_usb_dev_resume' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_usb_dev_resume' visibility='default' filepath='include/trace/hooks/usb.h' line='20' column='1' elf-symbol-id='__tracepoint_android_vh_usb_dev_resume'/>
