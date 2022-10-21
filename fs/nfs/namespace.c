@@ -200,7 +200,7 @@ struct vfsmount *nfs_d_automount(struct path *path)
 		goto out_fc;
 
 	mnt_set_expiry(mnt, &nfs_automount_list);
-	schedule_delayed_work(&nfs_automount_task, timeout);
+	queue_delayed_work(system_power_efficient_wq, &nfs_automount_task, timeout);
 
 out_fc:
 	put_fs_context(fc);
@@ -241,8 +241,9 @@ static void nfs_expire_automounts(struct work_struct *work)
 	int timeout = READ_ONCE(nfs_mountpoint_expiry_timeout);
 
 	mark_mounts_for_expiry(list);
+
 	if (!list_empty(list) && timeout > 0)
-		schedule_delayed_work(&nfs_automount_task, timeout);
+		queue_delayed_work(system_power_efficient_wq, &nfs_automount_task, timeout);
 }
 
 void nfs_release_automount_timer(void)
