@@ -4262,6 +4262,7 @@
       <elf-symbol name='power_supply_put_battery_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9fc6ccdc'/>
       <elf-symbol name='power_supply_reg_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x136209db'/>
       <elf-symbol name='power_supply_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x62e6d81c'/>
+      <elf-symbol name='power_supply_register_no_ws' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x997617c'/>
       <elf-symbol name='power_supply_set_property' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7f689a84'/>
       <elf-symbol name='power_supply_temp2resist_simple' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2b6150fb'/>
       <elf-symbol name='power_supply_unreg_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b81c38b'/>
@@ -138880,6 +138881,12 @@
         <parameter type-id='fa0b179b' name='parent' filepath='drivers/power/supply/power_supply_core.c' line='1309' column='1'/>
         <parameter type-id='cb9cd99f' name='desc' filepath='drivers/power/supply/power_supply_core.c' line='1310' column='1'/>
         <parameter type-id='048b3ad6' name='cfg' filepath='drivers/power/supply/power_supply_core.c' line='1311' column='1'/>
+        <return type-id='c0c93c9e'/>
+      </function-decl>
+      <function-decl name='power_supply_register_no_ws' mangled-name='power_supply_register_no_ws' filepath='drivers/power/supply/power_supply_core.c' line='1332' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='power_supply_register_no_ws'>
+        <parameter type-id='fa0b179b' name='parent' filepath='drivers/power/supply/power_supply_core.c' line='1332' column='1'/>
+        <parameter type-id='cb9cd99f' name='desc' filepath='drivers/power/supply/power_supply_core.c' line='1333' column='1'/>
+        <parameter type-id='048b3ad6' name='cfg' filepath='drivers/power/supply/power_supply_core.c' line='1334' column='1'/>
         <return type-id='c0c93c9e'/>
       </function-decl>
       <function-decl name='power_supply_set_property' mangled-name='power_supply_set_property' filepath='drivers/power/supply/power_supply_core.c' line='964' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='power_supply_set_property'>
