@@ -1709,6 +1709,7 @@
       <elf-symbol name='devm_kstrdup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbcf94680'/>
       <elf-symbol name='devm_kstrdup_const' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74cd3234'/>
       <elf-symbol name='devm_kvasprintf' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x34e8cde5'/>
+      <elf-symbol name='devm_led_classdev_flash_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb7b53b3a'/>
       <elf-symbol name='devm_led_classdev_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x78e191fd'/>
       <elf-symbol name='devm_led_classdev_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6d4083fd'/>
       <elf-symbol name='devm_mbox_controller_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x285a2912'/>
@@ -3368,6 +3369,7 @@
       <elf-symbol name='led_classdev_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd6296d3'/>
       <elf-symbol name='led_classdev_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcb7db351'/>
       <elf-symbol name='led_get_flash_fault' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8192026c'/>
+      <elf-symbol name='led_set_brightness' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xec09d5dc'/>
       <elf-symbol name='led_set_brightness_nosleep' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xca66a3d3'/>
       <elf-symbol name='led_set_brightness_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc41fa040'/>
       <elf-symbol name='led_set_flash_brightness' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1865ddc8'/>
@@ -3383,6 +3385,7 @@
       <elf-symbol name='led_update_brightness' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd97a221a'/>
       <elf-symbol name='led_update_flash_brightness' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2c5af1ce'/>
       <elf-symbol name='linear_range_get_max_value' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd5301b2c'/>
+      <elf-symbol name='linear_range_get_selector_high' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x69ee2220'/>
       <elf-symbol name='linear_range_get_value' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd4e6d7e0'/>
       <elf-symbol name='list_sort' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcba4abe3'/>
       <elf-symbol name='ll_rw_block' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ed79b9'/>
@@ -4472,6 +4475,7 @@
       <elf-symbol name='regulator_enable_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xca54496'/>
       <elf-symbol name='regulator_force_disable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x69f59f0b'/>
       <elf-symbol name='regulator_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdbddc967'/>
+      <elf-symbol name='regulator_get_bypass_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48257db8'/>
       <elf-symbol name='regulator_get_current_limit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c55a9b8'/>
       <elf-symbol name='regulator_get_current_limit_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8e7b742c'/>
       <elf-symbol name='regulator_get_drvdata' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc9874bae'/>
@@ -4497,6 +4501,7 @@
       <elf-symbol name='regulator_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd625d7ae'/>
       <elf-symbol name='regulator_register_notifier' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74d65fb6'/>
       <elf-symbol name='regulator_set_active_discharge_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2311fff'/>
+      <elf-symbol name='regulator_set_bypass_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc2ddd21'/>
       <elf-symbol name='regulator_set_current_limit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf024d2b7'/>
       <elf-symbol name='regulator_set_current_limit_regmap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x13adf665'/>
       <elf-symbol name='regulator_set_load' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbdb1494f'/>
@@ -6787,6 +6792,7 @@
       <elf-symbol name='kobj_sysfs_ops' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x551b1300'/>
       <elf-symbol name='ksoftirqd' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x66f86b20'/>
       <elf-symbol name='kstat' size='48' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x38869d88'/>
+      <elf-symbol name='led_colors' size='80' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b198c77'/>
       <elf-symbol name='loops_per_jiffy' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba497f13'/>
       <elf-symbol name='memcg_kmem_enabled_key' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd3543063'/>
       <elf-symbol name='memory_cgrp_subsys' size='240' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf09b210'/>
@@ -58444,6 +58450,9 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='b359f47f' size-in-bits='64' id='80b73a7b'/>
+      <array-type-def dimensions='1' type-id='b99c00c9' size-in-bits='640' id='80c2a296'>
+        <subrange length='10' type-id='7ff19f0f' id='487da03a'/>
+      </array-type-def>
       <pointer-type-def type-id='a547eaa5' size-in-bits='64' id='80c2f2c9'/>
       <pointer-type-def type-id='035aa62d' size-in-bits='64' id='80c9c0cd'/>
       <qualified-type-def type-id='9d0cc828' const='yes' id='80cb625d'/>
@@ -125683,6 +125692,12 @@
         <parameter type-id='2aee9912' name='ap' filepath='drivers/base/devres.c' line='1005' column='1'/>
         <return type-id='26a90f95'/>
       </function-decl>
+      <function-decl name='devm_led_classdev_flash_register_ext' mangled-name='devm_led_classdev_flash_register_ext' filepath='drivers/leds/led-class-flash.c' line='335' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_led_classdev_flash_register_ext'>
+        <parameter type-id='fa0b179b' name='parent' filepath='drivers/leds/led-class-flash.c' line='335' column='1'/>
+        <parameter type-id='26deddb9' name='fled_cdev' filepath='drivers/leds/led-class-flash.c' line='336' column='1'/>
+        <parameter type-id='eebb8ee8' name='init_data' filepath='drivers/leds/led-class-flash.c' line='337' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='devm_led_classdev_register_ext' mangled-name='devm_led_classdev_register_ext' filepath='drivers/leds/led-class.c' line='477' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_led_classdev_register_ext'>
         <parameter type-id='fa0b179b' name='parent' filepath='drivers/leds/led-class.c' line='477' column='1'/>
         <parameter type-id='bd1c8eb6' name='led_cdev' filepath='drivers/leds/led-class.c' line='478' column='1'/>
@@ -134350,10 +134365,16 @@
         <parameter type-id='bd1c8eb6' name='led_cdev' filepath='drivers/leds/led-class.c' line='431' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <var-decl name='led_colors' type-id='80c2a296' mangled-name='led_colors' visibility='default' filepath='drivers/leds/led-core.c' line='28' column='1' elf-symbol-id='led_colors'/>
       <function-decl name='led_get_flash_fault' mangled-name='led_get_flash_fault' filepath='drivers/leds/led-class-flash.c' line='406' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_get_flash_fault'>
         <parameter type-id='26deddb9' name='fled_cdev' filepath='drivers/leds/led-class-flash.c' line='406' column='1'/>
         <parameter type-id='f9409001' name='fault' filepath='drivers/leds/led-class-flash.c' line='406' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='led_set_brightness' mangled-name='led_set_brightness' filepath='drivers/leds/led-core.c' line='243' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_set_brightness'>
+        <parameter type-id='bd1c8eb6' name='led_cdev' filepath='drivers/leds/led-core.c' line='243' column='1'/>
+        <parameter type-id='fa598f35' name='brightness' filepath='drivers/leds/led-core.c' line='244' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='led_set_brightness_nosleep' mangled-name='led_set_brightness_nosleep' filepath='drivers/leds/led-core.c' line='284' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_set_brightness_nosleep'>
         <parameter type-id='bd1c8eb6' name='led_cdev' filepath='drivers/leds/led-core.c' line='284' column='1'/>
@@ -134420,6 +134441,13 @@
       <function-decl name='linear_range_get_max_value' mangled-name='linear_range_get_max_value' filepath='lib/linear_ranges.c' line='70' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='linear_range_get_max_value'>
         <parameter type-id='0c90828b' name='r' filepath='lib/linear_ranges.c' line='70' column='1'/>
         <return type-id='f0981eeb'/>
+      </function-decl>
+      <function-decl name='linear_range_get_selector_high' mangled-name='linear_range_get_selector_high' filepath='lib/linear_ranges.c' line='219' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='linear_range_get_selector_high'>
+        <parameter type-id='0c90828b' name='r' filepath='lib/linear_ranges.c' line='219' column='1'/>
+        <parameter type-id='f0981eeb' name='val' filepath='lib/linear_ranges.c' line='220' column='1'/>
+        <parameter type-id='807869d3' name='selector' filepath='lib/linear_ranges.c' line='220' column='1'/>
+        <parameter type-id='d8e6b335' name='found' filepath='lib/linear_ranges.c' line='221' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='linear_range_get_value' mangled-name='linear_range_get_value' filepath='lib/linear_ranges.c' line='87' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='linear_range_get_value'>
         <parameter type-id='0c90828b' name='r' filepath='lib/linear_ranges.c' line='87' column='1'/>
@@ -139909,6 +139937,11 @@
         <parameter type-id='80f4b756' name='id' filepath='drivers/regulator/core.c' line='2059' column='1'/>
         <return type-id='850c13f6'/>
       </function-decl>
+      <function-decl name='regulator_get_bypass_regmap' mangled-name='regulator_get_bypass_regmap' filepath='drivers/regulator/helpers.c' line='722' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_get_bypass_regmap'>
+        <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/helpers.c' line='722' column='1'/>
+        <parameter type-id='d8e6b335' name='enable' filepath='drivers/regulator/helpers.c' line='722' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='regulator_get_current_limit' mangled-name='regulator_get_current_limit' filepath='drivers/regulator/core.c' line='4302' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_get_current_limit'>
         <parameter type-id='850c13f6' name='regulator' filepath='drivers/regulator/core.c' line='4302' column='1'/>
         <return type-id='95e97e5e'/>
@@ -140027,6 +140060,11 @@
       <function-decl name='regulator_set_active_discharge_regmap' mangled-name='regulator_set_active_discharge_regmap' filepath='drivers/regulator/helpers.c' line='748' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_active_discharge_regmap'>
         <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/helpers.c' line='748' column='1'/>
         <parameter type-id='b50a4934' name='enable' filepath='drivers/regulator/helpers.c' line='749' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='regulator_set_bypass_regmap' mangled-name='regulator_set_bypass_regmap' filepath='drivers/regulator/helpers.c' line='663' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_bypass_regmap'>
+        <parameter type-id='43c38462' name='rdev' filepath='drivers/regulator/helpers.c' line='663' column='1'/>
+        <parameter type-id='b50a4934' name='enable' filepath='drivers/regulator/helpers.c' line='663' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='regulator_set_current_limit' mangled-name='regulator_set_current_limit' filepath='drivers/regulator/core.c' line='4247' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='regulator_set_current_limit'>
