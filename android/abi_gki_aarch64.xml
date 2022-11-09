@@ -148306,9 +148306,9 @@
         <parameter type-id='7359adad' name='offset' filepath='mm/util.c' line='556' column='1'/>
         <return type-id='7359adad'/>
       </function-decl>
-      <function-decl name='vm_munmap' mangled-name='vm_munmap' filepath='mm/mmap.c' line='3043' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_munmap'>
-        <parameter type-id='7359adad' name='start' filepath='mm/mmap.c' line='3043' column='1'/>
-        <parameter type-id='b59d7dce' name='len' filepath='mm/mmap.c' line='3043' column='1'/>
+      <function-decl name='vm_munmap' mangled-name='vm_munmap' filepath='mm/mmap.c' line='3060' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='vm_munmap'>
+        <parameter type-id='7359adad' name='start' filepath='mm/mmap.c' line='3060' column='1'/>
+        <parameter type-id='b59d7dce' name='len' filepath='mm/mmap.c' line='3060' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <var-decl name='vm_node_stat' type-id='9dc2293d' mangled-name='vm_node_stat' visibility='default' filepath='mm/vmstat.c' line='165' column='1' elf-symbol-id='vm_node_stat'/>
