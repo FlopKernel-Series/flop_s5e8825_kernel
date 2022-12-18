@@ -1173,6 +1173,7 @@
       <elf-symbol name='clk_hw_register_composite' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4a83a008'/>
       <elf-symbol name='clk_hw_register_fixed_factor' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1352a3cb'/>
       <elf-symbol name='clk_hw_round_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb4f74ad4'/>
+      <elf-symbol name='clk_hw_set_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc7e9633c'/>
       <elf-symbol name='clk_hw_set_rate_range' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3833308c'/>
       <elf-symbol name='clk_hw_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x14316d81'/>
       <elf-symbol name='clk_hw_unregister_divider' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x68d1ab7b'/>
@@ -122878,6 +122879,11 @@
         <parameter type-id='3aaeef89' name='hw' filepath='drivers/clk/clk.c' line='1471' column='1'/>
         <parameter type-id='7359adad' name='rate' filepath='drivers/clk/clk.c' line='1471' column='1'/>
         <return type-id='7359adad'/>
+      </function-decl>
+      <function-decl name='clk_hw_set_parent' mangled-name='clk_hw_set_parent' filepath='drivers/clk/clk.c' line='2654' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_hw_set_parent'>
+        <parameter type-id='3aaeef89' name='hw' filepath='drivers/clk/clk.c' line='2654' column='1'/>
+        <parameter type-id='3aaeef89' name='parent' filepath='drivers/clk/clk.c' line='2654' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='clk_hw_set_rate_range' mangled-name='clk_hw_set_rate_range' filepath='drivers/clk/clk.c' line='654' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_hw_set_rate_range'>
         <parameter type-id='3aaeef89' name='hw' filepath='drivers/clk/clk.c' line='654' column='1'/>
