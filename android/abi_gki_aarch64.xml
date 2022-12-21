@@ -5954,6 +5954,7 @@
       <elf-symbol name='v4l2_fh_is_singular' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xedab880'/>
       <elf-symbol name='v4l2_fh_open' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45171035'/>
       <elf-symbol name='v4l2_fh_release' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x69a9a3ab'/>
+      <elf-symbol name='v4l2_find_dv_timings_cap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3aa68d7a'/>
       <elf-symbol name='v4l2_format_info' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x28b12cc9'/>
       <elf-symbol name='v4l2_g_parm_cap' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd999b29'/>
       <elf-symbol name='v4l2_i2c_subdev_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3b8959c2'/>
@@ -148266,6 +148267,14 @@
       <function-decl name='v4l2_fh_release' mangled-name='v4l2_fh_release' filepath='drivers/media/v4l2-core/v4l2-fh.c' line='91' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_fh_release'>
         <parameter type-id='77e79a4b' name='filp' filepath='drivers/media/v4l2-core/v4l2-fh.c' line='91' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='v4l2_find_dv_timings_cap' mangled-name='v4l2_find_dv_timings_cap' filepath='drivers/media/v4l2-core/v4l2-dv-timings.c' line='188' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_find_dv_timings_cap'>
+        <parameter type-id='e3ba02e6' name='t' filepath='drivers/media/v4l2-core/v4l2-dv-timings.c' line='188' column='1'/>
+        <parameter type-id='5b555a0e' name='cap' filepath='drivers/media/v4l2-core/v4l2-dv-timings.c' line='189' column='1'/>
+        <parameter type-id='f0981eeb' name='pclock_delta' filepath='drivers/media/v4l2-core/v4l2-dv-timings.c' line='190' column='1'/>
+        <parameter type-id='eb920ed7' name='fnc' filepath='drivers/media/v4l2-core/v4l2-dv-timings.c' line='191' column='1'/>
+        <parameter type-id='eaa32e2f' name='fnc_handle' filepath='drivers/media/v4l2-core/v4l2-dv-timings.c' line='192' column='1'/>
+        <return type-id='b50a4934'/>
       </function-decl>
       <function-decl name='v4l2_format_info' mangled-name='v4l2_format_info' filepath='drivers/media/v4l2-core/v4l2-common.c' line='234' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='v4l2_format_info'>
         <parameter type-id='19c2251e' name='format' filepath='drivers/media/v4l2-core/v4l2-common.c' line='234' column='1'/>
