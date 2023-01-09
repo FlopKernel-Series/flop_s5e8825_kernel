@@ -2261,6 +2261,7 @@
       <elf-symbol name='drm_get_format_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e095f11'/>
       <elf-symbol name='drm_handle_vblank' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x291fccd0'/>
       <elf-symbol name='drm_hdcp_check_ksvs_revoked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x111c75dc'/>
+      <elf-symbol name='drm_hdcp_update_content_protection' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf8e8a19'/>
       <elf-symbol name='drm_hdmi_avi_infoframe_colorspace' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbb460cce'/>
       <elf-symbol name='drm_hdmi_avi_infoframe_from_display_mode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4dd70d27'/>
       <elf-symbol name='drm_hdmi_avi_infoframe_quant_range' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x184b6261'/>
@@ -4780,6 +4781,7 @@
       <elf-symbol name='sdhci_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x95267c66'/>
       <elf-symbol name='sdhci_request_atomic' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2b38beca'/>
       <elf-symbol name='sdhci_reset' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdfb9ba97'/>
+      <elf-symbol name='sdhci_reset_tuning' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbf5dcd6f'/>
       <elf-symbol name='sdhci_resume_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc91f5389'/>
       <elf-symbol name='sdhci_runtime_resume_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x458eb912'/>
       <elf-symbol name='sdhci_runtime_suspend_host' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x164a5bca'/>
@@ -129317,6 +129319,11 @@
         <parameter type-id='19c2251e' name='ksv_count' filepath='drivers/gpu/drm/drm_hdcp.c' line='286' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='drm_hdcp_update_content_protection' mangled-name='drm_hdcp_update_content_protection' filepath='drivers/gpu/drm/drm_hdcp.c' line='409' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_hdcp_update_content_protection'>
+        <parameter type-id='4db02c58' name='connector' filepath='drivers/gpu/drm/drm_hdcp.c' line='409' column='1'/>
+        <parameter type-id='91ce1af9' name='val' filepath='drivers/gpu/drm/drm_hdcp.c' line='410' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='drm_hdmi_avi_infoframe_colorspace' mangled-name='drm_hdmi_avi_infoframe_colorspace' filepath='drivers/gpu/drm/drm_edid.c' line='5714' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='drm_hdmi_avi_infoframe_colorspace'>
         <parameter type-id='19ddc3a6' name='frame' filepath='drivers/gpu/drm/drm_edid.c' line='5714' column='1'/>
         <parameter type-id='c9ecdb13' name='conn_state' filepath='drivers/gpu/drm/drm_edid.c' line='5715' column='1'/>
@@ -142182,6 +142189,10 @@
       <function-decl name='sdhci_reset' mangled-name='sdhci_reset' filepath='drivers/mmc/host/sdhci.c' line='205' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_reset'>
         <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='205' column='1'/>
         <parameter type-id='f9b06939' name='mask' filepath='drivers/mmc/host/sdhci.c' line='205' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='sdhci_reset_tuning' mangled-name='sdhci_reset_tuning' filepath='drivers/mmc/host/sdhci.c' line='2682' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_reset_tuning'>
+        <parameter type-id='2661e0d9' name='host' filepath='drivers/mmc/host/sdhci.c' line='2682' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='sdhci_resume_host' mangled-name='sdhci_resume_host' filepath='drivers/mmc/host/sdhci.c' line='3689' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sdhci_resume_host'>
