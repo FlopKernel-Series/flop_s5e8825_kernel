@@ -803,6 +803,7 @@
       <elf-symbol name='_snd_ctl_add_follower' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe01a67e4'/>
       <elf-symbol name='_snd_pcm_hw_params_any' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x283dfe3'/>
       <elf-symbol name='_snd_pcm_stream_lock_irqsave' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x10817908'/>
+      <elf-symbol name='_trace_android_vh_record_pcpu_rwsem_starttime' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc22864a7'/>
       <elf-symbol name='_vb2_fop_release' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3130e516'/>
       <elf-symbol name='access_process_vm' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6c1d25ab'/>
       <elf-symbol name='ack_all_badblocks' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3eccc739'/>
@@ -13097,6 +13098,7 @@
           <var-decl name='beacon_int_min_gcd' type-id='19c2251e' visibility='default' filepath='include/net/cfg80211.h' line='4508' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='ad974870' size-in-bits='64' id='117abbea'/>
       <function-type size-in-bits='64' id='117b6b23'>
         <parameter type-id='572fbdca'/>
         <parameter type-id='f8dc9def'/>
@@ -15332,6 +15334,7 @@
         <parameter type-id='91d0de51' name='_vq'/>
         <return type-id='b50a4934'/>
       </function-type>
+      <pointer-type-def type-id='2c98045e' size-in-bits='64' id='16990944'/>
       <pointer-type-def type-id='1d86628a' size-in-bits='64' id='16a27d24'/>
       <pointer-type-def type-id='2aa44dc9' size-in-bits='64' id='16ab0351'/>
       <class-decl name='keyring_index_key' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/key.h' line='108' column='1' id='16ab8749'>
@@ -22298,6 +22301,11 @@
           <var-decl name='base' type-id='85c172d2' visibility='default' filepath='include/crypto/internal/hash.h' line='37' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='27ca88ce'>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='16990944'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='shrinker' size-in-bits='512' is-struct='yes' visibility='default' filepath='include/linux/shrinker.h' line='63' column='1' id='27cb404f'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='count_objects' type-id='cd2cc9e1' visibility='default' filepath='include/linux/shrinker.h' line='64' column='1'/>
@@ -24271,6 +24279,17 @@
       </function-type>
       <pointer-type-def type-id='97488913' size-in-bits='64' id='2c8ff697'/>
       <pointer-type-def type-id='3a97b64f' size-in-bits='64' id='2c927837'/>
+      <class-decl name='nf_exp_event' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='155' column='1' id='2c98045e'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='exp' type-id='b7982cd5' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='156' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='portid' type-id='19c2251e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='157' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='report' type-id='95e97e5e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='158' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='2ca9725a'>
         <parameter type-id='0343ce83'/>
         <parameter type-id='63e171df'/>
@@ -45019,7 +45038,11 @@
       <pointer-type-def type-id='aac6e642' size-in-bits='64' id='601d7eac'/>
       <pointer-type-def type-id='818799b4' size-in-bits='64' id='60219102'/>
       <qualified-type-def type-id='74191d27' const='yes' id='60263890'/>
-      <class-decl name='nf_exp_event_notifier' is-struct='yes' visibility='default' is-declaration-only='yes' id='602fd1a9'/>
+      <class-decl name='nf_exp_event_notifier' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='161' column='1' id='602fd1a9'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='fcn' type-id='c8fa3070' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='162' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='603a76bb'>
         <parameter type-id='33c599da'/>
         <parameter type-id='a42536cd'/>
@@ -50348,6 +50371,7 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <pointer-type-def type-id='e0f7a7a4' size-in-bits='64' id='6c781266'/>
+      <pointer-type-def type-id='75c2ad3b' size-in-bits='64' id='6c8c82c7'/>
       <function-type size-in-bits='64' id='6c99ab8f'>
         <parameter type-id='fa0b179b'/>
         <parameter type-id='bff05edb'/>
@@ -53976,6 +54000,11 @@
       <pointer-type-def type-id='7dccafaf' size-in-bits='64' id='75adfaf3'/>
       <pointer-type-def type-id='7a35a8fe' size-in-bits='64' id='75ae4804'/>
       <pointer-type-def type-id='171b0f6c' size-in-bits='64' id='75b9415a'/>
+      <function-type size-in-bits='64' id='75c2ad3b'>
+        <parameter type-id='8c493d8a'/>
+        <parameter type-id='b7982cd5'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <enum-decl name='hdmi_audio_sample_frequency' filepath='include/linux/hdmi.h' line='286' column='1' id='75c2c977'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM' value='0'/>
@@ -66048,6 +66077,14 @@
         <parameter type-id='49a58c0c'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='__anonymous_struct__' size-in-bits='160' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='76' column='1' id='90eb4133'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='u3' type-id='8c17f46b' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='77' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='u' type-id='cfd75634' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='78' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='90f4cdc0'>
         <parameter type-id='809cdefc'/>
         <parameter type-id='1b0e1d00'/>
@@ -68542,6 +68579,11 @@
         <parameter type-id='8c46546a'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='nf_conntrack_tuple_mask' size-in-bits='160' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='75' column='1' id='97e29523'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='src' type-id='90eb4133' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='79' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='97e3fb6c'>
         <parameter type-id='7ac48c21'/>
         <parameter type-id='f0981eeb'/>
@@ -72650,6 +72692,7 @@
         <return type-id='48b5725f'/>
       </function-type>
       <qualified-type-def type-id='aa3fd2fc' const='yes' id='a19d369d'/>
+      <pointer-type-def type-id='c54a70ec' size-in-bits='64' id='a1a282ea'/>
       <function-type size-in-bits='64' id='a1aadc50'>
         <parameter type-id='7544e824'/>
         <parameter type-id='fa0b179b'/>
@@ -73321,7 +73364,11 @@
       </class-decl>
       <pointer-type-def type-id='b6fe802d' size-in-bits='64' id='a273cbc9'/>
       <pointer-type-def type-id='6161d888' size-in-bits='64' id='a2782ece'/>
-      <class-decl name='nf_ct_event_notifier' is-struct='yes' visibility='default' is-declaration-only='yes' id='a27aef61'/>
+      <class-decl name='nf_ct_event_notifier' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='75' column='1' id='a27aef61'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='fcn' type-id='117abbea' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='76' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='a2802dd0'>
         <parameter type-id='7e666abe'/>
         <parameter type-id='95e97e5e'/>
@@ -78069,6 +78116,11 @@
           <var-decl name='info' type-id='a54793a9' visibility='default' filepath='include/sound/soc-topology.h' line='85' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='ad974870'>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='bccf9b1c'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='load_weight' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/sched.h' line='327' column='1' id='ad979632'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='weight' type-id='7359adad' visibility='default' filepath='include/linux/sched.h' line='328' column='1'/>
@@ -82583,6 +82635,7 @@
       <pointer-type-def type-id='2a13094b' size-in-bits='64' id='b78e1fbb'/>
       <pointer-type-def type-id='4d3ea3f3' size-in-bits='64' id='b78e9a0f'/>
       <pointer-type-def type-id='e4e53fc0' size-in-bits='64' id='b797ac06'/>
+      <pointer-type-def type-id='c2dc4615' size-in-bits='64' id='b7982cd5'/>
       <union-decl name='ethtool_flow_union' size-in-bits='416' visibility='default' filepath='include/uapi/linux/ethtool.h' line='939' column='1' id='b79b5da2'>
         <data-member access='public'>
           <var-decl name='tcp_ip4_spec' type-id='51bf1175' visibility='default' filepath='include/uapi/linux/ethtool.h' line='940' column='1'/>
@@ -84504,6 +84557,12 @@
           <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/net/xdp_sock.h' line='34' column='1'/>
         </data-member>
       </class-decl>
+      <enum-decl name='ip_conntrack_dir' filepath='include/uapi/linux/netfilter/nf_conntrack_tuple_common.h' line='11' column='1' id='bbbf8507'>
+        <underlying-type type-id='9cac1fee'/>
+        <enumerator name='IP_CT_DIR_ORIGINAL' value='0'/>
+        <enumerator name='IP_CT_DIR_REPLY' value='1'/>
+        <enumerator name='IP_CT_DIR_MAX' value='2'/>
+      </enum-decl>
       <qualified-type-def type-id='0b8ea949' const='yes' id='bbc46580'/>
       <function-type size-in-bits='64' id='bbe0df86'>
         <parameter type-id='27f3f5d8'/>
@@ -86324,6 +86383,7 @@
           <var-decl name='fd_array' type-id='d2c516bd' visibility='default' filepath='include/linux/fdtable.h' line='67' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='d3056556' size-in-bits='64' id='bccf9b1c'/>
       <pointer-type-def type-id='d6a7cd6f' size-in-bits='64' id='bcd28457'/>
       <class-decl name='aead_instance' size-in-bits='6144' is-struct='yes' visibility='default' filepath='include/crypto/internal/aead.h' line='18' column='1' id='bcdbd578'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -88885,6 +88945,53 @@
         <enumerator name='TYPEC_CC_RP_3_0' value='5'/>
       </enum-decl>
       <pointer-type-def type-id='7c1f247e' size-in-bits='64' id='c2d2a400'/>
+      <class-decl name='nf_conntrack_expect' size-in-bits='1856' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='18' column='1' id='c2dc4615'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='lnode' type-id='03a4a074' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='20' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='hnode' type-id='03a4a074' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='23' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='tuple' type-id='9805d802' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='26' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='mask' type-id='97e29523' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='27' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='768'>
+          <var-decl name='expectfn' type-id='6c8c82c7' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='30' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='832'>
+          <var-decl name='helper' type-id='a1a282ea' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='34' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='896'>
+          <var-decl name='master' type-id='8c493d8a' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='37' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='960'>
+          <var-decl name='timeout' type-id='abe41e67' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='40' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='use' type-id='64615833' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='43' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1440'>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='46' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1472'>
+          <var-decl name='class' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='49' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1504'>
+          <var-decl name='saved_addr' type-id='8c17f46b' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='52' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1632'>
+          <var-decl name='saved_proto' type-id='cfd75634' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='55' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1664'>
+          <var-decl name='dir' type-id='bbbf8507' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='57' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='60' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='c2ddabb8'>
         <parameter type-id='ac2666b2'/>
         <parameter type-id='eaa32e2f'/>
@@ -90402,6 +90509,7 @@
       </function-type>
       <pointer-type-def type-id='350f4182' size-in-bits='64' id='c5417630'/>
       <pointer-type-def type-id='b9675e9f' size-in-bits='64' id='c5491077'/>
+      <class-decl name='nf_conntrack_helper' is-struct='yes' visibility='default' is-declaration-only='yes' id='c54a70ec'/>
       <function-type size-in-bits='64' id='c551f1b5'>
         <parameter type-id='6ed6b432'/>
         <parameter type-id='f23e2572'/>
@@ -91641,6 +91749,7 @@
       </class-decl>
       <pointer-type-def type-id='6aebc4a7' size-in-bits='64' id='c8f5869f'/>
       <pointer-type-def type-id='0331c4d6' size-in-bits='64' id='c8f8b049'/>
+      <pointer-type-def type-id='27ca88ce' size-in-bits='64' id='c8fa3070'/>
       <pointer-type-def type-id='49c81889' size-in-bits='64' id='c8fec899'/>
       <function-type size-in-bits='64' id='c8ffa4a2'>
         <parameter type-id='3213e875'/>
@@ -95607,6 +95716,17 @@
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
           <var-decl name='try_compose' type-id='3dbd4e78' visibility='default' filepath='include/media/v4l2-subdev.h' line='623' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='nf_ct_event' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='69' column='1' id='d3056556'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='ct' type-id='8c493d8a' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='70' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='portid' type-id='19c2251e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='71' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='report' type-id='95e97e5e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='72' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='b6ab8849' size-in-bits='64' id='d30bdc51'/>
@@ -118049,10 +118169,10 @@
         <parameter type-id='80f4b756' name='msg' filepath='include/trace/hooks/fault.h' line='20' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='__traceiter_android_rvh_dma_buf_stats_teardown' mangled-name='__traceiter_android_rvh_dma_buf_stats_teardown' filepath='include/trace/hooks/dmabuf.h' line='21' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_dma_buf_stats_teardown'>
-        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/dmabuf.h' line='21' column='1'/>
-        <parameter type-id='bd60ed15' name='sysfs_entry' filepath='include/trace/hooks/dmabuf.h' line='21' column='1'/>
-        <parameter type-id='d8e6b335' name='skip_sysfs_release' filepath='include/trace/hooks/dmabuf.h' line='21' column='1'/>
+      <function-decl name='__traceiter_android_rvh_dma_buf_stats_teardown' mangled-name='__traceiter_android_rvh_dma_buf_stats_teardown' filepath='include/trace/hooks/dmabuf.h' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_dma_buf_stats_teardown'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/dmabuf.h' line='15' column='1'/>
+        <parameter type-id='bd60ed15' name='sysfs_entry' filepath='include/trace/hooks/dmabuf.h' line='15' column='1'/>
+        <parameter type-id='d8e6b335' name='skip_sysfs_release' filepath='include/trace/hooks/dmabuf.h' line='15' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_do_mem_abort' mangled-name='__traceiter_android_rvh_do_mem_abort' filepath='include/trace/hooks/fault.h' line='28' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_do_mem_abort'>
@@ -120634,7 +120754,7 @@
       <var-decl name='__tracepoint_android_rvh_dequeue_task_fair' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_dequeue_task_fair' visibility='default' filepath='include/trace/hooks/sched.h' line='358' column='1' elf-symbol-id='__tracepoint_android_rvh_dequeue_task_fair'/>
       <var-decl name='__tracepoint_android_rvh_dequeue_task_idle' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_dequeue_task_idle' visibility='default' filepath='include/trace/hooks/sched.h' line='259' column='1' elf-symbol-id='__tracepoint_android_rvh_dequeue_task_idle'/>
       <var-decl name='__tracepoint_android_rvh_die_kernel_fault' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_die_kernel_fault' visibility='default' filepath='include/trace/hooks/fault.h' line='20' column='1' elf-symbol-id='__tracepoint_android_rvh_die_kernel_fault'/>
-      <var-decl name='__tracepoint_android_rvh_dma_buf_stats_teardown' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_dma_buf_stats_teardown' visibility='default' filepath='include/trace/hooks/dmabuf.h' line='21' column='1' elf-symbol-id='__tracepoint_android_rvh_dma_buf_stats_teardown'/>
+      <var-decl name='__tracepoint_android_rvh_dma_buf_stats_teardown' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_dma_buf_stats_teardown' visibility='default' filepath='include/trace/hooks/dmabuf.h' line='15' column='1' elf-symbol-id='__tracepoint_android_rvh_dma_buf_stats_teardown'/>
       <var-decl name='__tracepoint_android_rvh_do_mem_abort' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_mem_abort' visibility='default' filepath='include/trace/hooks/fault.h' line='28' column='1' elf-symbol-id='__tracepoint_android_rvh_do_mem_abort'/>
       <var-decl name='__tracepoint_android_rvh_do_ptrauth_fault' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_ptrauth_fault' visibility='default' filepath='include/trace/hooks/traps.h' line='25' column='1' elf-symbol-id='__tracepoint_android_rvh_do_ptrauth_fault'/>
       <var-decl name='__tracepoint_android_rvh_do_sched_yield' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_do_sched_yield' visibility='default' filepath='include/trace/hooks/sched.h' line='304' column='1' elf-symbol-id='__tracepoint_android_rvh_do_sched_yield'/>
@@ -121476,6 +121596,11 @@
         <return type-id='7359adad'/>
       </function-decl>
       <var-decl name='_totalram_pages' type-id='f22a8abb' mangled-name='_totalram_pages' visibility='default' filepath='mm/page_alloc.c' line='175' column='1' elf-symbol-id='_totalram_pages'/>
+      <function-decl name='_trace_android_vh_record_pcpu_rwsem_starttime' mangled-name='_trace_android_vh_record_pcpu_rwsem_starttime' filepath='kernel/locking/percpu-rwsem.c' line='21' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_trace_android_vh_record_pcpu_rwsem_starttime'>
+        <parameter type-id='f23e2572' name='tsk' filepath='kernel/locking/percpu-rwsem.c' line='21' column='1'/>
+        <parameter type-id='7359adad' name='settime' filepath='kernel/locking/percpu-rwsem.c' line='22' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='_vb2_fop_release' mangled-name='_vb2_fop_release' filepath='drivers/media/common/videobuf2/videobuf2-v4l2.c' line='1109' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_vb2_fop_release'>
         <parameter type-id='77e79a4b' name='file' filepath='drivers/media/common/videobuf2/videobuf2-v4l2.c' line='1109' column='1'/>
         <parameter type-id='e0ea832a' name='lock' filepath='drivers/media/common/videobuf2/videobuf2-v4l2.c' line='1109' column='1'/>
