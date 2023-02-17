@@ -754,6 +754,7 @@
       <elf-symbol name='__wake_up_sync_key' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xba220db7'/>
       <elf-symbol name='__warn_printk' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x56470118'/>
       <elf-symbol name='__xa_alloc' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf40e7a73'/>
+      <elf-symbol name='__xa_alloc_cyclic' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1765ea1f'/>
       <elf-symbol name='__xa_clear_mark' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb9af1d0d'/>
       <elf-symbol name='__xa_insert' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x296cb509'/>
       <elf-symbol name='__xfrm_decode_session' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x41b76380'/>
@@ -121256,6 +121257,15 @@
         <parameter type-id='eaa32e2f' name='entry' filepath='lib/xarray.c' line='1808' column='1'/>
         <parameter type-id='5066733a' name='limit' filepath='lib/xarray.c' line='1809' column='1'/>
         <parameter type-id='3eb7c31c' name='gfp' filepath='lib/xarray.c' line='1809' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__xa_alloc_cyclic' mangled-name='__xa_alloc_cyclic' filepath='lib/xarray.c' line='1857' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__xa_alloc_cyclic'>
+        <parameter type-id='60075f2a' name='xa' filepath='lib/xarray.c' line='1857' column='1'/>
+        <parameter type-id='f9409001' name='id' filepath='lib/xarray.c' line='1857' column='1'/>
+        <parameter type-id='eaa32e2f' name='entry' filepath='lib/xarray.c' line='1857' column='1'/>
+        <parameter type-id='5066733a' name='limit' filepath='lib/xarray.c' line='1858' column='1'/>
+        <parameter type-id='f9409001' name='next' filepath='lib/xarray.c' line='1858' column='1'/>
+        <parameter type-id='3eb7c31c' name='gfp' filepath='lib/xarray.c' line='1858' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__xa_clear_mark' mangled-name='__xa_clear_mark' filepath='lib/xarray.c' line='1914' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__xa_clear_mark'>
