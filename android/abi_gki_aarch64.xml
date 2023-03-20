@@ -1176,6 +1176,7 @@
       <elf-symbol name='clk_get_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x63150e06'/>
       <elf-symbol name='clk_get_phase' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c5ff742'/>
       <elf-symbol name='clk_get_rate' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x556e4390'/>
+      <elf-symbol name='clk_has_parent' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2b952517'/>
       <elf-symbol name='clk_hw_get_flags' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xee3aa642'/>
       <elf-symbol name='clk_hw_get_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb62ec837'/>
       <elf-symbol name='clk_hw_get_num_parents' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcc8b1059'/>
@@ -3778,6 +3779,7 @@
       <elf-symbol name='of_clk_get_parent_name' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd03f2be3'/>
       <elf-symbol name='of_clk_hw_onecell_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x70951935'/>
       <elf-symbol name='of_clk_hw_simple_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3c247ec4'/>
+      <elf-symbol name='of_clk_parent_fill' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc3059899'/>
       <elf-symbol name='of_clk_set_defaults' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd052824e'/>
       <elf-symbol name='of_clk_src_onecell_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x50eb7fa5'/>
       <elf-symbol name='of_clk_src_simple_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb4c76b57'/>
@@ -123622,6 +123624,11 @@
         <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='1690' column='1'/>
         <return type-id='7359adad'/>
       </function-decl>
+      <function-decl name='clk_has_parent' mangled-name='clk_has_parent' filepath='drivers/clk/clk.c' line='2564' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_has_parent'>
+        <parameter type-id='7d0bc0eb' name='clk' filepath='drivers/clk/clk.c' line='2564' column='1'/>
+        <parameter type-id='7d0bc0eb' name='parent' filepath='drivers/clk/clk.c' line='2564' column='1'/>
+        <return type-id='b50a4934'/>
+      </function-decl>
       <function-decl name='clk_hw_get_flags' mangled-name='clk_hw_get_flags' filepath='drivers/clk/clk.c' line='505' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='clk_hw_get_flags'>
         <parameter type-id='9e6d4b4e' name='hw' filepath='drivers/clk/clk.c' line='505' column='1'/>
         <return type-id='7359adad'/>
@@ -137133,6 +137140,12 @@
         <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4617' column='1'/>
         <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4617' column='1'/>
         <return type-id='3aaeef89'/>
+      </function-decl>
+      <function-decl name='of_clk_parent_fill' mangled-name='of_clk_parent_fill' filepath='drivers/clk/clk.c' line='5115' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_parent_fill'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5115' column='1'/>
+        <parameter type-id='7d3cd834' name='parents' filepath='drivers/clk/clk.c' line='5115' column='1'/>
+        <parameter type-id='f0981eeb' name='size' filepath='drivers/clk/clk.c' line='5116' column='1'/>
+        <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='of_clk_set_defaults' mangled-name='of_clk_set_defaults' filepath='drivers/clk/clk-conf.c' line='131' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_set_defaults'>
         <parameter type-id='9a537bbe' name='node' filepath='drivers/clk/clk-conf.c' line='131' column='1'/>
