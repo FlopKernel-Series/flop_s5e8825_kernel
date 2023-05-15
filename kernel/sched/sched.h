@@ -2483,6 +2483,7 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
 #endif /* CONFIG_CPU_FREQ */
 
 extern unsigned long cpu_util_cfs(int cpu);
+extern unsigned long cpu_util_cfs_boost(int cpu);
 
 #ifdef CONFIG_UCLAMP_TASK
 unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id);
@@ -2697,6 +2698,9 @@ static inline unsigned long cpu_util_dl(struct rq *rq)
 static inline unsigned long cpu_util_schedutil(struct rq *rq)
 {
 	unsigned long util = READ_ONCE(rq->cfs.avg.util_avg);
+	unsigned long runnable = READ_ONCE(rq->cfs.avg.runnable_avg);
+
+	util = max(util, runnable);
 
 	if (sched_feat(UTIL_EST)) {
 		util = max_t(unsigned long, util,
