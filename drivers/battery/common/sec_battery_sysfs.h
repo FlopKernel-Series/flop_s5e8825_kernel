@@ -77,6 +77,7 @@ enum sec_bat_attrs {
 #endif
 	BATT_VF_ADC,
 	BATT_SLATE_MODE,
+	CHARGING_ENABLED,
 
 	BATT_LP_CHARGING,
 	SIOP_ACTIVATED,
