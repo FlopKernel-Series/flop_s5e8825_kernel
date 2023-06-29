@@ -1274,6 +1274,10 @@ struct sec_battery_info {
 	bool vbat_adc_open;
 #endif
 
+	/* charging disabler */
+	bool charging_enabled;
+	bool charging_suspended;
+
 	/* usb suspend */
 	int prev_usb_conf;
 
