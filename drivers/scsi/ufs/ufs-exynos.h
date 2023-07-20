@@ -203,15 +203,48 @@ static inline u32 __get_upmcrs(struct exynos_ufs *ufs)
 	return (std_readl(&ufs->handle, REG_CONTROLLER_STATUS) >> 8) & 0x7;
 }
 
+#ifdef CONFIG_SCSI_UFS_EXYNOS_DBG
 int exynos_ufs_init_dbg(struct ufs_vs_handle *);
 int exynos_ufs_dbg_set_lanes(struct ufs_vs_handle *,
 				struct device *dev, u32);
 void exynos_ufs_dump_info(struct ufs_hba *, struct ufs_vs_handle *,
 			  struct device *dev);
+
 void exynos_ufs_cmd_log_start(struct ufs_vs_handle *,
 				struct ufs_hba *, struct scsi_cmnd *);
 void exynos_ufs_cmd_log_end(struct ufs_vs_handle *,
 				struct ufs_hba *hba, int tag);
+
+#else
+static inline
+int exynos_ufs_init_dbg(struct ufs_vs_handle * handle)
+{
+	return 0;
+}
+static inline
+int exynos_ufs_dbg_set_lanes(struct ufs_vs_handle *handle,
+	struct device *dev, u32 lane)
+{
+	return 0;
+}
+static inline
+void exynos_ufs_dump_info(struct ufs_hba *hba, struct ufs_vs_handle *handle,
+	struct device *dev)
+{
+}
+
+static inline
+void exynos_ufs_cmd_log_start(struct ufs_vs_handle *handle,
+	struct ufs_hba *hba, struct scsi_cmnd *cmnd)
+{
+}
+
+static inline
+void exynos_ufs_cmd_log_end(struct ufs_vs_handle *handle,
+	struct ufs_hba *hba, int tag)
+{
+}
+#endif
 
 #ifdef CONFIG_SCSI_UFS_EXYNOS_FMP
 void exynos_ufs_fmp_init(struct ufs_hba *hba);
@@ -252,6 +285,14 @@ static inline struct scsi_device *exynos_ufs_srpmb_sdev(void)
 	return NULL;
 }
 #endif
+
+#ifdef CONFIG_SCSI_UFS_EXYNOS_DBG
 int exynos_ufs_init_mem_log(struct platform_device *pdev);
+#else
+static inline int exynos_ufs_init_mem_log(struct platform_device *pdev)
+{
+	return 0;
+}
+#endif
 int ufs_call_cal(struct exynos_ufs *ufs, int init, void *func);
 #endif /* _UFS_EXYNOS_H_ */
