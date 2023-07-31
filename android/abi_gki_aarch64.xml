@@ -3298,6 +3298,7 @@
       <elf-symbol name='irq_work_run' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x541bd60a'/>
       <elf-symbol name='irq_work_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf361a95b'/>
       <elf-symbol name='is_bad_inode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2d628931'/>
+      <elf-symbol name='is_ashmem_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4bef6e5f'/>
       <elf-symbol name='is_console_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x944a564d'/>
       <elf-symbol name='is_dma_buf_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xabcf70c3'/>
       <elf-symbol name='is_swap_slot_cache_enabled' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x98575c12'/>
@@ -135040,6 +135041,10 @@
       </function-decl>
       <function-decl name='is_bad_inode' mangled-name='is_bad_inode' filepath='fs/bad_inode.c' line='225' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_bad_inode'>
         <parameter type-id='7e666abe' name='inode' filepath='fs/bad_inode.c' line='225' column='1'/>
+      <function-decl name='is_ashmem_file' mangled-name='is_ashmem_file' filepath='drivers/staging/android/ashmem.c' line='940' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_ashmem_file'>
+        <parameter type-id='77e79a4b' name='file' filepath='drivers/staging/android/ashmem.c' line='940' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
         <return type-id='b50a4934'/>
       </function-decl>
       <function-decl name='is_console_locked' mangled-name='is_console_locked' filepath='kernel/printk/printk.c' line='2394' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_console_locked'>
