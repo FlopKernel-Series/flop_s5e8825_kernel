@@ -3297,8 +3297,8 @@
       <elf-symbol name='irq_work_queue_on' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf64a80c9'/>
       <elf-symbol name='irq_work_run' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x541bd60a'/>
       <elf-symbol name='irq_work_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf361a95b'/>
+      <elf-symbol name='is_ashmem_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x94fc40b5'/>
       <elf-symbol name='is_bad_inode' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2d628931'/>
-      <elf-symbol name='is_ashmem_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4bef6e5f'/>
       <elf-symbol name='is_console_locked' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x944a564d'/>
       <elf-symbol name='is_dma_buf_file' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xabcf70c3'/>
       <elf-symbol name='is_swap_slot_cache_enabled' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x98575c12'/>
@@ -3691,6 +3691,7 @@
       <elf-symbol name='mmc_select_timing' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdf721daa'/>
       <elf-symbol name='mmc_send_status' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2ec60b84'/>
       <elf-symbol name='mmc_send_tuning' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b9e0402'/>
+      <elf-symbol name='mmc_set_blocklen' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc0d922f'/>
       <elf-symbol name='mmc_set_clock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa99f2303'/>
       <elf-symbol name='mmc_set_data_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2d4e8591'/>
       <elf-symbol name='mmc_set_initial_state' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d8084f3'/>
@@ -3806,6 +3807,7 @@
       <elf-symbol name='nonseekable_open' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x82885f25'/>
       <elf-symbol name='noop_llseek' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9f5afe9b'/>
       <elf-symbol name='notify_change' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcbe83eee'/>
+      <elf-symbol name='nr_free_buffer_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x27fa66e1'/>
       <elf-symbol name='nr_ipi_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x215054f8'/>
       <elf-symbol name='ns_capable' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf3adccc5'/>
       <elf-symbol name='ns_to_kernel_old_timeval' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6b853d06'/>
@@ -135039,12 +135041,12 @@
         <parameter type-id='44bef697' name='work' filepath='kernel/irq_work.c' line='197' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='is_bad_inode' mangled-name='is_bad_inode' filepath='fs/bad_inode.c' line='225' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_bad_inode'>
-        <parameter type-id='7e666abe' name='inode' filepath='fs/bad_inode.c' line='225' column='1'/>
-      <function-decl name='is_ashmem_file' mangled-name='is_ashmem_file' filepath='drivers/staging/android/ashmem.c' line='940' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_ashmem_file'>
-        <parameter type-id='77e79a4b' name='file' filepath='drivers/staging/android/ashmem.c' line='940' column='1'/>
+      <function-decl name='is_ashmem_file' mangled-name='is_ashmem_file' filepath='drivers/staging/android/ashmem.c' line='921' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_ashmem_file'>
+        <parameter type-id='77e79a4b' name='file' filepath='drivers/staging/android/ashmem.c' line='921' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='is_bad_inode' mangled-name='is_bad_inode' filepath='fs/bad_inode.c' line='225' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_bad_inode'>
+        <parameter type-id='7e666abe' name='inode' filepath='fs/bad_inode.c' line='225' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
       <function-decl name='is_console_locked' mangled-name='is_console_locked' filepath='kernel/printk/printk.c' line='2394' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='is_console_locked'>
@@ -137001,6 +137003,11 @@
         <parameter type-id='7292109c' name='cmd_error' filepath='drivers/mmc/core/mmc_ops.c' line='640' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='mmc_set_blocklen' mangled-name='mmc_set_blocklen' filepath='drivers/mmc/core/core.c' line='2062' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='mmc_set_blocklen'>
+        <parameter type-id='13d38dcb' name='card' filepath='drivers/mmc/core/core.c' line='2062' column='1'/>
+        <parameter type-id='f0981eeb' name='blocklen' filepath='drivers/mmc/core/core.c' line='2062' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='mmc_set_clock' mangled-name='mmc_set_clock' filepath='drivers/mmc/core/core.c' line='910' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='mmc_set_clock'>
         <parameter type-id='dd575c43' name='host' filepath='drivers/mmc/core/core.c' line='910' column='1'/>
         <parameter type-id='f0981eeb' name='hz' filepath='drivers/mmc/core/core.c' line='910' column='1'/>
@@ -137595,6 +137602,9 @@
         <return type-id='95e97e5e'/>
       </function-decl>
       <var-decl name='nr_cpu_ids' type-id='f0981eeb' mangled-name='nr_cpu_ids' visibility='default' filepath='kernel/smp.c' line='796' column='1' elf-symbol-id='nr_cpu_ids'/>
+      <function-decl name='nr_free_buffer_pages' mangled-name='nr_free_buffer_pages' filepath='mm/page_alloc.c' line='5542' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='nr_free_buffer_pages'>
+        <return type-id='7359adad'/>
+      </function-decl>
       <function-decl name='nr_ipi_get' mangled-name='nr_ipi_get' filepath='arch/arm64/kernel/smp.c' line='1147' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='nr_ipi_get'>
         <return type-id='95e97e5e'/>
       </function-decl>
@@ -146291,21 +146301,21 @@
         <parameter type-id='eefe253e' name='tcpci' filepath='drivers/usb/typec/tcpm/tcpci.c' line='856' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_cc_change' mangled-name='tcpm_cc_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5472' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_cc_change'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5472' column='1'/>
+      <function-decl name='tcpm_cc_change' mangled-name='tcpm_cc_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5483' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_cc_change'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5483' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_is_toggling' mangled-name='tcpm_is_toggling' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3829' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_is_toggling'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3829' column='1'/>
+      <function-decl name='tcpm_is_toggling' mangled-name='tcpm_is_toggling' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3840' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_is_toggling'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3840' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='tcpm_pd_hard_reset' mangled-name='tcpm_pd_hard_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5490' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_hard_reset'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5490' column='1'/>
+      <function-decl name='tcpm_pd_hard_reset' mangled-name='tcpm_pd_hard_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5501' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_hard_reset'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5501' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_pd_receive' mangled-name='tcpm_pd_receive' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2951' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_receive'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2951' column='1'/>
-        <parameter type-id='d7f1fb72' name='msg' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2951' column='1'/>
+      <function-decl name='tcpm_pd_receive' mangled-name='tcpm_pd_receive' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2962' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_receive'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2962' column='1'/>
+        <parameter type-id='d7f1fb72' name='msg' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2962' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='tcpm_pd_transmit_complete' mangled-name='tcpm_pd_transmit_complete' filepath='drivers/usb/typec/tcpm/tcpm.c' line='919' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_transmit_complete'>
@@ -146313,36 +146323,36 @@
         <parameter type-id='a2f9e316' name='status' filepath='drivers/usb/typec/tcpm/tcpm.c' line='920' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_register_port' mangled-name='tcpm_register_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6457' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_register_port'>
-        <parameter type-id='fa0b179b' name='dev' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6457' column='1'/>
-        <parameter type-id='15b1f129' name='tcpc' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6457' column='1'/>
+      <function-decl name='tcpm_register_port' mangled-name='tcpm_register_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6468' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_register_port'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6468' column='1'/>
+        <parameter type-id='15b1f129' name='tcpc' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6468' column='1'/>
         <return type-id='426e425b'/>
       </function-decl>
-      <function-decl name='tcpm_sink_frs' mangled-name='tcpm_sink_frs' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5499' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sink_frs'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5499' column='1'/>
+      <function-decl name='tcpm_sink_frs' mangled-name='tcpm_sink_frs' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5510' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sink_frs'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5510' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_sourcing_vbus' mangled-name='tcpm_sourcing_vbus' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5508' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sourcing_vbus'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5508' column='1'/>
+      <function-decl name='tcpm_sourcing_vbus' mangled-name='tcpm_sourcing_vbus' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5519' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sourcing_vbus'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5519' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_tcpc_reset' mangled-name='tcpm_tcpc_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6022' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_tcpc_reset'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6022' column='1'/>
+      <function-decl name='tcpm_tcpc_reset' mangled-name='tcpm_tcpc_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6033' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_tcpc_reset'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6033' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_unregister_port' mangled-name='tcpm_unregister_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6558' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_unregister_port'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6558' column='1'/>
+      <function-decl name='tcpm_unregister_port' mangled-name='tcpm_unregister_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6569' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_unregister_port'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6569' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_update_sink_capabilities' mangled-name='tcpm_update_sink_capabilities' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6160' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_update_sink_capabilities'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6160' column='1'/>
-        <parameter type-id='aded214c' name='pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6160' column='1'/>
-        <parameter type-id='f0981eeb' name='nr_pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6160' column='1'/>
-        <parameter type-id='f0981eeb' name='operating_snk_mw' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6161' column='1'/>
+      <function-decl name='tcpm_update_sink_capabilities' mangled-name='tcpm_update_sink_capabilities' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6171' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_update_sink_capabilities'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6171' column='1'/>
+        <parameter type-id='aded214c' name='pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6171' column='1'/>
+        <parameter type-id='f0981eeb' name='nr_pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6171' column='1'/>
+        <parameter type-id='f0981eeb' name='operating_snk_mw' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6172' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='tcpm_vbus_change' mangled-name='tcpm_vbus_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5481' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_vbus_change'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5481' column='1'/>
+      <function-decl name='tcpm_vbus_change' mangled-name='tcpm_vbus_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5492' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_vbus_change'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5492' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='thaw_bdev' mangled-name='thaw_bdev' filepath='fs/block_dev.c' line='610' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='thaw_bdev'>
@@ -150657,8 +150667,8 @@
         <parameter type-id='971e404f' name='ctx' filepath='drivers/usb/host/xhci-mem.c' line='584' column='1'/>
         <return type-id='e42579ca'/>
       </function-decl>
-      <function-decl name='xhci_handle_event' mangled-name='xhci_handle_event' filepath='drivers/usb/host/xhci-ring.c' line='2972' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_handle_event'>
-        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='2972' column='1'/>
+      <function-decl name='xhci_handle_event' mangled-name='xhci_handle_event' filepath='drivers/usb/host/xhci-ring.c' line='2999' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_handle_event'>
+        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='2999' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='xhci_init_driver' mangled-name='xhci_init_driver' filepath='drivers/usb/host/xhci.c' line='5447' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_init_driver'>
@@ -150678,12 +150688,12 @@
         <parameter type-id='b50a4934' name='chain_links' filepath='drivers/usb/host/xhci-mem.c' line='102' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='xhci_queue_stop_endpoint' mangled-name='xhci_queue_stop_endpoint' filepath='drivers/usb/host/xhci-ring.c' line='4428' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_queue_stop_endpoint'>
-        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='4428' column='1'/>
-        <parameter type-id='5a32bd4b' name='cmd' filepath='drivers/usb/host/xhci-ring.c' line='4428' column='1'/>
-        <parameter type-id='95e97e5e' name='slot_id' filepath='drivers/usb/host/xhci-ring.c' line='4429' column='1'/>
-        <parameter type-id='f0981eeb' name='ep_index' filepath='drivers/usb/host/xhci-ring.c' line='4429' column='1'/>
-        <parameter type-id='95e97e5e' name='suspend' filepath='drivers/usb/host/xhci-ring.c' line='4429' column='1'/>
+      <function-decl name='xhci_queue_stop_endpoint' mangled-name='xhci_queue_stop_endpoint' filepath='drivers/usb/host/xhci-ring.c' line='4455' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_queue_stop_endpoint'>
+        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='4455' column='1'/>
+        <parameter type-id='5a32bd4b' name='cmd' filepath='drivers/usb/host/xhci-ring.c' line='4455' column='1'/>
+        <parameter type-id='95e97e5e' name='slot_id' filepath='drivers/usb/host/xhci-ring.c' line='4456' column='1'/>
+        <parameter type-id='f0981eeb' name='ep_index' filepath='drivers/usb/host/xhci-ring.c' line='4456' column='1'/>
+        <parameter type-id='95e97e5e' name='suspend' filepath='drivers/usb/host/xhci-ring.c' line='4456' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='xhci_reset_bandwidth' mangled-name='xhci_reset_bandwidth' filepath='drivers/usb/host/xhci.c' line='3010' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_reset_bandwidth'>
@@ -150705,8 +150715,8 @@
         <parameter type-id='3eb7c31c' name='flags' filepath='drivers/usb/host/xhci-mem.c' line='425' column='1'/>
         <return type-id='52a50596'/>
       </function-decl>
-      <function-decl name='xhci_ring_cmd_db' mangled-name='xhci_ring_cmd_db' filepath='drivers/usb/host/xhci-ring.c' line='302' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_ring_cmd_db'>
-        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='302' column='1'/>
+      <function-decl name='xhci_ring_cmd_db' mangled-name='xhci_ring_cmd_db' filepath='drivers/usb/host/xhci-ring.c' line='322' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_ring_cmd_db'>
+        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='322' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='xhci_ring_free' mangled-name='xhci_ring_free' filepath='drivers/usb/host/xhci-mem.c' line='282' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_ring_free'>
@@ -150733,9 +150743,9 @@
         <parameter type-id='2e0bb6d4' name='trb' filepath='drivers/usb/host/xhci-ring.c' line='70' column='1'/>
         <return type-id='cf29c9b3'/>
       </function-decl>
-      <function-decl name='xhci_update_erst_dequeue' mangled-name='xhci_update_erst_dequeue' filepath='drivers/usb/host/xhci-ring.c' line='3048' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_update_erst_dequeue'>
-        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='3048' column='1'/>
-        <parameter type-id='2e0bb6d4' name='event_ring_deq' filepath='drivers/usb/host/xhci-ring.c' line='3049' column='1'/>
+      <function-decl name='xhci_update_erst_dequeue' mangled-name='xhci_update_erst_dequeue' filepath='drivers/usb/host/xhci-ring.c' line='3075' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_update_erst_dequeue'>
+        <parameter type-id='0c65b409' name='xhci' filepath='drivers/usb/host/xhci-ring.c' line='3075' column='1'/>
+        <parameter type-id='2e0bb6d4' name='event_ring_deq' filepath='drivers/usb/host/xhci-ring.c' line='3076' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='xhci_vendor_get_ops' mangled-name='xhci_vendor_get_ops' filepath='drivers/usb/host/xhci.c' line='4366' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='xhci_vendor_get_ops'>
