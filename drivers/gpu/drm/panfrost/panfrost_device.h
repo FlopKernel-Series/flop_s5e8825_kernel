@@ -133,6 +133,11 @@ struct panfrost_device {
 	struct shrinker shrinker;
 
 	struct panfrost_devfreq pfdevfreq;
+
+	struct {
+		atomic_t use_count;
+		spinlock_t lock;
+	} cycle_counter;
 };
 
 struct panfrost_mmu {
