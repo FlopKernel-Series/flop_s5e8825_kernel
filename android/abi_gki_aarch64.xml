@@ -6894,6 +6894,7 @@
       <elf-symbol name='_ctype' size='256' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x11089ac7'/>
       <elf-symbol name='_totalram_pages' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x944375db'/>
       <elf-symbol name='amba_bustype' size='208' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8ae4a6d8'/>
+      <elf-symbol name='android_gki_sysctl_vals' size='40' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x72e0e617'/>
       <elf-symbol name='arch_timer_read_counter' size='8' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x75fb9062'/>
       <elf-symbol name='arm64_const_caps_ready' size='16' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x14b89635'/>
       <elf-symbol name='arm64_use_ng_mappings' size='1' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf56600a'/>
@@ -100817,6 +100818,9 @@
         <return type-id='48b5725f'/>
       </function-type>
       <pointer-type-def type-id='bb05a47a' size-in-bits='64' id='dcbbb1fc'/>
+      <array-type-def dimensions='1' type-id='2448a865' size-in-bits='320' id='dcbdbf4a'>
+        <subrange length='10' type-id='7ff19f0f' id='487da03a'/>
+      </array-type-def>
       <union-decl name='__anonymous_union__' size-in-bits='2176' is-anonymous='yes' visibility='default' filepath='arch/arm64/include/asm/ptrace.h' line='179' column='1' id='dcc4b447'>
         <data-member access='public'>
           <var-decl name='user_regs' type-id='cedec667' visibility='default' filepath='arch/arm64/include/asm/ptrace.h' line='180' column='1'/>
@@ -122638,6 +122642,7 @@
         <parameter type-id='9a7fd0a4' name='symbol' filepath='drivers/android/debug_symbols.c' line='93' column='1'/>
         <return type-id='eaa32e2f'/>
       </function-decl>
+      <var-decl name='android_gki_sysctl_vals' type-id='dcbdbf4a' mangled-name='android_gki_sysctl_vals' visibility='default' filepath='fs/proc/proc_sysctl.c' line='31' column='1' elf-symbol-id='android_gki_sysctl_vals'/>
       <function-decl name='android_rvh_probe_register' mangled-name='android_rvh_probe_register' filepath='kernel/tracepoint.c' line='862' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='android_rvh_probe_register'>
         <parameter type-id='08e531de' name='tp' filepath='kernel/tracepoint.c' line='862' column='1'/>
         <parameter type-id='eaa32e2f' name='probe' filepath='kernel/tracepoint.c' line='862' column='1'/>
