@@ -422,6 +422,7 @@
       <elf-symbol name='__traceiter_android_vh_account_task_time' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5f7a1ebe'/>
       <elf-symbol name='__traceiter_android_vh_add_page_to_lrulist' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1fd92753'/>
       <elf-symbol name='__traceiter_android_vh_add_to_avail_list' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xbd5bd58b'/>
+      <elf-symbol name='__traceiter_android_vh_adjust_alloc_flags' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x63961554'/>
       <elf-symbol name='__traceiter_android_vh_aes_decrypt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb0d1574b'/>
       <elf-symbol name='__traceiter_android_vh_aes_encrypt' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6160ff0c'/>
       <elf-symbol name='__traceiter_android_vh_aes_expandkey' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdc004b58'/>
@@ -6527,6 +6528,7 @@
       <elf-symbol name='__tracepoint_android_vh_account_task_time' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf1afbf0d'/>
       <elf-symbol name='__tracepoint_android_vh_add_page_to_lrulist' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb9d54bc5'/>
       <elf-symbol name='__tracepoint_android_vh_add_to_avail_list' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8a9d0f84'/>
+      <elf-symbol name='__tracepoint_android_vh_adjust_alloc_flags' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1c10784a'/>
       <elf-symbol name='__tracepoint_android_vh_aes_decrypt' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xde5b1cc7'/>
       <elf-symbol name='__tracepoint_android_vh_aes_encrypt' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x10f648a3'/>
       <elf-symbol name='__tracepoint_android_vh_aes_expandkey' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf7274615'/>
@@ -116560,9 +116562,9 @@
       </function-type>
       <pointer-type-def type-id='46f53066' size-in-bits='64' id='fffb07a4'/>
       <qualified-type-def type-id='55efd1a3' const='yes' id='fffdaf52'/>
-      <var-decl name='GKI_struct_gic_chip_data' type-id='d3100295' mangled-name='GKI_struct_gic_chip_data' visibility='default' filepath='drivers/android/vendor_hooks.c' line='520' column='1' elf-symbol-id='GKI_struct_gic_chip_data'/>
+      <var-decl name='GKI_struct_gic_chip_data' type-id='d3100295' mangled-name='GKI_struct_gic_chip_data' visibility='default' filepath='drivers/android/vendor_hooks.c' line='521' column='1' elf-symbol-id='GKI_struct_gic_chip_data'/>
       <var-decl name='GKI_struct_selinux_state' type-id='4ae52763' mangled-name='GKI_struct_selinux_state' visibility='default' filepath='security/selinux/vendor_hooks.c' line='21' column='1' elf-symbol-id='GKI_struct_selinux_state'/>
-      <var-decl name='GKI_struct_swap_slots_cache' type-id='30eaa112' mangled-name='GKI_struct_swap_slots_cache' visibility='default' filepath='drivers/android/vendor_hooks.c' line='525' column='1' elf-symbol-id='GKI_struct_swap_slots_cache'/>
+      <var-decl name='GKI_struct_swap_slots_cache' type-id='30eaa112' mangled-name='GKI_struct_swap_slots_cache' visibility='default' filepath='drivers/android/vendor_hooks.c' line='526' column='1' elf-symbol-id='GKI_struct_swap_slots_cache'/>
       <function-decl name='PDE_DATA' mangled-name='PDE_DATA' filepath='fs/proc/generic.c' line='802' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='PDE_DATA'>
         <parameter type-id='c5a4eb7f' name='inode' filepath='fs/proc/generic.c' line='802' column='1'/>
         <return type-id='eaa32e2f'/>
@@ -119078,6 +119080,12 @@
         <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/mm.h' line='290' column='1'/>
         <parameter type-id='11e11a61' name='p' filepath='include/trace/hooks/mm.h' line='290' column='1'/>
         <parameter type-id='d8e6b335' name='skip' filepath='include/trace/hooks/mm.h' line='290' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_vh_adjust_alloc_flags' mangled-name='__traceiter_android_vh_adjust_alloc_flags' filepath='include/trace/hooks/iommu.h' line='46' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_adjust_alloc_flags'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/iommu.h' line='46' column='1'/>
+        <parameter type-id='f0981eeb' name='order' filepath='include/trace/hooks/iommu.h' line='46' column='1'/>
+        <parameter type-id='831e6e93' name='alloc_flags' filepath='include/trace/hooks/iommu.h' line='46' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_vh_aes_decrypt' mangled-name='__traceiter_android_vh_aes_decrypt' filepath='include/trace/hooks/fips140.h' line='46' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_vh_aes_decrypt'>
@@ -121615,6 +121623,7 @@
       <var-decl name='__tracepoint_android_vh_account_task_time' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_account_task_time' visibility='default' filepath='include/trace/hooks/sched.h' line='312' column='1' elf-symbol-id='__tracepoint_android_vh_account_task_time'/>
       <var-decl name='__tracepoint_android_vh_add_page_to_lrulist' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_add_page_to_lrulist' visibility='default' filepath='include/trace/hooks/mm.h' line='174' column='1' elf-symbol-id='__tracepoint_android_vh_add_page_to_lrulist'/>
       <var-decl name='__tracepoint_android_vh_add_to_avail_list' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_add_to_avail_list' visibility='default' filepath='include/trace/hooks/mm.h' line='290' column='1' elf-symbol-id='__tracepoint_android_vh_add_to_avail_list'/>
+      <var-decl name='__tracepoint_android_vh_adjust_alloc_flags' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_adjust_alloc_flags' visibility='default' filepath='include/trace/hooks/iommu.h' line='46' column='1' elf-symbol-id='__tracepoint_android_vh_adjust_alloc_flags'/>
       <var-decl name='__tracepoint_android_vh_aes_decrypt' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_aes_decrypt' visibility='default' filepath='include/trace/hooks/fips140.h' line='46' column='1' elf-symbol-id='__tracepoint_android_vh_aes_decrypt'/>
       <var-decl name='__tracepoint_android_vh_aes_encrypt' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_aes_encrypt' visibility='default' filepath='include/trace/hooks/fips140.h' line='39' column='1' elf-symbol-id='__tracepoint_android_vh_aes_encrypt'/>
       <var-decl name='__tracepoint_android_vh_aes_expandkey' type-id='4ca0c298' mangled-name='__tracepoint_android_vh_aes_expandkey' visibility='default' filepath='include/trace/hooks/fips140.h' line='32' column='1' elf-symbol-id='__tracepoint_android_vh_aes_expandkey'/>
