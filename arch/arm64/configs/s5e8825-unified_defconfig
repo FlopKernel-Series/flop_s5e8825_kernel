@@ -535,7 +535,7 @@ CONFIG_RANDOMIZE_BASE=y
 #
 # Boot options
 #
-CONFIG_CMDLINE="cgroup.memory=nokmem"
+CONFIG_CMDLINE="cgroup.memory=nokmem noirqdebug"
 # CONFIG_CMDLINE_FROM_BOOTLOADER is not set
 CONFIG_CMDLINE_EXTEND=y
 # CONFIG_CMDLINE_FORCE is not set
