@@ -1759,6 +1759,53 @@ struct station_info {
 	ANDROID_KABI_RESERVE(1);
 };
 
+/**
+ * struct cfg80211_sar_sub_specs - sub specs limit
+ * @power: power limitation in 0.25dbm
+ * @freq_range_index: index the power limitation applies to
+ */
+struct cfg80211_sar_sub_specs {
+	s32 power;
+	u32 freq_range_index;
+};
+
+/**
+ * struct cfg80211_sar_specs - sar limit specs
+ * @type: it's set with power in 0.25dbm or other types
+ * @num_sub_specs: number of sar sub specs
+ * @sub_specs: memory to hold the sar sub specs
+ */
+struct cfg80211_sar_specs {
+	enum nl80211_sar_type type;
+	u32 num_sub_specs;
+	struct cfg80211_sar_sub_specs sub_specs[];
+};
+
+/**
+ * @struct cfg80211_sar_chan_ranges - sar frequency ranges
+ * @start_freq:  start range edge frequency
+ * @end_freq:    end range edge frequency
+ */
+struct cfg80211_sar_freq_ranges {
+	u32 start_freq;
+	u32 end_freq;
+};
+
+/**
+ * struct cfg80211_sar_capa - sar limit capability
+ * @type: it's set via power in 0.25dbm or other types
+ * @num_freq_ranges: number of frequency ranges
+ * @freq_ranges: memory to hold the freq ranges.
+ *
+ * Note: WLAN driver may append new ranges or split an existing
+ * range to small ones and then append them.
+ */
+struct cfg80211_sar_capa {
+	enum nl80211_sar_type type;
+	u32 num_freq_ranges;
+	const struct cfg80211_sar_freq_ranges *freq_ranges;
+};
+
 #if IS_ENABLED(CONFIG_CFG80211)
 /**
  * cfg80211_get_station - retrieve information about a given station
@@ -4301,6 +4348,8 @@ struct cfg80211_ops {
 				  struct cfg80211_tid_config *tid_conf);
 	int	(*reset_tid_config)(struct wiphy *wiphy, struct net_device *dev,
 				    const u8 *peer, u8 tids);
+	int	(*set_sar_specs)(struct wiphy *wiphy,
+				 struct cfg80211_sar_specs *sar);
 	ANDROID_KABI_RESERVE(1);
 	ANDROID_KABI_RESERVE(2);
 	ANDROID_KABI_RESERVE(3);
@@ -4939,6 +4988,7 @@ struct wiphy_iftype_akm_suites {
  *	%NL80211_TID_CONFIG_ATTR_RETRY_LONG attributes
  */
 struct wiphy {
+	u16 mbssid_max_interfaces;
 	/* assign these fields before you register the wiphy */
 
 	u8 perm_addr[ETH_ALEN];
@@ -5074,6 +5124,8 @@ struct wiphy {
 	} tid_config_support;
 
 	u8 max_data_retry_count;
+
+	const struct cfg80211_sar_capa *sar_capa;
 
 	ANDROID_KABI_RESERVE(1);
 
@@ -6400,6 +6452,7 @@ cfg80211_chandef_to_scan_width(const struct cfg80211_chan_def *chandef)
  * @dev: network device
  * @buf: authentication frame (header + body)
  * @len: length of the frame data
+ * @reconnect: immediate reconnect is desired (include the nl80211 attribute)
  *
  * This function is called whenever an authentication, disassociation or
  * deauthentication frame has been received and processed in station mode.
@@ -6480,7 +6533,8 @@ void cfg80211_abandon_assoc(struct net_device *dev, struct cfg80211_bss *bss);
  * locally generated ones. This function may sleep. The caller must hold the
  * corresponding wdev's mutex.
  */
-void cfg80211_tx_mlme_mgmt(struct net_device *dev, const u8 *buf, size_t len);
+void cfg80211_tx_mlme_mgmt(struct net_device *dev, const u8 *buf, size_t len,
+			   bool reconnect);
 
 /**
  * cfg80211_rx_unprot_mlme_mgmt - notification of unprotected mlme mgmt frame
