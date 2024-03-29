@@ -488,6 +488,17 @@ config SEC_DETECT_SYSFS
 	help
 		Will show the currently running device through the sysfs node: /sys/kernel/sec_detect/device_name.
 
+config NTSYNC
+	tristate "NT synchronization primitive emulation"
+	help
+	  This module provides kernel support for emulation of Windows NT
+	  synchronization primitives. It is not a hardware driver.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called ntsync.
+
+	  If unsure, say N.
+
 source "drivers/misc/cmdline_helper/Kconfig"
 
 source "drivers/misc/c2port/Kconfig"
