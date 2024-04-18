@@ -866,6 +866,7 @@
       <elf-symbol name='__xfrm_decode_session' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x41b76380'/>
       <elf-symbol name='__xfrm_state_destroy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9c30e2e1'/>
       <elf-symbol name='_atomic_dec_and_lock' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcf4fdd4d'/>
+      <elf-symbol name='_atomic_dec_and_lock_irqsave' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x48c093fb'/>
       <elf-symbol name='_bcd2bin' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb6936ffe'/>
       <elf-symbol name='_bin2bcd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x80ca5026'/>
       <elf-symbol name='_copy_from_iter' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x39448fe2'/>
@@ -1020,6 +1021,7 @@
       <elf-symbol name='bio_put' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e359aa9'/>
       <elf-symbol name='bio_reset' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x92c823b1'/>
       <elf-symbol name='bio_split' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd2a1af6e'/>
+      <elf-symbol name='bio_uninit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x14dac3e4'/>
       <elf-symbol name='bioset_exit' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x679e9dab'/>
       <elf-symbol name='bioset_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xed64a00'/>
       <elf-symbol name='bit_wait_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x44bae227'/>
@@ -1068,6 +1070,7 @@
       <elf-symbol name='blk_mq_freeze_queue_wait_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa36c2cb3'/>
       <elf-symbol name='blk_mq_init_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe757d590'/>
       <elf-symbol name='blk_mq_init_sq_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x96d60e2e'/>
+      <elf-symbol name='blk_mq_kick_requeue_list' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4e63bd28'/>
       <elf-symbol name='blk_mq_map_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d4d7b79'/>
       <elf-symbol name='blk_mq_pci_map_queues' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6e581a9d'/>
       <elf-symbol name='blk_mq_queue_inflight' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9ae21087'/>
@@ -1122,6 +1125,7 @@
       <elf-symbol name='blk_queue_write_cache' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x143da591'/>
       <elf-symbol name='blk_register_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeb4185be'/>
       <elf-symbol name='blk_rq_append_bio' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x18609fa2'/>
+      <elf-symbol name='blk_rq_init' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9ed8c296'/>
       <elf-symbol name='blk_rq_map_kern' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcae859c2'/>
       <elf-symbol name='blk_rq_map_user' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaae3eac8'/>
       <elf-symbol name='blk_rq_map_user_iov' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x17aab0ad'/>
@@ -2601,6 +2605,7 @@
       <elf-symbol name='end_buffer_read_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe8fa6beb'/>
       <elf-symbol name='end_buffer_write_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4425e9c2'/>
       <elf-symbol name='end_page_writeback' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9700188'/>
+      <elf-symbol name='errno_to_blk_status' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x612bfd89'/>
       <elf-symbol name='errseq_set' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2ec6bba0'/>
       <elf-symbol name='eth_commit_mac_addr_change' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42bf83cd'/>
       <elf-symbol name='eth_header' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1ec241ac'/>
@@ -3215,6 +3220,7 @@
       <elf-symbol name='invalidate_mapping_pages' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2abc5f13'/>
       <elf-symbol name='io_schedule' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x93a6e0b2'/>
       <elf-symbol name='io_schedule_timeout' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfbc4f89e'/>
+      <elf-symbol name='ioc_lookup_icq' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x82c3af52'/>
       <elf-symbol name='iommu_alloc_resv_region' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xaf40724'/>
       <elf-symbol name='iommu_attach_device' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7b7e559e'/>
       <elf-symbol name='iommu_attach_group' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xdb2cdfed'/>
@@ -4830,12 +4836,15 @@
       <elf-symbol name='sbitmap_add_wait_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x40b43bd0'/>
       <elf-symbol name='sbitmap_any_bit_set' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42230915'/>
       <elf-symbol name='sbitmap_del_wait_queue' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x3c212744'/>
+      <elf-symbol name='sbitmap_finish_wait' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa50335f4'/>
       <elf-symbol name='sbitmap_init_node' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2fb72e9b'/>
+      <elf-symbol name='sbitmap_prepare_to_wait' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd32694be'/>
       <elf-symbol name='sbitmap_queue_clear' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xeaad96f9'/>
       <elf-symbol name='sbitmap_queue_init_node' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9ae4191f'/>
       <elf-symbol name='sbitmap_queue_min_shallow_depth' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7b4c9ba9'/>
       <elf-symbol name='sbitmap_queue_resize' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd9d5d879'/>
       <elf-symbol name='sbitmap_queue_show' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x42f75cea'/>
+      <elf-symbol name='sbitmap_queue_wake_all' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf6c9228c'/>
       <elf-symbol name='scan_swap_map_slots' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xad66b3f5'/>
       <elf-symbol name='scatterwalk_ffwd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x5bbdfa26'/>
       <elf-symbol name='scatterwalk_map_and_copy' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x845dbf3b'/>
@@ -4874,6 +4883,7 @@
       <elf-symbol name='scsi_block_requests' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x999377d'/>
       <elf-symbol name='scsi_block_when_processing_errors' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x1f193fbc'/>
       <elf-symbol name='scsi_change_queue_depth' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x969be5f3'/>
+      <elf-symbol name='scsi_command_normalize_sense' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x729b20f8'/>
       <elf-symbol name='scsi_compat_ioctl' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7ad9174c'/>
       <elf-symbol name='scsi_device_get' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x62a819e9'/>
       <elf-symbol name='scsi_device_lookup' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xf5ae3dd8'/>
@@ -5798,6 +5808,7 @@
       <elf-symbol name='ufshcd_query_flag_retry' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa4aa7bd6'/>
       <elf-symbol name='ufshcd_read_desc_param' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x67c2a4b2'/>
       <elf-symbol name='ufshcd_release' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfa98ca5c'/>
+      <elf-symbol name='ufshcd_release_scsi_cmd' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xef46bb54'/>
       <elf-symbol name='ufshcd_remove' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x53c91879'/>
       <elf-symbol name='ufshcd_shutdown' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x9a4540a1'/>
       <elf-symbol name='ufshcd_system_resume' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xfb14e9c8'/>
@@ -8420,7 +8431,7 @@
           <var-decl name='no_retry' type-id='b50a4934' visibility='default' filepath='include/drm/ttm/ttm_bo_driver.h' line='352' column='1'/>
         </data-member>
       </class-decl>
-      <enum-decl name='dwc3_ep0_state' filepath='drivers/usb/dwc3/core.h' line='779' column='1' id='045093ad'>
+      <enum-decl name='dwc3_ep0_state' filepath='drivers/usb/dwc3/core.h' line='784' column='1' id='045093ad'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='EP0_UNCONNECTED' value='0'/>
         <enumerator name='EP0_SETUP_PHASE' value='1'/>
@@ -9052,6 +9063,7 @@
         <enumerator name='IIO_EV_TYPE_CHANGE' value='5'/>
       </enum-decl>
       <pointer-type-def type-id='4cf04ec2' size-in-bits='64' id='064c3738'/>
+      <pointer-type-def type-id='0ebf66e5' size-in-bits='64' id='064ed7dd'/>
       <class-decl name='v4l2_m2m_queue_ctx' size-in-bits='7168' is-struct='yes' visibility='default' filepath='include/media/v4l2-mem2mem.h' line='65' column='1' id='0651f1ee'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='q' type-id='6b30321d' visibility='default' filepath='include/media/v4l2-mem2mem.h' line='66' column='1'/>
@@ -12384,6 +12396,7 @@
         <parameter type-id='51a94113'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <qualified-type-def type-id='fe7ab802' const='yes' id='0ebf66e5'/>
       <pointer-type-def type-id='eb76a649' size-in-bits='64' id='0ec7edd9'/>
       <typedef-decl name='notifier_fn_t' type-id='38a7cb79' filepath='include/linux/notifier.h' line='51' column='1' id='0ec8c658'/>
       <function-type size-in-bits='64' id='0ed9f201'>
@@ -13361,6 +13374,7 @@
           <var-decl name='beacon_int_min_gcd' type-id='19c2251e' visibility='default' filepath='include/net/cfg80211.h' line='4511' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='ad974870' size-in-bits='64' id='117abbea'/>
       <function-type size-in-bits='64' id='117b6b23'>
         <parameter type-id='572fbdca'/>
         <parameter type-id='f8dc9def'/>
@@ -15586,6 +15600,7 @@
         <parameter type-id='91d0de51' name='_vq'/>
         <return type-id='b50a4934'/>
       </function-type>
+      <pointer-type-def type-id='2c98045e' size-in-bits='64' id='16990944'/>
       <pointer-type-def type-id='1d86628a' size-in-bits='64' id='16a27d24'/>
       <pointer-type-def type-id='2aa44dc9' size-in-bits='64' id='16ab0351'/>
       <class-decl name='keyring_index_key' size-in-bits='320' is-struct='yes' visibility='default' filepath='include/linux/key.h' line='108' column='1' id='16ab8749'>
@@ -22560,6 +22575,11 @@
           <var-decl name='base' type-id='85c172d2' visibility='default' filepath='include/crypto/internal/hash.h' line='37' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='27ca88ce'>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='16990944'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='shrinker' size-in-bits='512' is-struct='yes' visibility='default' filepath='include/linux/shrinker.h' line='63' column='1' id='27cb404f'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='count_objects' type-id='cd2cc9e1' visibility='default' filepath='include/linux/shrinker.h' line='64' column='1'/>
@@ -24537,6 +24557,17 @@
       </function-type>
       <pointer-type-def type-id='97488913' size-in-bits='64' id='2c8ff697'/>
       <pointer-type-def type-id='3a97b64f' size-in-bits='64' id='2c927837'/>
+      <class-decl name='nf_exp_event' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='155' column='1' id='2c98045e'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='exp' type-id='b7982cd5' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='156' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='portid' type-id='19c2251e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='157' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='report' type-id='95e97e5e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='158' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='2ca9725a'>
         <parameter type-id='0343ce83'/>
         <parameter type-id='63e171df'/>
@@ -24952,42 +24983,42 @@
         <parameter type-id='95e97e5e'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <class-decl name='dwc3_hwparams' size-in-bits='448' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='864' column='1' id='2d79d174'>
+      <class-decl name='dwc3_hwparams' size-in-bits='448' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='869' column='1' id='2d79d174'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='hwparams0' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='865' column='1'/>
+          <var-decl name='hwparams0' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='870' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='hwparams1' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='866' column='1'/>
+          <var-decl name='hwparams1' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='871' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='hwparams2' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='867' column='1'/>
+          <var-decl name='hwparams2' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='872' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='hwparams3' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='868' column='1'/>
+          <var-decl name='hwparams3' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='873' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='hwparams4' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='869' column='1'/>
+          <var-decl name='hwparams4' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='874' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='hwparams5' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='870' column='1'/>
+          <var-decl name='hwparams5' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='875' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='hwparams6' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='871' column='1'/>
+          <var-decl name='hwparams6' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='876' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='hwparams7' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='872' column='1'/>
+          <var-decl name='hwparams7' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='877' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='hwparams8' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='873' column='1'/>
+          <var-decl name='hwparams8' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='878' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='288'>
-          <var-decl name='hwparams9' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='874' column='1'/>
+          <var-decl name='hwparams9' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='879' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='876' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='881' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='877' column='1'/>
+          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='882' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='425bcb9d' size-in-bits='64' id='2d81b115'/>
@@ -34864,60 +34895,60 @@
         <parameter type-id='83c1bde6'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <class-decl name='dwc3_request' size-in-bits='1664' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='917' column='1' id='48288128'>
+      <class-decl name='dwc3_request' size-in-bits='1664' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='922' column='1' id='48288128'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='request' type-id='43806adf' visibility='default' filepath='drivers/usb/dwc3/core.h' line='918' column='1'/>
+          <var-decl name='request' type-id='43806adf' visibility='default' filepath='drivers/usb/dwc3/core.h' line='923' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='919' column='1'/>
+          <var-decl name='list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='924' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='960'>
-          <var-decl name='dep' type-id='b31af340' visibility='default' filepath='drivers/usb/dwc3/core.h' line='920' column='1'/>
+          <var-decl name='dep' type-id='b31af340' visibility='default' filepath='drivers/usb/dwc3/core.h' line='925' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1024'>
-          <var-decl name='sg' type-id='bf3ef905' visibility='default' filepath='drivers/usb/dwc3/core.h' line='921' column='1'/>
+          <var-decl name='sg' type-id='bf3ef905' visibility='default' filepath='drivers/usb/dwc3/core.h' line='926' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='start_sg' type-id='bf3ef905' visibility='default' filepath='drivers/usb/dwc3/core.h' line='922' column='1'/>
+          <var-decl name='start_sg' type-id='bf3ef905' visibility='default' filepath='drivers/usb/dwc3/core.h' line='927' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='num_pending_sgs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='924' column='1'/>
+          <var-decl name='num_pending_sgs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='929' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1184'>
-          <var-decl name='num_queued_sgs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='925' column='1'/>
+          <var-decl name='num_queued_sgs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='930' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1216'>
-          <var-decl name='remaining' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='926' column='1'/>
+          <var-decl name='remaining' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='931' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1248'>
-          <var-decl name='status' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='928' column='1'/>
+          <var-decl name='status' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='933' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='epnum' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='937' column='1'/>
+          <var-decl name='epnum' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='942' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1344'>
-          <var-decl name='trb' type-id='0d6a59e1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='938' column='1'/>
+          <var-decl name='trb' type-id='0d6a59e1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='943' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1408'>
-          <var-decl name='trb_dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='939' column='1'/>
+          <var-decl name='trb_dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='944' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1472'>
-          <var-decl name='num_trbs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='941' column='1'/>
+          <var-decl name='num_trbs' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='946' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='needs_extra_trb' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='943' column='1'/>
+          <var-decl name='needs_extra_trb' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='948' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='direction' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='944' column='1'/>
+          <var-decl name='direction' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='949' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2'>
-          <var-decl name='mapped' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='945' column='1'/>
+          <var-decl name='mapped' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='950' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1536'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='947' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='952' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1600'>
-          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='948' column='1'/>
+          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='953' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='08594205' size-in-bits='64' id='482ccc39'/>
@@ -40914,7 +40945,7 @@
         <enumerator name='REF_CLK_FREQ_52_MHZ' value='3'/>
         <enumerator name='REF_CLK_FREQ_INVAL' value='-1'/>
       </enum-decl>
-      <enum-decl name='dwc3_ep0_next' filepath='drivers/usb/dwc3/core.h' line='772' column='1' id='56e3bcb9'>
+      <enum-decl name='dwc3_ep0_next' filepath='drivers/usb/dwc3/core.h' line='777' column='1' id='56e3bcb9'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='DWC3_EP0_UNKNOWN' value='0'/>
         <enumerator name='DWC3_EP0_COMPLETE' value='1'/>
@@ -45358,7 +45389,11 @@
           <var-decl name='family' type-id='8efea9e5' visibility='default' filepath='include/linux/netfilter/x_tables.h' line='219' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='nf_exp_event_notifier' is-struct='yes' visibility='default' is-declaration-only='yes' id='602fd1a9'/>
+      <class-decl name='nf_exp_event_notifier' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='161' column='1' id='602fd1a9'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='fcn' type-id='c8fa3070' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='162' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='603a76bb'>
         <parameter type-id='33c599da'/>
         <parameter type-id='a42536cd'/>
@@ -50706,6 +50741,7 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <pointer-type-def type-id='e0f7a7a4' size-in-bits='64' id='6c781266'/>
+      <pointer-type-def type-id='75c2ad3b' size-in-bits='64' id='6c8c82c7'/>
       <function-type size-in-bits='64' id='6c99ab8f'>
         <parameter type-id='fa0b179b'/>
         <parameter type-id='bff05edb'/>
@@ -52073,18 +52109,18 @@
           <var-decl name='head' type-id='d504f73d' visibility='default' filepath='include/linux/notifier.h' line='67' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='dwc3_trb' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='844' column='1' id='70923669'>
+      <class-decl name='dwc3_trb' size-in-bits='128' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='849' column='1' id='70923669'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='bpl' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='845' column='1'/>
+          <var-decl name='bpl' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='850' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='bph' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='846' column='1'/>
+          <var-decl name='bph' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='851' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='size' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='847' column='1'/>
+          <var-decl name='size' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='852' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='96'>
-          <var-decl name='ctrl' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='848' column='1'/>
+          <var-decl name='ctrl' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='853' column='1'/>
         </data-member>
       </class-decl>
       <class-decl name='pci_error_handlers' size-in-bits='448' is-struct='yes' visibility='default' filepath='include/linux/pci.h' line='814' column='1' id='709bf5ba'>
@@ -54375,6 +54411,11 @@
       <pointer-type-def type-id='7dccafaf' size-in-bits='64' id='75adfaf3'/>
       <pointer-type-def type-id='7a35a8fe' size-in-bits='64' id='75ae4804'/>
       <pointer-type-def type-id='171b0f6c' size-in-bits='64' id='75b9415a'/>
+      <function-type size-in-bits='64' id='75c2ad3b'>
+        <parameter type-id='8c493d8a'/>
+        <parameter type-id='b7982cd5'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <enum-decl name='hdmi_audio_sample_frequency' filepath='include/linux/hdmi.h' line='286' column='1' id='75c2c977'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM' value='0'/>
@@ -58823,390 +58864,390 @@
       <pointer-type-def type-id='9ba86a44' size-in-bits='64' id='807b7702'/>
       <pointer-type-def type-id='a82c7e12' size-in-bits='64' id='807c842c'/>
       <pointer-type-def type-id='5f81edee' size-in-bits='64' id='807f0070'/>
-      <class-decl name='dwc3' size-in-bits='10432' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1106' column='1' id='80824a72'>
+      <class-decl name='dwc3' size-in-bits='10432' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1111' column='1' id='80824a72'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='drd_work' type-id='ef9025d0' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1107' column='1'/>
+          <var-decl name='drd_work' type-id='ef9025d0' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1112' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='ep0_trb' type-id='0d6a59e1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1108' column='1'/>
+          <var-decl name='ep0_trb' type-id='0d6a59e1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1113' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='448'>
-          <var-decl name='bounce' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1109' column='1'/>
+          <var-decl name='bounce' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1114' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='scratchbuf' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1110' column='1'/>
+          <var-decl name='scratchbuf' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1115' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='576'>
-          <var-decl name='setup_buf' type-id='8bff8096' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1111' column='1'/>
+          <var-decl name='setup_buf' type-id='8bff8096' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1116' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='ep0_trb_addr' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1112' column='1'/>
+          <var-decl name='ep0_trb_addr' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1117' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='bounce_addr' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1113' column='1'/>
+          <var-decl name='bounce_addr' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1118' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='scratch_addr' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1114' column='1'/>
+          <var-decl name='scratch_addr' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1119' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='832'>
-          <var-decl name='ep0_usb_req' type-id='48288128' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1115' column='1'/>
+          <var-decl name='ep0_usb_req' type-id='48288128' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1120' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2496'>
-          <var-decl name='ep0_in_setup' type-id='f9fef04f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1116' column='1'/>
+          <var-decl name='ep0_in_setup' type-id='f9fef04f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1121' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2752'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1119' column='1'/>
+          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1124' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2816'>
-          <var-decl name='mutex' type-id='925167dc' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1122' column='1'/>
+          <var-decl name='mutex' type-id='925167dc' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1127' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3200'>
-          <var-decl name='dev' type-id='fa0b179b' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1124' column='1'/>
+          <var-decl name='dev' type-id='fa0b179b' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1129' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3264'>
-          <var-decl name='sysdev' type-id='fa0b179b' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1125' column='1'/>
+          <var-decl name='sysdev' type-id='fa0b179b' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1130' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3328'>
-          <var-decl name='xhci' type-id='db362995' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1127' column='1'/>
+          <var-decl name='xhci' type-id='db362995' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1132' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3392'>
-          <var-decl name='xhci_resources' type-id='05e8efcf' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1128' column='1'/>
+          <var-decl name='xhci_resources' type-id='05e8efcf' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1133' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4928'>
-          <var-decl name='ev_buf' type-id='c4c1659e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1130' column='1'/>
+          <var-decl name='ev_buf' type-id='c4c1659e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1135' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4992'>
-          <var-decl name='eps' type-id='21edd5c3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1131' column='1'/>
+          <var-decl name='eps' type-id='21edd5c3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1136' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7040'>
-          <var-decl name='gadget' type-id='49a58c0c' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1133' column='1'/>
+          <var-decl name='gadget' type-id='49a58c0c' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1138' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7104'>
-          <var-decl name='gadget_driver' type-id='9762ede1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1134' column='1'/>
+          <var-decl name='gadget_driver' type-id='9762ede1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1139' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7168'>
-          <var-decl name='clks' type-id='2942e355' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1136' column='1'/>
+          <var-decl name='clks' type-id='2942e355' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1141' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7232'>
-          <var-decl name='num_clks' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1137' column='1'/>
+          <var-decl name='num_clks' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1142' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7296'>
-          <var-decl name='reset' type-id='9f9b8114' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1139' column='1'/>
+          <var-decl name='reset' type-id='9f9b8114' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1144' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7360'>
-          <var-decl name='usb2_phy' type-id='ca9354d1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1141' column='1'/>
+          <var-decl name='usb2_phy' type-id='ca9354d1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1146' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7424'>
-          <var-decl name='usb3_phy' type-id='ca9354d1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1142' column='1'/>
+          <var-decl name='usb3_phy' type-id='ca9354d1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1147' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7488'>
-          <var-decl name='usb2_generic_phy' type-id='503ff1ba' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1144' column='1'/>
+          <var-decl name='usb2_generic_phy' type-id='503ff1ba' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1149' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7552'>
-          <var-decl name='usb3_generic_phy' type-id='503ff1ba' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1145' column='1'/>
+          <var-decl name='usb3_generic_phy' type-id='503ff1ba' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1150' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7616'>
-          <var-decl name='phys_ready' type-id='b50a4934' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1147' column='1'/>
+          <var-decl name='phys_ready' type-id='b50a4934' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1152' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7680'>
-          <var-decl name='ulpi' type-id='144a094f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1149' column='1'/>
+          <var-decl name='ulpi' type-id='144a094f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1154' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7744'>
-          <var-decl name='ulpi_ready' type-id='b50a4934' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1150' column='1'/>
+          <var-decl name='ulpi_ready' type-id='b50a4934' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1155' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7808'>
-          <var-decl name='regs' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1152' column='1'/>
+          <var-decl name='regs' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1157' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7872'>
-          <var-decl name='regs_size' type-id='b59d7dce' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1153' column='1'/>
+          <var-decl name='regs_size' type-id='b59d7dce' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1158' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7936'>
-          <var-decl name='dr_mode' type-id='d291aaf1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1155' column='1'/>
+          <var-decl name='dr_mode' type-id='d291aaf1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1160' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7968'>
-          <var-decl name='current_dr_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1156' column='1'/>
+          <var-decl name='current_dr_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1161' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8000'>
-          <var-decl name='desired_dr_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1157' column='1'/>
+          <var-decl name='desired_dr_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1162' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8064'>
-          <var-decl name='edev' type-id='c0d6fada' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1158' column='1'/>
+          <var-decl name='edev' type-id='c0d6fada' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1163' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8128'>
-          <var-decl name='edev_nb' type-id='9b08f7cd' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1159' column='1'/>
+          <var-decl name='edev_nb' type-id='9b08f7cd' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1164' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8320'>
-          <var-decl name='hsphy_mode' type-id='46b5771e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1160' column='1'/>
+          <var-decl name='hsphy_mode' type-id='46b5771e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1165' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8384'>
-          <var-decl name='role_sw' type-id='3e3cd44f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1161' column='1'/>
+          <var-decl name='role_sw' type-id='3e3cd44f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1166' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8448'>
-          <var-decl name='role_switch_default_mode' type-id='d291aaf1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1162' column='1'/>
+          <var-decl name='role_switch_default_mode' type-id='d291aaf1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1167' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8512'>
-          <var-decl name='usb_psy' type-id='c0c93c9e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1164' column='1'/>
+          <var-decl name='usb_psy' type-id='c0c93c9e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1169' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8576'>
-          <var-decl name='fladj' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1166' column='1'/>
+          <var-decl name='fladj' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1171' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8608'>
-          <var-decl name='irq_gadget' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1167' column='1'/>
+          <var-decl name='irq_gadget' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1172' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8640'>
-          <var-decl name='otg_irq' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1168' column='1'/>
+          <var-decl name='otg_irq' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1173' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8672'>
-          <var-decl name='current_otg_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1169' column='1'/>
+          <var-decl name='current_otg_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1174' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8704'>
-          <var-decl name='desired_otg_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1170' column='1'/>
+          <var-decl name='desired_otg_role' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1175' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8736'>
-          <var-decl name='otg_restart_host' type-id='b50a4934' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1171' column='1'/>
+          <var-decl name='otg_restart_host' type-id='b50a4934' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1176' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8768'>
-          <var-decl name='nr_scratch' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1172' column='1'/>
+          <var-decl name='nr_scratch' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1177' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8800'>
-          <var-decl name='u1u2' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1173' column='1'/>
+          <var-decl name='u1u2' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1178' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8832'>
-          <var-decl name='maximum_speed' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1174' column='1'/>
+          <var-decl name='maximum_speed' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1179' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8864'>
-          <var-decl name='gadget_max_speed' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1175' column='1'/>
+          <var-decl name='gadget_max_speed' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1180' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8896'>
-          <var-decl name='max_ssp_rate' type-id='a9ea967a' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1176' column='1'/>
+          <var-decl name='max_ssp_rate' type-id='a9ea967a' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1181' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8928'>
-          <var-decl name='gadget_ssp_rate' type-id='a9ea967a' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1177' column='1'/>
+          <var-decl name='gadget_ssp_rate' type-id='a9ea967a' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1182' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8960'>
-          <var-decl name='ip' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1179' column='1'/>
+          <var-decl name='ip' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1184' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8992'>
-          <var-decl name='revision' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1185' column='1'/>
+          <var-decl name='revision' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1190' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9024'>
-          <var-decl name='version_type' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1223' column='1'/>
+          <var-decl name='version_type' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1228' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9056'>
-          <var-decl name='ep0_next_event' type-id='56e3bcb9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1233' column='1'/>
+          <var-decl name='ep0_next_event' type-id='56e3bcb9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1238' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9088'>
-          <var-decl name='ep0state' type-id='045093ad' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1234' column='1'/>
+          <var-decl name='ep0state' type-id='045093ad' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1239' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9120'>
-          <var-decl name='link_state' type-id='9775e40e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1235' column='1'/>
+          <var-decl name='link_state' type-id='9775e40e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1240' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9152'>
-          <var-decl name='u2sel' type-id='1dc6a898' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1237' column='1'/>
+          <var-decl name='u2sel' type-id='1dc6a898' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1242' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9168'>
-          <var-decl name='u2pel' type-id='1dc6a898' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1238' column='1'/>
+          <var-decl name='u2pel' type-id='1dc6a898' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1243' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9184'>
-          <var-decl name='u1sel' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1239' column='1'/>
+          <var-decl name='u1sel' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1244' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9192'>
-          <var-decl name='u1pel' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1240' column='1'/>
+          <var-decl name='u1pel' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1245' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9200'>
-          <var-decl name='speed' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1242' column='1'/>
+          <var-decl name='speed' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1247' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9208'>
-          <var-decl name='num_eps' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1244' column='1'/>
+          <var-decl name='num_eps' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1249' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9216'>
-          <var-decl name='hwparams' type-id='2d79d174' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1246' column='1'/>
+          <var-decl name='hwparams' type-id='2d79d174' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1251' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9664'>
-          <var-decl name='root' type-id='27675065' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1247' column='1'/>
+          <var-decl name='root' type-id='27675065' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1252' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9728'>
-          <var-decl name='regset' type-id='62fa2ea7' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1248' column='1'/>
+          <var-decl name='regset' type-id='62fa2ea7' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1253' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9792'>
-          <var-decl name='dbg_lsp_select' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1250' column='1'/>
+          <var-decl name='dbg_lsp_select' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1255' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9824'>
-          <var-decl name='test_mode' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1252' column='1'/>
+          <var-decl name='test_mode' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1257' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9832'>
-          <var-decl name='test_mode_nr' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1253' column='1'/>
+          <var-decl name='test_mode_nr' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1258' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9840'>
-          <var-decl name='lpm_nyet_threshold' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1254' column='1'/>
+          <var-decl name='lpm_nyet_threshold' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1259' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9848'>
-          <var-decl name='hird_threshold' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1255' column='1'/>
+          <var-decl name='hird_threshold' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1260' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9856'>
-          <var-decl name='rx_thr_num_pkt_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1256' column='1'/>
+          <var-decl name='rx_thr_num_pkt_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1261' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9864'>
-          <var-decl name='rx_max_burst_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1257' column='1'/>
+          <var-decl name='rx_max_burst_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1262' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9872'>
-          <var-decl name='tx_thr_num_pkt_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1258' column='1'/>
+          <var-decl name='tx_thr_num_pkt_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1263' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9880'>
-          <var-decl name='tx_max_burst_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1259' column='1'/>
+          <var-decl name='tx_max_burst_prd' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1264' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9888'>
-          <var-decl name='tx_fifo_resize_max_num' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1260' column='1'/>
+          <var-decl name='tx_fifo_resize_max_num' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1265' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9920'>
-          <var-decl name='hsphy_interface' type-id='80f4b756' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1262' column='1'/>
+          <var-decl name='hsphy_interface' type-id='80f4b756' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1267' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='connected' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1264' column='1'/>
+          <var-decl name='connected' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1269' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='delayed_status' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1265' column='1'/>
+          <var-decl name='delayed_status' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1270' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2'>
-          <var-decl name='ep0_bounced' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1266' column='1'/>
+          <var-decl name='ep0_bounced' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1271' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3'>
-          <var-decl name='ep0_expect_in' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1267' column='1'/>
+          <var-decl name='ep0_expect_in' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1272' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4'>
-          <var-decl name='has_hibernation' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1268' column='1'/>
+          <var-decl name='has_hibernation' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1273' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='5'>
-          <var-decl name='sysdev_is_parent' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1269' column='1'/>
+          <var-decl name='sysdev_is_parent' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1274' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='6'>
-          <var-decl name='has_lpm_erratum' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1270' column='1'/>
+          <var-decl name='has_lpm_erratum' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1275' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7'>
-          <var-decl name='is_utmi_l1_suspend' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1271' column='1'/>
+          <var-decl name='is_utmi_l1_suspend' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1276' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='is_fpga' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1272' column='1'/>
+          <var-decl name='is_fpga' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1277' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9'>
-          <var-decl name='pending_events' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1273' column='1'/>
+          <var-decl name='pending_events' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1278' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10'>
-          <var-decl name='do_fifo_resize' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1274' column='1'/>
+          <var-decl name='do_fifo_resize' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1279' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='11'>
-          <var-decl name='pullups_connected' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1275' column='1'/>
+          <var-decl name='pullups_connected' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1280' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='12'>
-          <var-decl name='setup_packet_pending' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1276' column='1'/>
+          <var-decl name='setup_packet_pending' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1281' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='13'>
-          <var-decl name='three_stage_setup' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1277' column='1'/>
+          <var-decl name='three_stage_setup' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1282' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='14'>
-          <var-decl name='dis_start_transfer_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1278' column='1'/>
+          <var-decl name='dis_start_transfer_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1283' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='15'>
-          <var-decl name='usb3_lpm_capable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1279' column='1'/>
+          <var-decl name='usb3_lpm_capable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1284' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='16'>
-          <var-decl name='usb2_lpm_disable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1280' column='1'/>
+          <var-decl name='usb2_lpm_disable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1285' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='17'>
-          <var-decl name='usb2_gadget_lpm_disable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1281' column='1'/>
+          <var-decl name='usb2_gadget_lpm_disable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1286' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='18'>
-          <var-decl name='disable_scramble_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1283' column='1'/>
+          <var-decl name='disable_scramble_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1288' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='19'>
-          <var-decl name='u2exit_lfps_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1284' column='1'/>
+          <var-decl name='u2exit_lfps_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1289' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='20'>
-          <var-decl name='u2ss_inp3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1285' column='1'/>
+          <var-decl name='u2ss_inp3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1290' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='21'>
-          <var-decl name='req_p1p2p3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1286' column='1'/>
+          <var-decl name='req_p1p2p3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1291' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='22'>
-          <var-decl name='del_p1p2p3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1287' column='1'/>
+          <var-decl name='del_p1p2p3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1292' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='23'>
-          <var-decl name='del_phy_power_chg_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1288' column='1'/>
+          <var-decl name='del_phy_power_chg_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1293' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='24'>
-          <var-decl name='lfps_filter_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1289' column='1'/>
+          <var-decl name='lfps_filter_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1294' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='25'>
-          <var-decl name='rx_detect_poll_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1290' column='1'/>
+          <var-decl name='rx_detect_poll_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1295' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='26'>
-          <var-decl name='dis_u3_susphy_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1291' column='1'/>
+          <var-decl name='dis_u3_susphy_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1296' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='27'>
-          <var-decl name='dis_u2_susphy_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1292' column='1'/>
+          <var-decl name='dis_u2_susphy_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1297' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='28'>
-          <var-decl name='dis_enblslpm_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1293' column='1'/>
+          <var-decl name='dis_enblslpm_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1298' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='29'>
-          <var-decl name='dis_u1_entry_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1294' column='1'/>
+          <var-decl name='dis_u1_entry_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1299' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='30'>
-          <var-decl name='dis_u2_entry_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1295' column='1'/>
+          <var-decl name='dis_u2_entry_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1300' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='31'>
-          <var-decl name='dis_rxdet_inp3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1296' column='1'/>
+          <var-decl name='dis_rxdet_inp3_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1301' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='dis_u2_freeclk_exists_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1297' column='1'/>
+          <var-decl name='dis_u2_freeclk_exists_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1302' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='dis_del_phy_power_chg_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1298' column='1'/>
+          <var-decl name='dis_del_phy_power_chg_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1303' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='2'>
-          <var-decl name='dis_tx_ipgap_linecheck_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1299' column='1'/>
+          <var-decl name='dis_tx_ipgap_linecheck_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1304' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='3'>
-          <var-decl name='parkmode_disable_ss_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1300' column='1'/>
+          <var-decl name='parkmode_disable_ss_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1305' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='4'>
-          <var-decl name='tx_de_emphasis_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1302' column='1'/>
+          <var-decl name='tx_de_emphasis_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1307' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='5'>
-          <var-decl name='tx_de_emphasis' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1303' column='1'/>
+          <var-decl name='tx_de_emphasis' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1308' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='7'>
-          <var-decl name='dis_metastability_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1305' column='1'/>
+          <var-decl name='dis_metastability_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1310' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='8'>
-          <var-decl name='dis_split_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1307' column='1'/>
+          <var-decl name='dis_split_quirk' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1312' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='9'>
-          <var-decl name='async_callbacks' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1308' column='1'/>
+          <var-decl name='async_callbacks' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1313' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10032'>
-          <var-decl name='imod_interval' type-id='1dc6a898' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1310' column='1'/>
+          <var-decl name='imod_interval' type-id='1dc6a898' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1315' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10048'>
-          <var-decl name='max_cfg_eps' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1312' column='1'/>
+          <var-decl name='max_cfg_eps' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1317' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10080'>
-          <var-decl name='last_fifo_depth' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1313' column='1'/>
+          <var-decl name='last_fifo_depth' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1318' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10112'>
-          <var-decl name='num_ep_resized' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1314' column='1'/>
+          <var-decl name='num_ep_resized' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1319' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10176'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1316' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1321' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10240'>
-          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1317' column='1'/>
+          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1322' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10304'>
-          <var-decl name='android_kabi_reserved3' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1318' column='1'/>
+          <var-decl name='android_kabi_reserved3' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1323' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='10368'>
-          <var-decl name='android_kabi_reserved4' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1319' column='1'/>
+          <var-decl name='android_kabi_reserved4' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1324' column='1'/>
         </data-member>
       </class-decl>
       <enum-decl name='irqreturn' filepath='include/linux/irqreturn.h' line='11' column='1' id='8086ea38'>
@@ -66470,6 +66511,14 @@
         <parameter type-id='49a58c0c'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='__anonymous_struct__' size-in-bits='160' is-struct='yes' is-anonymous='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='76' column='1' id='90eb4133'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='u3' type-id='8c17f46b' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='77' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='u' type-id='cfd75634' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='78' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='90f4cdc0'>
         <parameter type-id='809cdefc'/>
         <parameter type-id='1b0e1d00'/>
@@ -67585,9 +67634,6 @@
         <parameter type-id='78c01427'/>
         <return type-id='95e97e5e'/>
       </function-type>
-      <array-type-def dimensions='1' type-id='95e97e5e' size-in-bits='2048' id='93e41790'>
-        <subrange length='64' type-id='7ff19f0f' id='b10be967'/>
-      </array-type-def>
       <pointer-type-def type-id='42b001af' size-in-bits='64' id='93edac17'/>
       <array-type-def dimensions='1' type-id='3b0abfc6' size-in-bits='768' id='93f82aba'>
         <subrange length='6' type-id='7ff19f0f' id='52fa524b'/>
@@ -68869,7 +68915,7 @@
         <return type-id='f9f4b16f'/>
       </function-type>
       <pointer-type-def type-id='b718d3f9' size-in-bits='64' id='9762ede1'/>
-      <enum-decl name='dwc3_link_state' filepath='drivers/usb/dwc3/core.h' line='786' column='1' id='9775e40e'>
+      <enum-decl name='dwc3_link_state' filepath='drivers/usb/dwc3/core.h' line='791' column='1' id='9775e40e'>
         <underlying-type type-id='9cac1fee'/>
         <enumerator name='DWC3_LINK_STATE_U0' value='0'/>
         <enumerator name='DWC3_LINK_STATE_U1' value='1'/>
@@ -69014,6 +69060,11 @@
         <parameter type-id='8c46546a'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <class-decl name='nf_conntrack_tuple_mask' size-in-bits='160' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='75' column='1' id='97e29523'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='src' type-id='90eb4133' visibility='default' filepath='include/net/netfilter/nf_conntrack_tuple.h' line='79' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='97e3fb6c'>
         <parameter type-id='7ac48c21'/>
         <parameter type-id='f0981eeb'/>
@@ -73136,6 +73187,7 @@
         <return type-id='48b5725f'/>
       </function-type>
       <qualified-type-def type-id='aa3fd2fc' const='yes' id='a19d369d'/>
+      <pointer-type-def type-id='c54a70ec' size-in-bits='64' id='a1a282ea'/>
       <function-type size-in-bits='64' id='a1aadc50'>
         <parameter type-id='7544e824'/>
         <parameter type-id='fa0b179b'/>
@@ -73807,7 +73859,11 @@
       </class-decl>
       <pointer-type-def type-id='b6fe802d' size-in-bits='64' id='a273cbc9'/>
       <pointer-type-def type-id='6161d888' size-in-bits='64' id='a2782ece'/>
-      <class-decl name='nf_ct_event_notifier' is-struct='yes' visibility='default' is-declaration-only='yes' id='a27aef61'/>
+      <class-decl name='nf_ct_event_notifier' size-in-bits='64' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='75' column='1' id='a27aef61'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='fcn' type-id='117abbea' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='76' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='a2802dd0'>
         <parameter type-id='7e666abe'/>
         <parameter type-id='95e97e5e'/>
@@ -77574,15 +77630,15 @@
         <enumerator name='DEVFREQ_TIMER_NUM' value='2'/>
       </enum-decl>
       <pointer-type-def type-id='644441a6' size-in-bits='64' id='aae3718c'/>
-      <class-decl name='dwc3_gadget_ep_cmd_params' size-in-bits='96' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1479' column='1' id='aaf4c449'>
+      <class-decl name='dwc3_gadget_ep_cmd_params' size-in-bits='96' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1484' column='1' id='aaf4c449'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='param2' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1480' column='1'/>
+          <var-decl name='param2' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1485' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='32'>
-          <var-decl name='param1' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1481' column='1'/>
+          <var-decl name='param1' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1486' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='param0' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1482' column='1'/>
+          <var-decl name='param0' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='1487' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='173cc5a0' size-in-bits='64' id='ab05e282'/>
@@ -78185,11 +78241,7 @@
       <pointer-type-def type-id='512ac7cc' size-in-bits='64' id='ac58af12'/>
       <pointer-type-def type-id='b254b8db' size-in-bits='64' id='ac5f2363'/>
       <pointer-type-def type-id='49a0ad34' size-in-bits='64' id='ac6963b2'/>
-      <class-decl name='prot_inuse' size-in-bits='2048' is-struct='yes' visibility='default' filepath='net/core/sock.c' line='3357' column='1' id='ac763c5d'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='val' type-id='93e41790' visibility='default' filepath='net/core/sock.c' line='3358' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='prot_inuse' is-struct='yes' visibility='default' is-declaration-only='yes' id='ac763c5d'/>
       <function-type size-in-bits='64' id='ac765b39'>
         <parameter type-id='2ba25712'/>
         <parameter type-id='14bde5bf'/>
@@ -78558,6 +78610,11 @@
           <var-decl name='info' type-id='a54793a9' visibility='default' filepath='include/sound/soc-topology.h' line='85' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='ad974870'>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='bccf9b1c'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='load_weight' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/sched.h' line='327' column='1' id='ad979632'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='weight' type-id='7359adad' visibility='default' filepath='include/linux/sched.h' line='328' column='1'/>
@@ -83098,6 +83155,7 @@
       <pointer-type-def type-id='2a13094b' size-in-bits='64' id='b78e1fbb'/>
       <pointer-type-def type-id='4d3ea3f3' size-in-bits='64' id='b78e9a0f'/>
       <pointer-type-def type-id='e4e53fc0' size-in-bits='64' id='b797ac06'/>
+      <pointer-type-def type-id='c2dc4615' size-in-bits='64' id='b7982cd5'/>
       <union-decl name='ethtool_flow_union' size-in-bits='416' visibility='default' filepath='include/uapi/linux/ethtool.h' line='939' column='1' id='b79b5da2'>
         <data-member access='public'>
           <var-decl name='tcp_ip4_spec' type-id='51bf1175' visibility='default' filepath='include/uapi/linux/ethtool.h' line='940' column='1'/>
@@ -85048,6 +85106,12 @@
           <var-decl name='work' type-id='ef9025d0' visibility='default' filepath='include/net/xdp_sock.h' line='34' column='1'/>
         </data-member>
       </class-decl>
+      <enum-decl name='ip_conntrack_dir' filepath='include/uapi/linux/netfilter/nf_conntrack_tuple_common.h' line='11' column='1' id='bbbf8507'>
+        <underlying-type type-id='9cac1fee'/>
+        <enumerator name='IP_CT_DIR_ORIGINAL' value='0'/>
+        <enumerator name='IP_CT_DIR_REPLY' value='1'/>
+        <enumerator name='IP_CT_DIR_MAX' value='2'/>
+      </enum-decl>
       <qualified-type-def type-id='0b8ea949' const='yes' id='bbc46580'/>
       <function-type size-in-bits='64' id='bbe0df86'>
         <parameter type-id='27f3f5d8'/>
@@ -86868,6 +86932,7 @@
           <var-decl name='fd_array' type-id='d2c516bd' visibility='default' filepath='include/linux/fdtable.h' line='67' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='d3056556' size-in-bits='64' id='bccf9b1c'/>
       <pointer-type-def type-id='d6a7cd6f' size-in-bits='64' id='bcd28457'/>
       <class-decl name='aead_instance' size-in-bits='6144' is-struct='yes' visibility='default' filepath='include/crypto/internal/aead.h' line='18' column='1' id='bcdbd578'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -89429,6 +89494,53 @@
         <enumerator name='TYPEC_CC_RP_3_0' value='5'/>
       </enum-decl>
       <pointer-type-def type-id='7c1f247e' size-in-bits='64' id='c2d2a400'/>
+      <class-decl name='nf_conntrack_expect' size-in-bits='1856' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='18' column='1' id='c2dc4615'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='lnode' type-id='03a4a074' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='20' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='hnode' type-id='03a4a074' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='23' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='tuple' type-id='9805d802' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='26' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='mask' type-id='97e29523' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='27' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='768'>
+          <var-decl name='expectfn' type-id='6c8c82c7' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='30' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='832'>
+          <var-decl name='helper' type-id='a1a282ea' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='34' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='896'>
+          <var-decl name='master' type-id='8c493d8a' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='37' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='960'>
+          <var-decl name='timeout' type-id='abe41e67' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='40' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1408'>
+          <var-decl name='use' type-id='64615833' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='43' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1440'>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='46' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1472'>
+          <var-decl name='class' type-id='f0981eeb' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='49' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1504'>
+          <var-decl name='saved_addr' type-id='8c17f46b' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='52' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1632'>
+          <var-decl name='saved_proto' type-id='cfd75634' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='55' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1664'>
+          <var-decl name='dir' type-id='bbbf8507' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='57' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='1728'>
+          <var-decl name='rcu' type-id='e3d8ce29' visibility='default' filepath='include/net/netfilter/nf_conntrack_expect.h' line='60' column='1'/>
+        </data-member>
+      </class-decl>
       <function-type size-in-bits='64' id='c2ddabb8'>
         <parameter type-id='ac2666b2'/>
         <parameter type-id='eaa32e2f'/>
@@ -90946,6 +91058,7 @@
       </function-type>
       <pointer-type-def type-id='350f4182' size-in-bits='64' id='c5417630'/>
       <pointer-type-def type-id='b9675e9f' size-in-bits='64' id='c5491077'/>
+      <class-decl name='nf_conntrack_helper' is-struct='yes' visibility='default' is-declaration-only='yes' id='c54a70ec'/>
       <function-type size-in-bits='64' id='c551f1b5'>
         <parameter type-id='6ed6b432'/>
         <parameter type-id='f23e2572'/>
@@ -92185,6 +92298,7 @@
       </class-decl>
       <pointer-type-def type-id='6aebc4a7' size-in-bits='64' id='c8f5869f'/>
       <pointer-type-def type-id='0331c4d6' size-in-bits='64' id='c8f8b049'/>
+      <pointer-type-def type-id='27ca88ce' size-in-bits='64' id='c8fa3070'/>
       <pointer-type-def type-id='49c81889' size-in-bits='64' id='c8fec899'/>
       <function-type size-in-bits='64' id='c8ffa4a2'>
         <parameter type-id='3213e875'/>
@@ -96155,6 +96269,17 @@
         </data-member>
         <data-member access='public' layout-offset-in-bits='512'>
           <var-decl name='try_compose' type-id='3dbd4e78' visibility='default' filepath='include/media/v4l2-subdev.h' line='623' column='1'/>
+        </data-member>
+      </class-decl>
+      <class-decl name='nf_ct_event' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='69' column='1' id='d3056556'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='ct' type-id='8c493d8a' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='70' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='portid' type-id='19c2251e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='71' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='report' type-id='95e97e5e' visibility='default' filepath='include/net/netfilter/nf_conntrack_ecache.h' line='72' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='b6ab8849' size-in-bits='64' id='d30bdc51'/>
@@ -100734,78 +100859,78 @@
       </function-type>
       <pointer-type-def type-id='e0ed16c6' size-in-bits='64' id='dc18a9b0'/>
       <typedef-decl name='gro_result_t' type-id='3facc5aa' filepath='include/linux/netdevice.h' line='391' column='1' id='dc1b1685'/>
-      <class-decl name='dwc3_ep' size-in-bits='1856' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='703' column='1' id='dc1b9a32'>
+      <class-decl name='dwc3_ep' size-in-bits='1856' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='708' column='1' id='dc1b9a32'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='endpoint' type-id='8005701f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='704' column='1'/>
+          <var-decl name='endpoint' type-id='8005701f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='709' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='640'>
-          <var-decl name='cancelled_list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='705' column='1'/>
+          <var-decl name='cancelled_list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='710' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='pending_list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='706' column='1'/>
+          <var-decl name='pending_list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='711' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='896'>
-          <var-decl name='started_list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='707' column='1'/>
+          <var-decl name='started_list' type-id='72f469ec' visibility='default' filepath='drivers/usb/dwc3/core.h' line='712' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1024'>
-          <var-decl name='regs' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='709' column='1'/>
+          <var-decl name='regs' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='714' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1088'>
-          <var-decl name='trb_pool' type-id='0d6a59e1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='711' column='1'/>
+          <var-decl name='trb_pool' type-id='0d6a59e1' visibility='default' filepath='drivers/usb/dwc3/core.h' line='716' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1152'>
-          <var-decl name='trb_pool_dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='712' column='1'/>
+          <var-decl name='trb_pool_dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='717' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1216'>
-          <var-decl name='dwc' type-id='5ac4ba20' visibility='default' filepath='drivers/usb/dwc3/core.h' line='713' column='1'/>
+          <var-decl name='dwc' type-id='5ac4ba20' visibility='default' filepath='drivers/usb/dwc3/core.h' line='718' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1280'>
-          <var-decl name='saved_state' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='715' column='1'/>
+          <var-decl name='saved_state' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='720' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1312'>
-          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='716' column='1'/>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='721' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1344'>
-          <var-decl name='trb_enqueue' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='744' column='1'/>
+          <var-decl name='trb_enqueue' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='749' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1352'>
-          <var-decl name='trb_dequeue' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='745' column='1'/>
+          <var-decl name='trb_dequeue' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='750' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1360'>
-          <var-decl name='number' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='747' column='1'/>
+          <var-decl name='number' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='752' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1368'>
-          <var-decl name='type' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='748' column='1'/>
+          <var-decl name='type' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='753' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1376'>
-          <var-decl name='resource_index' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='749' column='1'/>
+          <var-decl name='resource_index' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='754' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1408'>
-          <var-decl name='frame_number' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='750' column='1'/>
+          <var-decl name='frame_number' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='755' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1440'>
-          <var-decl name='interval' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='751' column='1'/>
+          <var-decl name='interval' type-id='19c2251e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='756' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1472'>
-          <var-decl name='name' type-id='664ac0b7' visibility='default' filepath='drivers/usb/dwc3/core.h' line='753' column='1'/>
+          <var-decl name='name' type-id='664ac0b7' visibility='default' filepath='drivers/usb/dwc3/core.h' line='758' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='direction' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='755' column='1'/>
+          <var-decl name='direction' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='760' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1'>
-          <var-decl name='stream_capable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='756' column='1'/>
+          <var-decl name='stream_capable' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='761' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1640'>
-          <var-decl name='combo_num' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='759' column='1'/>
+          <var-decl name='combo_num' type-id='f9b06939' visibility='default' filepath='drivers/usb/dwc3/core.h' line='764' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1664'>
-          <var-decl name='start_cmd_status' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='760' column='1'/>
+          <var-decl name='start_cmd_status' type-id='95e97e5e' visibility='default' filepath='drivers/usb/dwc3/core.h' line='765' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1728'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='762' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='767' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='1792'>
-          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='763' column='1'/>
+          <var-decl name='android_kabi_reserved2' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='768' column='1'/>
         </data-member>
       </class-decl>
       <pointer-type-def type-id='a9559bf8' size-in-bits='64' id='dc1e097e'/>
@@ -106159,33 +106284,33 @@
           <var-decl name='sysfs_groups' type-id='9f18d529' visibility='default' filepath='include/linux/led-class-flash.h' line='79' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='dwc3_event_buffer' size-in-bits='448' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='651' column='1' id='e6ab9148'>
+      <class-decl name='dwc3_event_buffer' size-in-bits='448' is-struct='yes' visibility='default' filepath='drivers/usb/dwc3/core.h' line='656' column='1' id='e6ab9148'>
         <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='buf' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='652' column='1'/>
+          <var-decl name='buf' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='657' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='cache' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='653' column='1'/>
+          <var-decl name='cache' type-id='eaa32e2f' visibility='default' filepath='drivers/usb/dwc3/core.h' line='658' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='length' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='654' column='1'/>
+          <var-decl name='length' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='659' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='160'>
-          <var-decl name='lpos' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='655' column='1'/>
+          <var-decl name='lpos' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='660' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='656' column='1'/>
+          <var-decl name='count' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='661' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='657' column='1'/>
+          <var-decl name='flags' type-id='f0981eeb' visibility='default' filepath='drivers/usb/dwc3/core.h' line='662' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='661' column='1'/>
+          <var-decl name='dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/dwc3/core.h' line='666' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='dwc' type-id='5ac4ba20' visibility='default' filepath='drivers/usb/dwc3/core.h' line='663' column='1'/>
+          <var-decl name='dwc' type-id='5ac4ba20' visibility='default' filepath='drivers/usb/dwc3/core.h' line='668' column='1'/>
         </data-member>
         <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='665' column='1'/>
+          <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/dwc3/core.h' line='670' column='1'/>
         </data-member>
       </class-decl>
       <function-type size-in-bits='64' id='e6af544d'>
@@ -122654,6 +122779,12 @@
         <parameter type-id='cff2d845' name='lock' filepath='lib/dec_and_lock.c' line='21' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='_atomic_dec_and_lock_irqsave' mangled-name='_atomic_dec_and_lock_irqsave' filepath='lib/dec_and_lock.c' line='37' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_atomic_dec_and_lock_irqsave'>
+        <parameter type-id='8a47abc3' name='atomic' filepath='lib/dec_and_lock.c' line='37' column='1'/>
+        <parameter type-id='cff2d845' name='lock' filepath='lib/dec_and_lock.c' line='37' column='1'/>
+        <parameter type-id='1d2c2b85' name='flags' filepath='lib/dec_and_lock.c' line='38' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='_bcd2bin' mangled-name='_bcd2bin' filepath='lib/bcd.c' line='5' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='_bcd2bin'>
         <parameter type-id='002ac4a6' name='val' filepath='lib/bcd.c' line='5' column='1'/>
         <return type-id='f0981eeb'/>
@@ -123459,6 +123590,10 @@
         <parameter type-id='38b1e3a0' name='bs' filepath='block/bio.c' line='1480' column='1'/>
         <return type-id='fb55efa1'/>
       </function-decl>
+      <function-decl name='bio_uninit' mangled-name='bio_uninit' filepath='block/bio.c' line='236' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bio_uninit'>
+        <parameter type-id='fb55efa1' name='bio' filepath='block/bio.c' line='236' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='bioset_exit' mangled-name='bioset_exit' filepath='block/bio.c' line='1551' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='bioset_exit'>
         <parameter type-id='38b1e3a0' name='bs' filepath='block/bio.c' line='1551' column='1'/>
         <return type-id='48b5725f'/>
@@ -123712,6 +123847,10 @@
         <parameter type-id='f0981eeb' name='queue_depth' filepath='block/blk-mq.c' line='3206' column='1'/>
         <parameter type-id='f0981eeb' name='set_flags' filepath='block/blk-mq.c' line='3207' column='1'/>
         <return type-id='e7d2a5fc'/>
+      </function-decl>
+      <function-decl name='blk_mq_kick_requeue_list' mangled-name='blk_mq_kick_requeue_list' filepath='block/blk-mq.c' line='868' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_kick_requeue_list'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-mq.c' line='868' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='blk_mq_map_queues' mangled-name='blk_mq_map_queues' filepath='block/blk-mq-cpumap.c' line='35' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_mq_map_queues'>
         <parameter type-id='187ae308' name='qmap' filepath='block/blk-mq-cpumap.c' line='35' column='1'/>
@@ -123977,6 +124116,11 @@
         <parameter type-id='3dad1a48' name='rq' filepath='block/blk-map.c' line='524' column='1'/>
         <parameter type-id='334817d1' name='bio' filepath='block/blk-map.c' line='524' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='blk_rq_init' mangled-name='blk_rq_init' filepath='block/blk-core.c' line='120' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_rq_init'>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-core.c' line='120' column='1'/>
+        <parameter type-id='3dad1a48' name='rq' filepath='block/blk-core.c' line='120' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='blk_rq_map_kern' mangled-name='blk_rq_map_kern' filepath='block/blk-map.c' line='684' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='blk_rq_map_kern'>
         <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-map.c' line='684' column='1'/>
@@ -127836,10 +127980,10 @@
         <parameter type-id='7bb280fa' name='config' filepath='drivers/nvmem/core.c' line='775' column='1'/>
         <return type-id='8179bc49'/>
       </function-decl>
-      <function-decl name='devm_of_clk_add_hw_provider' mangled-name='devm_of_clk_add_hw_provider' filepath='drivers/clk/clk.c' line='4788' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_of_clk_add_hw_provider'>
-        <parameter type-id='fa0b179b' name='dev' filepath='drivers/clk/clk.c' line='4788' column='1'/>
-        <parameter type-id='a5186342' name='get' filepath='drivers/clk/clk.c' line='4789' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4791' column='1'/>
+      <function-decl name='devm_of_clk_add_hw_provider' mangled-name='devm_of_clk_add_hw_provider' filepath='drivers/clk/clk.c' line='4789' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_of_clk_add_hw_provider'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/clk/clk.c' line='4789' column='1'/>
+        <parameter type-id='a5186342' name='get' filepath='drivers/clk/clk.c' line='4790' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4792' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='devm_of_icc_get' mangled-name='devm_of_icc_get' filepath='drivers/interconnect/core.c' line='405' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_of_icc_get'>
@@ -131829,6 +131973,10 @@
         <parameter type-id='02f11ed4' name='page' filepath='mm/filemap.c' line='1482' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='errno_to_blk_status' mangled-name='errno_to_blk_status' filepath='block/blk-core.c' line='206' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='errno_to_blk_status'>
+        <parameter type-id='95e97e5e' name='errno' filepath='block/blk-core.c' line='206' column='1'/>
+        <return type-id='f4e2facd'/>
+      </function-decl>
       <function-decl name='errseq_set' mangled-name='errseq_set' filepath='lib/errseq.c' line='58' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='errseq_set'>
         <parameter type-id='a07ff496' name='eseq' filepath='lib/errseq.c' line='58' column='1'/>
         <parameter type-id='95e97e5e' name='err' filepath='lib/errseq.c' line='58' column='1'/>
@@ -134989,6 +135137,11 @@
       <function-decl name='io_schedule_timeout' mangled-name='io_schedule_timeout' filepath='kernel/sched/core.c' line='6563' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='io_schedule_timeout'>
         <parameter type-id='bd54fe1a' name='timeout' filepath='kernel/sched/core.c' line='6563' column='1'/>
         <return type-id='bd54fe1a'/>
+      </function-decl>
+      <function-decl name='ioc_lookup_icq' mangled-name='ioc_lookup_icq' filepath='block/blk-ioc.c' line='332' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ioc_lookup_icq'>
+        <parameter type-id='d042cfad' name='ioc' filepath='block/blk-ioc.c' line='332' column='1'/>
+        <parameter type-id='e7d2a5fc' name='q' filepath='block/blk-ioc.c' line='332' column='1'/>
+        <return type-id='7c6e0e0c'/>
       </function-decl>
       <var-decl name='iomem_resource' type-id='5218160d' mangled-name='iomem_resource' visibility='default' filepath='kernel/resource.c' line='38' column='1' elf-symbol-id='iomem_resource'/>
       <function-decl name='iommu_alloc_resv_region' mangled-name='iommu_alloc_resv_region' filepath='drivers/iommu/iommu.c' line='2844' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='iommu_alloc_resv_region'>
@@ -138358,59 +138511,59 @@
         <parameter type-id='80f4b756' name='stem' filepath='drivers/of/base.c' line='2067' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='of_clk_add_hw_provider' mangled-name='of_clk_add_hw_provider' filepath='drivers/clk/clk.c' line='4716' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_add_hw_provider'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='4716' column='1'/>
-        <parameter type-id='a5186342' name='get' filepath='drivers/clk/clk.c' line='4717' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4719' column='1'/>
+      <function-decl name='of_clk_add_hw_provider' mangled-name='of_clk_add_hw_provider' filepath='drivers/clk/clk.c' line='4717' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_add_hw_provider'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='4717' column='1'/>
+        <parameter type-id='a5186342' name='get' filepath='drivers/clk/clk.c' line='4718' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4720' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='of_clk_add_provider' mangled-name='of_clk_add_provider' filepath='drivers/clk/clk.c' line='4674' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_add_provider'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='4674' column='1'/>
-        <parameter type-id='f1c652ac' name='clk_src_get' filepath='drivers/clk/clk.c' line='4675' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4677' column='1'/>
+      <function-decl name='of_clk_add_provider' mangled-name='of_clk_add_provider' filepath='drivers/clk/clk.c' line='4675' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_add_provider'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='4675' column='1'/>
+        <parameter type-id='f1c652ac' name='clk_src_get' filepath='drivers/clk/clk.c' line='4676' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4678' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='of_clk_del_provider' mangled-name='of_clk_del_provider' filepath='drivers/clk/clk.c' line='4818' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_del_provider'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='4818' column='1'/>
+      <function-decl name='of_clk_del_provider' mangled-name='of_clk_del_provider' filepath='drivers/clk/clk.c' line='4819' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_del_provider'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='4819' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='of_clk_get' mangled-name='of_clk_get' filepath='drivers/clk/clk.c' line='5018' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5018' column='1'/>
-        <parameter type-id='95e97e5e' name='index' filepath='drivers/clk/clk.c' line='5018' column='1'/>
+      <function-decl name='of_clk_get' mangled-name='of_clk_get' filepath='drivers/clk/clk.c' line='5019' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5019' column='1'/>
+        <parameter type-id='95e97e5e' name='index' filepath='drivers/clk/clk.c' line='5019' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
-      <function-decl name='of_clk_get_by_name' mangled-name='of_clk_get_by_name' filepath='drivers/clk/clk.c' line='5033' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_by_name'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5033' column='1'/>
-        <parameter type-id='80f4b756' name='name' filepath='drivers/clk/clk.c' line='5033' column='1'/>
+      <function-decl name='of_clk_get_by_name' mangled-name='of_clk_get_by_name' filepath='drivers/clk/clk.c' line='5034' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_by_name'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5034' column='1'/>
+        <parameter type-id='80f4b756' name='name' filepath='drivers/clk/clk.c' line='5034' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
-      <function-decl name='of_clk_get_from_provider' mangled-name='of_clk_get_from_provider' filepath='drivers/clk/clk.c' line='4984' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_from_provider'>
-        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4984' column='1'/>
+      <function-decl name='of_clk_get_from_provider' mangled-name='of_clk_get_from_provider' filepath='drivers/clk/clk.c' line='4985' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_from_provider'>
+        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4985' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
-      <function-decl name='of_clk_get_parent_count' mangled-name='of_clk_get_parent_count' filepath='drivers/clk/clk.c' line='5048' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_parent_count'>
-        <parameter type-id='0afa6ea3' name='np' filepath='drivers/clk/clk.c' line='5048' column='1'/>
+      <function-decl name='of_clk_get_parent_count' mangled-name='of_clk_get_parent_count' filepath='drivers/clk/clk.c' line='5049' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_parent_count'>
+        <parameter type-id='0afa6ea3' name='np' filepath='drivers/clk/clk.c' line='5049' column='1'/>
         <return type-id='f0981eeb'/>
       </function-decl>
-      <function-decl name='of_clk_get_parent_name' mangled-name='of_clk_get_parent_name' filepath='drivers/clk/clk.c' line='5060' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_parent_name'>
-        <parameter type-id='0afa6ea3' name='np' filepath='drivers/clk/clk.c' line='5060' column='1'/>
-        <parameter type-id='95e97e5e' name='index' filepath='drivers/clk/clk.c' line='5060' column='1'/>
+      <function-decl name='of_clk_get_parent_name' mangled-name='of_clk_get_parent_name' filepath='drivers/clk/clk.c' line='5061' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_get_parent_name'>
+        <parameter type-id='0afa6ea3' name='np' filepath='drivers/clk/clk.c' line='5061' column='1'/>
+        <parameter type-id='95e97e5e' name='index' filepath='drivers/clk/clk.c' line='5061' column='1'/>
         <return type-id='80f4b756'/>
       </function-decl>
-      <function-decl name='of_clk_hw_onecell_get' mangled-name='of_clk_hw_onecell_get' filepath='drivers/clk/clk.c' line='4652' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_hw_onecell_get'>
-        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4652' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4652' column='1'/>
+      <function-decl name='of_clk_hw_onecell_get' mangled-name='of_clk_hw_onecell_get' filepath='drivers/clk/clk.c' line='4653' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_hw_onecell_get'>
+        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4653' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4653' column='1'/>
         <return type-id='3aaeef89'/>
       </function-decl>
-      <function-decl name='of_clk_hw_simple_get' mangled-name='of_clk_hw_simple_get' filepath='drivers/clk/clk.c' line='4631' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_hw_simple_get'>
-        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4631' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4631' column='1'/>
+      <function-decl name='of_clk_hw_simple_get' mangled-name='of_clk_hw_simple_get' filepath='drivers/clk/clk.c' line='4632' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_hw_simple_get'>
+        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4632' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4632' column='1'/>
         <return type-id='3aaeef89'/>
       </function-decl>
-      <function-decl name='of_clk_parent_fill' mangled-name='of_clk_parent_fill' filepath='drivers/clk/clk.c' line='5129' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_parent_fill'>
-        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5129' column='1'/>
-        <parameter type-id='7d3cd834' name='parents' filepath='drivers/clk/clk.c' line='5129' column='1'/>
-        <parameter type-id='f0981eeb' name='size' filepath='drivers/clk/clk.c' line='5130' column='1'/>
+      <function-decl name='of_clk_parent_fill' mangled-name='of_clk_parent_fill' filepath='drivers/clk/clk.c' line='5130' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_parent_fill'>
+        <parameter type-id='9a537bbe' name='np' filepath='drivers/clk/clk.c' line='5130' column='1'/>
+        <parameter type-id='7d3cd834' name='parents' filepath='drivers/clk/clk.c' line='5130' column='1'/>
+        <parameter type-id='f0981eeb' name='size' filepath='drivers/clk/clk.c' line='5131' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='of_clk_set_defaults' mangled-name='of_clk_set_defaults' filepath='drivers/clk/clk-conf.c' line='139' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_set_defaults'>
@@ -138418,14 +138571,14 @@
         <parameter type-id='b50a4934' name='clk_supplier' filepath='drivers/clk/clk-conf.c' line='139' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='of_clk_src_onecell_get' mangled-name='of_clk_src_onecell_get' filepath='drivers/clk/clk.c' line='4637' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_src_onecell_get'>
-        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4637' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4637' column='1'/>
+      <function-decl name='of_clk_src_onecell_get' mangled-name='of_clk_src_onecell_get' filepath='drivers/clk/clk.c' line='4638' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_src_onecell_get'>
+        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4638' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4638' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
-      <function-decl name='of_clk_src_simple_get' mangled-name='of_clk_src_simple_get' filepath='drivers/clk/clk.c' line='4624' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_src_simple_get'>
-        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4624' column='1'/>
-        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4625' column='1'/>
+      <function-decl name='of_clk_src_simple_get' mangled-name='of_clk_src_simple_get' filepath='drivers/clk/clk.c' line='4625' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_clk_src_simple_get'>
+        <parameter type-id='51a94113' name='clkspec' filepath='drivers/clk/clk.c' line='4625' column='1'/>
+        <parameter type-id='eaa32e2f' name='data' filepath='drivers/clk/clk.c' line='4626' column='1'/>
         <return type-id='7d0bc0eb'/>
       </function-decl>
       <function-decl name='of_count_phandle_with_args' mangled-name='of_count_phandle_with_args' filepath='drivers/of/base.c' line='1771' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='of_count_phandle_with_args'>
@@ -143194,6 +143347,12 @@
         <parameter type-id='2c01b31d' name='sbq_wait' filepath='lib/sbitmap.c' line='661' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
+      <function-decl name='sbitmap_finish_wait' mangled-name='sbitmap_finish_wait' filepath='lib/sbitmap.c' line='683' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sbitmap_finish_wait'>
+        <parameter type-id='75396bad' name='sbq' filepath='lib/sbitmap.c' line='683' column='1'/>
+        <parameter type-id='cdff193b' name='ws' filepath='lib/sbitmap.c' line='683' column='1'/>
+        <parameter type-id='2c01b31d' name='sbq_wait' filepath='lib/sbitmap.c' line='684' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
       <function-decl name='sbitmap_init_node' mangled-name='sbitmap_init_node' filepath='lib/sbitmap.c' line='44' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sbitmap_init_node'>
         <parameter type-id='56033689' name='sb' filepath='lib/sbitmap.c' line='44' column='1'/>
         <parameter type-id='f0981eeb' name='depth' filepath='lib/sbitmap.c' line='44' column='1'/>
@@ -143201,6 +143360,13 @@
         <parameter type-id='3eb7c31c' name='flags' filepath='lib/sbitmap.c' line='45' column='1'/>
         <parameter type-id='95e97e5e' name='node' filepath='lib/sbitmap.c' line='45' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='sbitmap_prepare_to_wait' mangled-name='sbitmap_prepare_to_wait' filepath='lib/sbitmap.c' line='671' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sbitmap_prepare_to_wait'>
+        <parameter type-id='75396bad' name='sbq' filepath='lib/sbitmap.c' line='671' column='1'/>
+        <parameter type-id='cdff193b' name='ws' filepath='lib/sbitmap.c' line='672' column='1'/>
+        <parameter type-id='2c01b31d' name='sbq_wait' filepath='lib/sbitmap.c' line='673' column='1'/>
+        <parameter type-id='95e97e5e' name='state' filepath='lib/sbitmap.c' line='673' column='1'/>
+        <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='sbitmap_queue_clear' mangled-name='sbitmap_queue_clear' filepath='lib/sbitmap.c' line='562' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sbitmap_queue_clear'>
         <parameter type-id='75396bad' name='sbq' filepath='lib/sbitmap.c' line='562' column='1'/>
@@ -143230,6 +143396,10 @@
       <function-decl name='sbitmap_queue_show' mangled-name='sbitmap_queue_show' filepath='lib/sbitmap.c' line='613' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sbitmap_queue_show'>
         <parameter type-id='75396bad' name='sbq' filepath='lib/sbitmap.c' line='613' column='1'/>
         <parameter type-id='f8dc9def' name='m' filepath='lib/sbitmap.c' line='613' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='sbitmap_queue_wake_all' mangled-name='sbitmap_queue_wake_all' filepath='lib/sbitmap.c' line='592' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='sbitmap_queue_wake_all'>
+        <parameter type-id='75396bad' name='sbq' filepath='lib/sbitmap.c' line='592' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='scan_swap_map_slots' mangled-name='scan_swap_map_slots' filepath='mm/swapfile.c' line='787' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scan_swap_map_slots'>
@@ -143417,6 +143587,11 @@
         <parameter type-id='eb572b74' name='sdev' filepath='drivers/scsi/scsi.c' line='224' column='1'/>
         <parameter type-id='95e97e5e' name='depth' filepath='drivers/scsi/scsi.c' line='224' column='1'/>
         <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='scsi_command_normalize_sense' mangled-name='scsi_command_normalize_sense' filepath='drivers/scsi/scsi_error.c' line='2431' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scsi_command_normalize_sense'>
+        <parameter type-id='064ed7dd' name='cmd' filepath='drivers/scsi/scsi_error.c' line='2431' column='1'/>
+        <parameter type-id='991b8213' name='sshdr' filepath='drivers/scsi/scsi_error.c' line='2432' column='1'/>
+        <return type-id='b50a4934'/>
       </function-decl>
       <var-decl name='scsi_command_size_tbl' type-id='561570b5' mangled-name='scsi_command_size_tbl' visibility='default' filepath='block/scsi_ioctl.c' line='33' column='1' elf-symbol-id='scsi_command_size_tbl'/>
       <function-decl name='scsi_compat_ioctl' mangled-name='scsi_compat_ioctl' filepath='drivers/scsi/scsi_ioctl.c' line='288' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='scsi_compat_ioctl'>
@@ -146955,21 +147130,21 @@
         <parameter type-id='eefe253e' name='tcpci' filepath='drivers/usb/typec/tcpm/tcpci.c' line='860' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_cc_change' mangled-name='tcpm_cc_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5484' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_cc_change'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5484' column='1'/>
+      <function-decl name='tcpm_cc_change' mangled-name='tcpm_cc_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5501' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_cc_change'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5501' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_is_toggling' mangled-name='tcpm_is_toggling' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3841' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_is_toggling'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3841' column='1'/>
+      <function-decl name='tcpm_is_toggling' mangled-name='tcpm_is_toggling' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3851' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_is_toggling'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='3851' column='1'/>
         <return type-id='b50a4934'/>
       </function-decl>
-      <function-decl name='tcpm_pd_hard_reset' mangled-name='tcpm_pd_hard_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5502' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_hard_reset'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5502' column='1'/>
+      <function-decl name='tcpm_pd_hard_reset' mangled-name='tcpm_pd_hard_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5519' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_hard_reset'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5519' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_pd_receive' mangled-name='tcpm_pd_receive' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2963' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_receive'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2963' column='1'/>
-        <parameter type-id='d7f1fb72' name='msg' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2963' column='1'/>
+      <function-decl name='tcpm_pd_receive' mangled-name='tcpm_pd_receive' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2973' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_receive'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2973' column='1'/>
+        <parameter type-id='d7f1fb72' name='msg' filepath='drivers/usb/typec/tcpm/tcpm.c' line='2973' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='tcpm_pd_transmit_complete' mangled-name='tcpm_pd_transmit_complete' filepath='drivers/usb/typec/tcpm/tcpm.c' line='919' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_pd_transmit_complete'>
@@ -146977,36 +147152,36 @@
         <parameter type-id='a2f9e316' name='status' filepath='drivers/usb/typec/tcpm/tcpm.c' line='920' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_register_port' mangled-name='tcpm_register_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6469' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_register_port'>
-        <parameter type-id='fa0b179b' name='dev' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6469' column='1'/>
-        <parameter type-id='15b1f129' name='tcpc' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6469' column='1'/>
+      <function-decl name='tcpm_register_port' mangled-name='tcpm_register_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6486' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_register_port'>
+        <parameter type-id='fa0b179b' name='dev' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6486' column='1'/>
+        <parameter type-id='15b1f129' name='tcpc' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6486' column='1'/>
         <return type-id='426e425b'/>
       </function-decl>
-      <function-decl name='tcpm_sink_frs' mangled-name='tcpm_sink_frs' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5511' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sink_frs'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5511' column='1'/>
+      <function-decl name='tcpm_sink_frs' mangled-name='tcpm_sink_frs' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5528' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sink_frs'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5528' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_sourcing_vbus' mangled-name='tcpm_sourcing_vbus' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5520' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sourcing_vbus'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5520' column='1'/>
+      <function-decl name='tcpm_sourcing_vbus' mangled-name='tcpm_sourcing_vbus' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5537' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_sourcing_vbus'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5537' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_tcpc_reset' mangled-name='tcpm_tcpc_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6034' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_tcpc_reset'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6034' column='1'/>
+      <function-decl name='tcpm_tcpc_reset' mangled-name='tcpm_tcpc_reset' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6051' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_tcpc_reset'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6051' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_unregister_port' mangled-name='tcpm_unregister_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6570' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_unregister_port'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6570' column='1'/>
+      <function-decl name='tcpm_unregister_port' mangled-name='tcpm_unregister_port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6587' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_unregister_port'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6587' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
-      <function-decl name='tcpm_update_sink_capabilities' mangled-name='tcpm_update_sink_capabilities' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6172' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_update_sink_capabilities'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6172' column='1'/>
-        <parameter type-id='aded214c' name='pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6172' column='1'/>
-        <parameter type-id='f0981eeb' name='nr_pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6172' column='1'/>
-        <parameter type-id='f0981eeb' name='operating_snk_mw' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6173' column='1'/>
+      <function-decl name='tcpm_update_sink_capabilities' mangled-name='tcpm_update_sink_capabilities' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6189' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_update_sink_capabilities'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6189' column='1'/>
+        <parameter type-id='aded214c' name='pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6189' column='1'/>
+        <parameter type-id='f0981eeb' name='nr_pdo' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6189' column='1'/>
+        <parameter type-id='f0981eeb' name='operating_snk_mw' filepath='drivers/usb/typec/tcpm/tcpm.c' line='6190' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
-      <function-decl name='tcpm_vbus_change' mangled-name='tcpm_vbus_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5493' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_vbus_change'>
-        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5493' column='1'/>
+      <function-decl name='tcpm_vbus_change' mangled-name='tcpm_vbus_change' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5510' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='tcpm_vbus_change'>
+        <parameter type-id='426e425b' name='port' filepath='drivers/usb/typec/tcpm/tcpm.c' line='5510' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='thaw_bdev' mangled-name='thaw_bdev' filepath='fs/block_dev.c' line='610' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='thaw_bdev'>
@@ -148278,6 +148453,11 @@
       </function-decl>
       <function-decl name='ufshcd_release' mangled-name='ufshcd_release' filepath='drivers/scsi/ufs/ufshcd.c' line='1817' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_release'>
         <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='1817' column='1'/>
+        <return type-id='48b5725f'/>
+      </function-decl>
+      <function-decl name='ufshcd_release_scsi_cmd' mangled-name='ufshcd_release_scsi_cmd' filepath='drivers/scsi/ufs/ufshcd.c' line='5201' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_release_scsi_cmd'>
+        <parameter type-id='442b8d89' name='hba' filepath='drivers/scsi/ufs/ufshcd.c' line='5201' column='1'/>
+        <parameter type-id='6ca6fa6d' name='lrbp' filepath='drivers/scsi/ufs/ufshcd.c' line='5202' column='1'/>
         <return type-id='48b5725f'/>
       </function-decl>
       <function-decl name='ufshcd_remove' mangled-name='ufshcd_remove' filepath='drivers/scsi/ufs/ufshcd.c' line='9210' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='ufshcd_remove'>
