@@ -1859,6 +1859,7 @@
       <elf-symbol name='devm_kstrdup_const' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x74cd3234'/>
       <elf-symbol name='devm_kvasprintf' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x34e8cde5'/>
       <elf-symbol name='devm_led_classdev_flash_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb7b53b3a'/>
+      <elf-symbol name='devm_led_classdev_multicolor_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x7bfc081c'/>
       <elf-symbol name='devm_led_classdev_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x78e191fd'/>
       <elf-symbol name='devm_led_classdev_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6d4083fd'/>
       <elf-symbol name='devm_mbox_controller_register' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x285a2912'/>
@@ -3545,6 +3546,7 @@
       <elf-symbol name='led_classdev_register_ext' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xd6296d3'/>
       <elf-symbol name='led_classdev_unregister' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xcb7db351'/>
       <elf-symbol name='led_get_flash_fault' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8192026c'/>
+      <elf-symbol name='led_mc_calc_color_components' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb3c6f106'/>
       <elf-symbol name='led_set_brightness' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xec09d5dc'/>
       <elf-symbol name='led_set_brightness_nosleep' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xca66a3d3'/>
       <elf-symbol name='led_set_brightness_sync' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc41fa040'/>
@@ -10954,6 +10956,7 @@
         <parameter type-id='7359adad'/>
         <return type-id='7359adad'/>
       </function-type>
+      <pointer-type-def type-id='aa0df914' size-in-bits='64' id='0a3de906'/>
       <class-decl name='fb_pixmap' size-in-bits='448' is-struct='yes' visibility='default' filepath='include/linux/fb.h' line='185' column='1' id='0a45c8ef'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='addr' type-id='8bff8096' visibility='default' filepath='include/linux/fb.h' line='186' column='1'/>
@@ -19226,6 +19229,7 @@
       </class-decl>
       <pointer-type-def type-id='b17e4f4d' size-in-bits='64' id='1f6324ad'/>
       <pointer-type-def type-id='b99a3102' size-in-bits='64' id='1f6f58f4'/>
+      <pointer-type-def type-id='8a1ce1f9' size-in-bits='64' id='1f7349e5'/>
       <function-type size-in-bits='64' id='1f765c33'>
         <parameter type-id='06b2cd14'/>
         <parameter type-id='363a995e'/>
@@ -19655,6 +19659,12 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <qualified-type-def type-id='5218160d' const='yes' id='20b17040'/>
+      <function-type size-in-bits='64' id='20b2126a'>
+        <parameter type-id='10216dc5'/>
+        <parameter type-id='e7faa6fb'/>
+        <parameter type-id='f0981eeb'/>
+        <return type-id='48b5725f'/>
+      </function-type>
       <array-type-def dimensions='1' type-id='91ce1af9' size-in-bits='256' id='20b279f0'>
         <subrange length='4' type-id='7ff19f0f' id='16fe7105'/>
       </array-type-def>
@@ -33502,6 +33512,7 @@
       <array-type-def dimensions='1' type-id='0791d6c8' size-in-bits='128' id='43f0230f'>
         <subrange length='2' type-id='7ff19f0f' id='52efc4ef'/>
       </array-type-def>
+      <pointer-type-def type-id='e1fc3fb1' size-in-bits='64' id='43f4ef15'/>
       <array-type-def dimensions='1' type-id='0791d6c8' size-in-bits='64' id='43f871d4'>
         <subrange length='1' type-id='7ff19f0f' id='52f813b4'/>
       </array-type-def>
@@ -55683,6 +55694,7 @@
           <var-decl name='dma' type-id='cf29c9b3' visibility='default' filepath='drivers/usb/host/xhci.h' line='1075' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='e1886b45' size-in-bits='64' id='784b0515'/>
       <function-type size-in-bits='64' id='784e7aa9'>
         <parameter type-id='3dad1a48'/>
         <parameter type-id='eaa32e2f'/>
@@ -55984,6 +55996,7 @@
           <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='drivers/usb/typec/class.c' line='45' column='1'/>
         </data-member>
       </class-decl>
+      <pointer-type-def type-id='f0c5a369' size-in-bits='64' id='7943b831'/>
       <pointer-type-def type-id='476eb32c' size-in-bits='64' id='7943d272'/>
       <enum-decl name='hdmi_audio_coding_type_ext' filepath='include/linux/hdmi.h' line='297' column='1' id='795120af'>
         <underlying-type type-id='9cac1fee'/>
@@ -63509,6 +63522,12 @@
           <var-decl name='android_kabi_reserved1' type-id='91ce1af9' visibility='default' filepath='include/sound/core.h' line='66' column='1'/>
         </data-member>
       </class-decl>
+      <function-type size-in-bits='64' id='8a1ce1f9'>
+        <parameter type-id='10216dc5'/>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='f0981eeb'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <function-type size-in-bits='64' id='8a25144e'>
         <parameter type-id='15dccca9'/>
         <parameter type-id='eaa32e2f'/>
@@ -72595,6 +72614,11 @@
         <parameter type-id='eaa32e2f'/>
         <return type-id='95e97e5e'/>
       </function-type>
+      <function-type size-in-bits='64' id='9ee64233'>
+        <parameter type-id='10216dc5'/>
+        <parameter type-id='f0981eeb'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <pointer-type-def type-id='89aea402' size-in-bits='64' id='9ee77e60'/>
       <function-type size-in-bits='64' id='9eea6bb5'>
         <parameter type-id='06b2cd14'/>
@@ -74754,6 +74778,12 @@
       <function-type size-in-bits='64' id='a38d6c05'>
         <parameter type-id='bcfe6314'/>
         <return type-id='549da823'/>
+      </function-type>
+      <function-type size-in-bits='64' id='a38ff96f'>
+        <parameter type-id='10216dc5'/>
+        <parameter type-id='e7faa6fb'/>
+        <parameter type-id='f0981eeb'/>
+        <return type-id='95e97e5e'/>
       </function-type>
       <pointer-type-def type-id='de826e86' size-in-bits='64' id='a3948f60'/>
       <pointer-type-def type-id='4e0e413a' size-in-bits='64' id='a3a882dc'/>
@@ -77623,6 +77653,13 @@
       </enum-decl>
       <pointer-type-def type-id='82d9d5d4' size-in-bits='64' id='a9f319d2'/>
       <pointer-type-def type-id='ae01ca89' size-in-bits='64' id='aa06f721'/>
+      <function-type size-in-bits='64' id='aa0df914'>
+        <parameter type-id='10216dc5'/>
+        <parameter type-id='e7faa6fb'/>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='b50a4934'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='rt6_statistics' size-in-bits='224' is-struct='yes' visibility='default' filepath='include/net/ip6_fib.h' line='378' column='1' id='aa112583'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='fib_nodes' type-id='3f1a6b60' visibility='default' filepath='include/net/ip6_fib.h' line='379' column='1'/>
@@ -81136,6 +81173,7 @@
       </function-type>
       <pointer-type-def type-id='6c0f5f3c' size-in-bits='64' id='b22e78ee'/>
       <pointer-type-def type-id='8c180526' size-in-bits='64' id='b22f4610'/>
+      <pointer-type-def type-id='20b2126a' size-in-bits='64' id='b23189b4'/>
       <class-decl name='prb_desc_ring' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/../kernel/printk/printk_ringbuffer.h' line='72' column='1' id='b24206b8'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='count_bits' type-id='f0981eeb' visibility='default' filepath='include/../kernel/printk/printk_ringbuffer.h' line='73' column='1'/>
@@ -89475,7 +89513,38 @@
       <array-type-def dimensions='1' type-id='8f048e17' size-in-bits='56' id='c20b850f'>
         <subrange length='7' type-id='7ff19f0f' id='16fc326e'/>
       </array-type-def>
-      <class-decl name='pinmux_ops' is-struct='yes' visibility='default' is-declaration-only='yes' id='c20dd28d'/>
+      <class-decl name='pinmux_ops' size-in-bits='640' is-struct='yes' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='60' column='1' id='c20dd28d'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='request' type-id='fdb631af' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='61' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='free' type-id='fdb631af' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='62' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='128'>
+          <var-decl name='get_functions_count' type-id='9b3cc28d' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='63' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='192'>
+          <var-decl name='get_function_name' type-id='6fd7b107' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='64' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='256'>
+          <var-decl name='get_function_groups' type-id='43f4ef15' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='66' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='320'>
+          <var-decl name='set_mux' type-id='1f7349e5' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='70' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='384'>
+          <var-decl name='gpio_request_enable' type-id='eadc8303' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='72' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='448'>
+          <var-decl name='gpio_disable_free' type-id='b23189b4' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='75' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='512'>
+          <var-decl name='gpio_set_direction' type-id='0a3de906' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='78' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='576'>
+          <var-decl name='strict' type-id='b50a4934' visibility='default' filepath='include/linux/pinctrl/pinmux.h' line='82' column='1'/>
+        </data-member>
+      </class-decl>
       <typedef-decl name='xfrm_address_t' type-id='eba8a6fd' filepath='include/uapi/linux/xfrm.h' line='19' column='1' id='c210d497'/>
       <pointer-type-def type-id='7ec1f60a' size-in-bits='64' id='c2123138'/>
       <enum-decl name='tcpm_transmit_type' filepath='include/linux/usb/tcpm.h' line='42' column='1' id='c2132904'>
@@ -103924,6 +103993,20 @@
           <var-decl name='mask' type-id='01307915' visibility='default' filepath='include/net/flow_offload.h' line='20' column='1'/>
         </data-member>
       </class-decl>
+      <class-decl name='mc_subled' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/led-class-multicolor.h' line='12' column='1' id='e1886b45'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='color_index' type-id='f0981eeb' visibility='default' filepath='include/linux/led-class-multicolor.h' line='13' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='32'>
+          <var-decl name='brightness' type-id='f0981eeb' visibility='default' filepath='include/linux/led-class-multicolor.h' line='14' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='64'>
+          <var-decl name='intensity' type-id='f0981eeb' visibility='default' filepath='include/linux/led-class-multicolor.h' line='15' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='96'>
+          <var-decl name='channel' type-id='f0981eeb' visibility='default' filepath='include/linux/led-class-multicolor.h' line='16' column='1'/>
+        </data-member>
+      </class-decl>
       <pointer-type-def type-id='0fdf477e' size-in-bits='64' id='e188da98'/>
       <class-decl name='snd_soc_tplg_io_ops' size-in-bits='96' is-struct='yes' visibility='default' filepath='include/uapi/sound/asoc.h' line='275' column='1' id='e189081e'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -104079,6 +104162,13 @@
         </data-member>
       </class-decl>
       <pointer-type-def type-id='da3b08cd' size-in-bits='64' id='e1fb15d1'/>
+      <function-type size-in-bits='64' id='e1fc3fb1'>
+        <parameter type-id='10216dc5'/>
+        <parameter type-id='f0981eeb'/>
+        <parameter type-id='472eb409'/>
+        <parameter type-id='807869d3'/>
+        <return type-id='95e97e5e'/>
+      </function-type>
       <class-decl name='pmu' size-in-bits='2368' is-struct='yes' visibility='default' filepath='include/linux/perf_event.h' line='278' column='1' id='e205b6f1'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='entry' type-id='72f469ec' visibility='default' filepath='include/linux/perf_event.h' line='279' column='1'/>
@@ -108156,6 +108246,7 @@
         <return type-id='b59d7dce'/>
       </function-type>
       <pointer-type-def type-id='328ded65' size-in-bits='64' id='ead4b779'/>
+      <pointer-type-def type-id='a38ff96f' size-in-bits='64' id='eadc8303'/>
       <union-decl name='__anonymous_union__' size-in-bits='64' is-anonymous='yes' visibility='default' filepath='include/linux/interrupt.h' line='626' column='1' id='eae5c421'>
         <data-member access='public'>
           <var-decl name='func' type-id='08b16374' visibility='default' filepath='include/linux/interrupt.h' line='627' column='1'/>
@@ -110976,6 +111067,17 @@
       <array-type-def dimensions='1' type-id='c0e2acc9' size-in-bits='1088' id='f0bfbfd1'>
         <subrange length='17' type-id='7ff19f0f' id='888ad0ed'/>
       </array-type-def>
+      <class-decl name='led_classdev_mc' size-in-bits='3520' is-struct='yes' visibility='default' filepath='include/linux/led-class-multicolor.h' line='19' column='1' id='f0c5a369'>
+        <data-member access='public' layout-offset-in-bits='0'>
+          <var-decl name='led_cdev' type-id='6e0e17b0' visibility='default' filepath='include/linux/led-class-multicolor.h' line='21' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3392'>
+          <var-decl name='num_colors' type-id='f0981eeb' visibility='default' filepath='include/linux/led-class-multicolor.h' line='22' column='1'/>
+        </data-member>
+        <data-member access='public' layout-offset-in-bits='3456'>
+          <var-decl name='subled_info' type-id='784b0515' visibility='default' filepath='include/linux/led-class-multicolor.h' line='24' column='1'/>
+        </data-member>
+      </class-decl>
       <class-decl name='vsock_sock' size-in-bits='11520' is-struct='yes' visibility='default' filepath='include/net/af_vsock.h' line='27' column='1' id='f0c6a3fa'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='sk' type-id='a240f41d' visibility='default' filepath='include/net/af_vsock.h' line='29' column='1'/>
@@ -116009,6 +116111,7 @@
         <return type-id='95e97e5e'/>
       </function-type>
       <qualified-type-def type-id='cf8d7d81' const='yes' id='fdb55010'/>
+      <pointer-type-def type-id='9ee64233' size-in-bits='64' id='fdb631af'/>
       <typedef-decl name='s8' type-id='8af57d41' filepath='include/asm-generic/int-ll64.h' line='16' column='1' id='fdbf7a0f'/>
       <class-decl name='xfrm_mode' size-in-bits='24' is-struct='yes' visibility='default' filepath='include/net/xfrm.h' line='137' column='1' id='fdc52c40'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -128339,6 +128442,12 @@
         <parameter type-id='eebb8ee8' name='init_data' filepath='drivers/leds/led-class-flash.c' line='337' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
+      <function-decl name='devm_led_classdev_multicolor_register_ext' mangled-name='devm_led_classdev_multicolor_register_ext' filepath='drivers/leds/led-class-multicolor.c' line='155' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_led_classdev_multicolor_register_ext'>
+        <parameter type-id='fa0b179b' name='parent' filepath='drivers/leds/led-class-multicolor.c' line='155' column='1'/>
+        <parameter type-id='7943b831' name='mcled_cdev' filepath='drivers/leds/led-class-multicolor.c' line='156' column='1'/>
+        <parameter type-id='eebb8ee8' name='init_data' filepath='drivers/leds/led-class-multicolor.c' line='157' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
       <function-decl name='devm_led_classdev_register_ext' mangled-name='devm_led_classdev_register_ext' filepath='drivers/leds/led-class.c' line='481' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='devm_led_classdev_register_ext'>
         <parameter type-id='fa0b179b' name='parent' filepath='drivers/leds/led-class.c' line='481' column='1'/>
         <parameter type-id='bd1c8eb6' name='led_cdev' filepath='drivers/leds/led-class.c' line='482' column='1'/>
@@ -137137,6 +137246,11 @@
       <function-decl name='led_get_flash_fault' mangled-name='led_get_flash_fault' filepath='drivers/leds/led-class-flash.c' line='406' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_get_flash_fault'>
         <parameter type-id='26deddb9' name='fled_cdev' filepath='drivers/leds/led-class-flash.c' line='406' column='1'/>
         <parameter type-id='f9409001' name='fault' filepath='drivers/leds/led-class-flash.c' line='406' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='led_mc_calc_color_components' mangled-name='led_mc_calc_color_components' filepath='drivers/leds/led-class-multicolor.c' line='15' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_mc_calc_color_components'>
+        <parameter type-id='7943b831' name='mcled_cdev' filepath='drivers/leds/led-class-multicolor.c' line='15' column='1'/>
+        <parameter type-id='fa598f35' name='brightness' filepath='drivers/leds/led-class-multicolor.c' line='16' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='led_set_brightness' mangled-name='led_set_brightness' filepath='drivers/leds/led-core.c' line='243' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='led_set_brightness'>
