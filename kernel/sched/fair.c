@@ -107,6 +107,7 @@ static int __init setup_sched_thermal_decay_shift(char *str)
 __setup("sched_thermal_decay_shift=", setup_sched_thermal_decay_shift);
 
 #ifdef CONFIG_SCHED_BORE
+uint __read_mostly sched_burst_exclude_kthreads = 1;
 uint __read_mostly sched_bore                   = 1;
 uint __read_mostly sched_burst_smoothness_long  = 1;
 uint __read_mostly sched_burst_smoothness_short = 1;
@@ -151,7 +152,8 @@ static void update_burst_score(struct sched_entity *se) {
 	prio = p->static_prio - MAX_RT_PRIO;
 	prev_prio = min(39, prio + se->burst_score);
 
-	se->burst_score = se->burst_penalty >> 2;
+	if (!(p->flags & PF_KTHREAD && sched_burst_exclude_kthreads))
+ 		se->burst_score = se->burst_penalty >> 2;
 
 	new_prio = min(39, prio + se->burst_score);
 	if (new_prio != prev_prio) {
