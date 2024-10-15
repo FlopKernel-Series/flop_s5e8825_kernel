@@ -19,3 +19,5 @@
   __tracepoint_android_vh_do_read_fault
   __tracepoint_android_vh_filemap_read
   __tracepoint_android_vh_filemap_map_pages
+  netdev_get_name
+  tcp_send_active_reset
