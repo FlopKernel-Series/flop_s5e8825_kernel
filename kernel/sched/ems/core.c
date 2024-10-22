@@ -1354,7 +1354,6 @@ out:
 int core_init(struct device_node *ems_dn)
 {
 	struct device_node *dn, *child;
-	int index;
 
 	dn = of_find_node_by_name(ems_dn, "cpu-selection-domain");
 	if (unlikely(!dn))
@@ -1383,12 +1382,6 @@ int core_init(struct device_node *ems_dn)
 	tex_init();
 	cpus_binding_init();
 	cpu_weight_init();
-
-	index = match_string(sched_feat_names, __SCHED_FEAT_NR, "TTWU_QUEUE");
-	if (index >= 0) {
-		static_key_disable(&sched_feat_keys[index]);
-		sysctl_sched_features &= ~(1UL << index);
-	}
 
 	return 0;
 }
