@@ -17,7 +17,9 @@
 #include <drm/drm_prime.h>
 #include <drm/drm_print.h>
 
+#ifndef __GENKSYMS__
 #include "../../../mm/internal.h"   /* is_cow_mapping() */
+#endif
 
 /**
  * DOC: overview
