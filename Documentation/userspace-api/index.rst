@@ -23,6 +23,7 @@ place where this information is gathered.
    accelerators/ocxl
    ioctl/index
    iommu
+   ntsync
    media/index
 
 .. only::  subproject and html
