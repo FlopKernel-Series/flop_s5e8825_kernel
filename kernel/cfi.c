@@ -334,9 +334,11 @@ void cfi_slowpath_handler(uint64_t id, void *ptr, void *diag)
 	if (!IS_ENABLED(CONFIG_CFI_PERMISSIVE))
 		diag = NULL;
 
-	if (likely(fn))
+	if (likely(fn)) {
+#ifndef CONFIG_CFI_FORCE_SKIP_CHECK
 		fn(id, ptr, diag);
-	else /* Don't allow unchecked modules */
+#endif
+	} else /* Don't allow unchecked modules */
 		handle_cfi_failure(ptr);
 }
 
