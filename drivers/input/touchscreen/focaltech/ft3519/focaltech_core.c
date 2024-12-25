@@ -1636,6 +1636,8 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ts_data->ts_workqueue = create_singlethread_workqueue("fts_wq");
 	if (!ts_data->ts_workqueue) {
 		FTS_ERROR("create fts workqueue fail");
+		ret = -ENOMEM;
+		goto err_workqueue;
 	}
 
 	mutex_init(&ts_data->report_mutex);
@@ -1653,7 +1655,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = sec_input_device_register(ts_data->dev, ts_data);
 	if (ret) {
 		FTS_ERROR("failed to register input device, %d", ret);
-		goto err_input_init;
+		goto err_input_register;
 	}
 
 	mutex_init(&ts_data->pdata->enable_mutex);
@@ -1684,7 +1686,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = fts_get_ic_information(ts_data);
 	if (ret) {
 		FTS_ERROR("not focal IC, unregister driver");
-		goto err_irq_req;
+		goto err_get_ic_info;
 	}
 
 #if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
@@ -1771,22 +1773,33 @@ err_fwupg_init:
 	fts_irq_disable();
 	free_irq(ts_data->irq, ts_data);
 err_irq_req:
-err_power_init:
 #if FTS_POWER_SOURCE_CUST_EN
 	fts_power_source_exit(ts_data);
 #endif
 	if (gpio_is_valid(ts_data->pdata->irq_gpio))
 		gpio_free(ts_data->pdata->irq_gpio);
+err_get_ic_info:
+#if !FTS_POWER_SOURCE_CUST_EN
+	fts_ts_power_off(ts_data);
+#endif
+err_power_init:
 err_report_buffer:
-err_input_init:
+	if (ts_data->pdata && ts_data->pdata->input_dev) {
+		input_unregister_device(ts_data->pdata->input_dev);
+		ts_data->pdata->input_dev = NULL;
+	}
+err_input_register:
+	fts_bus_exit(ts_data);
+err_bus_init:
 	if (ts_data->ts_workqueue)
 		destroy_workqueue(ts_data->ts_workqueue);
-err_bus_init:
 	mutex_destroy(&ts_data->report_mutex);
 	mutex_destroy(&ts_data->bus_lock);
 	mutex_destroy(&ts_data->device_lock);
 	mutex_destroy(&ts_data->irq_lock);
+err_workqueue:
 err_parse_dt:
+	devm_kfree(ts_data->dev, ts_data->pdata);
 	FTS_FUNC_EXIT();
 	return ret;
 }
@@ -1843,6 +1856,7 @@ static int fts_ts_remove_entry(struct fts_ts_data *ts_data)
 #if FTS_POWER_SOURCE_CUST_EN
 	fts_power_source_exit(ts_data);
 #endif
+
 	mutex_destroy(&ts_data->report_mutex);
 	mutex_destroy(&ts_data->bus_lock);
 	mutex_destroy(&ts_data->device_lock);
@@ -2083,6 +2097,7 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	ret = fts_ts_probe_entry(ts_data);
 	if (ret) {
 		FTS_ERROR("Touch Screen(I2C BUS) driver probe fail");
+		devm_kfree(&client->dev, ts_data);
 		fts_data = NULL;
 		return ret;
 	}
