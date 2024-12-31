@@ -172,8 +172,8 @@ if [[ "$DO_OC" == "1" ]]; then
     FK_TYPE_SHORT="$FK_TYPE_SHORT+U"
 fi
 
-ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
-TAR_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
+ZIP_PATH="$KDIR/kernel_build/FloppyP_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
+TAR_PATH="$KDIR/kernel_build/FloppyP_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
 
 echo -e "\nINFO: Build info:
 - Device: $DEVICE ($CODENAME)
@@ -226,10 +226,10 @@ build() {
     make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$DO_KSU" == "1" ]] && echo "ksu.config") $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
     if [[ "$IS_RELEASE" == "1" ]]; then
-        VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
+        VERSION_STR="\"-FloppyP-$FK_VER-$FK_TYPE_SHORT/release\""
         VERSION_NOAUTO="1"
     else
-        VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/\""
+        VERSION_STR="\"-FloppyP-$FK_VER-$FK_TYPE_SHORT/\""
     fi
 
     rm -f "$OUT_KERNEL"
