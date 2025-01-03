@@ -797,8 +797,10 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
 KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
 KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
 
-#Enable MLGO for register allocation.
+ifeq ($(shell echo "$CONFIG_CC_VERSION_TEXT" | grep -qE 'Android|Neutron'; echo $?),0)
 KBUILD_CFLAGS   += -mllvm -regalloc-enable-advisor=release
+endif
+
 #Enable hot cold split optimization
 KBUILD_CFLAGS   += -mllvm -hot-cold-split=true
 
@@ -1027,8 +1029,9 @@ CC_FLAGS_LTO	+= -fvisibility=hidden
 # Limit inlining across translation units to reduce binary size
 KBUILD_LDFLAGS += -mllvm -import-instr-limit=5
 
-#Enable MLGO for register allocation.
+ifeq ($(shell echo "$CONFIG_CC_VERSION_TEXT" | grep -qE 'Android|Neutron'; echo $?),0)
 KBUILD_LDFLAGS += -mllvm -regalloc-enable-advisor=release
+endif
 endif
 
 ifdef CONFIG_LTO
