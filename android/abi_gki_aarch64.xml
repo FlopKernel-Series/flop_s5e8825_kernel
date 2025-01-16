@@ -359,6 +359,7 @@
       <elf-symbol name='__traceiter_android_rvh_free_swap_slot' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x45552271'/>
       <elf-symbol name='__traceiter_android_rvh_get_swap_page' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x465de79d'/>
       <elf-symbol name='__traceiter_android_rvh_gic_v3_set_affinity' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x25a6dad6'/>
+      <elf-symbol name='__traceiter_android_rvh_handle_bad_stack' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xb5abf5ea'/>
       <elf-symbol name='__traceiter_android_rvh_handle_pte_fault_end' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x4d48345a'/>
       <elf-symbol name='__traceiter_android_rvh_internal_blk_mq_alloc_request' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xe50e1ee'/>
       <elf-symbol name='__traceiter_android_rvh_iommu_setup_dma_ops' type='func-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x18bdcba6'/>
@@ -6552,6 +6553,7 @@
       <elf-symbol name='__tracepoint_android_rvh_free_swap_slot' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x8317a6b6'/>
       <elf-symbol name='__tracepoint_android_rvh_get_swap_page' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x647dedce'/>
       <elf-symbol name='__tracepoint_android_rvh_gic_v3_set_affinity' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6ffd12d7'/>
+      <elf-symbol name='__tracepoint_android_rvh_handle_bad_stack' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xa9f0eda9'/>
       <elf-symbol name='__tracepoint_android_rvh_handle_pte_fault_end' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x6adf3b7c'/>
       <elf-symbol name='__tracepoint_android_rvh_internal_blk_mq_alloc_request' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0xc10682d1'/>
       <elf-symbol name='__tracepoint_android_rvh_iommu_setup_dma_ops' size='72' type='object-type' binding='global-binding' visibility='default-visibility' is-defined='yes' crc='0x2461d175'/>
@@ -62435,14 +62437,6 @@
       <array-type-def dimensions='1' type-id='8af57d41' size-in-bits='32' id='87ce7f1e'>
         <subrange length='4' type-id='7ff19f0f' id='16fe7105'/>
       </array-type-def>
-      <class-decl name='mmu_notifier_subscriptions_hdr' size-in-bits='128' is-struct='yes' visibility='default' filepath='include/linux/mmu_notifier.h' line='20' column='1' id='87cf05dd'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='valid' type-id='b50a4934' visibility='default' filepath='include/linux/mmu_notifier.h' line='21' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='64'>
-          <var-decl name='mmu_notifier_lock' type-id='93ff941b' visibility='default' filepath='include/linux/mmu_notifier.h' line='23' column='1'/>
-        </data-member>
-      </class-decl>
       <pointer-type-def type-id='c0e2acc9' size-in-bits='64' id='87d62959'/>
       <class-decl name='v4l2_mbus_framefmt' size-in-bits='384' is-struct='yes' visibility='default' filepath='include/uapi/linux/v4l2-mediabus.h' line='35' column='1' id='87dd7486'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -67904,7 +67898,6 @@
         <enumerator name='NR_VM_NODE_STAT_ITEMS' value='38'/>
       </enum-decl>
       <pointer-type-def type-id='6ed6b432' size-in-bits='64' id='93fd81c8'/>
-      <pointer-type-def type-id='c062754b' size-in-bits='64' id='93ff941b'/>
       <qualified-type-def type-id='bd4e4ac8' const='yes' id='94052af7'/>
       <class-decl name='aead_alg' size-in-bits='4096' is-struct='yes' visibility='default' filepath='include/crypto/aead.h' line='136' column='1' id='94111b83'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -83542,35 +83535,7 @@
           <var-decl name='seqcount' type-id='e14c3b11' visibility='default' filepath='include/linux/seqlock.h' line='280' column='1'/>
         </data-member>
       </class-decl>
-      <class-decl name='mmu_notifier_subscriptions' size-in-bits='768' is-struct='yes' visibility='default' filepath='mm/mmu_notifier.c' line='37' column='1' id='b7e6b484'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='hdr' type-id='87cf05dd' visibility='default' filepath='mm/mmu_notifier.c' line='43' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='128'>
-          <var-decl name='list' type-id='e151255a' visibility='default' filepath='mm/mmu_notifier.c' line='45' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='192'>
-          <var-decl name='has_itree' type-id='b50a4934' visibility='default' filepath='mm/mmu_notifier.c' line='46' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='224'>
-          <var-decl name='lock' type-id='fb4018a0' visibility='default' filepath='mm/mmu_notifier.c' line='48' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='256'>
-          <var-decl name='invalidate_seq' type-id='7359adad' visibility='default' filepath='mm/mmu_notifier.c' line='49' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='320'>
-          <var-decl name='active_invalidate_ranges' type-id='7359adad' visibility='default' filepath='mm/mmu_notifier.c' line='50' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='384'>
-          <var-decl name='itree' type-id='6fe1603d' visibility='default' filepath='mm/mmu_notifier.c' line='51' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='512'>
-          <var-decl name='wq' type-id='b5ab048f' visibility='default' filepath='mm/mmu_notifier.c' line='52' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='704'>
-          <var-decl name='deferred_list' type-id='e151255a' visibility='default' filepath='mm/mmu_notifier.c' line='53' column='1'/>
-        </data-member>
-      </class-decl>
+      <class-decl name='mmu_notifier_subscriptions' is-struct='yes' visibility='default' is-declaration-only='yes' id='b7e6b484'/>
       <class-decl name='ptrauth_keys_user' size-in-bits='640' is-struct='yes' visibility='default' filepath='arch/arm64/include/asm/pointer_auth.h' line='29' column='1' id='b7ed9e82'>
         <data-member access='public' layout-offset-in-bits='0'>
           <var-decl name='apia' type-id='490938eb' visibility='default' filepath='arch/arm64/include/asm/pointer_auth.h' line='30' column='1'/>
@@ -88836,14 +88801,6 @@
         <parameter type-id='8bff8096'/>
         <return type-id='48b5725f'/>
       </function-type>
-      <class-decl name='percpu_rw_semaphore_atomic' size-in-bits='896' is-struct='yes' visibility='default' filepath='include/linux/percpu-rwsem.h' line='26' column='1' id='c062754b'>
-        <data-member access='public' layout-offset-in-bits='0'>
-          <var-decl name='rw_sem' type-id='ce848ab1' visibility='default' filepath='include/linux/percpu-rwsem.h' line='27' column='1'/>
-        </data-member>
-        <data-member access='public' layout-offset-in-bits='768'>
-          <var-decl name='destroy_list_entry' type-id='72f469ec' visibility='default' filepath='include/linux/percpu-rwsem.h' line='28' column='1'/>
-        </data-member>
-      </class-decl>
       <pointer-type-def type-id='7ba417e5' size-in-bits='64' id='c062d7a5'/>
       <class-decl name='uio_mem' size-in-bits='448' is-struct='yes' visibility='default' filepath='include/linux/uio_driver.h' line='38' column='1' id='c067c68a'>
         <data-member access='public' layout-offset-in-bits='0'>
@@ -117267,9 +117224,9 @@
       </function-type>
       <pointer-type-def type-id='46f53066' size-in-bits='64' id='fffb07a4'/>
       <qualified-type-def type-id='55efd1a3' const='yes' id='fffdaf52'/>
-      <var-decl name='GKI_struct_gic_chip_data' type-id='d3100295' mangled-name='GKI_struct_gic_chip_data' visibility='default' filepath='drivers/android/vendor_hooks.c' line='562' column='1' elf-symbol-id='GKI_struct_gic_chip_data'/>
+      <var-decl name='GKI_struct_gic_chip_data' type-id='d3100295' mangled-name='GKI_struct_gic_chip_data' visibility='default' filepath='drivers/android/vendor_hooks.c' line='563' column='1' elf-symbol-id='GKI_struct_gic_chip_data'/>
       <var-decl name='GKI_struct_selinux_state' type-id='4ae52763' mangled-name='GKI_struct_selinux_state' visibility='default' filepath='security/selinux/vendor_hooks.c' line='21' column='1' elf-symbol-id='GKI_struct_selinux_state'/>
-      <var-decl name='GKI_struct_swap_slots_cache' type-id='30eaa112' mangled-name='GKI_struct_swap_slots_cache' visibility='default' filepath='drivers/android/vendor_hooks.c' line='567' column='1' elf-symbol-id='GKI_struct_swap_slots_cache'/>
+      <var-decl name='GKI_struct_swap_slots_cache' type-id='30eaa112' mangled-name='GKI_struct_swap_slots_cache' visibility='default' filepath='drivers/android/vendor_hooks.c' line='568' column='1' elf-symbol-id='GKI_struct_swap_slots_cache'/>
       <function-decl name='PDE_DATA' mangled-name='PDE_DATA' filepath='fs/proc/generic.c' line='802' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='PDE_DATA'>
         <parameter type-id='c5a4eb7f' name='inode' filepath='fs/proc/generic.c' line='802' column='1'/>
         <return type-id='eaa32e2f'/>
@@ -119388,6 +119345,13 @@
         <parameter type-id='3df9fd28' name='affinity' filepath='include/trace/hooks/gic_v3.h' line='25' column='1'/>
         <parameter type-id='b50a4934' name='force' filepath='include/trace/hooks/gic_v3.h' line='25' column='1'/>
         <parameter type-id='eaa32e2f' name='base' filepath='include/trace/hooks/gic_v3.h' line='25' column='1'/>
+        <return type-id='95e97e5e'/>
+      </function-decl>
+      <function-decl name='__traceiter_android_rvh_handle_bad_stack' mangled-name='__traceiter_android_rvh_handle_bad_stack' filepath='include/trace/hooks/traps.h' line='38' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_handle_bad_stack'>
+        <parameter type-id='eaa32e2f' name='__data' filepath='include/trace/hooks/traps.h' line='38' column='1'/>
+        <parameter type-id='4616a179' name='regs' filepath='include/trace/hooks/traps.h' line='38' column='1'/>
+        <parameter type-id='f0981eeb' name='esr' filepath='include/trace/hooks/traps.h' line='38' column='1'/>
+        <parameter type-id='7359adad' name='far' filepath='include/trace/hooks/traps.h' line='38' column='1'/>
         <return type-id='95e97e5e'/>
       </function-decl>
       <function-decl name='__traceiter_android_rvh_handle_pte_fault_end' mangled-name='__traceiter_android_rvh_handle_pte_fault_end' filepath='include/trace/hooks/mm.h' line='229' column='1' visibility='default' binding='global' size-in-bits='64' elf-symbol-id='__traceiter_android_rvh_handle_pte_fault_end'>
@@ -122577,6 +122541,7 @@
       <var-decl name='__tracepoint_android_rvh_free_swap_slot' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_free_swap_slot' visibility='default' filepath='include/trace/hooks/mm.h' line='276' column='1' elf-symbol-id='__tracepoint_android_rvh_free_swap_slot'/>
       <var-decl name='__tracepoint_android_rvh_get_swap_page' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_get_swap_page' visibility='default' filepath='include/trace/hooks/mm.h' line='282' column='1' elf-symbol-id='__tracepoint_android_rvh_get_swap_page'/>
       <var-decl name='__tracepoint_android_rvh_gic_v3_set_affinity' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_gic_v3_set_affinity' visibility='default' filepath='include/trace/hooks/gic_v3.h' line='25' column='1' elf-symbol-id='__tracepoint_android_rvh_gic_v3_set_affinity'/>
+      <var-decl name='__tracepoint_android_rvh_handle_bad_stack' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_handle_bad_stack' visibility='default' filepath='include/trace/hooks/traps.h' line='38' column='1' elf-symbol-id='__tracepoint_android_rvh_handle_bad_stack'/>
       <var-decl name='__tracepoint_android_rvh_handle_pte_fault_end' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_handle_pte_fault_end' visibility='default' filepath='include/trace/hooks/mm.h' line='229' column='1' elf-symbol-id='__tracepoint_android_rvh_handle_pte_fault_end'/>
       <var-decl name='__tracepoint_android_rvh_internal_blk_mq_alloc_request' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_internal_blk_mq_alloc_request' visibility='default' filepath='include/trace/hooks/block.h' line='46' column='1' elf-symbol-id='__tracepoint_android_rvh_internal_blk_mq_alloc_request'/>
       <var-decl name='__tracepoint_android_rvh_iommu_setup_dma_ops' type-id='4ca0c298' mangled-name='__tracepoint_android_rvh_iommu_setup_dma_ops' visibility='default' filepath='include/trace/hooks/iommu.h' line='21' column='1' elf-symbol-id='__tracepoint_android_rvh_iommu_setup_dma_ops'/>
