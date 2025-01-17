@@ -1,4 +1,7 @@
 [abi_symbol_list]
+  profile_event_register
+  profile_event_unregister
+  task_cputime_adjusted
   arch_vma_name
   _vm_normal_page
   pmd_clear_bad
