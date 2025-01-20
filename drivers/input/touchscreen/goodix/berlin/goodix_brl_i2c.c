@@ -235,7 +235,7 @@ static void goodix_pdev_release(struct device *dev)
 
 static int goodix_i2c_init(struct i2c_client *client)
 {
-	struct goodix_ts_core *core_data = NULL;
+	struct goodix_ts_core *core_data;
 	struct sec_ts_plat_data *pdata;
 	struct sec_tclm_data *tdata = NULL;
 	int ret = 0;
@@ -243,24 +243,20 @@ static int goodix_i2c_init(struct i2c_client *client)
 	if (client->dev.of_node) {
 		pdata = devm_kzalloc(&client->dev,
 				sizeof(struct sec_ts_plat_data), GFP_KERNEL);
-
-		if (!pdata) {
-			ret = -ENOMEM;
-			goto error_allocate_pdata;
-		}
+		if (!pdata)
+			return -ENOMEM;
 
 		client->dev.platform_data = pdata;
 
 		ret = sec_input_parse_dt(&client->dev);
 		if (ret) {
 			input_err(true, &client->dev, "%s: Failed to parse dt\n", __func__);
-			goto error_allocate_mem;
+			return ret; // Direct return
 		}
 		tdata = devm_kzalloc(&client->dev,
 				sizeof(struct sec_tclm_data), GFP_KERNEL);
 		if (!tdata) {
-			ret = -ENOMEM;
-			goto error_allocate_tdata;
+			return -ENOMEM; // Direct return
 		}
 
 #ifdef TCLM_CONCEPT
@@ -269,19 +265,15 @@ static int goodix_i2c_init(struct i2c_client *client)
 	} else {
 		pdata = client->dev.platform_data;
 		if (!pdata) {
-			ret = -ENOMEM;
 			input_err(true, &client->dev, "%s: No platform data found\n", __func__);
-			goto error_allocate_pdata;
+			return -ENOMEM; // Direct return
 		}
 	}
 
 	core_data = devm_kzalloc(&client->dev,
 			sizeof(struct goodix_ts_core), GFP_KERNEL);
-	if (!core_data) {
-		ret = -ENOMEM;
-		input_err(true, &client->dev, "%s: Failed to allocate memory for core data\n", __func__);
-		goto error_allocate_mem;
-	}
+	if (!core_data)
+		return -ENOMEM;
 
 	i2c_set_clientdata(client, core_data);
 
@@ -292,8 +284,7 @@ static int goodix_i2c_init(struct i2c_client *client)
 	ptsp = &client->dev;
 
 	if (!tdata) {
-		ret = -ENOMEM;
-		goto err_null_tdata;
+		return -ENOMEM; // Direct return
 	}
 
 #ifdef TCLM_CONCEPT
@@ -309,22 +300,23 @@ static int goodix_i2c_init(struct i2c_client *client)
 
 	return 0;
 
-err_null_tdata:
-error_allocate_mem:
-	if (!pdata->not_support_io_ldo)
-		regulator_put(pdata->dvdd);
-	regulator_put(pdata->avdd);
-error_allocate_tdata:
-error_allocate_pdata:
-	input_err(true, &client->dev, "%s: failed(%d)\n", __func__, ret);
-	input_log_fix();
-	return ret;
+// err_null_tdata:
+// error_allocate_mem:
+// 	if (!pdata->not_support_io_ldo)
+// 		regulator_put(pdata->dvdd);
+// 	regulator_put(pdata->avdd);
+// error_allocate_tdata:
+// error_allocate_pdata:
+// 	input_err(true, &client->dev, "%s: failed(%d)\n", __func__, ret);
+//  	input_log_fix();
+//  	return ret;
 }
 
 static int goodix_i2c_probe(struct i2c_client *client,
 		const struct i2c_device_id *dev_id)
 {
-	int ret = 0;
+	int ret;
+	struct goodix_bus_interface *bus;
 
 	ts_info("goodix i2c probe in");
 	ret = i2c_check_functionality(client->adapter,
@@ -338,11 +330,12 @@ static int goodix_i2c_probe(struct i2c_client *client,
 		return ret;
 	}
 
-	goodix_i2c_bus.bus_type = GOODIX_BUS_TYPE_I2C;
-	goodix_i2c_bus.dev = &client->dev;
-	goodix_i2c_bus.read = goodix_i2c_read;
-	goodix_i2c_bus.write = goodix_i2c_write;
-	/* ts core device */
+	bus = &goodix_i2c_bus;
+	bus->bus_type = GOODIX_BUS_TYPE_I2C;
+	bus->dev = &client->dev;
+	bus->read = goodix_i2c_read;
+	bus->write = goodix_i2c_write;
+
 	goodix_pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
 	if (!goodix_pdev)
 		return -ENOMEM;
@@ -355,7 +348,7 @@ static int goodix_i2c_probe(struct i2c_client *client,
 	 * /sys/devices/platform/goodix_ts.0
 	 * goodix_pdev->dev.parent = &client->dev;
 	 */
-	goodix_pdev->dev.platform_data = &goodix_i2c_bus;
+	goodix_pdev->dev.platform_data = bus;
 	goodix_pdev->dev.release = goodix_pdev_release;
 
 	/* register platform device, then the goodix_ts_core
@@ -366,8 +359,9 @@ static int goodix_i2c_probe(struct i2c_client *client,
 		ts_err("failed register goodix platform device, %d", ret);
 		goto err_pdev;
 	}
+
 	ts_info("i2c probe out");
-	return ret;
+	return 0; // Success
 
 err_pdev:
 	kfree(goodix_pdev);
@@ -378,12 +372,13 @@ err_pdev:
 
 static int goodix_i2c_dev_remove(struct i2c_client *client)
 {
-	if (!goodix_pdev)
-		return 0;
-
 	ts_info("called");
-	platform_device_unregister(goodix_pdev);
-	goodix_pdev = NULL;
+
+	if (goodix_pdev) {
+		platform_device_unregister(goodix_pdev);
+		goodix_pdev = NULL;
+	}
+
 	return 0;
 }
 
