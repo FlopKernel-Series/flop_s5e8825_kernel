@@ -2133,20 +2133,19 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 		//ret = fts_parse_dt(ts_data->dev, ts_data->pdata);
 		if (ret) {
 			FTS_ERROR("device-tree parse fail");
-			goto err_parse_dt;
+			return ret;
 		}
+	} else if (ts_data->dev->platform_data) {
+		memcpy(ts_data->pdata, ts_data->dev->platform_data, pdata_size);
 	} else {
-		if (ts_data->dev->platform_data) {
-			memcpy(ts_data->pdata, ts_data->dev->platform_data, pdata_size);
-		} else {
-			FTS_ERROR("platform_data is null");
-			goto err_parse_dt;
-		}
+		FTS_ERROR("platform_data is null");
+ 		return -EINVAL;
 	}
 
 	ts_data->ts_workqueue = create_singlethread_workqueue("fts_wq");
 	if (!ts_data->ts_workqueue) {
 		FTS_ERROR("create fts workqueue fail");
+		return -ENOMEM;
 	}
 
 	mutex_init(&ts_data->report_mutex);
@@ -2158,7 +2157,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = fts_bus_init(ts_data);
 	if (ret) {
 		FTS_ERROR("bus initialize fail");
-		goto err_bus_init;
+		goto err_mutex_destroy;
 	}
 
 /*
@@ -2171,7 +2170,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = sec_input_device_register(ts_data->dev, ts_data);
 	if (ret) {
 		FTS_ERROR("failed to register input device, %d", ret);
-		goto err_input_init;
+		goto err_input_unregister;
 	}
 	ts_data->input_dev = ts_data->pdata->input_dev;
 	ts_data->input_dev_proximity = ts_data->pdata->input_dev_proximity;
@@ -2187,7 +2186,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = fts_report_buffer_init(ts_data);
 	if (ret) {
 		FTS_ERROR("report buffer init fail");
-		goto err_report_buffer;
+		goto err_input_unregister;
 	}
 
 /*
@@ -2204,13 +2203,13 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 #endif
 	if (ret) {
 		FTS_ERROR("fail to get power(regulator)");
-		goto err_power_init;
+		goto err_input_unregister;
 	}
 
 	ret = fts_get_ic_information(ts_data);
 	if (ret) {
 		FTS_ERROR("not focal IC, unregister driver");
-		goto err_irq_req;
+		goto err_power_off;
 	}
 
 #if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
@@ -2252,13 +2251,13 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = fts_irq_registration(ts_data);
 	if (ret) {
 		FTS_ERROR("request irq failed");
-		goto err_irq_req;
+		goto err_power_off;
 	}
 
 	ret = fts_fwupg_init(ts_data);
 	if (ret) {
 		FTS_ERROR("init fw upgrade fail");
-		goto err_fwupg_init;
+		goto err_irq_free;
 	}
 
 	atomic_set(&ts_data->pdata->enabled, true);
@@ -2269,7 +2268,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ret = fts_sec_cmd_init(ts_data);
 	if (ret) {
 		FTS_ERROR("init sec_cmd fail");
-		goto err_cmd_init;
+		goto err_fwupg_free;
 	}
 
 #if IS_ENABLED(CONFIG_VBUS_NOTIFIER)
@@ -2294,30 +2293,32 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	FTS_FUNC_EXIT();
 	return 0;
 
-err_cmd_init:
+err_fwupg_free:
 	ts_data->pdata->enable = NULL;
 	ts_data->pdata->disable = NULL;
-err_fwupg_init:
+	fts_fwupg_exit(ts_data);
+err_irq_free:
 	fts_irq_disable();
 	free_irq(ts_data->irq, ts_data);
-err_irq_req:
-err_power_init:
+err_power_off:
 #if FTS_POWER_SOURCE_CUST_EN
 	fts_power_source_exit(ts_data);
+#else
+ 	fts_ts_power_off(ts_data);
 #endif
-	if (gpio_is_valid(ts_data->pdata->irq_gpio))
-		gpio_free(ts_data->pdata->irq_gpio);
-err_report_buffer:
-err_input_init:
-	if (ts_data->ts_workqueue)
-		destroy_workqueue(ts_data->ts_workqueue);
-err_bus_init:
+err_input_unregister:
+ 	if (ts_data->input_dev)
+ 		input_unregister_device(ts_data->input_dev);
+ 	if (ts_data->input_dev_proximity)
+ 		input_unregister_device(ts_data->input_dev_proximity);
+err_mutex_destroy:
 	mutex_destroy(&ts_data->report_mutex);
 	mutex_destroy(&ts_data->bus_lock);
 	mutex_destroy(&ts_data->device_lock);
 	mutex_destroy(&ts_data->irq_lock);
-err_parse_dt:
-	FTS_FUNC_EXIT();
+	if (ts_data->ts_workqueue) {
+		destroy_workqueue(ts_data->ts_workqueue);
+	}
 	return ret;
 }
 
@@ -2329,7 +2330,26 @@ static int fts_ts_remove_entry(struct fts_ts_data *ts_data)
 	ts_data->pdata->disable = NULL;
 	atomic_set(&ts_data->pdata->shutdown_called, true);
 
-	disable_irq(ts_data->irq);
+	if (!ts_data) {
+		FTS_ERROR("ts_data is NULL");
+		return -EINVAL;
+	}
+
+	if (ts_data->input_dev) {
+		input_unregister_device(ts_data->input_dev);
+		ts_data->input_dev = NULL;
+	}
+
+	if (ts_data->input_dev_proximity) {
+		input_unregister_device(ts_data->input_dev_proximity);
+		ts_data->input_dev_proximity = NULL;
+	}
+
+	if (ts_data->irq) {
+		disable_irq(ts_data->irq);
+		free_irq(ts_data->irq, ts_data);
+		ts_data->irq = 0;
+	}
 	cancel_delayed_work_sync(&ts_data->print_info_work);
 	cancel_delayed_work_sync(&ts_data->read_info_work);
 
@@ -2360,13 +2380,10 @@ static int fts_ts_remove_entry(struct fts_ts_data *ts_data)
 
 	fts_wakeup_source_unregister(ts_data);
 
-	free_irq(ts_data->irq, ts_data);
-
-	if (ts_data->ts_workqueue)
+	if (ts_data->ts_workqueue) {
 		destroy_workqueue(ts_data->ts_workqueue);
-
-	if (gpio_is_valid(ts_data->pdata->irq_gpio))
-		gpio_free(ts_data->pdata->irq_gpio);
+		ts_data->ts_workqueue = NULL;
+ 	}
 
 #if FTS_POWER_SOURCE_CUST_EN
 	fts_power_source_exit(ts_data);
@@ -2377,7 +2394,6 @@ static int fts_ts_remove_entry(struct fts_ts_data *ts_data)
 	mutex_destroy(&ts_data->irq_lock);
 
 	FTS_FUNC_EXIT();
-	fts_data = NULL;
 
 	return 0;
 }
