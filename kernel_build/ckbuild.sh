@@ -156,12 +156,13 @@ fi
 ## Build type
 LINUX_VER=$(make kernelversion 2>/dev/null)
 
-FK_TYPE=""
 if [ $DO_KSU -eq 1 ]; then
     FK_TYPE="KSU"
+    FK_TYPE_SHORT="K"
     DEFCONFIG="s5e8825-unified-ksu_defconfig"
 else
     FK_TYPE="Vanilla"
+    FK_TYPE_SHORT="V"
 fi
 ZIP_PATH="$KDIR/kernel_build/FloppyKernel_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
 TAR_PATH="$KDIR/kernel_build/FloppyKernel_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
@@ -341,6 +342,13 @@ build() {
 
     make -j$(nproc --all) O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $DEFCONFIG 2>&1 | tee log.txt
 
+    if [ "$IS_RELEASE" == "1" ]; then
+        VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
+        VERSION_NOAUTO="1"
+    else
+        VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/\""
+    fi
+
     # Delete leftovers
     rm -f $OUT_KERNEL
 
@@ -348,6 +356,12 @@ build() {
         cp -f out/.config arch/arm64/configs/$DEFCONFIG
         echo "INFO: Configuration regenerated. Check the changes!"
         exit 0
+    fi
+
+    scripts/config --file $KDIR/out/.config --set-val LOCALVERSION "$VERSION_STR"
+
+    if [ "$VERSION_NOAUTO" == "1" ]; then
+        scripts/config --file $KDIR/out/.config --disable LOCALVERSION_AUTO
     fi
 
     if [ $DO_MENUCONFIG = "1" ]; then
