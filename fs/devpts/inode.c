@@ -596,7 +596,11 @@ struct dentry *devpts_pty_new(struct pts_fs_info *fsi, int index, void *priv)
 	return dentry;
 }
 
-#if defined(CONFIG_KSU_SUSFS_SUS_SU)
+#ifdef CONFIG_KSU_MANUAL_HOOK
+extern int ksu_handle_devpts(struct inode*);
+#endif
+
+#if defined(CONFIG_KSU_SUSFS_SUS_SU) && !defined(CONFIG_KSU_MANUAL_HOOK)
 extern bool ksu_devpts_hook;
 extern int ksu_handle_devpts(struct inode*);
 #endif
@@ -609,12 +613,15 @@ extern int ksu_handle_devpts(struct inode*);
  */
 void *devpts_get_priv(struct dentry *dentry)
 {
-#if defined(CONFIG_KSU_SUSFS_SUS_SU)
+#if defined(CONFIG_KSU_SUSFS_SUS_SU) && !defined(CONFIG_KSU_MANUAL_HOOK)
 	if (likely(ksu_devpts_hook)) {
 		ksu_handle_devpts(dentry->d_inode);
 	}
 #endif
 
+#ifdef CONFIG_KSU_MANUAL_HOOK
+	ksu_handle_devpts(dentry->d_inode);
+#endif
 	if (dentry->d_sb->s_magic != DEVPTS_SUPER_MAGIC)
 		return NULL;
 	return dentry->d_fsdata;
