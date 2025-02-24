@@ -1768,7 +1768,6 @@ static int s2mf301_fg_get_property(struct power_supply *psy,
 {
 	struct s2mf301_fuelgauge_data *fuelgauge = power_supply_get_drvdata(psy);
 	enum power_supply_ext_property ext_psp = (enum power_supply_ext_property) psp;
-	union power_supply_propval value;
 
 	switch ((int)psp) {
 	case POWER_SUPPLY_PROP_STATUS:
@@ -1952,8 +1951,7 @@ static int s2mf301_fg_get_property(struct power_supply *psy,
 		val->intval = fuelgauge->mode;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
-		psy_do_property("battery", get, POWER_SUPPLY_PROP_CHARGE_FULL, value);
-		val->intval = value.intval/1000 * fuelgauge->raw_capacity; //uAh
+		val->intval = fuelgauge->pdata->capacity_full * fuelgauge->raw_capacity;
 		break;
 	case POWER_SUPPLY_PROP_ONLINE:
 		pr_info("[DEBUG]%s: POWER_SUPPLY_PROP_ONLINE\n", __func__);
