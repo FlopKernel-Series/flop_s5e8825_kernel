@@ -68,14 +68,14 @@
  * After a CPU has dirtied this many pages, balance_dirty_pages_ratelimited
  * will look to see if it needs to force writeback or throttling.
  */
-static long ratelimit_pages = 32;
+static long ratelimit_pages = 256;
 
 /* The following parameters are exported via /proc/sys/vm */
 
 /*
  * Start background writeback (via writeback threads) at this percentage
  */
-int dirty_background_ratio = 10;
+int dirty_background_ratio = 50;
 
 /*
  * dirty_background_bytes starts at 0 (disabled) so that it is a function of
@@ -92,7 +92,7 @@ int vm_highmem_is_dirtyable;
 /*
  * The generator of dirty data starts writeback at this percentage
  */
-int vm_dirty_ratio = 30;
+int vm_dirty_ratio = 99;
 
 /*
  * vm_dirty_bytes starts at 0 (disabled) so that it is a function of
