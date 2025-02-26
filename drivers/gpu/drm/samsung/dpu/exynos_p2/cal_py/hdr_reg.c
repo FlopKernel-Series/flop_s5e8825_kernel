@@ -108,3 +108,15 @@ void hdr_regs_desc_init(u32 id, void __iomem *regs, const char *name,
 	regs_hdr[type][id].name = name;
 }
 
+#if IS_ENABLED(CONFIG_DRM_MCD_HDR)
+void hdr_write_reg(u32 id, u32 offset, u32 value)
+{
+	hdr_write_relaxed(id, offset, value);
+}
+
+uint32_t hdr_read_reg(u32 id, u32 offset)
+{
+	return hdr_read(id, offset);
+}
+#endif
+
