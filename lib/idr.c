@@ -522,7 +522,9 @@ delete:
 	return;
  err:
 	xas_unlock_irqrestore(&xas, flags);
+#ifndef CONFIG_KSU_SUSFS
 	WARN(1, "ida_free called for id=%d which is not allocated.\n", id);
+#endif
 }
 EXPORT_SYMBOL(ida_free);
 
