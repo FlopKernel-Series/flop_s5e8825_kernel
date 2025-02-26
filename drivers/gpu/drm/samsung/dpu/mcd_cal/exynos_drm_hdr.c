@@ -57,6 +57,12 @@ struct hdr_coef_header {
 static struct class *hdr_cls;
 static struct device_attribute *hdr_attrs[];
 
+#define HDR_ADDR_RANGE 0x1000
+#define HDR_MAX_REG_CNT (HDR_ADDR_RANGE / 4)
+#define HDR_REG_CON 0x0
+#define HDR_REG_CON_EN	0x1
+#define MAX_UNPACK_COUNT	6
+
 #define PREFIX_LEN      40
 #define ROW_LEN         32
 static void hdr_print_hex_dump(struct exynos_hdr *hdr, u32 offset,
@@ -83,6 +89,7 @@ static int hdr_import_buffer(struct exynos_hdr *hdr,
 	struct dma_buf *buf = NULL;
 	void *vaddr = NULL;
 	int64_t hdr_fd;
+	int i;
 
 	hdr_debug(hdr, "%s +\n", __func__);
 
@@ -97,14 +104,13 @@ static int hdr_import_buffer(struct exynos_hdr *hdr,
 
 	buf = dma_buf_get(hdr_fd);
 	if (IS_ERR_OR_NULL(buf)) {
-		if ((hdr_fd == hdr->hdr_fd) && (PTR_ERR(buf) == -EBADF)) {
-			hdr_debug(hdr, "FD in bad state but continued\n");
+		if ((hdr_fd == hdr->hdr_fd) && IS_ERR(buf)) {
+			hdr_debug(hdr, "bad fd [%ld] but continued with old vbuf\n", PTR_ERR(buf));
 			goto done;
-		} else {
-			hdr_err(hdr, "failed to get dma buf [%x] of fd [%lld]\n", buf, hdr_fd);
-			WARN_ON(1);
-			goto error;
 		}
+
+		hdr_warn(hdr, "failed to get dma buf [%x] of fd [%lld]\n", buf, hdr_fd);
+		goto error;
 	}
 
 	if ((hdr_fd == hdr->hdr_fd) && (buf == hdr->dma_buf)) {
@@ -128,6 +134,10 @@ static int hdr_import_buffer(struct exynos_hdr *hdr,
 	hdr->hdr_fd = hdr_fd;
 	hdr->dma_buf = buf;
 	hdr->dma_vbuf = vaddr;
+	for (i = 0; i < MAX_HDR_CONTEXT; i++) {
+		if (!hdr->ctx[i].data)
+			hdr->ctx[i].data = kzalloc(buf->size, GFP_KERNEL);
+	}
 done:
 	return 0;
 
@@ -140,71 +150,17 @@ error:
 	return -1;
 }
 
-#define MAX_HDR_CONTEXT 3 // 3 ctx buffer per layer
-static void hdr_allocate_context(struct exynos_hdr *hdr)
-{
-	u32 i;
-
-	if (!hdr->ctx) {
-		if (!hdr->dma_buf || hdr->dma_buf->size == 0) {
-			hdr_err(hdr, "invalid dma_buf\n");
-			return;
-		}
-
-		hdr->ctx = kzalloc(sizeof(struct hdr_context)*MAX_HDR_CONTEXT, GFP_KERNEL);
-		if (!hdr->ctx)
-			return;
-
-		for (i = 0; i < MAX_HDR_CONTEXT; i++) {
-			hdr->ctx[i].data = kzalloc(hdr->dma_buf->size, GFP_KERNEL);
-			if (!hdr->ctx[i].data)
-				return;
-		}
-	}
-}
-
 static struct hdr_context *hdr_acquire_context(struct exynos_hdr *hdr)
 {
-	int i;
-	struct hdr_context *ctx = NULL;
+	int ctx_no = (atomic_inc_return(&hdr->ctx_no) & INT_MAX) % MAX_HDR_CONTEXT;
 
-	if (!hdr->ctx)
-		return NULL;
-
-	for (i = 0; i < MAX_HDR_CONTEXT; i++) {
-		if (hdr->ctx[i].used == 0) {
-			ctx = &hdr->ctx[i];
-			ctx->used = 1;
-			break;
-		}
-	}
-
-	if (i == MAX_HDR_CONTEXT)
-		hdr_err(hdr, "all ctx pools are occupied\n");
-
-	return ctx;
+	return &hdr->ctx[ctx_no];
 }
 
-static void hdr_release_context(struct exynos_hdr *hdr,
-				struct hdr_context *ctx)
-{
-	int i;
 
-	if (ctx) {
-		if (ctx->used == 0)
-			hdr_warn(hdr, "ctx is already unused state\n");
-		ctx->used = 0;
-	} else {
-		if (!hdr->ctx)
-			return;
-
-		for (i = 0; i < MAX_HDR_CONTEXT; i++)
-			hdr->ctx[i].used = 0;
-	}
-}
 
 static int hdr_prepare_context(struct exynos_hdr *hdr,
-			const struct exynos_drm_plane_state *exynos_plane_state)
+		struct exynos_drm_plane_state *exynos_plane_state)
 {
 	const struct hdr_coef_header *coef_h;
 	struct hdr_context *ctx;
@@ -225,28 +181,24 @@ static int hdr_prepare_context(struct exynos_hdr *hdr,
 		return -1;
 	}
 
-	hdr_allocate_context(hdr);
 	ctx = hdr_acquire_context(hdr);
-	if (!ctx) {
+	if (!ctx || !ctx->data) {
 		hdr_err(hdr, "no valid ctx\n");
 		return -1;
 	}
 
 	memcpy(ctx->data, (void *)hdr->dma_vbuf, coef_h->total_bytesize);
 
-	mutex_lock(&hdr->ctx_list_lock);
-	list_add_tail(&ctx->list, &hdr->ctx_list);
-	mutex_unlock(&hdr->ctx_list_lock);
+	if (coef_h->sfr_con & HDR_REG_CON_EN)
+		exynos_plane_state->hdr_en = true;
+	else
+		exynos_plane_state->hdr_en = false;
+
+	exynos_plane_state->hdr_ctx = ctx->data;
 
 	return 0;
 }
 
-
-#define HDR_ADDR_RANGE 0x1000
-#define HDR_MAX_REG_CNT (HDR_ADDR_RANGE / 4)
-#define HDR_REG_CON 0x0
-#define HDR_REG_CON_EN	0x1
-#define MAX_UNPACK_COUNT	6
 
 static int hdr_update_lut(struct exynos_hdr *hdr, u32 *lut, int lut_offset)
 {
@@ -416,23 +368,19 @@ error:
 	return -EINVAL;
 }
 
-static int hdr_update_context(struct exynos_hdr *hdr)
+static int hdr_update_context(struct exynos_hdr *hdr,
+		const struct exynos_drm_plane_state *exynos_plane_state)
+
 {
 	int ret;
 	struct hdr_coef_header *header = NULL;
-	struct hdr_context *ctx = NULL;
 
-	mutex_lock(&hdr->ctx_list_lock);
-	if (list_empty(&hdr->ctx_list)) {
-		mutex_unlock(&hdr->ctx_list_lock);
+	if (!exynos_plane_state->hdr_ctx) {
+		hdr_err(hdr, "null hdr_ctx\n");
 		return -1;
 	}
 
-	ctx = list_first_entry(&hdr->ctx_list, struct hdr_context, list);
-	list_del(&ctx->list);
-	mutex_unlock(&hdr->ctx_list_lock);
-
-	header = (struct hdr_coef_header *)ctx->data;
+	header = (struct hdr_coef_header *)exynos_plane_state->hdr_ctx;
 	if (!header) {
 		hdr_err(hdr, "no allocated virtual buffer\n");
 		goto error;
@@ -449,14 +397,11 @@ static int hdr_update_context(struct exynos_hdr *hdr)
 		hdr_err(hdr, "failed to update hdr reg\n");
 		goto error_dump;
 	}
-
-	hdr_release_context(hdr, ctx);
 	return 0;
 error_dump:
 	hdr_print_hex_dump(hdr, 0, header->total_bytesize, header);
 error:
 	hdr_err(hdr, "%s parsing error\n", __func__);
-	hdr_release_context(hdr, ctx);
 	return -1;
 }
 
@@ -629,19 +574,20 @@ static void __exynos_hdr_dump(struct exynos_hdr *hdr)
 }
 
 static void __exynos_hdr_prepare(struct exynos_hdr *hdr,
-			const struct exynos_drm_plane_state *exynos_plane_state)
+			struct exynos_drm_plane_state *exynos_plane_state)
 {
 	hdr_debug(hdr, "%s +\n", __func__);
 	hdr_prepare_context(hdr, exynos_plane_state);
 	hdr_debug(hdr, "%s -\n", __func__);
 }
 
-static void __exynos_hdr_update(struct exynos_hdr *hdr)
+static void __exynos_hdr_update(struct exynos_hdr *hdr,
+			const struct exynos_drm_plane_state *exynos_plane_state)
 {
 	int ret;
 
-	hdr_debug(hdr, "%s +\n", __func__);
-	ret = hdr_update_context(hdr);
+	hdr_debug(hdr, "%s +\n", __func__);	
+	ret = hdr_update_context(hdr, exynos_plane_state);
 	if (ret == 0) {
 		hdr->state = HDR_STATE_ENABLE;
 		wake_up(&hdr->wait_update);
@@ -652,11 +598,6 @@ static void __exynos_hdr_update(struct exynos_hdr *hdr)
 static void __exynos_hdr_disable(struct exynos_hdr *hdr)
 {
 	hdr_debug(hdr, "%s +\n", __func__);
-	mutex_lock(&hdr->ctx_list_lock);
-	if (!list_empty(&hdr->ctx_list))
-		list_del_init(&hdr->ctx_list);
-	mutex_unlock(&hdr->ctx_list_lock);
-	hdr_release_context(hdr, NULL);
 	hdr->state = HDR_STATE_DISABLE;
 	hdr_debug(hdr, "%s -\n", __func__);
 }
@@ -681,7 +622,8 @@ void exynos_hdr_dump(struct exynos_hdr *hdr)
 }
 
 void exynos_hdr_prepare(struct exynos_hdr *hdr,
-			const struct exynos_drm_plane_state *exynos_plane_state)
+			struct exynos_drm_plane_state *exynos_plane_state)
+
 {
 	const struct exynos_hdr_funcs *funcs;
 
@@ -693,16 +635,17 @@ void exynos_hdr_prepare(struct exynos_hdr *hdr,
 		funcs->prepare(hdr, exynos_plane_state);
 }
 
-void exynos_hdr_update(struct exynos_hdr *hdr)
+void exynos_hdr_update(struct exynos_hdr *hdr,
+			const struct exynos_drm_plane_state *exynos_plane_state)
 {
 	const struct exynos_hdr_funcs *funcs;
 
-	if (!hdr || hdr->initialized == false)
+	if (!hdr || hdr->initialized == false || !exynos_plane_state)
 		return;
 
 	funcs = hdr->funcs;
 	if (funcs)
-		funcs->update(hdr);
+		funcs->update(hdr, exynos_plane_state);
 }
 
 void exynos_hdr_disable(struct exynos_hdr *hdr)
@@ -746,14 +689,12 @@ struct exynos_hdr *exynos_hdr_register(struct dpp_device *dpp)
 
 	dev_set_drvdata(hdr->dev, hdr);
 
-	INIT_LIST_HEAD(&hdr->ctx_list);
-	mutex_init(&hdr->ctx_list_lock);
 	mutex_init(&hdr->lock);
-	init_waitqueue_head(&hdr->wait_update);
+	init_waitqueue_head(&hdr->wait_update);	
+	atomic_set(&hdr->ctx_no, 0);
 	hdr->funcs = &hdr_funcs;
 	hdr->state = HDR_STATE_DISABLE;
 	hdr->initialized = true;
-	hdr->enable = false;
 
 	hdr_info(hdr, "HDR/WCG supported\n");
 
