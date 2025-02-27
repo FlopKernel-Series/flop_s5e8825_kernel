@@ -28,6 +28,7 @@ bool sec_doze = false; // Uses Samsung DRM Doze?
 bool sec_lcd_device = false;
 bool sec_legacy_sinput = false; // Uses old sec_input driver?
 bool sec_legacy_usbpd = false; // Uses old slsi usbpd platform?
+bool sec_slsi_usbpd = false;
 EXPORT_SYMBOL(sec_needs_decon);
 EXPORT_SYMBOL(sec_current_device);
 EXPORT_SYMBOL(sec_needs_blic);
@@ -35,6 +36,7 @@ EXPORT_SYMBOL(sec_doze);
 EXPORT_SYMBOL(sec_lcd_device);
 EXPORT_SYMBOL(sec_legacy_sinput);
 EXPORT_SYMBOL(sec_legacy_usbpd);
+EXPORT_SYMBOL(sec_slsi_usbpd);
 
 // Camera params
 bool mcd_disable_dual_sync = false;
@@ -195,6 +197,7 @@ static inline void print_sec_variables(const char *machine_name) {
 	SEC_DETECT_LOG("sec_lcd_device = %s\n", sec_lcd_device ? "true" : "false");
 	SEC_DETECT_LOG("sec_legacy_sinput = %s\n", sec_legacy_sinput ? "true" : "false");
 	SEC_DETECT_LOG("sec_legacy_usbpd = %s\n", sec_legacy_usbpd ? "true" : "false");
+	SEC_DETECT_LOG("sec_slsi_usbpd = %s\n", sec_slsi_usbpd ? "true" : "false");
 }
 
 int sec_detect_init(void) {
@@ -222,11 +225,13 @@ int sec_detect_init(void) {
 		strncpy(sec_current_device_name, "a25x", sizeof(sec_current_device_name));
 		sec_needs_decon = false;
 		sec_doze = true;
+		sec_slsi_usbpd = true;
 	} else if (strstr(machine_name, "A33") != NULL) {
 		sec_current_device = SEC_A33;
 		strncpy(sec_current_device_name, "a33x", sizeof(sec_current_device_name));
 		sec_needs_decon = true;
 		sec_legacy_usbpd = true;
+		sec_slsi_usbpd = true;
 	} else if (strstr(machine_name, "A53") != NULL) {
 		sec_current_device = SEC_A53;
 		strncpy(sec_current_device_name, "a53x", sizeof(sec_current_device_name));

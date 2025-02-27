@@ -165,11 +165,15 @@ static int __init s2m_pdic_notifier_init(void)
 {
 	int ret = 0;
 
-	if (!sec_legacy_usbpd) {
-		SEC_DETECT_LOG("Legacy usbpd slsi driver skipped\n");
+	if (sec_slsi_usbpd) {
+		if (!sec_legacy_usbpd) {
+			SEC_DETECT_LOG("Legacy usbpd slsi driver skipped\n");
+			return 0;
+		} else
+			SEC_DETECT_LOG("Legacy usbpd slsi driver initializing\n");
+	} else {
 		return 0;
-	} else
-		SEC_DETECT_LOG("Legacy usbpd slsi driver initializing\n");
+	}
 
 	pr_info("%s\n", __func__);
 
