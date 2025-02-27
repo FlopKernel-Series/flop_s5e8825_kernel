@@ -203,6 +203,11 @@ int sm5714_i2c_write_byte(struct i2c_client *client,
 	while (ret < 0) {
 		pr_info("[%s:%s] reg(0x%x), retrying...\n",
 			MUIC_DEV_NAME, __func__, command);
+		if (retry > 10) {
+			pr_err("[%s:%s] retry failed!!\n", MUIC_DEV_NAME,
+					__func__);
+			break;
+		}
 		sm5714_read_reg(client, command, &written);
 		if (written != value)
 			pr_err("[%s:%s] reg(0x%x)\n",
@@ -1397,6 +1402,7 @@ static void sm5714_muic_handle_attach(struct sm5714_muic_data *muic_data,
 	pr_info("[%s:%s] done\n", MUIC_DEV_NAME, __func__);
 
 	muic_data->attached_dev = new_dev;
+	muic_data->afc_dp_reset_count = 0;
 
 #if IS_ENABLED(CONFIG_MUIC_NOTIFIER)
 	if (noti) {
@@ -1540,8 +1546,8 @@ static void sm5714_muic_handle_detach(struct sm5714_muic_data *muic_data,
 #if defined(CONFIG_MUIC_BCD_RESCAN)
 	muic_data->bc12_retry_count = 0;
 #endif
-	muic_data->hv_voltage = 0;
 	muic_afc_request_cause_clear();
+	muic_data->afc_dp_reset_count = 0;
 }
 
 static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
@@ -1589,8 +1595,6 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 #endif
 			break;
 		case RID_301K:
-			if (!(vbvolt))
-				break;
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_USB_ON_MUIC;
 			pr_info("[%s:%s] JIG_USB_ON(301K)\n", MUIC_DEV_NAME,
@@ -1764,12 +1768,10 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 				MUIC_DEV_NAME, __func__);
 		}
 	} else if (dev2 & DEV_TYPE2_JIG_USB_ON) {
-		if (vbvolt) {
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_USB_ON_MUIC;
 			pr_info("[%s:%s] JIG_USB_ON(301K)\n",
 				MUIC_DEV_NAME, __func__);
-		}
 	} else if (dev2 & DEV_TYPE2_DEBUG_JTAG) {
 		pr_info("[%s:%s] DEBUG_JTAG\n", MUIC_DEV_NAME, __func__);
 		intr = MUIC_INTR_ATTACH;
@@ -2010,6 +2012,12 @@ static int sm5714_muic_hv_charger_init(void)
 #if IS_ENABLED(CONFIG_VBUS_NOTIFIER)
 	struct sm5714_muic_data *muic_data = static_data;
 
+	if (!muic_data || !muic_data->pdata ||
+		!test_bit(MUIC_PROBE_DONE, &muic_data->pdata->driver_probe_flag)) {
+		pr_info("[%s:%s] skip\n", MUIC_DEV_NAME, __func__);
+		return 0;
+	}	
+	
 	/* enable hiccup mode after charger init*/
 	if (muic_data->is_water_detect &&
 			muic_data->vbus_state == STATUS_VBUS_HIGH)
@@ -2214,7 +2222,7 @@ static void sm5714_set_bc1p2_retry_count(struct sm5714_muic_data *muic_data)
 	int count;
 
 	np = of_find_compatible_node(NULL, NULL, "siliconmitus,sm5714mfd");
-
+	
 	if (np && !of_property_read_u32(np, "sm5714,bc1p2_retry_count", &count))
 		muic_data->bc1p2_retry_count_max = count;
 	else
@@ -2315,7 +2323,6 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 	muic_data->vbus_changed_9to5 = 0;
 	muic_data->fled_torch_enable = false;
 	muic_data->fled_flash_enable = false;
-	muic_data->hv_voltage = 0;
 	muic_data->is_pdic_ready = false;
 
 #if defined(CONFIG_HICCUP_CHARGER)
@@ -2453,6 +2460,9 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 #endif
 
 	muic_data->shut_down = 0;
+	set_bit(MUIC_PROBE_DONE, &muic_data->pdata->driver_probe_flag);
+	if (test_bit(CHARGER_PROBE_DONE, &muic_data->pdata->driver_probe_flag))
+		sm5714_muic_hv_charger_init();
 
 	return 0;
 
@@ -2512,6 +2522,8 @@ static void sm5714_muic_shutdown(struct platform_device *pdev)
 
 	cancel_delayed_work_sync(&muic_data->muic_debug_work);
 	cancel_delayed_work_sync(&muic_data->muic_U200_work);
+
+	sm5714_muic_free_irqs (muic_data);
 
 	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 	if (!muic_data->i2c) {
