@@ -45,6 +45,7 @@ extern bool sec_doze;
 extern bool sec_lcd_device;
 extern bool sec_legacy_sinput;
 extern bool sec_legacy_usbpd;
+extern bool sec_slsi_usbpd;
 
 // Camera params
 extern bool mcd_disable_dual_sync;
