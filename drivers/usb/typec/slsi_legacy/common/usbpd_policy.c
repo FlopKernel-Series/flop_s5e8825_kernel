@@ -287,7 +287,7 @@ policy_state usbpd_policy_src_negotiate_capability(struct policy_data *policy)
 
 	pd_data->source_request_obj.object = policy->rx_data_obj[0].object;
 
-#if IS_ENABLED(CONFIG_PDIC_PD30) && !IS_ENABLED(CONFIG_PDIC_S2MU106)
+#if IS_ENABLED(CONFIG_PDIC_PD30)
 	/* Check Specification Revision */
 	if(pd_data->protocol_rx.msg_header.spec_revision >= USBPD_PD3_0)
 		pd_data->specification_revision = USBPD_PD3_0;
@@ -1214,7 +1214,7 @@ policy_state usbpd_policy_snk_evaluate_capability(struct policy_data *policy)
 	/* PD State Inform to AP */
 	dev_info(pd_data->dev, "%s\n", __func__);
 
-#if IS_ENABLED(CONFIG_PDIC_PD30) && !IS_ENABLED(CONFIG_PDIC_S2MU106)
+#if IS_ENABLED(CONFIG_PDIC_PD30)
 	/* Check Specification Revision */
 	if(pd_data->protocol_rx.msg_header.spec_revision >= USBPD_PD3_0)
 		pd_data->specification_revision = USBPD_PD3_0;
@@ -6371,7 +6371,7 @@ void legacy_usbpd_init_policy(struct usbpd_data *pd_data)
 #if IS_ENABLED(CONFIG_PDIC_PD30)
 	policy->pps_enable = 0;
 #endif
-#if IS_ENABLED(CONFIG_PDIC_PD30) && !IS_ENABLED(CONFIG_PDIC_S2MU106)
+#if IS_ENABLED(CONFIG_PDIC_PD30)
 	pd_data->specification_revision = USBPD_PD3_0;
 #else
 	pd_data->specification_revision = USBPD_PD2_0;
