@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * Goodix Touchscreen Driver
  * Copyright (C) 2020 - 2021 Goodix, Inc.
@@ -19,8 +18,7 @@
 
 bool debug_log_flag;
 
-/*
- *****************************************************************************
+/*****************************************************************************
  * goodix_append_checksum
  * @summary
  *    Calcualte data checksum with the specified mode.
@@ -32,10 +30,9 @@ bool debug_log_flag;
  * @param mode
  *   calculate for u8 or u16 checksum
  * @return
- *   returns the data checksum value.
+ *   return the data checksum value.
  *
- *****************************************************************************
- */
+ *****************************************************************************/
 u32 goodix_append_checksum(u8 *data, int len, int mode)
 {
 	u32 checksum = 0;
@@ -97,8 +94,8 @@ u32 checksum16_u32(const uint8_t *data, int size)
  * @data: data need to be check
  * @size: data length need to be check(include the checksum bytes)
  * @mode: compare with U8 or U16 mode
- */
-int checksum_cmp(const u8 *data, size_t size, int mode)
+ * */
+int checksum_cmp(const u8 *data, int size, int mode)
 {
 	u32 cal_checksum = 0;
 	u32 r_checksum = 0;
@@ -183,7 +180,7 @@ void goodix_rotate_abcd2cbad(int tx, int rx, s16 *data)
 	kfree(temp_buf);
 }
 
-int goodix_write_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int size)
+int goodix_write_nvm_data(struct goodix_ts_core *cd, unsigned char *data, int size)
 {
 	struct goodix_ts_cmd temp_cmd;
 	int ret;
@@ -194,7 +191,7 @@ int goodix_write_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int si
 	}
 
 	/* exit IDLE */
-	ret = ts->hw_ops->resume(ts);
+	ret = cd->hw_ops->resume(cd);
 	if (ret < 0)
 		ts_err("exit IDLE failed");
 
@@ -209,14 +206,14 @@ int goodix_write_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int si
 		temp_cmd.data[2] = data[0];
 		temp_cmd.len = 7;
 	}
-	ret = ts->hw_ops->send_cmd(ts, &temp_cmd);
+	ret = cd->hw_ops->send_cmd(cd, &temp_cmd);
 	if (ret < 0)
 		ts_err("send write nvm cmd failed");
 
 	return ret;
 }
 
-int goodix_read_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int size)
+int goodix_read_nvm_data(struct goodix_ts_core *cd, unsigned char *data, int size)
 {
 	struct goodix_ts_cmd temp_cmd;
 	unsigned char temp_buf[6];
@@ -229,7 +226,7 @@ int goodix_read_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int siz
 	}
 
 	/* exit IDLE */
-	ret = ts->hw_ops->resume(ts);
+	ret = cd->hw_ops->resume(cd);
 	if (ret < 0)
 		ts_err("exit IDLE failed");
 
@@ -237,7 +234,7 @@ int goodix_read_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int siz
 	temp_cmd.len = 6;
 	temp_cmd.data[0] = 0x01;	// read
 	temp_cmd.data[1] = 0x00;
-	ret = ts->hw_ops->send_cmd(ts, &temp_cmd);
+	ret = cd->hw_ops->send_cmd(cd, &temp_cmd);
 	if (ret < 0) {
 		ts_err("send read nvm cmd failed");
 		return ret;
@@ -247,7 +244,7 @@ int goodix_read_nvm_data(struct goodix_ts_data *ts, unsigned char *data, int siz
 
 	while (retry--) {
 		sec_delay(5);
-		ts->hw_ops->read(ts, ts->ic_info.misc.cmd_addr, temp_buf, 6);
+		cd->hw_ops->read(cd, cd->ic_info.misc.cmd_addr, temp_buf, 6);
 		if (temp_buf[0] == 0x80 && temp_buf[1] == 0x80)
 			break;
 	}

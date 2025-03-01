@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * Goodix Touchscreen Driver
  * Copyright (C) 2020 - 2021 Goodix, Inc.
@@ -102,7 +101,7 @@ struct goodix_cfg_bin {
 };
 
 #define BIN_CFG_START_LOCAL	6
-static int goodix_read_cfg_bin(const struct firmware *firmware,
+static int goodix_read_cfg_bin(struct device *dev, const struct firmware *firmware,
 		struct goodix_cfg_bin *cfg_bin)
 {
 	int cfgPackageLen;
@@ -146,7 +145,7 @@ static int goodix_read_cfg_bin(const struct firmware *firmware,
 #define CFG_NUM					23
 #define CFG_HEAD_BYTES			32
 #define CFG_INFO_BLOCK_BYTES	8
-static int goodix_parse_cfg_bin(struct goodix_ts_data *ts,
+static int goodix_parse_cfg_bin(struct goodix_ts_core *cd,
 		struct goodix_cfg_bin *cfg_bin, unsigned char sensor_id)
 {
 	u16 cfg_offset;
@@ -172,12 +171,12 @@ static int goodix_parse_cfg_bin(struct goodix_ts_data *ts,
 				cfg_offset += cfg_len;
 				continue;
 			}
-			if (!ts->ic_configs[cfg_type])
-				ts->ic_configs[cfg_type] = kzalloc(sizeof(struct goodix_ic_config), GFP_KERNEL);
+			if (!cd->ic_configs[cfg_type])
+				cd->ic_configs[cfg_type] = kzalloc(sizeof(struct goodix_ic_config), GFP_KERNEL);
 			else
-				memset(ts->ic_configs[cfg_type]->data, 0x00, GOODIX_CFG_MAX_SIZE);
-			ts->ic_configs[cfg_type]->len = cfg_len;
-			memcpy(ts->ic_configs[cfg_type]->data, &cfg_bin->bin_data[cfg_offset], cfg_len);
+				memset(cd->ic_configs[cfg_type]->data, 0x00, GOODIX_CFG_MAX_SIZE);
+			cd->ic_configs[cfg_type]->len = cfg_len;
+			memcpy(cd->ic_configs[cfg_type]->data, &cfg_bin->bin_data[cfg_offset], cfg_len);
 			exist = true;
 			ts_info("find valid config, cfg_type[%d], cfg_len[%d]", cfg_type, cfg_len);
 		} else {
@@ -191,21 +190,21 @@ static int goodix_parse_cfg_bin(struct goodix_ts_data *ts,
 	return 0;
 }
 
-static int goodix_get_config_data(struct goodix_ts_data *ts, u8 sensor_id,
+static int goodix_get_config_data(struct goodix_ts_core *cd, u8 sensor_id,
 					const struct firmware *firmware)
 {
 	struct goodix_cfg_bin cfg_bin = {0};
 	int ret;
 
 	/*get cfg_bin from file system*/
-	ret = goodix_read_cfg_bin(firmware, &cfg_bin);
+	ret = goodix_read_cfg_bin(&cd->pdev->dev, firmware, &cfg_bin);
 	if (ret) {
 		ts_err("failed get valid config bin data");
 		return ret;
 	}
 
 	/*parse cfg bin*/
-	ret = goodix_parse_cfg_bin(ts, &cfg_bin, sensor_id);
+	ret = goodix_parse_cfg_bin(cd, &cfg_bin, sensor_id);
 	if (ret)
 		ts_err("failed parse cfg bin");
 
@@ -215,17 +214,17 @@ static int goodix_get_config_data(struct goodix_ts_data *ts, u8 sensor_id,
 
 #define BRL_SENSOR_ID_REG	0x1002B
 #define DEFAULT_SENSOR_ID	0xFF
-int goodix_get_config_proc(struct goodix_ts_data *ts,
+int goodix_get_config_proc(struct goodix_ts_core *cd,
 				const struct firmware *firmware)
 {
 	u8 sensor_id;
 	int ret;
 
-	ret = ts->bus->read(ts->bus->dev, BRL_SENSOR_ID_REG, &sensor_id, 1);
+	ret = cd->bus->read(cd->bus->dev, BRL_SENSOR_ID_REG, &sensor_id, 1);
 	if (ret < 0) {
 		ts_info("read sensor_id failed, use defalut[%d]", DEFAULT_SENSOR_ID);
 		sensor_id = DEFAULT_SENSOR_ID;
 	}
 
-	return goodix_get_config_data(ts, sensor_id, firmware);
+	return goodix_get_config_data(cd, sensor_id, firmware);
 }

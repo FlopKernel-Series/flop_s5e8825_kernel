@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * Goodix Touchscreen Driver
  * Copyright (C) 2020 - 2021 Goodix, Inc.
@@ -35,10 +34,10 @@ struct goodix_bus_interface goodix_i2c_bus;
 
 /* Berlin read/write ops */
 static int goodix_i2c_read(struct device *dev, unsigned int reg,
-		unsigned char *data, size_t len)
+		unsigned char *data, unsigned int len)
 {
 	struct i2c_client *client = to_i2c_client(dev);
-	struct goodix_ts_data *ts = dev_get_drvdata(dev);
+	struct goodix_ts_core *core_data = dev_get_drvdata(dev);
 	unsigned int transfer_length = 0;
 	unsigned int pos = 0, address = reg;
 	unsigned char get_buf[128], addr_buf[BERLIN_REG_ADDR_SIZE];
@@ -55,16 +54,11 @@ static int goodix_i2c_read(struct device *dev, unsigned int reg,
 		}
 	};
 
-	if (!ts)
+	if (!core_data)
 		return -ENODEV;
 
-	if (ts->plat_data->power_enabled == false) {
+	if (core_data->plat_data->power_enabled == false) {
 		ts_err("IC power is off");
-		return -EIO;
-	}
-
-	if (atomic_read(&ts->plat_data->shutdown_called)) {
-		input_err(true, &client->dev, "%s: shutdown was called\n", __func__);
 		return -EIO;
 	}
 
@@ -73,8 +67,8 @@ static int goodix_i2c_read(struct device *dev, unsigned int reg,
 		return -EBUSY;
 #endif
 
-	if (!ts->plat_data->resume_done.done) {
-		int ret = wait_for_completion_interruptible_timeout(&ts->plat_data->resume_done,
+	if (!core_data->resume_done.done) {
+		int ret = wait_for_completion_interruptible_timeout(&core_data->resume_done,
 				msecs_to_jiffies(SEC_TS_WAKE_LOCK_TIME));
 
 		if (ret <= 0) {
@@ -109,24 +103,12 @@ static int goodix_i2c_read(struct device *dev, unsigned int reg,
 							msgs, 2) == 2)) {
 				memcpy(&data[pos], msgs[1].buf, transfer_length);
 
-				if (ts->debug_flag & SEC_TS_DEBUG_PRINT_READ_CMD) {
+				if (core_data->debug_flag & GOODIX_TS_DEBUG_PRINT_I2C_READ_CMD) {
 					int i;
-					char *dbuff;
-					char dtemp[4] = {0};
-					int dbuff_len = (3 * transfer_length) + 1;
-
-					dbuff = kzalloc(dbuff_len, GFP_KERNEL);
-					if (!dbuff) {
-						r = -EAGAIN;
-						goto read_exit;
-					}
-
-					for (i = 0; i < transfer_length; i++) {
-						snprintf(dtemp, sizeof(dtemp), "%02X ", data[pos + i]);
-						strlcat(dbuff, dtemp, dbuff_len);
-					}
-					ts_info("sec_input : i2c_cmd: R: lenth(%d) pos(%d) 0x%02X | %s", transfer_length, pos, reg, dbuff);
-					kfree(dbuff);
+					pr_info("sec_input : i2c_cmd: R: lenth(%d) pos(%d) 0x%02X | ", transfer_length, pos, reg);
+					for (i = 0; i < transfer_length; i++)
+						pr_cont("%02X ", data[pos + i]);
+					pr_cont("\n");
 				}
 
 				pos += transfer_length;
@@ -135,11 +117,10 @@ static int goodix_i2c_read(struct device *dev, unsigned int reg,
 				break;
 			}
 			ts_info("I2c read retry[%d]:0x%x", retry + 1, reg);
-			ts->plat_data->hw_param.comm_err_count++;
 			sec_delay(20);
 		}
 		if (unlikely(retry == GOODIX_BUS_RETRY_TIMES)) {
-			ts_err("I2c read failed,dev:%02x,reg:%04x,size:%ld",
+			ts_err("I2c read failed,dev:%02x,reg:%04x,size:%u",
 					client->addr, reg, len);
 			r = -EAGAIN;
 			goto read_exit;
@@ -153,10 +134,10 @@ read_exit:
 }
 
 static int goodix_i2c_write(struct device *dev, unsigned int reg,
-		unsigned char *data, size_t len)
+		unsigned char *data, unsigned int len)
 {
 	struct i2c_client *client = to_i2c_client(dev);
-	struct goodix_ts_data *ts = dev_get_drvdata(dev);
+	struct goodix_ts_core *core_data = dev_get_drvdata(dev);
 	unsigned int pos = 0, transfer_length = 0;
 	unsigned int address = reg;
 	unsigned char put_buf[128];
@@ -166,16 +147,11 @@ static int goodix_i2c_write(struct device *dev, unsigned int reg,
 		.flags = !I2C_M_RD,
 	};
 
-	if (!ts)
+	if (!core_data)
 		return -ENODEV;
 
-	if (ts->plat_data->power_enabled == false) {
+	if (core_data->plat_data->power_enabled == false) {
 		ts_err("IC power is off");
-		return -EIO;
-	}
-
-	if (atomic_read(&ts->plat_data->shutdown_called)) {
-		input_err(true, &client->dev, "%s: shutdown was called\n", __func__);
 		return -EIO;
 	}
 
@@ -184,8 +160,8 @@ static int goodix_i2c_write(struct device *dev, unsigned int reg,
 		return -EBUSY;
 #endif
 
-	if (!ts->plat_data->resume_done.done) {
-		int ret = wait_for_completion_interruptible_timeout(&ts->plat_data->resume_done,
+	if (!core_data->resume_done.done) {
+		int ret = wait_for_completion_interruptible_timeout(&core_data->resume_done,
 				msecs_to_jiffies(SEC_TS_WAKE_LOCK_TIME));
 
 		if (ret <= 0) {
@@ -227,33 +203,22 @@ static int goodix_i2c_write(struct device *dev, unsigned int reg,
 				break;
 			}
 			ts_debug("I2c write retry[%d]", retry + 1);
-			ts->plat_data->hw_param.comm_err_count++;
 			sec_delay(20);
 		}
 		if (unlikely(retry == GOODIX_BUS_RETRY_TIMES)) {
-			ts_err("I2c write failed,dev:%02x,reg:%04x,size:%ld",
+			ts_err("I2c write failed,dev:%02x,reg:%04x,size:%u",
 					client->addr, reg, len);
 			r = -EAGAIN;
 			goto write_exit;
 		}
 	}
 
-	if (ts->debug_flag & SEC_TS_DEBUG_PRINT_WRITE_CMD) {
+	if (core_data->debug_flag & GOODIX_TS_DEBUG_PRINT_I2C_WRITE_CMD) {
 		int i;
-		char *dbuff;
-		char dtemp[4] = { 0 };
-		int dbuff_len = (3 * len) + 1;
-
-		dbuff = kzalloc(dbuff_len, GFP_KERNEL);
-		if (!dbuff)
-			goto write_exit;
-
-		for (i = 0; i < len; i++) {
-			snprintf(dtemp, sizeof(dtemp), "%02X ", data[i]);
-			strlcat(dbuff, dtemp, dbuff_len);
-		}
-		ts_info("sec_input : i2c_cmd: W: 0x%02X | %s", reg, dbuff);
-		kfree(dbuff);
+		pr_info("sec_input : i2c_cmd: W: 0x%02X | ", reg);
+		for (i = 0; i < len; i++)
+			pr_cont("%02X ", data[i]);
+		pr_cont("\n");
 	}
 
 write_exit:
@@ -270,37 +235,55 @@ static void goodix_pdev_release(struct device *dev)
 
 static int goodix_i2c_init(struct i2c_client *client)
 {
-	struct goodix_ts_data *ts;
+	struct goodix_ts_core *core_data = NULL;
 	struct sec_ts_plat_data *pdata;
+	struct sec_tclm_data *tdata = NULL;
 	int ret = 0;
 
 	if (client->dev.of_node) {
 		pdata = devm_kzalloc(&client->dev,
 				sizeof(struct sec_ts_plat_data), GFP_KERNEL);
-		if (!pdata)
-			return -ENOMEM;
+
+		if (!pdata) {
+			ret = -ENOMEM;
+			goto error_allocate_pdata;
+		}
 
 		client->dev.platform_data = pdata;
 
 		ret = sec_input_parse_dt(&client->dev);
 		if (ret) {
 			input_err(true, &client->dev, "%s: Failed to parse dt\n", __func__);
-			return ret; // Direct return
+			goto error_allocate_mem;
 		}
+		tdata = devm_kzalloc(&client->dev,
+				sizeof(struct sec_tclm_data), GFP_KERNEL);
+		if (!tdata) {
+			ret = -ENOMEM;
+			goto error_allocate_tdata;
+		}
+
+#ifdef TCLM_CONCEPT
+		sec_tclm_parse_dt(&client->dev, tdata);
+#endif
 	} else {
 		pdata = client->dev.platform_data;
 		if (!pdata) {
+			ret = -ENOMEM;
 			input_err(true, &client->dev, "%s: No platform data found\n", __func__);
-			return -ENOMEM; // Direct return
+			goto error_allocate_pdata;
 		}
 	}
 
-	ts = devm_kzalloc(&client->dev,
-			sizeof(struct goodix_ts_data), GFP_KERNEL);
-	if (!ts)
-		return -ENOMEM;
+	core_data = devm_kzalloc(&client->dev,
+			sizeof(struct goodix_ts_core), GFP_KERNEL);
+	if (!core_data) {
+		ret = -ENOMEM;
+		input_err(true, &client->dev, "%s: Failed to allocate memory for core data\n", __func__);
+		goto error_allocate_mem;
+	}
 
-	i2c_set_clientdata(client, ts);
+	i2c_set_clientdata(client, core_data);
 
 	pdata->pinctrl = devm_pinctrl_get(&client->dev);
 	if (IS_ERR(pdata->pinctrl))
@@ -308,28 +291,42 @@ static int goodix_i2c_init(struct i2c_client *client)
 
 	ptsp = &client->dev;
 
+	if (!tdata) {
+		ret = -ENOMEM;
+		goto err_null_tdata;
+	}
+
+#ifdef TCLM_CONCEPT
+	sec_tclm_initialize(tdata);
+	tdata->client = client;
+	tdata->tclm_read = sec_tclm_data_read;
+	tdata->tclm_write = sec_tclm_data_write;
+	tdata->tclm_execute_force_calibration = sec_tclm_execute_force_calibration;
+	tdata->tclm_parse_dt = sec_tclm_parse_dt;
+#endif
+
 	input_info(true, &client->dev, "%s: init resource\n", __func__);
 
 	return 0;
 
-// error_allocate_mem:
-// error_allocate_pdata:
-// 	input_err(true, &client->dev, "%s: failed(%d)\n", __func__, ret);
-// 	input_log_fix();
-// 	return ret;
+err_null_tdata:
+error_allocate_mem:
+	if (!pdata->not_support_io_ldo)
+		regulator_put(pdata->dvdd);
+	regulator_put(pdata->avdd);
+error_allocate_tdata:
+error_allocate_pdata:
+	input_err(true, &client->dev, "%s: failed(%d)\n", __func__, ret);
+	input_log_fix();
+	return ret;
 }
 
-#if (KERNEL_VERSION(6, 6, 0) <= LINUX_VERSION_CODE)
-static int goodix_i2c_probe(struct i2c_client *client)
-#else
 static int goodix_i2c_probe(struct i2c_client *client,
 		const struct i2c_device_id *dev_id)
-#endif
 {
-	int ret;
-	struct goodix_bus_interface *bus;
+	int ret = 0;
 
-	ts_info("goodix i2c probe in 2024");
+	ts_info("goodix i2c probe in");
 	ret = i2c_check_functionality(client->adapter,
 			I2C_FUNC_I2C);
 	if (!ret)
@@ -341,12 +338,11 @@ static int goodix_i2c_probe(struct i2c_client *client,
 		return ret;
 	}
 
-	bus = &goodix_i2c_bus;
-	bus->bus_type = GOODIX_BUS_TYPE_I2C;
-	bus->dev = &client->dev;
-	bus->read = goodix_i2c_read;
-	bus->write = goodix_i2c_write;
-
+	goodix_i2c_bus.bus_type = GOODIX_BUS_TYPE_I2C;
+	goodix_i2c_bus.dev = &client->dev;
+	goodix_i2c_bus.read = goodix_i2c_read;
+	goodix_i2c_bus.write = goodix_i2c_write;
+	/* ts core device */
 	goodix_pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
 	if (!goodix_pdev)
 		return -ENOMEM;
@@ -354,17 +350,24 @@ static int goodix_i2c_probe(struct i2c_client *client,
 	goodix_pdev->name = GOODIX_CORE_DRIVER_NAME;
 	goodix_pdev->id = 0;
 	goodix_pdev->num_resources = 0;
-	goodix_pdev->dev.platform_data = bus;
+	/*
+	 * you can find this platform dev in
+	 * /sys/devices/platform/goodix_ts.0
+	 * goodix_pdev->dev.parent = &client->dev;
+	 */
+	goodix_pdev->dev.platform_data = &goodix_i2c_bus;
 	goodix_pdev->dev.release = goodix_pdev_release;
 
+	/* register platform device, then the goodix_ts_core
+	 * module will probe the touch device.
+	 */
 	ret = platform_device_register(goodix_pdev);
 	if (ret) {
 		ts_err("failed register goodix platform device, %d", ret);
 		goto err_pdev;
 	}
-
 	ts_info("i2c probe out");
-	return 0; // Correct return value on success
+	return ret;
 
 err_pdev:
 	kfree(goodix_pdev);
@@ -375,17 +378,16 @@ err_pdev:
 
 static int goodix_i2c_dev_remove(struct i2c_client *client)
 {
+	if (!goodix_pdev)
+		return 0;
+
 	ts_info("called");
-
-	if (goodix_pdev) {
-		platform_device_unregister(goodix_pdev);
-		goodix_pdev = NULL;
-	}
-
+	platform_device_unregister(goodix_pdev);
+	goodix_pdev = NULL;
 	return 0;
 }
 
-#if KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 static void goodix_i2c_remove(struct i2c_client *client)
 {
 	goodix_i2c_dev_remove(client);
@@ -400,13 +402,11 @@ static int goodix_i2c_remove(struct i2c_client *client)
 
 static void goodix_i2c_shutdown(struct i2c_client *client)
 {
-	struct sec_ts_plat_data *pdata = client->dev.platform_data;
-
 	ts_info("called");
-	atomic_set(&pdata->shutdown_called, true);
 	goodix_i2c_remove(client);
 }
 
+#ifdef CONFIG_OF
 static const struct of_device_id i2c_matches[] = {
 	{.compatible = "goodix,berlin",},
 	{.compatible = "goodix,gt9897",},
@@ -417,6 +417,7 @@ static const struct of_device_id i2c_matches[] = {
 	{},
 };
 MODULE_DEVICE_TABLE(of, i2c_matches);
+#endif
 
 static const struct i2c_device_id i2c_id_table[] = {
 	{TS_DRIVER_NAME, 0},
