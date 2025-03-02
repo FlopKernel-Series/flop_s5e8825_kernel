@@ -173,7 +173,7 @@ int slsi_change_virtual_intf(struct wiphy *wiphy,
 
 	SLSI_NET_DBG1(dev, SLSI_CFG80211, "type:%u, iftype:%d\n", type, ndev_vif->iftype);
 
-	if (ndev_vif->vif_type != FAPI_VIFTYPE_AP && WARN_ON(ndev_vif->activated)) {
+	if (WARN_ON(ndev_vif->activated)) {
 		r = -EINVAL;
 		goto exit;
 	}
@@ -1522,8 +1522,7 @@ int slsi_connect(struct wiphy *wiphy, struct net_device *dev,
 	 */
 	if (ndev_vif->probe_req_ies) {
 		if (ndev_vif->iftype == NL80211_IFTYPE_P2P_CLIENT) {
-			if (sme->crypto.wpa_versions == NL80211_WPA_VERSION_2
-				|| sme->crypto.wpa_versions == NL80211_WPA_VERSION_3)
+			if (sme->crypto.wpa_versions == 2)
 				ndev_vif->delete_probe_req_ies = true; /* Stored Probe Req can be deleted at vif
 									* deletion after WPA2 association
 									*/
@@ -1860,7 +1859,12 @@ int slsi_del_station(struct wiphy *wiphy, struct net_device *dev,
 		slsi_clear_cached_ies(&ndev_vif->ap.cache_wpa_ie, &ndev_vif->ap.wpa_ie_len);
 		slsi_clear_cached_ies(&ndev_vif->ap.cache_wmm_ie, &ndev_vif->ap.wmm_ie_len);
 
+		netif_carrier_off(dev);
+
 		/* All STA related packets and info should already have been flushed */
+		if (slsi_mlme_del_vif(sdev, dev) != 0)
+			SLSI_NET_ERR(dev, "slsi_mlme_del_vif failed\n");
+		slsi_vif_deactivated(sdev, dev);
 		ndev_vif->ipaddress = cpu_to_be32(0);
 
 		if (ndev_vif->ap.p2p_gc_keys_set) {
