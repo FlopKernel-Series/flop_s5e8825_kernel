@@ -15,7 +15,6 @@
 #include <linux/of_gpio.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
-#include <linux/sec_detect.h>
 
 static enum power_supply_property sm5714_fuelgauge_props[] = {
 	POWER_SUPPLY_PROP_ONLINE,
@@ -3211,7 +3210,6 @@ static struct platform_driver sm5714_fuelgauge_driver = {
 
 static int __init sm5714_fuelgauge_init(void)
 {
-	printk(KERN_INFO "%s Initializing sm5714 fuelgauge driver\n", sec_detect_label);
 	pr_info("%s:\n", __func__);
 	return platform_driver_register(&sm5714_fuelgauge_driver);
 }
