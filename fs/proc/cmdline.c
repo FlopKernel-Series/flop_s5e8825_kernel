@@ -3,62 +3,98 @@
 #include <linux/init.h>
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
+#include <linux/slab.h>
 
 #ifdef CONFIG_SEC_DETECT_CMDLINE_PATCH
-#include <linux/string.h> // Include for string manipulation functions
+#include <linux/string.h>
 #include <linux/sec_detect.h>
 
-#define BUF_SIZE 4096   // Define a buffer size
+#define BUF_SIZE 4096
 
-static void cmdline_panel_patch(char *command_line)
+static void cmdline_panel_patch(char *dest, size_t dest_size, const char *src)
 {
-	char buf[BUF_SIZE];
-	char *pos = buf;
-	char *token;
+	char *buf;
+	char *pos, *token;
 	const char *delim = " ";
 	int offset = 0;
+	int remaining, written;
 
-	// Initialize an empty buffer
-	memset(buf, 0, BUF_SIZE);
+	buf = kmalloc(BUF_SIZE, GFP_KERNEL);
+	if (!buf) {
+		strncpy(dest, src, dest_size);
+		dest[dest_size - 1] = '\0';
+		return;
+	}
 
-	// Copy the command_line to the buffer
-	strncpy(buf, command_line, BUF_SIZE - 1);
+	strncpy(buf, src, BUF_SIZE - 1);
+	buf[BUF_SIZE - 1] = '\0';
+	pos = buf;
 
-	// Tokenize the buffer to process each entry
+	memset(dest, 0, dest_size);
+
 	while ((token = strsep(&pos, delim)) != NULL) {
+		remaining = dest_size - offset;
+
+		if (remaining <= 0)
+			break;
+
 		if (sec_needs_decon) {
 			if (strstr(token, "mcd-panel.") == token) {
-				offset += snprintf(command_line + offset, BUF_SIZE - offset, "mcd-panel-decon%s ", token + strlen("mcd-panel"));
+				written = snprintf(dest + offset, remaining, "mcd-panel-decon%s ", token + strlen("mcd-panel"));
 			} else if (strstr(token, "exynos-drm.") == token) {
-				offset += snprintf(command_line + offset, BUF_SIZE - offset, "exynos-drm-decon%s ", token + strlen("exynos-drm"));
+				written = snprintf(dest + offset, remaining, "exynos-drm-decon%s ", token + strlen("exynos-drm"));
 			} else if (strstr(token, "mcd-panel-samsung-drv.") == token) {
-				offset += snprintf(command_line + offset, BUF_SIZE - offset, "mcd-panel-samsung-drv-decon%s ", token + strlen("mcd-panel-samsung-drv"));
+				written = snprintf(dest + offset, remaining, "mcd-panel-samsung-drv-decon%s ", token + strlen("mcd-panel-samsung-drv"));
 			} else {
-				offset += snprintf(command_line + offset, BUF_SIZE - offset, "%s ", token);
+				written = snprintf(dest + offset, remaining, "%s ", token);
 			}
 		} else {
 			if (strstr(token, "mcd-panel-samsung-drv.") == token) {
-				offset += snprintf(command_line + offset, BUF_SIZE - offset, "mcd-panel-samsung-drv-usdm%s ", token + strlen("mcd-panel-samsung-drv"));
+				written = snprintf(dest + offset, remaining, "mcd-panel-samsung-drv-usdm%s ", token + strlen("mcd-panel-samsung-drv"));
 			} else {
-				offset += snprintf(command_line + offset, BUF_SIZE - offset, "%s ", token);
+				written = snprintf(dest + offset, remaining, "%s ", token);
 			}
+		}
+
+		if (written < 0) {
+			break;
+		} else if (written >= remaining) {
+			offset = dest_size - 1;
+			break;
+		} else {
+			offset += written;
 		}
 	}
 
-	// Remove the trailing space
-	if (offset > 0 && command_line[offset - 1] == ' ')
-		command_line[offset - 1] = '\0';
+	if (offset > 0 && dest[offset - 1] == ' ') {
+		dest[offset - 1] = '\0';
+	} else {
+		dest[offset] = '\0';
+	}
+
+	kfree(buf);
 }
 #endif
 
 static int cmdline_proc_show(struct seq_file *m, void *v)
 {
 #ifdef CONFIG_SEC_DETECT_CMDLINE_PATCH
-	// Modify the saved_command_line before showing it
-	cmdline_panel_patch(saved_command_line);
+	char *patched_cmdline;
+
+	patched_cmdline = kmalloc(BUF_SIZE, GFP_KERNEL);
+	if (!patched_cmdline) {
+		seq_puts(m, saved_command_line);
+		goto out;
+	}
+
+	cmdline_panel_patch(patched_cmdline, BUF_SIZE, saved_command_line);
+	seq_puts(m, patched_cmdline);
+	kfree(patched_cmdline);
+#else
+	seq_puts(m, saved_command_line);
 #endif
 
-	seq_puts(m, saved_command_line);
+out:
 	seq_putc(m, '\n');
 	return 0;
 }
