@@ -4317,8 +4317,10 @@ static int hl7132_charger_probe(struct i2c_client *client, const struct i2c_devi
 			goto FAIL_IRQ;
 		}
 	}
-	
-	hl7132_create_debugfs_entries(charger);
+
+	ret = hl7132_create_debugfs_entries(charger);
+	if (ret < 0)
+		goto FAIL_DEBUGFS;
 
 #if IS_ENABLED(CONFIG_BATTERY_SAMSUNG)
 	sec_chg_set_dev_init(SC_DEV_DIR_CHG);
@@ -4327,8 +4329,8 @@ static int hl7132_charger_probe(struct i2c_client *client, const struct i2c_devi
 
 	return 0;
 
-// FAIL_DEBUGFS:
-// 	free_irq(charger->pdata->irq_gpio, NULL);
+FAIL_DEBUGFS:
+	free_irq(charger->pdata->irq_gpio, NULL);
 FAIL_IRQ:
 	power_supply_unregister(charger->psy_chg);
 	wakeup_source_unregister(charger->monitor_ws);
