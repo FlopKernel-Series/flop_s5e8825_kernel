@@ -21,12 +21,14 @@
 #include <linux/power_supply.h>
 #include "../../common/sec_charging_common.h"
 
+#if IS_ENABLED(CONFIG_MFD_SM5714)
 #include <linux/mfd/core.h>
 #include <linux/mfd/sm/sm5714/sm5714.h>
 #include <linux/mfd/sm/sm5714/sm5714-private.h>
 #include <linux/regulator/machine.h>
-
-
+#else
+#include "sm5714_fake_mfd_fg.h"
+#endif
 
 /* address should be shifted to the right 1bit.
  * R/W bit should NOT be included.

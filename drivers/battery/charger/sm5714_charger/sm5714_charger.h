@@ -12,8 +12,13 @@
 #ifndef __SM5714_CHARGER_H__
 #define __SM5714_CHARGER_H__
 
+#if IS_ENABLED(CONFIG_MFD_SM5714)
 #include <linux/mfd/sm/sm5714/sm5714.h>
 #include <linux/mfd/sm/sm5714/sm5714-private.h>
+#else
+#include "sm5714_fake_mfd_chg.h"
+#endif
+
 #include "../../common/sec_charging_common.h"
 #include <linux/types.h>
 
@@ -104,6 +109,7 @@ struct sm5714_charger_platform_data {
 	unsigned int irq_pogo_int;
 #endif
 	bool boosting_voltage_aicl;
+	int aicl_work_delay; /*ms*/
 	bool ovp_bypass_mode;
 };
 
@@ -134,6 +140,9 @@ struct sm5714_charger_data {
 	int unhealth_cnt;
 	bool is_charging;
 	bool otg_on;
+	bool is_sm5714a;
+	int ari_cnt;
+	bool spcom;
 
 	/* sm5714 Charger-IRQs */
 	int irq_vbuspok;

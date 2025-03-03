@@ -129,7 +129,7 @@ int muic_request_disable_afc_state(void)
 {
 	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
-	muic_afc_request_voltage(FLED, 5); /* 9V(12V) -> 5V */
+	muic_disable_afc(1); /* 9V(12V) -> 5V */
 
 	return 0;
 }
@@ -163,6 +163,11 @@ int muic_check_fled_state(int enable, int mode)
 
 	if ((muic_data->fled_torch_enable == false) &&
 			(muic_data->fled_flash_enable == false)) {
+		if (muic_data->hv_voltage == 5) {
+			pr_info("[%s:%s] skip high voltage setting\n",
+					MUIC_DEV_NAME, __func__);
+			return 0;
+		}
 		if ((mode == FLED_MODE_TORCH) && (enable == false)) {
 			cancel_delayed_work(&muic_data->afc_torch_work);
 			schedule_delayed_work(&muic_data->afc_torch_work,
@@ -170,8 +175,7 @@ int muic_check_fled_state(int enable, int mode)
 			pr_info("[%s:%s] afc_torch_work start(5sec)\n",
 					MUIC_DEV_NAME, __func__);
 		} else {
-			muic_afc_request_voltage(FLED, 9);  /* 5V -> 9V(12V) */
-
+			muic_disable_afc(0);  /* 5V -> 9V(12V) */
 		}
 	}
 
@@ -499,7 +503,7 @@ static void muic_afc_torch_work(struct work_struct *work)
 		return;
 	}
 
-	muic_afc_request_voltage(FLED, 9);  /* 5V -> 9V(12V) */
+	muic_disable_afc(0);  /* 5V -> 9V(12V) */
 }
 
 int sm5714_set_afc_ctrl_reg(struct sm5714_muic_data *muic_data, int shift,
@@ -639,13 +643,6 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 	if (sm5714_is_afc_disabled(muic_data)) {
 		pr_info("[%s:%s] Skip AFC\n",
 			MUIC_DEV_NAME, __func__);
-
-		afctxd = SM5714_MUIC_HV_5V;
-		ret = sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCTXD, afctxd);
-		if (ret < 0)
-			pr_err("[%s:%s] err write AFC_TXD(%d)\n",
-					MUIC_DEV_NAME, __func__, ret);
-
 		muic_data->attached_dev = ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC;
 		muic_notifier_attach_attached_dev(muic_data->attached_dev);
 		return 0;
@@ -1223,6 +1220,7 @@ int sm5714_muic_afc_set_voltage(int vol)
 #endif
 
 	pr_info("[%s:%s] vol = %dV\n", MUIC_DEV_NAME, __func__, vol);
+	muic_data->hv_voltage = vol;
 
 	if (vol == 5) {
 		if ((muic_data->attached_dev ==
@@ -1250,8 +1248,6 @@ static void muic_afc_retry_work(struct work_struct *work)
 	struct i2c_client *i2c = muic_data->i2c;
 	int ret = 0, vbvolt = 0;
 
-	mutex_lock(&muic_data->afc_mutex);
-
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCSTATUS);
 	pr_info("[%s:%s]: Read REG_AFCSTATUS = [0x%02x]\n",
 			MUIC_DEV_NAME, __func__, ret);
@@ -1268,17 +1264,8 @@ static void muic_afc_retry_work(struct work_struct *work)
 			muic_notifier_detach_attached_dev(
 					muic_data->attached_dev);
 			muic_data->attached_dev = ATTACHED_DEV_NONE_MUIC;
-			goto EOR;
+			return;
 		}
-
-		if (muic_data->afc_dp_reset_count >= SM5714_AFC_DP_RESET_LIMIT){
-			muic_data->attached_dev = ATTACHED_DEV_TA_MUIC;
-			muic_notifier_attach_attached_dev(muic_data->attached_dev);
-			pr_info("[%s:%s] DP RESET skip\n",
-				MUIC_DEV_NAME, __func__);
-			goto EOR;
-		}
-		muic_data->afc_dp_reset_count++;
 
 		pr_info("[%s:%s] [MUIC] device type is afc prepare, DP_RESET\n",
 				MUIC_DEV_NAME, __func__);
@@ -1286,8 +1273,6 @@ static void muic_afc_retry_work(struct work_struct *work)
 		/* DP_RESET '1' */
 		sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_DP_RESET, 1);
 	}
-EOR:
-	mutex_unlock(&muic_data->afc_mutex);
 }
 
 #if IS_ENABLED(CONFIG_MUIC_SUPPORT_PDIC)
