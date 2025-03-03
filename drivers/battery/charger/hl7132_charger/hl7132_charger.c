@@ -4144,6 +4144,7 @@ DEFINE_SIMPLE_ATTRIBUTE(vbat_reg_debug_ops, get_vbat_reg, set_vbat_reg, "%02lld\
 DEFINE_SIMPLE_ATTRIBUTE(iin_cfg_debug_ops, get_iin_cfg, set_iin_cfg, "%02lld\n");
 DEFINE_SIMPLE_ATTRIBUTE(tp_set_debug_ops, get_tp_set_cfg, set_tp_set_cfg, "%02lld\n");
 
+#if IS_ENABLED(CONFIG_DEBUG_FS)
 static int hl7132_create_debugfs_entries(struct hl7132_charger *chg)
 {
 	struct dentry *ent;
@@ -4206,6 +4207,7 @@ static int hl7132_create_debugfs_entries(struct hl7132_charger *chg)
 
 	return rc;
 }
+#endif
 
 static enum power_supply_property hl7132_psy_props[] = {
 	POWER_SUPPLY_PROP_STATUS,
@@ -4318,9 +4320,11 @@ static int hl7132_charger_probe(struct i2c_client *client, const struct i2c_devi
 		}
 	}
 
+#if IS_ENABLED(CONFIG_DEBUG_FS)
 	ret = hl7132_create_debugfs_entries(charger);
 	if (ret < 0)
 		goto FAIL_DEBUGFS;
+#endif
 
 #if IS_ENABLED(CONFIG_BATTERY_SAMSUNG)
 	sec_chg_set_dev_init(SC_DEV_DIR_CHG);
@@ -4329,8 +4333,10 @@ static int hl7132_charger_probe(struct i2c_client *client, const struct i2c_devi
 
 	return 0;
 
+#if IS_ENABLED(CONFIG_DEBUG_FS)
 FAIL_DEBUGFS:
 	free_irq(charger->pdata->irq_gpio, NULL);
+#endif
 FAIL_IRQ:
 	power_supply_unregister(charger->psy_chg);
 	wakeup_source_unregister(charger->monitor_ws);

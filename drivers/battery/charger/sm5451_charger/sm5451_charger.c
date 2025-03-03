@@ -1906,6 +1906,7 @@ static int sm5451_dbg_write_reg(void *data, u64 val)
 DEFINE_SIMPLE_ATTRIBUTE(register_debug_ops, sm5451_dbg_read_reg,
 	sm5451_dbg_write_reg, "0x%02llx\n");
 
+#if IS_ENABLED(CONFIG_DEBUG_FS)
 static int sm5451_create_debugfs_entries(struct sm5451_charger *sm5451)
 {
 	struct dentry *ent;
@@ -1928,6 +1929,7 @@ static int sm5451_create_debugfs_entries(struct sm5451_charger *sm5451)
 
 	return 0;
 }
+#endif
 
 static const struct i2c_device_id sm5451_charger_id_table[] = {
 	{ "sm5451-charger", .driver_data = SM5451_MAIN },
@@ -2092,11 +2094,13 @@ static int sm5451_charger_probe(struct i2c_client *i2c,
 	if (ret)
 		dev_err(sm5451->dev, "%s : Failed to create_attrs\n", __func__);
 
+#if IS_ENABLED(CONFIG_DEBUG_FS)
 	ret = sm5451_create_debugfs_entries(sm5451);
 	if (ret < 0) {
 		dev_err(sm5451->dev, "%s: fail to create debugfs(ret=%d)\n", __func__, ret);
 		goto err_psy_chg;
 	}
+#endif
 
 	dev_info(sm5451->dev, "%s: done. (rev_id=0x%x)[%s]\n", __func__,
 		sm5451->pdata->rev_id, SM5451_DC_VERSION);
