@@ -1532,11 +1532,14 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
 	if (ret != 1)
 		return -EINVAL;
 
-	/* Round down to kHz for PM QoS */
-	ret = dev_pm_qos_update_request(&df->user_min_freq_req,
+	if (df->governor && strncmp(df->governor->name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
+		DEVFREQ_NAME_LEN)) {
+			/* Round down to kHz for PM QoS */
+			ret = dev_pm_qos_update_request(&df->user_min_freq_req,
 					value / HZ_PER_KHZ);
-	if (ret < 0)
-		return ret;
+			if (ret < 0)
+				return ret;
+	}
 
 	return count;
 }
@@ -1588,9 +1591,12 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
 	else
 		value = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
 
-	ret = dev_pm_qos_update_request(&df->user_max_freq_req, value);
-	if (ret < 0)
-		return ret;
+	if (df->governor && strncmp(df->governor->name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
+                DEVFREQ_NAME_LEN)) {
+		ret = dev_pm_qos_update_request(&df->user_max_freq_req, value);
+		if (ret < 0)
+			return ret;
+	}
 
 	return count;
 }
