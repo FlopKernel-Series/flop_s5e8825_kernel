@@ -578,6 +578,12 @@ config SOC_S5E8825_GPU_OC
     help
       Choose this option enable preconfigured overclocked frequencies for the Exynos 1280 Mali GPU.
 
+config SOC_S5E8825_THERMAL_OVERRIDE
+	bool "Thermal override support for S5E8825 SoC"
+	depends on SOC_S5E8825
+	help
+	  Allows to override the thermal throttling of the Exynos 1280 SoC.
+
 source "drivers/soc/samsung/acpm/Kconfig"
 
 source "drivers/soc/samsung/debug/Kconfig"

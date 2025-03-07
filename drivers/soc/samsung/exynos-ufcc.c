@@ -968,6 +968,7 @@ static void freq_qos_release(struct work_struct *work)
 	}
 }
 
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 static int ufc_update_little_min_limit(int target_freq)
 {
 	struct ufc_domain *ufc_dom;
@@ -1001,6 +1002,7 @@ static int ufc_update_little_min_limit(int target_freq)
 
 	return 0;
 }
+#endif
 
 static void ufc_update_max_limit(void)
 {
@@ -1044,6 +1046,7 @@ static void ufc_update_max_limit(void)
 	}
 }
 
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 static void ufc_update_min_limit_wo_boost(void)
 {
 	struct ufc_domain *ufc_dom;
@@ -1079,6 +1082,7 @@ static void ufc_update_min_limit_wo_boost(void)
 						target_freq);
 	}
 }
+#endif
 
 /*
  * sysfs function
@@ -1111,11 +1115,13 @@ static ssize_t cpufreq_max_limit_show(struct kobject *kobj, char *buf)
 static ssize_t cpufreq_max_limit_store(struct kobject *kobj,
 					const char *buf, size_t count)
 {
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	int input;
 
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 	ufc_update_request(USERSPACE, PM_QOS_MAX_LIMIT, input);
+#endif
 
 	return count;
 }
@@ -1166,12 +1172,14 @@ static ssize_t limit_stat_show(struct kobject *kobj, char *buf)
 static ssize_t cpufreq_min_limit_store(struct kobject *kobj,
 				const char *buf, size_t count)
 {
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	int input;
 
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 
 	ufc_update_request(USERSPACE, PM_QOS_MIN_LIMIT, input);
+#endif
 
 	return count;
 }
@@ -1184,6 +1192,7 @@ static ssize_t cpufreq_min_limit_wo_boost_show(struct kobject *kobj, char *buf)
 static ssize_t cpufreq_min_limit_wo_boost_store(struct kobject *kobj,
 		                                        const char *buf, size_t count)
 {
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	int input;
 
 	if (!sscanf(buf, "%8d", &input))
@@ -1191,6 +1200,7 @@ static ssize_t cpufreq_min_limit_wo_boost_store(struct kobject *kobj,
 
 	ufc.last_min_wo_boost_input = input;
 	ufc_update_min_limit_wo_boost();
+#endif
 
 	return count;
 }
@@ -1203,12 +1213,14 @@ static ssize_t little_max_limit_show(struct kobject *kobj, char *buf)
 static ssize_t little_max_limit_store(struct kobject *kobj, const char *buf,
 								size_t count)
 {
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	int input;
 
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 
 	ufc_update_request(USERSPACE, PM_QOS_LITTLE_MAX_LIMIT, input);
+#endif
 
 	return count;
 }
@@ -1221,6 +1233,7 @@ static ssize_t little_min_limit_show(struct kobject *kobj, char *buf)
 static ssize_t little_min_limit_store(struct kobject *kobj, const char *buf,
 								size_t count)
 {
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	int input;
 
 	if (!sscanf(buf, "%8d", &input))
@@ -1228,6 +1241,7 @@ static ssize_t little_min_limit_store(struct kobject *kobj, const char *buf,
 
 	ufc.prio_vfreq[PM_QOS_LITTLE_MIN_LIMIT] = input;
 	ufc_update_little_min_limit(input);
+#endif
 	return count;
 }
 
@@ -1240,6 +1254,7 @@ static ssize_t over_limit_show(struct kobject *kobj, char *buf)
 static ssize_t over_limit_store(struct kobject *kobj, const char *buf,
 								size_t count)
 {
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	int input;
 
 	if (!sscanf(buf, "%8d", &input))
@@ -1247,7 +1262,7 @@ static ssize_t over_limit_store(struct kobject *kobj, const char *buf,
 
 	ufc.prio_vfreq[PM_QOS_OVER_LIMIT] = input;
 	ufc_update_request(USERSPACE, PM_QOS_OVER_LIMIT, input);
-
+#endif
 	return count;
 }
 
