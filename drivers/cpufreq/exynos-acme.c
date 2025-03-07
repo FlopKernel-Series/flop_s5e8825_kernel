@@ -1737,6 +1737,14 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 		return -ENODATA;
 	}
 
+#if defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
+	if (domain->id == 1) { // BIG
+		domain->boot_freq = 2400000;
+	} else if (domain->id == 0) {
+		domain->boot_freq = 2002000;
+	}
+#endif
+
 	/*
 	 * Directly read the frequency table from the device tree.
 	 */
@@ -1793,7 +1801,9 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 	/*
 	 * Initialize other items.
 	 */
+#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 	domain->boot_freq = cal_dfs_get_boot_freq(domain->cal_id);
+#endif
 	domain->resume_freq = cal_dfs_get_resume_freq(domain->cal_id);
 	domain->old = get_freq(domain);
 
