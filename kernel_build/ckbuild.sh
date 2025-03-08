@@ -101,8 +101,8 @@ CLANG_TYPE="aosp"
 
 ## Info message
 LINKER="ld.lld"
-DEVICE="Unified 1280"
-CODENAME="unity1280"
+DEVICE="Exynos 1280 Family"
+CODENAME="exynos1280"
 
 ## Secrets
 TELEGRAM_CHAT_ID="$(cat ../chat_ci)"
