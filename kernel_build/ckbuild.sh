@@ -157,8 +157,8 @@ fi
 LINUX_VER=$(make kernelversion 2>/dev/null)
 
 if [ $DO_KSU -eq 1 ]; then
-    FK_TYPE="KSU"
-    FK_TYPE_SHORT="K"
+    FK_TYPE="KSUNext"
+    FK_TYPE_SHORT="KN"
     DEFCONFIG="s5e8825-unified-ksu_defconfig"
 else
     FK_TYPE="Vanilla"
