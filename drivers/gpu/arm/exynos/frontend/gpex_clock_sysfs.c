@@ -29,7 +29,11 @@
 
 static struct _clock_info *clk_info;
 #ifdef CONFIG_SOC_S5E8825_GPU_OC
+#ifdef CONFIG_SOC_S5E8825_OVERCLOCK
 static int gpu_unlock = 1;
+#else
+static int gpu_unlock = 0;
+#endif
 #endif
 static int gpu_clklck = 1;
 
