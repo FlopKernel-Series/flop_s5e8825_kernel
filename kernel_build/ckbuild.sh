@@ -62,6 +62,7 @@ TMPDIR="$KDIR/kernel_build/tmp"
 IN_PLATFORM="$KDIR/kernel_build/vboot_platform"
 IN_DLKM="$KDIR/kernel_build/vboot_dlkm"
 IN_DTB="$OUTDIR/arch/arm64/boot/dts/exynos/s5e8825.dtb"
+IN_DTB_OC="$OUTDIR/arch/arm64/boot/dts/exynos/s5e8825_oc.dtb"
 PLATFORM_RAMDISK_DIR="$TMPDIR/ramdisk_platform"
 DLKM_RAMDISK_DIR="$TMPDIR/ramdisk_dlkm"
 PREBUILT_RAMDISK="$KDIR/kernel_build/boot/ramdisk"
@@ -114,6 +115,7 @@ DO_CLEAN=0
 DO_MENUCONFIG=0
 IS_RELEASE=0
 DO_TG=0
+DO_OC=0
 DEFCONFIG="$DEFAULT_DEFCONFIG"
 
 for arg in "$@"; do
@@ -141,6 +143,10 @@ for arg in "$@"; do
         echo -e "\nINFO: oshi.at argument passed, build will be uploaded to oshi.at..."
         DO_OSHI=1
     fi
+    if [[ "$arg" == *u* ]]; then
+        echo -e "\nINFO: Unlocked variant argument passed, unlocked build will be made..."
+        DO_OC=1
+    fi
 done
 
 if [[ "$IS_RELEASE" == "1" ]]; then
@@ -161,8 +167,13 @@ else
     FK_TYPE_SHORT="V"
 fi
 
-ZIP_PATH="$KDIR/kernel_build/FloppyKernel_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
-TAR_PATH="$KDIR/kernel_build/FloppyKernel_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
+if [[ "$DO_OC" == "1" ]]; then
+    FK_TYPE="$FK_TYPE+Unlocked"
+    FK_TYPE_SHORT="$FK_TYPE_SHORT+U"
+fi
+
+ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
+TAR_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
 
 echo -e "\nINFO: Build info:
 - Device: $DEVICE ($CODENAME)
@@ -344,6 +355,11 @@ build() {
         scripts/config --file "$KDIR/out/.config" --disable LOCALVERSION_AUTO
     fi
 
+    if [[ "$DO_OC" == "1" ]]; then
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_OVERCLOCK
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_GPU_OC
+    fi
+
     if [[ "$DO_MENUCONFIG" == "1" ]]; then
         make O=out menuconfig
     fi
@@ -447,7 +463,11 @@ post_build() {
     rm -rf "$MODULES_DIR/0.0"
 
     echo -e "\nINFO: Building dtb image..."
-    python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
+    if [[ "$DO_OC" == "1" ]]; then
+        python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB_OC" || exit 1
+    else
+        python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
+    fi
 
     echo -e "\nINFO: Building boot image..."
     "$MKBOOTIMG" --header_version 4 \

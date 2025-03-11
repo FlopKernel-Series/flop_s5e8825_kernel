@@ -584,6 +584,14 @@ config SOC_S5E8825_THERMAL_OVERRIDE
 	help
 	  Allows to override the thermal throttling of the Exynos 1280 SoC.
 
+config SOC_S5E8825_OVERCLOCK
+	bool "Enable overclocking support for S5E8825 SoC"
+	depends on SOC_S5E8825
+	select SOC_S5E8825_GPU_OC
+	default n
+	help
+	  Allows to enable overclocking for the Exynos 1280 SoC.
+
 source "drivers/soc/samsung/acpm/Kconfig"
 
 source "drivers/soc/samsung/debug/Kconfig"
