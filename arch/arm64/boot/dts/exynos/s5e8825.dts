@@ -1984,14 +1984,14 @@
 				};
 
 				big-switch-on {
-					temperature = <0xea60>;
+					temperature = <0x11170>;
 					hysteresis = <0x7d0>;
 					type = "active";
 					phandle = <0x188>;
 				};
 
 				big-control-temp {
-					temperature = <0x124f8>;
+					temperature = <0x14c08>;
 					hysteresis = <0x1388>;
 					type = "passive";
 					phandle = <0x04>;
