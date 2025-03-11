@@ -22,7 +22,6 @@
 #include <dt-bindings/soc/samsung/exynos-bts.h>
 #include <soc/samsung/exynos-pd.h>
 #include <soc/samsung/bts.h>
-#include <linux/rtmutex.h>
 
 #define DEFAULT_QOS	0x4
 #define MAX_QOS		0xF
@@ -81,7 +80,7 @@ struct bts_device {
 	struct device		*dev;
 
 	spinlock_t		lock;
-	struct rt_mutex mutex_lock;
+	struct mutex		mutex_lock;
 
 	unsigned int		num_bts;
 	unsigned int		num_scen;
