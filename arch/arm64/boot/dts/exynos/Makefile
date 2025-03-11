@@ -1,5 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0
+ifeq ($(CONFIG_SOC_S5E8825_OVERCLOCK),y)
+dtb-$(CONFIG_ARCH_EXYNOS) += s5e8825_oc.dtb
+else
 dtb-$(CONFIG_ARCH_EXYNOS) += s5e8825.dtb
+endif
 
 ifeq ($(CONFIG_ARCH_EXYNOS),y)
 dtbo-y += samsung/a25x/a25x_swa_open_w00_r00.dtbo
