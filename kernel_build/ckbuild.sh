@@ -358,6 +358,8 @@ build() {
     if [[ "$DO_OC" == "1" ]]; then
         scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_OVERCLOCK
         scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_GPU_OC
+        scripts/config --file "$KDIR/out/.config" --set-val CONFIG_SOC_S5E8825_CL1_UV 0
+        scripts/config --file "$KDIR/out/.config" --set-val CONFIG_SOC_S5E8825_CL0_UV 0
     fi
 
     if [[ "$DO_MENUCONFIG" == "1" ]]; then
