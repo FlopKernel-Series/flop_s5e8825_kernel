@@ -167,6 +167,7 @@ struct exynos_tmu_data {
 	struct freq_qos_request emergency_throttle_request;
 	ktime_t last_thermal_status_updated;
 	ktime_t thermal_status[3];
+	int thermal_mode;
 };
 
 extern int exynos_build_static_power_table(struct device_node *np, int **var_table,
