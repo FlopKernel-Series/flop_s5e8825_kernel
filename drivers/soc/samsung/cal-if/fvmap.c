@@ -482,6 +482,21 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
             pr_info("  Level %d: %d kHz, %d uV\n", j, old->table[j].rate, old->table[j].volt * STEP_UV);
         }
 
+		/* Adjust voltage for 2496000 kHz in CPUCL1 after undervolt logic */
+		if (fvmap_header[i].domain_id == S5E8825_DMID_CPUCL1) {
+			for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
+				/* Check if the frequency is 2496000 kHz */
+				if (old->table[j].rate == 2496000) {
+					/* Set the voltage of 2496000 kHz to match the next frequency (2400000 kHz) */
+					if (j + 1 < fvmap_header[i].num_of_lv && old->table[j + 1].rate == 2400000) {
+						old->table[j].volt = old->table[j + 1].volt;
+						pr_info("Adjusted voltage for 2496000 kHz to match 2400000 kHz: %d uV\n",
+								old->table[j].volt * STEP_UV);
+					}
+				}
+			}
+		}
+
 		for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
 			new->table[j].rate = old->table[j].rate;
 			new->table[j].volt = old->table[j].volt;
