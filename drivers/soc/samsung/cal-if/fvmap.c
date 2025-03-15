@@ -476,6 +476,12 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 #endif
 #endif
 
+        /* Print the frequency-voltage table for this domain */
+        pr_info("Frequency-Voltage Table for Domain %s (ID: %d):\n", vclk->name, fvmap_header[i].domain_id);
+        for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
+            pr_info("  Level %d: %d kHz, %d uV\n", j, old->table[j].rate, old->table[j].volt * STEP_UV);
+        }
+
 		for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
 			new->table[j].rate = old->table[j].rate;
 			new->table[j].volt = old->table[j].volt;
