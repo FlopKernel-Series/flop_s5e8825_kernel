@@ -1894,6 +1894,7 @@
 		integral_cutoff = <0x00>;
 		sustainable_power = <0x00>;
 		emergency_frequency_v2;
+		emergency_frequency;
 		phandle = <0x03>;
 	};
 

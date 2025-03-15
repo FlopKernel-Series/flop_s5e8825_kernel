@@ -384,15 +384,7 @@ static void thermal_freq_qos_init(struct exynos_tmu_data *data)
 		}
 	}
 
-	if (data->emergency_frequency) {
-		data->policy = cpufreq_cpu_get(cpumask_first(&data->cpu_domain));
-		if (data->policy) {
-			freq_qos_tracer_add_request(&data->policy->constraints,
-					&data->emergency_throttle_request, FREQ_QOS_MAX,
-					PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE);
-		}
-	}
-	if (data->emergency_frequency_1) {
+	if ((data->emergency_frequency) || (data->emergency_frequency_1)) {
 		data->policy = cpufreq_cpu_get(cpumask_first(&data->cpu_domain));
 		if (data->policy) {
 			freq_qos_tracer_add_request(&data->policy->constraints,
@@ -513,51 +505,60 @@ static int exynos_get_temp(void *p, int *temp)
 			}
 		}
 
-		if (data->emergency_frequency) {
+		if (data->thermal_mode == 0) {
+			// Throttling is disabled, bypass throttling logic
+			data->emergency_throttle = false;
+			emergency_throttle = 0;
+			freq_qos_update_request(&data->emergency_throttle_request,
+				PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE);
+		} else if (data->thermal_mode == 2) {
+			if (data->emergency_frequency) {
 
-			if (!data->emergency_throttle && (stat & EMERGENCY_THROTTLE_STAT)) {
-				freq_qos_update_request(&data->emergency_throttle_request,
-						data->emergency_frequency);
-				data->emergency_throttle = true;
-			} else if (data->emergency_throttle && !(stat & EMERGENCY_THROTTLE_STAT)) {
-				freq_qos_update_request(&data->emergency_throttle_request,
-						PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE);
-				data->emergency_throttle = false;
-			}
-		}
-		if (data->emergency_frequency_1) {
-			if (stat & EMERGENCY_THROTTLE_STAT_3) {
-				emergency_throttle = 3;
-			} else if (stat & EMERGENCY_THROTTLE_STAT_2) {
-				emergency_throttle = 2;
-			} else if (stat & EMERGENCY_THROTTLE_STAT_1) {
-				emergency_throttle = 1;
-			} else {
-				emergency_throttle = 0;
-			}
-			if (data->emergency_throttle != emergency_throttle) {
-				switch(emergency_throttle) {
-				case 0:
+				if (!data->emergency_throttle && (stat & EMERGENCY_THROTTLE_STAT)) {
 					freq_qos_update_request(&data->emergency_throttle_request,
-								PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE);
-					break;
-				case 1:
+							data->emergency_frequency);
+					data->emergency_throttle = true;
+				} else if (data->emergency_throttle && !(stat & EMERGENCY_THROTTLE_STAT)) {
 					freq_qos_update_request(&data->emergency_throttle_request,
-								data->emergency_frequency_1);
-					break;
-				case 2:
-					freq_qos_update_request(&data->emergency_throttle_request,
-								data->emergency_frequency_2);
-					break;
-				case 3:
-					freq_qos_update_request(&data->emergency_throttle_request,
-								data->emergency_frequency_3);
-					break;
-				default:
-					BUG();
-					break;
+							PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE);
+					data->emergency_throttle = false;
 				}
-				data->emergency_throttle = emergency_throttle;
+			}
+		} else if (data->thermal_mode == 1) {
+			if (data->emergency_frequency_1) {
+				if (stat & EMERGENCY_THROTTLE_STAT_3) {
+					emergency_throttle = 3;
+				} else if (stat & EMERGENCY_THROTTLE_STAT_2) {
+					emergency_throttle = 2;
+				} else if (stat & EMERGENCY_THROTTLE_STAT_1) {
+					emergency_throttle = 1;
+				} else {
+					emergency_throttle = 0;
+				}
+				if (data->emergency_throttle != emergency_throttle) {
+					switch(emergency_throttle) {
+					case 0:
+						freq_qos_update_request(&data->emergency_throttle_request,
+									PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE);
+						break;
+					case 1:
+						freq_qos_update_request(&data->emergency_throttle_request,
+									data->emergency_frequency_1);
+						break;
+					case 2:
+						freq_qos_update_request(&data->emergency_throttle_request,
+									data->emergency_frequency_2);
+						break;
+					case 3:
+						freq_qos_update_request(&data->emergency_throttle_request,
+									data->emergency_frequency_3);
+						break;
+					default:
+						BUG();
+						break;
+					}
+					data->emergency_throttle = emergency_throttle;
+				}
 			}
 		}
 	}
@@ -2026,6 +2027,33 @@ create_s32_boost_param_attr(throttle_mode_trip_2_temp);
 create_s32_boost_param_attr(throttle_mode_trip_3_temp);
 create_s32_boost_param_attr(throttle_mode_trip_4_temp);
 
+static ssize_t thermal_mode_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+
+	return sprintf(buf, "%d\n", data->thermal_mode);
+}
+
+static ssize_t thermal_mode_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+	int mode;
+
+	if (kstrtoint(buf, 10, &mode))
+		return -EINVAL;
+
+	if (mode > 2 || mode < 0)
+		return -EINVAL;
+
+	data->thermal_mode = mode;
+
+	return count;
+}
+
+static DEVICE_ATTR(thermal_mode, 0644, thermal_mode_show, thermal_mode_store);
+
 static struct attribute *exynos_tmu_attrs[] = {
 	&dev_attr_hotplug_out_temp.attr,
 	&dev_attr_hotplug_in_temp.attr,
@@ -2053,6 +2081,7 @@ static struct attribute *exynos_tmu_attrs[] = {
 	&dev_attr_throttle_mode_trip_4_temp.attr,
 	&dev_attr_throttle_mode_dfs_temp.attr,
 	&dev_attr_temp.attr,
+	&dev_attr_thermal_mode.attr,
 	NULL,
 };
 
@@ -2357,6 +2386,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
 	ret = exynos_map_dt_data(pdev);
 	if (ret)
 		goto err_sensor;
+
+	data->thermal_mode = 1; // Default to enabled
 
 #if IS_ENABLED(CONFIG_EXYNOS_ACPM_THERMAL)
 	if (list_empty(&dtm_dev_list)) {
