@@ -524,7 +524,7 @@ static int exynos_get_temp(void *p, int *temp)
 					data->emergency_throttle = false;
 				}
 			}
-		} else if (data->thermal_mode == 1) {
+		} else if (data->thermal_mode == 1 || data->thermal_mode == 3) {
 			if (data->emergency_frequency_1) {
 				if (stat & EMERGENCY_THROTTLE_STAT_3) {
 					emergency_throttle = 3;
@@ -1316,6 +1316,8 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 			cpulist_parse(buf, &data->cpu_domain);
 	}
 
+	data->thermal_mode = 1; // Default to enabled
+
 	if (of_property_read_bool(pdev->dev.of_node, "emergency_frequency")) {
 		int cal_id = 0;
 
@@ -1332,9 +1334,15 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 		of_property_read_u32(pdev->dev.of_node, "cal_id", &cal_id);
 		if (cal_id) {
 			data->emergency_throttle = 0;
-			data->emergency_frequency_1 = 2288000;
-			data->emergency_frequency_2 = 2132000;
-			data->emergency_frequency_3 = 2002000;
+			if (data->thermal_mode == 1) {
+				data->emergency_frequency_1 = 2288000;
+				data->emergency_frequency_2 = 2132000;
+				data->emergency_frequency_3 = 2002000;
+			} else if (data->thermal_mode == 3) {
+				data->emergency_frequency_1 = 2400000;
+				data->emergency_frequency_2 = 2288000;
+				data->emergency_frequency_3 = 2208000;
+			}
 			dev_info(&pdev->dev, "Use emergency frequency as %d\n", data->emergency_frequency_1);
 		}
 	}
@@ -2044,10 +2052,21 @@ static ssize_t thermal_mode_store(struct device *dev, struct device_attribute *a
 	if (kstrtoint(buf, 10, &mode))
 		return -EINVAL;
 
-	if (mode > 2 || mode < 0)
+	if (mode > 3 || mode < 0)
 		return -EINVAL;
 
 	data->thermal_mode = mode;
+
+	/* Re-evaluate emergency frequencies */
+	if (data->thermal_mode == 1) {
+		data->emergency_frequency_1 = 2288000;
+		data->emergency_frequency_2 = 2132000;
+		data->emergency_frequency_3 = 2002000;
+	} else if (data->thermal_mode == 3) {
+		data->emergency_frequency_1 = 2400000;
+		data->emergency_frequency_2 = 2288000;
+		data->emergency_frequency_3 = 2208000;
+	}
 
 	return count;
 }
@@ -2386,8 +2405,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
 	ret = exynos_map_dt_data(pdev);
 	if (ret)
 		goto err_sensor;
-
-	data->thermal_mode = 1; // Default to enabled
 
 #if IS_ENABLED(CONFIG_EXYNOS_ACPM_THERMAL)
 	if (list_empty(&dtm_dev_list)) {
