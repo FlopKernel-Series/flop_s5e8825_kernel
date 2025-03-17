@@ -55,6 +55,13 @@ AK3_DIR="$WP/AK3-1280"
 AK3_BRANCH="floppy-unity"
 KDIR="$(readlink -f .)"
 
+# Custom toolchain directory
+if [[ -z "$CUST_DIR" ]]; then
+    CUST_DIR="$WP/custom-toolchain"
+else
+    echo -e "\nINFO: Overriding custom toolchain path..."
+fi
+
 ## Inherited paths
 OUTDIR="$KDIR/out"
 MOD_OUTDIR="$KDIR/modules_out"
@@ -97,7 +104,7 @@ DO_ZIP=1
 # Upload build log
 BUILD_LOG=1
 
-# Pick aosp, proton, lolz, or slim
+# aosp, proton, lolz, slim, custom
 CLANG_TYPE="aosp"
 
 ## Info message
@@ -243,6 +250,14 @@ get_toolchain() {
                 rm "$WP/${LATEST_FILE}"
             fi
             ;;
+        custom)
+            toolchain_dir="$CUST_DIR"
+            if [[ ! -d "$toolchain_dir" ]]; then
+                echo -e "\nERROR: Custom toolchain not found! Aborting..."
+                echo -e "INFO: Please provide a toolchain at $CUST_DIR or select a different toolchain"
+                exit 1
+            fi
+            ;;
         *)
             echo -e "\nERROR: Unknown toolchain type: $toolchain_type"
             exit 1
@@ -274,6 +289,11 @@ prep_toolchain() {
             toolchain_dir="$SL_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
             echo -e "\nINFO: Using Slim LLVM Clang..."
+            ;;
+        custom)
+            toolchain_dir="$CUST_DIR"
+            CCARM64_PREFIX="aarch64-linux-gnu-"
+            echo -e "\nINFO: Using custom toolchain..."
             ;;
         *)
             echo -e "\nERROR: Unknown toolchain type: $toolchain_type"
