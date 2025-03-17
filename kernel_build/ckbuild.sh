@@ -105,7 +105,11 @@ DO_ZIP=1
 BUILD_LOG=1
 
 # aosp, proton, lolz, slim, custom
-CLANG_TYPE="aosp"
+if [[ -z "$CLANG_TYPE" ]]; then
+    CLANG_TYPE="aosp"
+else
+    echo -e "\nINFO: Overriding default toolchain"
+fi
 
 ## Info message
 LINKER="ld.lld"
