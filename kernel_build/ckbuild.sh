@@ -128,6 +128,7 @@ IS_RELEASE=0
 DO_TG=0
 DO_REGEN=0
 DO_OC=0
+DO_FLTO=0
 DEFCONFIG=$DEFAULT_DEFCONFIG
 
 for arg in "$@"; do
@@ -162,6 +163,11 @@ for arg in "$@"; do
     if [[ "$arg" == *u* ]]; then
         echo -e "\nINFO: Unlocked variant argument passed"
         DO_OC=1
+    fi
+    if [[ "$arg" == *l* ]]; then
+        echo -e "\nINFO: Full-LTO argument passed..."
+        echo -e "WARNING: Full-LTO is VERY resource heavy and may take a long time to compile!"
+        DO_FLTO=1
     fi
 done
 
@@ -399,6 +405,11 @@ build() {
 
     if [[ "$DO_MENUCONFIG" == "1" ]]; then
         make O=out menuconfig
+    fi
+
+    if [[ "$DO_FLTO" == "1" ]]; then
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_LTO_CLANG_FULL
+        scripts/config --file "$KDIR/out/.config" --disable CONFIG_LTO_CLANG_THIN
     fi
 
     echo -e "\nINFO: Starting compilation...\n"
