@@ -8933,7 +8933,7 @@
 
 			mfc_perf_boost_table {
 				num_cluster = <0x02>;
-				freq_cluster = <0x1e8c50 0x21b8d0>;
+				freq_cluster = <0x1e8c50 0x261600>;
 				freq_mfc = <0xa2990>;
 				freq_int = <0xa2990>;
 				freq_mif = <0x1fefc8>;
