@@ -89,7 +89,7 @@ if grep -q "Ubuntu" /etc/os-release; then
     sudo apt install $UB_DEPLIST -y
 else
     echo -e "\nINFO: Your distro is not Ubuntu, skipping dependencies installation..."
-    echo -e "INFO: Make sure you have these dependencies installed before proceeding: $UB_DEPLIST"
+    echo -e "INFO: Make sure you have these dependencies installed before proceeding: $UB_DEPLIST\n"
 fi
 
 ## Customizable vars
@@ -133,40 +133,40 @@ DEFCONFIG=$DEFAULT_DEFCONFIG
 
 for arg in "$@"; do
     if [[ "$arg" == *m* ]]; then
-        echo -e "\nINFO: menuconfig argument passed, kernel configuration menu will be shown..."
+        echo "INFO: menuconfig argument passed, kernel configuration menu will be shown"
         DO_MENUCONFIG=1
     fi
     if [[ "$arg" == *k* ]]; then
-        echo -e "\nINFO: KernelSU argument passed, a KernelSU build will be made..."
+        echo "INFO: KernelSU argument passed, a KernelSU build will be made"
         DO_KSU=1
     fi
     if [[ "$arg" == *c* ]]; then
-        echo -e "\nINFO: clean argument passed, output directory will be wiped..."
+        echo "INFO: clean argument passed, output directory will be wiped"
         DO_CLEAN=1
     fi
     if [[ "$arg" == *R* ]]; then
-        echo -e "\nINFO: Release argument passed, build marked as release..."
+        echo "INFO: Release argument passed, build marked as release"
         IS_RELEASE=1
     fi
     if [[ "$arg" == *t* ]]; then
-        echo -e "\nINFO: Telegram argument passed, build will be uploaded to CI..."
+        echo "INFO: Telegram argument passed, build will be uploaded to CI"
         DO_TG=1
     fi
     if [[ "$arg" == *o* ]]; then
-        echo -e "\nINFO: oshi.at argument passed, build will be uploaded to oshi.at..."
+        echo "INFO: oshi.at argument passed, build will be uploaded to oshi.at"
         DO_OSHI=1
     fi
     if [[ "$arg" == *r* ]]; then
-        echo -e "\nINFO: config regeneration mode"
+        echo "INFO: config regeneration mode"
         DO_REGEN=1
     fi
     if [[ "$arg" == *u* ]]; then
-        echo -e "\nINFO: Unlocked variant argument passed"
+        echo "INFO: Unlocked variant argument passed, unlocked build will be made"
         DO_OC=1
     fi
     if [[ "$arg" == *l* ]]; then
-        echo -e "\nINFO: Full-LTO argument passed..."
-        echo -e "WARNING: Full-LTO is VERY resource heavy and may take a long time to compile!"
+        echo "INFO: Full-LTO argument passed"
+        echo "WARNING: Full-LTO is VERY resource heavy and may take a long time to compile"
         DO_FLTO=1
     fi
 done
@@ -219,7 +219,7 @@ get_toolchain() {
                 echo -e "\nINFO: AOSP Clang not found! Cloning to $toolchain_dir..."
                 CURRENT_CLANG=$(curl -s "$AOSP_REPO" | grep -oE "clang-r[0-9a-f]+" | sort -u | tail -n1)
                 if ! curl -LSsO "$AOSP_ARCHIVE/$CURRENT_CLANG.tar.gz"; then
-                    echo -e "\nERROR: Cloning failed! Aborting..."
+                    echo "ERROR: Cloning failed! Aborting..."
                     exit 1
                 fi
                 mkdir -p "$toolchain_dir" && tar -xf ./*.tar.gz -C "$toolchain_dir" && rm ./*.tar.gz
@@ -232,7 +232,7 @@ get_toolchain() {
             if [[ ! -d "$toolchain_dir" ]]; then
                 echo -e "\nINFO: Proton Clang not found! Cloning to $toolchain_dir..."
                 if ! git clone -q --depth=1 "$PC_REPO" "$toolchain_dir"; then
-                    echo -e "\nERROR: Cloning failed! Aborting..."
+                    echo "ERROR: Cloning failed! Aborting..."
                     exit 1
                 fi
             fi
@@ -242,7 +242,7 @@ get_toolchain() {
             if [[ ! -d "$toolchain_dir" ]]; then
                 echo -e "\nINFO: Lolz Clang not found! Cloning to $toolchain_dir..."
                 if ! git clone -q --depth=1 "$LZ_REPO" "$toolchain_dir"; then
-                    echo -e "\nERROR: Cloning failed! Aborting..."
+                    echo "ERROR: Cloning failed! Aborting..."
                     exit 1
                 fi
             fi
@@ -254,7 +254,7 @@ get_toolchain() {
                 FILENAMES=$(curl -s "$SL_REPO" | grep -oP 'llvm-[\d.]+-x86_64\.tar\.xz')
                 LATEST_FILE=$(echo "$FILENAMES" | sort -V | tail -n 1)
                 if ! wget -q --show-progress -O "$WP/${LATEST_FILE}" "${SL_REPO}${LATEST_FILE}"; then
-                    echo -e "\nERROR: Cloning failed! Aborting..."
+                    echo "ERROR: Cloning failed! Aborting..."
                     exit 1
                 fi
                 mkdir -p "$toolchain_dir"
@@ -269,7 +269,7 @@ get_toolchain() {
             toolchain_dir="$CUST_DIR"
             if [[ ! -d "$toolchain_dir" ]]; then
                 echo -e "\nERROR: Custom toolchain not found! Aborting..."
-                echo -e "INFO: Please provide a toolchain at $CUST_DIR or select a different toolchain"
+                echo "INFO: Please provide a toolchain at $CUST_DIR or select a different toolchain"
                 exit 1
             fi
             ;;
@@ -288,30 +288,30 @@ prep_toolchain() {
         aosp)
             toolchain_dir="$AC_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
-            echo -e "\nINFO: Using AOSP Clang..."
+            echo "INFO: Toolchain: AOSP Clang"
             ;;
         proton)
             toolchain_dir="$PC_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
-            echo -e "\nINFO: Using Proton Clang..."
+            echo "INFO: Toolchain: Proton Clang"
             ;;
         lolz)
             toolchain_dir="$LZ_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
-            echo -e "\nINFO: Using Lolz Clang..."
+            echo "INFO: Toolchain: Lolz Clang"
             ;;
         slim)
             toolchain_dir="$SL_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
-            echo -e "\nINFO: Using Slim LLVM Clang..."
+            echo "INFO: Toolchain: Slim LLVM Clang"
             ;;
         custom)
             toolchain_dir="$CUST_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
-            echo -e "\nINFO: Using custom toolchain..."
+            echo "INFO: Toolchain: Custom"
             ;;
         *)
-            echo -e "\nERROR: Unknown toolchain type: $toolchain_type"
+            echo "ERROR: Unknown toolchain type: $toolchain_type"
             exit 1
             ;;
     esac
@@ -351,17 +351,16 @@ tgs() {
 
 prep_build() {
     if [[ "$USE_CCACHE" == "1" ]]; then
-        echo -e "\nINFO: Using ccache\n"
+        echo "INFO: Using ccache"
         if [[ "$IS_GP" == "1" ]]; then
             export CCACHE_DIR="$WP/.ccache"
             ccache -M 10G
         else
-            echo -e "INFO: Environment is not Gitpod, please make sure you setup your own ccache configuration!\n"
+            echo "WARNING: Environment is not Gitpod, please make sure you setup your own ccache configuration!"
         fi
     fi
 
-    echo "Compiler information:"
-    echo -e "\nINFO: $KBUILD_COMPILER_STRING\n"
+    echo -e "INFO: Compiler: $KBUILD_COMPILER_STRING\n"
 }
 
 build() {
