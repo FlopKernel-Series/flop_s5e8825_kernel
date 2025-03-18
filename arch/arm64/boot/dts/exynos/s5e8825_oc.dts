@@ -9947,8 +9947,8 @@
 			default-step = <0x0a>;
 			pm-qos-cpu = <0x00>;
 			pm-qos-min-freq = <0x123fe0>;
-			pm-qos-max-freq = <0x1e8c50>;
-			hp-minlock-low-limit = <0x1e8c50>;
+			pm-qos-max-freq = <0x21b8d0>;
+			hp-minlock-low-limit = <0x21b8d0>;
 			lp-minlock-low-limit = <0xd1790>;
 		};
 
