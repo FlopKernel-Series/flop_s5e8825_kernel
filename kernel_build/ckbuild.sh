@@ -128,6 +128,7 @@ DO_CLEAN=0
 DO_MENUCONFIG=0
 IS_RELEASE=0
 DO_TG=0
+DO_REGEN=0
 DO_OC=0
 DO_FLTO=0
 DEFCONFIG="$DEFAULT_DEFCONFIG"
@@ -165,6 +166,10 @@ for arg in "$@"; do
         echo "INFO: Full-LTO argument passed"
         echo "WARNING: Full-LTO is VERY resource heavy and may take a long time to compile"
         DO_FLTO=1
+    fi
+    if [[ "$arg" == *r* ]]; then
+        echo -e "\nINFO: config regeneration mode"
+        DO_REGEN=1
     fi
 done
 
@@ -391,6 +396,12 @@ build() {
     export LLVM=1
     export LLVM_IAS=1
     export ARCH=arm64
+
+    if [[ "$DO_REGEN" = "1" ]]; then
+        cp -f out/.config arch/arm64/configs/$DEFCONFIG
+        echo "INFO: Configuration regenerated. Check the changes!"
+        exit 0
+    fi
 
     if [[ "$IS_RELEASE" == "1" ]]; then
         VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
