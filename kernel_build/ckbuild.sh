@@ -112,6 +112,7 @@ DO_CLEAN=0
 DO_MENUCONFIG=0
 IS_RELEASE=0
 DO_TG=0
+DO_REGEN=0
 DEFCONFIG=$DEFAULT_DEFCONFIG
 for arg in "$@"
 do
@@ -138,6 +139,10 @@ do
     if [[ "$arg" == *o* ]]; then
         echo -e "\nINFO: oshi.at argument passed, build will be uploaded to oshi.at"
         DO_OSHI=1
+    fi
+    if [[ "$arg" == *r* ]]; then
+        echo -e "\nINFO: config regeneration mode"
+        DO_REGEN=1
     fi
 done
 
@@ -336,6 +341,12 @@ build() {
 
     # Delete leftovers
     rm -f $OUT_KERNEL
+
+    if [[ "$DO_REGEN" = "1" ]]; then
+        cp -f out/.config arch/arm64/configs/$DEFCONFIG
+        echo "INFO: Configuration regenerated. Check the changes!"
+        exit 0
+    fi
 
     make -j$(nproc --all) O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $DEFCONFIG 2>&1 | tee log.txt
 
