@@ -580,8 +580,7 @@ static int lb_idle_pull_tasks_rt(struct rq *dst_rq)
 	if (!pulled_task)
 		goto out;
 
-	if (lb_short_runnable(pulled_task) ||
-			pulled_task->migration_disabled)
+	if (lb_short_runnable(pulled_task))
 		goto out;
 
 	deactivate_task(src_rq, pulled_task, 0);
