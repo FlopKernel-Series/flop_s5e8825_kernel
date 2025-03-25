@@ -12,6 +12,7 @@ AOSP_ARCHIVE="https://android.googlesource.com/platform/prebuilts/clang/host/lin
 PC_REPO="https://github.com/kdrag0n/proton-clang"
 LZ_REPO="https://gitlab.com/Jprimero15/lolz_clang.git"
 SL_REPO="http://ftp.twaren.net/Unix/Kernel/tools/llvm/files/"
+GC_REPO="https://api.github.com/repos/greenforce-project/greenforce_clang/releases/latest"
 
 # Other
 DEFAULT_DEFCONFIG="s5e8825-unified_defconfig"
@@ -51,6 +52,7 @@ AC_DIR="$WP/aospclang"
 PC_DIR="$WP/protonclang"
 LZ_DIR="$WP/lolzclang"
 SL_DIR="$WP/slimllvm"
+GC_DIR="$WP/greenforceclang"
 AK3_DIR="$WP/AK3-1280"
 AK3_BRANCH="floppy-unity"
 KDIR="$(readlink -f .)"
@@ -104,7 +106,7 @@ DO_ZIP=1
 # Upload build log
 BUILD_LOG=1
 
-# aosp, proton, lolz, slim, custom
+# aosp, proton, lolz, slim, greenforce, custom
 if [[ -z "$CLANG_TYPE" ]]; then
     CLANG_TYPE="aosp"
 else
@@ -265,6 +267,24 @@ get_toolchain() {
                 rm "$WP/${LATEST_FILE}"
             fi
             ;;
+        greenforce)
+            toolchain_dir="$GC_DIR"
+            if [[ ! -d "$toolchain_dir" ]]; then
+                echo -e "\nINFO: Greenforce Clang not found! Cloning to $toolchain_dir..."
+                LATEST_RELEASE=$(curl -s $GC_REPO | grep "browser_download_url" | grep ".tar.gz" | cut -d '"' -f 4)
+                if [[ -z "$LATEST_RELEASE" ]]; then
+                    echo "ERROR: Failed to fetch the latest Greenforce Clang release! Aborting..."
+                    exit 1
+                fi
+                if ! wget -q --show-progress -O "$WP/greenforce-clang.tar.gz" "$LATEST_RELEASE"; then
+                    echo "ERROR: Download failed! Aborting..."
+                    exit 1
+                fi
+                mkdir -p "$toolchain_dir"
+                tar -xf "$WP/greenforce-clang.tar.gz" -C "$toolchain_dir"
+                rm "$WP/greenforce-clang.tar.gz"
+            fi
+            ;;
         custom)
             toolchain_dir="$CUST_DIR"
             if [[ ! -d "$toolchain_dir" ]]; then
@@ -304,6 +324,11 @@ prep_toolchain() {
             toolchain_dir="$SL_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Slim LLVM Clang"
+            ;;
+        greenforce)
+            toolchain_dir="$GC_DIR"
+            CCARM64_PREFIX="aarch64-linux-gnu-"
+            echo "INFO: Toolchain: Greenforce Clang"
             ;;
         custom)
             toolchain_dir="$CUST_DIR"
