@@ -157,7 +157,7 @@ void tex_dequeue_task(struct task_struct *p, int cpu)
 		ems_tex_level(p) = NOT_TEX;
 	}
 
-	if (p->__state != TASK_RUNNING) {
+	if (p->state != TASK_RUNNING) {
 		ems_tex_runtime(p) = 0;
 		ems_tex_chances(p) = TEX_WINDOW_COUNT;
 	}
@@ -306,7 +306,7 @@ void tex_update_stats(struct rq *rq, struct task_struct *p)
 {
 	s64 delta, now = p->se.sum_exec_runtime;
 
-	lockdep_assert_held(&rq->__lock);
+	lockdep_assert_held(&rq->lock);
 
 	delta = now - ems_tex_last_update(p);
 	if (delta < 0)
@@ -369,12 +369,12 @@ void tex_update(struct rq *rq)
 	if (get_sched_class(curr) != EMS_SCHED_FAIR)
 		return;
 
-	raw_spin_lock(&rq->__lock);
+	raw_spin_lock(&rq->lock);
 
 	is_tex = !list_empty(ems_qjump_node(curr)) && ems_qjump_node(curr)->next;
 
 	if (!is_tex) {
-		raw_spin_unlock(&rq->__lock);
+		raw_spin_unlock(&rq->lock);
 		return;
 	}
 
@@ -383,7 +383,7 @@ void tex_update(struct rq *rq)
 	if ((curr != ems_qjump_first_entry(ems_qjump_list(rq))) && (rq->cfs.h_nr_running > 1))
 		resched_curr(rq);
 
-	raw_spin_unlock(&rq->__lock);
+	raw_spin_unlock(&rq->lock);
 }
 
 void tex_do_yield(struct task_struct *p)

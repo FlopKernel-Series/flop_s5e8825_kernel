@@ -662,7 +662,7 @@ skip_find_next_freq:
  * required to meet deadlines.
  */
 unsigned long ego_cpu_util(int cpu, unsigned long util_cfs,
-				 unsigned long max, enum cpu_util_type type,
+				 unsigned long max, enum schedutil_type type,
 				 struct task_struct *p)
 {
 	unsigned long dl_util, util, irq;
