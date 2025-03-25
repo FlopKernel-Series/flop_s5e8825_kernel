@@ -1316,7 +1316,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 			cpulist_parse(buf, &data->cpu_domain);
 	}
 
-	data->thermal_mode = 3; // Default to enabled (custom mode)
+	data->thermal_mode = 1; // Default to enabled (custom mode)
 
 	if (of_property_read_bool(pdev->dev.of_node, "emergency_frequency")) {
 		int cal_id = 0;
