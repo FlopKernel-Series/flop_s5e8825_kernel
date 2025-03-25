@@ -15,6 +15,19 @@
 
 #include "../../../drivers/android/binder_internal.h"
 
+/* 5.15 ems porting to 5.10 */
+#define raw_spin_rq_lock_irqsave(A, B) \
+	raw_spin_lock_irqsave(&A->lock, B)
+
+#define raw_spin_rq_unlock_irqrestore(A, B) \
+	raw_spin_unlock_irqrestore(&A->lock, B)
+
+#define raw_spin_rq_lock(A) \
+	raw_spin_lock(&A->lock)
+
+#define raw_spin_rq_unlock(A) \
+	raw_spin_unlock(&A->lock)
+
 enum task_cgroup {
 	CGROUP_ROOT,
 	CGROUP_FOREGROUND,
@@ -902,6 +915,11 @@ static inline int cpu_overutilized(int cpu)
 	return (capacity_cpu(cpu) * 1024) < (ml_cpu_util(cpu) * 1280);
 }
 
+static inline struct task_struct *task_of(struct sched_entity *se)
+{
+	return container_of(se, struct task_struct, se);
+}
+
 static inline struct sched_entity *get_task_entity(struct sched_entity *se)
 {
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -922,9 +940,6 @@ static inline bool can_migrate(struct task_struct *p, int dst_cpu)
 		return false;
 
 	if (is_per_cpu_kthread(p))
-		return false;
-
-	if (p->migration_disabled)
 		return false;
 
 #ifdef CONFIG_SMP
