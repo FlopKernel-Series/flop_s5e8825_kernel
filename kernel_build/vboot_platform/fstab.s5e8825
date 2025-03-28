@@ -40,17 +40,11 @@ odm       /odm      ext4 ro wait,logical,first_stage_mount
 # CSC
 /dev/block/by-name/prism        /prism                  f2fs    ro,barrier=1    nofail,first_stage_mount
 /dev/block/by-name/prism        /prism                  ext4    ro,barrier=1    nofail,first_stage_mount
-/dev/block/by-name/prism        /prism                  xfs    ro,barrier=1    nofail,first_stage_mount
 /dev/block/by-name/prism        /prism                  erofs    ro,barrier=1    nofail,first_stage_mount
-/dev/block/by-name/prism        /prism                  squashfs    ro,barrier=1    nofail,first_stage_mount
-/dev/block/by-name/prism        /prism                  btrfs    ro,barrier=1    nofail,first_stage_mount,compress-force=zstd:15
 
 /dev/block/by-name/optics        /optics                  f2fs    ro,barrier=1    nofail,first_stage_mount
 /dev/block/by-name/optics        /optics                  ext4    ro,barrier=1    nofail,first_stage_mount
-/dev/block/by-name/optics        /optics                  xfs    ro,barrier=1    nofail,first_stage_mount
 /dev/block/by-name/optics        /optics                  erofs    ro,barrier=1    nofail,first_stage_mount
-/dev/block/by-name/optics        /optics                  squashfs    ro,barrier=1    nofail,first_stage_mount
-/dev/block/by-name/optics        /optics                  btrfs    ro,barrier=1    nofail,first_stage_mount,compress-force=zstd:15
 
 # VOLD
 /devices/platform/13200000.usb*	auto	vfat	default	voldmanaged=usb:auto
