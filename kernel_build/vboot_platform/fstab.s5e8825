@@ -33,6 +33,7 @@ odm       /odm      ext4 ro wait,logical,first_stage_mount
 /dev/block/by-name/misc	/misc	emmc	defaults	defaults,first_stage_mount
 /dev/block/by-name/recovery	/recovery	emmc	defaults	first_stage_mount
 /dev/block/by-name/cache        /cache  ext4    noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic wait,check
+/dev/block/by-name/cache        /cache  f2fs    noatime,nosuid,nodev,discard,errors=panic wait,check
 /dev/block/by-name/keystorage	/keystorage	emmc	defaults	first_stage_mount
 /dev/block/by-name/harx	/harx	emmc	defaults	first_stage_mount
 
