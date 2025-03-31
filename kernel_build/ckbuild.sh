@@ -397,6 +397,8 @@ build() {
     export LLVM_IAS=1
     export ARCH=arm64
 
+    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" 2>&1 | tee log.txt
+
     if [[ "$DO_REGEN" = "1" ]]; then
         cp -f out/.config arch/arm64/configs/$DEFCONFIG
         echo "INFO: Configuration regenerated. Check the changes!"
@@ -411,8 +413,6 @@ build() {
     fi
 
     rm -f "$OUT_KERNEL"
-
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" 2>&1 | tee log.txt
 
     scripts/config --file "$KDIR/out/.config" --set-val LOCALVERSION "$VERSION_STR"
 
