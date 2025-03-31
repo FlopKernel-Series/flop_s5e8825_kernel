@@ -339,6 +339,8 @@ build() {
     export LLVM_IAS=1
     export ARCH=arm64
 
+    make -j$(nproc --all) O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $DEFCONFIG 2>&1 | tee log.txt
+
     # Delete leftovers
     rm -f $OUT_KERNEL
 
@@ -347,8 +349,6 @@ build() {
         echo "INFO: Configuration regenerated. Check the changes!"
         exit 0
     fi
-
-    make -j$(nproc --all) O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $DEFCONFIG 2>&1 | tee log.txt
 
     if [ $DO_MENUCONFIG = "1" ]; then
         make O=out menuconfig
