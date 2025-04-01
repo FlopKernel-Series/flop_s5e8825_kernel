@@ -206,27 +206,6 @@ struct tmpmasks {
 	cpumask_var_t new_cpus;		/* For update_cpumasks_hier() */
 };
 
-bool task_is_booster(struct task_struct *tsk)
-{
-	char comm[sizeof(tsk->comm)];
-
-	get_task_comm(comm, tsk);
-	return !strcmp(comm, "init") || !strcmp(comm, "NodeLooperThrea") ||
-	       !strcmp(comm, "power@1.2-servi") ||
-	       !strcmp(comm, "power@1.3-servi") ||
-	       !strcmp(comm, "perf@1.0-servic") ||
-	       !strcmp(comm, "perf@2.0-servic") ||
-	       !strcmp(comm, "perf@2.1-servic") ||
-	       !strcmp(comm, "perf@2.2-servic") ||
-	       !strcmp(comm, "power@2.0-servi") ||
-	       !strcmp(comm, "iop@") ||
-	       !strcmp(comm, "PERFD-SERVER") ||
-	       !strcmp(comm, "init.qcom.post_") ||
-	       !strcmp(comm, "mtkPowerMsgHdl") ||
-	       !strcmp(comm, "mtkPowerService") ||
-	           !strncmp(comm, "system_perf_ini", 9);
-}
-
 #ifdef CONFIG_CPUSET_ASSIST
 struct cs_target {
 	const char *name;
