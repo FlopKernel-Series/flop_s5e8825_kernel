@@ -14,6 +14,8 @@ LZ_REPO="https://gitlab.com/Jprimero15/lolz_clang.git"
 SL_REPO="http://ftp.twaren.net/Unix/Kernel/tools/llvm/files/"
 GC_REPO="https://api.github.com/repos/greenforce-project/greenforce_clang/releases/latest"
 ZC_REPO="https://raw.githubusercontent.com/ZyCromerZ/Clang/refs/heads/main/Clang-main-link.txt"
+GCC_REPO="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9"
+GCC64_REPO="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9"
 
 # Other
 DEFAULT_DEFCONFIG="s5e8825-unified_defconfig"
@@ -49,6 +51,8 @@ fi
 export PATH="$(pwd)/kernel_build/bin:$PATH"
 
 # Directories
+GCC_DIR="$WP/gcc"
+GCC64_DIR="$WP/gcc64"
 AC_DIR="$WP/aospclang"
 PC_DIR="$WP/protonclang"
 LZ_DIR="$WP/lolzclang"
@@ -58,6 +62,7 @@ ZC_DIR="$WP/zycclang"
 AK3_DIR="$WP/AK3-1280"
 AK3_BRANCH="floppy-unity"
 KDIR="$(readlink -f .)"
+USE_GCC_BINUTILS="0"
 
 # Custom toolchain directory
 if [[ -z "$CUST_DIR" ]]; then
@@ -219,6 +224,7 @@ get_toolchain() {
     case "$toolchain_type" in
         aosp)
             toolchain_dir="$AC_DIR"
+            USE_GCC_BINUTILS=1
             if [[ ! -d "$toolchain_dir" ]]; then
                 echo -e "\nINFO: AOSP Clang not found! Cloning to $toolchain_dir..."
                 CURRENT_CLANG=$(curl -s "$AOSP_REPO" | grep -oE "clang-r[0-9a-f]+" | sort -u | tail -n1)
@@ -270,6 +276,7 @@ get_toolchain() {
             fi
             ;;
         greenforce)
+            USE_GCC_BINUTILS=1
             toolchain_dir="$GC_DIR"
             if [[ ! -d "$toolchain_dir" ]]; then
                 echo -e "\nINFO: Greenforce Clang not found! Cloning to $toolchain_dir..."
@@ -314,6 +321,24 @@ get_toolchain() {
             fi
             ;;
     esac
+
+    if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
+        if [[ ! -d "$GCC_DIR" ]]; then
+            echo "INFO: GCC not found! Cloning to $GCC_DIR..."
+            if ! git clone -q -b lineage-19.1 --depth=1 "$GCC_REPO" "$GCC_DIR"; then
+                echo "ERROR: Cloning failed! Aborting..."
+                exit 1
+            fi
+        fi
+        if [[ ! -d "$GCC64_DIR" ]]; then
+            echo "INFO: GCC64 not found! Cloning to $GCC64_DIR..."
+            if ! git clone -q -b lineage-19.1 --depth=1 "$GCC64_REPO" "$GCC64_DIR"; then
+                echo "ERROR: Cloning failed! Aborting..."
+                exit 1
+            fi
+        fi
+    fi
+
 }
 
 prep_toolchain() {
@@ -323,37 +348,30 @@ prep_toolchain() {
     case "$toolchain_type" in
         aosp)
             toolchain_dir="$AC_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: AOSP Clang"
             ;;
         proton)
             toolchain_dir="$PC_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Proton Clang"
             ;;
         lolz)
             toolchain_dir="$LZ_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Lolz Clang"
             ;;
         slim)
             toolchain_dir="$SL_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Slim LLVM Clang"
             ;;
         greenforce)
             toolchain_dir="$GC_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Greenforce Clang"
             ;;
         custom)
             toolchain_dir="$CUST_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Custom"
             ;;
         zyc)
             toolchain_dir="$ZC_DIR"
-            CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: ZyC Clang"
             ;;
         *)
@@ -363,8 +381,17 @@ prep_toolchain() {
     esac
 
     export PATH="${toolchain_dir}/bin:${PATH}"
+    if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
+        export PATH="${GCC64_DIR}/bin:${GCC_DIR}/bin:${PATH}"
+    fi
     KBUILD_COMPILER_STRING=$("$toolchain_dir/bin/clang" -v 2>&1 | head -n 1 | sed 's/(https..*//' | sed 's/ version//')
     export KBUILD_COMPILER_STRING
+
+    if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
+        CCARM64_PREFIX="aarch64-linux-android-"
+    else
+        CCARM64_PREFIX="aarch64-linux-gnu-"
+    fi
 }
 
 ## Pre-build dependencies
