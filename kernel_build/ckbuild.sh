@@ -95,6 +95,7 @@ MKDTBOIMG="$(pwd)/kernel_build/dtb/mkdtboimg.py"
 # Dependencies
 UB_DEPLIST="lz4 brotli flex bc cpio kmod ccache zip binutils-aarch64-linux-gnu"
 if grep -q "Ubuntu" /etc/os-release; then
+    sudo apt update -qq
     sudo apt install $UB_DEPLIST -y
 else
     echo -e "\nINFO: Your distro is not Ubuntu, skipping dependencies installation..."
