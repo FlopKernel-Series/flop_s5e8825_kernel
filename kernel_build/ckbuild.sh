@@ -13,6 +13,7 @@ PC_REPO="https://github.com/kdrag0n/proton-clang"
 LZ_REPO="https://gitlab.com/Jprimero15/lolz_clang.git"
 SL_REPO="http://ftp.twaren.net/Unix/Kernel/tools/llvm/files/"
 GC_REPO="https://api.github.com/repos/greenforce-project/greenforce_clang/releases/latest"
+ZC_REPO="https://raw.githubusercontent.com/ZyCromerZ/Clang/refs/heads/main/Clang-main-link.txt"
 
 # Other
 DEFAULT_DEFCONFIG="s5e8825-unified_defconfig"
@@ -53,6 +54,7 @@ PC_DIR="$WP/protonclang"
 LZ_DIR="$WP/lolzclang"
 SL_DIR="$WP/slimllvm"
 GC_DIR="$WP/greenforceclang"
+ZC_DIR="$WP/zycclang"
 AK3_DIR="$WP/AK3-1280"
 AK3_BRANCH="floppy-unity"
 KDIR="$(readlink -f .)"
@@ -106,7 +108,7 @@ DO_ZIP=1
 # Upload build log
 BUILD_LOG=1
 
-# aosp, proton, lolz, slim, greenforce, custom
+# aosp, proton, lolz, slim, greenforce, zyc, custom
 if [[ -z "$CLANG_TYPE" ]]; then
     CLANG_TYPE="aosp"
 else
@@ -293,9 +295,23 @@ get_toolchain() {
                 exit 1
             fi
             ;;
-        *)
-            echo -e "\nERROR: Unknown toolchain type: $toolchain_type"
-            exit 1
+        zyc)
+            toolchain_dir="$ZC_DIR"
+            if [[ ! -d "$toolchain_dir" ]]; then
+            echo -e "\nINFO: ZyC Clang not found! Cloning to $toolchain_dir..."
+            LATEST_RELEASE=$(curl -s "$ZC_REPO" | head -n 1)
+            if [[ -z "$LATEST_RELEASE" ]]; then
+                echo "ERROR: Failed to fetch the latest ZyC Clang release! Aborting..."
+                exit 1
+            fi
+            if ! wget -q --show-progress -O "$WP/zyc-clang.tar.gz" "$LATEST_RELEASE"; then
+                echo "ERROR: Download failed! Aborting..."
+                exit 1
+            fi
+            mkdir -p "$toolchain_dir"
+            tar -xf "$WP/zyc-clang.tar.gz" -C "$toolchain_dir"
+            rm "$WP/zyc-clang.tar.gz"
+            fi
             ;;
     esac
 }
@@ -334,6 +350,11 @@ prep_toolchain() {
             toolchain_dir="$CUST_DIR"
             CCARM64_PREFIX="aarch64-linux-gnu-"
             echo "INFO: Toolchain: Custom"
+            ;;
+        zyc)
+            toolchain_dir="$ZC_DIR"
+            CCARM64_PREFIX="aarch64-linux-gnu-"
+            echo "INFO: Toolchain: ZyC Clang"
             ;;
         *)
             echo "ERROR: Unknown toolchain type: $toolchain_type"
