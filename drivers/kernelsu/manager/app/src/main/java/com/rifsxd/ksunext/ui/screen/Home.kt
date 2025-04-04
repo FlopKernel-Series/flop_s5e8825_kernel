@@ -293,7 +293,7 @@ private fun StatusCard(
                         val suSFS = getSuSFS()
                         if (suSFS == "Supported") {
                             Text(
-                                text = stringResource(R.string.home_susfs, getSuSFS()),
+                                text = "SuSFS: " + stringResource(R.string.susfs_supported),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
@@ -446,19 +446,20 @@ private fun InfoCard() {
 
             Spacer(Modifier.height(16.dp))
             InfoCardItem(
-                label = stringResource(R.string.home_module_mount),
-                content = when {
-                    ksuVersion == null -> stringResource(R.string.unavailable)
-                    useOverlayFs -> stringResource(R.string.home_overlayfs_mount)
-                    else -> stringResource(R.string.home_magic_mount)
-                },
+                label = stringResource(R.string.home_mount_system),
+                content = currentMountSystem().ifEmpty { stringResource(R.string.unavailable) },
                 icon = Icons.Filled.SettingsSuggest,
             )
-            Spacer(Modifier.height(16.dp))
-            val isSUS_SU = getSuSFSFeatures() == "CONFIG_KSU_SUSFS_SUS_SU"
+            
             val suSFS = getSuSFS()
             if (suSFS == "Supported") {
-                val susSUMode = if (isSUS_SU) "| SuS SU mode: ${susfsSUS_SU_Mode()}" else ""
+                val isSUS_SU = getSuSFSFeatures() == "CONFIG_KSU_SUSFS_SUS_SU"
+                val susSUMode = if (isSUS_SU) {
+                    val mode = susfsSUS_SU_Mode()
+                    val modeString = if (mode == "2") stringResource(R.string.enabled) else stringResource(R.string.disabled)
+                    "| SuS SU: $modeString"
+                } else ""
+                Spacer(Modifier.height(16.dp))
                 InfoCardItem(
                     label = stringResource(R.string.home_susfs_version),
                     content = "${getSuSFSVersion()} (${getSuSFSVariant()}) $susSUMode",
