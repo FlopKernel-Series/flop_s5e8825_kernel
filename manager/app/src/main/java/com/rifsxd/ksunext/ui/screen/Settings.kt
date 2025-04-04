@@ -170,19 +170,21 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            if (Natives.version >= Natives.MINIMAL_SUPPORTED_SU_COMPAT) {
-                var isSuDisabled by rememberSaveable {
-                    mutableStateOf(!Natives.isSuEnabled())
-                }
-                SwitchItem(
-                    icon = Icons.Filled.RemoveModerator,
-                    title = stringResource(id = R.string.settings_disable_su),
-                    summary = stringResource(id = R.string.settings_disable_su_summary),
-                    checked = isSuDisabled
-                ) { checked ->
-                    val shouldEnable = !checked
-                    if (Natives.setSuEnabled(shouldEnable)) {
-                        isSuDisabled = !shouldEnable
+            if (ksuVersion != null) {
+                if (Natives.version >= Natives.MINIMAL_SUPPORTED_SU_COMPAT) {
+                    var isSuDisabled by rememberSaveable {
+                        mutableStateOf(!Natives.isSuEnabled())
+                    }
+                    SwitchItem(
+                        icon = Icons.Filled.RemoveModerator,
+                        title = stringResource(id = R.string.settings_disable_su),
+                        summary = stringResource(id = R.string.settings_disable_su_summary),
+                        checked = isSuDisabled
+                    ) { checked ->
+                        val shouldEnable = !checked
+                        if (Natives.setSuEnabled(shouldEnable)) {
+                            isSuDisabled = !shouldEnable
+                        }
                     }
                 }
             }
@@ -218,19 +220,13 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 }
             }
 
-            val hasShownWarning = rememberSaveable { mutableStateOf(prefs.getBoolean("has_shown_warning", false)) }
-
             var useOverlayFs by rememberSaveable {
                 mutableStateOf(
                     prefs.getBoolean("use_overlay_fs", false)
                 )
             }
 
-            val isManager = Natives.becomeManager(ksuApp.packageName)
-
             var showRebootDialog by remember { mutableStateOf(false) }
-
-            var showWarningDialog by remember { mutableStateOf(false) }
 
             if (ksuVersion != null) {
                 SwitchItem(
@@ -239,39 +235,16 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     summary = stringResource(id = R.string.use_overlay_fs_summary),
                     checked = useOverlayFs
                 ) {
-                    if (!hasShownWarning.value) {
-                        showWarningDialog = true
+                    prefs.edit().putBoolean("use_overlay_fs", it).apply()
+                    useOverlayFs = it
+                    if (useOverlayFs) {
+                        moduleBackup()
+                    } else {
+                        moduleMigration()
                     }
+                    if (isManager) install()
+                    showRebootDialog = true
                 }
-            }
-
-            if (showWarningDialog) {
-                AlertDialog(
-                    onDismissRequest = { showWarningDialog = false },
-                    title = { Text(stringResource(R.string.warning)) },
-                    text = { Text(stringResource(R.string.warning_message)) },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showWarningDialog = false
-                            prefs.edit().putBoolean("use_overlay_fs", !useOverlayFs).apply()
-                            useOverlayFs = !useOverlayFs
-                            if (useOverlayFs) {
-                                moduleBackup()
-                            } else {
-                                moduleMigration()
-                            }
-                            if (isManager) install()
-                            showRebootDialog = true
-                        }) {
-                            Text(stringResource(R.string.proceed))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showWarningDialog = false }) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    }
-                )
             }
 
             if (showRebootDialog) {
@@ -316,14 +289,17 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     prefs.getBoolean("enable_web_debugging", false)
                 )
             }
-            SwitchItem(
-                icon = Icons.Filled.Web,
-                title = stringResource(id = R.string.enable_web_debugging),
-                summary = stringResource(id = R.string.enable_web_debugging_summary),
-                checked = enableWebDebugging
-            ) {
-                prefs.edit().putBoolean("enable_web_debugging", it).apply()
-                enableWebDebugging = it
+
+            if (ksuVersion != null) {
+                SwitchItem(
+                    icon = Icons.Filled.Web,
+                    title = stringResource(id = R.string.enable_web_debugging),
+                    summary = stringResource(id = R.string.enable_web_debugging_summary),
+                    checked = enableWebDebugging
+                ) {
+                    prefs.edit().putBoolean("enable_web_debugging", it).apply()
+                    enableWebDebugging = it
+                }
             }
 
             var developerOptionsEnabled by rememberSaveable {
@@ -340,6 +316,54 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 ) {
                     prefs.edit().putBoolean("enable_developer_options", it).apply()
                     developerOptionsEnabled = it
+                }
+            }
+
+            if (ksuVersion != null) {
+                val backupRestore = stringResource(id = R.string.backup_restore)
+                ListItem(
+                    leadingContent = {
+                        Icon(
+                            Icons.Filled.Backup,
+                            backupRestore
+                        )
+                    },
+                    headlineContent = { Text(backupRestore) },
+                    modifier = Modifier.clickable {
+                        navigator.navigate(BackupRestoreScreenDestination)
+                    }
+                )
+            }
+
+            if (useOverlayFs) {
+                val shrink = stringResource(id = R.string.shrink_sparse_image)
+                val shrinkMessage = stringResource(id = R.string.shrink_sparse_image_message)
+                ListItem(
+                    leadingContent = {
+                        Icon(
+                            Icons.Filled.Compress,
+                            shrink
+                        )
+                    },
+                    headlineContent = { Text(shrink) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            val result = shrinkDialog.awaitConfirm(title = shrink, content = shrinkMessage)
+                            if (result == ConfirmResult.Confirmed) {
+                                loadingDialog.withLoading {
+                                    shrinkModules()
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+
+
+            val lkmMode = Natives.version >= Natives.MINIMAL_SUPPORTED_KERNEL_LKM && Natives.isLkmMode
+            if (lkmMode) {
+                UninstallItem(navigator) {
+                    loadingDialog.withLoading(it)
                 }
             }
 
@@ -450,54 +474,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                         }
                     }
                 )
-            }
-
-            if (ksuVersion != null) {
-                val backupRestore = stringResource(id = R.string.backup_restore)
-                ListItem(
-                    leadingContent = {
-                        Icon(
-                            Icons.Filled.Backup,
-                            backupRestore
-                        )
-                    },
-                    headlineContent = { Text(backupRestore) },
-                    modifier = Modifier.clickable {
-                        navigator.navigate(BackupRestoreScreenDestination)
-                    }
-                )
-            }
-
-            if (useOverlayFs) {
-                val shrink = stringResource(id = R.string.shrink_sparse_image)
-                val shrinkMessage = stringResource(id = R.string.shrink_sparse_image_message)
-                ListItem(
-                    leadingContent = {
-                        Icon(
-                            Icons.Filled.Compress,
-                            shrink
-                        )
-                    },
-                    headlineContent = { Text(shrink) },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            val result = shrinkDialog.awaitConfirm(title = shrink, content = shrinkMessage)
-                            if (result == ConfirmResult.Confirmed) {
-                                loadingDialog.withLoading {
-                                    shrinkModules()
-                                }
-                            }
-                        }
-                    }
-                )
-            }
-
-
-            val lkmMode = Natives.version >= Natives.MINIMAL_SUPPORTED_KERNEL_LKM && Natives.isLkmMode
-            if (lkmMode) {
-                UninstallItem(navigator) {
-                    loadingDialog.withLoading(it)
-                }
             }
 
             val about = stringResource(id = R.string.about)
