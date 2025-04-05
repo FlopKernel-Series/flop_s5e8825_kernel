@@ -156,9 +156,6 @@ static inline bool task_is_booster(struct task_struct *tsk)
 	       !strcmp(comm, "power@2.0-servic") ||
 	       !strcmp(comm, "iop@") ||
 	       !strcmp(comm, "PERFD-SERVER") ||
-	       !strcmp(comm, "init.qcom.post_") ||
-	       !strcmp(comm, "mtkPowerMsgHdl") ||
-	       !strcmp(comm, "mtkPowerService") ||
 	       !strncmp(comm, "system_perf_ini", 9);
 }
 
