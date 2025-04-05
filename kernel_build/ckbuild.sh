@@ -308,18 +308,45 @@ get_toolchain() {
             toolchain_dir="$ZC_DIR"
             if [[ ! -d "$toolchain_dir" ]]; then
             echo -e "\nINFO: ZyC Clang not found! Cloning to $toolchain_dir..."
-            LATEST_RELEASE=$(curl -s "$ZC_REPO" | head -n 1)
-            if [[ -z "$LATEST_RELEASE" ]]; then
-                echo "ERROR: Failed to fetch the latest ZyC Clang release! Aborting..."
-                exit 1
             fi
-            if ! wget -q --show-progress -O "$WP/zyc-clang.tar.gz" "$LATEST_RELEASE"; then
-                echo "ERROR: Download failed! Aborting..."
-                exit 1
+
+            # Check and cache the latest version
+            ZYC_VERSION_FILE="$WP/zyc-clang-version.txt"
+            LATEST_VERSION=$(curl -s "$ZC_REPO" | head -n 1)
+            if [[ -z "$LATEST_VERSION" ]]; then
+                echo "INFO: Failed to check ZyC Clang version"
+            else
+                if [[ -f "$ZYC_VERSION_FILE" ]]; then
+                    CURRENT_VERSION=$(cat "$ZYC_VERSION_FILE")
+                    if [[ "$CURRENT_VERSION" != "$LATEST_VERSION" ]]; then
+                        echo "INFO: A new version of ZyC Clang is available: $LATEST_VERSION"
+                        echo "$LATEST_VERSION" > "$ZYC_VERSION_FILE"
+                    fi
+                else
+                    echo "$LATEST_VERSION" > "$ZYC_VERSION_FILE"
+                fi
             fi
-            mkdir -p "$toolchain_dir"
-            tar -xf "$WP/zyc-clang.tar.gz" -C "$toolchain_dir"
-            rm "$WP/zyc-clang.tar.gz"
+
+            if [[ ! -d "$toolchain_dir" ]]; then
+                if [[ -f "$ZYC_VERSION_FILE" ]]; then
+                    echo "$LATEST_VERSION" > "$ZYC_VERSION_FILE"
+                fi
+                if [[ -z "$LATEST_VERSION" ]]; then
+                    echo "ERROR: Failed to fetch the latest ZyC Clang release! Aborting..."
+                    exit 1
+                fi
+                if ! wget -q --show-progress -O "$WP/zyc-clang.tar.gz" "$LATEST_VERSION"; then
+                    echo "ERROR: Download failed! Aborting..."
+                    rm -f "$ZYC_VERSION_FILE"
+                    exit 1
+                fi
+                mkdir -p "$toolchain_dir"
+                if ! tar -xf "$WP/zyc-clang.tar.gz" -C "$toolchain_dir"; then
+                    echo "ERROR: Extraction failed! Aborting..."
+                    rm -f "$WP/zyc-clang.tar.gz" "$ZYC_VERSION_FILE"
+                    exit 1
+                fi
+                rm "$WP/zyc-clang.tar.gz"
             fi
             ;;
     esac
