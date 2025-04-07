@@ -28,7 +28,9 @@ bool ksu_faccessat_hook __read_mostly = true;
 bool ksu_stat_hook __read_mostly = true;
 bool ksu_execve_sucompat_hook __read_mostly = true;
 bool ksu_execveat_sucompat_hook __read_mostly = true;
+#ifdef CONFIG_KSU_SUSFS_SUS_SU
 static bool ksu_devpts_hook __read_mostly = true;
+#endif
 
 extern void ksu_escape_to_root();
 
@@ -293,6 +295,7 @@ static int execve_handler_pre(struct kprobe *p, struct pt_regs *regs)
 					  NULL);
 }
 
+#ifdef CONFIG_KSU_SUSFS_SUS_SU
 #if 1
 static struct kprobe faccessat_kp = {
 	.symbol_name = SYS_FACCESSAT_SYMBOL,
@@ -342,6 +345,7 @@ static struct kprobe execve_kp = {
 	.pre_handler = execve_handler_pre,
 };
 #endif
+#endif
 
 static int pts_unix98_lookup_pre(struct kprobe *p, struct pt_regs *regs)
 {
@@ -356,10 +360,12 @@ static int pts_unix98_lookup_pre(struct kprobe *p, struct pt_regs *regs)
 	return ksu_handle_devpts(inode);
 }
 
+#ifdef CONFIG_KSU_SUSFS_SUS_SU
 static struct kprobe pts_unix98_lookup_kp = { .symbol_name =
 	"pts_unix98_lookup",
 .pre_handler =
 	pts_unix98_lookup_pre };
+#endif
 
 static struct kprobe *init_kprobe(const char *name,
 				  kprobe_pre_handler_t handler)
