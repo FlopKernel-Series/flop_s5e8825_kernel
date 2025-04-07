@@ -7337,6 +7337,11 @@ CONFIG_TOUCHSCREEN_HIMAX_INSPECT=m
 # KernelSU
 #
 # CONFIG_KSU is not set
+
+#
+# KernelSU - SUSFS
+#
+# end of KernelSU - SUSFS
 # end of KernelSU
 # end of Device Drivers
 
