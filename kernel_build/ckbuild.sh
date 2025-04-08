@@ -119,7 +119,7 @@ BUILD_LOG=1
 
 # aosp, proton, lolz, slim, greenforce, zyc, rv, custom
 if [[ -z "$CLANG_TYPE" ]]; then
-    CLANG_TYPE="aosp"
+    CLANG_TYPE="rv"
 else
     echo -e "\nINFO: Overriding default toolchain"
 fi
