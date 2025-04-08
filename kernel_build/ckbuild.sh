@@ -378,6 +378,10 @@ get_toolchain() {
             fi
             fi
             ;;
+        *)
+            echo -e "\nERROR: Unknown toolchain type: $toolchain_type"
+            exit 1
+            ;;
     esac
 
     if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
