@@ -15,8 +15,7 @@ SL_REPO="http://ftp.twaren.net/Unix/Kernel/tools/llvm/files/"
 GC_REPO="https://api.github.com/repos/greenforce-project/greenforce_clang/releases/latest"
 ZC_REPO="https://raw.githubusercontent.com/ZyCromerZ/Clang/refs/heads/main/Clang-main-link.txt"
 RV_REPO="https://api.github.com/repos/Rv-Project/RvClang/releases/latest"
-GCC_REPO="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9"
-GCC64_REPO="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9"
+GCC64_REPO="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-gnu-9.3"
 
 # Other
 DEFAULT_DEFCONFIG="s5e8825-unified_defconfig"
@@ -53,7 +52,6 @@ fi
 export PATH="$(pwd)/kernel_build/bin:$PATH"
 
 # Directories
-GCC_DIR="$WP/gcc"
 GCC64_DIR="$WP/gcc64"
 AC_DIR="$WP/aospclang"
 PC_DIR="$WP/protonclang"
@@ -385,16 +383,9 @@ get_toolchain() {
     esac
 
     if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
-        if [[ ! -d "$GCC_DIR" ]]; then
-            echo "INFO: GCC not found! Cloning to $GCC_DIR..."
-            if ! git clone -q -b lineage-19.1 --depth=1 "$GCC_REPO" "$GCC_DIR"; then
-                echo "ERROR: Cloning failed! Aborting..."
-                exit 1
-            fi
-        fi
         if [[ ! -d "$GCC64_DIR" ]]; then
             echo "INFO: GCC64 not found! Cloning to $GCC64_DIR..."
-            if ! git clone -q -b lineage-19.1 --depth=1 "$GCC64_REPO" "$GCC64_DIR"; then
+            if ! git clone -q --depth=1 "$GCC64_REPO" "$GCC64_DIR"; then
                 echo "ERROR: Cloning failed! Aborting..."
                 exit 1
             fi
@@ -448,13 +439,13 @@ prep_toolchain() {
 
     export PATH="${toolchain_dir}/bin:${PATH}"
     if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
-        export PATH="${GCC64_DIR}/bin:${GCC_DIR}/bin:${PATH}"
+        export PATH="${GCC64_DIR}/bin:${PATH}"
     fi
     KBUILD_COMPILER_STRING=$("$toolchain_dir/bin/clang" -v 2>&1 | head -n 1 | sed 's/(https..*//' | sed 's/ version//')
     export KBUILD_COMPILER_STRING
 
     if [[ "$USE_GCC_BINUTILS" == "1" ]]; then
-        CCARM64_PREFIX="aarch64-linux-android-"
+        CCARM64_PREFIX="aarch64-linux-"
     else
         CCARM64_PREFIX="aarch64-linux-gnu-"
     fi
