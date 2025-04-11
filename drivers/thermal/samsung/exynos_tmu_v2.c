@@ -1336,8 +1336,8 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 			data->emergency_throttle = 0;
 			if (data->thermal_mode == 1) {
 				data->emergency_frequency_1 = 2288000;
-				data->emergency_frequency_2 = 2132000;
-				data->emergency_frequency_3 = 2002000;
+				data->emergency_frequency_2 = 2112000;
+				data->emergency_frequency_3 = 2016000;
 			} else if (data->thermal_mode == 3) {
 				data->emergency_frequency_1 = 2400000;
 				data->emergency_frequency_2 = 2288000;
