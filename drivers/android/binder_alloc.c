@@ -1297,6 +1297,21 @@ static int binder_alloc_do_buffer_copy(struct binder_alloc *alloc,
 				       void *ptr,
 				       size_t bytes)
 {
+	if (unlikely(!alloc)) {
+		pr_crit("binder: binder_alloc_do_buffer_copy: alloc is NULL! buffer=%px ptr=%px bytes=%zu\n",
+			buffer, ptr, bytes);
+		dump_stack();
+		WARN_ON(1);
+		return -EFAULT;
+	}
+	if (unlikely(!buffer)) {
+		pr_crit("binder: binder_alloc_do_buffer_copy: buffer is NULL! alloc=%px ptr=%px bytes=%zu\n",
+			alloc, ptr, bytes);
+		dump_stack();
+		WARN_ON(1);
+		return -EFAULT;
+	}
+
 	/* All copies must be 32-bit aligned and 32-bit size */
 	if (!check_buffer(alloc, buffer, buffer_offset, bytes))
 		return -EINVAL;
@@ -1310,8 +1325,23 @@ static int binder_alloc_do_buffer_copy(struct binder_alloc *alloc,
 
 		page = binder_alloc_get_page(alloc, buffer,
 					     buffer_offset, &pgoff);
+		if (unlikely(!page)) {
+			pr_crit("binder: binder_alloc_get_page returned NULL page! alloc=%px buffer=%px offset=%lld\n",
+				alloc, buffer, (long long)buffer_offset);
+			dump_stack();
+			WARN_ON(1);
+			return -EFAULT;
+		}
+
 		size = min_t(size_t, bytes, PAGE_SIZE - pgoff);
 		base_ptr = kmap_atomic(page);
+		if (unlikely(!base_ptr)) {
+			pr_crit("binder: kmap_atomic failed for page %p! alloc=%px buffer=%px offset=%lld\n",
+				page, alloc, buffer, (long long)buffer_offset);
+			dump_stack();
+			WARN_ON(1);
+			return -ENOMEM;
+		}
 		tmpptr = base_ptr + pgoff;
 		if (to_buffer)
 			memcpy(tmpptr, ptr, size);
