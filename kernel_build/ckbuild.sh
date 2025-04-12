@@ -128,8 +128,12 @@ DEVICE="Exynos 1280 Family"
 CODENAME="exynos1280"
 
 ## Secrets
-TELEGRAM_CHAT_ID="$(cat ../chat_ci)"
-TELEGRAM_BOT_TOKEN="$(cat ../bot_token)"
+if [ -f "../chat_ci" ]; then
+    TELEGRAM_CHAT_ID="$(cat ../chat_ci)"
+fi
+if [ -f "../bot_token" ]; then
+    TELEGRAM_BOT_TOKEN="$(cat ../bot_token)"
+fi
 
 ## Parse arguments
 DO_KSU=0
