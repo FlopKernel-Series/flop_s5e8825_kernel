@@ -119,25 +119,10 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
 				   unsigned int next_freq)
 {
-	/*
-	 * When a frequency update isn't mandatory (!need_freq_update), the rate
-	 * limit is checked again upon frequency reduction because systems with
-	 * frequency-invariant utilization bypass the rate limit check entirely
-	 * in sugov_should_update_freq(). This is done so that the rate limit
-	 * can be applied only for frequency reduction when frequency-invariant
-	 * utilization is present. Now that the next frequency is known, the
-	 * rate limit can be selectively applied to frequency reduction on such
-	 * systems. A check for arch_scale_freq_invariant() is omitted here
-	 * because unconditionally rechecking the rate limit is cheaper.
-	 */
-	if (!sg_policy->need_freq_update) {
-		if (next_freq == sg_policy->next_freq ||
-		    (next_freq < sg_policy->next_freq &&
-		     sugov_should_rate_limit(sg_policy, time)))
-			return false;
-	} else {
+	if (sg_policy->need_freq_update)
 		sg_policy->need_freq_update = false;
-	}
+	else if (sg_policy->next_freq == next_freq)
+		return false;
 
 	sg_policy->next_freq = next_freq;
 	sg_policy->last_freq_update_time = time;
