@@ -165,3 +165,6 @@ sphinx_*/
 /kernel_build/*.img
 !/kernel_build/vboot_platform/vendor/firmware/*.bin
 log.txt
+
+# Deps
+kernel_build/.deps
