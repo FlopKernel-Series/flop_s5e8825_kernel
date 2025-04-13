@@ -513,6 +513,8 @@ build() {
     export LLVM_IAS=1
     export ARCH=arm64
 
+    rm -rf "$MOD_OUTDIR" 2>/dev/null
+
     make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
     if [[ "$IS_RELEASE" == "1" ]]; then
