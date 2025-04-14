@@ -523,6 +523,21 @@ int muic_afc_request_cause_clear(void)
 }
 EXPORT_SYMBOL_GPL(muic_afc_request_cause_clear);
 
+int muic_afc_request_cause_clear_bit(int cause)
+{
+	struct muic_platform_data *pdata = &muic_pdata;
+
+	if (pdata == NULL)
+		return -ENOENT;
+
+	pdata->afc_request_cause &= ~(cause);
+	pr_info("%s: clear cause=%d, afc_request_cause = %d\n"
+				, __func__, cause, pdata->afc_request_cause);
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(muic_afc_request_cause_clear_bit);
+
 int muic_afc_get_request_cause(void)
 {
 	struct muic_platform_data *pdata = &muic_pdata;

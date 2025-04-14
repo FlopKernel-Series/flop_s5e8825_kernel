@@ -222,7 +222,7 @@ static int muic_notifier_notify(void)
 
 #if IS_ENABLED(CONFIG_SEC_FACTORY)
 #if IS_ENABLED(CONFIG_ANDROID_SWITCH) || IS_ENABLED(CONFIG_SWITCH)
-#if defined(CONFIG_MUIC_SUPPORT_PDIC) && defined(CONFIG_PDIC_NOTIFIER)
+#if IS_ENABLED(CONFIG_MUIC_SUPPORT_PDIC) && IS_ENABLED(CONFIG_PDIC_NOTIFIER)
 	if (muic_notifier.cxt.attach != 0)
 		send_muic_cable_intent(muic_notifier.cxt.cable_type);
 	else
@@ -359,7 +359,7 @@ static int muic_pogo_notifier_notify(void)
 #endif
 
 #if IS_ENABLED(CONFIG_SEC_FACTORY)
-#if defined(CONFIG_MUIC_SUPPORT_PDIC) && defined(CONFIG_PDIC_NOTIFIER)
+#if IS_ENABLED(CONFIG_MUIC_SUPPORT_PDIC) && IS_ENABLED(CONFIG_PDIC_NOTIFIER)
 	if (muic_notifier.pogo_cxt.attach != 0)
 		send_muic_cable_intent(muic_notifier.pogo_cxt.cable_type);
 	else
