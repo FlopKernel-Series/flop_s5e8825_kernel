@@ -22,6 +22,7 @@
 #include "../sensormanager/shub_sensor_manager.h"
 #include "../sensormanager/shub_sensor_type.h"
 #include "../sensorhub/shub_device.h"
+#include "../utility/shub_wakelock.h"
 #include "scontext_cmd.h"
 
 #define BIG_DATA_SIZE       256
@@ -87,6 +88,8 @@ void shub_report_scontext_data(char *data, u32 data_len)
 		if (sensor) {
 			sensor->event_buffer.timestamp = get_current_timestamp();
 			sensor->event_buffer.received_timestamp = sensor->event_buffer.timestamp;
+
+			shub_wake_lock_timeout(300);
 		}
 	}
 
@@ -188,7 +191,7 @@ int shub_scontext_send_cmd(const unsigned char *buf, int count)
 		return -EINVAL;
 	}
 
-	ret = shub_send_status(convert_status);
+	ret = shub_send_status(convert_status, NULL, 0);
 
 	if (buf[2] == SCONTEXT_AP_STATUS_LCD_ON || buf[2] == SCONTEXT_AP_STATUS_LCD_OFF)
 		shub_data->lcd_status = convert_status;
@@ -201,14 +204,14 @@ int shub_scontext_send_cmd(const unsigned char *buf, int count)
 #define SCONTEXT_VALUE_PEDOMETER_USERWEIGHT	   0x13
 #define SCONTEXT_VALUE_PEDOMETER_USERGENDER	   0x14
 #define SCONTEXT_VALUE_PEDOMETER_INFOUPDATETIME       0x15
-#define SCONTEXT_VLAUE_DISPLAY_STATE			0x47
+#define SCONTEXT_VALUE_DISPLAY_STATE			0x47
 
 int convert_scontext_putvalue_subcmd(int subcmd)
 {
 	int ret = -1;
 
 	switch (subcmd) {
-	case SCONTEXT_VLAUE_DISPLAY_STATE:
+	case SCONTEXT_VALUE_DISPLAY_STATE:
 		ret = SCREEN_STATE;
 		break;
 	case SCONTEXT_VALUE_CURRENTSYSTEMTIME:
@@ -336,6 +339,8 @@ int shub_scontext_send_instruction(const unsigned char *buf, int count)
 					shub_data->intent_screen_state = buffer[1];
 				else if (buffer[1] == 0x00 || buffer[1] == 0x01)
 					shub_data->display_screen_state = buffer[1];
+				else if (buffer[1] == 0x02 || buffer[1] == 0x03)
+					shub_data->display_foldable_state = buffer[1];
 			}
 		} else {
 			type = buf[2] + SENSOR_TYPE_SS_BASE;
@@ -400,7 +405,7 @@ void disable_scontext_all(void)
 	}
 }
 
-void print_scontext_debug(void)
+void print_scontext_debug(int type)
 {
 	/* print nothing for debug */
 }

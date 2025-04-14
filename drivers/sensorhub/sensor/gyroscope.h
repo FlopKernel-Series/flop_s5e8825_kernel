@@ -59,12 +59,6 @@ struct gyroscope_data {
 	int position;
 };
 
-struct sensor_chipset_init_funcs *get_gyroscope_lsm6dsl_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_gyroscope_icm42605m_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_gyroscope_lsm6dsotr_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_gyroscope_icm42632m_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_gyroscope_lsm6dsvtr_function_pointer(char *name);
-
 int save_gyro_calibration_file(s16 *cal_data);
 
 #endif /* __SHUB_GYROSCOPE_COMMON_H_ */

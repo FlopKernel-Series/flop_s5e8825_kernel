@@ -34,6 +34,7 @@
 void init_shub_panel(void);
 void remove_shub_panel(void);
 void sync_panel_state(void);
+int send_screen_mode_information(int display_index, int screen_mode);
 
 void init_shub_panel_callback(void);
 void remove_shub_panel_callback(void);

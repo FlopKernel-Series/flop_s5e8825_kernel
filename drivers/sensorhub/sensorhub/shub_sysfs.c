@@ -13,6 +13,7 @@
  *
  */
 #include "../comm/shub_comm.h"
+#include "../debug/shub_mini_dump.h"
 #include "../sensorhub/shub_device.h"
 #include "../sensormanager/shub_sensor_type.h"
 #include "../utility/shub_dev_core.h"
@@ -22,6 +23,7 @@
 #include "../sensormanager/shub_sensor_manager.h"
 #include "shub_device.h"
 
+#include <linux/of.h>
 #include <linux/slab.h>
 #ifdef CONFIG_SHUB_FIRMWARE_DOWNLOAD
 #include "shub_firmware.h"
@@ -114,9 +116,27 @@ static ssize_t operation_mode_store(struct device *dev, struct device_attribute 
 
 ssize_t minidump_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	struct shub_data_t *data = get_shub_data();
+	return sprintf(buf, "%s\n", get_shub_mini_dump());
+}
 
-	return sprintf(buf, "%s\n", data->mini_dump);
+int support_dual_sensor = -1;
+ssize_t support_dual_sensor_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct device_node *np = get_shub_device()->of_node;
+
+	if (support_dual_sensor < 0) {
+		if (of_property_read_bool(np, "6axis-dual")) {
+			shub_info("support dual 6axis sensor");
+			support_dual_sensor = 1;
+		} else {
+			support_dual_sensor = 0;
+		}
+	}
+
+	if (support_dual_sensor == 1)
+		return sprintf(buf, "DUAL_GYRO\n");
+	else
+		return sprintf(buf, "SINGLE_GYRO\n");
 }
 
 static DEVICE_ATTR(mcu_rev, S_IRUGO, mcu_revision_show, NULL);
@@ -126,6 +146,7 @@ static DEVICE_ATTR(reset_info, S_IRUGO, show_reset_info, NULL);
 static DEVICE_ATTR(fs_ready, 0220, NULL, fs_ready_store);
 static DEVICE_ATTR(operation_mode, 0220, NULL, operation_mode_store);
 static DEVICE_ATTR(minidump, S_IRUGO, minidump_show, NULL);
+static DEVICE_ATTR(support_dual_sensor, S_IRUGO, support_dual_sensor_show, NULL);
 
 static struct device_attribute *shub_attrs[] = {
 	&dev_attr_mcu_rev,
@@ -135,6 +156,7 @@ static struct device_attribute *shub_attrs[] = {
 	&dev_attr_fs_ready,
 	&dev_attr_operation_mode,
 	&dev_attr_minidump,
+	&dev_attr_support_dual_sensor,
 	NULL,
 };
 

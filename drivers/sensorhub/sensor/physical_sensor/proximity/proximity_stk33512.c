@@ -30,15 +30,15 @@
 #define STK33512_NAME   "STK33512"
 #define STK33512_VENDOR "Sitronix"
 
-int init_proximity_stk33512(void)
+int init_proximity_stk33512(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	data->cal_data_len = sizeof(u16);
 	return 0;
 }
 
-void parse_dt_proximity_stk33512(struct device *dev)
+void parse_dt_proximity_stk33512(struct device *dev, int type)
 {
 	struct device_node *np = dev->of_node;
 	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
@@ -49,19 +49,19 @@ void parse_dt_proximity_stk33512(struct device *dev)
 	shub_info("thresh %u, %u", data->prox_threshold[PROX_THRESH_HIGH], data->prox_threshold[PROX_THRESH_LOW]);
 }
 
-int proximity_open_calibration_stk33512(void)
+int proximity_open_calibration_stk33512(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
-	open_default_proximity_calibration();
+	open_default_proximity_calibration(type);
 	shub_infof(" mode:%d base:%d", data->setting_mode, *((u16 *)data->cal_data));
 
 	return 0;
 }
 
-void set_proximity_state_stk33512(struct proximity_data *data)
+void set_proximity_state_stk33512(int type)
 {
-	set_proximity_calibration();
+	set_proximity_calibration(type);
 }
 
 struct proximity_chipset_funcs prox_stk33512_funcs = {

@@ -17,6 +17,7 @@
 #include "../../sensorhub/shub_device.h"
 #include "../../sensormanager/shub_sensor.h"
 #include "../../sensormanager/shub_sensor_manager.h"
+#include "../../factory/shub_factory.h"
 #include "../../utility/shub_dev_core.h"
 #include "../../utility/shub_utility.h"
 #include "../../comm/shub_comm.h"
@@ -39,8 +40,61 @@
 
 #define SELFTEST_REVISED 1
 
-static struct device *gyro_sysfs_device;
-static struct device_attribute **chipset_attrs;
+__visible_for_testing struct device *gyro_sysfs_device;
+__visible_for_testing struct device *gyro_sub_sysfs_device;
+
+static struct gyroscope_factory_chipset_funcs *chipset_func;
+typedef struct gyroscope_factory_chipset_funcs* (*get_chipset_funcs_ptr)(char *);
+get_chipset_funcs_ptr get_gyroscope_factory_chipset_funcs_ptr[] = {
+	get_gyroscope_icm42605m_chipset_func,
+	get_gyroscope_lsm6dsl_chipset_func,
+	get_gyroscope_lsm6dsotr_chipset_func,
+	get_gyroscope_lsm6dsvtr_chipset_func,
+	get_gyroscope_icm42632m_chipset_func,
+};
+
+static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE);
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	return sprintf(buf, "%s\n", sensor->spec.name);
+}
+
+static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE);
+	char vendor[VENDOR_MAX] = "";
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	get_sensor_vendor_name(sensor->spec.vendor, vendor);
+
+	return sprintf(buf, "%s\n", vendor);
+}
+
+int get_gyro_type(struct device *dev)
+{
+	const char *name = dev->kobj.name;
+
+	if (!strcmp(name, "gyro_sensor")) {
+		return SENSOR_TYPE_GYROSCOPE;
+	}
+	else if(!strcmp(name, "sub_gyro_sensor")) {
+		return SENSOR_TYPE_GYROSCOPE_SUB;
+	}
+	else {
+		return SENSOR_TYPE_GYROSCOPE;
+	}
+}
+
 
 static ssize_t power_off_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
@@ -62,9 +116,10 @@ static ssize_t temperature_show(struct device *dev, struct device_attribute *att
 	int buffer_length = 0;
 	unsigned char reg[2] = {0, };
 	short temperature = 0;
+	int type = get_gyro_type(dev);
 	int ret = 0;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_GYROSCOPE, GYROSCOPE_TEMPERATURE_FACTORY,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, GYROSCOPE_TEMPERATURE_FACTORY,
 				     3000, NULL, 0, &buffer, &buffer_length, true);
 
 	if (ret < 0) {
@@ -113,76 +168,116 @@ static ssize_t selftest_revised_show(struct device *dev, struct device_attribute
 	return snprintf(buf, PAGE_SIZE, "%d\n", SELFTEST_REVISED);
 }
 
+static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	int type = get_gyro_type(dev);
+
+	if (chipset_func && chipset_func->selftest)
+		return chipset_func->selftest(type, buf);
+	else
+		return -EINVAL;
+}
+
+static DEVICE_ATTR_RO(name);
+static DEVICE_ATTR_RO(vendor);
 static DEVICE_ATTR_RO(power_off);
 static DEVICE_ATTR_RO(power_on);
 static DEVICE_ATTR_RO(temperature);
 static DEVICE_ATTR_RO(selftest_revised);
 static DEVICE_ATTR(selftest_dps, 0664, selftest_dps_show, selftest_dps_store);
+static DEVICE_ATTR_RO(selftest);
 
 __visible_for_testing struct device_attribute *gyro_attrs[] = {
+	&dev_attr_name,
+	&dev_attr_vendor,
 	&dev_attr_power_on,
 	&dev_attr_power_off,
 	&dev_attr_temperature,
 	&dev_attr_selftest_dps,
 	&dev_attr_selftest_revised,
+	&dev_attr_selftest,
 	NULL,
 };
 
-typedef struct device_attribute** (*get_chipset_dev_attrs)(char *);
-get_chipset_dev_attrs get_gyro_chipset_dev_attrs[] = {
-	get_gyroscope_icm42605m_dev_attrs,
-	get_gyroscope_lsm6dsl_dev_attrs,
-	get_gyroscope_lsm6dsotr_dev_attrs,
-	get_gyroscope_lsm6dsvtr_dev_attrs,
-	get_gyroscope_icm42632m_dev_attrs,
+__visible_for_testing struct device_attribute *gyro_sub_attrs[] = {
+	&dev_attr_name,
+	&dev_attr_vendor,
+	&dev_attr_power_on,
+	&dev_attr_power_off,
+	&dev_attr_temperature,
+	&dev_attr_selftest_dps,
+	&dev_attr_selftest,
+	NULL,
 };
 
-void initialize_gyroscope_sysfs(void)
+void initialize_gyroscope_sysfs(struct device **dev, struct device_attribute *attrs[], char *name)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE);
 	int ret;
-	uint64_t i;
 
-	ret = sensor_device_create(&gyro_sysfs_device, NULL, "gyro_sensor");
+	ret = sensor_device_create(&(*dev), NULL, name);
 	if (ret < 0) {
-		shub_errf("fail to creat %s sysfs device", sensor->name);
+		shub_errf("fail to create %s sysfs device", name);
 		return;
 	}
 
-	ret = add_sensor_device_attr(gyro_sysfs_device, gyro_attrs);
+	ret = add_sensor_device_attr(*dev, attrs);
 	if (ret < 0) {
-		shub_errf("fail to add %s sysfs device attr", sensor->name);
+		shub_errf("fail to add %s sysfs device attr", name);
 		return;
-	}
-
-	for (i = 0; i < ARRAY_SIZE(get_gyro_chipset_dev_attrs); i++) {
-		chipset_attrs = get_gyro_chipset_dev_attrs[i](sensor->spec.name);
-		if (chipset_attrs) {
-			ret = add_sensor_device_attr(gyro_sysfs_device, chipset_attrs);
-			if (ret < 0) {
-				shub_errf("fail to add sysfs chipset device attr(%d)", (int)i);
-				return;
-			}
-			break;
-		}
 	}
 }
 
-void remove_gyroscope_sysfs(void)
+void remove_gyroscope_sysfs(struct device **dev, struct device_attribute *attrs[])
 {
-	if (chipset_attrs)
-		remove_sensor_device_attr(gyro_sysfs_device, chipset_attrs);
-	remove_sensor_device_attr(gyro_sysfs_device, gyro_attrs);
-	sensor_device_destroy(gyro_sysfs_device);
-	gyro_sysfs_device = NULL;
+	remove_sensor_device_attr(*dev, attrs);
+	sensor_device_unregister(*dev);
+	*dev = NULL;
 }
 
-void initialize_gyroscope_factory(bool en)
+void initialize_gyroscope_chipset_func(struct device **dev)
 {
-	if (!get_sensor(SENSOR_TYPE_GYROSCOPE))
-		return;
+	int i;
+
+	struct shub_sensor *sensor = get_sensor(get_gyro_type(*dev));
+
+	for (i = 0; i < ARRAY_SIZE(get_gyroscope_factory_chipset_funcs_ptr); i++) {
+		chipset_func = get_gyroscope_factory_chipset_funcs_ptr[i](sensor->spec.name);
+		if(!chipset_func)
+			continue;
+
+		shub_infof("support %s sysfs", sensor->name);
+		break;
+	}
+
+	if (!chipset_func) {
+		if (sensor->type == SENSOR_TYPE_GYROSCOPE)
+			remove_gyroscope_sysfs(&gyro_sysfs_device, gyro_attrs);
+		else
+			remove_gyroscope_sysfs(&gyro_sub_sysfs_device, gyro_sub_attrs);
+	}
+}
+
+void initialize_gyroscope_factory(bool en, int mode)
+{
 	if (en)
-		initialize_gyroscope_sysfs();
-	else
-		remove_gyroscope_sysfs();
+		initialize_gyroscope_sysfs(&gyro_sysfs_device, gyro_attrs, "gyro_sensor");
+	else {
+		if (mode == INIT_FACTORY_MODE_REMOVE_EMPTY && get_sensor(SENSOR_TYPE_GYROSCOPE))
+			initialize_gyroscope_chipset_func(&gyro_sysfs_device);
+		else
+			remove_gyroscope_sysfs(&gyro_sysfs_device, gyro_attrs);
+	}
+}
+
+void initialize_gyroscope_sub_factory(bool en, int mode)
+{
+	if (en)
+		initialize_gyroscope_sysfs(&gyro_sub_sysfs_device, gyro_sub_attrs, "sub_gyro_sensor");
+	else {
+		if (mode == INIT_FACTORY_MODE_REMOVE_EMPTY && get_sensor(SENSOR_TYPE_GYROSCOPE_SUB))
+			initialize_gyroscope_chipset_func(&gyro_sub_sysfs_device);
+		else
+			remove_gyroscope_sysfs(&gyro_sub_sysfs_device, gyro_sub_attrs);
+
+	}
 }

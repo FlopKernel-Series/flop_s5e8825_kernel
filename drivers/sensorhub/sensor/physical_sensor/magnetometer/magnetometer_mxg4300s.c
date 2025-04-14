@@ -21,14 +21,14 @@
 #include "../../../utility/shub_utility.h"
 #include "../../../sensormanager/shub_sensor.h"
 #include "../../../sensormanager/shub_sensor_manager.h"
-
+#include "../../flip_cover_detector.h"
 #include "../../magnetometer.h"
 
 #define MXG4300S_NAME	"MXG4300S"
 
-static int init_mag_mxg4300s(void)
+static int init_mag_mxg4300s(int type)
 {
-	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
+	struct magnetometer_data *data = get_sensor(type)->data;
 
 	data->mag_matrix_len = 27;
 	data->cal_data_len = sizeof(struct calibration_data_mxg4300s);
@@ -36,7 +36,7 @@ static int init_mag_mxg4300s(void)
 	return 0;
 }
 
-static void parse_dt_magnetometer_mxg4300s(struct device *dev)
+static void parse_dt_magnetometer_mxg4300s(struct device *dev, int type)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 	struct device_node *np = dev->of_node;
@@ -77,7 +77,7 @@ static void parse_dt_magnetometer_mxg4300s(struct device *dev)
 			shub_err("no mag-mxg4300s-nfc-array");
 	}
 
-	if (get_sensor(SENSOR_TYPE_FLIP_COVER_DETECTOR)) {
+	if (get_sensor(SENSOR_TYPE_FLIP_COVER_DETECTOR) && check_flip_cover_detector_supported()) {
 		if (of_property_read_u8_array(np, "mag-mxg4300s-cover-array", data->cover_matrix, data->mag_matrix_len))
 			shub_err("no mag-mxg4300s-cover-array, set as 0");
 	}

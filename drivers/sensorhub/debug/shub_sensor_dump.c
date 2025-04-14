@@ -22,7 +22,16 @@
 #include "../sensormanager/shub_sensor_manager.h"
 #include "../utility/shub_utility.h"
 
-static char *sensor_dump[SENSOR_TYPE_LEGACY_MAX];
+#if defined(CONFIG_SHUB_KUNIT)
+#include <kunit/mock.h>
+#define __mockable __weak
+#define __visible_for_testing
+#else
+#define __mockable
+#define __visible_for_testing static
+#endif
+
+__visible_for_testing char *sensor_dump[SENSOR_TYPE_LEGACY_MAX];
 
 static bool is_support_registerdump(int sensor_type)
 {
@@ -40,6 +49,21 @@ static bool is_support_registerdump(int sensor_type)
 	return ret;
 }
 
+int convert_sensor_type(int type)
+{
+	int base = 0x10000;
+
+	switch(type)
+	{
+		case SENSOR_TYPE_ACCELEROMETER_SUB:
+			return base + 151;
+		case SENSOR_TYPE_GYROSCOPE_SUB:
+			return base + 153;
+		default:
+			return type;
+	}
+}
+
 static int store_sensor_dump(int sensor_type, u16 length, u8 *buf)
 {
 	char *contents;
@@ -48,7 +72,7 @@ static int store_sensor_dump(int sensor_type, u16 length, u8 *buf)
 	int dump_len = sensor_dump_length(length);
 	char tmp_ch;
 
-	shub_infof("type %d, length %d", sensor_type, length);
+	shub_infof("type %d(%d), length %d", sensor_type, convert_sensor_type(sensor_type), length);
 
 	/*make file contents*/
 	contents = kzalloc(dump_len, GFP_KERNEL);

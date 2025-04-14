@@ -19,6 +19,7 @@
 #include "../comm/shub_iio.h"
 #include "../debug/shub_system_checker.h"
 #include "../debug/shub_debug.h"
+#include "../factory/shub_factory.h"
 #include "../sensor/scontext.h"
 #include "../sensorhub/shub_device.h"
 #include "../sensormanager/shub_sensor.h"
@@ -28,6 +29,7 @@
 #include "shub_sensor_type.h"
 #include "../sensor/sensor.h"
 
+#include <linux/ctype.h>
 #include <linux/delay.h>
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
@@ -36,6 +38,7 @@
 
 #define INIT_SENSOR_STATE   0x3FEFF
 #define EXECUTE_FUNC(sensor, f) if ((sensor) && (sensor)->funcs && f != NULL) f()
+#define EXECUTE_FUNC_TYPE(sensor, f) if ((sensor) && (sensor)->funcs && f != NULL) f(sensor->type)
 
 #define BIGDATA_KEY_MAX 30
 
@@ -49,12 +52,16 @@ struct init_func_t {
 struct init_func_t init_sensor_funcs[] = {
 	{SENSOR_TYPE_ACCELEROMETER, init_accelerometer},
 	{SENSOR_TYPE_ACCELEROMETER_UNCALIBRATED, init_accelerometer_uncal},
+	{SENSOR_TYPE_ACCELEROMETER_SUB, init_accelerometer_sub},
+	{SENSOR_TYPE_ACCELEROMETER_UNCALIBRATED_SUB, init_accelerometer_uncal_sub},
 	{SENSOR_TYPE_STEP_COUNTER, init_step_counter},
 	{SENSOR_TYPE_GEOMAGNETIC_FIELD, init_magnetometer},
 	{SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, init_magnetometer_uncal},
 	{SENSOR_TYPE_FLIP_COVER_DETECTOR, init_flip_cover_detector},
 	{SENSOR_TYPE_GYROSCOPE, init_gyroscope},
 	{SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, init_gyroscope_uncal},
+	{SENSOR_TYPE_GYROSCOPE_SUB, init_gyroscope_sub},
+	{SENSOR_TYPE_GYROSCOPE_UNCALIBRATED_SUB, init_gyroscope_uncal_sub},
 	{SENSOR_TYPE_LIGHT, init_light},
 	{SENSOR_TYPE_LIGHT_CCT, init_light_cct},
 	{SENSOR_TYPE_LIGHT_AUTOBRIGHTNESS, init_light_autobrightness},
@@ -91,6 +98,15 @@ struct init_func_t init_sensor_funcs[] = {
 	{SENSOR_TYPE_LIGHT_IR, init_light_ir},
 	{SENSOR_TYPE_DROP_CLASSIFIER, init_drop_classifier},
 	{SENSOR_TYPE_SEQUENTIAL_STEP, init_sequential_step},
+	{SENSOR_TYPE_FOLDING_ANGLE, init_folding_angle},
+	{SENSOR_TYPE_LID_ANGLE_FUSION, init_lid_angle_fusion},
+	{SENSOR_TYPE_HINGE_ANGLE, init_hinge_angle},
+	{SENSOR_TYPE_FOLDING_STATE_LPM, init_folding_state_lpm},
+	{SENSOR_TYPE_SUB_LIGHT, init_sub_light},
+	{SENSOR_TYPE_SUB_PROXIMITY, init_sub_proximity},
+	{SENSOR_TYPE_ANGLE_SENSOR_STATUS, init_angle_sensor_status},
+	{SENSOR_TYPE_DEVICE_COMMON_INFO, init_device_common_info},
+	{SENSOR_TYPE_SAR_FOLDING, init_sar_folding},
 };
 
 struct sensor_key_type {
@@ -211,6 +227,7 @@ int enable_sensor(int type, char *buf, int buf_len)
 	char *send_buffer;
 	int send_buffer_len;
 	struct shub_sensor *sensor;
+	u64 timestamp = get_current_timestamp();
 	u8 delay_buf[8] = {0, };
 
 	sensor = get_sensor(type);
@@ -254,7 +271,7 @@ int enable_sensor(int type, char *buf, int buf_len)
 		sensor->enabled_cnt--;
 	} else {
 		sensor->enabled = true;
-		sensor->enable_timestamp = get_current_timestamp();
+		sensor->enable_timestamp = timestamp;
 		get_tm(&(sensor->enable_time));
 	}
 
@@ -427,7 +444,7 @@ void print_sensor_debug(int type)
 	if (!sensor)
 		return;
 
-	EXECUTE_FUNC(sensor, sensor->funcs->print_debug);
+	EXECUTE_FUNC_TYPE(sensor, sensor->funcs->print_debug);
 	if (sensor->funcs == NULL || sensor->funcs->print_debug == NULL) {
 		if (type <= SENSOR_TYPE_LEGACY_MAX) {
 			shub_info("%s(%u) : %ums, %dms(%lld)", sensor->name, type, sensor->sampling_period,
@@ -809,14 +826,12 @@ void exit_sensor_manager(struct device *dev)
 int open_sensors_calibration(void)
 {
 	int i;
-	//if (!sensor_manager->is_fs_ready)
-	//	return 0;
 
 	shub_infof();
 	for (i = 0; i < SENSOR_TYPE_MAX; i++) {
 		struct shub_sensor *sensor = sensor_manager->sensor_list[i];
 
-		EXECUTE_FUNC(sensor, sensor->funcs->open_calibration_file);
+		EXECUTE_FUNC_TYPE(sensor, sensor->funcs->open_calibration_file);
 	}
 
 	return 0;
@@ -826,14 +841,16 @@ int sync_sensors_attribute(void)
 {
 	int type;
 
-	if (!sensor_manager->is_fs_ready)
-		return 0;
+	if (!is_shub_working()) {
+		shub_errf("sensor hub is not working");
+		return -EINVAL;
+	}
 
 	shub_infof();
 	for (type = 0; type < SENSOR_TYPE_MAX; type++) {
 		struct shub_sensor *sensor = get_sensor(type);
 
-		EXECUTE_FUNC(sensor, sensor->funcs->sync_status);
+		EXECUTE_FUNC_TYPE(sensor, sensor->funcs->sync_status);
 	}
 
 	return 0;
@@ -887,6 +904,7 @@ static inline int get_probed_legacy_count(void)
 	return count;
 }
 
+bool complete_sensor_spec = false;
 int get_sensor_spec_from_hub(void)
 {
 	int probe_cnt = get_probed_legacy_count();
@@ -924,13 +942,19 @@ int get_sensor_spec_from_hub(void)
 			shub_errf("sensor is probed, but sensor spec is reported");
 	}
 
+	complete_sensor_spec = true;
 	return ret;
 }
 
-unsigned int get_total_sensor_spec(char *buf)
+int get_total_sensor_spec(char *buf)
 {
 	unsigned int type;
 	unsigned int len = 0;
+
+	if (!complete_sensor_spec) {
+		shub_errf("sensor spec is not completed");
+		return -EINVAL;
+	}
 
 	for (type = 0 ; type < SENSOR_TYPE_MAX ; type++) {
 		struct shub_sensor *sensor = get_sensor(type);
@@ -949,6 +973,21 @@ void get_sensor_vendor_name(int vendor_type, char *vendor_name)
 	char *vendor_list[VENDOR_MAX] = VENDOR_LIST;
 
 	strcpy(vendor_name, vendor_list[vendor_type]);
+}
+
+void get_sensor_dt_name(char *dt_name, char* prefix, char *chip_name, char* suffix)
+{
+	int len, i;
+	char temp[15] = {0, };
+
+	strcpy(temp, chip_name);
+
+	len = strlen(temp);
+	for (i = 0; i < len; i++) {
+		temp[i] = tolower(temp[i]);
+	}
+
+	sprintf(dt_name, "%s%s%s", prefix, temp, suffix);
 }
 
 static void init_sensors(void)
@@ -1021,6 +1060,7 @@ int refresh_sensors(struct device *dev)
 		init_sensors();
 		register_file_manager_ready_callback(&fm_notifier);
 		remove_empty_dev();
+		remove_empty_factory();
 		first = false;
 	} else {
 		init_scontext_enable_state();
@@ -1035,6 +1075,5 @@ int refresh_sensors(struct device *dev)
 
 void fs_ready_cb(void)
 {
-	sensor_manager->is_fs_ready = true;
 	sensorhub_fs_ready();
 }

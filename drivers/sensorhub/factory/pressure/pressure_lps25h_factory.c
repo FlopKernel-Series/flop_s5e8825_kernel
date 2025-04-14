@@ -13,7 +13,7 @@
 
 #define LPS25H_NAME   "LPS25H"
 
-ssize_t pressure_temperature_show(struct device *dev, struct device_attribute *attr, char *buf)
+ssize_t pressure_lps25h_temperature_show(char *buf)
 {
 	s32 temperature = 0;
 	s32 float_temperature = 0;
@@ -27,17 +27,14 @@ ssize_t pressure_temperature_show(struct device *dev, struct device_attribute *a
 	return sprintf(buf, "%d.%02d\n", (temperature / 100), float_temperature);
 }
 
-static DEVICE_ATTR(temperature, S_IRUGO, pressure_temperature_show, NULL);
-
-static struct device_attribute *pressure_lps25h_attrs[] = {
-	&dev_attr_temperature,
-	NULL,
+struct pressure_factory_chipset_funcs pressure_lps25h_ops = {
+	.temperature_show = pressure_lps25h_temperature_show,
 };
 
-struct device_attribute **get_pressure_lps25h_dev_attrs(char *name)
+struct pressure_factory_chipset_funcs *get_pressure_lps25h_chipset_func(char *name)
 {
 	if (strcmp(name, LPS25H_NAME) != 0)
 		return NULL;
 
-	return pressure_lps25h_attrs;
+	return &pressure_lps25h_ops;
 }

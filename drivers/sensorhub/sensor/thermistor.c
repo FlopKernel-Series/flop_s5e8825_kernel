@@ -24,7 +24,7 @@ struct thermistor_event {
 	s16 raw;
 } __attribute__((__packed__));
 
-static void print_thermistor_debug(void)
+static void print_thermistor_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_THERMISTOR);
 	struct sensor_event *event = &(sensor->last_event_buffer);

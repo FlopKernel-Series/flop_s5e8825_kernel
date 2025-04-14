@@ -24,5 +24,6 @@ void remove_sensor_device_attr(struct device *dev, struct device_attribute *attr
 void remove_sensor_bin_attr(struct device *dev, struct bin_attribute *attributes[]);
 int sensor_device_create(struct device **pdev, void *drvdata, char *name);
 void sensor_device_destroy(struct device *dev);
+void sensor_device_unregister(struct device *dev);
 
 #endif

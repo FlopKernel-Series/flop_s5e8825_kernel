@@ -45,7 +45,7 @@ static void report_event_light_ir(void)
 	}
 }
 
-void print_light_ir_debug(void)
+void print_light_ir_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT_IR);
 	struct sensor_event *event = &(sensor->last_event_buffer);

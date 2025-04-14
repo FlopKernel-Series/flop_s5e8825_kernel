@@ -69,8 +69,13 @@ int init_proximity_raw(bool en)
 		return 0;
 
 	if (en) {
-		ret = init_default_func(sensor, "proximity_raw", 2, 0, sizeof(struct prox_raw_event));
-		sensor->hal_sensor = false;
+		if (sensor->spec.version >= PROX_RAW_ADDITIONAL_DEBUG_DATA_VERSION)
+			ret = init_default_func(sensor, "proximity_raw", 12, 12, sizeof(struct prox_raw_event));
+		else {
+			ret = init_default_func(sensor, "proximity_raw", 2, 0, sizeof(struct prox_raw_event));
+			sensor->hal_sensor = false;
+		}
+
 		sensor->data = (void *)&proximity_raw_data;
 		sensor->funcs = &proximity_raw_sensor_funcs;
 	} else {

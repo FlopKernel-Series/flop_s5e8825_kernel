@@ -47,7 +47,7 @@ int set_device_orientation_mode(struct orientation_data *data)
 	return ret;
 }
 
-static int sync_device_orientation_status(void)
+static int sync_device_orientation_status(int type)
 {
 	int ret = 0;
 	struct orientation_data *data = get_sensor(SENSOR_TYPE_DEVICE_ORIENTATION)->data;

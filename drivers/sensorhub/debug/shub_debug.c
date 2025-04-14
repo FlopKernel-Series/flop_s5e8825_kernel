@@ -21,6 +21,7 @@
 #include <linux/version.h>
 
 #include "../comm/shub_comm.h"
+#include "../debug/shub_mini_dump.h"
 #include "../sensormanager/shub_sensor.h"
 #include "../sensormanager/shub_sensor_manager.h"
 #include "../sensormanager/shub_sensor_type.h"
@@ -69,7 +70,9 @@ static void check_no_event(void)
 			continue;
 
 		event = get_sensor_event(type);
-		if (sensor->report_mode_continuous && sensor->enabled && sensor->max_report_latency == 0 &&
+		if ((sensor->report_mode_continuous ||
+		     (type == SENSOR_TYPE_LIGHT && event->received_timestamp < sensor->enable_timestamp)) &&
+		    sensor->enabled && sensor->max_report_latency == 0 &&
 		    MAX(sensor->enable_timestamp, sensor->change_timestamp) + 5000000000ULL < timestamp &&
 		    event->received_timestamp + 5000000000ULL < timestamp) {
 			shub_infof("sensor(%d) %lld(%lld), cur = %lld en = %lld change = %lld", type, event->received_timestamp,
@@ -122,12 +125,13 @@ static void debug_work_func(struct work_struct *work)
 	get_sensors_legacy_probe_state(probe_state);
 	get_sensors_legacy_enable_state(en_state);
 	shub_infof(" (%s) FW(%d):%u, Sensor state: 0x%llx, 0x%llx, En: 0x%llx, 0x%llx, "
-		   "Reset cnt: %d[%d : C %u(%u, %u), N %u, %u, %u], Cal result : [M:%c, P:%c]",
+		   "Reset cnt: %d[%d : C %u(%u, %u), N %u, %u, %u, D %u], Cal result : [M:%c, P:%c]",
 		   time_temp, get_firmware_type(), get_firmware_rev(),
 		   probe_state[0], probe_state[1], en_state[0], en_state[1], data->cnt_reset,
 		   data->cnt_shub_reset[RESET_TYPE_MAX], data->cnt_shub_reset[RESET_TYPE_KERNEL_COM_FAIL],
 		   get_cnt_comm_fail(), get_cnt_timeout(), data->cnt_shub_reset[RESET_TYPE_KERNEL_NO_EVENT],
 		   data->cnt_shub_reset[RESET_TYPE_HUB_NO_EVENT], data->cnt_shub_reset[RESET_TYPE_HUB_REQ_TASK_FAILURE],
+		   data->cnt_shub_reset[RESET_TYPE_9900_DUMP],
 		   open_cal_result[SENSOR_TYPE_GEOMAGNETIC_FIELD], open_cal_result[SENSOR_TYPE_PRESSURE]);
 
 	if (is_shub_working())
@@ -139,7 +143,7 @@ static void debug_work_func(struct work_struct *work)
 		/* only work for debug level is mid */
 		if (shub_debug_level()) {
 			shub_infof("panic!");
-			shub_infof("mini dump : %s", data->mini_dump);
+			shub_infof("mini dump : %s", get_shub_mini_dump());
 			panic("sensorhub crash error\n");
 
 		} else {
@@ -197,7 +201,11 @@ int shub_debug_level(void)
 	return SEC_DEBUG_LEVEL(kernel);
 #endif
 #else // LSI
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+	return sec_debug_get_force_upload();
+#else
 	return secdbg_mode_enter_upload();
+#endif
 #endif
 }
 

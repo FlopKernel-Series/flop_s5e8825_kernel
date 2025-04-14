@@ -22,7 +22,7 @@
 
 #define UNCAL_MAG_RECEIVE_EVENT_SIZE(x) ((x) * 6)
 
-void print_magnetometer_uncal_debug(void)
+void print_magnetometer_uncal_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED);
 	struct sensor_event *event = &(sensor->last_event_buffer);

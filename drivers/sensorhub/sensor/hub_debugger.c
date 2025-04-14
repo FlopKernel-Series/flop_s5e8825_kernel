@@ -33,6 +33,7 @@ int get_hub_debugger_value(char *dataframe, int *index, struct sensor_event *eve
 	u8 *buf;
 	u8 cmd = 0;
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_HUB_DEBUGGER);
+	struct hub_debugger *sensor_value = (struct hub_debugger *)event->value;
 
 	memcpy(&length, dataframe + *index, 2);
 	if (*index + length > frame_len)
@@ -42,6 +43,8 @@ int get_hub_debugger_value(char *dataframe, int *index, struct sensor_event *eve
 
 	buf = kzalloc(length, GFP_KERNEL);
 	memcpy(buf, dataframe + *index, length);
+
+	sensor->hal_sensor = false;
 
 	if (sensor->spec.version == 0) {
 		shub_info("[M] %s", buf);
@@ -53,6 +56,10 @@ int get_hub_debugger_value(char *dataframe, int *index, struct sensor_event *eve
 		} else if (cmd == HUB_DUBBGER_SUBCMD_FIFO_DATA) {
 			memset(buf_fifo_data, 0, sizeof(buf_fifo_data));
 			memcpy(buf_fifo_data, &buf[1], length-1);
+		} else if (cmd == HUB_DUBBGER_SUBCMD_LOG_TO_HAL) {
+			memcpy(sensor_value, &buf[1], length-1);
+			shub_info("[M] %s", sensor_value->log_to_hal_buffer);
+			sensor->hal_sensor = true;
 		} else {
 			shub_info("hub_debugger cmd is wrong : %d", cmd);
 		}
@@ -78,8 +85,11 @@ int init_hub_debugger(bool en)
 		return 0;
 
 	if (en) {
-		ret = init_default_func(sensor, "hub_debugger", 0, 0, 0);
-		sensor->hal_sensor = false;
+		ret = init_default_func(sensor, "hub_debugger", 0, sensor->spec.version == 0 ? 0 : 256,
+					sensor->spec.version == 0 ? 0 : 256);
+		if (sensor->spec.version == 0)
+			sensor->hal_sensor = false;
+
 		sensor->funcs = &hub_debugger_sensor_funcs;
 	} else {
 		destroy_default_func(sensor);

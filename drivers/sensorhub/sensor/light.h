@@ -23,12 +23,14 @@
 
 #ifdef CONFIG_SHUB_TEST_FOR_ONLY_UML
 #define LIGHT_CALIBRATION_FILE_PATH "calibration_data.txt"
+#define LIGHT_SUB_CALIBRATION_FILE_PATH "sub_calibration_data.txt"
 #else
 #define LIGHT_CALIBRATION_FILE_PATH "/efs/FactoryApp/light_cal_data"
+#define LIGHT_SUB_CALIBRATION_FILE_PATH "/efs/FactoryApp/light_sub_cal_data"
 #endif
 
 #define PANEL_TYPE_FILE_PATH "sys/class/lcd/panel/lcd_type"
-#define LIGHT_DEBIG_EVENT_SIZE_4BYTE_VERSION	2000
+#define LIGHT_EVENT_SIZE_4BYTE_VERSION	2000
 #define LIGHT_CAL_CH0_SIZE_4BYTE_VERSION		3000
 
 struct light_event {
@@ -36,7 +38,7 @@ struct light_event {
 	s32 cct;
 	u32 raw_lux;
 	s32 r;		/* r, g, b, w, a_time, a_gain : 2byte or 4byte */
-	s32 g;		/* LIGHT_DEBIG_EVENT_SIZE_4BYTE_VERSION : 4byte, others : 2byte */
+	s32 g;		/* LIGHT_EVENT_SIZE_4BYTE_VERSION : 4byte, others : 2byte */
 	s32 b;
 	s32 w;
 	s32 a_time;
@@ -50,7 +52,7 @@ struct light_cct_event {
 	u32 raw_lux;
 	u16 roi;	/* roi : ddi_support is supported */
 	u32 r;		/* r, g, b, w, a_time, a_gain : 2byte or 4byte */
-	u32 g;		/* LIGHT_DEBIG_EVENT_SIZE_4BYTE_VERSION : 4byte, others : 2byte */
+	u32 g;		/* LIGHT_EVENT_SIZE_4BYTE_VERSION : 4byte, others : 2byte */
 	u32 b;
 	u32 w;
 	u32 a_time;
@@ -70,6 +72,8 @@ struct light_cal_data_legacy {
 } __attribute__((__packed__));
 
 struct light_data {
+	char prefix[8];
+	char path_calibration[64];
 	int *light_coef;
 	int light_log_cnt;
 	int brightness;
@@ -101,6 +105,8 @@ void set_light_ddi_support(uint32_t system_feature);
 #define LIGHT_SUBCMD_PANEL_INFORMATION			139
 #define LIGHT_SUBCMD_UB_CONNECTED				140
 #define LIGHT_SUBCMD_SCREEN_MODE_INFORMATION	141
-struct sensor_chipset_init_funcs *get_light_stk_common_function_pointer(char *name);
+#define LIGHT_SUBCMD_COPR_DATA					142
+
+struct sensor_chipset_init_funcs *get_light_common_function_pointer(char *name);
 
 #endif /* __SHUB_LIGHT_H_ */

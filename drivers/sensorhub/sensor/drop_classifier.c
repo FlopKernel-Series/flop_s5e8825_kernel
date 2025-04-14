@@ -25,7 +25,7 @@
 #include "drop_classifier.h"
 
 
-void print_drop_classifier_debug(void)
+void print_drop_classifier_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_DROP_CLASSIFIER);
 	struct sensor_event *event = &(sensor->last_event_buffer);

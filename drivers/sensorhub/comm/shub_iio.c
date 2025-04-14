@@ -21,6 +21,12 @@
 #include <linux/iio/types.h>
 #include <linux/slab.h>
 #include <linux/version.h>
+#if (KERNEL_VERSION(6, 6, 0) <= LINUX_VERSION_CODE)
+#include <linux/iio/iio-opaque.h>
+#define IIO_LOCK(indio_dev) &to_iio_dev_opaque(indio_dev)->mlock
+#else
+#define IIO_LOCK(indio_dev) &indio_dev->mlock
+#endif
 
 #include "../sensorhub/shub_device.h"
 #include "../utility/shub_wakelock.h"
@@ -60,6 +66,7 @@ static struct iio_probe_device iio_probe_list[] = {
 	{SENSOR_TYPE_LIGHT, "light_sensor", 4 },
 	{SENSOR_TYPE_PRESSURE, "pressure_sensor", 14 },
 	{SENSOR_TYPE_PROXIMITY, "proximity_sensor", 1 },
+	{SENSOR_TYPE_PROXIMITY_RAW, "proximity_raw", 12 },
 	{SENSOR_TYPE_ROTATION_VECTOR, "rotation_vector_sensor", 17 },
 	{SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED, "uncal_geomagnetic_sensor", 24 },
 	{SENSOR_TYPE_GAME_ROTATION_VECTOR, "game_rotation_vector_sensor", 17 },
@@ -88,12 +95,24 @@ static struct iio_probe_device iio_probe_list[] = {
 	{SENSOR_TYPE_AOIS, "aois_sensor", 0 },
 	{SENSOR_TYPE_SUPER_STEADY_GYROSCOPE, "super_steady_gyro_sensor", 6 },
 	{SENSOR_TYPE_DEVICE_ORIENTATION_WU, "device_orientation_wu", 1 },
+	{SENSOR_TYPE_HUB_DEBUGGER, "hub_debugger", 256},
 	{SENSOR_TYPE_SAR_BACKOFF_MOTION, "sar_backoff_motion", 1 },
 	{SENSOR_TYPE_LIGHT_SEAMLESS, "light_seamless_sensor", 4 },
 	{SENSOR_TYPE_LED_COVER_EVENT, "led_cover_event_sensor", 1 },
 	{SENSOR_TYPE_LIGHT_IR, "light_ir_sensor", 24 },
 	{SENSOR_TYPE_DROP_CLASSIFIER, "drop_classifier", 25 },
 	{SENSOR_TYPE_SEQUENTIAL_STEP, "sequential_step", 4 },
+	{SENSOR_TYPE_ACCELEROMETER_SUB, "accelerometer_sub_sensor", 6 },
+	{SENSOR_TYPE_ACCELEROMETER_UNCALIBRATED_SUB, "uncal_accel_sub_sensor", 12 },
+	{SENSOR_TYPE_GYROSCOPE_SUB, "gyro_sub_sensor", 6 },
+	{SENSOR_TYPE_GYROSCOPE_UNCALIBRATED_SUB, "uncal_gyro_sub_sensor", 12 },
+	{SENSOR_TYPE_FOLDING_ANGLE, "folding_angle", 4 },
+	{SENSOR_TYPE_LID_ANGLE_FUSION, "lid_angle_fusion", 62 },
+	{SENSOR_TYPE_HINGE_ANGLE, "hinge_angle", 4 },
+	{SENSOR_TYPE_FOLDING_STATE_LPM, "folding_state_lpm", 38 },
+	{SENSOR_TYPE_ANGLE_SENSOR_STATUS, "angle_sensor_status", 1},
+	{SENSOR_TYPE_DEVICE_COMMON_INFO, "device_common_info", 3},
+	{SENSOR_TYPE_SAR_FOLDING, "sar_folding", 1},	
 };
 
 struct shub_iio_device {
@@ -278,7 +297,7 @@ void shub_report_sensordata(int type, u64 timestamp, char *data, int data_len)
 	struct shub_sensor *sensor = get_sensor(type);
 	char *buf;
 
-	if (!sensor || !indio_dev)
+	if (!sensor || !indio_dev || !sensor->hal_sensor)
 		return;
 
 	buf = kzalloc(sensor->report_event_size + sizeof(timestamp), GFP_KERNEL);
@@ -294,11 +313,23 @@ void shub_report_sensordata(int type, u64 timestamp, char *data, int data_len)
 		shub_wake_lock_timeout(300);
 
 	memcpy(buf + data_len, &timestamp, sizeof(timestamp));
-	mutex_lock(&indio_dev->mlock);
+	mutex_lock(IIO_LOCK(indio_dev));
 	iio_push_to_buffers(indio_dev, buf);
-	mutex_unlock(&indio_dev->mlock);
+	mutex_unlock(IIO_LOCK(indio_dev));
 
 	kfree(buf);
+}
+
+static bool is_remove_node(int type)
+{
+	if (iio_list[type] == NULL)
+		return false;
+	if (get_sensor(type) == NULL)
+		return true;
+	else if ((get_sensor(type))->hal_sensor == false)
+		return true;
+
+	return false;
 }
 
 void remove_empty_dev(void)
@@ -306,7 +337,7 @@ void remove_empty_dev(void)
 	int i;
 
 	for (i = 0 ; i < SENSOR_TYPE_LEGACY_MAX ; i++) {
-		if (iio_list[i] && get_sensor(i) == NULL) {
+		if (is_remove_node(i)) {
 			iio_device_unregister(iio_list[i]->indio_dev);
 			shub_infof("type %d", i);
 			kfree(iio_list[i]);

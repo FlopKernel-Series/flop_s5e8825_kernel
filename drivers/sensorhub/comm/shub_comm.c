@@ -14,6 +14,7 @@
  */
 
 #include "../debug/shub_debug.h"
+#include "../debug/shub_mini_dump.h"
 #include "../sensor/scontext.h"
 #include "../sensorhub/shub_device.h"
 #include "../sensormanager/shub_sensor.h"
@@ -125,6 +126,7 @@ static int comm_to_sensorhub(struct shub_msg *msg)
 
 	shub_infof("cmd %d type %d subcmd %d send_buf_len %d ts %llu", msg->cmd, msg->type, msg->subcmd, msg->length,
 		   msg->timestamp);
+	push_last_cmd(msg->cmd, msg->type, msg->subcmd, msg->timestamp);
 
 	ret = sensorhub_comms_write(shub_cmd_data, SHUB_CMD_SIZE);
 	mutex_unlock(&comm_mutex);
