@@ -162,7 +162,6 @@ LINUX_VER=$(make kernelversion 2>/dev/null)
 if [[ "$DO_KSU" == "1" ]]; then
     FK_TYPE="KSUNext"
     FK_TYPE_SHORT="KN"
-    DEFCONFIG="s5e8825-unified-ksu_defconfig"
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"
@@ -235,7 +234,36 @@ build() {
 
     rm -f "$OUT_KERNEL"
 
+    if [[ "$DO_KSU" == "1" ]]; then
+        # KernelSU Next
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU
+        scripts/config --file "$KDIR/out/.config" --enable KSU_WITH_KPROBES
+        scripts/config --file "$KDIR/out/.config" --disable KSU_DEBUG
+        scripts/config --file "$KDIR/out/.config" --disable KSU_ALLOWLIST_WORKAROUND
+        # susfs
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT 
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_SUS_PATH
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_SUS_MOUNT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_SUS_KSTAT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_TRY_UMOUNT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_SPOOF_UNAME
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_ENABLE_LOG
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_OPEN_REDIRECT
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_KSU_SUSFS_SUS_SU
+        scripts/config --file "$KDIR/out/.config" --disable CONFIG_KSU_SUSFS_SUS_OVERLAYFS
+    fi
+
     if [[ "$DO_REGEN" = "1" ]]; then
+        if [[ "$DO_KSU" == "1" ]]; then
+            echo "ERROR: Regenerate config(s) without DO_KSU=1"
+            exit 1
+        fi
         cp -f out/.config arch/arm64/configs/$DEFCONFIG
         echo "INFO: Configuration regenerated. Check the changes!"
         exit 0
