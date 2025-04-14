@@ -78,7 +78,7 @@ int init_shub_sensor(struct shub_sensor *sensor)
 	}
 
 	if (chipset_init_funcs && chipset_init_funcs->init) {
-		ret = chipset_init_funcs->init();
+		ret = chipset_init_funcs->init(sensor->type);
 		if (ret) {
 			shub_errf("%s chipset init ret %d", sensor->name, ret);
 			return ret;
@@ -86,7 +86,7 @@ int init_shub_sensor(struct shub_sensor *sensor)
 	}
 
 	if (sensor->funcs->init_variable) {
-		ret = sensor->funcs->init_variable();
+		ret = sensor->funcs->init_variable(sensor->type);
 		if (ret) {
 			shub_errf("%s init variable ret %d", sensor->name, ret);
 			return ret;
@@ -94,10 +94,10 @@ int init_shub_sensor(struct shub_sensor *sensor)
 	}
 
 	if (sensor->funcs->parse_dt)
-		sensor->funcs->parse_dt(dev);
+		sensor->funcs->parse_dt(dev, sensor->type);
 
 	if (chipset_init_funcs && chipset_init_funcs->parse_dt)
-		chipset_init_funcs->parse_dt(dev);
+		chipset_init_funcs->parse_dt(dev, sensor->type);
 
 	if (chipset_init_funcs && chipset_init_funcs->get_chipset_funcs)
 		sensor->chipset_funcs = chipset_init_funcs->get_chipset_funcs();

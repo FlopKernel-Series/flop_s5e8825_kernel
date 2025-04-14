@@ -28,7 +28,6 @@ struct sensor_manager_t {
 	uint64_t sensor_probe_state[2];
 	uint64_t scontext_probe_state[2];
 	struct sensor_spec_t *sensor_spec;
-	bool is_fs_ready;
 };
 
 int init_sensor_manager(struct device *dev);
@@ -60,12 +59,13 @@ int get_sensors_scontext_probe_state(uint64_t *buf);
 
 bool get_sensor_probe_state(int type);
 bool get_sensor_enabled(int type);
-unsigned int get_total_sensor_spec(char *buf);
+int get_total_sensor_spec(char *buf);
 unsigned int get_bigdata_wakeup_reason(char *buf);
 
 void fs_ready_cb(void);
 
 void get_sensor_vendor_name(int vendor_type, char *vendor_name);
+void get_sensor_dt_name(char *dt_name, char* prefix, char *chip_name, char* suffix);
 
 void print_big_data(void);
 #endif /* __SENSOR_MANAGER_H_ */

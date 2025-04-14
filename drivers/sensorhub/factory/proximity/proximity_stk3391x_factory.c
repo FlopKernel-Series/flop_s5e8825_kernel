@@ -27,38 +27,23 @@
 #include "proximity_factory.h"
 #include "../../others/shub_panel.h"
 
-#define STK33910_NAME "STK33910"
-#define STK33915_NAME "STK33915"
-#define STK_VENDOR "Sitronix"
-
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t proximity_stk3391x_prox_trim_show(char *buf, int type)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_PROXIMITY);
-	return sprintf(buf, "%s\n", sensor->spec.name);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", STK_VENDOR);
-}
-
-static ssize_t prox_trim_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
 	shub_infof("prox_trim_show : %d", data->setting_mode);
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", data->setting_mode);
 }
 
-static int proximity_get_calibration_data(void)
+static int proximity_get_calibration_data(int type)
 {
 	int ret = 0;
 	char *buffer = NULL;
 	int buffer_length = 0;
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_PROXIMITY, CAL_DATA, 1000, NULL, 0, &buffer,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, CAL_DATA, 1000, NULL, 0, &buffer,
 					&buffer_length, true);
 	if (ret < 0) {
 		shub_errf("shub_send_command_wait fail %d", ret);
@@ -73,21 +58,21 @@ static int proximity_get_calibration_data(void)
 
 	memcpy(data->cal_data, buffer, data->cal_data_len);
 
-	save_proximity_calibration();
+	save_proximity_calibration(type);
 
 	kfree(buffer);
 
 	return 0;
 }
 
-static int proximity_get_setting_mode(void)
+static int proximity_get_setting_mode(int type)
 {
 	int ret = 0;
 	char *buffer = NULL;
 	int buffer_length = 0;
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_PROXIMITY, PROXIMITY_SETTING_MODE, 1000, NULL,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, PROXIMITY_SETTING_MODE, 1000, NULL,
 					0, &buffer, &buffer_length, true);
 	if (ret < 0) {
 		shub_errf("shub_send_command_wait fail %d", ret);
@@ -101,19 +86,19 @@ static int proximity_get_setting_mode(void)
 	}
 
 	memcpy(&data->setting_mode, buffer, sizeof(data->setting_mode));
-	save_proximity_setting_mode();
+	save_proximity_setting_mode(type);
 
 	kfree(buffer);
 
 	return 0;
 }
 
-static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static ssize_t proximity_stk3391x_prox_cal_store(const char *buf, size_t size, int type)
 {
 	int ret = 0;
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_PROXIMITY, PROX_SUBCMD_CALIBRATION_START, NULL, 0);
+	ret = shub_send_command(CMD_SETVALUE, type, PROX_SUBCMD_CALIBRATION_START, NULL, 0);
 	if (ret < 0) {
 		shub_errf("shub_send_command_wait fail %d", ret);
 		return ret;
@@ -121,31 +106,24 @@ static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *
 
 	msleep(500);
 
-	proximity_get_setting_mode();
-	proximity_get_calibration_data();
+	proximity_get_setting_mode(type);
+	proximity_get_calibration_data(type);
 
 	shub_infof("ADC : %u, mode : %u", *((u16 *)(data->cal_data)), data->setting_mode);
 
 	return size;
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR_RO(prox_trim);
-static DEVICE_ATTR(prox_cal, 0220, NULL, proximity_cal_store);
-
-static struct device_attribute *proximity_stk3391x_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_prox_trim,
-	&dev_attr_prox_cal,
-	NULL,
+struct proximity_factory_chipset_funcs proximity_stk3391x_ops = {
+	.prox_cal_store = proximity_stk3391x_prox_cal_store,
+	.prox_trim_show = proximity_stk3391x_prox_trim_show,
 };
 
-struct device_attribute **get_proximity_stk3391x_dev_attrs(char *name)
+struct proximity_factory_chipset_funcs *get_proximity_stk3391x_chipset_func(char *name)
 {
-	if (strcmp(name, STK33910_NAME) != 0 && strcmp(name, STK33915_NAME) != 0)
+	if (strcmp(name, "STK33910") != 0 && strcmp(name, "STK33911") != 0 \
+			&& strcmp(name, "STK33915") != 0 && strcmp(name, "STK33917") != 0)
 		return NULL;
 
-	return proximity_stk3391x_attrs;
+	return &proximity_stk3391x_ops;
 }

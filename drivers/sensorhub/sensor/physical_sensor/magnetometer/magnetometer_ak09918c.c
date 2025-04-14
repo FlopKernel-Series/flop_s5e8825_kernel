@@ -21,14 +21,14 @@
 #include "../../../utility/shub_utility.h"
 #include "../../../sensormanager/shub_sensor.h"
 #include "../../../sensormanager/shub_sensor_manager.h"
-
+#include "../../flip_cover_detector.h"
 #include "../../magnetometer.h"
 
 #define AK09918C_NAME	"AK09918C"
 
-static int init_mag_ak09918c(void)
+static int init_mag_ak09918c(int type)
 {
-	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
+	struct magnetometer_data *data = get_sensor(type)->data;
 
 	data->mag_matrix_len = 27;
 	data->cal_data_len = sizeof(struct calibration_data_ak09918c);
@@ -36,7 +36,7 @@ static int init_mag_ak09918c(void)
 	return 0;
 }
 
-static void parse_dt_magnetometer_ak09918c(struct device *dev)
+static void parse_dt_magnetometer_ak09918c(struct device *dev, int type)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 	struct device_node *np = dev->of_node;
@@ -77,9 +77,14 @@ static void parse_dt_magnetometer_ak09918c(struct device *dev)
 			shub_err("no mag-ak09918c-nfc-array");
 	}
 
-	if (get_sensor(SENSOR_TYPE_FLIP_COVER_DETECTOR)) {
+	if (get_sensor(SENSOR_TYPE_FLIP_COVER_DETECTOR) && check_flip_cover_detector_supported()) {
 		if (of_property_read_u8_array(np, "mag-ak09918c-cover-array", data->cover_matrix, data->mag_matrix_len))
 			shub_err("no mag-ak09918c-cover-array, set as 0");
+	}
+
+	if (of_property_read_u8_array(np, "mag-ak09918c-mpp-array", data->mpp_matrix, data->mag_matrix_len)) {
+		shub_err("no mag-ak09918c-mpp-array, set as 0");
+		kfree_and_clear(data->mpp_matrix);
 	}
 }
 

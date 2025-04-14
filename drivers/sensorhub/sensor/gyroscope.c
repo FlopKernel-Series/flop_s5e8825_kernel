@@ -30,14 +30,24 @@
 
 #define GYRO_CALIBRATION_FILE_PATH "/efs/FactoryApp/gyro_cal_data"
 
-int set_gyro_position(int position)
+void parse_dt_gyroscope(struct device *dev, int type)
+{
+	struct accelerometer_data *acc_data = get_sensor(type == SENSOR_TYPE_GYROSCOPE ? SENSOR_TYPE_ACCELEROMETER :
+								 SENSOR_TYPE_ACCELEROMETER_SUB)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
+
+	data->position = acc_data->position;
+	shub_infof("type[%d], position[%d]", type, data->position);
+}
+
+int set_gyro_position(int type, int position)
 {
 	int ret = 0;
-	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
 
 	data->position = position;
 
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_GYROSCOPE, SENSOR_AXIS, (char *)&(data->position),
+	ret = shub_send_command(CMD_SETVALUE, type, SENSOR_AXIS, (char *)&(data->position),
 				sizeof(data->position));
 	if (ret < 0) {
 		shub_errf("CMD fail %d\n", ret);
@@ -49,17 +59,17 @@ int set_gyro_position(int position)
 	return ret;
 }
 
-int get_gyro_position(void)
+int get_gyro_position(int type)
 {
-	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
 
 	return data->position;
 }
 
-static int open_gyro_calibration_file(void)
+static int open_gyro_calibration_file(int type)
 {
 	int ret = 0;
-	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
 
 	shub_infof();
 
@@ -111,12 +121,12 @@ int parsing_gyro_calibration(char *dataframe, int *index, int frame_len)
 	return 0;
 }
 
-int set_gyro_cal(struct gyroscope_data *data)
+int set_gyro_cal(int type, struct gyroscope_data *data)
 {
 	int ret = 0;
 	s16 gyro_cal[3] = {0, };
 
-	if (!get_sensor_probe_state(SENSOR_TYPE_GYROSCOPE)) {
+	if (!get_sensor_probe_state(type)) {
 		shub_infof("[SHUB] Skip this function!!!, gyro sensor is not connected\n");
 		return ret;
 	}
@@ -125,7 +135,7 @@ int set_gyro_cal(struct gyroscope_data *data)
 	gyro_cal[1] = data->cal_data.y;
 	gyro_cal[2] = data->cal_data.z;
 
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_GYROSCOPE, CAL_DATA, (char *)gyro_cal, sizeof(gyro_cal));
+	ret = shub_send_command(CMD_SETVALUE, type, CAL_DATA, (char *)gyro_cal, sizeof(gyro_cal));
 
 	if (ret < 0) {
 		shub_errf("CMD Fail %d", ret);
@@ -138,33 +148,19 @@ int set_gyro_cal(struct gyroscope_data *data)
 	return ret;
 }
 
-get_init_chipset_funcs_ptr get_gyro_funcs_ary[] = {
-	get_gyroscope_icm42605m_function_pointer,
-	get_gyroscope_lsm6dsl_function_pointer,
-	get_gyroscope_lsm6dsotr_function_pointer,
-	get_gyroscope_lsm6dsvtr_function_pointer,
-	get_gyroscope_icm42632m_function_pointer,
-};
-
-static get_init_chipset_funcs_ptr *get_gyro_init_chipset_funcs(int *len)
-{
-	*len = ARRAY_SIZE(get_gyro_funcs_ary);
-	return get_gyro_funcs_ary;
-}
-
-int sync_gyroscope_status(void)
+int sync_gyroscope_status(int type)
 {
 	int ret = 0;
-	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
 
 	shub_infof();
-	ret = set_gyro_position(data->position);
+	ret = set_gyro_position(type, data->position);
 	if (ret < 0) {
 		shub_errf("set_position failed");
 		return ret;
 	}
 
-	ret = set_gyro_cal(data);
+	ret = set_gyro_cal(type, data);
 	if (ret < 0) {
 		shub_errf("set_gyro_cal failed");
 		return ret;
@@ -173,13 +169,13 @@ int sync_gyroscope_status(void)
 	return ret;
 }
 
-void print_gyroscope_debug(void)
+void print_gyroscope_debug(int type)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE);
+	struct shub_sensor *sensor = get_sensor(type);
 	struct sensor_event *event = &(sensor->last_event_buffer);
 	struct gyro_event *sensor_value = (struct gyro_event *)(event->value);
 
-	shub_info("%s(%u) : %d, %d, %d (%lld) (%ums, %dms)", sensor->name, SENSOR_TYPE_GYROSCOPE, sensor_value->x,
+	shub_info("%s(%u) : %d, %d, %d (%lld) (%ums, %dms)", sensor->name, sensor->type, sensor_value->x,
 		  sensor_value->y, sensor_value->z, event->timestamp, sensor->sampling_period,
 		  sensor->max_report_latency);
 }
@@ -192,7 +188,7 @@ static struct sensor_funcs gyroscope_sensor_func = {
 	.print_debug = print_gyroscope_debug,
 	.parsing_data = parsing_gyro_calibration,
 	.open_calibration_file = open_gyro_calibration_file,
-	.get_init_chipset_funcs = get_gyro_init_chipset_funcs,
+	.parse_dt = parse_dt_gyroscope,
 };
 
 int init_gyroscope(bool en)
@@ -208,6 +204,29 @@ int init_gyroscope(bool en)
 
 		sensor->report_mode_continuous = true;
 		sensor->data = (void *)&gyroscope_data;
+		sensor->funcs = &gyroscope_sensor_func;
+	} else {
+		destroy_default_func(sensor);
+	}
+
+	return ret;
+}
+
+static struct gyroscope_data gyroscope_sub_data;
+
+int init_gyroscope_sub(bool en)
+{
+	int ret = 0;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE_SUB);
+
+	if (!sensor)
+		return 0;
+
+	if (en) {
+		ret = init_default_func(sensor, "gyro_sub_sensor", 6, 6, sizeof(struct gyro_event));
+
+		sensor->report_mode_continuous = true;
+		sensor->data = (void *)&gyroscope_sub_data;
 		sensor->funcs = &gyroscope_sensor_func;
 	} else {
 		destroy_default_func(sensor);

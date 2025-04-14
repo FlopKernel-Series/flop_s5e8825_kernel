@@ -13,6 +13,7 @@
  *
  */
 
+#include "gyroscope_factory.h"
 #include "../../comm/shub_comm.h"
 #include "../../utility/shub_utility.h"
 #include "../../sensormanager/shub_sensor.h"
@@ -26,16 +27,6 @@
 
 #define DEF_GYRO_SENS_STM            (700) /* 0.0700 * 10000 */
 #define DEF_BIAS_LSB_THRESH_SELF_STM (40000 / DEF_GYRO_SENS_STM)
-
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", LSM6DSOTR_NAME);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", LSM6DSOTR_VENDOR);
-}
 
 static u32 lsm6dsotr_selftest_sqrt(u32 sqsum)
 {
@@ -102,7 +93,7 @@ static u32 lsm6dsotr_selftest_sqrt(u32 sqsum)
 
 	return sq_rt;
 }
-static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t gyroscope_lsm6dsotr_selftest(int type, char *buf)
 {
 	char *temp_buf = NULL;
 	int temp_buf_length = 0;
@@ -124,9 +115,9 @@ static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, 
 	s16 st_bias[3] = {0, };
 	int gyro_fifo_avg[3] = {0, }, gyro_self_zro[3] = {0, };
 	int gyro_self_bias[3] = {0, }, gyro_self_diff[3] = {0, };
-	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_GYROSCOPE, SENSOR_FACTORY,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, SENSOR_FACTORY,
 				     7000, NULL, 0, &temp_buf, &temp_buf_length, true);
 
 	if (ret < 0) {
@@ -319,21 +310,14 @@ exit:
 	return ret;
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR_RO(selftest);
-
-static struct device_attribute *gyro_lsm6dsotr_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_selftest,
-	NULL,
+struct gyroscope_factory_chipset_funcs gyroscope_lsm6dsotr_ops = {
+	.selftest = gyroscope_lsm6dsotr_selftest,
 };
 
-struct device_attribute **get_gyroscope_lsm6dsotr_dev_attrs(char *name)
+struct gyroscope_factory_chipset_funcs *get_gyroscope_lsm6dsotr_chipset_func(char *name)
 {
 	if (strcmp(name, LSM6DSOTR_NAME) != 0)
 		return NULL;
 
-	return gyro_lsm6dsotr_attrs;
+	return &gyroscope_lsm6dsotr_ops;
 }

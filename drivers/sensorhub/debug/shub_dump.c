@@ -15,6 +15,7 @@
 
 #include "../sensorhub/shub_device.h"
 #include "../comm/shub_iio.h"
+#include "../sensormanager/shub_sensor.h"
 #include "../sensormanager/shub_sensor_type.h"
 #include "../utility/shub_utility.h"
 #include "../vendor/shub_vendor.h"
@@ -73,8 +74,7 @@ static int create_dump_bin_file(void)
 	}
 
 	if (ret < 0) {
-		kvfree(sensorhub_dump);
-		sensorhub_dump = NULL;
+		kvfree_and_clear(sensorhub_dump);
 		sensorhub_dump_size = 0;
 	}
 
@@ -90,6 +90,9 @@ void write_shub_dump_file(char *dump, int dumpsize, int type, int count)
 		return;
 	} else if (dumpsize != sensorhub_dump_size) {
 		shub_errf("dump size is wrong %d(%d)", dumpsize, sensorhub_dump_size);
+		return;
+	} else if (ZERO_OR_NULL_PTR(sensorhub_dump)) {
+		shub_errf("sensorhub_dump is NULL");
 		return;
 	}
 
@@ -119,7 +122,8 @@ void remove_shub_dump(void)
 	if (ZERO_OR_NULL_PTR(sensorhub_dump))
 		return;
 
-	kvfree(sensorhub_dump);
+	kvfree_and_clear(sensorhub_dump);
+
 	for (i = 0; i < ARRAY_SIZE(shub_dump_bin_attrs); i++)
 		device_remove_bin_file(data->sysfs_dev, shub_dump_bin_attrs[i]);
 }

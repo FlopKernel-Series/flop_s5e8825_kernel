@@ -16,6 +16,7 @@
 #include "magnetometer_factory.h"
 
 #include "../../comm/shub_comm.h"
+#include "../../factory/shub_factory.h"
 #include "../../sensor/magnetometer.h"
 #include "../../sensorhub/shub_device.h"
 #include "../../sensormanager/shub_sensor.h"
@@ -25,6 +26,7 @@
 
 #include <linux/delay.h>
 #include <linux/slab.h>
+#include <linux/device.h>
 
 #if defined(CONFIG_SHUB_KUNIT)
 #include <kunit/mock.h>
@@ -39,16 +41,15 @@
 /* factory Sysfs                                                         */
 /*************************************************************************/
 
-static struct device *mag_sysfs_device;
-static struct device_attribute **chipset_attrs;
-static u8 chipset_index;
+__visible_for_testing struct device *mag_sysfs_device;
 
-typedef int (*check_adc_data_spec)(s32 sensor_value[3]);
-check_adc_data_spec check_adc_data_spec_funcs[] = {
-	check_ak09918c_adc_data_spec,
-	check_mmc5633_adc_data_spec,
-	check_yas539_adc_data_spec,
-	check_mxg4300s_adc_data_spec,
+static struct magnetometer_factory_chipset_funcs *chipset_func;
+typedef struct magnetometer_factory_chipset_funcs* (*get_chipset_funcs_ptr)(char *);
+get_chipset_funcs_ptr get_magnetometer_factory_chipset_funcs_ptr[] = {
+	get_magnetometer_ak09918c_chipset_func,
+	get_magnetometer_mmc5633_chipset_func,
+	get_magnetometer_yas539_chipset_func,
+	get_magnetometer_mxg4300s_chipset_func,
 };
 
 void get_magnetometer_sensor_value_s32(struct mag_power_event *event, s32 *sensor_value)
@@ -56,6 +57,33 @@ void get_magnetometer_sensor_value_s32(struct mag_power_event *event, s32 *senso
 	sensor_value[0] = (s32) event->x;
 	sensor_value[1] = (s32) event->y;
 	sensor_value[2] = (s32) event->z;
+}
+
+static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD);
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	return sprintf(buf, "%s\n", sensor->spec.name);
+}
+
+static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD);
+	char vendor[VENDOR_MAX] = "";
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	get_sensor_vendor_name(sensor->spec.vendor, vendor);
+
+	return sprintf(buf, "%s\n", vendor);
 }
 
 static ssize_t status_show(struct device *dev, struct device_attribute *attr, char *buf)
@@ -168,6 +196,12 @@ static ssize_t raw_data_store(struct device *dev, struct device_attribute *attr,
 	int64_t dEnable;
 	s32 dMsDelay = 20;
 	s32 sensor_buf[3] = {0, };
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_POWER);
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
 
 	memcpy(&chTempbuf[0], &dMsDelay, 4);
 
@@ -191,7 +225,7 @@ static ssize_t raw_data_store(struct device *dev, struct device_attribute *attr,
 		do {
 			msleep(20);
 			get_magnetometer_sensor_value_s32(sensor_value, sensor_buf);
-			if (check_adc_data_spec_funcs[chipset_index](sensor_buf) == 0) { // success
+			if (chipset_func->check_adc_data_spec(sensor_buf) == 0) { // success
 				break;
 			}
 		} while (--retries);
@@ -214,8 +248,14 @@ static ssize_t adc_show(struct device *dev, struct device_attribute *attr, char 
 	s32 sensor_buf[3] = {0, };
 	int retries = 10;
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD);
-	struct mag_event *sensor_value = (struct mag_event *)(sensor->event_buffer.value);
+	struct mag_event *sensor_value;
 
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	sensor_value = (struct mag_event *)(sensor->event_buffer.value);
 	sensor_value->x = 0;
 	sensor_value->y = 0;
 	sensor_value->z = 0;
@@ -229,7 +269,7 @@ static ssize_t adc_show(struct device *dev, struct device_attribute *attr, char 
 		sensor_buf[0] = sensor_value->x;
 		sensor_buf[1] = sensor_value->y;
 		sensor_buf[2] = sensor_value->z;
-		if (check_adc_data_spec_funcs[chipset_index](sensor_buf) == 0) { // success
+		if (chipset_func->check_adc_data_spec(sensor_buf) == 0) {  // success
 			break;
 		}
 	} while (--retries);
@@ -245,80 +285,183 @@ static ssize_t adc_show(struct device *dev, struct device_attribute *attr, char 
 
 	shub_infof("x = %d, y = %d, z = %d\n", sensor_buf[0], sensor_buf[1], sensor_buf[2]);
 
+
 	return sprintf(buf, "%s,%d,%d,%d\n", (bSuccess ? "OK" : "NG"), sensor_buf[0], sensor_buf[1], sensor_buf[2]);
 }
 
-static DEVICE_ATTR(raw_data, 0664, raw_data_show, raw_data_store);
+static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (!chipset_func ||!chipset_func->selftest_show)
+		return -EINVAL;
+
+	return chipset_func->selftest_show(buf);
+}
+
+static ssize_t hw_offset_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (!chipset_func ||!chipset_func->hw_offset_show)
+		return -EINVAL;
+
+	return chipset_func->hw_offset_show(buf);
+}
+
+static ssize_t matrix_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (!chipset_func ||!chipset_func->matrix_show)
+		return -EINVAL;
+
+	return chipset_func->matrix_show(buf);
+}
+
+static ssize_t matrix_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+{
+	if (!chipset_func ||!chipset_func->matrix_store)
+		return -EINVAL;
+
+	return chipset_func->matrix_store(buf, size);
+}
+
+static ssize_t cover_matrix_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (!chipset_func ||!chipset_func->cover_matrix_show)
+		return -EINVAL;
+
+	return chipset_func->cover_matrix_show(buf);
+}
+
+static ssize_t mpp_matrix_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+{
+	if (!chipset_func ||!chipset_func->mpp_matrix_store)
+		return -EINVAL;
+
+	return chipset_func->mpp_matrix_store(buf, size);
+}
+
+static ssize_t mpp_matrix_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	if (!chipset_func ||!chipset_func->mpp_matrix_show)
+		return -EINVAL;
+
+	return chipset_func->mpp_matrix_show(buf);
+}
+
+static ssize_t cover_matrix_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+{
+	if (!chipset_func || !chipset_func->cover_matrix_store)
+		return -EINVAL;
+
+	return chipset_func->cover_matrix_store(buf, size);
+}
+
+static ssize_t ak09911_asa_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "0,0,0\n");
+}
+
+static DEVICE_ATTR_RO(name);
+static DEVICE_ATTR_RO(vendor);
 static DEVICE_ATTR_RO(adc);
 static DEVICE_ATTR_RO(dac);
+static DEVICE_ATTR(raw_data, 0664, raw_data_show, raw_data_store);
 static DEVICE_ATTR_RO(status);
 static DEVICE_ATTR_RO(logging_data);
+static DEVICE_ATTR_RO(selftest);
+static DEVICE_ATTR_RO(hw_offset);
+static DEVICE_ATTR(matrix, 0664, matrix_show, matrix_store);
+static DEVICE_ATTR(cover_matrix, 0664, cover_matrix_show, cover_matrix_store);
+static DEVICE_ATTR(mpp_matrix, 0664, mpp_matrix_show, mpp_matrix_store);
+static DEVICE_ATTR_RO(ak09911_asa);
 
 __visible_for_testing struct device_attribute *mag_attrs[] = {
+	&dev_attr_name,
+	&dev_attr_vendor,
 	&dev_attr_adc,
 	&dev_attr_dac,
 	&dev_attr_raw_data,
 	&dev_attr_status,
 	&dev_attr_logging_data,
+	&dev_attr_selftest,
+	&dev_attr_hw_offset,
+	&dev_attr_matrix,
+	&dev_attr_cover_matrix,
+	&dev_attr_mpp_matrix,
+	&dev_attr_ak09911_asa,
 	NULL,
-};
-
-typedef struct device_attribute **(*get_chipset_dev_attrs)(char *);
-get_chipset_dev_attrs get_mag_chipset_dev_attrs[] = {
-	get_magnetometer_ak09918c_dev_attrs,
-	get_magnetometer_mmc5633_dev_attrs,
-	get_magnetometer_yas539_dev_attrs,
-	get_magnetometer_mxg4300s_dev_attrs,
 };
 
 void initialize_magnetometer_sysfs(void)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD);
 	int ret;
-	uint64_t i;
 
 	ret = sensor_device_create(&mag_sysfs_device, NULL, "magnetic_sensor");
 	if (ret < 0) {
-		shub_errf("fail to creat %s sysfs device", sensor->name);
+		shub_errf("fail to creat magnetic_sensor sysfs device");
 		return;
 	}
 
 	ret = add_sensor_device_attr(mag_sysfs_device, mag_attrs);
 	if (ret < 0) {
-		shub_errf("fail to add %s sysfs device attr", sensor->name);
+		shub_errf("fail to add magnetic_sensor sysfs device attr");
 		return;
-	}
-
-	for (i = 0; i < ARRAY_SIZE(get_mag_chipset_dev_attrs); i++) {
-		chipset_attrs = get_mag_chipset_dev_attrs[i](sensor->spec.name);
-		if (chipset_attrs) {
-			ret = add_sensor_device_attr(mag_sysfs_device, chipset_attrs);
-			chipset_index = i;
-			if (ret < 0) {
-				shub_errf("fail to add sysfs chipset device attr(%d)", (int)i);
-				return;
-			}
-			break;
-		}
 	}
 }
 
 void remove_magnetometer_sysfs(void)
 {
-	if (chipset_attrs)
-		remove_sensor_device_attr(mag_sysfs_device, chipset_attrs);
 	remove_sensor_device_attr(mag_sysfs_device, mag_attrs);
-	sensor_device_destroy(mag_sysfs_device);
+	sensor_device_unregister(mag_sysfs_device);
 	mag_sysfs_device = NULL;
 }
 
-void initialize_magnetometer_factory(bool en)
+void remove_magnetometer_empty_sysfs(void)
 {
-	if (!get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD))
-		return;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD);
+	struct magnetometer_data *data = sensor->data;
 
+	if (!data->mpp_matrix) {
+		shub_errf("mpp_matrix is null");
+		device_remove_file(mag_sysfs_device, &dev_attr_mpp_matrix);
+	}
+
+	if (!data->cover_matrix) {
+		shub_errf("cover_matrix is null");
+		device_remove_file(mag_sysfs_device, &dev_attr_cover_matrix);
+	}
+
+	if (strcmp(sensor->spec.name, "YAS539") == 0 || strcmp(sensor->spec.name, "MMC5633") == 0) {
+		device_remove_file(mag_sysfs_device, &dev_attr_ak09911_asa);
+	}
+}
+
+void initialize_magnetometer_factory_chipset_func(void)
+{
+	int i;
+
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD);
+
+	for (i = 0; i < ARRAY_SIZE(get_magnetometer_factory_chipset_funcs_ptr); i++) {
+		chipset_func = get_magnetometer_factory_chipset_funcs_ptr[i](sensor->spec.name);
+		if(!chipset_func)
+			continue;
+
+		shub_infof("support magnetometer sysfs");
+		break;
+	}
+
+	if (!chipset_func)
+		remove_magnetometer_sysfs();
+}
+
+void initialize_magnetometer_factory(bool en, int mode)
+{
 	if (en)
 		initialize_magnetometer_sysfs();
-	else
-		remove_magnetometer_sysfs();
+	else {
+		if (mode == INIT_FACTORY_MODE_REMOVE_EMPTY && get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)) {
+			initialize_magnetometer_factory_chipset_func();
+			remove_magnetometer_empty_sysfs();
+		} else {
+			remove_magnetometer_sysfs();
+		}
+	}
 }

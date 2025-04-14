@@ -25,6 +25,8 @@
 #include "../utility/sensor_core.h"
 #include "../sensorhub/shub_device.h"
 
+static int spec_retry_count = 0;
+
 static ssize_t show_sensors_enable(struct device *dev,
                                    struct device_attribute *attr, char *buf)
 {
@@ -89,6 +91,7 @@ static ssize_t show_sensor_spec(struct device *dev,
 	shub_infof("");
 	if (!is_shub_working()) {
 		shub_errf("sensor hub is not working");
+		spec_retry_count++;
 		return -EINVAL;
 	}
 
@@ -123,6 +126,11 @@ static struct device_attribute *shub_sensor_attrs[] = {
 	&dev_attr_wakeup_reason,
 	NULL,
 };
+
+int get_spec_retry_cnt(void)
+{
+	return spec_retry_count;
+}
 
 int init_shub_sensor_sysfs(void)
 {

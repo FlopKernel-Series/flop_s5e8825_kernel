@@ -28,7 +28,7 @@
 
 #define STK3328_NAME   "STK3328"
 
-void parse_dt_proximity_stk3328(struct device *dev)
+void parse_dt_proximity_stk3328(struct device *dev, int type)
 {
 	struct device_node *np = dev->of_node;
 	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
@@ -54,12 +54,12 @@ void parse_dt_proximity_stk3328(struct device *dev)
 	thd_data->prox_thresh_default[1] = data->prox_threshold[1];
 }
 
-int proximity_open_calibration_stk3328(void)
+int proximity_open_calibration_stk3328(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
-	ret = shub_file_read(PROX_CALIBRATION_FILE_PATH,
+	ret = shub_file_read(data->path_calibration,
 			     (char *)&data->prox_threshold, sizeof(data->prox_threshold), 0);
 	if (ret != sizeof(data->prox_threshold))
 		ret = -EIO;
@@ -69,9 +69,9 @@ int proximity_open_calibration_stk3328(void)
 	return ret;
 }
 
-int init_proximity_stk3328(void)
+int init_proximity_stk3328(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->threshold_data == NULL) {
 		data->threshold_data = kzalloc(sizeof(struct proximity_stk3328_data), GFP_KERNEL);

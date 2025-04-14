@@ -24,6 +24,9 @@
 #else
 #define ACCEL_CALIBRATION_FILE_PATH "/efs/FactoryApp/calibration_data"
 #endif
+
+#define ACCEL_SUBCMD_MOTOR_COEF	128
+
 struct accel_event {
 	s16 x;
 	s16 y;
@@ -51,13 +54,6 @@ struct accelerometer_data {
 	bool is_accel_alert;
 	int range;
 };
-
-struct sensor_chipset_init_funcs *get_accelometer_lsm6dsl_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_accelometer_icm42605m_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_accelometer_lis2dlc12_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_accelometer_lsm6dsotr_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_accelometer_icm42632m_function_pointer(char *name);
-struct sensor_chipset_init_funcs *get_accelometer_lsm6dsvtr_function_pointer(char *name);
 
 int set_accel_cal(struct accelerometer_data *data);
 #endif

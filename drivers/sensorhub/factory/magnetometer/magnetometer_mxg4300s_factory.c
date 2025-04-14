@@ -24,7 +24,6 @@
 #include <linux/delay.h>
 
 #define MXG4300S_NAME	"MXG4300S"
-#define MXG4300S_VENDOR "Haechitech"
 
 #define GM_HEACHITECH_DATA_SPEC_MIN -16666
 #define GM_HEACHITECH_DATA_SPEC_MAX 16666
@@ -38,7 +37,7 @@
 #define GM_SELFTEST_Z_SPEC_MIN -1000
 #define GM_SELFTEST_Z_SPEC_MAX -150
 
-int check_mxg4300s_adc_data_spec(s32 sensor_value[3])
+int magnetometer_mxg4300s_check_adc_data_spec(s32 sensor_value[3])
 {
 	if ((sensor_value[0] == 0) && (sensor_value[1] == 0) && (sensor_value[2] == 0)) {
 		return -1;
@@ -54,17 +53,7 @@ int check_mxg4300s_adc_data_spec(s32 sensor_value[3])
 	}
 }
 
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", MXG4300S_NAME);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", MXG4300S_VENDOR);
-}
-
-static ssize_t matrix_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_mxg4300s_matrix_show(char *buf)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 
@@ -78,7 +67,7 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr, ch
 		       data->mag_matrix[24], data->mag_matrix[25], data->mag_matrix[26]);
 }
 
-static ssize_t matrix_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static ssize_t magnetometer_mxg4300s_matrix_store(const char *buf, size_t size)
 {
 	u8 val[27] = {0, };
 	int ret = 0;
@@ -119,7 +108,7 @@ static ssize_t matrix_store(struct device *dev, struct device_attribute *attr, c
 	return size;
 }
 
-static ssize_t cover_matrix_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_mxg4300s_cover_matrix_show(char *buf)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 
@@ -133,7 +122,7 @@ static ssize_t cover_matrix_show(struct device *dev, struct device_attribute *at
 		       data->cover_matrix[24], data->cover_matrix[25], data->cover_matrix[26]);
 }
 
-static ssize_t cover_matrix_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static ssize_t magnetometer_mxg4300s_cover_matrix_store(const char *buf, size_t size)
 {
 	u8 val[27] = {0, };
 	int ret = 0;
@@ -175,7 +164,7 @@ static ssize_t cover_matrix_store(struct device *dev, struct device_attribute *a
 }
 
 
-static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_mxg4300s_selftest_show(char *buf)
 {
 	s8 result[4] = {-1, -1, -1, -1};
 	char *buf_selftest = NULL;
@@ -272,12 +261,7 @@ exit:
 	return ret;
 }
 
-static ssize_t ak09911_asa_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "0,0,0\n");
-}
-
-static ssize_t hw_offset_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_mxg4300s_hw_offset_show(char *buf)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 	struct calibration_data_mxg4300s *cal_data = data->cal_data;
@@ -285,38 +269,20 @@ static ssize_t hw_offset_show(struct device *dev, struct device_attribute *attr,
 	return snprintf(buf, PAGE_SIZE, "%d,%d,%d\n", cal_data->offset_x, cal_data->offset_y, cal_data->offset_z);
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR_RO(selftest);
-static DEVICE_ATTR_RO(ak09911_asa);
-static DEVICE_ATTR_RO(hw_offset);
-static DEVICE_ATTR(matrix, 0664, matrix_show, matrix_store);
-static DEVICE_ATTR(matrix2, 0664, cover_matrix_show, cover_matrix_store);
-
-static struct device_attribute *mag_mxg4300s_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_selftest,
-	&dev_attr_ak09911_asa,
-	&dev_attr_matrix,
-	&dev_attr_hw_offset,
-	NULL,
-	NULL,
+struct magnetometer_factory_chipset_funcs magnetometer_mxg4300s_ops = {
+	.selftest_show = magnetometer_mxg4300s_selftest_show,
+	.hw_offset_show = magnetometer_mxg4300s_hw_offset_show,
+	.matrix_show = magnetometer_mxg4300s_matrix_show,
+	.matrix_store = magnetometer_mxg4300s_matrix_store,
+	.cover_matrix_show = magnetometer_mxg4300s_cover_matrix_show,
+	.cover_matrix_store = magnetometer_mxg4300s_cover_matrix_store,
+	.check_adc_data_spec = magnetometer_mxg4300s_check_adc_data_spec,
 };
 
-struct device_attribute **get_magnetometer_mxg4300s_dev_attrs(char *name)
+struct magnetometer_factory_chipset_funcs *get_magnetometer_mxg4300s_chipset_func(char *name)
 {
-	int index = 0;
-	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
-
 	if (strcmp(name, MXG4300S_NAME) != 0)
 		return NULL;
 
-	if (data->cover_matrix) {
-		while (mag_mxg4300s_attrs[index] != NULL)
-			index++;
-		mag_mxg4300s_attrs[index] = &dev_attr_matrix2;
-	}
-
-	return mag_mxg4300s_attrs;
+	return &magnetometer_mxg4300s_ops;
 }

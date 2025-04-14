@@ -19,13 +19,36 @@
 #include <linux/device.h>
 #include <linux/types.h>
 
-struct device_attribute **get_proximity_gp2ap110s_dev_attrs(char *name);
-struct device_attribute **get_proximity_stk3x6x_dev_attrs(char *name);
-struct device_attribute **get_proximity_stk3328_dev_attrs(char *name);
-struct device_attribute **get_proximity_tmd3725_dev_attrs(char *name);
-struct device_attribute **get_proximity_tmd4912_dev_attrs(char *name);
-struct device_attribute **get_proximity_stk3391x_dev_attrs(char *name);
-struct device_attribute **get_proximity_stk33512_dev_attrs(char *name);
-struct device_attribute **get_proximity_stk3afx_dev_attrs(char *name);
+
+struct proximity_factory_chipset_funcs {
+	ssize_t (*trim_check_show)(char *buf);
+	ssize_t (*prox_cal_show)(char *buf);
+	ssize_t (*prox_cal_store)(const char *buf, size_t size, int type);
+	ssize_t (*prox_trim_show)(char *buf, int type);
+	ssize_t (*modify_settings_show)(char *buf);
+	ssize_t (*modify_settings_store)(const char *buf, size_t size);
+	ssize_t (*settings_thresh_high_show)(char *buf);
+	ssize_t (*settings_thresh_high_store)(const char *buf, size_t size);
+	ssize_t (*settings_thresh_low_show)(char *buf);
+	ssize_t (*settings_thresh_low_store)(const char *buf, size_t size);
+	ssize_t (*debug_info_show)(char *buf);
+	ssize_t (*prox_led_test_show)(char *buf);
+	ssize_t (*thresh_detect_high_show)(char *buf);
+	ssize_t (*thresh_detect_high_store)(const char *buf, size_t size);
+	ssize_t (*thresh_detect_low_show)(char *buf);
+	ssize_t (*thresh_detect_low_store)(const char *buf, size_t size);
+	ssize_t (*prox_trim_check_show)(char *name);
+};
+
+struct proximity_factory_chipset_funcs *get_proximity_gp2ap110s_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_stk3x6x_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_stk3328_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_tmd3725_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_tmd4912_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_stk3391x_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_stk33512_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_stk3afx_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_tmd4913_chipset_func(char *name);
+struct proximity_factory_chipset_funcs *get_proximity_tmd4914_chipset_func(char *name);
 
 #endif

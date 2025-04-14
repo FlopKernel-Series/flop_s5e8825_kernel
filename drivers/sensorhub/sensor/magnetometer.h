@@ -48,6 +48,7 @@ struct magnetometer_data {
 	int cal_data_len;
 
 	u8 *cover_matrix;
+	u8 *mpp_matrix;
 	u8 *mag_matrix;
 	int mag_matrix_len;
 };
@@ -59,6 +60,7 @@ struct sensor_chipset_init_funcs *get_magnetic_mxg4300s_function_pointer(char *n
 
 int set_mag_matrix(struct magnetometer_data *data);
 int set_mag_cover_matrix(struct magnetometer_data *data);
+int set_mag_mpp_matrix(struct magnetometer_data *data);
 
 /* magnetometer calibration data */
 struct calibration_data_ak09918c {
@@ -92,5 +94,9 @@ struct calibration_data_mxg4300s {
 	s32 radius;
 	u8 accuracy;
 } __attribute__((__packed__));
+
+/* magnetometer sub command */
+#define MAG_SUBCMD_MPP_MATRIX 						127
+#define MAG_SUBCMD_MPP_COVER_STATUS		128
 
 #endif /* __SHUB_MAGNETOMETER_H_ */

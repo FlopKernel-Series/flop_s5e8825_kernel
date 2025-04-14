@@ -44,7 +44,7 @@ enum {
 
 static BLOCKING_NOTIFIER_HEAD(fm_ready_notifier_list);
 struct mutex fm_ready_notifier_mutex;
-struct work_struct fm_nofifier_work;
+struct work_struct fm_notifier_work;
 
 struct mutex fm_mutex;
 struct completion fm_done;
@@ -73,7 +73,7 @@ static void fm_notifier_work_func(struct work_struct *work)
 static void file_manager_ready(void)
 {
 	shub_infof("");
-	shub_queue_work(&fm_nofifier_work);
+	shub_queue_work(&fm_notifier_work);
 }
 
 void unregister_file_manager_ready_callback(struct notifier_block *nb)
@@ -230,8 +230,8 @@ ssize_t shub_file_store(struct device *dev, struct device_attribute *attr, const
 		memset(fm_msg.rx_buf, 0, PAGE_SIZE);
 		memcpy(&fm_msg.result, &buf[1], sizeof(int32_t));
 		if (buf[0] == FM_READ && fm_msg.result > 0) {
-			fm_msg.rx_buf_size = fm_msg.result > sizeof(fm_msg.rx_buf) ?
-					     sizeof(fm_msg.rx_buf) : fm_msg.result;
+			fm_msg.rx_buf_size = MIN(fm_msg.result, sizeof(fm_msg.rx_buf));
+			fm_msg.rx_buf_size = MIN(fm_msg.rx_buf_size, size - 5);
 			memcpy(fm_msg.rx_buf, &buf[5], fm_msg.rx_buf_size);
 		}
 
@@ -242,7 +242,7 @@ ssize_t shub_file_store(struct device *dev, struct device_attribute *attr, const
 }
 
 static DEVICE_ATTR(shub_file, 0660, shub_file_show, shub_file_store);
-static struct device_attribute *shub_attrs[] = {
+__visible_for_testing struct device_attribute *shub_attrs[] = {
 	&dev_attr_shub_file,
 	NULL,
 };
@@ -254,7 +254,7 @@ int init_file_manager(void)
 
 	mutex_init(&fm_mutex);
 	mutex_init(&fm_ready_notifier_mutex);
-	INIT_WORK(&fm_nofifier_work, fm_notifier_work_func);
+	INIT_WORK(&fm_notifier_work, fm_notifier_work_func);
 
 	ret = sensor_device_create(&data->sysfs_dev, data, "ssp_sensor");
 	if (ret < 0) {
@@ -273,7 +273,7 @@ void remove_file_manager(void)
 {
 	struct shub_data_t *data = get_shub_data();
 
-	cancel_work_sync(&fm_nofifier_work);
+	cancel_work_sync(&fm_notifier_work);
 	mutex_destroy(&fm_ready_notifier_mutex);
 	mutex_destroy(&fm_mutex);
 	remove_sensor_device_attr(data->sysfs_dev, shub_attrs);

@@ -24,12 +24,11 @@
 #include <linux/slab.h>
 
 #define YAS539_NAME   "YAS539"
-#define YAS539_VENDOR "YAMAHA"
 
 #define GM_DATA_SPEC_MIN -6500
 #define GM_DATA_SPEC_MAX 6500
 
-int check_yas539_adc_data_spec(s32 sensor_value[3])
+int magnetometer_yas539_check_adc_data_spec(s32 sensor_value[3])
 {
 	if ((sensor_value[0] == 0) && (sensor_value[1] == 0) && (sensor_value[2] == 0)) {
 		return -1;
@@ -42,17 +41,7 @@ int check_yas539_adc_data_spec(s32 sensor_value[3])
 	}
 }
 
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", YAS539_NAME);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", YAS539_VENDOR);
-}
-
-static ssize_t matrix_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_yas539_matrix_show(char *buf)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 
@@ -62,7 +51,7 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr, ch
 		      *(s16 *)&data->mag_matrix[12], *(s16 *)&data->mag_matrix[14], *(s16 *)&data->mag_matrix[16]);
 }
 
-static ssize_t matrix_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static ssize_t magnetometer_yas539_matrix_store(const char *buf, size_t size)
 {
 	s16 val[9] = {0, };
 	int ret = 0;
@@ -99,7 +88,7 @@ static ssize_t matrix_store(struct device *dev, struct device_attribute *attr, c
 	return size;
 }
 
-static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_yas539_selftest_show(char *buf)
 {
 	char *buf_selftest = NULL;
 	int buf_selftest_length = 0;
@@ -188,7 +177,7 @@ exit:
 		       y1, y2, err[4], dir, err[5], sx, sy1, sy2, err[6], ohx, ohy, ohz, err[1]);
 }
 
-static ssize_t hw_offset_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t magnetometer_yas539_hw_offset_show(char *buf)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 	struct calibration_data_yas539 *cal_data = data->cal_data;
@@ -196,25 +185,18 @@ static ssize_t hw_offset_show(struct device *dev, struct device_attribute *attr,
 	return snprintf(buf, PAGE_SIZE, "%d,%d,%d\n", cal_data->offset_x, cal_data->offset_y, cal_data->offset_z);
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR_RO(selftest);
-static DEVICE_ATTR_RO(hw_offset);
-static DEVICE_ATTR(matrix, 0664, matrix_show, matrix_store);
-
-static struct device_attribute *mag_yas539_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_selftest,
-	&dev_attr_matrix,
-	&dev_attr_hw_offset,
-	NULL,
+struct magnetometer_factory_chipset_funcs magnetometer_yas539_ops = {
+	.selftest_show = magnetometer_yas539_selftest_show,
+	.hw_offset_show = magnetometer_yas539_hw_offset_show,
+	.matrix_show = magnetometer_yas539_matrix_show,
+	.matrix_store = magnetometer_yas539_matrix_store,
+	.check_adc_data_spec = magnetometer_yas539_check_adc_data_spec,
 };
 
-struct device_attribute **get_magnetometer_yas539_dev_attrs(char *name)
+struct magnetometer_factory_chipset_funcs *get_magnetometer_yas539_chipset_func(char *name)
 {
 	if (strcmp(name, YAS539_NAME) != 0)
 		return NULL;
 
-	return mag_yas539_attrs;
+	return &magnetometer_yas539_ops;
 }

@@ -28,6 +28,13 @@
 #include <linux/input.h>
 #include <linux/sysfs.h>
 #include <linux/notifier.h>
+#include <linux/version.h>
+
+#if (KERNEL_VERSION(6, 6, 0) <= LINUX_VERSION_CODE)
+#define CREATE_CLASS(name) class_create(name)
+#else
+#define CREATE_CLASS(name) class_create(THIS_MODULE, name);
+#endif
 
 struct class *sensors_class;
 EXPORT_SYMBOL_GPL(sensors_class);
@@ -147,7 +154,8 @@ int sensors_register(struct device **pdev, void *drvdata,
 	struct device* dev;
 
 	if (!sensors_class) {
-		sensors_class = class_create(THIS_MODULE, "sensors");
+		sensors_class = CREATE_CLASS("sensors");
+
 		if (IS_ERR(sensors_class)) {
 			return PTR_ERR(sensors_class);
 		}
@@ -241,7 +249,9 @@ void sensors_meta_input_clean(void)
 static int __init sensors_class_init(void)
 {
 	pr_info("[SENSORS CORE] sensors_class_init\n");
-	sensors_class = class_create(THIS_MODULE, "sensors");
+
+	sensors_class = CREATE_CLASS("sensors");
+
 	if (IS_ERR(sensors_class)) {
 		pr_err("%s, create sensors_class is failed.(err=%d)\n",
 		       __func__, IS_ERR(sensors_class));
@@ -249,7 +259,8 @@ static int __init sensors_class_init(void)
 	}
 
 	/* For symbolic link */
-	sensors_event_class = class_create(THIS_MODULE, "sensor_event");
+	sensors_event_class = CREATE_CLASS("sensor_event");
+
 	if (IS_ERR(sensors_event_class)) {
 		pr_err("%s, create sensors_class is failed.(err=%d)\n",
 		       __func__, IS_ERR(sensors_event_class));

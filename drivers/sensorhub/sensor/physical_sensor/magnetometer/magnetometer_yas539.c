@@ -25,9 +25,9 @@
 
 #define YAS539_NAME   "YAS539"
 
-static int init_mag_yas539(void)
+static int init_mag_yas539(int type)
 {
-	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
+	struct magnetometer_data *data = get_sensor(type)->data;
 
 	data->mag_matrix_len = 18;
 	data->cal_data_len = sizeof(struct calibration_data_yas539);
@@ -35,7 +35,7 @@ static int init_mag_yas539(void)
 	return 0;
 }
 
-static void parse_dt_magnetometer_yas539(struct device *dev)
+static void parse_dt_magnetometer_yas539(struct device *dev, int type)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 	struct device_node *np = dev->of_node;

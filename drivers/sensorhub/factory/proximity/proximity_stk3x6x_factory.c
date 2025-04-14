@@ -26,20 +26,6 @@
 #include "../../utility/shub_utility.h"
 #include "proximity_factory.h"
 
-#define STK3X6X_NAME "STK33617"
-#define STK3X6X_VENDOR "Sitronix"
-
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", STK3X6X_NAME);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", STK3X6X_VENDOR);
-}
-
-
 static void do_proximity_calibration(void)
 {
 	shub_infof("");
@@ -47,11 +33,11 @@ static void do_proximity_calibration(void)
 	enable_sensor(SENSOR_TYPE_PROXIMITY_CALIBRATION, NULL, 0);
 }
 
-static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static ssize_t proximity_stk3x6x_prox_cal_store(const char *buf, size_t size, int type)
 {
 	int ret = 0;
 	u8 temp;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 	struct proximity_stk3x6x_data *thd_data = data->threshold_data;
 
 	shub_infof("%s", buf);
@@ -70,21 +56,14 @@ static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *
 	return size;
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR(prox_cal, 0220, NULL, proximity_cal_store);
-
-static struct device_attribute *proximity_stk3x6x_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_prox_cal,
-	NULL,
+struct proximity_factory_chipset_funcs proximity_stk3x6x_ops = {
+	.prox_cal_store = proximity_stk3x6x_prox_cal_store,
 };
 
-struct device_attribute **get_proximity_stk3x6x_dev_attrs(char *name)
+struct proximity_factory_chipset_funcs *get_proximity_stk3x6x_chipset_func(char *name)
 {
-	if (strcmp(name, STK3X6X_NAME) != 0)
+	if (strcmp(name, "STK33617") != 0)
 		return NULL;
 
-	return proximity_stk3x6x_attrs;
+	return &proximity_stk3x6x_ops;
 }

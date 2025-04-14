@@ -22,7 +22,8 @@
 #include <linux/of_gpio.h>
 #include <linux/gpio.h>
 
-#if IS_ENABLED(CONFIG_KEYBOARD_STM32_POGO) || IS_ENABLED(CONFIG_KEYBOARD_STM32_POGO_V2) || IS_ENABLED(CONFIG_KEYBOARD_STM32_POGO_V3)
+#if IS_ENABLED(CONFIG_KEYBOARD_STM32_POGO) || IS_ENABLED(CONFIG_KEYBOARD_STM32_POGO_V2) || \
+    IS_ENABLED(CONFIG_KEYBOARD_STM32_POGO_V3) || IS_ENABLED(CONFIG_KEYBOARD_ABOV_POGO_V2)
 #define SHUB_POGO
 #endif
 
@@ -41,7 +42,7 @@ static int shub_pogo_notifier(struct notifier_block *nb, unsigned long action, v
 		enable_sensor(SENSOR_TYPE_POGO_REQUEST_HANDLER, NULL, 0);
 		break;
 	case POGO_NOTIFIER_ID_DETACHED:
-		shub_infof("pogo dettach");
+		shub_infof("pogo detach");
 		disable_sensor(SENSOR_TYPE_POGO_REQUEST_HANDLER, NULL, 0);
 		break;
 	};

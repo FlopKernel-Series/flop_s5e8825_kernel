@@ -77,7 +77,7 @@ int get_light_cct_sensor_value(char *dataframe, int *index, struct sensor_event 
 	return 0;
 }
 
-void print_light_cct_debug(void)
+void print_light_cct_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT_CCT);
 	struct sensor_event *event = &(sensor->last_event_buffer);
@@ -105,7 +105,7 @@ int init_light_cct(bool en)
 
 	if (en) {
 		ret = init_default_func(sensor, "light_cct_sensor", 
-					sensor->spec.version >= LIGHT_DEBIG_EVENT_SIZE_4BYTE_VERSION ? 36 : 24, 14, sizeof(struct light_cct_event));
+					sensor->spec.version >= LIGHT_EVENT_SIZE_4BYTE_VERSION ? 36 : 24, 14, sizeof(struct light_cct_event));
 
 		sensor->funcs = &light_cct_sensor_funcs;
 	} else {

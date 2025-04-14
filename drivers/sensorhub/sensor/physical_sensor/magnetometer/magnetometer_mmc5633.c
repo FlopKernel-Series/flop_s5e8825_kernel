@@ -27,9 +27,9 @@
 
 #define MMC5633_NAME   "MMC5633"
 
-static int init_mag_mmc5633(void)
+static int init_mag_mmc5633(int type)
 {
-	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
+	struct magnetometer_data *data = get_sensor(type)->data;
 
 	data->mag_matrix_len = 27;
 	data->cal_data_len = sizeof(struct calibration_data_mmc5633);
@@ -37,7 +37,7 @@ static int init_mag_mmc5633(void)
 	return 0;
 }
 
-static void parse_dt_magnetometer_mmc5633(struct device *dev)
+static void parse_dt_magnetometer_mmc5633(struct device *dev, int type)
 {
 	struct magnetometer_data *data = get_sensor(SENSOR_TYPE_GEOMAGNETIC_FIELD)->data;
 	struct device_node *np = dev->of_node;

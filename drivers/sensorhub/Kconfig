@@ -32,22 +32,22 @@ config SHUB_PANEL_NOTIFY
 
 config SHUB_KUNIT
 	tristate "Kunit test for SHUB"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	default n
 	help
 	  Kunit test for SHUB.
 
 config SHUB_TEST_FOR_ON_DEVICE
 	tristate "KUnit test for shub_test"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on SHUB
 	help
 	  TODO: Describe config fully.
-	  If you run this test driver on device, SHOULD set this config as 'm' to build test driver modulraly.
+	  If you run this test driver on device, SHOULD set this config as 'm' to build test driver modularly.
 
 config SHUB_TEST_FOR_ONLY_UML
 	tristate "KUnit test for shub_test"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -56,7 +56,7 @@ config SHUB_TEST_FOR_ONLY_UML
 
 config SHUB_ACCELEROMETER_TEST
 	tristate "KUnit test for shub_accelerometer"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -65,7 +65,25 @@ config SHUB_ACCELEROMETER_TEST
 
 config SHUB_GYROSCOPE_TEST
 	tristate "KUnit test for shub_gyroscope"
-	depends on KUNIT
+	depends on SEC_KUNIT
+	depends on UML
+	depends on SHUB
+	help
+	  TODO: Describe config fully.
+	  This CONFIG is recommended to set to y.
+
+config SHUB_ACCELEROMETER_SUB_TEST
+	tristate "KUnit test for shub_accelerometer_sub"
+	depends on SEC_KUNIT
+	depends on UML
+	depends on SHUB
+	help
+	  TODO: Describe config fully.
+	  This CONFIG is recommended to set to y.
+
+config SHUB_GYROSCOPE_SUB_TEST
+	tristate "KUnit test for shub_gyroscope_sub"
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -74,7 +92,7 @@ config SHUB_GYROSCOPE_TEST
 
 config SHUB_PROXIMITY_TEST
 	tristate "KUnit test for shub_proximity"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -83,7 +101,7 @@ config SHUB_PROXIMITY_TEST
 
 config SHUB_LIGHT_TEST
 	tristate "KUnit test for shub_light"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -92,7 +110,7 @@ config SHUB_LIGHT_TEST
 
 config SHUB_PRESSURE_TEST
 	tristate "KUnit test for shub_pressure"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -101,7 +119,7 @@ config SHUB_PRESSURE_TEST
 
 config SHUB_MAGNETOMETER_TEST
 	tristate "KUnit test for shub_magnetometer"
-	depends on KUNIT
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help
@@ -110,7 +128,25 @@ config SHUB_MAGNETOMETER_TEST
 
 config SHUB_SCONTEXT_TEST
 	tristate "KUnit test for shub_scontext"
-	depends on KUNIT
+	depends on SEC_KUNIT
+	depends on UML
+	depends on SHUB
+	help
+	  TODO: Describe config fully.
+	  This CONFIG is recommended to set to y.
+
+config SHUB_DEVICE_TEST
+	tristate "KUnit test for shub_device"
+	depends on SEC_KUNIT
+	depends on UML
+	depends on SHUB
+	help
+	  TODO: Describe config fully.
+	  This CONFIG is recommended to set to y.
+
+config SHUB_DEBUG_TEST
+	tristate "KUnit test for shub_debug"
+	depends on SEC_KUNIT
 	depends on UML
 	depends on SHUB
 	help

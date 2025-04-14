@@ -34,9 +34,9 @@
 static u8 prox_thresh_mode;
 static u16 prox_thresh_addval[PROX_THRESH_SIZE];
 
-int init_proximity_stk3x6x(void)
+int init_proximity_stk3x6x(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 	struct proximity_stk3x6x_data *thd_data = data->threshold_data;
 
 	data->threshold_data = kzalloc(sizeof(struct proximity_stk3x6x_data), GFP_KERNEL);
@@ -49,7 +49,7 @@ int init_proximity_stk3x6x(void)
 	return 0;
 }
 
-void parse_dt_proximity_stk3x6x(struct device *dev)
+void parse_dt_proximity_stk3x6x(struct device *dev, int type)
 {
 	struct device_node *np = dev->of_node;
 	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
@@ -76,16 +76,17 @@ void set_proximity_stk3x6x_threshold_mode(u8 mode)
 	prox_thresh_mode = mode;
 }
 
-int proximity_open_calibration_stk3x6x(void)
+int proximity_open_calibration_stk3x6x(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
-	ret = shub_file_read(PROX_CALIBRATION_FILE_PATH,
+	ret = shub_file_read(data->path_calibration,
 			     (char *)&data->prox_threshold, sizeof(data->prox_threshold), 0);
 	if (ret != sizeof(data->prox_threshold)) {
-		ret = shub_file_read(PROX_CALIBRATION_FILE_MODE2_PATH,
-				     (char *)&data->prox_threshold, sizeof(data->prox_threshold), 0);
+		char path[128];
+		snprintf(path, sizeof(path), "%s2", data->path_calibration);
+		ret = shub_file_read(path, (char *)&data->prox_threshold, sizeof(data->prox_threshold), 0);
 		if (ret != sizeof(data->prox_threshold)) {
 			shub_errf("failed");
 			ret = -EIO;
@@ -101,19 +102,22 @@ int proximity_open_calibration_stk3x6x(void)
 	return ret;
 }
 
-int save_prox_cal_threshold_data(struct proximity_data *data)
+int save_prox_cal_threshold_data(int type)
 {
 	int ret = 0;
+	struct proximity_data *data = get_sensor(type)->data;
 	struct proximity_stk3x6x_data *thd_data = data->threshold_data;
 
 	shub_infof("mode %d thresh %d, %d ", thd_data->prox_cal_mode,
 		data->prox_threshold[0], data->prox_threshold[1]);
 
 	if (thd_data->prox_cal_mode == 1) {
-		ret = shub_file_write(PROX_CALIBRATION_FILE_PATH, (char *)&data->prox_threshold,
+		ret = shub_file_write(data->path_calibration, (char *)&data->prox_threshold,
 				      sizeof(data->prox_threshold), 0);
 	} else if (thd_data->prox_cal_mode == 2) {
-		ret = shub_file_write(PROX_CALIBRATION_FILE_MODE2_PATH, (char *)&data->prox_threshold,
+		char path[128];
+		snprintf(path, sizeof(path), "%s2", data->path_calibration);
+		ret = shub_file_write(path, (char *)&data->prox_threshold,
 				      sizeof(data->prox_threshold), 0);
 	} else {
 		return -EINVAL;
@@ -130,10 +134,8 @@ int save_prox_cal_threshold_data(struct proximity_data *data)
 
 void pre_report_event_proximity_stk3x6x(void)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
-
-	save_prox_cal_threshold_data(data);
-	proximity_open_calibration_stk3x6x();
+	save_prox_cal_threshold_data(SENSOR_TYPE_PROXIMITY);
+	proximity_open_calibration_stk3x6x(SENSOR_TYPE_PROXIMITY);
 }
 
 struct proximity_chipset_funcs prox_stk3x6x_funcs = {
