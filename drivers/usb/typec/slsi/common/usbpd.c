@@ -35,6 +35,7 @@ enum pdic_sysfs_property usbpd_sysfs_properties[] = {
 	PDIC_SYSFS_PROP_STATE,
 	PDIC_SYSFS_PROP_RID,
 	PDIC_SYSFS_PROP_CTRL_OPTION,
+	PDIC_SYSFS_PROP_CONTROL_GPIO,
 	PDIC_SYSFS_PROP_FW_WATER,
 	PDIC_SYSFS_PROP_ACC_DEVICE_VERSION,
 	PDIC_SYSFS_PROP_USBPD_IDS,
@@ -63,8 +64,44 @@ static void usbpd_ops_ccopen_req(void *data, int is_on)
 	PDIC_OPS_PARAM_FUNC(ops_ccopen_req, pd_data, is_on);
 }
 
+void usbpd_ops_set_host_on(void *data, int mode)
+{
+	struct usbpd_data *pd_data = (struct usbpd_data *)data;
+
+	if (!pd_data)
+		return;
+
+	usbpd_info("%s : current_set is %d!\n", __func__, mode);
+	if (mode) {
+		pd_data->detach_done_wait = 0;
+		pd_data->host_turn_on_event = 1;
+		wake_up_interruptible(&pd_data->host_turn_on_wait_q);
+	} else {
+		pd_data->detach_done_wait = 0;
+		pd_data->host_turn_on_event = 0;
+	}
+}
+
+static void usbpd_ops_wait_entermode(void *data, int on)
+{
+	struct usbpd_data *pd_data = (struct usbpd_data *)data;
+
+	if (!pd_data)
+		return;
+
+	usbpd_info("%s : %d!\n", __func__, on);
+	if (on) {
+		pd_data->wait_entermode = 1;
+	} else {
+		pd_data->wait_entermode = 0;
+		wake_up_interruptible(&pd_data->host_turn_on_wait_q);
+	}
+}
+
 struct usbpd_ops ops_usbpd = {
 	.usbpd_cc_control_command = usbpd_ops_ccopen_req,
+	.usbpd_set_host_on = usbpd_ops_set_host_on,
+	.usbpd_wait_entermode = usbpd_ops_wait_entermode,
 };
 #endif
 
@@ -240,6 +277,10 @@ void usbpd_policy_reset(struct usbpd_data *pd_data, unsigned flag)
 		pd_data->policy.plug_valid = 1;
 		dev_info(pd_data->dev, "%s ATTACHED\n", __func__);
 	} else if (flag == PLUG_DETACHED) {
+#if IS_ENABLED(CONFIG_PDIC_PD30)
+		pd_data->is_manual_retry = 0;
+		PDIC_OPS_PARAM_FUNC(set_revision, pd_data, USBPD_PD3_0);
+#endif
 		pd_data->policy.plug_valid = 0;
 		dev_info(pd_data->dev, "%s DETACHED\n", __func__);
 		pd_data->counter.hard_reset_counter = 0;
@@ -462,6 +503,7 @@ void usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops)
 	pd_data->phy_ops.soft_reset = ops->soft_reset;
 	pd_data->phy_ops.set_power_role = ops->set_power_role;
 	pd_data->phy_ops.get_power_role = ops->get_power_role;
+	pd_data->phy_ops.check_hardreset = ops->check_hardreset;
 	pd_data->phy_ops.set_data_role = ops->set_data_role;
 	pd_data->phy_ops.get_data_role = ops->get_data_role;
 	pd_data->phy_ops.get_vconn_source = ops->get_vconn_source;
@@ -469,6 +511,7 @@ void usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops)
 	pd_data->phy_ops.get_status = ops->get_status;
 	pd_data->phy_ops.poll_status = ops->poll_status;
 	pd_data->phy_ops.driver_reset = ops->driver_reset;
+	pd_data->phy_ops.give_sink_cap = ops->give_sink_cap;
 	pd_data->phy_ops.set_otg_control = ops->set_otg_control;
 	pd_data->phy_ops.get_vbus_short_check = ops->get_vbus_short_check;
 	pd_data->phy_ops.pd_vbus_short_check = ops->pd_vbus_short_check;
@@ -535,6 +578,10 @@ void usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops)
 	pd_data->phy_ops.ops_check_pps_irq_tx_req = ops->ops_check_pps_irq_tx_req;
 	pd_data->phy_ops.ops_check_pps_irq = ops->ops_check_pps_irq;
 	pd_data->phy_ops.ops_manual_retry = ops->ops_manual_retry;
+	pd_data->phy_ops.ops_cc_hiccup = ops->ops_cc_hiccup;
+	pd_data->phy_ops.ops_disable_water = ops->ops_disable_water;
+	pd_data->phy_ops.ops_set_fac_sbu = ops->ops_set_fac_sbu;
+	pd_data->phy_ops.ops_get_fac_sbu = ops->ops_get_fac_sbu;
 }
 EXPORT_SYMBOL(usbpd_set_ops);
 
@@ -837,6 +884,7 @@ int usbpd_sysfs_get_prop(struct _pdic_data_t *ppdic_data,
 	struct usbpd_manager_data *manager;
 	int retval = -ENODEV;
 	int var;
+	int vsbu1 = 0, vsbu2 = 0;
 
 	if (!pd_data) {
 		usbpd_info("pd_data is null : request prop = %d", prop);
@@ -915,6 +963,20 @@ int usbpd_sysfs_get_prop(struct _pdic_data_t *ppdic_data,
 		usbpd_info("%s : PDIC_SYSFS_PROP_15MODE_WATERTEST_TYPE : %s", __func__, buf);
 		break;
 #endif
+	case PDIC_SYSFS_PROP_CONTROL_GPIO:
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT) && IS_ENABLED(CONFIG_S2MF301_TYPEC_WATER)
+		PDIC_OPS_PARAM2_FUNC(ops_get_fac_sbu, pd_data, &vsbu1, &vsbu2);
+		usbpd_info("%s : PDIC_SYSFS_PROP_CONTROL_GPIO SBU1(%d), SBU2(%d)\n",
+				__func__, vsbu1, vsbu2);
+
+		vsbu1 = (vsbu1 > 1500) ? 1 : 0;
+		vsbu2 = (vsbu2 > 1500) ? 1 : 0;
+#else
+		usbpd_info("%s: not implemented\n", __func__);
+#endif
+		
+		retval = sprintf(buf, "%d %d\n", vsbu1, vsbu2);
+		break;
 	default:
 		usbpd_info("prop read not supported prop (%d)", prop);
 		retval = -ENODATA;
@@ -966,6 +1028,17 @@ ssize_t usbpd_sysfs_set_prop(struct _pdic_data_t *ppdic_data,
 		sscanf(buf, "%d", &cmd);
 		usbpd_info("usb: %s PROP_LPM_MODE mode=%d\n", __func__, cmd);
 		PDIC_OPS_PARAM_FUNC(ops_sysfs_lpm_mode, pd_data, cmd);
+		break;
+	case PDIC_SYSFS_PROP_CONTROL_GPIO:
+		sscanf(buf, "%d", &cmd);
+		usbpd_info("%s : PDIC_SYSFS_PROP_CONTROL_GPIO mode=%d. do nothing for control gpio.\n",
+				__func__, cmd);
+		/* original concept : mode 0 : SBU1/SBU2 set as open-drain status
+		 *                         mode 1 : SBU1/SBU2 set as default status - Pull up
+		 */
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT) && IS_ENABLED(CONFIG_S2MF301_TYPEC_WATER)
+		PDIC_OPS_PARAM_FUNC(ops_set_fac_sbu, pd_data, cmd);
+#endif
 		break;
 	default:
 		usbpd_info("prop read not supported prop (%d)", prop);
@@ -1091,7 +1164,14 @@ int usbpd_init(struct device *dev, void *phy_driver_data)
 	pd_data->usbpd_d.ops = &ops_usbpd;
 	pd_data->usbpd_d.data = (void *)pd_data;
 	pd_data->man = register_usbpd(&pd_data->usbpd_d);
+
+	init_waitqueue_head(&pd_data->host_turn_on_wait_q);
+	pd_data->host_turn_on_wait_time = 20;
+
 #endif
+
+	pd_data->cc_hiccup_delay = 5;
+	pd_data->hardreset_flag = false;
 
 	INIT_WORK(&pd_data->worker, usbpd_policy_work);
 

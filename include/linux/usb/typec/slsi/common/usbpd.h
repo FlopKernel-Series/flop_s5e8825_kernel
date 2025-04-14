@@ -49,7 +49,7 @@
 #if defined(CONFIG_SEC_FACTORY)
 #define tSenderResponse		(1100)	/* for UCT300 */
 #else
-#define tSenderResponse (pd_data->specification_revision == USBPD_PD3_0 ? 27:25) /* 24~30ms */
+#define tSenderResponse (pd_data->specification_revision == USBPD_PD3_0 ? 30:27) /* 24~30ms */
 #endif
 #define tSenderResponseSRC	(300)	/* 1000 ms */
 #define tSendSourceCap		(10)	/* 1~2 s */
@@ -67,7 +67,7 @@
 #define tSrcRecover (880) /* 660~1000ms */
 #define tNoResponse (5500) /* 660~1000ms */
 #define tDRPtry (75) /* 75~150ms */
-#define tTryCCDebounce (15) /* 10~20ms */
+#define tTryCCDebounce (18) /* 10~20ms */
 
 /* Custom Timer */
 #define tStartAmsMargin (100)
@@ -537,6 +537,8 @@ typedef enum usbpd_manager_command {
 	MANAGER_REQ_UVDM_SEND_MESSAGE		= 1 << 16,
 	MANAGER_REQ_UVDM_RECEIVE_MESSAGE	= 1 << 17,
 	MANAGER_REQ_GET_SRC_CAP			= 1 << 18,
+	MANAGER_REQ_ERROR_RECOVERY		= 1 << 19,
+	MANAGER_REQ_SOFT_RESET			= 1 << 20,
 } usbpd_manager_command_type;
 
 typedef enum usbpd_manager_event {
@@ -771,6 +773,7 @@ typedef enum {
 
 enum {
 	CC_OPEN_OVERHEAT,
+	CC_OPEN_HICCUP,
 };
 
 #define PDIC_OPS_FUNC(func, _data) \
@@ -796,6 +799,7 @@ typedef struct usbpd_phy_ops {
 	void    (*soft_reset)(void *);
 	int    (*set_power_role)(void *, int);
 	int    (*get_power_role)(void *, int *);
+	void	(*check_hardreset)(void *);	
 	int    (*set_data_role)(void *, int);
 	int    (*get_data_role)(void *, int *);
 	int    (*set_vconn_source)(void *, int);
@@ -804,6 +808,7 @@ typedef struct usbpd_phy_ops {
 	unsigned   (*get_status)(void *, u64);
 	bool   (*poll_status)(void *);
 	void   (*driver_reset)(void *);
+	void   (*give_sink_cap)(void *);
 	int    (*set_otg_control)(void *, int);
 	void    (*get_vbus_short_check)(void *, bool *);
 	void    (*pd_vbus_short_check)(void *);
@@ -859,6 +864,7 @@ typedef struct usbpd_phy_ops {
 	void	(*ops_control_option_command)(void *, int);
 	void	(*ops_sysfs_lpm_mode)(void *, int cmd);
 	void	(*set_pcp_clk)(void *, int);
+	void	(*ops_cc_hiccup)(void *, int);
 	void	(*ops_ccopen_req)(void *, int);
 	void	(*set_revision)(void *, int);
 	void	(*get_rp_level)(void *, int *);
@@ -867,6 +873,9 @@ typedef struct usbpd_phy_ops {
 	void	(*ops_check_pps_irq_tx_req)(void *);
 	void	(*ops_check_pps_irq)(void *, int);
 	void	(*ops_manual_retry)(void *, int);
+	void	(*ops_disable_water)(void *, int);
+	void	(*ops_set_fac_sbu)(void *, int);
+	void	(*ops_get_fac_sbu)(void *, int*, int*);
 } usbpd_phy_ops_type;
 
 struct policy_data {
@@ -875,6 +884,7 @@ struct policy_data {
 	msg_header_type		rx_msg_header;
 	data_obj_type           tx_data_obj[USBPD_MAX_COUNT_MSG_OBJECT];
 	data_obj_type		rx_data_obj[USBPD_MAX_COUNT_MSG_OBJECT];
+	data_obj_type		rx_dp_vdm[USBPD_MAX_COUNT_MSG_OBJECT];
 	bool			rx_hardreset;
 	bool			rx_softreset;
 	bool			plug;
@@ -974,6 +984,14 @@ struct usbpd_manager_data {
 	uint16_t SVID_1;
 	uint16_t Standard_Vendor_ID;
 
+	int hpd_state;
+	int hpd_irq;
+	int dp_selected_pin;
+	bool is_dp_selected;
+	bool multi_function_preferred;
+	int pin_assignment;
+	bool dp_attached;
+
 	struct mutex vdm_mutex;
 	struct mutex pdo_mutex;
 
@@ -983,6 +1001,8 @@ struct usbpd_manager_data {
 	struct delayed_work start_discover_msg_handler;
 	struct delayed_work short_check_work;
 	struct delayed_work pps_request_handler;
+	struct delayed_work buck_off_handler;
+	struct delayed_work buck_off_clear_handler;
 	muic_attached_dev_t	attached_dev;
 
 	int pd_attached;
@@ -1040,6 +1060,7 @@ struct usbpd_data {
 	int pd_support;
 	int	ip_num;
 	char *pmeter_name;
+	char *charger_name;
 
 #if IS_ENABLED(CONFIG_BATTERY_SAMSUNG) && IS_ENABLED(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
 	struct pdic_notifier_struct pd_noti;
@@ -1063,11 +1084,17 @@ struct usbpd_data {
 #if IS_ENABLED(CONFIG_IF_CB_MANAGER)
 	struct usbpd_dev usbpd_d;
 	struct if_cb_manager *man;
+
+	wait_queue_head_t host_turn_on_wait_q;
+	int host_turn_on_event;
+	int host_turn_on_wait_time;
+	int detach_done_wait;
+	int wait_entermode;
 #endif
 	int pps_pd;
-#if IS_ENABLED(CONFIG_S2M_PDIC_MANUAL_RETRY)
 	int is_manual_retry;
-#endif
+	int cc_hiccup_delay;
+	bool hardreset_flag;
 };
 
 static inline struct usbpd_data *protocol_rx_to_usbpd(struct protocol_data *rx)
@@ -1115,7 +1142,11 @@ extern int usbpd_manager_get_identity(struct usbpd_data *);
 extern int usbpd_manager_get_svids(struct usbpd_data *);
 extern int usbpd_manager_get_modes(struct usbpd_data *);
 extern int usbpd_manager_enter_mode(struct usbpd_data *);
+extern void usbpd_manager_select_dp_pin(struct usbpd_data *pd_data);
 extern int usbpd_manager_exit_mode(struct usbpd_data *, unsigned mode);
+extern void usbpd_manager_dp_status_update(struct usbpd_data *pd_data);
+extern void usbpd_manager_dp_configure(struct usbpd_data *pd_data);
+extern void usbpd_manager_dp_hpd(struct usbpd_data *pd_data);
 extern void usbpd_manager_inform_event(struct usbpd_data *,
 		usbpd_manager_event_type);
 extern int usbpd_manager_evaluate_capability(struct usbpd_data *);
