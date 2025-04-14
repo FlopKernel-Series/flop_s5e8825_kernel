@@ -427,6 +427,8 @@ struct s2mf301_charger_platform_data {
 	char *charger_name;
 	char *fuelgauge_name;
 	int slow_charging_current;
+	int bat2ship_debounce_time;
+	bool boosting_voltage_aicl;
 };
 
 struct s2mf301_charger_data {
@@ -493,7 +495,6 @@ struct s2mf301_charger_data {
 	int irq_rechg;
 
 	int charge_mode;
-	int irq_ivr_enabled;
 	int ivr_on;
 	bool slow_charging;
 

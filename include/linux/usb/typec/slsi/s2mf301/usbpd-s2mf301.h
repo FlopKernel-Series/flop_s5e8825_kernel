@@ -121,6 +121,10 @@
 #define S2MF301_REG_PD2_RS_SW_ON_MASK    (0x1 << S2MF301_REG_PD2_RS_SW_ON_SHIFT)
 #define S2MF301_REG_PD1_RS_SW_ON_MASK    (0x1 << S2MF301_REG_PD1_RS_SW_ON_SHIFT)
 
+/* reg 0x07 */
+#define S2MF301_REG_D2A_TC_FRSW1_SHIFT	(7)
+#define S2MF301_REG_D2A_TC_FRSW1_MASK	(0x1 << S2MF301_REG_D2A_TC_FRSW1_SHIFT)
+
 /* reg 0x08 */
 #define S2MF301_REG_LPMPUI_SEL_SHIFT        (2)
 #define S2MF301_REG_LPMPUI_SEL_MASK            (0x3 << S2MF301_REG_LPMPUI_SEL_SHIFT)
@@ -129,9 +133,18 @@
 #define S2MF301_REG_LPMPUI_SEL_1UA_MASK        (0x2 << S2MF301_REG_LPMPUI_SEL_SHIFT)
 #define S2MF301_REG_LPMPUI_SEL_2UA_MASK        (0x3 << S2MF301_REG_LPMPUI_SEL_SHIFT)
 
+/* reg 0x09 */
+#define S2MF301_REG_D2A_TC_FRSW2_SHIFT	(7)
+#define S2MF301_REG_D2A_TC_FRSW2_MASK	(0x1 << S2MF301_REG_D2A_TC_FRSW2_SHIFT)
+
 /* reg 0x0A */
 #define S2MF301_REG_PCP_CLK_SEL_SHIFT        (7)
 #define S2MF301_REG_PCP_CLK_SEL            (0x1 << S2MF301_REG_PCP_CLK_SEL_SHIFT)
+
+/* reg 0x0F */
+#define S2MF301_REG_CC12_OVP_MASK	(0x3)
+#define S2MF301_REG_CC1_OVP_ON		(0x2)
+#define S2MF301_REG_CC2_OVP_ON		(0x1)
 
 /* reg 0x18 */
 #define S2MF301_REG_PLUG_CTRL_MODE_SHIFT    (0)
@@ -452,7 +465,9 @@ enum s2mf301_usbpd_reg {
 	S2MF301_REG_PD_CTRL            = 0x01,
 	S2MF301_REG_PD_CTRL_2          = 0x02,
 	S2MF301_REG_ANALOG_OTP_04      = 0x04,
+	S2MF301_REG_ANALOG_OTP_07      = 0x07,
 	S2MF301_REG_ANALOG_OTP_08      = 0x08,
+	S2MF301_REG_ANALOG_OTP_09      = 0x09,
 	S2MF301_REG_ANALOG_OTP_0A      = 0x0A,
     S2MF301_REG_MAN_CTRL           = 0x0F,
 	S2MF301_REG_PHY_CTRL_00        = 0x10,
@@ -579,6 +594,7 @@ typedef enum {
 struct s2mf301_usbpd_data {
 	struct device *dev;
 	struct i2c_client *i2c;
+	struct mutex status_mutex;
 	struct mutex _mutex;
 	struct mutex poll_mutex;
 	struct mutex lpm_mutex;
@@ -586,6 +602,7 @@ struct s2mf301_usbpd_data {
 	struct mutex water_mutex;
 	struct mutex s2m_water_mutex;
 	struct mutex otg_mutex;
+	struct mutex usbpd_reset;
 	int vconn_en;
 	int regulator_en;
 	int irq_gpio;
@@ -610,6 +627,7 @@ struct s2mf301_usbpd_data {
 	bool pd_vbus_short_check;
 	bool vbus_short;
 	bool first_attach;
+	bool is_shutdown;
 
 	struct timespec64 time_tx;
 	int clk_offset;
@@ -629,6 +647,7 @@ struct s2mf301_usbpd_data {
 	int is_attached;
 	int is_killer;
 	int vbus_dischg_gpio;
+	int vctrl_otg_gpio;
 #if IS_ENABLED(CONFIG_DUAL_ROLE_USB_INTF)
 	struct dual_role_phy_instance *dual_role;
 	struct dual_role_phy_desc *desc;
@@ -645,10 +664,13 @@ struct s2mf301_usbpd_data {
 	struct notifier_block type3_nb;
 	struct workqueue_struct *pdic_queue;
 	struct delayed_work plug_work;
+	struct delayed_work clear_hardreset;
 	struct s2m_pdic_notifier_struct pdic_notifier;
 	struct delayed_work vbus_dischg_off_work;
+	struct delayed_work cc_hiccup_work;
 	struct delayed_work probe_reset_work;
 	int facwater_check_cnt;
+	int facwater_fault_cnt;
 	int pm_cc1;
 	int pm_cc2;
 	int pm_chgin;
@@ -682,7 +704,9 @@ struct s2mf301_usbpd_data {
 	struct regulator *regulator;
 	int rprd_mode;
 	int first_goodcrc;
+	int source_cap_received;
 	int pps_enable;
+	int give_sink_cap;
 
 	void (*rprd_mode_change)(void *data, u8 mode);
 
@@ -706,6 +730,12 @@ extern void s2mf301_rprd_mode_change(void *data, u8 mode);
 extern int s2mf301_set_lpm_mode(struct s2mf301_usbpd_data *pdic_data);
 extern int s2mf301_set_normal_mode(struct s2mf301_usbpd_data *pdic_data);
 extern void s2mf301_usbpd_set_cc_state(struct s2mf301_usbpd_data *pdic_data, int cc);
+extern void s2mf301_usbpd_set_rp_scr_sel(struct s2mf301_usbpd_data *pdic_data,
+		PDIC_RP_SCR_SEL scr_sel);
+extern void s2mf301_set_cc1_pull_down(struct s2mf301_usbpd_data *pdic_data, bool cc_en);
+extern void s2mf301_set_cc2_pull_down(struct s2mf301_usbpd_data *pdic_data, bool cc_en);
+extern void s2mf301_set_cc_ovp_state(struct s2mf301_usbpd_data *pdic_data, bool cc1_en, bool cc2_en);
+extern bool s2mf301_check_cc_ovp_state(struct s2mf301_usbpd_data *pdic_data);
 
 #if IS_ENABLED(CONFIG_S2MF301_TYPEC_WATER)
 extern void s2mf301_usbpd_water_set_status(struct s2mf301_usbpd_data *pdic_data, int status);

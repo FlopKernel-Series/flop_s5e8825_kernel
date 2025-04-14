@@ -269,8 +269,12 @@ static int of_s2mf301_dt(struct device *dev,
 }
 #endif /* CONFIG_OF */
 
+#if (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
+static int s2mf301_i2c_probe(struct i2c_client *i2c)
+#else
 static int s2mf301_i2c_probe(struct i2c_client *i2c,
-			     const struct i2c_device_id *dev_id)
+				const struct i2c_device_id *id)
+#endif
 {
 	struct s2mf301_dev *s2mf301;
 	struct s2mf301_platform_data *pdata = i2c->dev.platform_data;
@@ -409,6 +413,16 @@ static int s2mf301_i2c_remove(struct i2c_client *i2c)
 #endif
 }
 
+static void s2mf301_i2c_shutdown(struct i2c_client *i2c)
+{
+	struct s2mf301_dev *s2mf301 = i2c_get_clientdata(i2c);
+
+	disable_irq(s2mf301->irq);
+	s2mf301_info("%s: s2mf301 disable_irq\n", __func__);
+	free_irq(s2mf301->irq, s2mf301);
+	s2mf301_info("%s: s2mf301 free_irq\n", __func__);
+}
+
 static const struct i2c_device_id s2mf301_i2c_id[] = {
 	{ MFD_DEV_NAME_, TYPE_S2MF301 },
 	{ }
@@ -488,6 +502,7 @@ static struct i2c_driver s2mf301_i2c_driver = {
 	.probe		= s2mf301_i2c_probe,
 	.remove		= s2mf301_i2c_remove,
 	.id_table	= s2mf301_i2c_id,
+	.shutdown   = s2mf301_i2c_shutdown,
 };
 
 static int __init s2mf301_i2c_init(void)
