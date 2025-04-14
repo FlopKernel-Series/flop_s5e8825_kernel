@@ -33,7 +33,7 @@
 
 #include "focaltech_config.h"
 #if IS_ENABLED(CONFIG_INPUT_SEC_INPUT)
-#include "../../../sec_input/sec_input.h"
+#include <linux/input/sec_input.h>
 #endif
 
 #if IS_ENABLED(CONFIG_SPU_VERIFY)
@@ -85,11 +85,11 @@
 #define FTS_SYSFS_ECHO_ON(buf)      (buf[0] == '1')
 #define FTS_SYSFS_ECHO_OFF(buf)     (buf[0] == '0')
 
-#define kfree_safe(pbuf) do {\
-    if (pbuf) {\
-        kfree(pbuf);\
-        pbuf = NULL;\
-    }\
+#define kfree_safe(pbuf) do {			\
+	if (pbuf) {				\
+		kfree(pbuf);			\
+		pbuf = NULL;			\
+	}					\
 } while(0)
 
 /*****************************************************************************

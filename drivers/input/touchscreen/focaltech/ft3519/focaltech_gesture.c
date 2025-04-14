@@ -189,21 +189,22 @@ static void fts_gesture_report(struct fts_ts_data *ts_data, struct fts_gesture_s
 {
 	switch (gesture->gesture_id) {
 	case GESTURE_SWIPE:
-		sec_input_gesture_report(ts_data->dev, SPONGE_EVENT_TYPE_SPAY, 0, 0);
+		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_SPAY, 0, 0);
 		break;
 	case GESTURE_SINGLETAP:
-		sec_input_gesture_report(ts_data->dev, SPONGE_EVENT_TYPE_SINGLE_TAP,
+		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_SINGLE_TAP,
 			gesture->coordinate_x[0], gesture->coordinate_y[0]);
+
 		break;
 	case GESTURE_DOUBLECLICK:
 		FTS_DEBUG("Double Tap to wake up");
-		input_report_key(ts_data->input_dev, KEY_WAKEUP, 1);
-		input_sync(ts_data->input_dev);
-		input_report_key(ts_data->input_dev, KEY_WAKEUP, 0);
-		input_sync(ts_data->input_dev);
+		input_report_key(ts_data->pdata->input_dev, KEY_WAKEUP, 1);
+		input_sync(ts_data->pdata->input_dev);
+		input_report_key(ts_data->pdata->input_dev, KEY_WAKEUP, 0);
+		input_sync(ts_data->pdata->input_dev);
 		break;
 	case GESTURE_AOD:
-		sec_input_gesture_report(ts_data->dev, SPONGE_EVENT_TYPE_AOD_DOUBLETAB,
+		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_AOD_DOUBLETAB,
 			gesture->coordinate_x[0], gesture->coordinate_y[0]);
 		break;
 	default:
