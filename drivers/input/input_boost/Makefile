@@ -23,4 +23,5 @@ ccflags-y += -I$(srctree)/drivers/misc/mediatek/sched/
 endif
 ifdef CONFIG_MTK_DVFSRC
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/include/mt-plat/
+ccflags-y += -I$(srctree)/../kernel_device_modules-6.1/drivers/misc/mediatek/include/mt-plat/
 endif
