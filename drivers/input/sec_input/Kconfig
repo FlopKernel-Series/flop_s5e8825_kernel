@@ -40,6 +40,11 @@ config INPUT_SEC_NOTIFIER
 	help
 	  Say Y here if you need to use input notifier.
 
+config SEC_INPUT_HEADER
+	bool "include sec_input header under include linux input"
+	help
+	  Say Y here if you copy headers under include/linux/input.
+
 config SEC_INPUT_MULTI_DEVICE
 	tristate "Multi device for Foldable"
 	help
@@ -47,6 +52,12 @@ config SEC_INPUT_MULTI_DEVICE
 
 config SEC_INPUT_CMD_TEST
 	tristate "KUnit test for tsp_common_test"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
+
+config SEC_INPUT_TEST
+	tristate "KUnit test for sec_input_test"
 	depends on SEC_KUNIT
 	help
 	  TODO: Describe config fully.
