@@ -127,6 +127,7 @@ void sec_pd_init_data(SEC_PD_SINK_STATUS* psink_status);
 int sec_pd_register_chg_info_cb(void *cb);
 int sec_pd_get_chg_info(void);
 void sec_pd_get_vid_pid(unsigned short *vid, unsigned short *pid, unsigned int *xid);
+void sec_pd_get_vid(unsigned short *vid);
 void sec_pd_manual_ccopen_req(int is_on);
 void sec_pd_manual_jig_ctrl(bool mode);
 int sec_pd_detach_with_cc(int state);
@@ -146,6 +147,7 @@ static inline int sec_pd_get_apdo_max_power(unsigned int *pdo_pos, unsigned int 
 static inline void sec_pd_init_data(SEC_PD_SINK_STATUS* psink_status) { }
 static inline int sec_pd_register_chg_info_cb(void *cb) { return 0; }
 static inline void sec_pd_get_vid_pid(unsigned short *vid, unsigned short *pid, unsigned int *xid) { }
+static inline void sec_pd_get_vid(unsigned short *vid) { }
 static inline void sec_pd_manual_ccopen_req(int is_on) { }
 static inline void sec_pd_manual_jig_ctrl(bool mode) { }
 static inline int sec_pd_detach_with_cc(int state) { return 0; }

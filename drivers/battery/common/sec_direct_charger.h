@@ -30,10 +30,12 @@
 #if IS_ENABLED(CONFIG_SEC_ABC)
 #define ABC_DC_CNT	5
 #endif
+#define MAX_DC_ICS	2
 
 typedef enum _sec_direct_chg_src {
 	SEC_CHARGING_SOURCE_SWITCHING = 0,
 	SEC_CHARGING_SOURCE_DIRECT,
+	SEC_CHARGING_SOURCE_NONE,
 } sec_direct_chg_src_t;
 
 typedef enum _sec_direct_chg_mode {
@@ -78,11 +80,17 @@ struct sec_direct_charger_platform_data {
 	int swelling_high_rechg_voltage;
 	int fpdo_dc_min_vbat;
 	int fpdo_dc_max_vbat;
-#if IS_ENABLED(CONFIG_DUAL_BATTERY)
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
 	int fpdo_dc_max_main_vbat;
 	int fpdo_dc_max_sub_vbat;
+#if IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	int fpdo_dc_max_3rd_vbat;
+#endif
 #endif
 	bool chgen_over_swell_rechg_vol;
+	bool dc_sc_dual_charging;
+	int ovlo_workaround_delay;
+	int dc_ibus_ucp_soc;
 };
 
 struct sec_direct_charger_info {
@@ -116,6 +124,7 @@ struct sec_direct_charger_info {
 	bool store_mode;
 	int vbat_min_src;
 	bool dc_rcp;
+	bool dc_ibus_ucp;
 
 	int bat_temp;
 
@@ -127,5 +136,7 @@ struct sec_direct_charger_info {
 #if IS_ENABLED(CONFIG_SEC_ABC)
 	int abc_dc_current_cnt;
 #endif
+	bool dc_err_test;
+	bool force_swc;
 };
 #endif /* __SEC_DIRECT_CHARGER_H */

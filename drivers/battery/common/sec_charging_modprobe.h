@@ -28,10 +28,12 @@ enum sec_chg_dev_info {
 	SC_DEV_SB_MFC = 0x20,
 	SC_DEV_MAIN_LIM = 0x40,
 	SC_DEV_SUB_LIM = 0x80,
+	SC_DEV_DUAL_FG = 0x100,
 };
 
 struct dev_init_info {
-	wait_queue_head_t dev_wait;
+	wait_queue_head_t all_dev_wait;
+	wait_queue_head_t depend_dev_wait;
 	unsigned int dev;
 };
 
