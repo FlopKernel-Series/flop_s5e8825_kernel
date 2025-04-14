@@ -2037,7 +2037,7 @@ void slsi_vendor_nan_event_create_delete(struct slsi_dev *sdev, int hal_event, i
 int slsi_nan_data_iface_create(struct wiphy *wiphy, struct wireless_dev *wdev, const void *data, int len)
 {
 	struct slsi_dev *sdev = SDEV_FROM_WIPHY(wiphy);
-	u8 *iface_name = NULL;
+	u8 iface_name[IFNAMSIZ] = {0};
 	int ret = 0, reply_status, type, tmp;
 	struct net_device *dev = slsi_nan_get_netdev(sdev);
 	const struct nlattr *iter;
@@ -2056,12 +2056,13 @@ int slsi_nan_data_iface_create(struct wiphy *wiphy, struct wireless_dev *wdev, c
 			 */
 			if (nla_len(iter) > IFNAMSIZ)
 				return -EINVAL;
-			iface_name = nla_data(iter);
+			memcpy(iface_name, nla_data(iter), nla_len(iter));
+			SLSI_ENSURE_NULL_TERMINATED(iface_name, sizeof(iface_name));
 		} else if (type == NAN_REQ_ATTR_HAL_TRANSACTION_ID)
 			slsi_util_nla_get_u16(iter, &transaction_id);
 	}
 
-	if (!iface_name) {
+	if (!iface_name[0]) {
 		SLSI_ERR(sdev, "No NAN data interface name\n");
 		ret = WIFI_HAL_ERROR_INVALID_ARGS;
 		reply_status = SLSI_HAL_NAN_STATUS_INVALID_PARAM;
@@ -2087,7 +2088,7 @@ exit:
 int slsi_nan_data_iface_create(struct wiphy *wiphy, struct wireless_dev *wdev, const void *data, int len)
 {
 	struct slsi_dev *sdev = SDEV_FROM_WIPHY(wiphy);
-	u8 *iface_name = NULL;
+	u8 iface_name[IFNAMSIZ] = {0};
 	int ret = 0, if_idx, type, tmp, err;
 	struct net_device *dev = slsi_nan_get_netdev(sdev);
 	struct net_device *dev_ndp = NULL;
@@ -2108,11 +2109,12 @@ int slsi_nan_data_iface_create(struct wiphy *wiphy, struct wireless_dev *wdev, c
 			 */
 			if (nla_len(iter) > IFNAMSIZ)
 				return -EINVAL;
-			iface_name = nla_data(iter);
+			memcpy(iface_name, nla_data(iter), nla_len(iter));
+			SLSI_ENSURE_NULL_TERMINATED(iface_name, sizeof(iface_name));
 		} else if (type == NAN_REQ_ATTR_HAL_TRANSACTION_ID)
 			slsi_util_nla_get_u16(iter, &transaction_id);
 	}
-	if (!iface_name) {
+	if (!iface_name[0]) {
 		SLSI_ERR(sdev, "No NAN data interface name\n");
 		ret = WIFI_HAL_ERROR_INVALID_ARGS;
 		reply_status = SLSI_HAL_NAN_STATUS_INVALID_PARAM;
@@ -2171,7 +2173,7 @@ exit:
 int slsi_nan_data_iface_delete(struct wiphy *wiphy, struct wireless_dev *wdev, const void *data, int len)
 {
 	struct slsi_dev *sdev = SDEV_FROM_WIPHY(wiphy);
-	u8 *iface_name = NULL;
+	u8 iface_name[IFNAMSIZ] = {0};
 	int ret = 0, type, tmp;
 	struct net_device *dev = slsi_nan_get_netdev(sdev);
 	u32 reply_status = SLSI_HAL_NAN_STATUS_SUCCESS;
@@ -2190,11 +2192,12 @@ int slsi_nan_data_iface_delete(struct wiphy *wiphy, struct wireless_dev *wdev, c
 			 */
 			if (nla_len(iter) > IFNAMSIZ)
 				return -EINVAL;
-			iface_name = nla_data(iter);
+			memcpy(iface_name, nla_data(iter), nla_len(iter));
+			SLSI_ENSURE_NULL_TERMINATED(iface_name, sizeof(iface_name));
 		} else if (type == NAN_REQ_ATTR_HAL_TRANSACTION_ID)
 			slsi_util_nla_get_u16(iter, &(transaction_id));
 	}
-	if (!iface_name) {
+	if (!iface_name[0]) {
 		SLSI_ERR(sdev, "No NAN data interface name\n");
 		ret = WIFI_HAL_ERROR_INVALID_ARGS;
 		reply_status = SLSI_HAL_NAN_STATUS_INVALID_PARAM;
@@ -2222,7 +2225,7 @@ exit:
 int slsi_nan_data_iface_delete(struct wiphy *wiphy, struct wireless_dev *wdev, const void *data, int len)
 {
 	struct slsi_dev *sdev = SDEV_FROM_WIPHY(wiphy);
-	u8 *iface_name = NULL;
+	u8 iface_name[IFNAMSIZ] = {0};
 	int ret = 0, if_idx, type, tmp;
 	struct net_device *dev = slsi_nan_get_netdev(sdev);
 	struct net_device *dev_ndp = NULL;
@@ -2242,11 +2245,12 @@ int slsi_nan_data_iface_delete(struct wiphy *wiphy, struct wireless_dev *wdev, c
 			 */
 			if (nla_len(iter) > IFNAMSIZ)
 				return -EINVAL;
-			iface_name = nla_data(iter);
+			memcpy(iface_name, nla_data(iter), nla_len(iter));
+			SLSI_ENSURE_NULL_TERMINATED(iface_name, sizeof(iface_name));
 		} else if (type == NAN_REQ_ATTR_HAL_TRANSACTION_ID)
 			slsi_util_nla_get_u16(iter, &(transaction_id));
 	}
-	if (!iface_name) {
+	if (!iface_name[0]) {
 		SLSI_ERR(sdev, "No NAN data interface name\n");
 		ret = WIFI_HAL_ERROR_INVALID_ARGS;
 		reply_status = SLSI_HAL_NAN_STATUS_INVALID_PARAM;

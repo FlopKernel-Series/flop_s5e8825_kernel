@@ -1387,7 +1387,7 @@ struct slsi_dev {
 	struct scsc_service        *service;
 	struct slsi_chip_info_mib  chip_info_mib;
 	struct slsi_plat_info_mib  plat_info_mib;
-	u16                        reg_dom_version;
+	u32                        reg_dom_version;
 
 #ifdef CONFIG_SCSC_WLAN_MUTEX_DEBUG
 	struct slsi_mutex          netdev_add_remove_mutex;

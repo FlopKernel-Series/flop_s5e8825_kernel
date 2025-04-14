@@ -180,7 +180,9 @@ struct slsi_mlme_pkt_filter_elem {
 #define SLSI_KEY_MGMT_FT_FILS_SHA256 0x000fac10
 #define SLSI_KEY_MGMT_FT_FILS_SHA384 0x000fac11
 #define SLSI_KEY_MGMT_OWE 0x000fac12
+#define SLSI_KEY_MGMT_OWE_REV 0x12ac0f00
 #define SLSI_KEY_MGMT_802_1X_SUITE_B_192 0x000fac0c
+#define SLSI_KEY_MGMT_802_1X_SUITE_B_192_REV 0x0cac0f00
 #define SLSI_KEY_MGMT_FT_802_1X_SHA384 0x000fac0d
 
 struct slsi_mlme_parameters {

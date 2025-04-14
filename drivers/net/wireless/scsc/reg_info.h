@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * Copyright (c) 2012 - 2021 Samsung Electronics Co., Ltd. All rights reserved
+ * Copyright (c) 2012 - 2024 Samsung Electronics Co., Ltd. All rights reserved
  *
  *****************************************************************************/
 #ifndef __SLSI_REGINFO_H__
@@ -20,6 +20,7 @@ struct reg_database {
 	enum slsi_regdb_state regdb_state;
 	uint32_t db_major_version;
 	uint32_t db_minor_version;
+	uint32_t db_2nd_minor_version;
 	uint32_t num_countries;
 	struct regdb_file_reg_rule *reg_rules;
 	struct regdb_file_freq_range *freq_ranges;
