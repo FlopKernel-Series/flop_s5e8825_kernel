@@ -21,17 +21,23 @@
 #include <linux/device.h>
 #include <linux/types.h>
 
-struct device_attribute **get_magnetometer_ak09918c_dev_attrs(char *name);
-int check_ak09918c_adc_data_spec(s32 sensor_value[3]);
 
-struct device_attribute **get_magnetometer_mmc5633_dev_attrs(char *name);
-int check_mmc5633_adc_data_spec(s32 sensor_value[3]);
+struct magnetometer_factory_chipset_funcs {
+	ssize_t (*selftest_show)(char *name);
+	ssize_t (*hw_offset_show)(char *name);
+	ssize_t (*matrix_show)(char *name);
+	ssize_t (*matrix_store)(const char *name, size_t size);
+	ssize_t (*cover_matrix_show)(char *name);
+	ssize_t (*cover_matrix_store)(const char *name, size_t size);
+	ssize_t (*mpp_matrix_show)(char *name);
+	ssize_t (*mpp_matrix_store)(const char *name, size_t size);
+	int (*check_adc_data_spec)(s32 sensor_value[3]);
+};
 
-struct device_attribute **get_magnetometer_yas539_dev_attrs(char *name);
-int check_yas539_adc_data_spec(s32 sensor_value[3]);
-
-struct device_attribute **get_magnetometer_mxg4300s_dev_attrs(char *name);
-int check_mxg4300s_adc_data_spec(s32 sensor_value[3]);
+struct magnetometer_factory_chipset_funcs *get_magnetometer_ak09918c_chipset_func(char *name);
+struct magnetometer_factory_chipset_funcs *get_magnetometer_mmc5633_chipset_func(char *name);
+struct magnetometer_factory_chipset_funcs *get_magnetometer_yas539_chipset_func(char *name);
+struct magnetometer_factory_chipset_funcs *get_magnetometer_mxg4300s_chipset_func(char *name);
 
 void get_magnetometer_sensor_value_s32(struct mag_power_event *event, s32 *sensor_value);
 #endif

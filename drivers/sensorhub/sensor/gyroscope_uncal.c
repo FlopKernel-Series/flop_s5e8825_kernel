@@ -20,14 +20,14 @@
 
 #include <linux/slab.h>
 
-void print_gyroscope_uncal_debug(void)
+void print_gyroscope_uncal_debug(int type)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE_UNCALIBRATED);
+	struct shub_sensor *sensor = get_sensor(type);
 	struct sensor_event *event = &(sensor->last_event_buffer);
 	struct uncal_gyro_event *sensor_value = (struct uncal_gyro_event *)(event->value);
 
 	shub_info("%s(%u) : %d, %d, %d, %d, %d, %d (%lld) (%ums, %dms)", sensor->name,
-		  SENSOR_TYPE_GYROSCOPE_UNCALIBRATED, sensor_value->uncal_x, sensor_value->uncal_y, sensor_value->uncal_z,
+		  sensor->type, sensor_value->uncal_x, sensor_value->uncal_y, sensor_value->uncal_z,
 		  sensor_value->offset_x, sensor_value->offset_y, sensor_value->offset_z, event->timestamp,
 		  sensor->sampling_period, sensor->max_report_latency);
 }
@@ -46,6 +46,26 @@ int init_gyroscope_uncal(bool en)
 
 	if (en) {
 		ret = init_default_func(sensor, "uncal_gyro_sensor", 12, 12, sizeof(struct uncal_gyro_event));
+
+		sensor->report_mode_continuous = true;
+		sensor->funcs = &gyroscope_uncal_sensor_funcs;
+	} else {
+		destroy_default_func(sensor);
+	}
+
+	return ret;
+}
+
+int init_gyroscope_uncal_sub(bool en)
+{
+	int ret = 0;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_GYROSCOPE_UNCALIBRATED_SUB);
+
+	if (!sensor)
+		return 0;
+
+	if (en) {
+		ret = init_default_func(sensor, "uncal_gyro_sub_sensor", 12, 12, sizeof(struct uncal_gyro_event));
 
 		sensor->report_mode_continuous = true;
 		sensor->funcs = &gyroscope_uncal_sensor_funcs;

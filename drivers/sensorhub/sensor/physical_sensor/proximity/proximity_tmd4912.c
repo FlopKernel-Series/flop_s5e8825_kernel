@@ -27,16 +27,16 @@
 
 #define TMD4912_NAME "TMD4912"
 
-int init_proximity_tmd4912(void)
+int init_proximity_tmd4912(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	data->cal_data_len = sizeof(int) * 2;
 
 	return 0;
 }
 
-void parse_dt_proximity_tmd4912(struct device *dev)
+void parse_dt_proximity_tmd4912(struct device *dev, int type)
 {
 	struct device_node *np = dev->of_node;
 	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;

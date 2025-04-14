@@ -25,7 +25,7 @@
 #include <linux/slab.h>
 
 get_init_chipset_funcs_ptr get_light_funcs_ary[] = {
-	get_light_stk_common_function_pointer,
+	get_light_common_function_pointer,
 };
 
 static get_init_chipset_funcs_ptr *get_light_init_chipset_funcs(int *len)
@@ -35,14 +35,14 @@ static get_init_chipset_funcs_ptr *get_light_init_chipset_funcs(int *len)
 }
 
 
-static int init_light_variable(void)
+static int init_light_variable(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
 	struct light_data *data = sensor->data;
 	struct shub_system_info *system_info = get_shub_system_info();
 
 	data->brightness = -1;
-	if(sensor->spec.version >= LIGHT_DEBIG_EVENT_SIZE_4BYTE_VERSION)
+	if(sensor->spec.version >= LIGHT_EVENT_SIZE_4BYTE_VERSION)
 		data->raw_data_size = 4;
 	else
 		data->raw_data_size = 2;
@@ -52,25 +52,31 @@ static int init_light_variable(void)
 	return 0;
 }
 
-static void parse_dt_light(struct device *dev)
+static void parse_dt_light(struct device *dev, int type)
 {
-	struct light_data *data = get_sensor(SENSOR_TYPE_LIGHT)->data;
+	struct light_data *data = get_sensor(type)->data;
 	struct device_node *np = dev->of_node;
 	int coef[LIGHT_COEF_SIZE] = {0, };
+	char property_name[256] = {0, };
 
 	if (!of_property_read_u32_array(np, "light-coef", coef, LIGHT_COEF_SIZE)) {
 		data->light_coef = kcalloc(LIGHT_COEF_SIZE, sizeof(*data->light_coef), GFP_KERNEL);
 		memcpy(data->light_coef, coef, sizeof(coef));
 	}
 
-	if (of_property_read_u32(np, "brightness-array-len", &data->brightness_array_len)) {
+	snprintf(property_name, sizeof(property_name), "%sbrightness-array-len", data->prefix);
+
+	if (of_property_read_u32(np, property_name, &data->brightness_array_len)) {
 		shub_errf("no brightness array len");
 		data->brightness_array_len = 0;
 		data->brightness_array = NULL;
 	} else {
 		data->brightness_array = kcalloc(data->brightness_array_len, sizeof(*data->brightness_array),
 						 GFP_KERNEL);
-		if (of_property_read_u32_array(np, "brightness-array", data->brightness_array,
+
+		snprintf(property_name, sizeof(property_name), "%sbrightness-array", data->prefix);
+
+		if (of_property_read_u32_array(np, property_name, data->brightness_array,
 					       data->brightness_array_len)) {
 			shub_errf("no brightness array");
 			data->brightness_array_len = 0;
@@ -78,6 +84,8 @@ static void parse_dt_light(struct device *dev)
 			data->brightness_array = NULL;
 		}
 	}
+
+	shub_infof("parse_dt_light(%d) - brightness_array_len = %d\n", type, data->brightness_array_len);
 }
 
 void set_light_coef(struct light_data *data)
@@ -152,13 +160,13 @@ void set_light_ddi_support(uint32_t system_feature)
 	shub_infof("%d", data->ddi_support);
 }
 
-int light_open_calibration(void)
+int light_open_calibration(int type)
 {
 	int ret;
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	struct shub_sensor *sensor = get_sensor(type);
 	struct light_data *data = sensor->data;
 
-	ret = shub_file_read(LIGHT_CALIBRATION_FILE_PATH, (char *)&data->cal_data, sizeof(data->cal_data), 0);
+	ret = shub_file_read(data->path_calibration, (char *)&data->cal_data, sizeof(data->cal_data), 0);
 	if (ret != sizeof(data->cal_data)) {
 		shub_errf("Can't read calibration file %d", ret);
 		return -EIO;
@@ -169,16 +177,17 @@ int light_open_calibration(void)
 	return ret;
 }
 
-static int set_light_cal(struct light_data *data)
+static int set_light_cal(int type)
 {
 	int ret = 0;
+	struct light_data *data = get_sensor(type)->data;
 
 	if (!data->use_cal_data || is_panel_ubid_changed())
 		return 0;
 
 	shub_infof("%d %d %d", data->cal_data.result, data->cal_data.max, data->cal_data.lux);
 
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_LIGHT, CAL_DATA, (u8 *)(&data->cal_data),
+	ret = shub_send_command(CMD_SETVALUE, type, CAL_DATA, (u8 *)(&data->cal_data),
 							sizeof(data->cal_data));
 	if (ret < 0)
 		shub_errf("shub_send_command fail %d", ret);
@@ -186,16 +195,17 @@ static int set_light_cal(struct light_data *data)
 	return ret;
 }
 
-static int set_panel_vendor(struct light_data *data)
+static int set_panel_vendor(int type)
 {
 	int ret = 0;
+	struct light_data *data = get_sensor(type)->data;
 
 	data->panel_vendor = get_panel_lcd_type();
 	if (data->panel_vendor < 0)
 		return ret;
 
 	shub_infof("%d", data->panel_vendor);
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_LIGHT, LIGHT_SUBCMD_PANEL_TYPE, (u8 *)(&data->panel_vendor),
+	ret = shub_send_command(CMD_SETVALUE, type, LIGHT_SUBCMD_PANEL_TYPE, (u8 *)(&data->panel_vendor),
 							sizeof(int8_t));
 	if (ret < 0)
 		shub_errf("shub_send_command fail %d", ret);
@@ -208,6 +218,7 @@ static int set_hbm_finger(struct light_data *data)
 	int ret = 0;
 
 	shub_infof("%d", data->hbm_finger);
+
 	if (data->hbm_finger == true) {
 		ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_LIGHT, LIGHT_SUBCMD_HBM_FINGERPRINT,
 		(u8 *)(&data->hbm_finger), sizeof(data->hbm_finger));
@@ -218,19 +229,25 @@ static int set_hbm_finger(struct light_data *data)
 	return ret;
 }
 
-static int sync_light_status(void)
+static int sync_light_status(int type)
 {
 	int ret = 0;
-	struct light_data *data = get_sensor(SENSOR_TYPE_LIGHT)->data;
-	shub_info("sync_light_status ");
-	set_light_coef(data);
-	set_light_brightness(data);
+	struct light_data *data = get_sensor(type)->data;
+
+	shub_info("sync_light_status %d", type);
+
+	if (type == SENSOR_TYPE_LIGHT) {
+		set_light_coef(data);
+		set_light_brightness(data);
 #ifdef CONFIG_SENSORS_SSP_LIGHT_JPNCONCEPT
-	set_light_region(data);
+		set_light_region(data);
 #endif
-	set_light_cal(data);
-	set_panel_vendor(data);
-	set_hbm_finger(data);
+		set_hbm_finger(data);
+	}
+
+	set_light_cal(type);
+	set_panel_vendor(type);
+
 	return ret;
 }
 
@@ -257,7 +274,7 @@ static void report_event_light(void)
 	}
 }
 
-void print_light_debug(void)
+void print_light_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
 	struct sensor_event *event = &(sensor->last_event_buffer);
@@ -367,7 +384,10 @@ int get_light_sensor_value(char *dataframe, int *index, struct sensor_event *eve
 }
 
 
-static struct light_data light_data;
+static struct light_data light_data = {
+	.path_calibration = LIGHT_CALIBRATION_FILE_PATH,
+};
+
 static struct sensor_funcs light_sensor_funcs = {
 	.sync_status = sync_light_status,
 	.enable = enable_light,
@@ -381,6 +401,18 @@ static struct sensor_funcs light_sensor_funcs = {
 	.get_init_chipset_funcs = get_light_init_chipset_funcs,
 };
 
+static struct light_data sub_light_data = {
+	.prefix = "sub-",
+	.path_calibration = LIGHT_SUB_CALIBRATION_FILE_PATH,
+};
+
+static struct sensor_funcs sub_light_sensor_funcs = {
+	.sync_status = sync_light_status,
+	.open_calibration_file = light_open_calibration,
+	.parse_dt = parse_dt_light,
+	.init_variable = init_light_variable,
+};
+
 int init_light(bool en)
 {
 	int ret = 0;
@@ -391,9 +423,29 @@ int init_light(bool en)
 
 	if (en) {
 		ret = init_default_func(sensor, "light_sensor",
-				sensor->spec.version >= LIGHT_DEBIG_EVENT_SIZE_4BYTE_VERSION ? 40 : 28, 4, sizeof(struct light_event));
+				sensor->spec.version >= LIGHT_EVENT_SIZE_4BYTE_VERSION ? 40 : 28, 4, sizeof(struct light_event));
 		sensor->data = (void *)&light_data;
 		sensor->funcs = &light_sensor_funcs;
+	} else {
+		destroy_default_func(sensor);
+	}
+
+	return ret;
+}
+
+int init_sub_light(bool en)
+{
+	int ret = 0;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_SUB_LIGHT);
+
+	if (!sensor)
+		return 0;
+
+	if (en) {
+		ret = init_default_func(sensor, "sub_light_sensor",
+				sensor->spec.version >= LIGHT_EVENT_SIZE_4BYTE_VERSION ? 40 : 28, 4, sizeof(struct light_event));
+		sensor->data = (void *)&sub_light_data;
+		sensor->funcs = &sub_light_sensor_funcs;
 	} else {
 		destroy_default_func(sensor);
 	}

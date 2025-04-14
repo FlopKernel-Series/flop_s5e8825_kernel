@@ -33,6 +33,8 @@ get_init_chipset_funcs_ptr get_prox_funcs_ary[] = {
 	get_proximity_stk33512_function_pointer,
 	get_proximity_stk3afx_function_pointer,
 	get_proximity_tmd3725_function_pointer,
+	get_proximity_tmd4913_function_pointer,
+	get_proximity_tmd4914_function_pointer,
 };
 
 static get_init_chipset_funcs_ptr *get_proximity_init_chipset_funcs(int *len)
@@ -41,9 +43,9 @@ static get_init_chipset_funcs_ptr *get_proximity_init_chipset_funcs(int *len)
 	return get_prox_funcs_ary;
 }
 
-static int init_proximity_variable(void)
+static int init_proximity_variable(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->cal_data_len) {
 		data->cal_data = kzalloc(data->cal_data_len, GFP_KERNEL);
@@ -119,22 +121,21 @@ void set_proximity_threshold(void)
 		  data->prox_threshold[PROX_THRESH_LOW]);
 }
 
-static int sync_proximity_status(void)
+static int sync_proximity_status(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
-	struct proximity_chipset_funcs *chipset_funcs = get_sensor(SENSOR_TYPE_PROXIMITY)->chipset_funcs;
+	struct proximity_chipset_funcs *chipset_funcs = get_sensor(type)->chipset_funcs;
 
 	shub_infof();
 
 	set_proximity_threshold();
 	if (chipset_funcs && chipset_funcs->sync_proximity_state)
-		chipset_funcs->sync_proximity_state(data);
+		chipset_funcs->sync_proximity_state(type);
 
 	return ret;
 }
 
-static void print_debug_proximity(void)
+static void print_debug_proximity(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_PROXIMITY);
 	struct sensor_event *event = &(sensor->event_buffer);
@@ -197,15 +198,15 @@ int parsing_proximity_threshold(char *dataframe, int *index, int frame_len)
 	return 0;
 }
 
-int set_proximity_calibration(void)
+int set_proximity_calibration(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->cal_data_len == 0)
 		return ret;
 
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_PROXIMITY, CAL_DATA, (char *)data->cal_data,
+	ret = shub_send_command(CMD_SETVALUE, type, CAL_DATA, (char *)data->cal_data,
 				 data->cal_data_len);
 	if (ret < 0)
 		shub_errf("failed %d", ret);
@@ -213,15 +214,15 @@ int set_proximity_calibration(void)
 	return ret;
 }
 
-int save_proximity_calibration(void)
+int save_proximity_calibration(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->cal_data_len == 0)
 		return ret;
 
-	ret = shub_file_write_no_wait(PROX_CALIBRATION_FILE_PATH, (char *)data->cal_data, data->cal_data_len, 0);
+	ret = shub_file_write_no_wait(data->path_calibration, (char *)data->cal_data, data->cal_data_len, 0);
 	if (ret != data->cal_data_len) {
 		shub_errf("failed");
 		return -EIO;
@@ -230,15 +231,15 @@ int save_proximity_calibration(void)
 	return ret;
 }
 
-int open_default_proximity_calibration(void)
+int open_default_proximity_calibration(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->cal_data_len == 0)
 		return ret;
 
-	ret = shub_file_read(PROX_CALIBRATION_FILE_PATH, (char *)data->cal_data, data->cal_data_len, 0);
+	ret = shub_file_read(data->path_calibration, (char *)data->cal_data, data->cal_data_len, 0);
 	if (ret != data->cal_data_len) {
 		shub_errf("failed");
 		return -EIO;
@@ -247,30 +248,30 @@ int open_default_proximity_calibration(void)
 	return ret;
 }
 
-static int open_proximity_calibration(void)
+static int open_proximity_calibration(int type)
 {
 	int ret = 0;
-	struct proximity_chipset_funcs *chipset_funcs = get_sensor(SENSOR_TYPE_PROXIMITY)->chipset_funcs;
+	struct proximity_chipset_funcs *chipset_funcs = get_sensor(type)->chipset_funcs;
 
 	if (chipset_funcs && chipset_funcs->open_calibration_file)
-		ret = chipset_funcs->open_calibration_file();
+		ret = chipset_funcs->open_calibration_file(type);
 	else
-		ret = open_default_proximity_calibration();
+		ret = open_default_proximity_calibration(type);
 
 	return ret;
 }
 
-int set_proximity_setting_mode(void)
+int set_proximity_setting_mode(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->setting_mode == 0)
 		return ret;
 
 	shub_infof("%d", data->setting_mode);
 
-	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_PROXIMITY, PROXIMITY_SETTING_MODE,
+	ret = shub_send_command(CMD_SETVALUE, type, PROXIMITY_SETTING_MODE,
 				 (char *)&data->setting_mode, sizeof(data->setting_mode));
 	if (ret < 0)
 		shub_errf("failed %d", ret);
@@ -278,17 +279,17 @@ int set_proximity_setting_mode(void)
 	return ret;
 }
 
-int save_proximity_setting_mode(void)
+int save_proximity_setting_mode(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->setting_mode == 0)
 		return ret;
 
 	shub_infof("%d", data->setting_mode);
 
-	ret = shub_file_write_no_wait(PROX_SETTING_MODE_FILE_PATH, (char *)&data->setting_mode,
+	ret = shub_file_write_no_wait(data->path_setting_mode, (char *)&data->setting_mode,
 					sizeof(data->setting_mode), 0);
 	if (ret != sizeof(data->setting_mode)) {
 		shub_errf("failed");
@@ -298,13 +299,13 @@ int save_proximity_setting_mode(void)
 	return ret;
 }
 
-int open_default_proximity_setting_mode(void)
+int open_default_proximity_setting_mode(int type)
 {
 	int ret = 0;
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 	u8 mode;
 
-	ret = shub_file_read(PROX_SETTING_MODE_FILE_PATH, (char *)&mode, sizeof(mode), 0);
+	ret = shub_file_read(data->path_setting_mode, (char *)&mode, sizeof(mode), 0);
 	if (ret != sizeof(mode)) {
 		shub_errf("failed");
 		ret = -EIO;
@@ -317,13 +318,29 @@ int open_default_proximity_setting_mode(void)
 	return ret;
 }
 
-static struct proximity_data proximity_data;
+static struct proximity_data proximity_data = {
+	.path_calibration = PROX_CALIBRATION_FILE_PATH,
+	.path_setting_mode = PROX_SETTING_MODE_FILE_PATH,
+};
+
 static struct sensor_funcs proximity_sensor_funcs = {
 	.enable = enable_proximity,
 	.sync_status = sync_proximity_status,
 	.print_debug = print_debug_proximity,
 	.report_event = report_event_proximity,
 	.parsing_data = parsing_proximity_threshold,
+	.open_calibration_file = open_proximity_calibration,
+	.init_variable = init_proximity_variable,
+	.get_init_chipset_funcs = get_proximity_init_chipset_funcs,
+};
+
+static struct proximity_data sub_proximity_data = {
+	.path_calibration = SUB_PROX_CALIBRATION_FILE_PATH,
+	.path_setting_mode = SUB_PROX_SETTING_MODE_FILE_PATH,
+};
+
+static struct sensor_funcs sub_proximity_sensor_funcs = {
+	.sync_status = sync_proximity_status,
 	.open_calibration_file = open_proximity_calibration,
 	.init_variable = init_proximity_variable,
 	.get_init_chipset_funcs = get_proximity_init_chipset_funcs,
@@ -344,6 +361,27 @@ int init_proximity(bool en)
 	} else {
 		kfree_and_clear(proximity_data.threshold_data);
 		kfree_and_clear(proximity_data.cal_data);
+		destroy_default_func(sensor);
+	}
+
+	return ret;
+}
+
+int init_sub_proximity(bool en)
+{
+	int ret = 0;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_SUB_PROXIMITY);
+
+	if (!sensor)
+		return 0;
+
+	if (en) {
+		ret = init_default_func(sensor, "sub_proximity_sensor", 3, 1, sizeof(struct prox_event));
+		sensor->data = (void *)&sub_proximity_data;
+		sensor->funcs = &sub_proximity_sensor_funcs;
+	} else {
+		kfree_and_clear(sub_proximity_data.threshold_data);
+		kfree_and_clear(sub_proximity_data.cal_data);
 		destroy_default_func(sensor);
 	}
 

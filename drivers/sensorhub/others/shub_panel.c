@@ -32,14 +32,13 @@
 #endif
 #include "../sensor/light.h"
 #include "../sensormanager/shub_sensor_type.h"
-
 #include <linux/sec_detect.h>
 
-#define PANEL_MAX (1)
+#define PANEL_MAX (2)
 
-static struct panel_event_bl_data panel_event_data[PANEL_MAX];
-static struct panel_event_dms_data panel_event_dms_data[PANEL_MAX];
-static int panel_screen_mode[PANEL_MAX];
+static struct panel_event_bl_data panel_event_bl[PANEL_MAX];
+static struct panel_event_dms_data panel_event_dms[PANEL_MAX];
+static int panel_screen_mode;
 static u8 copr_state;
 static u8 ub_state;
 #endif
@@ -198,7 +197,7 @@ int send_ub_state(void)
 					LIGHT_SUBCMD_UB_CONNECTED, &enable, sizeof(enable));
 
 	if (ub_state == PANEL_EVENT_UB_CON_STATE_DISCONNECTED)
-		ret = shub_send_status(get_lcd_status());
+		ret = shub_send_status(get_lcd_status(), NULL, 0);
 
 	return ret;
 }
@@ -225,6 +224,8 @@ int send_screen_mode_information(int display_index, int screen_mode)
 	int buf[2] = { display_index, screen_mode };
 	int ret = 0;
 
+	panel_screen_mode = screen_mode;
+
 	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_LIGHT,
 					LIGHT_SUBCMD_SCREEN_MODE_INFORMATION, (char *)&buf, sizeof(buf));
 
@@ -234,7 +235,7 @@ int send_screen_mode_information(int display_index, int screen_mode)
 static int panel_notifier_callback(struct notifier_block *nb, unsigned long event, void *data)
 {
 	struct panel_notifier_event_data *evtdata = data;
-	int index = evtdata->display_index;
+	unsigned int index = evtdata->display_index;
 
 	if (index >= PANEL_MAX)
 	{
@@ -245,16 +246,13 @@ static int panel_notifier_callback(struct notifier_block *nb, unsigned long even
 
 	if (event == PANEL_EVENT_BL_STATE_CHANGED) {
 		struct shub_data_t *shub_data = get_shub_data();
-		u32 brightness_resolution = 1;
-
-		if (strcmp(shub_data->model_name, "S921") == 0 || strcmp(shub_data->model_name, "S926") == 0)
-			brightness_resolution = 10;
+		u32 brightness_resolution = shub_data->brightness_resolution;
 
 		evtdata->d.bl.level = evtdata->d.bl.level / brightness_resolution;
 
-		if (panel_event_data[evtdata->display_index].level != evtdata->d.bl.level) {
+		if (panel_event_bl[evtdata->display_index].level != evtdata->d.bl.level) {
 			// store these values for reset
-			memcpy(&panel_event_data[index], &evtdata->d.bl, sizeof(struct panel_event_bl_data));
+			memcpy(&panel_event_bl[index], &evtdata->d.bl, sizeof(struct panel_event_bl_data));
 			shub_infof("PANEL_EVENT_BL_STATE_CHANGED, level(%d) aor(%d) acl_status(%d) acl_val(%d) resolution(%d)\n",
 							evtdata->d.bl.level, evtdata->d.bl.aor, evtdata->d.bl.acl_status, evtdata->d.bl.gradual_acl_val, brightness_resolution);
 			send_panel_information(index, &evtdata->d.bl);
@@ -293,10 +291,23 @@ static int panel_notifier_callback(struct notifier_block *nb, unsigned long even
 			shub_infof("PANEL_EVENT_COPR_STATE_CHANGED, event(%d) lcd_status(%d)\n",
 							evtdata->state, shub_data->lcd_status);
 			send_copr_state();
+		} else if (evtdata->state == PANEL_EVENT_STATE_NONE) {
+			u8 buf[1 + MAX_COPR_ROI * MAX_PANEL_EVENT_COPR_WRGB] = { 0, };
+			int i = 0, j = 0;
+			int ret = 0;
+
+			buf[0] = index;
+			for (i = 0; i < MAX_COPR_ROI; i++) {
+				for (j = 0; j < MAX_PANEL_EVENT_COPR_WRGB; j++) {
+					buf[1 + i * MAX_PANEL_EVENT_COPR_WRGB + j] = (u8)MIN(evtdata->d.copr.stat[i][j],255);
+				}
+			}
+			ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_LIGHT,
+							LIGHT_SUBCMD_COPR_DATA, (char *)&buf, sizeof(buf));
 		}
 	} else if (event == PANEL_EVENT_SCREEN_MODE_STATE_CHANGED) {
-		memcpy(&panel_event_dms_data[index], &evtdata->d.dms, sizeof(struct panel_event_dms_data));
-		panel_screen_mode[index] = evtdata->d.screen_mode;
+		memcpy(&panel_event_dms[index], &evtdata->d.dms, sizeof(struct panel_event_dms_data));
+		panel_screen_mode = evtdata->d.screen_mode;
 
 		shub_infof("panel screen mode %d %d", evtdata->display_index, evtdata->d.screen_mode);
 
@@ -319,7 +330,7 @@ void init_shub_panel_callback(void)
 	ub_state = PANEL_EVENT_UB_CON_STATE_CONNECTED;
 
 	for (i = 0; i < PANEL_MAX; i++) {
-		panel_event_data[i].level = -1;
+		panel_event_bl[i].level = -1;
 	}
 
 	if (sec_needs_decon)
@@ -349,13 +360,14 @@ void sync_panel_state(void)
 
 	for (i = 0; i < PANEL_MAX; i++)
 	{
-		if (panel_event_data[i].level != -1)
-			send_panel_information(i, &panel_event_data[i]);
-		send_screen_mode_information(i, panel_screen_mode[i]);
+		if (panel_event_bl[i].level != -1)
+			send_panel_information(i, &panel_event_bl[i]);
 	}
+	send_screen_mode_information(0, panel_screen_mode);
 }
 #else
 void init_shub_panel_callback(void) {}
 void remove_shub_panel_callback(void) {}
 void sync_panel_state(void) {}
+int send_screen_mode_information(int display_index, int screen_mode) { return 0; }
 #endif

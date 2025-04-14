@@ -29,9 +29,9 @@
 #define GP2AP110S_NAME    "GP2AP110S"
 #define GP2AP110S_VENDOR  "SHARP"
 
-int init_proximity_gp2ap110s(void)
+int init_proximity_gp2ap110s(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	if (data->threshold_data == NULL) {
 		data->threshold_data = kzalloc(sizeof(struct proximity_gp2ap110s_data), GFP_KERNEL);
@@ -43,7 +43,7 @@ int init_proximity_gp2ap110s(void)
 	return 0;
 }
 
-void parse_dt_proximity_gp2ap110s(struct device *dev)
+void parse_dt_proximity_gp2ap110s(struct device *dev, int type)
 {
 	struct device_node *np = dev->of_node;
 	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
@@ -67,14 +67,14 @@ void parse_dt_proximity_gp2ap110s(struct device *dev)
 		  thd_data->prox_mode_thresh[PROX_THRESH_LOW]);
 }
 
-int open_proximity_setting_mode(void)
+int open_proximity_setting_mode(int type)
 {
 	int ret = -1;
 	char buf[3] = "";
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 	struct proximity_gp2ap110s_data *thd_data = data->threshold_data;
 
-	ret = shub_file_read(PROX_SETTING_MODE_FILE_PATH, buf, sizeof(buf), 0);
+	ret = shub_file_read(data->path_setting_mode, buf, sizeof(buf), 0);
 	if (ret <= 0) {
 		shub_errf("Can't read the prox settings data from file, bytes=%d", ret);
 		ret = -EIO;
@@ -87,7 +87,7 @@ int open_proximity_setting_mode(void)
 		shub_infof("prox_settings %d", data->setting_mode);
 		if (data->setting_mode != 1 && data->setting_mode != 2) {
 			data->setting_mode = 1;
-			shub_errf("leg_reg_val is wrong. set defulat setting");
+			shub_errf("leg_reg_val is wrong. set default setting");
 		}
 	}
 
@@ -97,14 +97,14 @@ int open_proximity_setting_mode(void)
 	return ret;
 }
 
-void set_proximity_gp2ap110s_state(struct proximity_data *data) // sync
+void set_proximity_gp2ap110s_state(int type) // sync
 {
-	set_proximity_setting_mode();
+	set_proximity_setting_mode(type);
 }
 
 void pre_enable_proximity_gp2ap110s(struct proximity_data *data)
 {
-	set_proximity_setting_mode();
+	set_proximity_setting_mode(SENSOR_TYPE_PROXIMITY);
 }
 
 struct proximity_chipset_funcs prox_gp2ap110s_funcs = {

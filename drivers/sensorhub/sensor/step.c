@@ -32,7 +32,7 @@ static void report_event_step_counter(void)
 	sensor_value->step_total += sensor_value->step_diff;
 }
 
-void print_step_counter_debug(void)
+void print_step_counter_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_STEP_COUNTER);
 	struct sensor_event *event = &(sensor->last_event_buffer);

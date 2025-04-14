@@ -21,12 +21,18 @@
  *
  * version 0 : only log for sensor hub [length:2, data]
  * version 1 : add command [length:2, buffer[cmd:1, data]]
- *    HUB_DEBUGGER_SUBCMD_LOG       : log for sensor hub
- *    HUB_DEBUGGER_SUBCMD_FIFO_DATA : light fifo data for light test app (req. hw)
+ *    HUB_DEBUGGER_SUBCMD_LOG        : log for sensor hub
+ *    HUB_DEBUGGER_SUBCMD_FIFO_DATA  : light fifo data for light test app (req. hw)
+ *    HUB_DEBUGGER_SUBCMD_LOG_IN_HAL : print log in HAL layer
  */
 
 #define HUB_DUBBGER_SUBCMD_LOG		126
 #define HUB_DUBBGER_SUBCMD_FIFO_DATA	127
+#define HUB_DUBBGER_SUBCMD_LOG_TO_HAL	128
+
+struct hub_debugger {
+	u8 log_to_hal_buffer[256];
+} __attribute__((__packed__));
 
 u8 *get_hub_debugger_fifo_data(void);
 

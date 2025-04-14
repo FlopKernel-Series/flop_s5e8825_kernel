@@ -6,9 +6,9 @@
 
 #define LPS22HH_NAME	"LPS22HHTR"
 
-static int init_pressure_lps22hh(void)
+static int init_pressure_lps22hh(int type)
 {
-	struct pressure_data *data = (struct pressure_data *)(get_sensor(SENSOR_TYPE_PRESSURE)->data);
+	struct pressure_data *data = (struct pressure_data *)(get_sensor(type)->data);
 
 	shub_infof("");
 

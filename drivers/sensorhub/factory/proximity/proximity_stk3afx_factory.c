@@ -27,22 +27,7 @@
 #include "proximity_factory.h"
 #include "../../others/shub_panel.h"
 
-#define STK33F11_NAME "STK33F11"
-#define STK_VENDOR "Sitronix"
-
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_PROXIMITY);
-
-	return sprintf(buf, "%s\n", sensor->spec.name);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", STK_VENDOR);
-}
-
-static ssize_t prox_led_test_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t proximity_stk3afx_prox_led_test_show(char *buf)
 {
 	int ret = 0;
 	char *buffer = NULL;
@@ -76,23 +61,23 @@ static ssize_t prox_led_test_show(struct device *dev, struct device_attribute *a
 	return ret;
 }
 
-static ssize_t prox_trim_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t proximity_stk3afx_prox_trim_show(char *buf, int type)
 {
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
 	shub_infof("setting_mode : %d", data->setting_mode);
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", data->setting_mode);
 }
 
-static int proximity_get_calibration_data(void)
+static int proximity_get_calibration_data(int type)
 {
 	int ret = 0;
 	char *buffer = NULL;
 	int buffer_length = 0;
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_PROXIMITY, CAL_DATA, 1000, NULL, 0, &buffer,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, CAL_DATA, 1000, NULL, 0, &buffer,
 					&buffer_length, true);
 	if (ret < 0) {
 		shub_errf("shub_send_command_wait fail %d", ret);
@@ -107,21 +92,21 @@ static int proximity_get_calibration_data(void)
 
 	memcpy(data->cal_data, buffer, data->cal_data_len);
 
-	save_proximity_calibration();
+	save_proximity_calibration(type);
 
 	kfree(buffer);
 
 	return 0;
 }
 
-static int proximity_get_setting_mode(void)
+static int proximity_get_setting_mode(int type)
 {
 	int ret = 0;
 	char *buffer = NULL;
 	int buffer_length = 0;
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_PROXIMITY, PROXIMITY_SETTING_MODE, 1000, NULL,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, PROXIMITY_SETTING_MODE, 1000, NULL,
 					0, &buffer, &buffer_length, true);
 	if (ret < 0) {
 		shub_errf("shub_send_command_wait fail %d", ret);
@@ -135,20 +120,20 @@ static int proximity_get_setting_mode(void)
 	}
 
 	memcpy(&data->setting_mode, buffer, sizeof(data->setting_mode));
-	save_proximity_setting_mode();
+	save_proximity_setting_mode(type);
 
 	kfree(buffer);
 
 	return 0;
 }
 
-static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static ssize_t proximity_stk3afx_prox_cal_store(const char *buf, size_t size, int type)
 {
 	int ret = 0;
 	bool init, update = false;
-	struct proximity_data *data = (struct proximity_data *)get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = (struct proximity_data *)get_sensor(type)->data;
 
-	if (!get_sensor_probe_state(SENSOR_TYPE_PROXIMITY))
+	if (!get_sensor_probe_state(type))
 		return -ENOENT;
 	if (!buf)
 		return -EINVAL;
@@ -157,7 +142,7 @@ static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *
 	update = sysfs_streq(buf, "1");
 
 	if (init) {
-		ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_PROXIMITY, PROX_SUBCMD_CALIBRATION_START, NULL, 0);
+		ret = shub_send_command(CMD_SETVALUE, type, PROX_SUBCMD_CALIBRATION_START, NULL, 0);
 		if (ret < 0) {
 			shub_errf("CMD fail %d", ret);
 			return ret;
@@ -166,13 +151,13 @@ static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *
 		memset(data->cal_data, 0, data->cal_data_len);
 
 	} else if (update) {
-		ret = proximity_get_setting_mode();
+		ret = proximity_get_setting_mode(type);
 		if (ret < 0) {
 			shub_errf("proximity_get_setting_mode fail %d", ret);
 			return ret;
 		}
 		msleep(500);
-		ret = proximity_get_calibration_data();
+		ret = proximity_get_calibration_data(type);
 		if (ret < 0) {
 			shub_errf("proximity_get_calibration_data fail %d", ret);
 			return ret;
@@ -190,7 +175,7 @@ static ssize_t proximity_cal_store(struct device *dev, struct device_attribute *
 	return size;
 }
 
-static ssize_t debug_info_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t proximity_stk3afx_debug_info_show(char *buf)
 {
 	int ret = 0;
 	char *buffer = NULL;
@@ -210,27 +195,17 @@ static ssize_t debug_info_show(struct device *dev, struct device_attribute *attr
 				debug[3], debug[4], debug[5], debug[6], debug[7], debug[8], debug[9]);
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR_RO(prox_trim);
-static DEVICE_ATTR(prox_cal, 0220, NULL, proximity_cal_store);
-static DEVICE_ATTR_RO(debug_info);
-static DEVICE_ATTR_RO(prox_led_test);
-
-static struct device_attribute *proximity_stk3afx_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_prox_trim,
-	&dev_attr_prox_cal,
-	&dev_attr_debug_info,
-	&dev_attr_prox_led_test,
-	NULL,
+struct proximity_factory_chipset_funcs proximity_stk3afx_ops = {
+	.prox_cal_store = proximity_stk3afx_prox_cal_store,
+	.prox_trim_show = proximity_stk3afx_prox_trim_show,
+	.debug_info_show = proximity_stk3afx_debug_info_show,
+	.prox_led_test_show = proximity_stk3afx_prox_led_test_show,
 };
 
-struct device_attribute **get_proximity_stk3afx_dev_attrs(char *name)
+struct proximity_factory_chipset_funcs *get_proximity_stk3afx_chipset_func(char *name)
 {
-	if (strcmp(name, STK33F11_NAME) != 0)
+	if (strcmp(name, "STK33F11") != 0 && strcmp(name, "STK33F15") != 0)
 		return NULL;
 
-	return proximity_stk3afx_attrs;
+	return &proximity_stk3afx_ops;
 }

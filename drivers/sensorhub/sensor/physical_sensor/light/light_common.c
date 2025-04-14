@@ -24,27 +24,25 @@
 #include "../../../utility/shub_file_manager.h"
 #include "../../../others/shub_panel.h"
 
-#define STK33512_NAME   "STK33512"
-#define STK33F11_NAME   "STK33F11"
-#define STK33512_VENDOR "Sitronix"
-
-int init_light_stk_common(void)
+int init_light_common(int type)
 {
-	struct light_data *data = get_sensor(SENSOR_TYPE_LIGHT)->data;
+	struct light_data *data = get_sensor(type)->data;
 
 	data->use_cal_data = true;
 	shub_info("light_use_cal_data true;");
 	return 0;
 }
 
-struct sensor_chipset_init_funcs light_stk_common_ops = {
-	.init = init_light_stk_common,
+struct sensor_chipset_init_funcs light_common_ops = {
+	.init = init_light_common,
 };
 
-struct sensor_chipset_init_funcs *get_light_stk_common_function_pointer(char *name)
+struct sensor_chipset_init_funcs *get_light_common_function_pointer(char *name)
 {
-	if (strstr(name, STK33F11_NAME) != NULL || strstr(name, STK33F11_NAME) != NULL)
-		return &light_stk_common_ops;
+	if (strstr(name, "STK33512") != NULL || strstr(name, "STK33F11") != NULL || strstr(name, "STK33F15") != NULL || 
+		strstr(name, "STK33911") != NULL || strstr(name, "STK33917") != NULL || strstr(name, "TMD4914")!= NULL || \
+		strstr(name, "TMD4913") != NULL || strstr(name, "VEML3235O") != NULL)
+		return &light_common_ops;
 	else
 		return NULL;
 }

@@ -21,17 +21,20 @@
 #define LENGTH_1BYTE_HEXA_WITH_BLANK    3       /* example : 'ff ' 'ff\n' */
 #define LENGTH_EXTRA_STRING             1       /* '\0' */
 #define LENGTH_SENSOR_NAME_MAX          30
-#define LENGTH_SENSOR_TYPE_MAX          11      /* @@TYPE:1##\n */
+#define LENGTH_SENSOR_TYPE_MAX          15      /* @@TYPE:1##\n */
 
 #define sensor_dump_length(x)  (x*LENGTH_1BYTE_HEXA_WITH_BLANK+LENGTH_EXTRA_STRING)
 
 #define SENSOR_DUMP_SENSOR_LIST         {SENSOR_TYPE_ACCELEROMETER, SENSOR_TYPE_GYROSCOPE, \
 					SENSOR_TYPE_GEOMAGNETIC_FIELD, SENSOR_TYPE_PRESSURE, \
-					SENSOR_TYPE_PROXIMITY, SENSOR_TYPE_LIGHT}
+					SENSOR_TYPE_PROXIMITY, SENSOR_TYPE_LIGHT, \
+					SENSOR_TYPE_ACCELEROMETER_SUB, SENSOR_TYPE_GYROSCOPE_SUB, \
+					SENSOR_TYPE_SUB_LIGHT, SENSOR_TYPE_SUB_PROXIMITY}
 
 int send_sensor_dump_command(u8 sensor_type);
 int send_all_sensor_dump_command(void);
 void clear_sensor_dump(void);
 char **get_sensor_dump_data(void);
+int convert_sensor_type(int type);
 
 #endif

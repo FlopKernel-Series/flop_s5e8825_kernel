@@ -7,9 +7,9 @@
 
 #define BMP580_NAME	"BMP580"
 
-static int init_pressure_bmp580(void)
+static int init_pressure_bmp580(int type)
 {
-	struct pressure_data *data = (struct pressure_data *)(get_sensor(SENSOR_TYPE_PRESSURE)->data);
+	struct pressure_data *data = (struct pressure_data *)(get_sensor(type)->data);
 
 	shub_infof("");
 

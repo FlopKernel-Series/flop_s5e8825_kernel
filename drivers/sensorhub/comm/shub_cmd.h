@@ -69,8 +69,8 @@ enum {
 	PROXIMITY_OFFSET,
 	LIGHT_COEF,
 	CAL_DATA,
-	ACCELOMETER_REACTIVE_ALERT,
-	ACCELOMETER_LPF_ON_OFF,
+	ACCELEROMETER_REACTIVE_ALERT,
+	ACCELEROMETER_LPF_ON_OFF,
 	GYROSCOPE_TEMPERATURE_FACTORY,
 	MAGNETIC_LOGGING,
 	PROXIMITY_SETTING = 40,
@@ -109,6 +109,8 @@ enum {
 	// 73 (0x49)                  // WIFI_DATA_ACTIVITY_ @ref SensorAdditionalInfo.java
 	// 74 (0x50)                  // SENSORHUB_INFO_POWERSHARE_ @ref MotionRecognitionService.java
 	MODEL_NAME_INFO = 75,
+	// 76						  // reserved by sensorhub
+	FLIP_STATE = 77,
 	CMD_VALUE_MAX,
 };
 

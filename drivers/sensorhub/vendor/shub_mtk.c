@@ -14,10 +14,12 @@
  */
 
 #include "../comm/shub_comm.h"
+#include "../debug/shub_debug.h"
+#include "../debug/shub_dump.h"
+#include "../debug/shub_mini_dump.h"
 #include "../sensorhub/shub_device.h"
 #include "../sensormanager/shub_sensor_type.h"
 #include "../utility/shub_utility.h"
-#include "../debug/shub_dump.h"
 #include "shub_mtk.h"
 
 #include <linux/delay.h>
@@ -67,7 +69,7 @@ static int notify_scp_state(struct notifier_block *this, unsigned long event, vo
 {
 	unsigned long flags = 0;
 
-	shub_infof("notify event %d", event);
+	shub_infof("notify event %lu", event);
 
 	if (event == SCP_EVENT_STOP) { // 1
 		spin_lock_irqsave(&scp_state_lock, flags);
@@ -114,12 +116,12 @@ void shub_dump_write_file(void *dump_data, int dump_size)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
 static int shub_dump_notifier(struct notifier_block *nb, unsigned long val, void *data)
 {
-	struct shub_data_t *shub_data = get_shub_data();
 	struct shub_dump *dump_data = (struct shub_dump *)data;
 
-	shub_infof("ram_dump : %x mini_dump : %x", dump_data->dump, dump_data->mini_dump);
+	shub_infof("ram_dump : %p mini_dump : %p", dump_data->dump, dump_data->mini_dump);
 	shub_dump_write_file(dump_data->dump, dump_data->size);
-	memcpy(shub_data->mini_dump, dump_data->mini_dump, MINI_DUMP_LENGTH);
+	shub_write_mini_dump(dump_data->mini_dump, strlen(dump_data->mini_dump));
+
 	return 0;
 }
 
@@ -135,6 +137,8 @@ int sensorhub_probe(void)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0))
 	shub_dump_notifier_register(&shub_dump_nb);
 #endif
+
+	enable_sensor_vdd();
 	return 0;
 }
 
@@ -222,6 +226,15 @@ void sensorhub_fs_ready(void)
 
 void sensorhub_save_ram_dump(void)
 {
+#if defined(CONFIG_SHUB_DEBUG) && IS_ENABLED(CONFIG_SEC_DEBUG)
+	if (shub_debug_level()) {
+		struct shub_data_t *shub_data = get_shub_data();
+		shub_data->reset_type = RESET_TYPE_9900_DUMP;
+		shub_data->cnt_shub_reset[RESET_TYPE_9900_DUMP]++;
+
+		scp_wdt_reset(SCP_A_ID);
+	}
+#endif
 }
 
 int sensorhub_get_dump_size(void)

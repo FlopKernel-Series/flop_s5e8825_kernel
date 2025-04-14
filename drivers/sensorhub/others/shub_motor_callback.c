@@ -13,12 +13,14 @@
  *
  */
 
+#include "../comm/shub_comm.h"
+#include "../sensor/accelerometer.h"
+#include "../sensorhub/shub_device.h"
+#include "../sensormanager/shub_sensor_type.h"
+#include "../utility/shub_utility.h"
+
 #ifdef CONFIG_SEC_VIB_NOTIFIER
 #include <linux/vibrator/sec_vibrator_notifier.h>
-#include "../utility/shub_utility.h"
-#include "../sensorhub/shub_device.h"
-#include "../comm/shub_comm.h"
-#include "../sensormanager/shub_sensor_type.h"
 
 int motor_coef;
 int motor_state;
@@ -123,17 +125,45 @@ int get_motor_coef(void)
 
 void sync_motor_state(void)
 {
+	int ret= 0;
+	char buf = motor_coef;
+
 	if (motor_coef == 0)
 		return;
+
+	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_ACCELEROMETER, ACCEL_SUBCMD_MOTOR_COEF, &buf, sizeof(buf));
+	if (ret < 0)
+		shub_errf("send motor coef failed : %d", motor_coef);
 
 	shub_infof("%d", motor_state);
 	shub_queue_motor_work(motor_state);
 }
 
 #else
+
+int motor_coef;
+
 void init_shub_motor_callback(void) {}
 void remove_shub_motor_callback(void) {}
-void sync_motor_state(void) {}
-void set_motor_coef(int coef) {}
+
+void sync_motor_state(void) {
+	int ret= 0;
+	char buf = motor_coef;
+
+	if (motor_coef == 0)
+		return;
+
+	ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_ACCELEROMETER, ACCEL_SUBCMD_MOTOR_COEF, &buf, sizeof(buf));
+	if (ret < 0)
+		shub_errf("> send motor coef failed : %d", motor_coef);
+
+	shub_infof("> %d", motor_coef);
+}
+
+void set_motor_coef(int coef) {
+	motor_coef = coef;
+	shub_infof("> %d", motor_coef);
+}
+
 int get_motor_coef(void) {return 0; }
 #endif

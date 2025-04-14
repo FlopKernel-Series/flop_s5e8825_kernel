@@ -21,7 +21,7 @@
 #include <linux/device.h>
 
 struct drop_classifier_event {
-	u8 drop_result;
+	s8 drop_result;
 	u32 height;
 	s32 acc_x;
 	s32 acc_y;

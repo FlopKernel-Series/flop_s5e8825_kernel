@@ -15,6 +15,7 @@
 
 #include "../../sensor/light.h"
 #include "../../comm/shub_comm.h"
+#include "../../factory/shub_factory.h"
 #include "../../sensorhub/shub_device.h"
 #include "../../sensormanager/shub_sensor.h"
 #include "../../sensormanager/shub_sensor_manager.h"
@@ -23,6 +24,7 @@
 #include "../../utility/shub_utility.h"
 #include "../../utility/shub_file_manager.h"
 #include "../../sensor/hub_debugger.h"
+#include "../../others/shub_panel.h"
 
 #include <linux/device.h>
 #include <linux/of.h>
@@ -41,24 +43,48 @@
 /*************************************************************************/
 /* factory Sysfs                                                         */
 /*************************************************************************/
-static struct device *light_sysfs_device;
+__visible_for_testing struct device *light_sysfs_device;
 __visible_for_testing s32 light_position[12];
 
-#define DUAL_CHECK_MODE 13
-static u8 fstate;
-static struct light_cal_data_legacy sub_cal_data;
+int get_light_type(void) {
+	u8 fstate = get_shub_data()->fac_fstate;
+
+	switch (fstate) {
+	case FAC_FSTATE_MAIN:
+		return SENSOR_TYPE_LIGHT;
+	case FAC_FSTATE_FOLDERBLE_SUB:
+	case FAC_FSTATE_TABLET_SUB:
+		return SENSOR_TYPE_SUB_LIGHT;
+	case FAC_FSTATE_TABLET_DUAL:
+		return SENSOR_TYPE_LIGHT;
+	default:
+		return SENSOR_TYPE_LIGHT;
+	}
+}
 
 static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	int type = get_light_type();
+	struct shub_sensor *sensor = get_sensor(type);
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
 
 	return sprintf(buf, "%s\n", sensor->spec.name);
 }
 
 static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	int type = get_light_type();
+	struct shub_sensor *sensor = get_sensor(type);
 	char vendor[VENDOR_MAX] = "";
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
 
 	get_sensor_vendor_name(sensor->spec.vendor, vendor);
 
@@ -67,7 +93,15 @@ static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, ch
 
 static ssize_t lux_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	struct light_event *sensor_value = (struct light_event *)(get_sensor_event(SENSOR_TYPE_LIGHT)->value);
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	struct light_event *sensor_value;
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	sensor_value = (struct light_event *)(get_sensor_event(SENSOR_TYPE_LIGHT)->value);
 
 	return sprintf(buf, "%d,%d,%d,%d,%d,%d\n", sensor_value->r, sensor_value->g, sensor_value->b, sensor_value->w,
 		       sensor_value->a_time, sensor_value->a_gain);
@@ -90,15 +124,23 @@ static ssize_t raw_data_show(struct device *dev, struct device_attribute *attr, 
 
 static ssize_t light_circle_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	struct light_data *data = get_sensor(SENSOR_TYPE_LIGHT)->data;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	struct light_data *data;
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	data = sensor->data;
 
 	if (data->light_dual) {
-		return sprintf(buf, "%d.%d %d.%d %d.%d %d.%d %d.%d %d.%d\n",
+		return sprintf(buf, "%d.%02d %d.%02d %d.%d %d.%02d %d.%02d %d.%d\n",
 			   light_position[0], light_position[1], light_position[2], light_position[3],
 			   light_position[4], light_position[5], light_position[6], light_position[7],
 			   light_position[8], light_position[9], light_position[10], light_position[11]);
 	} else {
-		return sprintf(buf, "%d.%d %d.%d %d.%d\n",
+		return sprintf(buf, "%d.%02d %d.%02d %d.%d\n",
 			   light_position[0], light_position[1], light_position[2],
 			   light_position[3], light_position[4], light_position[5]);
 	}
@@ -135,7 +177,15 @@ static ssize_t coef_show(struct device *dev, struct device_attribute *attr, char
 	char *coef_buf = NULL;
 	int coef_buf_length = 0;
 	int temp_coef[7] = {0, };
-	struct light_data *data = get_sensor(SENSOR_TYPE_LIGHT)->data;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	struct light_data *data;
+
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	data = sensor->data;
 
 	if (data->light_coef) {
 		ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_LIGHT, LIGHT_COEF, 1000, NULL, 0, &coef_buf,
@@ -285,10 +335,29 @@ retry:
 
 static ssize_t light_cal_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
-	struct light_data *data = sensor->data;
+	int type = get_light_type();
+	struct shub_sensor *sensor = get_sensor(type);
+	struct light_data *data;
+	u8 fstate = get_shub_data()->fac_fstate;
 
-	if (fstate == DUAL_CHECK_MODE) {
+	if (!sensor) {
+		shub_infof("sensor is null");
+		return -EINVAL;
+	}
+
+	data = sensor->data;
+
+	if (fstate == FAC_FSTATE_TABLET_DUAL) {
+		struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_SUB_LIGHT);
+		struct light_data *sub_data;
+		struct light_cal_data sub_cal_data;
+
+		memset(&sub_cal_data, 0, sizeof(sub_cal_data));
+		if (sensor) {
+			sub_data = sensor->data;
+			memcpy(&(sub_cal_data), (char *)&sub_data->cal_data, sizeof(sub_cal_data));
+		}
+
 		return snprintf(buf, PAGE_SIZE, "%u, %u, %u, %u, %u, %u\n",
 				data->cal_data.result, data->cal_data.max, data->cal_data.lux,
 				sub_cal_data.result, sub_cal_data.max, sub_cal_data.lux);
@@ -298,80 +367,151 @@ static ssize_t light_cal_show(struct device *dev, struct device_attribute *attr,
 	}
 }
 
-static ssize_t light_cal_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+static int init_light_cal_data(int type)
 {
-	int ret, cal_data_size = 0;
-	bool init, update, file_write = false;
+	int ret = 0;
+	char send_buf = 1;
+	struct shub_sensor *sensor = get_sensor(type);
+	struct light_data *data;
 
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
-	struct light_data *data = sensor->data;
+	if (!get_sensor_probe_state(type))
+		return -ENOENT;
+	if (!sensor) {
+		shub_infof("sensor(%d) is null", type);
+		return -EINVAL;
+	}
+
+	data = sensor->data;
+
+	ret = shub_send_command(CMD_SETVALUE, type, SENSOR_FACTORY, &send_buf, sizeof(send_buf));
+	if (ret < 0) {
+		shub_errf("%d : CMD failed, %d", type, ret);
+		return -EINVAL;
+	}
+
+	memset(&data->cal_data, 0, sizeof(data->cal_data));
+
+	return ret;
+}
+
+static int get_light_cal_data(int type)
+{
+	int ret = 0;
+	struct shub_sensor *sensor = get_sensor(type);
+	struct light_data *data;
 	struct light_cal_data_legacy cal_data_legacy;
+	int cal_data_size = 0;
+	char *buffer = NULL;
+	int buffer_length = 0;
+
+	if (!get_sensor_probe_state(type))
+		return -ENOENT;
+	if (!sensor) {
+		shub_infof("sensor(%d) is null", type);
+		return -EINVAL;
+	}
+
+	data = sensor->data;
 
 	if (sensor->spec.version >= LIGHT_CAL_CH0_SIZE_4BYTE_VERSION)
 		cal_data_size = sizeof(data->cal_data);
 	else
 		cal_data_size = sizeof(cal_data_legacy);
 
-	if (!get_sensor_probe_state(SENSOR_TYPE_LIGHT))
+	ret = shub_send_command_wait(CMD_GETVALUE, type, CAL_DATA, 1000, NULL, 0, &buffer,
+					&buffer_length, false);
+	if (ret < 0) {
+		shub_errf("CMD fail %d", ret);
+		return ret;
+	}
+
+	if (buffer_length != cal_data_size) {
+		shub_errf("%d : buffer_length(%d) != cal_data_size(%d)", type, buffer_length, cal_data_size);
+		return -EINVAL;
+	}
+
+	if (sensor->spec.version >= LIGHT_CAL_CH0_SIZE_4BYTE_VERSION) {
+		memcpy(&(data->cal_data), buffer, sizeof(data->cal_data));
+		ret = data->cal_data.result;
+	} else {
+		memset(&cal_data_legacy, 0, sizeof(cal_data_legacy));
+		memcpy(&(cal_data_legacy), buffer, sizeof(cal_data_legacy));
+		data->cal_data.result = cal_data_legacy.result;
+		data->cal_data.max = (u32)cal_data_legacy.max;
+		data->cal_data.lux = cal_data_legacy.lux;
+		ret = data->cal_data.result;
+	}
+
+	return ret;
+}
+
+static ssize_t light_cal_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+{
+	int ret;
+	bool init, update, file_write = false;
+	int type = get_light_type();
+	u8 fstate = get_shub_data()->fac_fstate;
+
+	struct shub_sensor *sensor = get_sensor(type);
+	struct light_data *data;
+
+	if (!sensor) {
+		shub_infof("sensor(%d) is null", type);
+		return -EINVAL;
+	}
+
+	data = sensor->data;
+
+	if (!get_sensor_probe_state(type))
 		return -ENOENT;
 	if (!buf)
 		return -EINVAL;
 
 	init = sysfs_streq(buf, "0");
 	update = sysfs_streq(buf, "1");
-	if (fstate == DUAL_CHECK_MODE)
-		cal_data_size = cal_data_size * 2;
 
 	if (init) {
-		char send_buf = 1;
+		if (fstate == FAC_FSTATE_TABLET_DUAL) {
+			int ret2 = 0;
 
-		ret = shub_send_command(CMD_SETVALUE, SENSOR_TYPE_LIGHT, SENSOR_FACTORY, &send_buf, sizeof(send_buf));
-		if (ret < 0) {
-			shub_errf("CMD fail %d", ret);
-			return ret;
+			ret = init_light_cal_data(SENSOR_TYPE_LIGHT);
+			ret2 = init_light_cal_data(SENSOR_TYPE_SUB_LIGHT);
+
+			if (ret < 0 && ret2 < 0)
+				return -EINVAL;
+		} else {
+			ret = init_light_cal_data(type);
+			if (ret < 0)
+				return ret;
 		}
-
-		memset(&data->cal_data, 0, sizeof(data->cal_data));
-		memset(&sub_cal_data, 0, sizeof(sub_cal_data));
-		memset(&cal_data_legacy, 0, sizeof(cal_data_legacy));
 
 		file_write = true;
 	} else if (update) {
-		char *buffer = NULL;
-		int buffer_length = 0;
-		int ret = 0;
+		if (fstate == FAC_FSTATE_TABLET_DUAL) {
+			int ret2 = 0;
 
-		ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_LIGHT, CAL_DATA, 1000, NULL, 0, &buffer,
-					     &buffer_length, false);
-		if (ret < 0) {
-			shub_errf("CMD fail %d", ret);
-			return ret;
-		}
-		if (buffer_length != cal_data_size) {
-			shub_errf("buffer_length(%d) != cal_data_size(%d)", buffer_length, cal_data_size);
-			return -EINVAL;
-		}
+			ret = get_light_cal_data(SENSOR_TYPE_LIGHT);
+			ret2 = get_light_cal_data(SENSOR_TYPE_SUB_LIGHT);
 
-		if (sensor->spec.version >= LIGHT_CAL_CH0_SIZE_4BYTE_VERSION) {
-			memcpy(&(data->cal_data), buffer, sizeof(data->cal_data));
-			file_write = data->cal_data.result;
+			if (ret < 0 && ret2 < 0)
+				return -EINVAL;
+
+			file_write = ret | ret2;
 		} else {
-			memcpy(&(cal_data_legacy), buffer, sizeof(cal_data_legacy));
-			data->cal_data.result = cal_data_legacy.result;
-			data->cal_data.max = (u32)cal_data_legacy.max;
-			data->cal_data.lux = cal_data_legacy.lux;
-			if (fstate == DUAL_CHECK_MODE)
-				memcpy(&sub_cal_data, &buffer[sizeof(data->cal_data)], sizeof(sub_cal_data));
-			file_write = data->cal_data.result;
+			ret = get_light_cal_data(type);
+			if (ret < 0)
+				return ret;
+
+			file_write = ret;
 		}
 	} else {
 		shub_errf("buf data is wrong %s", buf);
 	}
 
 	if (file_write) {
-		ret = shub_file_write_no_wait(LIGHT_CALIBRATION_FILE_PATH, (u8 *)&(data->cal_data),
-									  sizeof(data->cal_data), 0);
-		if (fstate == DUAL_CHECK_MODE)
+		ret = shub_file_write_no_wait(data->path_calibration, (u8 *)&(data->cal_data),
+									sizeof(data->cal_data), 0);
+		if (fstate == FAC_FSTATE_TABLET_DUAL)
 			shub_infof("Skip saving sub_cal_data");
 
 		if (ret != sizeof(data->cal_data))
@@ -400,7 +540,7 @@ static ssize_t factory_fstate_store(struct device *dev,
 		return ret;
 	}
 
-	fstate = send_buf;
+	get_shub_data()->fac_fstate = send_buf;
 
 	return size;
 }
@@ -485,21 +625,45 @@ static ssize_t fifo_data_show(struct device *dev, struct device_attribute *attr,
 	return snprintf(buf, PAGE_SIZE, "%s\n", get_hub_debugger_fifo_data());
 }
 
+static ssize_t screen_mode_store(struct device *dev,
+					  struct device_attribute *attr, const char *buf, size_t size)
+{
+	int ret = 0;
+	u8 send_buf;
+
+	shub_infof("%s", buf);
+
+	ret = kstrtou8(buf, 10, &send_buf);
+
+	if (ret < 0)
+		return ret;
+
+	ret = send_screen_mode_information(0, send_buf);
+
+	if (ret < 0) {
+		shub_errf("CMD fail %d", ret);
+		return ret;
+	}
+
+	return size;
+}
+
 static DEVICE_ATTR_RO(name);
 static DEVICE_ATTR_RO(vendor);
 static DEVICE_ATTR_RO(lux);
 static DEVICE_ATTR_RO(raw_data);
-static DEVICE_ATTR_RO(light_circle);
-static DEVICE_ATTR_RO(coef);
 static DEVICE_ATTR(hall_ic, 0220, NULL, hall_ic_store);
-static DEVICE_ATTR_RO(sensorhub_ddi_spi_check);
-static DEVICE_ATTR_RO(test_copr);
-static DEVICE_ATTR_RO(copr_roix);
 static DEVICE_ATTR(light_cal, 0664, light_cal_show, light_cal_store);
-static DEVICE_ATTR(fac_fstate, 0220, NULL, factory_fstate_store);
-static DEVICE_ATTR_RO(trim_check);
 static DEVICE_ATTR_RO(debug_info);
 static DEVICE_ATTR_RO(fifo_data);
+static DEVICE_ATTR_RO(trim_check);
+static DEVICE_ATTR_RO(light_circle);
+static DEVICE_ATTR_RO(coef);
+static DEVICE_ATTR_RO(copr_roix);
+static DEVICE_ATTR_RO(test_copr);
+static DEVICE_ATTR_RO(sensorhub_ddi_spi_check);
+static DEVICE_ATTR(fac_fstate, 0220, NULL, factory_fstate_store);
+static DEVICE_ATTR(screen_mode, 0220, NULL, screen_mode_store);
 
 __visible_for_testing struct device_attribute *light_attrs[] = {
 	&dev_attr_name,
@@ -510,88 +674,30 @@ __visible_for_testing struct device_attribute *light_attrs[] = {
 	&dev_attr_light_cal,
 	&dev_attr_debug_info,
 	&dev_attr_fifo_data,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	&dev_attr_trim_check,
+	&dev_attr_light_circle,
+	&dev_attr_coef,
+	&dev_attr_copr_roix,
+	&dev_attr_test_copr,
+	&dev_attr_sensorhub_ddi_spi_check,
+	&dev_attr_fac_fstate,
+	&dev_attr_screen_mode,
 	NULL,
 };
-
-static void check_light_dev_attr(void)
-{
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
-	struct light_data *data = sensor->data;
-	struct device_node *np = get_shub_device()->of_node;
-	int index = 0;
-	int light_position_size = 0;
-
-	while (light_attrs[index] != NULL)
-		index++;
-
-	if (of_property_read_bool(np, "light-dual")) {
-		if (index < ARRAY_SIZE(light_attrs))
-			light_attrs[index++] = &dev_attr_fac_fstate;
-		data->light_dual = true;
-		shub_info("support light_dual");
-	}
-
-	if (data->light_dual)
-		light_position_size = ARRAY_SIZE(light_position);
-	else
-		light_position_size = ARRAY_SIZE(light_position)/2;
-
-	if (!of_property_read_u32_array(np, "light-position", (s32 *)light_position, light_position_size)) {
-		if (index < ARRAY_SIZE(light_attrs))
-			light_attrs[index++] = &dev_attr_light_circle;
-
-		if (data->light_dual) {
-			shub_info("light-position - %d.%d %d.%d %d.%d %d.%d %d.%d %d.%d",
-				   light_position[0], light_position[1], light_position[2], light_position[3],
-				   light_position[4], light_position[5], light_position[6], light_position[7],
-				   light_position[8], light_position[9], light_position[10], light_position[11]);
-		} else {
-			shub_info("light-position - %d.%d %d.%d %d.%d",
-				   light_position[0], light_position[1], light_position[2],
-				   light_position[3], light_position[4], light_position[5]);
-		}
-	}
-
-	if (data->light_coef && index < ARRAY_SIZE(light_attrs))
-		light_attrs[index++] = &dev_attr_coef;
-
-	if (data->ddi_support && index + 3 <= ARRAY_SIZE(light_attrs)) {
-		light_attrs[index++] = &dev_attr_sensorhub_ddi_spi_check;
-		light_attrs[index++] = &dev_attr_test_copr;
-		light_attrs[index++] = &dev_attr_copr_roix;
-	}
-
-	if (sensor->spec.vendor == VENDOR_AMS
-	|| sensor->spec.vendor == VENDOR_CAPELLA
-	|| sensor->spec.vendor == VENDOR_SITRONIX) {
-		if (index < ARRAY_SIZE(light_attrs))
-			light_attrs[index++] = &dev_attr_trim_check;
-	}
-}
 
 void initialize_light_sysfs(void)
 {
 	int ret;
-	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
 
 	ret = sensor_device_create(&light_sysfs_device, NULL, "light_sensor");
 	if (ret < 0) {
-		shub_errf("fail to creat %s sysfs device", sensor->name);
+		shub_errf("fail to creat light_sensor sysfs device");
 		return;
 	}
 
-	check_light_dev_attr();
-
 	ret = add_sensor_device_attr(light_sysfs_device, light_attrs);
 	if (ret < 0) {
-		shub_errf("fail to add %s sysfs device attr", sensor->name);
+		shub_errf("fail to add light_sensor sysfs device attr");
 		return;
 	}
 
@@ -600,16 +706,74 @@ void initialize_light_sysfs(void)
 void remove_light_sysfs(void)
 {
 	remove_sensor_device_attr(light_sysfs_device, light_attrs);
-	sensor_device_destroy(light_sysfs_device);
+	sensor_device_unregister(light_sysfs_device);
 	light_sysfs_device = NULL;
 }
 
-void initialize_light_factory(bool en)
+void remove_light_empty_sysfs(void)
 {
-	if (!get_sensor(SENSOR_TYPE_LIGHT))
-		return;
+	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_LIGHT);
+	struct light_data *data = sensor->data;
+	struct device_node *np = get_shub_device()->of_node;
+	int light_position_size = 0;
+
+	if (of_property_read_bool(np, "light-dual")) {
+		data->light_dual = true;
+		shub_info("support light_dual");
+	} else {
+		device_remove_file(light_sysfs_device, &dev_attr_fac_fstate);
+	}
+
+	if (data->light_dual)
+		light_position_size = ARRAY_SIZE(light_position);
+	else
+		light_position_size = ARRAY_SIZE(light_position)/2;
+
+	if (!of_property_read_u32_array(np, "light-position", (s32 *)light_position, light_position_size)) {
+		if (data->light_dual) {
+			shub_info("light-position - %d.%d %d.%d %d.%d %d.%d %d.%d %d.%d",
+				light_position[0], light_position[1], light_position[2], light_position[3],
+				light_position[4], light_position[5], light_position[6], light_position[7],
+				light_position[8], light_position[9], light_position[10], light_position[11]);
+		} else {
+			shub_info("light-position - %d.%d %d.%d %d.%d",
+				light_position[0], light_position[1], light_position[2],
+				light_position[3], light_position[4], light_position[5]);
+		}
+	} else {
+		device_remove_file(light_sysfs_device, &dev_attr_light_circle);
+	}
+
+	if (!data->light_coef)
+		device_remove_file(light_sysfs_device, &dev_attr_coef);
+
+	if (!data->ddi_support) {
+		device_remove_file(light_sysfs_device, &dev_attr_sensorhub_ddi_spi_check);
+		device_remove_file(light_sysfs_device, &dev_attr_test_copr);
+		device_remove_file(light_sysfs_device, &dev_attr_copr_roix);
+	}
+
+	if (!is_support_system_feature(SF_LIGHT_FIFO_DATA_SUPPORT))
+		device_remove_file(light_sysfs_device, &dev_attr_fifo_data);
+
+	if (sensor->spec.vendor != VENDOR_AMS
+		&& sensor->spec.vendor != VENDOR_CAPELLA
+		&& sensor->spec.vendor != VENDOR_SITRONIX) {
+		device_remove_file(light_sysfs_device, &dev_attr_trim_check);
+	}
+
+	shub_infof("support light sysfs");
+}
+
+void initialize_light_factory(bool en, int type)
+{
 	if (en)
 		initialize_light_sysfs();
-	else
-		remove_light_sysfs();
+	else {
+		if (type == INIT_FACTORY_MODE_REMOVE_EMPTY && get_sensor(SENSOR_TYPE_LIGHT)) {
+			remove_light_empty_sysfs();
+		} else {
+			remove_light_sysfs();
+		}
+	}
 }

@@ -18,11 +18,15 @@
 
 int init_accelerometer(bool en);
 int init_accelerometer_uncal(bool en);
+int init_accelerometer_sub(bool en);
+int init_accelerometer_uncal_sub(bool en);
 int init_magnetometer(bool en);
 int init_magnetometer_uncal(bool en);
 int init_flip_cover_detector(bool en);
 int init_gyroscope(bool en);
 int init_gyroscope_uncal(bool en);
+int init_gyroscope_sub(bool en);
+int init_gyroscope_uncal_sub(bool en);
 int init_light(bool en);
 int init_light_cct(bool en);
 int init_light_autobrightness(bool en);
@@ -60,4 +64,13 @@ int init_game_rotation_vector(bool en);
 int init_light_ir(bool en);
 int init_drop_classifier(bool en);
 int init_sequential_step(bool en);
+int init_folding_angle(bool en);
+int init_lid_angle_fusion(bool en);
+int init_hinge_angle(bool en);
+int init_folding_state_lpm(bool en);
+int init_sub_light(bool en);
+int init_sub_proximity(bool en);
+int init_angle_sensor_status(bool en);
+int init_device_common_info(bool en);
+int init_sar_folding(bool en);
 #endif

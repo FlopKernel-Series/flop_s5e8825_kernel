@@ -13,6 +13,7 @@
  *
  */
 
+#include "gyroscope_factory.h"
 #include "../../comm/shub_comm.h"
 #include "../../utility/shub_utility.h"
 #include "../../sensormanager/shub_sensor.h"
@@ -24,20 +25,10 @@
 #define ICM42632M_NAME	 "ICM42632M"
 #define ICM42632M_VENDOR "TDK"
 
-#define DEF_GYRO_SENS_TDK            (76) /* 0.0076 * 10000 */
+#define DEF_GYRO_SENS_TDK            (131) /* 250dps */
 #define DEF_BIAS_LSB_THRESH_SELF_STM (40000 / DEF_GYRO_SENS_TDK)
 #define DEF_GYRO_MAX_DPS_TDK         (10)
 #define DEF_GYRO_SELF_MIN_RATIO_TDK  (50)
-
-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", ICM42632M_NAME);
-}
-
-static ssize_t vendor_show(struct device *dev, struct device_attribute *attr, char *buf)
-{
-	return sprintf(buf, "%s\n", ICM42632M_VENDOR);
-}
 
 static u32 icm42632m_selftest_sqrt(u32 sqsum)
 {
@@ -105,7 +96,7 @@ static u32 icm42632m_selftest_sqrt(u32 sqsum)
 	return sq_rt;
 }
 
-static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, char *buf)
+static ssize_t gyroscope_icm42632m_selftest(int type, char *buf)
 {
 	char *temp_buf = NULL;
 	int temp_buf_length = 0;
@@ -129,9 +120,9 @@ static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, 
 	s16 st_bias[3] = {0, };
 	int gyro_fifo_avg[3] = {0, }, gyro_self_zro[3] = {0, };
 	int gyro_self_bias[3] = {0, }, gyro_self_diff[3] = {0, }, gyro_self_ratio[3] = {0, };
-	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+	struct gyroscope_data *data = get_sensor(type)->data;
 
-	ret = shub_send_command_wait(CMD_GETVALUE, SENSOR_TYPE_GYROSCOPE, SENSOR_FACTORY,
+	ret = shub_send_command_wait(CMD_GETVALUE, type, SENSOR_FACTORY,
 				     7000, NULL, 0, &temp_buf, &temp_buf_length, true);
 
 	if (ret < 0) {
@@ -177,24 +168,24 @@ static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, 
 	shub_infof("rms %+8ld %+8ld %+8ld (LSB)\n", rms[0], rms[1], rms[2]);
 
 	/* FIFO ZRO check pass / fail */
-	gyro_fifo_avg[0] = avg[0] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
-	gyro_fifo_avg[1] = avg[1] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
-	gyro_fifo_avg[2] = avg[2] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
+	gyro_fifo_avg[0] = avg[0] / DEF_GYRO_SENS_TDK;
+	gyro_fifo_avg[1] = avg[1] / DEF_GYRO_SENS_TDK;
+	gyro_fifo_avg[2] = avg[2] / DEF_GYRO_SENS_TDK;
 	/* ZRO self test */
-	gyro_self_zro[0] = st_zro[0] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
-	gyro_self_zro[1] = st_zro[1] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
-	gyro_self_zro[2] = st_zro[2] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
+	gyro_self_zro[0] = st_zro[0] / DEF_GYRO_SENS_TDK;
+	gyro_self_zro[1] = st_zro[1] / DEF_GYRO_SENS_TDK;
+	gyro_self_zro[2] = st_zro[2] / DEF_GYRO_SENS_TDK;
 	/* bias */
-	gyro_self_bias[0] = st_bias[0] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
-	gyro_self_bias[1] = st_bias[1] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
-	gyro_self_bias[2] = st_bias[2] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
+	gyro_self_bias[0] = st_bias[0] / DEF_GYRO_SENS_TDK;
+	gyro_self_bias[1] = st_bias[1] / DEF_GYRO_SENS_TDK;
+	gyro_self_bias[2] = st_bias[2] / DEF_GYRO_SENS_TDK;
 	/* diff = bias - ZRO */
 	gyro_self_diff[0] =
-	    ABS(shift_ratio[0] - gyro_self_bias[0]); // shift_ratio[0] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
+	    ABS(shift_ratio[0] - gyro_self_bias[0]); // shift_ratio[0] / DEF_GYRO_SENS_TDK ;
 	gyro_self_diff[1] =
-	    ABS(shift_ratio[1] - gyro_self_bias[1]); // shift_ratio[1] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
+	    ABS(shift_ratio[1] - gyro_self_bias[1]); // shift_ratio[1] / DEF_GYRO_SENS_TDK ;
 	gyro_self_diff[2] =
-	    ABS(shift_ratio[2] - gyro_self_bias[2]); // shift_ratio[2] * DEF_GYRO_SENS_TDK / DEF_SCALE_FOR_FLOAT;
+	    ABS(shift_ratio[2] - gyro_self_bias[2]); // shift_ratio[2] / DEF_GYRO_SENS_TDK ;
 
 	gyro_self_ratio[0] = shift_ratio[0];
 	gyro_self_ratio[1] = shift_ratio[1];
@@ -233,18 +224,16 @@ static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, 
 	}
 
 	/* STMICRO */
-	gyro_bias[0] = avg[0] * DEF_GYRO_SENS_TDK;
-	gyro_bias[1] = avg[1] * DEF_GYRO_SENS_TDK;
-	gyro_bias[2] = avg[2] * DEF_GYRO_SENS_TDK;
+	gyro_bias[0] = avg[0] / DEF_GYRO_SENS_TDK;
+	gyro_bias[1] = avg[1] / DEF_GYRO_SENS_TDK;
+	gyro_bias[2] = avg[2] / DEF_GYRO_SENS_TDK;
 	cal_data[0] = (s16)avg[0];
 	cal_data[1] = (s16)avg[1];
 	cal_data[2] = (s16)avg[2];
 
 	if (VERBOSE_OUT) {
-		shub_infof("abs bias : %+8d.%03d %+8d.%03d %+8d.%03d (dps)\n",
-			  (int)abs(gyro_bias[0]) / DEF_SCALE_FOR_FLOAT, (int)abs(gyro_bias[0]) % DEF_SCALE_FOR_FLOAT,
-			  (int)abs(gyro_bias[1]) / DEF_SCALE_FOR_FLOAT, (int)abs(gyro_bias[1]) % DEF_SCALE_FOR_FLOAT,
-			  (int)abs(gyro_bias[2]) / DEF_SCALE_FOR_FLOAT, (int)abs(gyro_bias[2]) % DEF_SCALE_FOR_FLOAT);
+		shub_infof("abs bias : %+8d %+8d %+8d (dps)\n",
+			  (int)abs(gyro_bias[0]), (int)abs(gyro_bias[1]), (int)abs(gyro_bias[2]));
 	}
 
 	for (j = 0; j < 3; j++) {
@@ -271,13 +260,11 @@ static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, 
 
 		dps_rms[i] = icm42632m_selftest_sqrt(temp) / DEF_GYRO_SENS_TDK;
 
-		gyro_rms[i] = dps_rms[i] * DEF_SCALE_FOR_FLOAT / DEF_SQRT_SCALE_FOR_RMS;
+		gyro_rms[i] = dps_rms[i] / DEF_SQRT_SCALE_FOR_RMS;
 	}
 
-	shub_infof("RMS : %+8d.%03d %+8d.%03d  %+8d.%03d (dps)\n",
-		  (int)abs(gyro_rms[0]) / DEF_SCALE_FOR_FLOAT, (int)abs(gyro_rms[0]) % DEF_SCALE_FOR_FLOAT,
-		  (int)abs(gyro_rms[1]) / DEF_SCALE_FOR_FLOAT, (int)abs(gyro_rms[1]) % DEF_SCALE_FOR_FLOAT,
-		  (int)abs(gyro_rms[2]) / DEF_SCALE_FOR_FLOAT, (int)abs(gyro_rms[2]) % DEF_SCALE_FOR_FLOAT);
+	shub_infof("RMS : %+8d %+8d %+8d (dps)\n",
+		  (int)abs(gyro_rms[0]), (int)abs(gyro_rms[1]), (int)abs(gyro_rms[2]));
 
 	if (gyro_lib_dl_fail) {
 		shub_errf("gyro_lib_dl_fail, Don't save cal data\n");
@@ -294,7 +281,7 @@ static ssize_t selftest_show(struct device *dev, struct device_attribute *attr, 
 		data->cal_data.z = 0;
 	}
 exit:
-	shub_dbg("fifo_avg : %d,%d,%d, self_zro : %d,%d,%d, self_bias : %d,%d,%d, " \
+	shub_infof("fifo_avg : %d,%d,%d, self_zro : %d,%d,%d, self_bias : %d,%d,%d, " \
 		 "self_ratio : %d,%d,%d, ratio res : %d, zro res : %d",
 		 gyro_fifo_avg[0], gyro_fifo_avg[1], gyro_fifo_avg[2], gyro_self_zro[0], gyro_self_zro[1],
 		 gyro_self_zro[2], gyro_self_bias[0], gyro_self_bias[1], gyro_self_bias[2], gyro_self_diff[0],
@@ -317,21 +304,14 @@ exit:
 	return ret;
 }
 
-static DEVICE_ATTR_RO(name);
-static DEVICE_ATTR_RO(vendor);
-static DEVICE_ATTR_RO(selftest);
-
-static struct device_attribute *gyro_icm42632m_attrs[] = {
-	&dev_attr_name,
-	&dev_attr_vendor,
-	&dev_attr_selftest,
-	NULL,
+struct gyroscope_factory_chipset_funcs gyroscope_icm42632m_ops = {
+	.selftest = gyroscope_icm42632m_selftest,
 };
 
-struct device_attribute **get_gyroscope_icm42632m_dev_attrs(char *name)
+struct gyroscope_factory_chipset_funcs *get_gyroscope_icm42632m_chipset_func(char *name)
 {
 	if (strcmp(name, ICM42632M_NAME) != 0)
 		return NULL;
 
-	return gyro_icm42632m_attrs;
+	return &gyroscope_icm42632m_ops;
 }

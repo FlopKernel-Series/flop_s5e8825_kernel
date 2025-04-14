@@ -37,7 +37,7 @@ bool check_flip_cover_detector_supported(void)
 	return true;
 }
 
-void parse_dt_flip_cover_detector_variable(struct device *dev)
+void parse_dt_flip_cover_detector_variable(struct device *dev, int type)
 {
 	struct flip_cover_detector_data *data = get_sensor(SENSOR_TYPE_FLIP_COVER_DETECTOR)->data;
 	struct device_node *np = dev->of_node;
@@ -83,7 +83,7 @@ int set_nfc_cover_status(void)
 	return ret;
 }
 
-int sync_flip_cover_detector_status(void)
+int sync_flip_cover_detector_status(int type)
 {
 	int ret = 0;
 
@@ -99,7 +99,7 @@ int sync_flip_cover_detector_status(void)
 	return ret;
 }
 
-void print_flip_cover_detector_debug(void)
+void print_flip_cover_detector_debug(int type)
 {
 	struct shub_sensor *sensor = get_sensor(SENSOR_TYPE_FLIP_COVER_DETECTOR);
 	struct sensor_event *event = &(sensor->last_event_buffer);
@@ -107,8 +107,8 @@ void print_flip_cover_detector_debug(void)
 
 	shub_info("%s(%u) : %d, %d, %d, %d, %d, %d, %d, %d, %d / %d, %d, %d, %d (%lld) (%ums, %dms)", sensor->name,
 		  SENSOR_TYPE_FLIP_COVER_DETECTOR, sensor_value->value, sensor_value->nfc, (int)sensor_value->diff, (int)sensor_value->magX,
-		  (int)sensor_value->stable_min, (int)sensor_value->stable_max, (int)sensor_value->detach_mismatch_cnt, 
-		  (int)sensor_value->detach_mismatch_stop_cnt, (int)sensor_value->attach_retry_cnt, (int)sensor_value->uncal_mag_x, 
+		  (int)sensor_value->stable_min, (int)sensor_value->stable_max, (int)sensor_value->detach_mismatch_cnt,
+		  (int)sensor_value->detach_mismatch_stop_cnt, (int)sensor_value->attach_retry_cnt, (int)sensor_value->uncal_mag_x,
 		  (int)sensor_value->uncal_mag_y, (int)sensor_value->uncal_mag_z, sensor_value->saturation, event->timestamp, sensor->sampling_period,
 		  sensor->max_report_latency);
 }

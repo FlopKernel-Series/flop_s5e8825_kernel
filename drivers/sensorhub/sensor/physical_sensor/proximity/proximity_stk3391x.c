@@ -27,13 +27,11 @@
 #include "../../../utility/shub_file_manager.h"
 #include "../../../others/shub_panel.h"
 
-#define STK33910_NAME "STK33910"
-#define STK33915_NAME "STK33915"
 #define STK_VENDOR "Sitronix"
 
-int init_proximity_stk3391x(void)
+int init_proximity_stk3391x(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
 	data->cal_data_len = sizeof(u16);
 	data->setting_mode = 1;
@@ -41,7 +39,7 @@ int init_proximity_stk3391x(void)
 	return 0;
 }
 
-void parse_dt_proximity_stk3391x(struct device *dev)
+void parse_dt_proximity_stk3391x(struct device *dev, int type)
 {
 	struct device_node *np = dev->of_node;
 	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
@@ -52,21 +50,21 @@ void parse_dt_proximity_stk3391x(struct device *dev)
 	shub_info("thresh %u, %u", data->prox_threshold[PROX_THRESH_HIGH], data->prox_threshold[PROX_THRESH_LOW]);
 }
 
-int proximity_open_calibration_stk3391x(void)
+int proximity_open_calibration_stk3391x(int type)
 {
-	struct proximity_data *data = get_sensor(SENSOR_TYPE_PROXIMITY)->data;
+	struct proximity_data *data = get_sensor(type)->data;
 
-	open_default_proximity_setting_mode();
-	open_default_proximity_calibration();
+	open_default_proximity_setting_mode(type);
+	open_default_proximity_calibration(type);
 	shub_infof(" mode:%d base:%d", data->setting_mode, *((u16 *)data->cal_data));
 
 	return 0;
 }
 
-void set_proximity_state_stk3391x(struct proximity_data *data)
+void set_proximity_state_stk3391x(int type)
 {
-	set_proximity_setting_mode();
-	set_proximity_calibration();
+	set_proximity_setting_mode(type);
+	set_proximity_calibration(type);
 }
 
 struct proximity_chipset_funcs prox_stk3391x_funcs = {
@@ -87,7 +85,8 @@ struct sensor_chipset_init_funcs prox_stk3391x_ops = {
 
 struct sensor_chipset_init_funcs *get_proximity_stk3391x_function_pointer(char *name)
 {
-	if (strcmp(name, STK33910_NAME) != 0 && strcmp(name, STK33915_NAME) != 0)
+	if (strcmp(name, "STK33910") != 0 && strcmp(name, "STK33911") != 0 \
+			&& strcmp(name, "STK33915") != 0 && strcmp(name, "STK33917") != 0)
 		return NULL;
 
 	return &prox_stk3391x_ops;
