@@ -23,10 +23,12 @@
 #include <linux/of_gpio.h>
 
 #define ICM42605M_NAME		"ICM42605M"
-static void parse_dt_accelerometer_icm24605m(struct device *dev)
+static void parse_dt_accelerometer_icm24605m(struct device *dev, int id)
 {
 	struct accelerometer_data *data = get_sensor(SENSOR_TYPE_ACCELEROMETER)->data;
 	struct device_node *np = dev->of_node;
+
+	(void) id;
 
 	if (of_property_read_u32(np, "acc-icm42605m-position", &data->position))
 		data->position = 0;

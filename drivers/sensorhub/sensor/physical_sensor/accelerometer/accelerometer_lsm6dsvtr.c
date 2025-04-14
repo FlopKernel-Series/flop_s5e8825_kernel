@@ -24,10 +24,12 @@
 
 #define CHIP_ID	"LSM6DSVTR"
 
-static void parse_dt_accelerometer_lsm6dsvtr(struct device *dev)
+static void parse_dt_accelerometer_lsm6dsvtr(struct device *dev, int id)
 {
 	struct accelerometer_data *data = get_sensor(SENSOR_TYPE_ACCELEROMETER)->data;
 	struct device_node *np = dev->of_node;
+
+	(void)id;
 
 	if (of_property_read_u32(np, "acc-lsm6dsvtr-position", &data->position))
 		data->position = 0;
