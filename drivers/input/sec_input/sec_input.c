@@ -665,12 +665,12 @@ static int __init sec_input_init(void)
 
 	pr_info("%s %s: 2024: ++\n", SECLOG, __func__);
 
+	sec_external_api_init();
+
 #if IS_ENABLED(CONFIG_SEC_DEBUG_TSP_LOG)
 	mutex_init(&input_log_mutex);
 	mutex_init(&input_fail_hist_log_mutex);
 	mutex_init(&input_raw_info_log_mutex);
-
-	sec_external_api_init();
 
 	ret = sec_tsp_log_init();
 	pr_info("%s %s: sec_tsp_log_init %d\n", SECLOG, __func__, ret);
