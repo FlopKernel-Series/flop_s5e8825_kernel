@@ -237,7 +237,7 @@ static int stm_touch_notify_call(struct notifier_block *n, unsigned long data, v
 			reg[2] = 1;
 			ret = ts->stm_ts_write(ts, reg, 3, NULL, 0);
 			input_info(true, ts->dev, "%s: tsp block, ret=%d\n", __func__, ret);
-			sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_TSP_SCAN_BLOCK, 0, 0);
+			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_TSP_SCAN_BLOCK, 0, 0);
 		}
 		break;
 	case NOTIFIER_TSP_BLOCKING_RELEASE:
@@ -248,7 +248,7 @@ static int stm_touch_notify_call(struct notifier_block *n, unsigned long data, v
 			reg[2] = 0;
 			ret = ts->stm_ts_write(ts, reg, 3, NULL, 0);
 			input_info(true, ts->dev, "%s: tsp unblock, ret=%d\n", __func__, ret);
-			sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_TSP_SCAN_UNBLOCK, 0, 0);
+			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_TSP_SCAN_UNBLOCK, 0, 0);
 		}
 		break;
 	case NOTIFIER_WACOM_PEN_INSERT:
@@ -446,10 +446,10 @@ static void stm_ts_gesture_event(struct stm_ts_data *ts, u8 *event_buff)
 	y = (p_gesture_status->gesture_data_2 << 4) | (p_gesture_status->gesture_data_3 & 0x0F);
 
 	if (p_gesture_status->stype == STM_TS_SPONGE_EVENT_SWIPE_UP) {
-		sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_SPAY, 0, 0);
+		sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_SPAY, 0, 0);
 	} else if (p_gesture_status->stype == STM_TS_GESTURE_CODE_DOUBLE_TAP) {
 		if (p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_AOD) {
-			sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_AOD_DOUBLETAB, x, y);
+			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_AOD_DOUBLETAB, x, y);
 		} else if (p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_DOUBLETAP_TO_WAKEUP) {
 			input_info(true, ts->dev, "%s: AOT\n", __func__);
 			input_report_key(ts->plat_data->input_dev, KEY_WAKEUP, 1);
@@ -458,19 +458,19 @@ static void stm_ts_gesture_event(struct stm_ts_data *ts, u8 *event_buff)
 			input_sync(ts->plat_data->input_dev);
 		}
 	} else if (p_gesture_status->stype  == STM_TS_SPONGE_EVENT_SINGLETAP) {
-		sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_SINGLE_TAP, x, y);
+		sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_SINGLE_TAP, x, y);
 	} else if (p_gesture_status->stype  == STM_TS_SPONGE_EVENT_PRESS) {
 		if (p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_FOD_LONG ||
 			p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_FOD_NORMAL) {
-			sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_FOD_PRESS, x, y);
+			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_FOD_PRESS, x, y);
 			input_info(true, ts->dev, "%s: FOD %sPRESS\n",
 					__func__, p_gesture_status->gesture_id ? "" : "LONG");
 		} else if (p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_FOD_RELEASE) {
-			sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_FOD_RELEASE, x, y);
+			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_FOD_RELEASE, x, y);
 			input_info(true, ts->dev, "%s: FOD RELEASE\n", __func__);
 			memset(ts->plat_data->fod_data.vi_data, 0x0, ts->plat_data->fod_data.vi_size);
 		} else if (p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_FOD_OUT) {
-			sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_FOD_OUT, x, y);
+			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_FOD_OUT, x, y);
 			input_info(true, ts->dev, "%s: FOD OUT\n", __func__);
 		} else if (p_gesture_status->gesture_id == STM_TS_SPONGE_EVENT_GESTURE_ID_FOD_VI) {
 			if ((ts->plat_data->lowpower_mode & SEC_TS_MODE_SPONGE_PRESS) && ts->plat_data->support_fod_lp_mode)
@@ -502,7 +502,7 @@ static void stm_ts_gesture_event(struct stm_ts_data *ts, u8 *event_buff)
 			input_report_key(ts->plat_data->input_dev, BTN_LARGE_PALM, 1);
 		input_sync(ts->plat_data->input_dev);
 	} else if (p_gesture_status->stype  == STM_TS_SPONGE_EVENT_LONGPRESS) {
-		sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_LONG_PRESS, x, y);
+		sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_LONG_PRESS, x, y);
 		input_info(true, ts->dev, "%s: LONG PRESS\n", __func__);
 	}
 }
@@ -880,10 +880,10 @@ irqreturn_t stm_ts_irq_thread(int irq, void *ptr)
 				event_buff[12], event_buff[13], event_buff[14], event_buff[15]);
 
 			if (event_buff[2] == STM_TS_CMD_SET_GET_OPMODE && event_buff[3] == STM_TS_OPMODE_NORMAL) {
-				sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_TSP_SCAN_UNBLOCK, 0, 0);
+				sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_TSP_SCAN_UNBLOCK, 0, 0);
 				input_info(true, ts->dev, "%s: Normal changed\n", __func__);
 			} else if (event_buff[2] == STM_TS_CMD_SET_GET_OPMODE && event_buff[3] == STM_TS_OPMODE_LOWPOWER) {
-				sec_input_gesture_report(ts->dev, SPONGE_EVENT_TYPE_TSP_SCAN_UNBLOCK, 0, 0);
+				sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_TSP_SCAN_UNBLOCK, 0, 0);
 				input_info(true, ts->dev, "%s: lp changed\n", __func__);
 			}
 

@@ -469,9 +469,9 @@ int stm_ts_execute_autotune(struct stm_ts_data *ts, bool issaving)
 			ts->tdata->nvdata.cal_fail_cnt = 0;
 		if (ret < 0) {
 			ts->tdata->nvdata.cal_fail_cnt++;
-			ts->tdata->nvdata.cal_fail_falg = 0;
+			ts->tdata->nvdata.cal_fail_flag = 0;
 		} else {
-			ts->tdata->nvdata.cal_fail_falg = SEC_CAL_PASS;
+			ts->tdata->nvdata.cal_fail_flag = SEC_CAL_PASS;
 			ts->is_cal_done = true;
 		}
 		stm_tclm_data_write(ts->dev, SEC_TCLM_NVM_ALL_DATA);
