@@ -23,10 +23,12 @@
 #include <linux/device.h>
 
 #define ICM42605M_NAME		"ICM42605M"
-static void parse_dt_gyroscope_icm24605m(struct device *dev)
+static void parse_dt_gyroscope_icm24605m(struct device *dev, int id)
 {
 	struct accelerometer_data *acc_data =  get_sensor(SENSOR_TYPE_ACCELEROMETER)->data;
 	struct gyroscope_data *data = get_sensor(SENSOR_TYPE_GYROSCOPE)->data;
+
+	(void)id;
 
 	data->position = acc_data->position;
 	shub_infof("position[%d]", data->position);
