@@ -107,7 +107,6 @@ void store_battery_log(const char *fmt, ...) {}
 void store_battery_log(const char *fmt, ...)
 {
 	unsigned long long tnsec;
-	unsigned long rem_nsec;
 	unsigned long target_index;
 	char *bat_buf;
 	int string_len, rem_buf;
@@ -119,7 +118,6 @@ void store_battery_log(const char *fmt, ...)
 
 	mutex_lock(&batterylog_root.battery_log_lock);
 	tnsec = local_clock();
-	rem_nsec = do_div(tnsec, 1000000000);
 
 	logger_get_time_of_the_day_in_hr_min_sec(temp, BATTERYLOG_MAX_STRING_SIZE);
 	string_len = strlen(temp);

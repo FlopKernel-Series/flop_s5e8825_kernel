@@ -50,7 +50,19 @@
 #define TX_ID_CHECK_CNT		3
 #define MISALIGN_TX_TRY_CNT	3
 
-#define WL_TO_W 99
+#define WL_TO_W 9
+
+enum MPP_CLOAK_ENUM {
+	CLOAK_TURN_OFF_PWR,
+	CLOAK_EXIT_CMD,
+	CLOAK_GENERIC,
+	CLOAK_FORCED,
+	CLOAK_THERMALLY_CONSTRAINED,
+	CLOAK_INSUFFICIENT_POWER,
+	CLOAK_COEX_MITIGATION,
+	CLOAK_END_OF_CHARGE,
+	CLOAK_PTX_INITIATED,
+};
 
 #if IS_ENABLED(CONFIG_USB_FACTORY_MODE)
 #define FOREACH_BOOT_MODE(GEN_BOOT_MODE) \
@@ -126,11 +138,26 @@ enum sec_battery_temp_type {
 	SEC_BATTERY_TEMP_ADC,
 };
 
-#if IS_ENABLED(CONFIG_DUAL_BATTERY)
+/* For CONFIG_DUAL_BATTERY and CONFIG_BATTERY_HOTSWAP, DPM */
+enum BAT_DET_STATUS_TYPE {
+	NONE = 0,			// default, nothing to do
+	DPM,				// main and sub are all removed
+	HOTSWAP_DONE,		// main and sub are all connected
+	HOTSWAP_PREPARE,	// main or sub is removed
+};
+
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
 enum sec_battery_dual_mode {
 	SEC_DUAL_BATTERY_MAIN = 0,
 	SEC_DUAL_BATTERY_SUB,
+	SEC_DUAL_BATTERY_3RD,
 	SEC_DUAL_BATTERY_TOTAL,
+};
+
+enum sec_battery_dual_chg_mode {
+	SEC_DUAL_BATTERY_CHG_ON = 0,
+	SEC_DUAL_BATTERY_CHG_OFF,
+	SEC_DUAL_BATTERY_BUCK_OFF,
 };
 #endif
 
@@ -194,6 +221,7 @@ enum sec_wireless_auth_mode {
 
 enum sec_wireless_pad_id {
 	WC_PAD_UNKNOWN = 0x00,
+	WC_PAD_UNSUPPORTED = 0x09,
 
 	/* 0x01~1F : Single Port */
 	WC_PAD_HN930 = 0x11, /* Wireless Charger Vehicle */
@@ -205,6 +233,7 @@ enum sec_wireless_pad_id {
 	/* 0x20~2F : Multi Port */
 	WC_PAD_MULTI_PORT_START = 0x20,
 	WC_PAD_N6100 = 0x20, /* N6100 portrait mode */
+	WC_PAD_P5200_P = 0x24, /* P5200 Pad mode(right) */
 	WC_PAD_P4300 = 0x25, /* P4300 Pad mode */
 	WC_PAD_P5400_P = 0x27, /* P5400 Pad mode(left) */
 	WC_PAD_MULTI_PORT_END = 0x2F,
@@ -277,7 +306,8 @@ enum sec_wireless_pad_id {
 	(pad_id != WC_PAD_N5200_P) && \
 	(pad_id != WC_PAD_N5200_L) && \
 	(pad_id != WC_PAD_U1200) && \
-	(pad_id != WC_PAD_U3300))
+	(pad_id != WC_PAD_U3300) && \
+	(pad_id != WC_PAD_UNSUPPORTED))
 
 #define is_samsung_pad(vendor_id) (\
 	(vendor_id == 0x42))
@@ -285,6 +315,12 @@ enum sec_wireless_pad_id {
 #define is_3rd_pad(vendor_id) (\
 	(vendor_id == 0x6E00) || \
 	(vendor_id == 0x0066))
+
+#define is_3_1_wc_status(wc_stat) (\
+	(wc_stat == SEC_BATTERY_CABLE_HV_WIRELESS_DC))
+
+#define is_valid_2_1_forced_ta(vid) (\
+	(vid == 0x04E8))
 
 enum sec_battery_adc_channel {
 	SEC_BAT_ADC_CHANNEL_CABLE_CHECK = 0,
@@ -480,6 +516,22 @@ enum mfc_phm_state {
 	END_PHM,
 };
 
+enum mfc_rx_mode {
+	MFC_RX_MODE_WPC_BPP = 1,
+	MFC_RX_MODE_WPC_EPP,
+	MFC_RX_MODE_WPC_MPP_RESTRICT,
+	MFC_RX_MODE_WPC_MPP_FULL,
+	MFC_RX_MODE_WPC_MPP_CLOAK,
+	MFC_RX_MODE_WPC_MPP_NEGO,
+	MFC_RX_MODE_WPC_EPP_NEGO,
+};
+
+enum mfc_ept {
+	EPT_UNKNOWN = 1,
+	EPT_RESTART,
+	CEP_TIMEOUT,
+};
+
 /* full check condition type (can be used overlapped) */
 #define sec_battery_full_condition_t unsigned int
 
@@ -499,7 +551,7 @@ enum sec_battery_check {
 	SEC_BATTERY_CHECK_CHARGER,
 	/* by interrupt (use check_battery_callback() to check battery) */
 	SEC_BATTERY_CHECK_INT,
-#if IS_ENABLED(CONFIG_DUAL_BATTERY)
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
 	/* by dual battery */
 	SEC_BATTERY_CHECK_DUAL_BAT_GPIO,
 #endif
@@ -522,12 +574,24 @@ enum sec_battery_check {
   */
 #define SEC_FUELGAUGE_CAPACITY_TYPE_RESET	(-1)
 
-#if IS_ENABLED(CONFIG_DUAL_FUELGAUGE)
  /* SEC_FUELGAUGE_CAPACITY_TYPE_RESET_SUB
   * use capacity information to reset sub fuel gauge
   * (only for driver algorithm, can NOT be set by user)
   */
 #define SEC_FUELGAUGE_CAPACITY_TYPE_RESET_SUB	(-2)
+
+ /* SEC_FUELGAUGE_CAPACITY_TYPE_RESET_SUB_PKCP
+  * use capacity information to reset sub fuel gauge using 523k
+  * (only for driver algorithm, can NOT be set by user)
+  */
+#define SEC_FUELGAUGE_CAPACITY_TYPE_RESET_SUB_PKCP	(-3)
+
+#if IS_ENABLED(CONFIG_DUAL_FUELGAUGE) || IS_ENABLED(CONFIG_TRIPLE_FUELGAUGE)
+ /* SEC_FUELGAUGE_CAPACITY_TYPE_RESET_DUAL
+  * use capacity information to reset dual fuel gauge
+  * (only for driver algorithm, can NOT be set by user)
+  */
+#define SEC_FUELGAUGE_CAPACITY_TYPE_RESET_DUAL	(-4)
 #endif
 
 /* SEC_FUELGAUGE_CAPACITY_TYPE_RAW
@@ -603,7 +667,14 @@ typedef struct {
 
 #define is_pwr_nego_wireless_type(cable_type) ( \
 	cable_type == SEC_BATTERY_CABLE_HV_WIRELESS_20 || \
-	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP)
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP || \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
+
+#define is_epp_mpp_wireless_type(cable_type) ( \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP_FAKE || \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP || \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP_FAKE || \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
 
 #define is_hv_wireless_type(cable_type) ( \
 	cable_type == SEC_BATTERY_CABLE_HV_WIRELESS || \
@@ -612,7 +683,9 @@ typedef struct {
 	cable_type == SEC_BATTERY_CABLE_HV_WIRELESS_20_LIMIT || \
 	cable_type == SEC_BATTERY_CABLE_WIRELESS_HV_VEHICLE || \
 	cable_type == SEC_BATTERY_CABLE_WIRELESS_HV_PACK || \
-	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP)
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP || \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP_FAKE || \
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
 
 #define is_nv_wireless_type(cable_type)	( \
 	cable_type == SEC_BATTERY_CABLE_WIRELESS || \
@@ -653,6 +726,7 @@ typedef struct {
 	cable_type != SEC_BATTERY_CABLE_HV_WIRELESS_20_LIMIT && \
 	cable_type != SEC_BATTERY_CABLE_WIRELESS_HV_PACK && \
 	cable_type != SEC_BATTERY_CABLE_WIRELESS_EPP && \
+	cable_type != SEC_BATTERY_CABLE_WIRELESS_MPP && \
 	cable_type != SEC_BATTERY_CABLE_WIRELESS_EPP_NV)
 
 #define is_wired_type(cable_type) \
@@ -726,4 +800,9 @@ typedef struct {
 
 #define is_wcin_type(cable_type) ( \
 	is_pogo_wire_type(cable_type) || is_wireless_type(cable_type))
+
+#define is_all_hv_wire_type(cable_type) ( \
+	is_hv_wire_type(cable_type) || \
+	is_hv_wire_9v_type(cable_type) || \
+	is_pd_wire_type(cable_type))
 #endif /* __SEC_CHARGING_COMMON_H */

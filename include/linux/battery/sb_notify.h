@@ -37,6 +37,11 @@ enum sbn_type {
 
 };
 
+enum{
+	OCP_WARN_ON,
+	OCP_WARN_OFF
+};
+
 struct sbn_dev_list {
 	const char		**list;
 	unsigned int	count;
@@ -65,6 +70,10 @@ static inline int sb_notify_register(struct notifier_block *nb,
 static inline int sb_notify_unregister(struct notifier_block *nb)
 { return SB_NOTIFY_DISABLE; }
 #endif
+
+extern int register_ocp_warn_notifier(struct notifier_block *nb);
+extern int unregister_ocp_warn_notifier(struct notifier_block *nb);
+extern int ocp_warn_notifier_call_chain(unsigned long val);
 
 #endif /* __SB_NOTIFY_H */
 

@@ -97,8 +97,8 @@ int adc_read_type(struct device *dev, int channel, int batt_adc_type)
 		batt_adc_list[channel].prev_value = adc;
 	}
 
-	pr_debug("%s: [%d] ADC (type:%s) = %d\n", __func__, channel,
-		(batt_adc_type ? "raw" : "proc."), adc);
+	pr_debug("%s: [%d] ADC (type:%s) = %d. ret(%d)\n", __func__, channel,
+		(batt_adc_type ? "raw" : "proc."), adc, ret);
 
 	return adc;
 }
