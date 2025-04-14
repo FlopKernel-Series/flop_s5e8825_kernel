@@ -1711,6 +1711,11 @@ static int slsi_start_keepalive_offload(struct wiphy *wiphy, struct wireless_dev
 			goto exit;
 		}
 	}
+	if (!index) {
+		SLSI_WARN_NODEV("No MKEEP_ALIVE_ATTRIBUTE_ID\n");
+		r = -EINVAL;
+		goto exit;
+	}
 
 	/* Stop any existing request. This may fail if no request exists
 	  * so ignore the return value
@@ -1828,6 +1833,11 @@ static int slsi_stop_keepalive_offload(struct wiphy *wiphy, struct wireless_dev 
 			r = -EINVAL;
 			goto exit;
 		}
+	}
+	if (!index) {
+		SLSI_WARN_NODEV("No MKEEP_ALIVE_ATTRIBUTE_ID\n");
+		r = -EINVAL;
+		goto exit;
 	}
 
 	r = slsi_mlme_send_frame_mgmt(sdev, net_dev, NULL, 0, FAPI_DATAUNITDESCRIPTOR_IEEE802_3_FRAME,
@@ -5942,6 +5952,9 @@ slsi_wlan_vendor_lls_policy[LLS_ATTRIBUTE_MAX + 1] = {
 	[LLS_ATTRIBUTE_SET_AGGR_STATISTICS_GATHERING] = {.type = NLA_U32},
 	[LLS_ATTRIBUTE_CLEAR_STOP_REQUEST_MASK] = {.type = NLA_U32},
 	[LLS_ATTRIBUTE_CLEAR_STOP_REQUEST] = {.type = NLA_U32},
+	[LLS_ATTRIBUTE_STATS_VERSION] 			= {.type = NLA_U32},
+	[LLS_ATTRIBUTE_GET_STATS_TYPE] 			= {.type = NLA_U32},
+	[LLS_ATTRIBUTE_GET_STATS_STRUCT] 		= {.type = NLA_U32},
 };
 
 static const struct nla_policy
@@ -6927,8 +6940,8 @@ static void slsi_nll80211_vendor_init_policy(struct wiphy_vendor_command *slsi_v
 			vcmd->maxattr = LLS_ATTRIBUTE_MAX;
 			break;
 		case SLSI_NL80211_VENDOR_SUBCMD_LSTATS_SUBCMD_GET_STATS:
-			vcmd->policy = VENDOR_CMD_RAW_DATA;
-			vcmd->maxattr = 0;
+			vcmd->policy = slsi_wlan_vendor_lls_policy;
+			vcmd->maxattr = LLS_ATTRIBUTE_MAX;
 			break;
 		case SLSI_NL80211_VENDOR_SUBCMD_LSTATS_SUBCMD_CLEAR_STATS:
 			vcmd->policy = slsi_wlan_vendor_lls_policy;

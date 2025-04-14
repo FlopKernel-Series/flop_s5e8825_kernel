@@ -3964,6 +3964,9 @@ bool slsi_rx_received_frame_logging(struct net_device *dev, struct sk_buff *skb,
 		case SLSI_DHCP_MESSAGE_TYPE_FORCERENEW:
 			snprintf(log_str_buffer, buffer_size, "DHCP [FORCERENEW]");
 			break;
+		case SLSI_DHCP_MESSAGE_TYPE_INVALID:
+			SLSI_DBG1(sdev, SLSI_RX, "Received IP pkt but not DHCP\n");
+			break;
 		default:
 			snprintf(log_str_buffer, buffer_size, "DHCP [INVALID]");
 			break;
