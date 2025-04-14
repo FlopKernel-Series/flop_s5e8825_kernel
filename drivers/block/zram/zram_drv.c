@@ -387,7 +387,7 @@ static int init_lru_writeback(struct zram *zram)
 	int bitmap_sz;
 
 	init_waitqueue_head(&zram->wbd_wait);
-	zram->wb_table = kvzalloc(sizeof(u8) * zram->nr_pages, GFP_KERNEL);
+	zram->wb_table = kvzalloc(sizeof(*zram->wb_table) * zram->nr_pages, GFP_KERNEL);
 	if (!zram->wb_table) {
 		ret = -ENOMEM;
 		return ret;
@@ -457,7 +457,7 @@ static void stop_lru_writeback(struct zram *zram)
 static void deinit_lru_writeback(struct zram *zram)
 {
 	unsigned long flags;
-	u8 *wb_table_tmp = zram->wb_table;
+	u16 *wb_table_tmp = zram->wb_table;
 
 	stop_lru_writeback(zram);
 	if (zram->read_req_bitmap) {
