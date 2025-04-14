@@ -48,7 +48,7 @@
 #endif
 
 #if IS_ENABLED(CONFIG_INPUT_SEC_INPUT)
-#include "../../../sec_input/sec_input.h"
+#include <linux/input/sec_input.h>
 #else
 #include <linux/input/sec_cmd.h>
 #endif
