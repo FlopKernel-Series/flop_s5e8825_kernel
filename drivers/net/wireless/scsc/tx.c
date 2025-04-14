@@ -50,8 +50,10 @@ static int slsi_get_miclen(struct net_device *dev, u32 akm_suite)
 	switch (akm_suite) {
 	case SLSI_KEY_MGMT_802_1X_SUITE_B_192:
 	case SLSI_KEY_MGMT_FT_802_1X_SHA384:
+	case SLSI_KEY_MGMT_802_1X_SUITE_B_192_REV:
 		return 24;
 	case SLSI_KEY_MGMT_OWE:
+	case SLSI_KEY_MGMT_OWE_REV:
 		if (ndev_vif->sta.owe_group_during_connection == 20)
 			return 24;
 		else if (ndev_vif->sta.owe_group_during_connection == 21)
@@ -139,7 +141,6 @@ static int slsi_tx_eapol(struct slsi_dev *sdev, struct net_device *dev, struct s
 
 		if (key->type == SLSI_IEEE8021X_TYPE_EAPOL_KEY && frame_len >= 99) {
 			msg_type = FAPI_MESSAGETYPE_EAPOL_KEY_M123;
-
 			if ((key->key_info[0] & SLSI_EAPOL_KEY_INFO_REQUEST_BIT_IN_HIGHER_BYTE) ||
 			    !(key->key_info[1] & SLSI_EAPOL_KEY_INFO_KEY_TYPE_BIT_IN_LOWER_BYTE)) {
 				msg_type = FAPI_MESSAGETYPE_EAPOL_KEY_M123;
