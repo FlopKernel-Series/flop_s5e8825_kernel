@@ -25,6 +25,7 @@ static ssize_t scrub_pos_show(struct device *dev,
 {
 	struct sec_cmd_data *sec = dev_get_drvdata(dev);
 	struct stm_ts_data *ts = container_of(sec, struct stm_ts_data, sec);
+#if 0
 	char buff[256] = { 0 };
 
 #if IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
@@ -42,6 +43,12 @@ static ssize_t scrub_pos_show(struct device *dev,
 	ts->plat_data->gesture_y = 0;
 
 	return snprintf(buf, PAGE_SIZE, "%s", buff);
+#endif
+	input_info(true, ts->dev,
+			"%s: Gesture info (id/x/y) is no longer stored in plat_data. Gestures are reported via uevent.\n", __func__);
+
+	return snprintf(buf, PAGE_SIZE, "NA\n");
+
 }
 
 /* read param */

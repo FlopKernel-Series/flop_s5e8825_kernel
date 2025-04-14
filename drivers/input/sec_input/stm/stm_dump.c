@@ -167,7 +167,7 @@ err_out:
 	return strlen(buf);
 }
 
-
+#if 0
 static ssize_t get_cmoffset_dump_v1(struct stm_ts_data *ts, char *buf, u8 position)
 {
 	u8 *rbuff;
@@ -249,6 +249,7 @@ out:
 	kfree(rbuff);
 	return strlen(buf);
 }
+#endif
 
 
 static ssize_t stm_ts_tsp_cmoffset_all_read(struct file *file, char __user *buf,
@@ -461,11 +462,7 @@ ssize_t get_cmoffset_dump(struct stm_ts_data *ts, char *buf, u8 position)
 		return ret;
 	}
 
-	if (ts->plat_data->dump_ic_ver == STM_TS_GET_CMOFFSET_DUMP_V1) {
-		return get_cmoffset_dump_v1(ts, buf, position);
-	} else if (ts->plat_data->dump_ic_ver == STM_TS_GET_CMOFFSET_DUMP_V2) {
-		return get_cmoffset_dump_v2(ts, buf, position);
-	}
+	return get_cmoffset_dump_v2(ts, buf, position);
 
 	return strlen(buf);
 
