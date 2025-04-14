@@ -43,6 +43,14 @@ config S2MF301_TYPEC_WATER
 	  If you say yes here you will get support for
 	  the S2MU Type-C Water functions.
 
+config S2MF301_TYPEC_WATER_DRY_CC_CHECK
+	bool "Using S2MU Type-C Water Detection"
+	depends on I2C && (MFD_S2MF301 || PM_S2MF301)
+	default n
+	help
+	  If you say yes here you will get support for
+	  the S2MU Type-C Water functions of dry with CC1/2 check.
+
 config SUPPORT_USB_TYPEC_OPS
 	bool "Using TYPEC OPS since kernel 5.4 version"
 	default n
@@ -57,9 +65,9 @@ config S2M_PDIC_MANUAL_RETRY
 	  If you say yes here you will get support for
 	  manual retry to avoid alert-req collision
 
-config S2M_SUPPORT_DELAYED_REQUEST_MESSAGE_UFP
-	bool "Using delayed request message in UFP"
+config S2M_PDIC_DP_SUPPORT
+	bool "Using dp through pdic"
 	default n
 	help
 	  If you say yes here you will get support for
-	  the delayed request message in ufp.
+	  displayport suppor vdm msg, notify
