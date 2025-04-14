@@ -10,64 +10,24 @@
 #include <trace/hooks/net.h>
 #endif
 #include <trace/events/skb.h>
-
-/*******************************************************************
-  To extend dropdump to all dropped packets, do followings
-
-  1. move kfree_skb() trace point to __kfree_skb()
-
-  //net/core/skbuff.c
-  void __kfree_skb(struct sk_buff *skb)
-  {
-+  	trace_kfree_skb(skb, __builtin_return_address(0));
-  	skb_release_all(skb);
-  	kfree_skbmem(skb);
-  }
-
-  void kfree_skb(struct sk_buff *skb)
-  {
-  	if (!skb_unref(skb))
-  		return;
-  
--  	trace_kfree_skb(skb, __builtin_return_address(0));
-  	__kfree_skb(skb);
-  }
-
-  2. Enable definition for 'EXTENDED_DROPDUMP'
-*******************************************************************/
-//#define EXTENDED_DROPDUMP 
-/******************************************************************/
+#include <net/dropdump.h>
 
 int debug_drd = 0;
-module_param(debug_drd, int, S_IRUGO | S_IWUSR | S_IWGRP);
-MODULE_PARM_DESC(debug_drd, "dropdump debug flags");
-
 #define drd_info(fmt, ...) pr_info("drd: %s: " pr_fmt(fmt), __func__, ##__VA_ARGS__)
-#define drd_dbg(...) \
+#define drd_dbg(flag, ...) \
 do { \
-	if (unlikely(debug_drd)) { drd_info(__VA_ARGS__); } \
+	if (unlikely(debug_drd & flag)) { drd_info(__VA_ARGS__); } \
 	else {} \
 } while (0)
 
-DEFINE_RATELIMIT_STATE(drd_ratelimit_state, 1 * HZ, 10);
+DEFINE_RATELIMIT_STATE(drd_ratelimit_print, 1 * HZ, 10);
 #define drd_limit(...)				\
 do {						\
-	if (__ratelimit(&drd_ratelimit_state))	\
+	if (__ratelimit(&drd_ratelimit_print))	\
 		drd_info(__VA_ARGS__);		\
 } while (0)
 
-static inline int deliver_skb(struct sk_buff *skb,
-			      struct packet_type *pt_prev,
-			      struct net_device *orig_dev)
-{
-	if (unlikely(skb_orphan_frags_rx(skb, GFP_ATOMIC)))
-		return -ENOMEM;
-	refcount_inc(&skb->users);
-	return pt_prev->func(skb, skb->dev, pt_prev, orig_dev);
-}
-
-/* add definition for logging */
-#define ETH_P_LOG	0x00FA
+DEFINE_RATELIMIT_STATE(drd_ratelimit_pkt, 1 * HZ, 32);
 
 struct list_head ptype_log __read_mostly;
 EXPORT_SYMBOL_GPL(ptype_log);
@@ -75,18 +35,116 @@ EXPORT_SYMBOL_GPL(ptype_log);
 int support_dropdump;
 EXPORT_SYMBOL_GPL(support_dropdump);
 
-#define ST_MAX	 20
-#define ST_SIZE  0x30
-#ifdef EXTENDED_DROPDUMP
-#define ST_START 5
-#else
-#define ST_START 4
+extern struct list_head ptype_all;
+
+struct st_item hmap[DRD_HSIZE];
+spinlock_t hlock;
+u64 hmap_count;
+u64 hdup_count;
+uint hmax_depth;
+u16 skip_count;
+u64 dropped_count;
+
+#ifdef DRD_WQ
+struct _drd_worker drd_worker;
+
+unsigned int budget_default = BUDGET_DEFAULT;
+unsigned int budget_limit;
+
+#define	BUDGET_MAX	(budget_default << 2)
+#define	LIST_MAX	(BUDGET_MAX << 2)
 #endif
-static char save_stack[NR_CPUS][ST_SIZE * ST_MAX];
+
+void init_st_item(struct st_item *item)
+{
+	INIT_LIST_HEAD(&item->list);
+	item->p = 0;
+	item->matched = 0;
+	item->st[0] = '\n';
+}
+
+int get_hkey(u64 *hvalue)
+{
+	u64 key = 0;
+	u64 src = *hvalue & 0x00000000ffffffff;
+
+	while (src) {
+		key += src & 0x000000ff;
+		src >>= 8;
+	}
+	key %= DRD_HSIZE;
+
+	return (int)key;
+}
+
+char *get_hmap(u64 *hvalue)
+{
+	int hkey = get_hkey(hvalue);
+	struct st_item *lookup = &hmap[hkey];
+	uint depth = 1;
+
+	do {
+		drd_dbg(DEBUG_HASH, "hvalue search[%d]: <%pK|%pK|%pK> p:[%llx], hvalue:{%llx}\n",
+				hkey, lookup, lookup->list.next, &hmap[hkey], lookup->p, *hvalue);
+		if (lookup->p == *hvalue) {
+			drd_dbg(DEBUG_HASH, "hvalue found: '%s'\n", lookup->st);
+			if (lookup->matched < 0xffffffffffffffff)
+				lookup->matched++;
+
+			if (depth >=3 && lookup->matched > ((struct st_item *)hmap[hkey].list.next)->matched) {
+				// simply reorder the list by matched count, except the hmap array head
+				list_del(&lookup->list);
+				__list_add(&lookup->list, &hmap[hkey].list, hmap[hkey].list.next);
+			}
+
+			return lookup->st;
+		}
+		lookup = (struct st_item *)lookup->list.next;
+		if (hmax_depth < ++depth)
+			hmax_depth = depth;
+	} while (lookup != &hmap[hkey]);
+
+	drd_dbg(DEBUG_HASH, "hvalue not found\n");
+	return NULL;
+}
+
+char *set_hmap(u64 *hvalue)
+{
+	int hkey = get_hkey(hvalue);
+	struct st_item *newItem = NULL;
+	bool first_hit = false;
+
+	drd_dbg(DEBUG_HASH, "hvalue {%d}: <%llx> %llx\n", hkey, *hvalue, hmap[hkey].p);
+	if (hmap[hkey].p == 0) {
+		newItem = &hmap[hkey];
+		first_hit = true;
+	} else {
+		newItem = kmalloc(sizeof(struct st_item), GFP_ATOMIC);
+		if (newItem == NULL) {
+			drd_dbg(DEBUG_HASH, "fail to alloc\n");
+			spin_unlock_bh(&hlock);
+			return NULL;
+		}
+
+		init_st_item(newItem);
+		list_add_tail(&newItem->list, &hmap[hkey].list);
+		hdup_count++;
+	}
+
+	newItem->p = *hvalue;
+	hmap_count++;
+	spin_unlock_bh(&hlock);
+
+	snprintf(newItem->st, ST_SIZE, "%pS", (void *)*hvalue);
+	drd_dbg(DEBUG_HASH, "{%d:%d} <%pK> '%s'\n", hkey, first_hit, hvalue, newItem->st);
+
+	return newItem->st;
+}
 
 /* use direct call instead of recursive stack trace */
-char *__stack(int depth) {
-	char *func = NULL;
+u64 __stack(int depth)
+{
+	u64 *func = NULL;
 	switch (depth + ST_START) {
 		case  3 :
 			func = __builtin_return_address(3);
@@ -154,15 +212,18 @@ char *__stack(int depth) {
 		case 24 :
 			func = __builtin_return_address(24);
 			break;
+		case 25 :
+			func = __builtin_return_address(25);
+			break;
 		default :
-			return NULL;
+			return 0;
 	}
 
-	return func;
+	return (u64)func;
 }
 
 
-#define NOT_TRACE	(-1)
+#define NOT_TRACE	(0xDD)
 #define FIN_TRACE	1
 #define ACK_TRACE	2
 #define GET_TRACE	3
@@ -170,6 +231,8 @@ char *__stack(int depth) {
 int chk_stack(char *pos, int net_pkt)
 {
 	/* stop tracing */
+	if (!strncmp(pos + 4, "f_nbu", 5))// __qdf_nbuf_free
+		return NOT_TRACE;
 	if (!strncmp(pos, "unix", 4))	  // unix_xxx
 		return NOT_TRACE;
 	if (!strncmp(pos + 2, "tlin", 4)) // netlink_xxx
@@ -194,7 +257,7 @@ int chk_stack(char *pos, int net_pkt)
 #endif
 
 	/* end of callstack */
-	if (!strncmp(pos + 7, "_bh_", 4))// __local_bh_xxx
+	if (!strncmp(pos, "loc", 3))// local_*
 		return FIN_TRACE;
 	if (!strncmp(pos + 7, "ftir", 4))// __do_softirq
 		return FIN_TRACE;
@@ -204,13 +267,13 @@ int chk_stack(char *pos, int net_pkt)
 		return FIN_TRACE;
 	if (!strncmp(pos, "ret_", 4))	 // ret_from_xxx
 		return FIN_TRACE;
-	if (!strncmp(pos, "el0", 3))	 // el0_irq
-		return FIN_TRACE;
-	if (!strncmp(pos, "el1", 3))	 // el1_irq
+	if (!strncmp(pos, "el", 2))	 // el*
 		return FIN_TRACE;
 	if (!strncmp(pos, "gic", 3))	 // gic_xxx
 		return FIN_TRACE;
-	if (!strncmp(pos + 4, "f_nbu", 5))// __qdf_nbuf_free
+	if (!strncmp(pos + 3, "rt_ke", 5))// start_kernel
+		return FIN_TRACE;
+	if (!strncmp(pos + 13, "rt_ke", 5))// secondary_start_kernel
 		return FIN_TRACE;
 
 	/* network pkt */
@@ -225,6 +288,8 @@ int chk_stack(char *pos, int net_pkt)
 			return GET_TRACE;
 		}
 		if (!strncmp(pos, "ip",  2))
+			return GET_TRACE;
+		if (!strncmp(pos, "icmp",  4))
 			return GET_TRACE;
 		if (!strncmp(pos, "xfr", 3))
 			return GET_TRACE;
@@ -272,255 +337,235 @@ static inline bool is_tcp_ack(struct sk_buff *skb)
 	return false;
 }
 
-int pr_stack(struct sk_buff *skb, char *dst)
+int symbol_lookup(u64 *addr, int net_pkt) {
+	char *symbol = NULL;
+
+	spin_lock_bh(&hlock);
+	symbol = get_hmap(addr);
+
+	if (symbol != NULL)
+		spin_unlock_bh(&hlock);
+	else
+		symbol = set_hmap(addr);
+
+	memcpy((char *)addr, symbol, strlen(symbol));
+	return chk_stack(symbol, net_pkt);
+}
+
+u8 get_stack(struct sk_buff *skb, struct sk_buff *dmy, unsigned int offset, unsigned int reason)
 {
-	int n = 0, depth = 0, chk = 0, net_pkt = 0;
-	char pos[ST_SIZE], *st;
+	u8 depth = 0, max_depth = ST_MAX;
+	struct _dmy_info *dmy_info = (struct _dmy_info *)(dmy->data + offset);
+	u64 *stack_base = &dmy_info->stack;
 
-	for (depth = 0; depth < ST_MAX; depth++) {
-		st = __stack(depth);
-		if (st) {
-			n = snprintf(pos, ST_SIZE, "%pS", st);
-			if (n < ST_SIZE)
-				memset(pos + n, 0, ST_SIZE - n);
-			else
-				n = ST_SIZE;
+#ifdef DRD_WQ
+	// sometimes __builtin_return_address() returns invalid address for deep stack of
+	// ksoftirq or kworker, and migration task. limit the maximun depth for them.
+	if ((current->comm[0] == 'k' && (current->comm[4] == 't' || current->comm[4] == 'k')) ||
+	    (current->comm[0] == 'm' &&  current->comm[4] == 'a')) {
+		dmy_info->flag |= LIMIT_DEPTH_BIT;
+		max_depth >>= 1;
+	}
+#else
+	int chk = 0, net_pkt = 0;
+#endif
 
-			chk = chk_stack(pos, net_pkt);
-			drd_dbg("[%2d:%d] <%s>\n", depth, chk, pos);
-			if (chk < 0)
-				return NOT_TRACE;
+	if (skb->tstamp >> 48 < 5000) {
+		// packet has kernel timestamp, not utc.
+		// using a zero-value for updating to utc at tpacket_rcv()
+		dmy_info->flag |= UPDATE_TIME_BIT;
+		dmy->tstamp = 0;
+	} else {
+		// using utc of original packet
+		dmy->tstamp = skb->tstamp;
+	}
 
-			if (chk == FIN_TRACE) 
-				break;
-
-			if (chk == ACK_TRACE) {
-				if (is_tcp_ack(skb)) {
-					drd_dbg("don't trace tcp ack\n");
-					return NOT_TRACE;
-				}
-				else
-					net_pkt = 1;
-			}
-
-			if (chk == GET_TRACE)
-				net_pkt = 1;
-
-			memcpy(dst + ST_SIZE * depth, pos, ST_SIZE);
-		} else {
-			/* end of callstack */
+	drd_dbg(DEBUG_SAVE, "trace <%pK>\n", skb);
+	for (depth = 0; depth < max_depth; depth++) {
+		*stack_base = __stack(depth);
+#ifdef DRD_WQ
+		drd_dbg(DEBUG_SAVE, "%02d: <%pK>\n", depth, (u64 *)*stack_base);
+		if (*stack_base == 0) {
+			// __builtin_return_address() returned root stack
 			depth--;
 			break;
 		}
+#else
+		/* functions that instead of when set_stack_work not used */
+		chk = symbol_lookup(stack_base, net_pkt);
+		drd_dbg(DEBUG_SAVE, "[%2d:%d] <%s>\n", depth, chk, (char *)stack_base);
+
+		if (chk == NOT_TRACE) {
+			drd_dbg(DEBUG_TRACE, "not target stack\n");
+			return NOT_TRACE;
+		}
+
+		if (chk == FIN_TRACE)
+			break;
+
+		if (chk == ACK_TRACE) {
+			if (is_tcp_ack(skb)) {
+				drd_dbg(DEBUG_TRACE, "don't trace tcp ack\n");
+				return NOT_TRACE;
+			} else {
+				net_pkt = 1;
+			}
+		}
+
+		if (chk == GET_TRACE)
+			net_pkt = 1;
+#endif
+
+		stack_base += (ST_SIZE / sizeof(u64));
+	}
+
+	memcpy(dmy_info->magic, "DRD", 3);
+	dmy_info->depth = depth;
+	if (skip_count > 0) {
+		dmy_info->skip_count = skip_count;
+		skip_count = 0;
+	}
+	dmy_info->count = ++dropped_count;
+	dmy_info->reason_id = reason;
+	if (reason < DRD_REASON_MAX) {
+		memcpy(dmy_info->reason_str, drd_reasons[reason], min(16, (int)strlen(drd_reasons[reason])));
+	} else {
+		memcpy(dmy_info->reason_str, "UNDEFINED_REASON", 16);
+	}
+
+	drd_dbg(DEBUG_RAW, "<%pK:%pK> %*ph\n", dmy, dmy_info, 16, dmy_info);
+
+	return depth;
+}
+
+int set_stack_work(struct sk_buff *skb, struct _dmy_info *dmy_info)
+{
+	int chk = 0, net_pkt = 0;
+	u8 depth;
+	u64 *stack_base;
+
+	drd_dbg(DEBUG_RAW, "<%pK:%pK> %*ph\n", skb, dmy_info, 16, dmy_info);
+
+	if (strncmp(dmy_info->magic, "DRD", 3)) {
+		drd_dbg(DEBUG_TRACE, "invalid magic <%pK>\n", skb);
+		return -1;
+	}
+
+	stack_base = &dmy_info->stack;
+	for (depth = 0; depth < dmy_info->depth; depth++) {
+		chk = symbol_lookup(stack_base, net_pkt);
+		drd_dbg(DEBUG_RESTORE, "[%2d:%d] <%s>\n", depth, chk, (char *)stack_base);
+
+		if (chk == NOT_TRACE) {
+			drd_dbg(DEBUG_TRACE, "not target stack\n");
+			return NOT_TRACE;
+		}
+
+		if (chk == FIN_TRACE)
+			break;
+
+		if (chk == ACK_TRACE) {
+			if (is_tcp_ack(skb)) {
+				drd_dbg(DEBUG_TRACE, "don't trace tcp ack\n");
+				return NOT_TRACE;
+			} else {
+				net_pkt = 1;
+			}
+		}
+
+		if (chk == GET_TRACE)
+			net_pkt = 1;
+
+		stack_base += (ST_SIZE / sizeof(u64));
 	}
 
 	if (net_pkt == 0) {
-		drd_dbg("not defined packet\n");
+		drd_dbg(DEBUG_TRACE, "not defined packet\n");
 		return -3;
 	}
 
-	return depth > 5 ? depth - 4 : depth; /* do not use root stacks */
+	return depth;
 }
 
-struct sk_buff *get_dummy(struct sk_buff *skb, unsigned int reason, char *pos, int st_depth)
+#ifdef DRD_WQ
+static void save_pkt_work(struct work_struct *ws)
 {
-	struct sk_buff *dummy = NULL;
-	unsigned int stack_len = ST_SIZE * st_depth;
-
-	/* initialize dummy packet with ipv4 : iphdr + udp_hdr + align */
-	unsigned int hdr_len, hdr_tot_len, hdr_align;
-	unsigned int data_len, data_offset;
-	struct udphdr *udph;
-
-	if (skb->protocol == htons(ETH_P_IP)) {
-		hdr_len   = (unsigned int)sizeof(struct iphdr);
-		hdr_align = 4;
-	} else {
-		hdr_len   = (unsigned int)sizeof(struct ipv6hdr);
-		hdr_align = 0;
-	}
-	hdr_tot_len = hdr_len + (unsigned int)sizeof(struct udphdr);
-	data_len    = hdr_tot_len + hdr_align;
-	data_offset = data_len;
-
-	/* expand data_len */
-	data_len += stack_len;
-
-	dummy = alloc_skb(data_len, GFP_ATOMIC);
-	if (likely(dummy)) {
-		/* set skb info */
-		memset(dummy->data, 0, data_offset);
-		dummy->dev              = skb->dev;
-		dummy->hdr_len          = hdr_tot_len;
-		dummy->len	        = data_len;
-		dummy->transport_header = hdr_len;
-		dummy->protocol         = skb->protocol;
-
-		/* set ip_hdr info */
-		if (dummy->protocol == htons(ETH_P_IP)) {
-			struct iphdr *iph = (struct iphdr *)dummy->data;
-			memcpy(dummy->data, ip_hdr(skb), hdr_len);
-			
-			iph->protocol = 17; // UDP
-			iph->tot_len  = htons(data_len);
-			iph->ttl      = (__u8)(reason & 0xff);
-		} else {
-			struct ipv6hdr *ip6h = (struct ipv6hdr *)dummy->data;
-			memcpy(dummy->data, ipv6_hdr(skb), hdr_len);
-
-			ip6h->nexthdr     = 17; // UDP
-			ip6h->payload_len = htons(data_len - hdr_len);
-			ip6h->hop_limit   = (__u8)(reason & 0xff);
-		}
-
-		/* set udp_hdr info */
-		udph = udp_hdr(dummy);
-		udph->len = htons(data_len - hdr_len);
-
-		/* save callstack */
-		memcpy(dummy->data + data_offset, pos, stack_len);
-	} else {
-		drd_dbg("fail to alloc dummy\n");
-	}
-
-	return dummy;
-}
-
-#if 0
-// somtimes this log causes lock starvation when too many called (P230510-05174)
-// tempory disable until find smart solution
-static void drd_print_skb(struct sk_buff *skb, unsigned int len, unsigned int reason)
-{
-	struct iphdr *ip4hdr = (struct iphdr *)skb_network_header(skb);
-
-	if (ip4hdr->version == 4) {
-		drd_limit("<%pS><%pS> [%u] src:%pI4 | dst:%pI4 | %*ph\n",
-			__builtin_return_address(ST_START - 2), __builtin_return_address(ST_START-1),
-			reason, &ip4hdr->saddr, &ip4hdr->daddr, len < 48 ? len : 48, ip4hdr);
-	} else {
-		struct ipv6hdr *ip6hdr = (struct ipv6hdr *)ip4hdr;
-		drd_limit("<%pS><%pS> [%u] src:%pI6c | dst:%pI6c | %*ph\n",
-			__builtin_return_address(ST_START - 2), __builtin_return_address(ST_START-1),
-			reason, &ip6hdr->saddr, &ip6hdr->daddr, len < 48 ? len : 48, ip4hdr);
-	}
-}
-#endif
-
-extern struct list_head ptype_all;
-struct sk_buff *drd_queue_skb(struct sk_buff *skb, int mode, unsigned int reason)
-{
-	struct packet_type *ptype;
-	struct packet_type *pt_prev = NULL;
-	struct sk_buff *skb2 = NULL;
-	struct list_head *ptype_list = &ptype_log;
-	struct net_device *dev = NULL;
-	struct net_device *old_dev;
-	struct iphdr *ip4hdr = (struct iphdr *)(skb_network_header(skb));
-	struct ipv6hdr *ip6hdr;
-	bool logged = false;
-	unsigned int len, clen;
-	static ktime_t tstamp_bck;
-
+	struct sk_buff *skb, *next;
+	struct packet_type *ptype = NULL;
+	struct _dmy_info *dmy_info = NULL;
 	int st_depth = 0;
-	char *pos;
-	static struct sk_buff *dmy_skb[NR_CPUS];
-	int cur_cpu = get_cpu();put_cpu();
+	u16 budget = 0;
 
+	list_for_each_entry_safe(skb, next, &drd_worker.list, list) {
+		spin_lock_bh(&drd_worker.lock);
+		if (support_dropdump) {
+			list_for_each_entry_rcu(ptype, &ptype_log, list) {
+				if (ptype != NULL)
+					break;
+			}
 
-	if (mode) {
-		if (dmy_skb[cur_cpu] == skb)
-			return NULL;
-
-		pos = (char *)save_stack + (ST_SIZE * ST_MAX) * (unsigned long)cur_cpu;
-		st_depth = pr_stack(skb, pos);
-		if (st_depth < 0) {
-			drd_dbg("can't trace [%d]\n", st_depth);
-			return NULL;
-		}
-	}
-
-	if (ip4hdr->version == 4) {
-		len = ntohs(ip4hdr->tot_len);
-	} else {
-		ip6hdr = (struct ipv6hdr *)ip4hdr;
-		len = skb_network_header_len(skb) + ntohs(ip6hdr->payload_len);
-	}
-
-	if (mode) {
-		clen = min(0x80u, len);
-
-		/* set timestamp for dummy packet */
-		if (skb->tstamp >> 48 < 5000) {
-			/* packet has kernel timestamp, not utc
-			   using a zero-value for updating to utc at tpacket_rcv() */
-			tstamp_bck = 0;
+			drd_dbg(DEBUG_LOG, "del %u:%llu <%llx>\n", budget, drd_worker.num, (u64)(skb));
+			skb_list_del_init(skb);
+			drd_worker.num--;
 		} else {
-			/* using utc of original packet */
-			tstamp_bck = skb->tstamp;
+			spin_unlock_bh(&drd_worker.lock);
+			return;
 		}
-	} else {
-		clen = len;
-	}
+		spin_unlock_bh(&drd_worker.lock);
 
-	rcu_read_lock_bh();
-
-	old_dev = skb->dev;
-	if (skb->dev)
-		dev = skb->dev;
-	else if (skb_dst(skb) && skb_dst(skb)->dev)
-		dev = skb_dst(skb)->dev;
-	else
-		dev = init_net.loopback_dev;
-
-	skb->dev = dev;
-	list_for_each_entry_rcu(ptype, ptype_list, list) {
-		if (pt_prev) {
-			deliver_skb(skb2, pt_prev, dev);
-			pt_prev = ptype;
-			logged = true;
+		if (ptype == NULL || list_empty(&ptype->list)) {
+			drd_dbg(DEBUG_LOG,"pt list not ready\n");
+			__kfree_skb(skb);
 			continue;
 		}
 
-		skb2 = netdev_alloc_skb(dev, clen);
-		if (unlikely(!skb2)) {
-			drd_dbg("alloc fail, %u\n", clen);
-			goto out_unlock;
+		dmy_info = (struct _dmy_info *)(skb->data + PKTINFO_OFFSET(skb));
+
+		st_depth = set_stack_work(skb, dmy_info);
+		if (st_depth != NOT_TRACE) {
+			ptype->func(skb, skb->dev, ptype, skb->dev);
+		} else {
+			__kfree_skb(skb);
 		}
 
-		dmy_skb[cur_cpu] = skb2;
-
-		skb2->protocol = skb->protocol;
-		skb2->tstamp   = mode ? skb->tstamp : tstamp_bck;
-
-		skb_put(skb2, clen);
-		skb_reset_mac_header(skb2);
-		skb_reset_network_header(skb2);
-		skb_set_transport_header(skb2, skb_network_header_len(skb));
-
-		memcpy(skb_network_header(skb2), skb_network_header(skb), clen);
-
-		pt_prev = ptype;
+		if (++budget >= budget_limit)
+			break;
 	}
 
-	if (pt_prev) {
-		if (!skb_orphan_frags_rx(skb2, GFP_ATOMIC)) {
-			pt_prev->func(skb2, skb->dev, pt_prev, skb->dev);
-			logged = true;
-		} else
-			__kfree_skb(skb2);
+	if (!list_empty(&drd_worker.list)) {
+		if (budget_limit < BUDGET_MAX)
+			budget_limit <<= 1;
+		queue_delayed_work(drd_worker.wq, &drd_worker.dwork, msecs_to_jiffies(1));
+		drd_dbg(DEBUG_LOG, "pkt remained(%llu), trigger again. budget:%d\n", drd_worker.num, budget_limit);
+	} else {
+		drd_worker.num = 0;
 	}
 
-out_unlock:
-	skb->dev = old_dev;
-	rcu_read_unlock_bh();
-
-	if (mode && logged) {
-		//drd_print_skb(skb, len, reason );
-		return get_dummy(skb, reason, pos, st_depth);
-	}
-
-	return NULL;
+	return;
 }
+#else
+void save_pkt(struct sk_buff *skb)
+{
+	struct packet_type *ptype = NULL;
+
+	rcu_read_lock();
+	list_for_each_entry_rcu(ptype, &ptype_log, list) {
+		if (ptype != NULL)
+			break;
+	}
+
+	if (ptype == NULL || list_empty(&ptype->list)) {
+		drd_dbg(DEBUG_LOG,"pt list not ready\n");
+		__kfree_skb(skb);
+		goto out;
+	}
+
+	drd_dbg(DEBUG_LOG, "%llu <%llx>\n", dropped_count, (u64)(skb));
+	ptype->func(skb, skb->dev, ptype, skb->dev);
+out:
+	rcu_read_unlock();
+}
+#endif
 
 int skb_validate(struct sk_buff *skb)
 {
@@ -532,16 +577,23 @@ int skb_validate(struct sk_buff *skb)
 			return -1;
 
 		switch (skb->dev->name[0]) {
-			case 'r' : // rmnet*
-			//case 'w' : // wlan
-			case 'v' : // v4-rmnet*
-			case 'l' : // lo
-			//case 's' : // swlan /* swlan logging makes rcu lock starvation */
-			case 't' : // tun
-			case 'b' : // bt*
+			case 'r': // rmnet*
+			case 'v': // v4-rmnet*
+			case 't': // tun
+			case 'e': // epdg
 				break;
-			default :
-				drd_dbg("invalid dev: %s\n", skb->dev->name);
+			case 'l': // lo
+			case 'b': // bt*
+			case 'w': // wlan
+			case 's': // swlan
+				if (__ratelimit(&drd_ratelimit_pkt))
+					break;
+				if (skip_count < 0xffff)
+					skip_count++;
+				dropped_count++;
+				return -9;
+			default:
+				drd_dbg(DEBUG_LOG, "invalid dev: %s\n", skb->dev->name);
 				return -2;
 		}
 
@@ -564,27 +616,136 @@ int skb_validate(struct sk_buff *skb)
 		if (unlikely(skb->pkt_type == PACKET_LOOPBACK))
 			return -8;
 
+		drd_dbg(DEBUG_RAW, "ndev: %s\n", skb->dev->name);
 		return 0;
 	}
 
 	return -255;
 }
 
+
+struct sk_buff *get_dummy(struct sk_buff *skb, unsigned int reason)//, char *pos, int st_depth)
+{
+	struct sk_buff *dummy = NULL;
+	struct skb_shared_info *shinfo;
+	unsigned int copy_len     = PKTINFO_COPYLEN_MAX;
+	unsigned int copy_buf_len = PKTINFO_COPYLEN_MAX;
+	unsigned int org_len, dummy_len;
+	u8 ret = 0;
+
+	struct iphdr *ip4hdr = (struct iphdr *)(skb_network_header(skb));
+	struct ipv6hdr *ip6hdr;
+
+	if (ip4hdr->version == 4) {
+		org_len = ntohs(ip4hdr->tot_len);
+	} else {
+		ip6hdr  = (struct ipv6hdr *)ip4hdr;
+		org_len = skb_network_header_len(skb) + ntohs(ip6hdr->payload_len);
+	}
+
+	if (org_len < PKTINFO_COPYLEN_MAX) {
+		copy_len     = org_len;
+		copy_buf_len = round_up(org_len, 0x10);
+	}
+
+	dummy_len = copy_buf_len + sizeof(struct _dmy_info) + ST_BUF_SIZE;
+
+	dummy = alloc_skb(dummy_len, GFP_ATOMIC);
+	if (unlikely(!dummy)) {
+		drd_dbg(DEBUG_LOG, "alloc fail, %u\n", dummy_len);
+		return NULL;
+	}
+
+	drd_dbg(DEBUG_SAVE, "skb->len:%u org_len:%u copy_len:%u copy_buf_len:%u dummy_len:%u\n",
+		 skb->len, org_len, copy_len, copy_buf_len, dummy_len);
+
+	dummy->dev = skb->dev;
+	dummy->protocol = skb->protocol;
+	dummy->ip_summed = CHECKSUM_UNNECESSARY;
+
+	refcount_set(&skb->users, 1);
+
+	skb_put(dummy, dummy_len);
+	skb_reset_mac_header(dummy);
+	skb_reset_network_header(dummy);
+	skb_set_transport_header(dummy, skb_network_header_len(skb));
+
+	shinfo = skb_shinfo(dummy);
+	memset(shinfo, 0, sizeof(struct skb_shared_info));
+	atomic_set(&shinfo->dataref, 1);
+
+	INIT_LIST_HEAD(&dummy->list);
+
+	memcpy(dummy->data, skb_network_header(skb), copy_len);
+	memset((void *)((u64)dummy->data + (u64)copy_len), 0,
+		0x10 - (copy_len % 0x10) + sizeof(struct _dmy_info) + ST_BUF_SIZE);
+
+	ret = get_stack(skb, dummy, copy_buf_len, reason);
+	if (ret != NOT_TRACE) {
+		PKTINFO_OFFSET(dummy) = copy_buf_len;
+	} else {
+		drd_dbg(DEBUG_SAVE, "not saving pkt\n");
+		__kfree_skb(dummy);
+		return NULL;
+	}
+
+	return dummy;
+}
+
 void drd_kfree_skb(struct sk_buff *skb, unsigned int reason)
 {
 	struct sk_buff *dmy;
+#ifdef DRD_WQ
+	struct sk_buff *next;
+#endif
 
-	if (unlikely(!support_dropdump))
+	if (support_dropdump < 2) {
+#ifdef DRD_WQ
+		if (drd_worker.num) {
+			drd_dbg(DEBUG_LOG, "purge drd list\n");
+			cancel_delayed_work(&drd_worker.dwork);
+			spin_lock_bh(&drd_worker.lock);
+			list_for_each_entry_safe(dmy, next, &drd_worker.list, list) {
+				skb_list_del_init(dmy);
+				__kfree_skb(dmy);
+			}
+			drd_worker.num = 0;
+			spin_unlock_bh(&drd_worker.lock);
+		}
+#endif
 		return;
-
-	if (unlikely(skb_validate(skb)))
-		return;
-
-	dmy = drd_queue_skb(skb, 1, reason);
-	if (unlikely(dmy)) {
-		drd_queue_skb(dmy, 0, 0);
-		__kfree_skb(dmy);
 	}
+
+	if (skb_validate(skb))
+		return;
+
+#ifdef DRD_WQ
+	if (unlikely(drd_worker.num >= LIST_MAX - 1)) {
+		drd_dbg(DEBUG_LOG, "drd list full\n");
+		return;
+	}
+#endif
+
+	dmy = get_dummy(skb, reason);
+	if (dmy == NULL)
+		return;
+
+#ifdef DRD_WQ
+	spin_lock_bh(&drd_worker.lock);
+
+	if (support_dropdump) {
+		list_add_tail(&dmy->list, &drd_worker.list);
+		drd_worker.num++;
+		drd_dbg(DEBUG_LOG, "add %llu <%pK>\n", drd_worker.num, dmy);
+	}
+	spin_unlock_bh(&drd_worker.lock);
+
+	budget_limit = budget_default;
+	queue_delayed_work(drd_worker.wq, &drd_worker.dwork, 0);
+#else
+	save_pkt(dmy);
+#endif
+
 }
 EXPORT_SYMBOL_GPL(drd_kfree_skb);
 
@@ -623,6 +784,109 @@ static void drd_kfree_skb_handler(void *data, struct sk_buff *skb, void *locatio
 	drd_kfree_skb(skb, (unsigned int)reason);
 }
 
+struct kobject *drd_kobj;
+int get_attr_input(const char *buf, int *val)
+{
+	int ival;
+	int err = kstrtoint(buf, 0, &ival);
+	if (err >= 0)
+		*val = ival;
+	else
+		drd_info("invalid input: %s\n", buf);
+	return err;
+}
+
+static ssize_t hstat_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf,
+		       "stack : total %d, used %lld, dupplicated %llu, max_depth %u, dropped %llu\n",
+		       DRD_HSIZE, hmap_count, hdup_count, hmax_depth, dropped_count);
+}
+
+
+static struct kobj_attribute hstat_attribute = {
+	.attr = {.name = "hstat", .mode = 0660},
+	.show = hstat_show,
+};
+
+static ssize_t hmap_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	int i;
+	struct st_item *lookup;
+
+	for (i = 0; i < DRD_HSIZE; i++) {
+		lookup = &hmap[i];
+		drd_info("---------------------------------------------------------------------\n");
+		do {
+			drd_info("%03d <%llx:%llu> '%s'\n", i, lookup->p, lookup->matched, lookup->st);
+			lookup = (struct st_item *)lookup->list.next;
+		} while (lookup != &hmap[i]);
+	}
+	drd_info("---------------------------------------------------------------------\n");
+
+	return sprintf(buf, "hmap checked\n");
+}
+
+static struct kobj_attribute hmap_attribute = {
+	.attr = {.name = "hmap", .mode = 0660},
+	.show = hmap_show,
+};
+
+static ssize_t debug_drd_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "current debug_drd: %d (0x%x)\n", debug_drd, debug_drd);
+}
+
+ssize_t debug_drd_store(struct kobject *kobj, struct kobj_attribute *attr,
+			const char *buf, size_t count)
+{
+	if (get_attr_input(buf, &debug_drd) >= 0)
+		drd_info("debug_drd = %d\n", debug_drd);
+	return count;
+}
+
+static struct kobj_attribute debug_drd_attribute = {
+	.attr = {.name = "debug_drd", .mode = 0660},
+	.show = debug_drd_show,
+	.store = debug_drd_store,
+};
+
+#ifdef DRD_WQ
+static ssize_t budget_default_show(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "current budget_default: %u\n", budget_default);
+}
+
+ssize_t budget_default_store(struct kobject *kobj, struct kobj_attribute *attr,
+			const char *buf, size_t count)
+{
+	if (get_attr_input(buf, &budget_default) >= 0)
+		drd_info("budget_default = %u\n", budget_default);
+	return count;
+}
+
+static struct kobj_attribute budget_default_attribute = {
+	.attr = {.name = "budget_default", .mode = 0660},
+	.show = budget_default_show,
+	.store = budget_default_store,
+};
+#endif
+
+static struct attribute *dropdump_attrs[] = {
+	&hstat_attribute.attr,
+	&hmap_attribute.attr,
+	&debug_drd_attribute.attr,
+#ifdef DRD_WQ
+	&budget_default_attribute.attr,
+#endif
+	NULL,
+};
+ATTRIBUTE_GROUPS(dropdump);
+
 static struct ctl_table drd_proc_table[] = {
 	{
 		.procname	= "support_dropdump",
@@ -645,7 +909,7 @@ static struct ctl_table drd_proc_table[] = {
 
 static int __init init_net_drop_dump(void)
 {
-	int rc = 0;
+	int rc = 0, i;
 
 	drd_info("\n");
 
@@ -666,8 +930,47 @@ static int __init init_net_drop_dump(void)
 		return -EIO;
 	}
 
-	support_dropdump = 0;
+#ifdef DRD_WQ
+	drd_worker.wq = create_workqueue("drd_work");
+	if (!drd_worker.wq) {
+		drd_info("fail to create wq\n");
+		return -ENOMEM;
+	}
+	INIT_DELAYED_WORK(&drd_worker.dwork, save_pkt_work);
+	INIT_LIST_HEAD(&drd_worker.list);
+	spin_lock_init(&drd_worker.lock);
+	drd_worker.num = 0;
+#endif
 
+	drd_kobj = kobject_create_and_add("dropdump", kernel_kobj);
+	if (!drd_kobj) {
+		drd_info("fail to create kobj\n");
+		rc = -ENOMEM;
+		goto kobj_error;
+	}
+	rc = sysfs_create_groups(drd_kobj, dropdump_groups);
+	if (rc) {
+		drd_info("fail to create attr\n");
+		goto attr_error;
+	}
+
+	for (i = 0; i < DRD_HSIZE; i++) {
+		init_st_item(&hmap[i]);
+	}
+	spin_lock_init(&hlock);
+
+	support_dropdump = 0;
+	goto out;
+
+attr_error:
+	kobject_put(drd_kobj);
+
+kobj_error:
+#ifdef DRD_WQ
+	destroy_workqueue(drd_worker.wq);
+#endif
+
+out:
 	return rc;
 }
 
