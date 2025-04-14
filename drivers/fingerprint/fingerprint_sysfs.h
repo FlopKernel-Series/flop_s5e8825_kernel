@@ -22,6 +22,7 @@
 #include <linux/device.h>
 #include <linux/fs.h>
 #include <linux/err.h>
+#include <linux/version.h>
 
 void set_fingerprint_attr(struct device *dev,
 	struct device_attribute *attributes[]);

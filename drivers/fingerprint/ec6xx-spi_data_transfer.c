@@ -527,6 +527,10 @@ int ec6xx_io_get_frame(struct ec6xx_data *etspi, u8 *fr, u32 size)
 	pr_debug("size = %d, xfer.len = %d, buf = %p, fr = %p\n",
 			size, spi_len, etspi->buf, fr);
 
+	if (spi_len >= bufsiz) {
+		pr_info("xfer.len = %d, bufsiz = %d\n", spi_len, bufsiz);
+		return -EFAULT;
+	}
 	memset(etspi->buf, 0, spi_len);
 	etspi->buf[0] = OP_IMG_R;
 	retval = ec6xx_spi_sync(etspi, spi_len);
