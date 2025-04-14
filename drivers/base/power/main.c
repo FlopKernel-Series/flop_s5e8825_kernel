@@ -244,8 +244,11 @@ static void dpm_wait(struct device *dev, bool async)
 	if (!dev)
 		return;
 
-	if (async || (pm_async_enabled && dev->power.async_suspend))
+	if (async || (pm_async_enabled && dev->power.async_suspend)) {
+		secdbg_dtsk_built_set_data(DTYPE_DPMDEV, dev);
 		wait_for_completion(&dev->power.completion);
+		secdbg_dtsk_built_clear_data();
+	}
 }
 
 static int dpm_wait_fn(struct device *dev, void *async_ptr)
