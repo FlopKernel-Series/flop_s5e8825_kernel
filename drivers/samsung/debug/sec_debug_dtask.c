@@ -135,6 +135,13 @@ static void secdbg_print_rwsem_info(struct task_struct *task, struct sec_debug_w
 	pr_cont("\n");
 }
 
+static void secdbg_print_dpm_device_info(struct task_struct *task, struct sec_debug_wait *winfo, bool raw)
+{
+	struct device *dev = (struct device *)winfo->data;
+
+	pr_info("DPM: %s %s\n", dev_driver_string(dev), dev_name(dev));
+}
+
 static void secdbg_dtsk_print_info(struct task_struct *task, bool raw)
 {
 	struct sec_debug_wait winfo;
@@ -154,6 +161,9 @@ static void secdbg_dtsk_print_info(struct task_struct *task, bool raw)
 		break;
 	case DTYPE_RWSEM:
 		secdbg_print_rwsem_info(task, &winfo, raw);
+		break;
+	case DTYPE_DPMDEV:
+		secdbg_print_dpm_device_info(task, &winfo, raw);
 		break;
 	default:
 		/* unknown type */
