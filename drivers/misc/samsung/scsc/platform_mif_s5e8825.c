@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright (c) 2014 - 2021 Samsung Electronics Co., Ltd. All rights reserved
+ * Copyright (c) 2014 - 2024 Samsung Electronics Co., Ltd. All rights reserved
  *
  ****************************************************************************/
 
@@ -2995,12 +2995,11 @@ void platform_mif_resume(struct scsc_mif_abs *interface)
 	platform_mif_reg_restore(platform);
 
 	SCSC_TAG_INFO_DEV(PLAT_MIF, platform->dev,
-			  "Set TCXO_GATE bit\n");
-	/* Clear WLBT_ACTIVE_CLR flag in WLBT_CTRL_NS */
-	ret = regmap_write_bits(platform->pmureg, WLBT_CTRL_NS  | 0xc000, TCXO_GATE, TCXO_GATE);
+			  "Clear WLBT_ACTIVE_CLR flag\n");
+	ret = regmap_write_bits(platform->pmureg, WLBT_CTRL_NS | 0xc000, 8, 8);
 	if (ret < 0) {
 		SCSC_TAG_ERR_DEV(PLAT_MIF, platform->dev,
-			"Failed to Set WLBT_CTRL_NS[TCXO_GATE]: %d\n", ret);
+				 "Failed to Set WLBT_CTRL_NS[WLBT_ACTIVE_CLR]: %d\n", ret);
 	}
 
 	if (platform->resume_handler)
