@@ -1114,7 +1114,8 @@ void stm_ts_set_cover_type(struct stm_ts_data *ts, bool enable)
 
 	input_info(true, ts->dev, "%s: %d\n", __func__, ts->plat_data->cover_type);
 
-	cover_cmd = sec_input_check_cover_type(ts->dev) & 0xFF;
+	cover_cmd = ts->plat_data->cover_type & 0xFF;
+	input_info(true, ts->dev, "%s: Using cover_type %d directly from plat_data\n", __func__, cover_cmd);
 
 	if (enable) {
 		address = STM_TS_CMD_SET_GET_COVERTYPE;
@@ -1767,7 +1768,7 @@ int stm_tclm_data_read(struct device *dev, int address)
 				nvm_data[STM_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO].length; i++)
 			ts->tdata->nvdata.cal_pos_hist_queue[i - nvm_data[STM_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO].offset] = nbuff[i];
 
-		ts->tdata->nvdata.cal_fail_falg = nbuff[nvm_data[STM_TS_NVM_OFFSET_CAL_FAIL_FLAG].offset];
+		ts->tdata->nvdata.cal_fail_flag = nbuff[nvm_data[STM_TS_NVM_OFFSET_CAL_FAIL_FLAG].offset];
 		ts->tdata->nvdata.cal_fail_cnt= nbuff[nvm_data[STM_TS_NVM_OFFSET_CAL_FAIL_COUNT].offset];
 		ts->fac_nv = nbuff[nvm_data[STM_TS_NVM_OFFSET_FAC_RESULT].offset];
 		ts->disassemble_count = nbuff[nvm_data[STM_TS_NVM_OFFSET_DISASSEMBLE_COUNT].offset];
@@ -1812,7 +1813,7 @@ int stm_tclm_data_write(struct device *dev, int address)
 				i < nvm_data[STM_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO].offset +
 				nvm_data[STM_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO].length; i++)
 			nbuff[i] = ts->tdata->nvdata.cal_pos_hist_queue[i - nvm_data[STM_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO].offset];
-		nbuff[nvm_data[STM_TS_NVM_OFFSET_CAL_FAIL_FLAG].offset] = ts->tdata->nvdata.cal_fail_falg;
+		nbuff[nvm_data[STM_TS_NVM_OFFSET_CAL_FAIL_FLAG].offset] = ts->tdata->nvdata.cal_fail_flag;
 		nbuff[nvm_data[STM_TS_NVM_OFFSET_CAL_FAIL_COUNT].offset] = ts->tdata->nvdata.cal_fail_cnt;
 		ret = set_nvm_data_by_size(ts, nvm_data[STM_TS_NVM_OFFSET_FAC_RESULT].offset, STM_TS_NVM_OFFSET_ALL, nbuff);
 		return ret;
