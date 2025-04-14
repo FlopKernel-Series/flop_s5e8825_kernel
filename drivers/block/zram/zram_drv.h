@@ -196,7 +196,7 @@ struct zram {
 #ifdef CONFIG_ZRAM_LRU_WRITEBACK
 	struct task_struct *wbd;
 	wait_queue_head_t wbd_wait;
-	u8 *wb_table;
+	u16 *wb_table;
 	unsigned long *chunk_bitmap;
 	unsigned long nr_lru_pages;
 	bool wbd_running;
