@@ -761,11 +761,10 @@ void ec6xx_platformUninit(struct ec6xx_data *etspi)
 static int ec6xx_parse_dt(struct device *dev, struct ec6xx_data *etspi)
 {
 	struct device_node *np = dev->of_node;
-	enum of_gpio_flags flags;
 	int retval = 0;
 	int gpio;
 
-	gpio = of_get_named_gpio_flags(np, "etspi-sleepPin", 0, &flags);
+	gpio = of_get_named_gpio(np, "etspi-sleepPin", 0);
 	if (gpio < 0) {
 		retval = gpio;
 		pr_err("fail to get sleepPin\n");
@@ -774,7 +773,7 @@ static int ec6xx_parse_dt(struct device *dev, struct ec6xx_data *etspi)
 		etspi->sleepPin = gpio;
 		pr_info("sleepPin=%d\n", etspi->sleepPin);
 	}
-	gpio = of_get_named_gpio_flags(np, "etspi-drdyPin",	0, &flags);
+	gpio = of_get_named_gpio(np, "etspi-drdyPin", 0);
 	if (gpio < 0) {
 		retval = gpio;
 		pr_err("fail to get drdyPin\n");
@@ -783,8 +782,7 @@ static int ec6xx_parse_dt(struct device *dev, struct ec6xx_data *etspi)
 		etspi->drdyPin = gpio;
 		pr_info("drdyPin=%d\n", etspi->drdyPin);
 	}
-	gpio = of_get_named_gpio_flags(np, "etspi-ldoPin",
-		0, &flags);
+	gpio = of_get_named_gpio(np, "etspi-ldoPin", 0);
 	if (gpio < 0) {
 		etspi->ldo_pin = 0;
 		pr_err("fail to get ldo_pin\n");
@@ -922,11 +920,15 @@ static int ec6xx_type_check(struct ec6xx_data *etspi)
 	/*
 	 * type check return value
 	 * EC617  : XX / 0x11 / 0x06
+	 * EC618  : XX / 0x12 / 0x06
 	 */
 
 	if ((buf2 == 0x11) && (buf3 == 0x06)) {
 		etspi->sensortype = SENSOR_OK;
 		pr_info("sensor type is EGIS EC617 sensor\n");
+	} else if ((buf2 == 0x12) && (buf3 == 0x06)) {
+		etspi->sensortype = SENSOR_OK;
+		pr_info("sensor type is EGIS EC618 sensor\n");
 	} else {
 		etspi->sensortype = SENSOR_FAILED;
 		pr_info("sensor type is FAILED\n");
@@ -1392,7 +1394,11 @@ static int __init ec6xx_init(void)
 		return retval;
 	}
 
+#if (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
+	ec6xx_class = class_create("egis_fingerprint");
+#else
 	ec6xx_class = class_create(THIS_MODULE, "egis_fingerprint");
+#endif
 	if (IS_ERR(ec6xx_class)) {
 		pr_err("class_create error.\n");
 		unregister_chrdev(EC6XX_MAJOR, ec6xx_spi_driver.driver.name);
@@ -1429,7 +1435,7 @@ static void __exit ec6xx_exit(void)
 	unregister_chrdev(EC6XX_MAJOR, ec6xx_spi_driver.driver.name);
 }
 
-module_init(ec6xx_init);
+late_initcall(ec6xx_init);
 module_exit(ec6xx_exit);
 
 MODULE_AUTHOR("fp.sec@samsung.com");

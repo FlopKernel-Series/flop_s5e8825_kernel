@@ -133,7 +133,7 @@
 #define MAX_NVM_LEN (32 * 2) /* NVM length in bytes (32 * 16 bits internally) */
 #define NVM_WRITE_LENGTH 4096
 #define DETECT_ADM 1
-static unsigned int bufsiz = 32 * 1024;
+static unsigned int bufsiz = 64 * 1024;
 
 struct egis_ioc_transfer {
 	u8 *tx_buf;

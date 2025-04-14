@@ -37,7 +37,11 @@ int fingerprint_register(struct device *dev, void *drvdata,
 	int ret = 0;
 
 	if (!fingerprint_class) {
+#if (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
+		fingerprint_class = class_create("fingerprint");
+#else
 		fingerprint_class = class_create(THIS_MODULE, "fingerprint");
+#endif
 		if (IS_ERR(fingerprint_class))
 			return PTR_ERR(fingerprint_class);
 	}
@@ -78,8 +82,11 @@ EXPORT_SYMBOL_GPL(destroy_fingerprint_class);
 static int __init fingerprint_class_init(void)
 {
 	pr_info("%s\n", __func__);
+#if (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
+	fingerprint_class = class_create("fingerprint");
+#else
 	fingerprint_class = class_create(THIS_MODULE, "fingerprint");
-
+#endif
 	if (IS_ERR(fingerprint_class)) {
 		pr_err("%s, create fingerprint_class is failed.(err=%d)\n",
 			__func__, IS_ERR(fingerprint_class));
