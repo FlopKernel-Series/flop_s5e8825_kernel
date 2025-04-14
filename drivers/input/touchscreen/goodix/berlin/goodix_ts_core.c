@@ -323,28 +323,28 @@ static int goodix_parse_update_info(struct device_node *node,
 {
 	int ret;
 
-	ret = of_property_read_u32(node, "goodix,isp_ram_reg", &ts->isp_ram_reg);
+	ret = of_property_read_u32(node, "sec,isp_ram_reg", &ts->isp_ram_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,flash_cmd_reg", &ts->flash_cmd_reg);
+	ret = of_property_read_u32(node, "sec,flash_cmd_reg", &ts->flash_cmd_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,isp_buffer_reg", &ts->isp_buffer_reg);
+	ret = of_property_read_u32(node, "sec,isp_buffer_reg", &ts->isp_buffer_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,config_data_reg", &ts->config_data_reg);
+	ret = of_property_read_u32(node, "sec,config_data_reg", &ts->config_data_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,misctl_reg", &ts->misctl_reg);
+	ret = of_property_read_u32(node, "sec,misctl_reg", &ts->misctl_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,watch_dog_reg", &ts->watch_dog_reg);
+	ret = of_property_read_u32(node, "sec,watch_dog_reg", &ts->watch_dog_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,config_id_reg", &ts->config_id_reg);
+	ret = of_property_read_u32(node, "sec,config_id_reg", &ts->config_id_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,enable_misctl_val", &ts->enable_misctl_val);
+	ret = of_property_read_u32(node, "sec,enable_misctl_val", &ts->enable_misctl_val);
 	if (ret < 0)
 		return ret;
 
@@ -359,53 +359,53 @@ static int goodix_test_prepare(struct device_node *node,
 	int size;
 	int ret;
 
-	ret = of_property_read_u32(node, "goodix,max_drv_num", &ts->max_drv_num);
+	ret = of_property_read_u32(node, "sec,max_drv_num", &ts->max_drv_num);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,max_sen_num", &ts->max_sen_num);
+	ret = of_property_read_u32(node, "sec,max_sen_num", &ts->max_sen_num);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,short_test_time_reg", &ts->short_test_time_reg);
+	ret = of_property_read_u32(node, "sec,short_test_time_reg", &ts->short_test_time_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,short_test_status_reg", &ts->short_test_status_reg);
+	ret = of_property_read_u32(node, "sec,short_test_status_reg", &ts->short_test_status_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,short_test_result_reg", &ts->short_test_result_reg);
+	ret = of_property_read_u32(node, "sec,short_test_result_reg", &ts->short_test_result_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,drv_drv_reg", &ts->drv_drv_reg);
+	ret = of_property_read_u32(node, "sec,drv_drv_reg", &ts->drv_drv_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,sen_sen_reg", &ts->sen_sen_reg);
+	ret = of_property_read_u32(node, "sec,sen_sen_reg", &ts->sen_sen_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,drv_sen_reg", &ts->drv_sen_reg);
+	ret = of_property_read_u32(node, "sec,drv_sen_reg", &ts->drv_sen_reg);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,diff_code_reg", &ts->diff_code_reg);
+	ret = of_property_read_u32(node, "sec,diff_code_reg", &ts->diff_code_reg);
 	if (ret < 0)
 		return ret;
 
 	if (ts->bus->ic_type != IC_TYPE_GT9916K) {
-		ret = of_property_read_u32(node, "goodix,production_test_addr", &ts->production_test_addr);
+		ret = of_property_read_u32(node, "sec,production_test_addr", &ts->production_test_addr);
 		if (ret < 0)
 			return ret;
 	}
-	ret = of_property_read_u32(node, "goodix,switch_cfg_cmd", &ts->switch_cfg_cmd);
+	ret = of_property_read_u32(node, "sec,switch_cfg_cmd", &ts->switch_cfg_cmd);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,switch_freq_cmd", &ts->switch_freq_cmd);
+	ret = of_property_read_u32(node, "sec,switch_freq_cmd", &ts->switch_freq_cmd);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,snr_cmd", &ts->snr_cmd);
+	ret = of_property_read_u32(node, "sec,snr_cmd", &ts->snr_cmd);
 	if (ret < 0)
 		return ret;
-	ret = of_property_read_u32(node, "goodix,sensitive_cmd", &ts->sensitive_cmd);
+	ret = of_property_read_u32(node, "sec,sensitive_cmd", &ts->sensitive_cmd);
 	if (ret < 0)
 		return ret;
 
-	prop = of_find_property(node, "goodix,drv_map", &size);
+	prop = of_find_property(node, "sec,drv_map", &size);
 	if (!prop) {
 		ts_err("can't find drv_map");
 		return -EINVAL;
@@ -416,13 +416,13 @@ static int goodix_test_prepare(struct device_node *node,
 		return -EINVAL;
 	}
 
-	ret = of_property_read_u32_array(node, "goodix,drv_map", ts->drv_map, arr_len);
+	ret = of_property_read_u32_array(node, "sec,drv_map", ts->drv_map, arr_len);
 	if (ret < 0)
 		return ret;
 
 	ts_info("drv_map array size:%d", arr_len);
 
-	prop = of_find_property(node, "goodix,sen_map", &size);
+	prop = of_find_property(node, "sec,sen_map", &size);
 	if (!prop) {
 		ts_err("can't find sen_map");
 		return -EINVAL;
@@ -433,13 +433,13 @@ static int goodix_test_prepare(struct device_node *node,
 		return -EINVAL;
 	}
 
-	ret = of_property_read_u32_array(node, "goodix,sen_map", ts->sen_map, arr_len);
+	ret = of_property_read_u32_array(node, "sec,sen_map", ts->sen_map, arr_len);
 	if (ret < 0)
 		return ret;
 
 	ts_info("sen_map array size:%d", arr_len);
 
-	ts->enable_esd_check = of_property_read_bool(node, "goodix,enable_esd_check");
+	ts->enable_esd_check = of_property_read_bool(node, "sec,enable_esd_check");
 	ts_info("esd check %s", ts->enable_esd_check ? "enable" : "disable");
 
 	return 0;
@@ -457,7 +457,7 @@ static int goodix_parse_dt(struct device *dev, struct goodix_ts_data *ts)
 	}
 
 	/* get ic type */
-	r = of_property_read_u32(node, "goodix,ic_type", &ic_type);
+	r = of_property_read_u32(node, "sec,ic_type", &ic_type);
 	if (r < 0) {
 		ts_err("can't parse sec,ic_type, exit");
 		return r;
