@@ -38,7 +38,7 @@ static void sec_trusted_bus_put(struct sec_ts_plat_data *pdata)
 	struct sec_trusted_touch *pvm = pdata->pvm;
 	struct device *dev = NULL;
 
-	dev = pdata->bus_master;
+	dev = pdata->bus_master->parent;
 
 	mutex_lock(&pvm->clk_io_ctrl_mutex);
 	if (pvm->core_clk != NULL && pvm->iface_clk != NULL)
@@ -107,9 +107,9 @@ static int sec_trusted_populate_vm_info(struct device *dev)
 	int num_regs, num_sizes, num_gpios, list_size;
 	struct resource res;
 	struct sec_ts_plat_data *pdata;
-	
+
 	pdata = (struct sec_ts_plat_data *)dev_get_platdata(dev);
-	
+
 	vm_info = kzalloc(sizeof(struct trusted_touch_vm_info), GFP_KERNEL);
 	if (!vm_info) {
 		rc = -ENOMEM;
@@ -145,7 +145,7 @@ static int sec_trusted_populate_vm_info(struct device *dev)
 		goto vm_error;
 	}
 
-	num_gpios = of_gpio_named_count(np, "trusted-touch-vm-gpio-list");
+	num_gpios = of_count_phandle_with_args(np, "trusted-touch-vm-gpio-list", "#gpio-cells");
 	if (num_gpios < 0) {
 		input_err(true, pdata->dev, "Ignoring invalid trusted gpio list: %d\n", num_gpios);
 		num_gpios = 0;
@@ -250,41 +250,41 @@ static void sec_trusted_touch_abort_pvm(struct sec_ts_plat_data *pdata)
 	}
 
 	switch (vm_state) {
-		case PVM_IRQ_RELEASE_NOTIFIED:
-		case PVM_ALL_RESOURCES_RELEASE_NOTIFIED:
-		case PVM_IRQ_LENT:
-		case PVM_IRQ_LENT_NOTIFIED:
-			rc = gh_irq_reclaim(vm_info->irq_label);
-			if (rc)
-				input_err(true, pdata->dev, "failed to reclaim irq on pvm rc:%d\n", rc);
-			fallthrough;
-		case PVM_IRQ_RECLAIMED:
-		case PVM_IOMEM_LENT:
-		case PVM_IOMEM_LENT_NOTIFIED:
-		case PVM_IOMEM_RELEASE_NOTIFIED:
+	case PVM_IRQ_RELEASE_NOTIFIED:
+	case PVM_ALL_RESOURCES_RELEASE_NOTIFIED:
+	case PVM_IRQ_LENT:
+	case PVM_IRQ_LENT_NOTIFIED:
+		rc = gh_irq_reclaim(vm_info->irq_label);
+		if (rc)
+			input_err(true, pdata->dev, "failed to reclaim irq on pvm rc:%d\n", rc);
+		fallthrough;
+	case PVM_IRQ_RECLAIMED:
+	case PVM_IOMEM_LENT:
+	case PVM_IOMEM_LENT_NOTIFIED:
+	case PVM_IOMEM_RELEASE_NOTIFIED:
 #if (KERNEL_VERSION(6, 1, 0) <= LINUX_VERSION_CODE)
-			rc = ghd_rm_mem_reclaim(vm_info->vm_mem_handle, 0);
+		rc = ghd_rm_mem_reclaim(vm_info->vm_mem_handle, 0);
 #else
-			rc = gh_rm_mem_reclaim(vm_info->vm_mem_handle, 0);
+		rc = gh_rm_mem_reclaim(vm_info->vm_mem_handle, 0);
 #endif
-			if (rc)
-				input_err(true, pdata->dev, "failed to reclaim iomem on pvm rc:%d\n", rc);
-			vm_info->vm_mem_handle = 0;
-			fallthrough;
-		case PVM_IOMEM_RECLAIMED:
-		case PVM_INTERRUPT_DISABLED:
-			enable_irq(pdata->irq);
-			fallthrough;
-		case PVM_I2C_RESOURCE_ACQUIRED:
-		case PVM_INTERRUPT_ENABLED:
-			sec_trusted_bus_put(pdata);
-			fallthrough;
-		case TRUSTED_TOUCH_PVM_INIT:
-		case PVM_I2C_RESOURCE_RELEASED:
-			atomic_set(&pvm->trusted_touch_enabled, 0);
-			atomic_set(&pvm->trusted_touch_transition, 0);
-			complete_all(&pvm->trusted_touch_powerdown);
-			break;
+		if (rc)
+			input_err(true, pdata->dev, "failed to reclaim iomem on pvm rc:%d\n", rc);
+		vm_info->vm_mem_handle = 0;
+		fallthrough;
+	case PVM_IOMEM_RECLAIMED:
+	case PVM_INTERRUPT_DISABLED:
+		enable_irq(pdata->irq);
+		fallthrough;
+	case PVM_I2C_RESOURCE_ACQUIRED:
+	case PVM_INTERRUPT_ENABLED:
+		sec_trusted_bus_put(pdata);
+		fallthrough;
+	case TRUSTED_TOUCH_PVM_INIT:
+	case PVM_I2C_RESOURCE_RELEASED:
+		atomic_set(&pvm->trusted_touch_enabled, 0);
+		atomic_set(&pvm->trusted_touch_transition, 0);
+		complete_all(&pvm->trusted_touch_powerdown);
+		break;
 	}
 
 	atomic_set(&pvm->trusted_touch_abort_status, 0);
@@ -314,7 +314,7 @@ static int sec_trusted_clk_prepare_enable(struct sec_ts_plat_data *pdata)
 static int sec_trusted_bus_get(struct sec_ts_plat_data *pdata)
 {
 	struct sec_trusted_touch *pvm = pdata->pvm;
-	
+
 	int rc = 0;
 	struct device *dev = NULL;
 
@@ -349,7 +349,7 @@ static struct gh_notify_vmid_desc *sec_trusted_vm_get_vmid(gh_vmid_t vmid)
 
 static void stm_trusted_touch_pvm_vm_mode_disable(struct sec_ts_plat_data *pdata)
 {
-	struct sec_trusted_touch *pvm = pdata->pvm; 
+	struct sec_trusted_touch *pvm = pdata->pvm;
 	struct trusted_touch_vm_info *vm_info = pvm->vm_info;
 	int rc = 0;
 
@@ -615,8 +615,11 @@ error:
 
 int sec_trusted_handle_trusted_touch_pvm(struct sec_ts_plat_data *pdata, int value)
 {
-	struct sec_trusted_touch *pvm = pdata->pvm; 
+	struct sec_trusted_touch *pvm = pdata->pvm;
 	int err = 0;
+
+	if (pvm->pre_func)
+		pvm->pre_func(pdata->dev, value);
 
 	switch (value) {
 	case 0:
@@ -652,6 +655,10 @@ int sec_trusted_handle_trusted_touch_pvm(struct sec_ts_plat_data *pdata, int val
 		err = -EINVAL;
 		break;
 	}
+
+	if (pvm->post_func)
+		pvm->post_func(pdata->dev, value);
+
 	return err;
 }
 
@@ -733,7 +740,7 @@ static ssize_t trusted_touch_enable_show(struct device *dev, struct device_attri
 {
 	struct input_dev *input_dev = to_input_dev(dev);
 	struct sec_ts_plat_data *pdata = input_dev->dev.parent->platform_data;
-	struct sec_trusted_touch *pvm = pdata->pvm; 
+	struct sec_trusted_touch *pvm = pdata->pvm;
 
 	input_info(true, pdata->dev, "%s\n", __func__);
 	return scnprintf(buf, PAGE_SIZE, "%d", atomic_read(&pvm->trusted_touch_enabled));
@@ -743,7 +750,7 @@ static ssize_t trusted_touch_enable_store(struct device *dev, struct device_attr
 {
 	struct input_dev *input_dev = to_input_dev(dev);
 	struct sec_ts_plat_data *pdata = input_dev->dev.parent->platform_data;
-	struct sec_trusted_touch *pvm = pdata->pvm; 
+	struct sec_trusted_touch *pvm = pdata->pvm;
 	unsigned long value;
 	int ret;
 
@@ -844,12 +851,11 @@ static struct attribute_group trusted_attr_group = {//TODO: Move it back to core
 
 int sec_trusted_touch_init(struct device *dev)
 {
-	
 	int rc = 0;
 	int ret = 0;
 	struct sec_trusted_touch *pvm;
 	struct sec_ts_plat_data *pdata = dev->platform_data;
-	
+
 	pvm = devm_kzalloc(pdata->dev, sizeof(struct sec_trusted_touch), GFP_KERNEL);
 	if (!pvm) {
 		ret = -ENOMEM;

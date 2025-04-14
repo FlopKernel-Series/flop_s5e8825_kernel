@@ -220,16 +220,16 @@ static int sec_secure_touch_hall_ic_notifier(struct notifier_block *nb, unsigned
 	struct hall_notifier_context *hall_notifier;
 
 	if (!data)
-		return -ENOMEM;
+		return NOTIFY_DONE;
 
 	if (data->device_number < 1)
-		return -ENODEV;
+		return NOTIFY_DONE;
 
 	hall_notifier = ptr;
 
 	if (strncmp(hall_notifier->name, "flip", 4) != 0) {
 		pr_info("%s: %s\n", __func__, hall_notifier->name);
-		return 0;
+		return NOTIFY_DONE;
 	}
 
 	data->hall_ic = hall_ic;
@@ -240,7 +240,7 @@ static int sec_secure_touch_hall_ic_notifier(struct notifier_block *nb, unsigned
 			data->touch_driver[SECURE_TOUCH_SUB_DEV].is_running ? "tsp2" : "");
 
 	if (data->device_number < 2)
-		return 0;
+		return NOTIFY_DONE;
 
 	if (data->hall_ic == SECURE_TOUCH_FOLDER_OPEN) {
 		if (data->touch_driver[SECURE_TOUCH_SUB_DEV].registered) {
@@ -282,7 +282,7 @@ static int sec_secure_touch_hall_ic_notifier(struct notifier_block *nb, unsigned
 out:
 	schedule_work(&data->folder_work.work);
 
-	return 0;
+	return NOTIFY_DONE;
 }
 #endif
 
@@ -292,10 +292,10 @@ static int sec_secure_touch_hall_ic_ssh_notifier(struct notifier_block *nb, unsi
 	struct sec_secure_touch *data = container_of(nb, struct sec_secure_touch, nb_ssh);
 
 	if (!data)
-		return -ENOMEM;
+		return NOTIFY_DONE;
 
 	if (data->device_number < 1)
-		return -ENODEV;
+		return NOTIFY_DONE;
 
 	data->hall_ic = hall_ic;
 
@@ -306,7 +306,7 @@ static int sec_secure_touch_hall_ic_ssh_notifier(struct notifier_block *nb, unsi
 
 	schedule_work(&data->folder_work.work);
 
-	return 0;
+	return NOTIFY_DONE;
 }
 #endif
 #endif
