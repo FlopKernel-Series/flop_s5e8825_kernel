@@ -1,6 +1,7 @@
 #define ITAG " [Input Booster] "
 #include <linux/input/input_booster.h>
 
+#include <linux/version.h>
 #include <linux/random.h>
 #include <linux/spinlock.h>
 #include <linux/syscalls.h>
@@ -1000,7 +1001,13 @@ out:
 		if (ib_init_succeed) {
 			for (mode_type = 0; mode_type < num_of_mode; mode_type++) {
 				ib_mode = &ib_boost_modes[mode_type];
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0))
+				sysfs_class = class_create(ib_mode->label);
+#else
 				sysfs_class = class_create(THIS_MODULE, ib_mode->label);
+#endif
+
 				if (IS_ERR(sysfs_class)) {
 					pr_err(ITAG" Failed to create class\n");
 					continue;
