@@ -6459,6 +6459,8 @@ static irqreturn_t ufshcd_check_errors(struct ufs_hba *hba, u32 intr_status)
 	}
 
 	trace_android_vh_ufs_check_int_errors(hba, queue_eh_work);
+	if (ufshcd_is_link_broken(hba))
+		queue_eh_work = true;
 
 	if (queue_eh_work) {
 		/*

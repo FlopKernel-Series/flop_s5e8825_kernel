@@ -2124,7 +2124,7 @@ static int exynos_ufs_sysfs_init(struct exynos_ufs *ufs)
 	 */
 	ufs->params[UFS_S_PARAM_EOM_VER] = 0;
 	ufs->params[UFS_S_PARAM_MON] = 0;
-	ufs->params[UFS_S_PARAM_H8_D_MS] = 4;
+	ufs->params[UFS_S_PARAM_H8_D_MS] = 8;
 
 	return 0;
 
