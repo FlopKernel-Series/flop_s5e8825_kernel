@@ -35,7 +35,7 @@ upload() {
 
     if [[ "$DO_TG" == "1" ]]; then
         echo -e "\nINFO: Uploading to Telegram\n"
-        tgs "$TAR_PATH"
+        tgs "$ZIP_PATH"
     fi
 
     if [[ "$BUILD_LOG" == "1" ]]; then
