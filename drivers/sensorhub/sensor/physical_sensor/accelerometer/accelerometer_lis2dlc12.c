@@ -23,10 +23,12 @@
 #include <linux/of_gpio.h>
 
 #define LIS2DLC12_NAME		"LIS2DLC12"
-static void parse_dt_accelerometer_lis2dlc12(struct device *dev)
+static void parse_dt_accelerometer_lis2dlc12(struct device *dev, int id)
 {
 	struct accelerometer_data *data = get_sensor(SENSOR_TYPE_ACCELEROMETER)->data;
 	struct device_node *np = dev->of_node;
+
+	(void) id;
 
 	if (of_property_read_u32(np, "acc-lis2dlc12-position", &data->position))
 		data->position = 0;
