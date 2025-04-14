@@ -71,7 +71,24 @@
 #include <linux/vbus_notifier.h>
 #endif
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2) && IS_ENABLED(CONFIG_SEC_FACTORY)
+#include <linux/sec_panel_notifier_v2.h>
+#define FTS_PANEL_DETACHED	0
+#define FTS_PANEL_ATTACHED	1
+#endif
+
 extern struct device *ptsp;
+
+/* SEC touch type */
+#define SEC_TS_TOUCHTYPE_NORMAL		0
+#define SEC_TS_TOUCHTYPE_HOVER		1
+#define SEC_TS_TOUCHTYPE_FLIPCOVER	2
+#define SEC_TS_TOUCHTYPE_GLOVE		3
+#define SEC_TS_TOUCHTYPE_STYLUS		4
+#define SEC_TS_TOUCHTYPE_PALM		5
+#define SEC_TS_TOUCHTYPE_WET		6
+#define SEC_TS_TOUCHTYPE_PROXIMITY	7
+#define SEC_TS_TOUCHTYPE_JIG		8
 
 /*****************************************************************************
 * Private constant and macro definitions using #define
@@ -79,8 +96,9 @@ extern struct device *ptsp;
 #define FTS_MAX_POINTS_SUPPORT              10 /* constant value, can't be changed */
 #define FTS_MAX_KEYS                        4
 #define FTS_KEY_DIM                         10
-#define FTS_ONE_TCH_LEN                     6
+#define FTS_ONE_TCH_LEN                     16
 #define FTS_TOUCH_DATA_LEN  (FTS_MAX_POINTS_SUPPORT * FTS_ONE_TCH_LEN + 3)
+#define IRQ_EVENT_HEAD_LEN			1
 
 #define FTS_GESTURE_POINTS_MAX              6
 #define FTS_GESTURE_DATA_LEN               (FTS_GESTURE_POINTS_MAX * 4 + 4)
@@ -115,6 +133,12 @@ extern struct device *ptsp;
 
 #define FTS_TOUCH_COUNT(x)			hweight_long(*x & BITMAP_LAST_WORD_MASK(FTS_MAX_POINTS_SUPPORT))
 
+/* SEC status event id */
+#define SEC_TS_COORDINATE_EVENT			0
+#define SEC_TS_STATUS_EVENT			1
+#define SEC_TS_GESTURE_EVENT			2
+#define SEC_TS_EMPTY_EVENT			3
+
 /*****************************************************************************
 *  Alternative mode (When something goes wrong, the modules may be able to solve the problem.)
 *****************************************************************************/
@@ -125,7 +149,7 @@ extern struct device *ptsp;
 #define FTS_WAKELOCK_TIME			500
 #define FTS_TIMEOUT_COMERR_PM                   700
 
-#define FTS_HIGH_REPORT                         0
+//#define FTS_HIGH_REPORT                         0
 #define FTS_SIZE_DEFAULT                        15
 
 
@@ -137,31 +161,6 @@ struct ftxxxx_proc {
 	u8 opmode;
 	u8 cmd_len;
 	u8 cmd[FTS_MAX_COMMMAND_LENGTH];
-};
-
-struct fts_ts_platform_data {
-	u32 irq_gpio;
-	u32 irq_gpio_flags;
-	u32 reset_gpio;
-	u32 reset_gpio_flags;
-	bool have_key;
-	u32 key_number;
-	u32 keys[FTS_MAX_KEYS];
-	u32 key_y_coords[FTS_MAX_KEYS];
-	u32 key_x_coords[FTS_MAX_KEYS];
-	u32 x_max;
-	u32 y_max;
-	u32 x_min;
-	u32 y_min;
-	u32 area_indicator;
-	u32 area_navigation;
-	u32 area_edge;
-	u32 max_touch_number;
-	const char *firmware_name;
-	bool enable_settings_aot;
-	bool enable_sysinput_enabled;
-	bool support_dex;
-	bool enable_vbus_notifier;
 };
 
 struct ts_event {
@@ -202,14 +201,10 @@ struct fts_ts_data {
 	struct i2c_client *client;
 	struct spi_device *spi;
 	struct device *dev;
-	struct input_dev *input_dev;
-	struct input_dev *input_dev_pad;
-	struct input_dev *input_dev_proximity;
 	struct input_dev *pen_dev;
 	struct sec_ts_plat_data *pdata;
 	struct ts_ic_info ic_info;
 	struct sec_cmd_data sec;
-	struct sec_input_grip_data grip_data;
 	struct workqueue_struct *ts_workqueue;
 	struct delayed_work esdcheck_work;
 	struct delayed_work prc_work;
@@ -228,10 +223,6 @@ struct fts_ts_data {
 	int log_level;
 	int fw_is_running;      /* confirm fw is running when using spi:default 0 */
 	int dummy_byte;
-#if defined(CONFIG_PM) && FTS_PATCH_COMERR_PM
-	struct wakeup_source *wake_lock;
-	struct completion pm_completion;
-#endif
 	bool suspended;
 	bool fw_loading;
 	bool irq_disabled;
@@ -272,6 +263,11 @@ struct fts_ts_data {
 	struct pinctrl_state *pins_release;
 #endif
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2) && IS_ENABLED(CONFIG_SEC_FACTORY)
+	u8 panel_attached;
+	struct notifier_block lcd_nb;
+#endif
+
 	struct delayed_work print_info_work;
 	u32 print_info_cnt_open;
 	u32 print_info_cnt_release;
@@ -288,12 +284,12 @@ struct fts_ts_data {
 	int rx_num;
 	int *pFrame;
 	int pFrame_size;
-#if IS_ENABLED(CONFIG_VBUS_NOTIFIER)
-	struct notifier_block vbus_nb;
-	bool ta_status;
-#endif
 
 	u8 hover_event;
+	int debug_flag;
+	u16 ic_name;
+
+	bool support_high_report;
 };
 
 enum _FTS_BUS_TYPE {
@@ -389,7 +385,6 @@ void fts_tp_state_recovery(struct fts_ts_data *ts_data);
 int fts_ex_mode_init(struct fts_ts_data *ts_data);
 int fts_ex_mode_exit(struct fts_ts_data *ts_data);
 int fts_ex_mode_recovery(struct fts_ts_data *ts_data);
-void fts_set_edge_handler(struct fts_ts_data *ts);
 void fts_set_scan_off(bool scan_off);
 
 void fts_irq_disable(void);
@@ -398,5 +393,13 @@ void fts_irq_enable(void);
 int fts_read_fod_data(struct fts_ts_data *ts_data);
 int fts_set_fod_rect(struct fts_ts_data *ts_data);
 int fts_set_refresh_rate(struct fts_ts_data *ts_data);
+
+int fts_ts_power_on(struct fts_ts_data *ts_data);
+int fts_ts_power_off(struct fts_ts_data *ts_data);
+
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2) && IS_ENABLED(CONFIG_SEC_FACTORY)
+extern int panel_notifier_register(struct notifier_block *nb);
+extern int panel_notifier_unregister(struct notifier_block *nb);
+#endif
 
 #endif /* __LINUX_FOCALTECH_CORE_H__ */
