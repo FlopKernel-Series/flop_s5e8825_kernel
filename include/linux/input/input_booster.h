@@ -9,6 +9,7 @@
 #include <linux/input.h>
 #include <linux/module.h>
 #include <linux/init.h>
+#include <linux/version.h>
 #if IS_ENABLED(CONFIG_SOC_EXYNOS2100) || \
 	IS_ENABLED(CONFIG_ARCH_LAHAINA) || \
 	IS_ENABLED(CONFIG_ARCH_WAIPIO)
@@ -43,6 +44,49 @@
 #define INPUT_LEVEL 2
 
 //+++++++++++++++++++++++++++++++++++++++++++++++  STRUCT & VARIABLE FOR SYSFS  +++++++++++++++++++++++++++++++++++++++++++++++//
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0))
+#define SYSFS_CLASS(_ATTR_, _ARGU_, _COUNT_) \
+		ssize_t input_booster_sysfs_class_show_##_ATTR_(const struct class *dev, const struct class_attribute *attr, char *buf) \
+		{ \
+			ssize_t ret; \
+			unsigned int enable_event; \
+			unsigned int debug_level; \
+			unsigned int sendevent; \
+			unsigned int ib_mode_state; \
+			enable_event = enable_event_booster; \
+			debug_level = debug_flag; \
+			sendevent = send_ev_enable; \
+			if (IS_ENABLED(CONFIG_SEC_INPUT_BOOSTER_MODE)) \
+				ib_mode_state = u_ib_mode; \
+			ret = sprintf _ARGU_; \
+			pr_booster("[Input Booster8] %s buf : %s\n", __func__, buf); \
+			return ret; \
+		} \
+		ssize_t input_booster_sysfs_class_store_##_ATTR_(const struct class *dev, const struct class_attribute *attr, const char *buf, size_t count) \
+		{ \
+			unsigned int enable_event[1] = {0}; \
+			unsigned int debug_level[1] = {0}; \
+			unsigned int sendevent[1] = {0}; \
+			unsigned int ib_mode_state[1] = {0}; \
+			enable_event[0] = enable_event_booster; \
+			debug_level[0] = debug_flag; \
+			sendevent[0] = send_ev_enable; \
+			if (IS_ENABLED(CONFIG_SEC_INPUT_BOOSTER_MODE)) \
+				ib_mode_state[0] = u_ib_mode; \
+			sscanf _ARGU_; \
+			send_ev_enable = sendevent[0]; \
+			debug_flag = debug_level[0]; \
+			if (IS_ENABLED(CONFIG_SEC_INPUT_BOOSTER_MODE)) \
+				u_ib_mode = ib_mode_state[0] >= num_of_mode ? u_ib_mode : ib_mode_state[0]; \
+			enable_event_booster = enable_event[0]; \
+			pr_booster("[Input Booster8] %s buf : %s\n", __func__, buf); \
+			if (sscanf _ARGU_ != _COUNT_) { \
+				return count; \
+			} \
+			return count; \
+		} \
+    static struct class_attribute class_attr_##_ATTR_ = __ATTR(_ATTR_, S_IRUGO | S_IWUSR, input_booster_sysfs_class_show_##_ATTR_, input_booster_sysfs_class_store_##_ATTR_);
+#else
 #define SYSFS_CLASS(_ATTR_, _ARGU_, _COUNT_) \
 		ssize_t input_booster_sysfs_class_show_##_ATTR_(struct class *dev, struct class_attribute *attr, char *buf) \
 		{ \
@@ -75,7 +119,7 @@
 			send_ev_enable = sendevent[0]; \
 			debug_flag = debug_level[0]; \
 			if (IS_ENABLED(CONFIG_SEC_INPUT_BOOSTER_MODE)) \
-				u_ib_mode = ib_mode_state[0]; \
+				u_ib_mode = ib_mode_state[0] >= num_of_mode ? u_ib_mode : ib_mode_state[0]; \
 			enable_event_booster = enable_event[0]; \
 			pr_booster("[Input Booster8] %s buf : %s\n", __func__, buf); \
 			if (sscanf _ARGU_ != _COUNT_) { \
@@ -84,6 +128,7 @@
 			return count; \
 		} \
     static struct class_attribute class_attr_##_ATTR_ = __ATTR(_ATTR_, S_IRUGO | S_IWUSR, input_booster_sysfs_class_show_##_ATTR_, input_booster_sysfs_class_store_##_ATTR_);
+#endif
 
 #define HEAD_TAIL_SYSFS_DEVICE(_ATTR_) \
 	ssize_t input_booster_sysfs_device_show_##_ATTR_(struct device *dev, struct device_attribute *attr, char *buf) \

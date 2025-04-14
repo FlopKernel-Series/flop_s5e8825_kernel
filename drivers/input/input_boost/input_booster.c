@@ -1,6 +1,7 @@
 #define ITAG " [Input Booster] "
 #include <linux/input/input_booster.h>
 
+#include <linux/version.h>
 #include <linux/random.h>
 #include <linux/spinlock.h>
 #include <linux/syscalls.h>
@@ -21,6 +22,7 @@ struct workqueue_struct *ib_handle_highwq;
 int total_ib_cnt;
 int ib_init_succeed;
 int u_ib_mode;
+static int num_of_mode;
 
 int level_value = IB_MAX;
 
@@ -104,7 +106,7 @@ void trigger_input_booster(struct work_struct *work)
 		// When create ib instance, insert resource info in qos list with value 0.
 		for (res_type = 0; res_type < allowed_res_count; res_type++) {
 			if (allowed_resources[res_type] > max_resource_count) {
-				pr_err(ITAG" allow res num exceeds over max res count",
+				pr_err(ITAG" allow res num(%d) exceeds over max res count",
 					allowed_resources[res_type]);
 				continue;
 			}
@@ -400,7 +402,7 @@ void release_state_func(struct work_struct* work)
 		spin_unlock(&write_qos_lock);
 
 		qos_values[res.res_id] = get_qos_value(res.res_id);
-		pr_booster("Release State Func :::: Uniq(%d)'s Update Tail Val (%d), Qos_Val(%ld)",
+		pr_booster("Release State Func :::: Uniq(%d)'s Update Tail Val (%ld), Qos_Val(%ld)",
 			tv->uniq_id, tv->value, qos_values[res.res_id]);
 	}
 
@@ -448,7 +450,7 @@ void release_timeout_func(struct work_struct* work)
 			continue;
 		}
 
-		pr_booster("Release Timeout Func :::: Delete Uniq(%d)'s TV Val (%d)",
+		pr_booster("Release Timeout Func :::: Delete Uniq(%d)'s TV Val (%ld)",
 			tv->uniq_id, tv->value);
 
 		spin_lock(&write_qos_lock);
@@ -795,7 +797,7 @@ void input_booster_init(void)
 
 	for (i = 0; i < result; i++) {
 		if (allowed_resources[i] >= max_resource_count) {
-			pr_err(ITAG" allow res index exceeds over max res count",
+			pr_err(ITAG" allow res index(%d) exceeds over max res count",
 				allowed_resources[i]);
 			goto out;
 		}
@@ -909,7 +911,12 @@ out:
 		struct class* sysfs_class;
 		int ret;
 		int ib_type;
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0))
+		sysfs_class = class_create("input_booster");
+#else
 		sysfs_class = class_create(THIS_MODULE, "input_booster");
+#endif
 
 		if (IS_ERR(sysfs_class)) {
 			pr_err(ITAG" Failed to create class\n");
