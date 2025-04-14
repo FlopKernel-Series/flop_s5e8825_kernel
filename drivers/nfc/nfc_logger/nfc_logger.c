@@ -34,7 +34,11 @@
 
 #include "nfc_logger.h"
 
+#ifdef CONFIG_NFC_LOGGER_LOWMEM
+#define BUF_SIZE	SZ_64K
+#else
 #define BUF_SIZE	SZ_128K
+#endif
 #define BOOT_LOG_SIZE	2400
 #define MAX_STR_LEN	160
 #define PROC_FILE_NAME	"nfclog"
