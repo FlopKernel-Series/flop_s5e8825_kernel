@@ -1453,6 +1453,11 @@ static void android_rvh_do_sea(void *data, struct pt_regs *regs,
 	if (!user_mode(regs)) {
 		secdbg_exin_set_fault(SEABORT_FAULT, addr, regs);
 		secdbg_exin_set_esr(esr);
+	} else {
+		if (IS_ENABLED(CONFIG_SEC_DEBUG_FAULT_MSG_ADV))
+			pr_auto(ASL1, "current->group_leader: [%s:%5d]\n",
+				current->group_leader->comm,
+				current->group_leader->pid);
 	}
 }
 
