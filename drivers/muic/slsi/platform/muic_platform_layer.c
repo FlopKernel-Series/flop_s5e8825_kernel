@@ -36,9 +36,9 @@
 #include <linux/muic/common/muic.h>
 
 #include <linux/usb/typec/common/pdic_param.h>
+#if IS_ENABLED(CONFIG_USB_NOTIFIER)
 #include <linux/usb_notify.h>
-#include <linux/sec_detect.h>
-
+#endif
 struct m_p_l_data {
 	struct muic_platform_data *pdata;
 	struct muic_share_data *sdata;
@@ -562,8 +562,9 @@ int muic_platform_handle_attach(struct muic_share_data *sdata,
 	}
 
 	/* TODO: There is no needs to use JIGB pin by MUIC if PDIC is supported */
-	if (!sec_slsi_usbpd)
-		MUIC_PDATA_FUNC(ic_data->m_ops.set_jig_ctrl_on, ic_data->drv_data, &ret);
+#if !IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
+	MUIC_PDATA_FUNC(ic_data->m_ops.set_jig_ctrl_on, ic_data->drv_data, &ret);
+#endif
 
 	if (noti) {
 		sdata->attached_dev = new_dev;
@@ -1542,6 +1543,9 @@ static int muic_manager_set_property(struct power_supply *psy,
 		case POWER_SUPPLY_LSI_PROP_PD_SUPPORT:
 			sdata->is_pdic_probe = true;
 			break;
+		case POWER_SUPPLY_LSI_PROP_SBU_OVP_STATE:
+			MUIC_PDATA_VOID_FUNC_MULTI_PARAM(ic_data->m_ops.set_sbu_ovp_state, ic_data->drv_data, val->intval);
+			break;
 		default:
 			ret = -EINVAL;
 		}
@@ -1684,11 +1688,6 @@ EXPORT_SYMBOL_GPL(unregister_muic_platform_layer);
 static int __init muic_platform_layer_init(void)
 {
 	int ret = 0;
-
-	if (!sec_slsi_usbpd) {
-		mpl_info("%s muic platform driver should not initialize for this device\n", __func__);
-		return 0;
-	}
 
 	if (!mpl_data)
 		ret = mpl_init();
