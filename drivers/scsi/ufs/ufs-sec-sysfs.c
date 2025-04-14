@@ -45,6 +45,29 @@ static ssize_t ufs_sec_lt_show(struct device *dev,
 }
 static DEVICE_ATTR(lt, 0444, ufs_sec_lt_show, NULL);
 
+static ssize_t ufs_sec_flt_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct ufs_hba *hba;
+
+	hba = ufs_vdi.hba;
+	if (!hba) {
+		dev_err(dev, "skipping ufs flt read\n");
+		ufs_vdi.flt = 0;
+	} else if (hba->ufshcd_state == UFSHCD_STATE_OPERATIONAL) {
+		pm_runtime_get_sync(hba->dev);
+		ufs_sec_get_health_desc(hba);
+		pm_runtime_put(hba->dev);
+	} else {
+		/* return previous FLT value if not operational */
+		dev_info(hba->dev, "ufshcd_state : %d, old FLT: %u\n",
+				hba->ufshcd_state, ufs_vdi.flt);
+	}
+
+	return snprintf(buf, PAGE_SIZE, "%u\n", ufs_vdi.flt);
+}
+static DEVICE_ATTR(flt, 0444, ufs_sec_flt_show, NULL);
+
 static ssize_t ufs_sec_lc_info_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -173,6 +196,9 @@ void ufs_sec_create_sysfs(struct ufs_hba *hba)
 			pr_err("Fail to create status sysfs file\n");
 		if (device_create_file(sec_ufs_cmd_dev,
 					&dev_attr_lt) < 0)
+			pr_err("Fail to create status sysfs file\n");
+		if (device_create_file(sec_ufs_cmd_dev,
+					&dev_attr_flt) < 0)
 			pr_err("Fail to create status sysfs file\n");
 		if (device_create_file(sec_ufs_cmd_dev,
 					&dev_attr_lc) < 0)

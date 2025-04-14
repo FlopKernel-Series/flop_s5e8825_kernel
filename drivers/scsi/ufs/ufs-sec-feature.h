@@ -45,10 +45,16 @@
 /*wContextConf attribute offset*/
 #define QUERY_ATTR_IDN_CONTEXTCONF 0x10
 
+#define HEALTH_DESC_PARAM_SEC_FLT 0x22
+#define HEALTH_DESC_PARAM_KIC_FLT 0x11
+#define HEALTH_DESC_PARAM_MIC_FLT 0x5
+#define HEALTH_DESC_PARAM_SKH_FLT 0x5
+
 struct ufs_vendor_dev_info {
 	struct ufs_hba *hba;
 	char unique_number[UFS_UN_MAX_DIGITS];
 	u8 lifetime;
+	u16 flt;
 	unsigned int lc_info;
 	/*context id*/
 	u16 conid_cap[UFS_SEC_MAX_LUN_ID];
