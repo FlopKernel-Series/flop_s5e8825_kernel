@@ -112,15 +112,6 @@ static void s2mf301_fg_i2c_enable(struct i2c_client *client, bool enable)
 	}
 }
 
-#if defined(CONFIG_SEC_FACTORY)
-static void s2mf301_fg_update_reg(struct i2c_client *client, u8 reg, u8 val, u8 mask)
-{
-	s2mf301_fg_i2c_enable(client, true);
-	s2mf301_update_reg(client, reg, val, mask);
-	s2mf301_fg_i2c_enable(client, false);
-}
-#endif
-
 static int s2mf301_write_and_verify_reg_byte(struct i2c_client *client, int reg, u8 data)
 {
 	int ret, i = 0;
@@ -239,13 +230,11 @@ static int s2mf301_fg_read_reg(struct i2c_client *client, int reg, u8 *buf)
 static void s2mf301_fg_test_read(struct i2c_client *client)
 {
 	static int reg_list[] = {
-		0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0E, 0x0F,
-		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x1A, 0x1B, 0x1E, 0x1F,
-		0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x32, 0x33, 0x34, 0x35,
-		0x40, 0x41, 0x43, 0x44, 0x45, 0x48, 0x49, 0x4A, 0x4B, 0x50,
-		0x51, 0x52, 0x53, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x67, 0x70,
-		0x71, 0x72, 0x73, 0x7B, 0x80, 0x81, 0x88, 0x89, 0x8E, 0x8F,
-		0x90, 0x91
+		0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x1A, 0x1B,
+		0x1E, 0x1F, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x40, 0x41,
+		0x43, 0x44, 0x45, 0x48, 0x49, 0x4A, 0x4B, 0x50, 0x51, 0x52,
+		0x53, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x67, 0x68, 0x69, 0x6F,
+		0x70, 0x71, 0x72, 0x73, 0x7B, 0x88, 0x89, 0x8E, 0x8F, 0x90, 0x91
 	};
 	u8 data = 0;
 	char str[1016] = {0,};
@@ -319,33 +308,41 @@ static void s2mf301_reset_fg(struct s2mf301_fuelgauge_data *fuelgauge)
 	/* Set EDV voltage : 2.8V */
 	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x14, 0x67);
 
-	/* Set rZADJ, rZADJ_CHG, rZADJ_CHG2 */
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x12, 0x00);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x13, 0x00);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x15, 0x00);
+	/* Set rZADJ_CHG, rZADJ_CHG2, rZADJ */
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x12,
+			fuelgauge->zadj_data[fuelgauge->fg_age_step].zadj_chg);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x13,
+			fuelgauge->zadj_data[fuelgauge->fg_age_step].zadj_chg2);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x15,
+			fuelgauge->zadj_data[fuelgauge->fg_age_step].zadj);
 
 	s2mf301_read_reg_byte(fuelgauge->i2c, 0x4B, &temp);
 	temp &= 0x8F;
 	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x4B, temp);
 	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x4A, 0x10);
 
-	/* Set Power off voltage (under 3.35V) */
+	/* Set Power off voltage */
 	s2mf301_read_reg_byte(fuelgauge->i2c, 0x6F, &temp);
 	temp &= ~0x07;
-	temp |= 0x07;
+	if (!fuelgauge->pdata->bat_id_cutoff_level)
+		temp |= 0x07;
+	else {
+		temp |= fuelgauge->pdata->bat_id_cutoff_level[fuelgauge->battery_id];
+		temp |= 0x04;
+	}
 	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x6F, temp);
 
 	/* Set temperature load compensation coefficient */
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x71, 0x41);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x73, 0x43);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x70, 0x01);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x72, 0x0);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x6E, 0x10);
-	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x7B, 0x0A);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x71, 0xFA);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x73, 0xB9);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x70, 0x02);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x72, 0x15);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x6E, 0x04);
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x7B, 0x02);
 
 	/* Dumpdone. Re-calculate SOC */
 	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x1E, 0x0F);
-	msleep(300);
+	msleep(700);
 
 	s2mf301_read_reg_byte(fuelgauge->i2c, 0x03, &temp);
 	temp |= 0x40;
@@ -368,13 +365,9 @@ static int s2mf301_fix_rawsoc_reset_fg(struct s2mf301_fuelgauge_data *fuelgauge)
 {
 	int ret = 0, ui_soc = 0, f_soc = 0;
 	u8 data;
-	struct power_supply *psy;
 	union power_supply_propval value;
 
-	psy = power_supply_get_by_name("battery");
-	if (!psy)
-		return -EINVAL;
-	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_CAPACITY, &value);
+	ret = psy_do_property("battery", get, POWER_SUPPLY_PROP_CAPACITY, value);
 	if (ret < 0)
 		pr_err("%s: Fail to execute property\n", __func__);
 	dev_info(&fuelgauge->i2c->dev, "%s: UI SOC = %d\n", __func__, value.intval);
@@ -444,6 +437,17 @@ static void s2mf301_init_regs(struct s2mf301_fuelgauge_data *fuelgauge)
 	s2mf301_read_reg_byte(fuelgauge->i2c, S2MF301_REG_VM, &temp);
 	temp &= ~0x04;
 	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, S2MF301_REG_VM, temp);
+
+	/* Set Power off voltage */
+	s2mf301_read_reg_byte(fuelgauge->i2c, 0x6F, &temp);
+	temp &= ~0x07;
+	if (!fuelgauge->pdata->bat_id_cutoff_level)
+		temp |= 0x07;
+	else {
+		temp |= fuelgauge->pdata->bat_id_cutoff_level[fuelgauge->battery_id];
+		temp |= 0x04;
+	}
+	s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x6F, temp);
 
 	pr_info("%s: s2mf301 fuelgauge initialize end\n", __func__);
 }
@@ -549,7 +553,7 @@ static int s2mf301_temperature_compensation(struct s2mf301_fuelgauge_data *fuelg
 
 				if (temp == data[1])
 					s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, S2MF301_REG_RSOC_R_I2C, data[0]);
-				else 
+				else
 					pr_info("%s: 0x8F write fail(read:0x%02x, write:0x%02x)! skip soc update!\n", __func__, temp, data[1]);
 
 				msleep(300);
@@ -855,12 +859,9 @@ static int s2mf301_runtime_reset_wa(struct s2mf301_fuelgauge_data *fuelgauge)
 			(((por_state != 0x00) || (reg_1E != 0x03)) && (fuelgauge->age_reset_status == 0))) {
 		/* check charging enable */
 #if IS_ENABLED(CONFIG_CHARGER_S2MF301)
-		psy = power_supply_get_by_name("s2mf301-charger");
-		if (!psy)
-			return -EINVAL;
-
 		psp = (enum power_supply_property)POWER_SUPPLY_EXT_PROP_CHARGING_ENABLED;
-		ret = power_supply_get_property(psy, psp, &value);
+		ret = psy_do_property("s2mf301-charger", get, psp, value);
+
 		if (ret < 0)
 			pr_err("%s: Fail to execute property\n", __func__);
 
@@ -960,29 +961,22 @@ static int s2mf301_get_compen_soc(struct s2mf301_fuelgauge_data *fuelgauge)
 
 	if (fuelgauge->pdata->use_external_temp && fuelgauge->probe_done) {
 		int ret = 0;
-		struct power_supply *psy;
 		union power_supply_propval value;
 
 		/* If you want to use temperature sensed by other IC,
 		 * change the battery driver so that F.G driver can
 		 * get the value.
 		 */
-		psy = power_supply_get_by_name("battery");
-		if (!psy)
-			return -EINVAL;
-		/* Get temperature from battery driver */
-		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_TEMP, &value);
+		ret = psy_do_property("battery", get, POWER_SUPPLY_PROP_TEMP, value);
+
 		if (ret < 0)
 			pr_err("%s: Fail to execute property\n", __func__);
 		fuelgauge->temperature = value.intval;
-		temp_i2c = fuelgauge->temperature / 10;
+		temp_i2c = (fuelgauge->temperature / 10) & 0xFF;
 		pr_info("%s: temperature from battery: %d\n", __func__, fuelgauge->temperature);
 
 		/* W/A use system temperature */
-		if (fuelgauge->temperature >= 0)
-			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, S2MF301_REG_TEMP_I2C, temp_i2c);
-		else
-			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, S2MF301_REG_TEMP_I2C, ~(temp_i2c & 0xFF) + 1);
+		s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, S2MF301_REG_TEMP_I2C, (u8)temp_i2c);
 	} else
 		fuelgauge->temperature = s2mf301_get_temperature(fuelgauge);
 
@@ -1022,7 +1016,7 @@ static int s2mf301_fg_set_mode(struct s2mf301_fuelgauge_data *fuelgauge)
 	if (!psy)
 		float_voltage = fuelgauge->pdata->float_voltage;
 	else {
-		ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE, &value);
+		ret = psy_do_property("s2mf301-charger", get, POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE, value);
 		if (ret < 0)
 			pr_err("%s: Fail to execute property\n", __func__);
 		float_voltage = value.intval;
@@ -1126,8 +1120,19 @@ batcap_learn_init:
 static void s2mf301_low_voltage_wa(struct s2mf301_fuelgauge_data *fuelgauge)
 {
 	u8 temp = 0;
+	u8 vm;
+
+	s2mf301_read_reg_byte(fuelgauge->i2c, S2MF301_REG_rLVBAT_TH0, &vm);
 
 	if (fuelgauge->temperature > fuelgauge->low_temp_limit) {
+		if (vm == S2MF301_LTEMP_VM0) {
+			pr_info("%s, Normal Temperature, Change VM value\n", __func__);
+			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c,
+					S2MF301_REG_rLVBAT_TH0, S2MF301_NTEMP_VM0);
+			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c,
+					S2MF301_REG_rLVBAT_TH1, S2MF301_NTEMP_VM1);
+		}
+
 		if ((fuelgauge->avg_vbat < fuelgauge->low_voltage_limit) &&
 				(fuelgauge->avg_curr < -50) && (fuelgauge->rsoc > 300)) {
 			dev_info(&fuelgauge->i2c->dev, "%s: Low voltage WA. Make rawsoc 0\n", __func__);
@@ -1143,6 +1148,14 @@ static void s2mf301_low_voltage_wa(struct s2mf301_fuelgauge_data *fuelgauge)
 			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c, 0x29, temp);
 		}
 	} else {
+		if (vm == S2MF301_NTEMP_VM0) {
+			pr_info("%s, Low Temperature, Change VM value\n", __func__);
+			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c,
+					S2MF301_REG_rLVBAT_TH0, S2MF301_LTEMP_VM0);
+			s2mf301_write_and_verify_reg_byte(fuelgauge->i2c,
+					S2MF301_REG_rLVBAT_TH1, S2MF301_LTEMP_VM1);
+		}
+
 		if ((fuelgauge->avg_vbat < fuelgauge->low_voltage_limit_lowtemp) &&
 				(fuelgauge->avg_curr < -50) && (fuelgauge->info.soc > 100)) {
 			dev_info(&fuelgauge->i2c->dev, "%s: Low voltage WA. Make UI SOC 0\n", __func__);
@@ -1160,14 +1173,9 @@ static int s2mf301_get_rawsoc(struct s2mf301_fuelgauge_data *fuelgauge)
 	u8 data[2];
 	u16 compliment;
 	int ret = 0, info_soc = 0, mode = 0;
-	struct power_supply *psy;
 	union power_supply_propval value;
 
-	psy = power_supply_get_by_name("battery");
-	if (!psy)
-		return -EINVAL;
-	/* Get UI SOC from battery driver */
-	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_CAPACITY, &value);
+	ret = psy_do_property("battery", get, POWER_SUPPLY_PROP_CAPACITY, value);
 	if (ret < 0) {
 		pr_err("%s: Fail to execute property.\n", __func__);
 		value.intval = 0;
@@ -1768,7 +1776,6 @@ static int s2mf301_fg_get_property(struct power_supply *psy,
 {
 	struct s2mf301_fuelgauge_data *fuelgauge = power_supply_get_drvdata(psy);
 	enum power_supply_ext_property ext_psp = (enum power_supply_ext_property) psp;
-	union power_supply_propval value;
 
 	switch ((int)psp) {
 	case POWER_SUPPLY_PROP_STATUS:
@@ -1952,8 +1959,7 @@ static int s2mf301_fg_get_property(struct power_supply *psy,
 		val->intval = fuelgauge->mode;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
-		psy_do_property("battery", get, POWER_SUPPLY_PROP_CHARGE_FULL, value);
-		val->intval = value.intval/1000 * fuelgauge->raw_capacity; //uAh
+		val->intval = fuelgauge->pdata->capacity_full * fuelgauge->raw_capacity;
 		break;
 	case POWER_SUPPLY_PROP_ONLINE:
 		pr_info("[DEBUG]%s: POWER_SUPPLY_PROP_ONLINE\n", __func__);
@@ -2085,17 +2091,8 @@ static int s2mf301_fg_set_property(struct power_supply *psy,
 		case POWER_SUPPLY_EXT_PROP_AFC_TEST_FG_MODE:
 			pr_info("%s, POWER_SUPPLY_EXT_PROP_AFC_TEST_FG_MODE(%d)\n", __func__, val->intval);
 			if (val->intval) {
-				s2mf301_fg_reset_capacity_by_jig_connection(fuelgauge);
-				s2mf301_fg_update_reg(fuelgauge->i2c, S2MF301_REG_VBAT_TIME_SEL, 0x00, FG_ON_MASK);
-				msleep(260);
-				s2mf301_fg_update_reg(fuelgauge->i2c, S2MF301_REG_FS, FS_MANUAL_EN, FS_MANUAL_EN);
-				s2mf301_fg_update_reg(fuelgauge->i2c, S2MF301_REG_VBAT_TIME_SEL, FG_ON_MASK, FG_ON_MASK);
-				msleep(200);
-			} else {
-				s2mf301_fg_update_reg(fuelgauge->i2c, S2MF301_REG_VBAT_TIME_SEL, 0x00, FG_ON_MASK);
-				msleep(70);
-				s2mf301_fg_update_reg(fuelgauge->i2c, S2MF301_REG_FS, 0x00, FS_MANUAL_EN);
-				s2mf301_fg_update_reg(fuelgauge->i2c, S2MF301_REG_VBAT_TIME_SEL, FG_ON_MASK, FG_ON_MASK);
+				s2mf301_restart_gauging(fuelgauge);
+				fuelgauge->initial_update_of_soc = true;
 			}
 			break;
 #endif
@@ -2157,10 +2154,13 @@ static irqreturn_t s2mf301_fg_irq_thread(int irq, void *irq_data)
 static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 {
 	struct device_node *np = of_find_node_by_name(NULL, "s2mf301-fuelgauge");
+	struct device_node *dnp;
 	int ret;
 	int len, i;
 	int battery_id = -1;
 	int bat_id[BAT_GPIO_NO] = {0, };
+	const u32 *p;
+	char prop_name_data[PROPERTY_NAME_SIZE];
 
 	/* reset, irq gpio info */
 	if (np == NULL)
@@ -2181,7 +2181,7 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 					__func__);
 			fuelgauge->low_voltage_limit_lowtemp = 3100;
 		}
-		fuelgauge->pdata->bat_gpio_cnt = of_gpio_named_count(np, "fuelgauge,bat_id_gpio");
+		fuelgauge->pdata->bat_gpio_cnt = sb_of_gpio_named_count(np, "fuelgauge,bat_id_gpio");
 		/* not run if gpio gpio cnt is less than 1 */
 		if (fuelgauge->pdata->bat_gpio_cnt > 0) {
 			pr_info("%s: Has %d bat_id_gpios\n", __func__, fuelgauge->pdata->bat_gpio_cnt);
@@ -2205,6 +2205,33 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 					s2mf301_get_bat_id(bat_id, fuelgauge->pdata->bat_gpio_cnt);
 
 			pr_info("%s: battery_id (gpio) = %d\n", __func__, fuelgauge->battery_id);
+
+			p = of_get_property(np, "fuelgauge,bat_id_cutoff_level", &len);
+			if (!p) {
+				len = 4;
+				fuelgauge->pdata->bat_id_cutoff_level =
+					kzalloc(sizeof(*fuelgauge->pdata->bat_id_cutoff_level) * len, GFP_KERNEL);
+				for (i = 0; i < 4; i++)
+					fuelgauge->pdata->bat_id_cutoff_level[i] = 3;
+			} else {
+				len = len / sizeof(u32);
+				fuelgauge->pdata->bat_id_cutoff_level =
+					kzalloc(sizeof(*fuelgauge->pdata->bat_id_cutoff_level) * len, GFP_KERNEL);
+				ret = of_property_read_u32_array(np, "fuelgauge,bat_id_cutoff_level",
+					fuelgauge->pdata->bat_id_cutoff_level, len);
+				for (i = 0; i < len; i++) {
+					if (fuelgauge->pdata->bat_id_cutoff_level[i] >= 3450)
+						fuelgauge->pdata->bat_id_cutoff_level[i] = 0;
+					else if (fuelgauge->pdata->bat_id_cutoff_level[i] >= 3400)
+						fuelgauge->pdata->bat_id_cutoff_level[i] = 1;
+					else if (fuelgauge->pdata->bat_id_cutoff_level[i] >= 3350)
+						fuelgauge->pdata->bat_id_cutoff_level[i] = 2;
+					else
+						fuelgauge->pdata->bat_id_cutoff_level[i] = 3;
+				}
+			}
+			pr_info("%s: battery cutoff level setting value : %d\n", __func__,
+						fuelgauge->pdata->bat_id_cutoff_level[fuelgauge->battery_id]);
 		} else {
 			fuelgauge->battery_id = 0;
 		}
@@ -2242,11 +2269,11 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 		fuelgauge->pdata->use_external_temp = of_property_read_bool(np,
 												"fuelgauge,use_external_temp");
 
-		np = of_find_node_by_name(NULL, "cable-info");
-		if (!np) {
-			pr_err("%s np NULL\n", __func__);
+		dnp = of_find_node_by_name(NULL, "cable-info");
+		if (!dnp) {
+			pr_err("%s dnp NULL\n", __func__);
 		} else {
-			ret = of_property_read_u32(np, "full_check_current_1st",
+			ret = of_property_read_u32(dnp, "full_check_current_1st",
 					&fuelgauge->topoff_current);
 			if (ret < 0) {
 				pr_err("%s fail to get topoff current %d\n", __func__, ret);
@@ -2255,16 +2282,16 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 			pr_info("%s: topoff_current = %d\n", __func__, fuelgauge->topoff_current);
 		}
 
-		np = of_find_node_by_name(NULL, "battery");
-		if (!np)
-			pr_err("%s: np NULL\n", __func__);
+		dnp = of_find_node_by_name(NULL, "battery");
+		if (!dnp)
+			pr_err("%s: dnp NULL\n", __func__);
 		else {
-			ret = of_property_read_string(np, "battery,fuelgauge_name",
+			ret = of_property_read_string(dnp, "battery,fuelgauge_name",
 							(char const **)&fuelgauge->pdata->fuelgauge_name);
 			if (ret < 0)
 				pr_err("%s error reading battery,fuelgauge_name\n", __func__);
 
-			ret = of_property_read_u32(np, "battery,chg_float_voltage",
+			ret = of_property_read_u32(dnp, "battery,chg_float_voltage",
 					(unsigned int *)&fuelgauge->pdata->float_voltage);
 			if (ret) {
 				pr_info("%s: chg_float_voltage is Empty\n", __func__);
@@ -2273,8 +2300,8 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 		}
 
 		/* get battery node */
-		np = of_find_node_by_name(NULL, "battery_params");
-		if (!np) {
+		dnp = of_find_node_by_name(NULL, "battery_params");
+		if (!dnp) {
 			pr_err("%s: battery_params node NULL\n", __func__);
 			return -EINVAL;
 		}
@@ -2282,11 +2309,11 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 			char prop_name[PROPERTY_NAME_SIZE];
 			battery_id = fuelgauge->battery_id;
 			snprintf(prop_name, PROPERTY_NAME_SIZE, "battery%d,%s", battery_id, "battery_data");
-			if (!of_find_property(np, prop_name, NULL)) {
+			if (!of_find_property(dnp, prop_name, NULL)) {
 				pr_err("%s: no battery_id(%d) data\n", __func__, battery_id);
 				/* get battery_id */
 				battery_id = 0;
-				if (of_property_read_u32(np, "battery,id", &battery_id) < 0)
+				if (of_property_read_u32(dnp, "battery,id", &battery_id) < 0)
 					pr_err("%s: not battery,id property\n", __func__);
 				pr_err("%s: use battery default id = %d\n", __func__, battery_id);
 			}
@@ -2294,13 +2321,13 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 			snprintf(prop_name, PROPERTY_NAME_SIZE, "battery%d,%s", battery_id, "battery_data");
 			pr_err("%s: prop_name = %s\n", __func__, prop_name);
 
-			of_get_property(np, prop_name, &len);
+			of_get_property(dnp, prop_name, &len);
 			pr_info("%s: length len= (%d)\n", __func__, len);
 			fuelgauge->fg_num_age_step = len / sizeof(fg_age_data_info_t);
 			pr_info("%s: fg_num_age_step = (%d)\n", __func__,
 				fuelgauge->fg_num_age_step);
 			fuelgauge->age_data_info = kzalloc(len, GFP_KERNEL);
-			ret = of_property_read_u32_array(np, prop_name,
+			ret = of_property_read_u32_array(dnp, prop_name,
 					(int *)fuelgauge->age_data_info, len/sizeof(int));
 
 			pr_err("%s: [Long life] fuelgauge->fg_num_age_step %d\n",
@@ -2308,7 +2335,7 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 
 			if ((sizeof(fg_age_data_info_t) * fuelgauge->fg_num_age_step) != len) {
 				pr_err("%s: [Long life] variables and data in device tree doesn't match\n", __func__);
-				BUG();
+				WARN("%s: Long Life data mismatch Warning", __func__);
 			}
 
 			for (i = 0 ; i < fuelgauge->fg_num_age_step; i++) {
@@ -2323,10 +2350,43 @@ static int s2mf301_fuelgauge_parse_dt(struct s2mf301_fuelgauge_data *fuelgauge)
 						fuelgauge->age_data_info[i].ocv_arr_val[0],
 						fuelgauge->age_data_info[i].rRS_CC0);
 			}
-			ret = of_property_read_u32(np, "battery,low_temp_limit", &fuelgauge->low_temp_limit);
+			ret = of_property_read_u32(dnp, "battery,low_temp_limit", &fuelgauge->low_temp_limit);
 			if (ret < 0) {
 				pr_err("%s: There is no low temperature limit. Use default(100)\n", __func__);
 				fuelgauge->low_temp_limit = 100;
+			}
+		}
+
+		snprintf(prop_name_data, PROPERTY_NAME_SIZE, "fuelgauge%d,%s", battery_id, "zadj_data");
+		if (!of_find_property(np, prop_name_data, NULL)) {
+			pr_info("%s: fuelgauge zadj node NULL\n", __func__);
+			len = sizeof(int) * 3 * fuelgauge->fg_num_age_step;
+			fuelgauge->zadj_data = kzalloc(len, GFP_KERNEL);
+			for (i = 0 ; i < fuelgauge->fg_num_age_step; i++) {
+				fuelgauge->zadj_data[i].zadj_chg = 0;
+				fuelgauge->zadj_data[i].zadj_chg2 = 0;
+				fuelgauge->zadj_data[i].zadj = 0;
+			}
+			battery_id = 0;
+		} else {
+			snprintf(prop_name_data, PROPERTY_NAME_SIZE, "fuelgauge%d,%s", battery_id, "zadj_data");
+			pr_info("%s: prop_name_data = %s\n", __func__, prop_name_data);
+
+			of_get_property(np, prop_name_data, &len);
+			pr_info("%s: zadj_data len = (%d)\n", __func__, len);
+			fuelgauge->zadj_data = kzalloc(len, GFP_KERNEL);
+			ret = of_property_read_u32_array(np, prop_name_data,
+					(int *)fuelgauge->zadj_data, len/sizeof(int));
+			if (ret < 0)
+				pr_err("%s: error reading zadj_data %d\n", __func__, ret);
+			else {
+				for (i = 0 ; i < fuelgauge->fg_num_age_step; i++) {
+					pr_info("%s: age_step[%d]: zadj_chg(%d), zadj_chg2(%d), zadj(%d)\n",
+							__func__, i,
+							fuelgauge->zadj_data[i].zadj_chg,
+							fuelgauge->zadj_data[i].zadj_chg2,
+							fuelgauge->zadj_data[i].zadj);
+				}
 			}
 		}
 	}

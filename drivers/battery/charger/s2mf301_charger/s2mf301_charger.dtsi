@@ -9,3 +9,10 @@
 	};
 };
 
+
+/* /home/dpi/qb5_8814/workspace/P4_1716/android/kernel/kmodule/battery/suwon/charger/s2mf301/s2mf301_charger.a26xs.dtsi */
+&s2mf301_charger {
+	charger,bat2ship_debounce_time = <16>;
+	charger,bat2ship_debounce_time_factory_bin = <16>;
+};
+

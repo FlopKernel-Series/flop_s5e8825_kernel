@@ -49,7 +49,10 @@
 #define S2MF301_REG_RSOC_R_SAVE		0x2A
 #define S2MF301_REG_RSOC_R		0x80
 #define S2MF301_REG_RSOH		0x84
-#define S2MF301_REG_RSOC_R_I2C	0x8E
+#define S2MF301_REG_RSOC_R_I2C		0x8E
+#define S2MF301_REG_rLVBAT_TH0		0x68
+#define S2MF301_REG_rLVBAT_TH1		0x69
+
 
 #if defined(CONFIG_SEC_FACTORY)
 #define S2MF301_REG_VBAT_TIME_SEL	0x0D
@@ -79,6 +82,11 @@
 #define S2MF301_REG_FG_ID		0x48
 
 #define S2MF301_REG_VM			0x67
+
+#define S2MF301_LTEMP_VM0		0x26
+#define S2MF301_LTEMP_VM1		0x33
+#define S2MF301_NTEMP_VM0		0x70
+#define S2MF301_NTEMP_VM1		0x60
 
 #define S2MF301_REG_RBATCAP_OCV_NEW_IN 0x90
 
@@ -121,6 +129,12 @@ typedef struct fg_age_data_info {
 	int rRS_CC0;
 } fg_age_data_info_t;
 
+typedef struct fg_zadj_data {
+	int zadj_chg;
+	int zadj_chg2;
+	int zadj;
+} fg_zadj_data_t;
+
 struct s2mf301_fuelgauge_platform_data {
 	int fuel_alert_soc;
 	int fuel_alert_vol;
@@ -140,6 +154,7 @@ struct s2mf301_fuelgauge_platform_data {
 	unsigned int float_voltage;
 
 	int bat_id_gpio[BAT_GPIO_NO];
+	unsigned int *bat_id_cutoff_level;
 	int bat_gpio_cnt;
 };
 
@@ -167,6 +182,7 @@ struct s2mf301_fuelgauge_data {
 	struct fg_info info;
 
 	fg_age_data_info_t *age_data_info;
+	fg_zadj_data_t *zadj_data;
 	int fg_num_age_step;
 	int fg_age_step;
 	int age_reset_status;

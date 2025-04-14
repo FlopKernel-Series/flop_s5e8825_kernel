@@ -31,6 +31,7 @@
 #endif
 
 #define IS_NOT_CAP(volt)	(volt <= water->cap_threshold)
+#define IS_CC_NOT_CAP(volt)	(volt <= water->cc_cap_threshold)
 #define IS_DRY(volt)		(volt > water->dry_threshold)
 #define IS_WATER(volt)		(volt <= water->water_threshold)
 
@@ -45,6 +46,7 @@ enum s2m_water_status_t {
 	S2M_WATER_STATUS_DRY,
 	S2M_WATER_STATUS_WATER,
 	S2M_WATER_STATUS_CHECKING,
+	S2M_WATER_STATUS_DP_SUPPORT,
 };
 
 enum s2m_water_enable {
@@ -62,7 +64,10 @@ enum s2m_water_state_t {
 	S2M_WATER_STATE_1st_CHECK,
 	S2M_WATER_STATE_WAIT,
 	S2M_WATER_STATE_2nd_CHECK,
+	S2M_WATER_STATE_3rd_CHECK,
+	S2M_WATER_STATE_OTG_CHECK,
 	S2M_WATER_STATE_WAIT_RECHECK,
+	S2M_WATER_STATE_DP_SUPPORT,
 	S2M_WATER_STATE_MAX,
 };
 
@@ -79,18 +84,24 @@ enum s2m_water_event_t {
 	S2M_WATER_EVENT_TIMER_EXPIRED,
 	S2M_WATER_EVENT_RECHECK,
 	S2M_WATER_EVENT_VBUS_OR_PDRID_DETECTED,
+	S2M_WATER_EVENT_DP_ATTACH,
+	S2M_WATER_EVENT_DP_DETACH,
 	S2M_WATER_EVENT_MAX,
 };
 
 struct s2mf301_water_data {
 	struct power_supply *psy_pm;
 	struct power_supply *psy_muic;
+	struct power_supply_desc water_desc;
+	struct power_supply *psy_water;
 	void *pmeter;
 
 	struct mutex			mutex;
 	struct completion		water_check_done;
 	struct completion		water_wait_compl;
 	struct completion		water_rr_compl;
+	struct completion		water_cc1_rr_compl;
+	struct completion		water_cc2_rr_compl;
 	struct wakeup_source	*water_wake;
 	struct wakeup_source	*recheck_wake;
 
@@ -107,6 +118,9 @@ struct s2mf301_water_data {
 	int water_threshold;
 	int dry_threshold;
 	int cap_threshold;
+	int cc_cap_threshold;
+	int cc_hiccup_th;
+	int water_and_or_sel;
 
 	enum s2m_water_status_t notify_status;
 	enum s2m_water_status_t status;
@@ -122,8 +136,14 @@ struct s2mf301_water_data {
 
 	int vgpadc1;
 	int vgpadc2;
+	int vcc1;
+	int vcc2;
+	bool vgpadc1_done;
+	bool vgpadc2_done;
 
 	int gpadc_rr_done;
+
+	int cc_hiccup;
 
 	void	(*water_irq_masking)	(void *data, int masking, int mask);
 	void	(*water_det_en)			(void *data, int enable);
@@ -134,9 +154,11 @@ struct s2mf301_water_data {
 	void	(*water_1time_check)	(void *data, int *);
 	int		(*pm_enable)			(void *data, int mode, int enable, int type);
 	int		(*pm_get_value)			(void *data, int type);
+	void	(*pm_set_dry_threshold)	(void *data, int);
 };
 
 extern int s2mf301_water_check_facwater(struct s2mf301_water_data *water);
+extern bool s2mf301_water_state_cc_check(struct s2mf301_water_data *water);
 extern void s2mf301_water_init(struct s2mf301_water_data *water);
 extern void s2mf301_water_init_work_start(struct s2mf301_water_data *water);
 

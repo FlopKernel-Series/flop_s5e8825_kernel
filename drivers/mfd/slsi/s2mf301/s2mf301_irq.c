@@ -477,7 +477,7 @@ static irqreturn_t s2mf301_irq_thread(int irq, void *data)
 			__func__, irq_reg[PM_ADC_REQ_DONE1], irq_reg[PM_ADC_REQ_DONE2], irq_reg[PM_ADC_REQ_DONE3], irq_reg[PM_ADC_REQ_DONE4]);
 
 		s2mf301_info("%s: powermeter interrupt CO(0x%02x, 0x%02x, 0x%02x, 0x%02x)\n",
-			__func__, irq_reg[PM_ADC_CHANGE_INT1], irq_reg[PM_ADC_CHANGE_INT1], irq_reg[PM_ADC_CHANGE_INT3], irq_reg[PM_ADC_CHANGE_INT4]);
+			__func__, irq_reg[PM_ADC_CHANGE_INT1], irq_reg[PM_ADC_CHANGE_INT2], irq_reg[PM_ADC_CHANGE_INT3], irq_reg[PM_ADC_CHANGE_INT4]);
 	}
 #endif
 

@@ -457,6 +457,7 @@ struct s2mf301_pm_rid_ops {
 struct s2mf301_top_rid_ops {
 	int		(*set_jig_on)(void *_data, bool enable);
 	int		(*mask_rid_change)(void *_data, bool enable);
+	u8		(*get_dummy_rid)(void *_data);
 	void		*_data;
 };
 

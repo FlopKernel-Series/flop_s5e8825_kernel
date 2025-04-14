@@ -28,9 +28,11 @@
 #if IS_ENABLED(CONFIG_MUIC_S2MF301_RID)
 static int s2mf301_top_set_jig_on(void *_data, bool enable);
 static int s2mf301_top_mask_rid_change(void *_data, bool enable);
+static u8 s2mf301_top_get_dummy_rid(void *_data);
 struct s2mf301_top_rid_ops _s2mf301_top_rid_ops = {
 	.set_jig_on			= s2mf301_top_set_jig_on,
 	.mask_rid_change	= s2mf301_top_mask_rid_change,
+	.get_dummy_rid		= s2mf301_top_get_dummy_rid,
 };
 #endif
 
@@ -144,6 +146,38 @@ static int s2mf301_top_set_jig_on(void *_data, bool enable)
 	s2mf301_write_reg(top->i2c, S2MF301_TOP_REG_JIG_CTRL, reg_data);
 
 	return 0;
+}
+
+static u8 s2mf301_top_get_dummy_rid(void *_data)
+{
+	struct s2mf301_top_data *top = _data;
+	u8 reg = 0;
+	u8 rid = 0;
+
+	/* Same with 0x7E30 */
+	s2mf301_read_reg(top->i2c, 0x19, &reg);
+
+	pr_info("%s, dummy rid(0x%x)\n", __func__, reg);
+	switch (reg & S2MF301_TOP_RID_STATUS_MASK) {
+	case S2MF301_TOP_RID_STATUS_255K:
+	case S2MF301_TOP_RID_STATUS_56K:
+		rid = ADC_JIG_USB_OFF;
+		break;
+	case S2MF301_TOP_RID_STATUS_301K:
+		rid = ADC_JIG_USB_ON;
+		break;
+	case S2MF301_TOP_RID_STATUS_523K:
+		rid = ADC_JIG_UART_OFF;
+		break;
+	case S2MF301_TOP_RID_STATUS_619K:
+		rid = ADC_JIG_UART_ON;
+		break;
+	default:
+		pr_info("%s, invalid rid status, return ADC_GND\n", __func__);
+		break;
+	}
+
+	return rid;
 }
 #endif
 

@@ -41,6 +41,7 @@ static struct s2mf301_pm_rid_ops _s2mf301_pm_rid_ops = {
 
 static enum power_supply_property s2mf301_pmeter_props[] = {
 	POWER_SUPPLY_PROP_ONLINE,
+	POWER_SUPPLY_PROP_PRESENT,
 };
 
 #if 0
@@ -69,7 +70,7 @@ static void s2mf301_pm_test_read(struct i2c_client *i2c)
 static int s2mf301_pm_enable(struct s2mf301_pmeter_data *pmeter, int mode, int enable, enum pm_type type)
 {
 	u8 addr, r_data, w_data;
-	int shift = 7 - (type & 0x111);
+	int shift = 7 - (type & 0x7);
 
 	if (mode > REQUEST_RESPONSE_MODE) {
 		pr_info("%s, invalid mode(%d)\n", __func__, mode);
@@ -231,11 +232,20 @@ int	s2mf301_pm_ops_pm_get_value(void *data, int type)
 	return s2mf301_pm_get_value(pmeter, type);
 }
 
+void s2mf301_pm_ops_set_dry_threshold(void *data, int val)
+{
+	struct s2mf301_pmeter_data *pmeter = (struct s2mf301_pmeter_data *)data;
+	int th = (val / 8) * 8;
+
+	pr_info("%s, dry Threshold set to %d(->%d)\n", __func__, val, th);
+	s2mf301_write_reg(pmeter->i2c, 0x84, th);
+}
+
 void s2mf301_pm_water_irq_masking(void *data, int masking, int mask)
 {
 	struct s2mf301_pmeter_data *pmeter = data;
 	u8 r_data, w_data;
-	u8 reg[3];
+	u8 reg[4];
 
 	/*
 	 * masking==true -> disable irq
@@ -245,6 +255,8 @@ void s2mf301_pm_water_irq_masking(void *data, int masking, int mask)
 		"CHANGE",
 		"WATER",
 		"RR",
+		"CC1_RR",
+		"CC2_RR",
 	};
 
 	pr_info("%s, %s %s\n", __func__, ((masking)?"masking":"unmasking"),
@@ -281,6 +293,26 @@ void s2mf301_pm_water_irq_masking(void *data, int masking, int mask)
 			}
 			s2mf301_write_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE2_MASK, w_data);
 			break;
+		case S2MF301_IRQ_TYPE_CC1_RR:
+			s2mf301_read_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE1_MASK, &r_data);
+			if (masking) {
+				w_data = r_data & ~(0x04);
+				w_data |= 0x04;
+			} else {
+				w_data = r_data & ~(0x04);
+			}
+			s2mf301_write_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE1_MASK, w_data);
+			break;
+		case S2MF301_IRQ_TYPE_CC2_RR:
+			s2mf301_read_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE1_MASK, &r_data);
+			if (masking) {
+				w_data = r_data & ~(0x02);
+				w_data |= 0x02;
+			} else {
+				w_data = r_data & ~(0x02);
+			}
+			s2mf301_write_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE1_MASK, w_data);
+			break;
 		default:
 			break;
 	}
@@ -289,8 +321,9 @@ void s2mf301_pm_water_irq_masking(void *data, int masking, int mask)
 	s2mf301_read_reg(pmeter->i2c, S2MF301_REG_PM_ADC_CHANGE_INT2_MASK, &reg[0]);
 	s2mf301_read_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE4_MASK, &reg[1]);
 	s2mf301_read_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE2_MASK, &reg[2]);
+	s2mf301_read_reg(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE1_MASK, &reg[3]);
 
-	pr_info("%s, change[0x%x], water[0x%x], rr[0x%x]\n", __func__, reg[0], reg[1], reg[2]);
+	pr_info("%s, change[0x%x], water[0x%x], rr[0x%x] cc_rr[0x%x]\n", __func__, reg[0], reg[1], reg[2], reg[3]);
 }
 
 static void s2mf301_pm_water_set_gpadc_mode(void *data, int mode)
@@ -410,9 +443,10 @@ static irqreturn_t s2mf301_pm_gpadc1up_isr(int irq, void *data)
 	pr_info("%s, vgpadc1 = %dmV\n", __func__, volt);
 
 	water->vgpadc1 = volt;
+	water->vgpadc1_done = true;
 
 #if !IS_ENABLED(CONFIG_SEC_FACTORY)
-	if (water->vgpadc1 > 0 && water->vgpadc2 > 0) {
+	if (water->vgpadc1_done && water->vgpadc2_done) {
 		pr_info("[WATER][DEBUG] %s, vgpadc1(%d), vgpadc2(%d)\n", __func__,
 				water->vgpadc1, water->vgpadc2);
 		complete(&water->water_rr_compl);
@@ -438,13 +472,62 @@ static  irqreturn_t s2mf301_pm_gpadc2up_isr(int irq, void *data)
 	pr_info("%s, vgpadc2 = %dmV\n", __func__, volt);
 
 	water->vgpadc2 = volt;
+	water->vgpadc2_done = true;
 
 #if !IS_ENABLED(CONFIG_SEC_FACTORY)
-	if (water->vgpadc1 > 0 && water->vgpadc2 > 0) {
+	if (water->vgpadc1_done && water->vgpadc2_done) {
 		pr_info("[WATER][DEBUG] %s, vgpadc1(%d), vgpadc2(%d)\n", __func__,
 				water->vgpadc1, water->vgpadc2);
 		complete(&water->water_rr_compl);
 	}
+#endif
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t s2mf301_pm_vcc1up_isr(int irq, void *data)
+{
+	struct s2mf301_pmeter_data *pmeter = data;
+	struct s2mf301_water_data *water;
+	int volt;
+
+	if (!pmeter->water) {
+		pr_info("%s, pmeter->water is NULL\n", __func__);
+		return -1;
+	}
+	water = pmeter->water;
+
+	volt = s2mf301_pm_get_value(pmeter, S2MF301_PM_TYPE_VCC1);
+	pr_info("%s, vcc1 = %dmV\n", __func__, volt);
+
+	water->vcc1 = volt;
+
+#if !IS_ENABLED(CONFIG_SEC_FACTORY)
+	complete(&water->water_cc1_rr_compl);
+#endif
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t s2mf301_pm_vcc2up_isr(int irq, void *data)
+{
+	struct s2mf301_pmeter_data *pmeter = data;
+	struct s2mf301_water_data *water;
+	int volt;
+
+	if (!pmeter->water) {
+		pr_info("%s, pmeter->water is NULL\n", __func__);
+		return -1;
+	}
+	water = pmeter->water;
+
+	volt = s2mf301_pm_get_value(pmeter, S2MF301_PM_TYPE_VCC2);
+	pr_info("%s, vcc2 = %dmV\n", __func__, volt);
+
+	water->vcc2 = volt;
+
+#if !IS_ENABLED(CONFIG_SEC_FACTORY)
+	complete(&water->water_cc2_rr_compl);
 #endif
 
 	return IRQ_HANDLED;
@@ -578,6 +661,8 @@ void *s2mf301_pm_water_init(struct s2mf301_water_data *water)
 	 */
 	s2mf301_write_reg(pmeter->i2c, 0x73, 0x54);
 	s2mf301_write_reg(pmeter->i2c, 0x74, 0x45);
+	s2mf301_pm_water_10s_en(pmeter, false);
+	s2mf301_pm_water_det_en(pmeter, false);
 	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_CHANGE);
 	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_RR);
 	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_WATER);
@@ -601,6 +686,7 @@ void *s2mf301_pm_water_init(struct s2mf301_water_data *water)
 	pmeter->water->water_get_status = s2mf301_pm_water_get_status;
 	pmeter->water->pm_enable = s2mf301_pm_ops_pm_enable;
 	pmeter->water->pm_get_value = s2mf301_pm_ops_pm_get_value;
+	pmeter->water->pm_set_dry_threshold = s2mf301_pm_ops_set_dry_threshold;
 
 	return pmeter;
 }
@@ -612,6 +698,7 @@ void s2mf301_pm_water_irq_init(struct s2mf301_water_data *water)
 	struct power_supply *psy;
 	struct s2mf301_pmeter_data *pmeter;
 	struct s2mf301_dev *s2mf301;
+	u8 irq_reg[8] = {0, };
 
 	psy = get_power_supply_by_name("s2mf301-pmeter");
 	if (!psy) {
@@ -649,14 +736,14 @@ void s2mf301_pm_water_irq_init(struct s2mf301_water_data *water)
 	if (ret < 0)
 		pr_err("%s: Fail to request SYS in IRQ: %d: %d\n", __func__, pmeter->irq_water_status1, ret);
 
-	pmeter->irq_water_status2 = s2mf301->pdata->irq_base + S2MF301_PM_ADC_REQ_DONE4_WET_STATUS_GPADC2 ;
+	pmeter->irq_water_status2 = s2mf301->pdata->irq_base + S2MF301_PM_ADC_REQ_DONE4_WET_STATUS_GPADC2;
 	ret = request_threaded_irq(pmeter->irq_water_status2, NULL,
 			s2mf301_pm_water2_isr, 0, "water2-irq", pmeter);
 	if (ret < 0)
 		pr_err("%s: Fail to request SYS in IRQ: %d: %d\n", __func__,
 				pmeter->irq_water_status2, ret);
 
-	pmeter->irq_gpadc1up = s2mf301->pdata->irq_base + S2MF301_PM_ADC_REQ_DONE2_GPADC1UP ;
+	pmeter->irq_gpadc1up = s2mf301->pdata->irq_base + S2MF301_PM_ADC_REQ_DONE2_GPADC1UP;
 	ret = request_threaded_irq(pmeter->irq_gpadc1up, NULL,
 			s2mf301_pm_gpadc1up_isr, 0, "gpadc1up-irq", pmeter);
 	if (ret < 0)
@@ -668,7 +755,27 @@ void s2mf301_pm_water_irq_init(struct s2mf301_water_data *water)
 	if (ret < 0)
 		pr_err("%s: Fail to request SYS in IRQ: %d: %d\n", __func__, pmeter->irq_gpadc2up, ret);
 
+	pmeter->irq_vcc1up = s2mf301->pdata->irq_base + S2MF301_PM_ADC_REQ_DONE1_VCC1UP;
+	ret = request_threaded_irq(pmeter->irq_vcc1up, NULL,
+			s2mf301_pm_vcc1up_isr, 0, "vcc1up-irq", pmeter);
+	if (ret < 0)
+		pr_err("%s: Fail to request SYS in IRQ: %d: %d\n", __func__, pmeter->irq_vcc1up, ret);
 
+	pmeter->irq_vcc2up = s2mf301->pdata->irq_base + S2MF301_PM_ADC_REQ_DONE1_VCC2UP;
+	ret = request_threaded_irq(pmeter->irq_vcc2up, NULL,
+			s2mf301_pm_vcc2up_isr, 0, "vcc2up-irq", pmeter);
+	if (ret < 0)
+		pr_err("%s: Fail to request SYS in IRQ: %d: %d\n", __func__, pmeter->irq_vcc2up, ret);
+
+	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_CHANGE);
+	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_RR);
+	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_WATER);
+
+	s2mf301_bulk_read(pmeter->i2c, S2MF301_REG_PM_ADC_REQ_DONE1, 8, &irq_reg[0]);
+	pr_info("%s: powermeter interrupt RR(0x%02x, 0x%02x, 0x%02x, 0x%02x)\n",
+			__func__, irq_reg[0], irq_reg[1], irq_reg[2], irq_reg[3]);
+	pr_info("%s: powermeter interrupt CO(0x%02x, 0x%02x, 0x%02x, 0x%02x)\n",
+			__func__, irq_reg[4], irq_reg[5], irq_reg[6], irq_reg[7]);
 }
 EXPORT_SYMBOL_GPL(s2mf301_pm_water_irq_init);
 #endif
@@ -783,6 +890,13 @@ static int s2mf301_pm_set_property(struct power_supply *psy,
 	u8 reg[6] = {0, };
 
 	switch ((int)psp) {
+	case POWER_SUPPLY_PROP_PRESENT:
+		if (val->intval < 0 || val->intval > 5000)
+			break;
+#if IS_ENABLED(CONFIG_S2MF301_TYPEC_WATER)
+		pmeter->water->cc_hiccup_th = val->intval;
+#endif
+		break;
 	case POWER_SUPPLY_PROP_ONLINE:
 		pr_info("[DEBUG]%s: POWER_SUPPLY_PROP_ONLINE\n", __func__);
 		s2mf301_read_reg(pmeter->i2c, 0x3c, &reg[0]);
@@ -951,7 +1065,7 @@ static irqreturn_t s2mf301_vchgin_isr(int irq, void *data)
 
 	voltage = s2mf301_pm_get_value(pmeter, S2MF301_PM_TYPE_VCHGIN);
 
-	pr_info("%s voltage : %d", __func__, voltage);
+	pr_info("%s voltage : %d\n", __func__, voltage);
 
 	psy_do_property("muic-manager", set,
 		POWER_SUPPLY_LSI_PROP_PM_VCHGIN, value);
@@ -979,8 +1093,6 @@ static void s2mf301_powermeter_initial(struct s2mf301_pmeter_data *pmeter)
 {
 	s2mf301_pm_enable(pmeter, CONTINUOUS_MODE, true, S2MF301_PM_TYPE_ICHGIN);
 	s2mf301_pm_enable(pmeter, CONTINUOUS_MODE, true, S2MF301_PM_TYPE_VCHGIN);
-	s2mf301_pm_enable(pmeter, CONTINUOUS_MODE, true, S2MF301_PM_TYPE_VCC1);
-	s2mf301_pm_enable(pmeter, CONTINUOUS_MODE, true, S2MF301_PM_TYPE_VCC2);
 }
 
 static int s2mf301_pmeter_probe(struct platform_device *pdev)
@@ -1086,17 +1198,36 @@ static void s2mf301_pmeter_shutdown(struct platform_device *pdev)
 {
 #if IS_ENABLED(CONFIG_S2MF301_TYPEC_WATER)
 	struct s2mf301_pmeter_data *pmeter = platform_get_drvdata(pdev);
-#endif
-	pr_info("%s: S2MF301 PowerMeter driver shutdown\n", __func__);
-	
-#if IS_ENABLED(CONFIG_S2MF301_TYPEC_WATER)
+	struct s2mf301_water_data *water = pmeter->water;
+
 	s2mf301_pm_water_det_en(pmeter, false);
 	s2mf301_pm_water_10s_en(pmeter, false);
 
 	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_RR);
 	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_WATER);
 	s2mf301_pm_water_irq_masking(pmeter, true, S2MF301_IRQ_TYPE_CHANGE);
+
+	disable_irq(pmeter->irq_comp1);
+	disable_irq(pmeter->irq_comp2);
+	disable_irq(pmeter->irq_water_status1);
+	disable_irq(pmeter->irq_water_status2);
+	disable_irq(pmeter->irq_gpadc1up);
+	disable_irq(pmeter->irq_gpadc2up);
+	disable_irq(pmeter->irq_vcc1up);
+	disable_irq(pmeter->irq_vcc2up);
+	free_irq(pmeter->irq_comp1, pmeter);
+	free_irq(pmeter->irq_comp2, pmeter);
+	free_irq(pmeter->irq_water_status1, pmeter);
+	free_irq(pmeter->irq_water_status2, pmeter);
+	free_irq(pmeter->irq_gpadc1up, pmeter);
+	free_irq(pmeter->irq_gpadc2up, pmeter);
+	free_irq(pmeter->irq_vcc1up, pmeter);
+	free_irq(pmeter->irq_vcc2up, pmeter);
+
+	cancel_delayed_work_sync(&water->state_work);
+	cancel_delayed_work_sync(&water->start_10s_work);
 #endif
+	pr_info("%s: S2MF301 PowerMeter driver shutdown\n", __func__);
 }
 
 static SIMPLE_DEV_PM_OPS(s2mf301_pmeter_pm_ops, s2mf301_pmeter_suspend,

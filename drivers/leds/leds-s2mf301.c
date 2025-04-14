@@ -22,6 +22,9 @@
 #include <linux/platform_device.h>
 #include <linux/power_supply.h>
 
+#include <linux/muic/common/muic.h>
+#include <linux/usb/typec/slsi/common/usbpd_ext.h>
+
 #define CONTROL_I2C	0
 #define CONTROL_GPIO	1
 
@@ -690,17 +693,26 @@ static ssize_t s2mf301_rear_flash_store(struct device *dev,
 	if (mode == S2MF301_FLED_MODE_TORCH) {
 		pr_info("%s: %d: S2MF301_FLED_MODE_TORCH - %dmA\n", __func__, value, torch_current);
 		/* torch current set */
+		pdo_ctrl_by_flash(1);
+		muic_afc_request_voltage(FLED, 5);
+		pr_info("[%s](%d) S2MF301_FLED_MODE_TORCH: Power Down Volatge set(9V -> 5V).\n" ,__func__, __LINE__);
 		s2mf301_fled_set_torch_curr(g_fled_data, 1, torch_current);
 		s2mf301_fled_set_mode(g_fled_data, 1, S2MF301_FLED_MODE_TORCH);
 		g_fled_data->pdata->en_torch = true;
 	} else if (mode == S2MF301_FLED_MODE_FLASH) {
 		pr_info("%s: %d: S2MF301_FLED_MODE_FLASH - %dmA\n", __func__, value, flash_current);
 		/* flash current set */
+		pdo_ctrl_by_flash(1);
+		muic_afc_request_voltage(FLED, 5);
+		pr_info("[%s](%d) S2MF301_FLED_MODE_FLASH: Power Down Volatge set(9V -> 5V).\n" ,__func__, __LINE__);
 		s2mf301_fled_set_flash_curr(g_fled_data, 1, flash_current);
 		s2mf301_fled_set_mode(g_fled_data, 1, S2MF301_FLED_MODE_FLASH);
 		g_fled_data->pdata->en_flash = true;
 	} else {
 		pr_info("%s: %d: S2MF301_FLED_MODE_OFF\n", __func__, value);
+		pdo_ctrl_by_flash(0);
+		muic_afc_request_voltage(FLED, 9);
+		pr_info("[%s](%d) S2MF301_FLED_MODE_OFF: Power Down Volatge set Clear(5V -> 9V).\n" ,__func__, __LINE__);
 		/* false torch current set for initial current */
 		/* flash current set */
 		s2mf301_fled_set_flash_curr(g_fled_data, 1, flash_current);
