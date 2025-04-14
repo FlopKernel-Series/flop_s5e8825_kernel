@@ -99,8 +99,9 @@ static int fts_ex_mode_switch(enum _ex_mode mode, u8 value)
 	return ret;
 }
 
-static ssize_t fts_glove_mode_show(
-    struct device *dev, struct device_attribute *attr, char *buf)
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
+static ssize_t fts_glove_mode_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
 {
 	int count = 0;
 	u8 val = 0;
@@ -109,16 +110,15 @@ static ssize_t fts_glove_mode_show(
 	mutex_lock(&ts_data->pdata->enable_mutex);
 	fts_read_reg(FTS_REG_GLOVE_MODE_EN, &val);
 	count = snprintf(buf + count, PAGE_SIZE, "Glove Mode:%s\n",
-	                 ts_data->glove_mode ? "On" : "Off");
+			ts_data->glove_mode ? "On" : "Off");
 	count += snprintf(buf + count, PAGE_SIZE, "Glove Reg(0xC0):%d\n", val);
 	mutex_unlock(&ts_data->pdata->enable_mutex);
 
 	return count;
 }
 
-static ssize_t fts_glove_mode_store(
-    struct device *dev,
-    struct device_attribute *attr, const char *buf, size_t count)
+static ssize_t fts_glove_mode_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
 {
 	int ret = 0;
 	struct fts_ts_data *ts_data = fts_data;
@@ -145,7 +145,6 @@ static ssize_t fts_glove_mode_store(
 	return count;
 }
 
-
 static ssize_t fts_cover_mode_show(
     struct device *dev, struct device_attribute *attr, char *buf)
 {
@@ -156,16 +155,15 @@ static ssize_t fts_cover_mode_show(
 	mutex_lock(&ts_data->pdata->enable_mutex);
 	fts_read_reg(FTS_REG_COVER_MODE_EN, &val);
 	count = snprintf(buf + count, PAGE_SIZE, "Cover Mode:%s\n",
-	                 ts_data->cover_mode ? "On" : "Off");
+			ts_data->cover_mode ? "On" : "Off");
 	count += snprintf(buf + count, PAGE_SIZE, "Cover Reg(0xC1):%d\n", val);
 	mutex_unlock(&ts_data->pdata->enable_mutex);
 
 	return count;
 }
 
-static ssize_t fts_cover_mode_store(
-    struct device *dev,
-    struct device_attribute *attr, const char *buf, size_t count)
+static ssize_t fts_cover_mode_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
 {
 	int ret = 0;
 	struct fts_ts_data *ts_data = fts_data;
@@ -202,7 +200,7 @@ static ssize_t fts_charger_mode_show(
 	mutex_lock(&ts_data->pdata->enable_mutex);
 	fts_read_reg(FTS_REG_CHARGER_MODE_EN, &val);
 	count = snprintf(buf + count, PAGE_SIZE, "Charger Mode:%s\n",
-	                 ts_data->charger_mode ? "On" : "Off");
+			ts_data->charger_mode ? "On" : "Off");
 	count += snprintf(buf + count, PAGE_SIZE, "Charger Reg(0x8B):%d\n", val);
 	mutex_unlock(&ts_data->pdata->enable_mutex);
 
@@ -234,7 +232,7 @@ static ssize_t fts_charger_mode_store(
 		}
 	}
 
-	FTS_DEBUG("charger mode:%d", ts_data->glove_mode);
+	FTS_DEBUG("charger mode:%d", ts_data->charger_mode);
 	return count;
 }
 
@@ -244,13 +242,13 @@ static ssize_t fts_charger_mode_store(
  * write example:echo 1 > fts_glove_mode   ---write glove mode to 01
  */
 static DEVICE_ATTR(fts_glove_mode, S_IRUGO | S_IWUSR,
-                   fts_glove_mode_show, fts_glove_mode_store);
+			fts_glove_mode_show, fts_glove_mode_store);
 
 static DEVICE_ATTR(fts_cover_mode, S_IRUGO | S_IWUSR,
-                   fts_cover_mode_show, fts_cover_mode_store);
+			fts_cover_mode_show, fts_cover_mode_store);
 
 static DEVICE_ATTR(fts_charger_mode, S_IRUGO | S_IWUSR,
-                   fts_charger_mode_show, fts_charger_mode_store);
+			fts_charger_mode_show, fts_charger_mode_store);
 
 static struct attribute *fts_touch_mode_attrs[] = {
 	&dev_attr_fts_glove_mode.attr,
@@ -262,50 +260,41 @@ static struct attribute *fts_touch_mode_attrs[] = {
 static struct attribute_group fts_touch_mode_group = {
 	.attrs = fts_touch_mode_attrs,
 };
-
+#endif
 int fts_ex_mode_recovery(struct fts_ts_data *ts_data)
 {
-	if (ts_data->glove_mode) {
+	if (ts_data->glove_mode)
 		fts_ex_mode_switch(MODE_GLOVE, ENABLE);
-	}
 
-	if (ts_data->cover_mode) {
+	if (ts_data->cover_mode)
 		fts_ex_mode_switch(MODE_COVER, ENABLE);
-	}
 
 #if IS_ENABLED(CONFIG_VBUS_NOTIFIER)
-	if (ts_data->ta_status) {
+	if (ts_data->pdata->charger_flag) {
 		fts_ex_mode_switch(MODE_CHARGER, ENABLE);
 		ts_data->charger_mode = ENABLE;
 	}
 #endif
-	if (ts_data->aot_enable) {
+	if (ts_data->aot_enable)
 		fts_write_reg(FTS_REG_DOUBLETAP_TO_WAKEUP_EN, ENABLE);
-	}
 
-	if (ts_data->singletap_enable) {
+	if (ts_data->singletap_enable)
 		fts_write_reg(FTS_REG_SINGLETAP_EN, ts_data->singletap_enable);
-	}
 
-	if (ts_data->aod_enable) {
+	if (ts_data->aod_enable)
 		fts_write_reg(FTS_REG_AOD_EN, ts_data->aod_enable);
-	}
 
-	if (ts_data->spay_enable) {
+	if (ts_data->spay_enable)
 		fts_write_reg(FTS_REG_SPAY_EN, ENABLE);
-	}
 
-	if (ts_data->pdata->pocket_mode) {
+	if (ts_data->pdata->pocket_mode)
 		fts_write_reg(FTS_REG_POCKET_MODE, ts_data->pdata->pocket_mode);
-	}
 
-	if (ts_data->pdata->ed_enable) {
+	if (ts_data->pdata->ed_enable)
 		fts_write_reg(FTS_REG_PROXIMITY_MODE, ts_data->pdata->ed_enable);
-	}
 
-	if (ts_data->fod_mode & 0x01) {
+	if (ts_data->fod_mode & 0x01)
 		fts_write_reg(FTS_REG_FOD_MODE, ts_data->fod_mode);
-	}
 
 	FTS_INFO("gesture_mode=0x%02X pm:0x%02X, AOT:%d, ST:%d, SPAY:%d, ED:%d, Pocket:%d, FOD:%d",
 				ts_data->gesture_mode, ts_data->power_mode,
@@ -322,13 +311,17 @@ int fts_ex_mode_recovery(struct fts_ts_data *ts_data)
 	if (ts_data->refresh_rate)
 		fts_set_refresh_rate(ts_data);
 
+	atomic_set(&ts_data->pdata->touch_noise_status, 0);
+	atomic_set(&ts_data->pdata->touch_pre_noise_status, 0);
+
 	return 0;
 }
 
 int fts_ex_mode_init(struct fts_ts_data *ts_data)
 {
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 	int ret = 0;
-
+#endif
 	ts_data->glove_mode = DISABLE;
 	ts_data->cover_mode = DISABLE;
 	ts_data->charger_mode = DISABLE;
@@ -337,6 +330,7 @@ int fts_ex_mode_init(struct fts_ts_data *ts_data)
 	if (ts_data->pdata->support_fod)
 		fts_read_fod_data(ts_data);
 
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 	ret = sysfs_create_group(&ts_data->dev->kobj, &fts_touch_mode_group);
 	if (ret < 0) {
 		FTS_ERROR("create sysfs(ex_mode) fail");
@@ -345,12 +339,14 @@ int fts_ex_mode_init(struct fts_ts_data *ts_data)
 	} else {
 		FTS_DEBUG("create sysfs(ex_mode) succeedfully");
 	}
-
+#endif
 	return 0;
 }
 
 int fts_ex_mode_exit(struct fts_ts_data *ts_data)
 {
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 	sysfs_remove_group(&ts_data->dev->kobj, &fts_touch_mode_group);
+#endif
 	return 0;
 }

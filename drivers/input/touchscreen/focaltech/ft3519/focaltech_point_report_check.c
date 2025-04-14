@@ -84,7 +84,7 @@ void fts_prc_queue_work(struct fts_ts_data *ts_data)
 	ts_data->intr_jiffies = jiffies;
 	if (!ts_data->prc_mode) {
 		queue_delayed_work(ts_data->ts_workqueue, &ts_data->prc_work,
-		                   msecs_to_jiffies(POINT_REPORT_CHECK_WAIT_TIME));
+					msecs_to_jiffies(POINT_REPORT_CHECK_WAIT_TIME));
 		ts_data->prc_mode = 1;
 	}
 }

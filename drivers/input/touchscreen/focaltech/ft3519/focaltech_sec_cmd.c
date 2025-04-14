@@ -27,7 +27,12 @@ enum ALL_NODE_TEST_TYPE {
 	ALL_NODE_TYPE_NOISE,
 	ALL_NODE_TYPE_PRAM,
 	ALL_NODE_TYPE_INT,
+	ALL_NODE_TYPE_DELTA_JITTER,
 };
+
+int read_mass_data(u8 addr, int byte_num, int *buf);
+static void fts_print_frame(struct fts_ts_data *ts, short *min, short *max);
+static void fts_print_scap_frame(int *data, int *min, int *max);
 
 static int fts_wait_test_done(u8 cmd, u8 mode, int delayms)
 {
@@ -127,25 +132,55 @@ static int enter_factory_mode(void)
 	return fts_wait_test_done(DEVICE_MODE_ADDR, FTS_REG_WORKMODE_FACTORY_VALUE, 200);
 }
 
-static ssize_t scrub_position_show(struct device *dev,
+/**************************************************************************************************/
+/* for bigdata */
+/* read param */
+static ssize_t hw_param_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sec_cmd_data *sec = dev_get_drvdata(dev);
-	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
-	char buff[256] = { 0 };
+	struct fts_ts_data *ts = container_of(sec, struct fts_ts_data, sec);
+	char buff[SEC_INPUT_HW_PARAM_SIZE];
+	char tbuff[SEC_CMD_STR_LEN];
+	char mdev[SEC_CMD_STR_LEN];
 
-#if IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
-	FTS_INFO("id: %d", ts_data->pdata->gesture_id);
-#else
-	FTS_INFO("id: %d, X:%d, Y:%d", ts_data->pdata->gesture_id, ts_data->pdata->gesture_x, ts_data->pdata->gesture_y);
-#endif
-	snprintf(buff, sizeof(buff), "%d %d %d", ts_data->pdata->gesture_id,
-			ts_data->pdata->gesture_x, ts_data->pdata->gesture_y);
+	memset(mdev, 0x00, sizeof(mdev));
+	snprintf(mdev, sizeof(mdev), "%s", "");
 
-	ts_data->pdata->gesture_x = 0;
-	ts_data->pdata->gesture_y = 0;
+	memset(buff, 0x00, sizeof(buff));
 
-	return snprintf(buf, PAGE_SIZE, "%s", buff);
+	sec_input_get_common_hw_param(ts->pdata, buff);
+
+	/* module_id */
+	memset(tbuff, 0x00, sizeof(tbuff));
+
+	snprintf(tbuff, sizeof(tbuff), ",\"TMOD%s\":\"FT%02X%02X%02X%c%01X\"",
+			mdev, ts->ic_fw_ver.project_name, ts->ic_fw_ver.module_id, ts->ic_fw_ver.fw_ver, '0', 0);
+
+	strlcat(buff, tbuff, sizeof(buff));
+
+	/* vendor_id */
+	memset(tbuff, 0x00, sizeof(tbuff));
+	snprintf(tbuff, sizeof(tbuff), ",\"TVEN%s\":\"FT_FT%04X\"", mdev, ts->ic_name);
+
+	strlcat(buff, tbuff, sizeof(buff));
+
+	FTS_INFO("%s: %s\n", __func__, buff);
+
+	return snprintf(buf, SEC_CMD_BUF_SIZE, "%s", buff);
+}
+
+/* clear param */
+static ssize_t hw_param_store(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count)
+{
+	struct sec_cmd_data *sec = dev_get_drvdata(dev);
+	struct fts_ts_data *ts = container_of(sec, struct fts_ts_data, sec);
+
+	sec_input_clear_common_hw_param(ts->pdata);
+
+	return count;
 }
 
 static ssize_t sensitivity_mode_show(struct device *dev,
@@ -158,9 +193,8 @@ static ssize_t sensitivity_mode_show(struct device *dev,
 	char buff[10 * 9] = { 0 };
 
 	ret = fts_write_reg(FTS_REG_SNR_BUFF_COUNTER, 0);
-	if (ret < 0) {
+	if (ret < 0)
 		FTS_ERROR("failed to start snr non touched test, ret=%d", ret);
-	}
 
 	ret = fts_read(&cmd, 1, data, 18);
 	if (ret < 0)
@@ -261,7 +295,7 @@ out:
 	return count;
 }
 
-static ssize_t protos_event_show(struct device *dev,
+static ssize_t virtual_prox_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sec_cmd_data *sec = dev_get_drvdata(dev);
@@ -272,7 +306,7 @@ static ssize_t protos_event_show(struct device *dev,
 	return snprintf(buf, SEC_CMD_BUF_SIZE, "%d", ts_data->hover_event != 3 ? 0 : 3);
 }
 
-static ssize_t protos_event_store(struct device *dev,
+static ssize_t virtual_prox_store(struct device *dev,
 		struct device_attribute *attr,
 		const char *buf, size_t count)
 {
@@ -437,20 +471,169 @@ out:
 	return count;
 }
 
-static DEVICE_ATTR(scrub_pos, 0444, scrub_position_show, NULL);
-static DEVICE_ATTR(sensitivity_mode, 0644, sensitivity_mode_show, sensitivity_mode_store);
-static DEVICE_ATTR(virtual_prox, 0664, protos_event_show, protos_event_store);
-static DEVICE_ATTR(fod_pos, 0444, fod_pos_show, NULL);
-static DEVICE_ATTR(fod_info, 0444, fod_info_show, NULL);
-static DEVICE_ATTR(get_lp_dump, 0444, get_lp_dump_show, NULL);
+static ssize_t get_scap_rx_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	int ret = 0;
+    int i = 0;
+	int count = 0;
+	u8 data_buf[68] = {0};
+    int scap_data[34] = {0};
+
+	ret = fts_burst_read(0x92, data_buf, 68);
+	if (ret < 0) {
+		FTS_ERROR("Failed to read scap data");
+		count += snprintf(buf + count, PAGE_SIZE, "NG, Failed to read scap data\n");
+		goto out;
+	}
+
+	for (i = 0; i < 68; i = i + 2) {
+        scap_data[i >> 1] = (int)(short)((data_buf[i] << 8) + data_buf[i + 1]);
+    }
+
+    count += snprintf(buf + count, PAGE_SIZE, "SCap Rx: ");
+    for (i = 0; i < 34; i++) {
+        count += snprintf(buf + count, PAGE_SIZE, "%5d, ", scap_data[i]);
+    }
+    count += snprintf(buf + count, PAGE_SIZE, "\n");
+
+out:
+	return count;
+}
+
+static ssize_t get_scap_delta_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+    struct sec_cmd_data *sec = dev_get_drvdata(dev);
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+    //char buff[SEC_CMD_STR_LEN] = { 0 };
+    int ret = 0;
+    int count = 0;
+    int min_value = 0;
+    int max_value = 0;
+    u8 reg06_val = 0;
+    u8 reg09 = 0;
+    int *scap_rwadata = NULL;
+    int *sraw_tmp = NULL;
+    int scb_cnt = 0;
+    int byte_num = 0;
+    int *data = NULL;
+    u8 tx = 0;
+    u8 rx = 0;
+
+    FTS_FUNC_ENTER();
+
+    fts_write_reg(0xEE, 1);
+
+    enter_factory_mode();
+    fts_read_reg(0x02, &tx);
+    fts_read_reg(0x03, &rx);
+
+    byte_num = 2 * (tx * rx);
+    data = vmalloc(tx * rx * sizeof(int));
+    /* save origin value */
+    ret = fts_read_reg(FACTORY_REG_DATA_SELECT, &reg06_val);
+    if (ret < 0) {
+        FTS_ERROR("read reg06 fail,ret=%d", ret);
+        goto out;
+    }
+    FTS_INFO("reg06_val = [%d]", reg06_val);
+
+    ret = fts_write_reg(FACTORY_REG_DATA_SELECT, 0x01);
+    if (ret < 0) {
+        FTS_ERROR("set reg06 fail,ret=%d", ret);
+        goto out_testmode;
+    }
+
+    ret = fts_write_reg(FACTORY_REG_LINE_ADDR, FACTORY_REG_RAWADDR_SET);
+    if (ret < 0) {
+        FTS_ERROR("failed to write rawdata addr setting");
+        goto out_testmode;
+    }
+
+    FTS_RAW_INFO("%s", __func__);
+    ret = read_mass_data(FACTORY_REG_RAWDATA_ADDR_MC_SC, byte_num, data);
+    if (ret < 0) {
+        FTS_ERROR("failed to read noise");
+        goto out_testmode;
+    }
+
+    fts_print_frame(ts_data, (short *)&min_value, (short *)&max_value);
+    count += snprintf(buf + count, PAGE_SIZE, "%d,%d", min_value, max_value);
+
+
+    /***********get scap diff*************/
+    memset(data, 0x00, tx * rx * sizeof(int));
+    scap_rwadata = data;
+    
+    byte_num = (tx + rx) * 2;
+    
+    fts_read_reg(0x09, &reg09);
+    if (!(reg09 & 0x20)) {
+        sraw_tmp = scap_rwadata + scb_cnt;
+        fts_write_reg(0x01, 0xAC);
+        /*print*/
+        FTS_RAW_INFO("water proof on:\n");
+        ret = read_mass_data(FACTORY_REG_RAWDATA_ADDR_MC_SC,byte_num, sraw_tmp);
+        if (ret < 0) {
+            FTS_ERROR("read sc_rawdata fail,ret=%d", ret);
+            goto out;
+        }
+
+        /* show Scap rawdata */
+        fts_print_scap_frame(sraw_tmp, &min_value, &max_value);
+        count += snprintf(buf + count, PAGE_SIZE, "%d,%d", min_value, max_value);
+        scb_cnt += (rx + tx);
+    }
+
+    /* water proof off check */
+    if (!(reg09 & 0x80)) {
+        sraw_tmp = scap_rwadata + scb_cnt;
+        fts_write_reg(0x01, 0xAB);
+        FTS_RAW_INFO("water proof off:\n");
+        ret = read_mass_data(FACTORY_REG_RAWDATA_ADDR_MC_SC,byte_num, sraw_tmp);
+        if (ret < 0) {
+            FTS_ERROR("read sc_rawdata fail,ret=%d", ret);
+            goto out;
+        }
+
+        /* show Scap rawdata */
+        fts_print_scap_frame(sraw_tmp, &min_value, &max_value);
+        count += snprintf(buf + count, PAGE_SIZE, "%d,%d", min_value, max_value);
+        scb_cnt += (rx + tx);
+    }
+
+out_testmode:
+    /* set the origin value */
+    ret = fts_write_reg(FACTORY_REG_DATA_SELECT, reg06_val);
+    if (ret < 0) {
+        FTS_ERROR("restore normalize fail,ret=%d", ret);
+    }
+
+out:
+    vfree(data);
+
+    enter_work_mode();
+    return count;
+}
+
+
+static DEVICE_ATTR_RW(hw_param);
+static DEVICE_ATTR_RW(sensitivity_mode);
+static DEVICE_ATTR_RW(virtual_prox);
+static DEVICE_ATTR_RO(fod_pos);
+static DEVICE_ATTR_RO(fod_info);
+static DEVICE_ATTR_RO(get_lp_dump);
+static DEVICE_ATTR_RO(get_scap_rx);
+static DEVICE_ATTR_RO(get_scap_delta);
 
 static struct attribute *cmd_attributes[] = {
-	&dev_attr_scrub_pos.attr,
+	&dev_attr_hw_param.attr,
 	&dev_attr_sensitivity_mode.attr,
 	&dev_attr_virtual_prox.attr,
 	&dev_attr_fod_pos.attr,
 	&dev_attr_fod_info.attr,
 	&dev_attr_get_lp_dump.attr,
+	&dev_attr_get_scap_rx.attr,
+	&dev_attr_get_scap_delta.attr,
 	NULL,
 };
 
@@ -570,31 +753,10 @@ static void get_chip_vendor(void *device_data)
 static void get_chip_name(void *device_data)
 {
 	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
+	struct fts_ts_data *ts = container_of(sec, struct fts_ts_data, sec);
 	char buff[SEC_CMD_STR_LEN] = { 0 };
-	int ret;
-	u8 rbuff, rbuff2;
-	rbuff = rbuff2 = 0;
 
-	ret = fts_write_reg(FTS_REG_BANK_MODE, 0);
-	if (ret < 0) {
-		FTS_ERROR("failed to write bank mode 0, ret=%d", ret);
-		goto out;
-	}
-
-	ret = fts_read_reg(FTS_REG_SEC_CHIP_NAME_H, &rbuff);
-	if (ret < 0) {
-		FTS_ERROR("failed to read CHIP NAME H, ret=%d", ret);
-		goto out;
-	}
-
-	ret = fts_read_reg(FTS_REG_SEC_CHIP_NAME_L, &rbuff2);
-	if (ret < 0) {
-		FTS_ERROR("failed to read CHIP NAME L, ret=%d", ret);
-		goto out;
-	}
-
-out:
-	snprintf(buff, sizeof(buff), "FT%02X%02X", rbuff, rbuff2);
+	snprintf(buff, sizeof(buff), "FT%04X", ts->ic_name);
 	FTS_INFO("%s", buff);
 
 	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
@@ -971,7 +1133,7 @@ out:
 	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
 	if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING)
 		sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "SHORT");
-	FTS_INFO("%s", buff);
+	FTS_RAW_INFO("%s : %s", __func__, buff);
 	if (short_data)
 		kfree(short_data);
 }
@@ -1080,7 +1242,7 @@ static void get_scap_rawdata(void *device_data)
 
 	FTS_RAW_INFO("%s", __func__);
 	/* show Scap rawdata */
-	FTS_RAW_INFO("scap_cb in waterproof on mode:");
+	FTS_RAW_INFO("scap_rawdata in waterproof on mode:");
 	fts_print_scap_frame(sraw_tmp, &min_value, &max_value);
 out:
 	if (ret < 0) {
@@ -1104,12 +1266,17 @@ static void get_rawdata(void *device_data)
 	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
 	char buff[SEC_CMD_STR_LEN] = { 0 };
 	int ret = 0;
-	short min_value, max_value;
+	short min_value = 0, max_value = 0;
 	u8 fre = 0;
 	u8 fir = 0;
 	u8 normalize = 0;
 	int byte_num = 0;
-	min_value = max_value = 0;
+
+	short rawcap[2] = {SHRT_MAX, SHRT_MIN};
+	short rawcap_edge[2] = {SHRT_MAX, SHRT_MIN};
+	u8 tx = ts_data->tx_num;
+	u8 rx = ts_data->rx_num;
+	int ii, jj;
 
 	FTS_FUNC_ENTER();
 
@@ -1155,6 +1322,24 @@ static void get_rawdata(void *device_data)
 
 	fts_print_frame(ts_data, &min_value, &max_value);
 
+	for (ii = 0; ii < rx; ii++) {
+		for (jj = 0; jj < tx; jj++) {
+			short *rawcap_ptr;
+
+			if (ii == 0 || ii == rx - 1 || jj == 0 || jj == tx - 1)
+				rawcap_ptr = rawcap_edge;
+			else
+				rawcap_ptr = rawcap;
+
+			if (ts_data->pFrame[(ii * tx) + jj] < rawcap_ptr[0])
+				rawcap_ptr[0] = ts_data->pFrame[(ii * tx) + jj];
+			if (ts_data->pFrame[(ii * tx) + jj] > rawcap_ptr[1])
+				rawcap_ptr[1] = ts_data->pFrame[(ii * tx) + jj];
+		}
+	}
+	FTS_RAW_INFO("%s: rawcap:%d,%d rawcap_edge:%d,%d", __func__,
+				rawcap[0], rawcap[1], rawcap_edge[0], rawcap_edge[1]);
+
 out_testmode:
 	ret = fts_write_reg(FACTORY_REG_NORMALIZE, normalize);
 	if (ret < 0) {
@@ -1181,8 +1366,15 @@ out:
 	}
 
 	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
-	if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING)
+
+	if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING) {
 		sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "RAWDATA");
+		snprintf(buff, SEC_CMD_STR_LEN, "%d,%d", rawcap[0], rawcap[1]);
+		sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "TSP_RAWCAP");
+		snprintf(buff, SEC_CMD_STR_LEN, "%d,%d", rawcap_edge[0], rawcap_edge[1]);
+		sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "TSP_RAWCAP_EDGE");
+	}
+
 	FTS_INFO("%s", buff);
 }
 
@@ -1303,6 +1495,124 @@ out:
 	FTS_INFO("%s", buff);
 }
 
+static void get_jitter_delta(void *device_data)
+{
+	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+	char buff[SEC_CMD_STR_LEN] = { 0 };
+	u8 cmd = { 0 };
+	u8 value = 0;
+	int ret;
+	int result = -1;
+	int i = 0;
+	u8 data[7] = {0};
+	s16 min_of_min = 0;
+	s16 max_of_min = 0;
+	s16 min_of_max = 0;
+	s16 max_of_max = 0;
+	s16 min_of_avg = 0;
+	s16 max_of_avg = 0;
+
+	FTS_FUNC_ENTER();
+
+	enter_factory_mode();
+	ret = fts_write_reg(0x06, 0x01);
+	if (ret < 0) {
+		FTS_ERROR("set reg06 fail,ret=%d", ret);
+		goto OUT_JITTER_DELTA;
+	}
+
+	ret = fts_write_reg(0x10, 0x01);
+	if (ret < 0) {
+		FTS_ERROR("set reg10 fail,ret=%d", ret);
+		goto OUT_JITTER_DELTA;
+	}
+
+	/*set 1000 frames*/
+	ret = fts_write_reg(0x12, 100);
+	if (ret < 0) {
+		FTS_ERROR("set 1000 frames fail,ret=%d", ret);
+		goto OUT_JITTER_DELTA;
+	}
+
+	ret = fts_write_reg(0x00, 0xC0);
+	if (ret < 0) {
+		FTS_ERROR("set 1000 frames fail,ret=%d", ret);
+		goto OUT_JITTER_DELTA;
+	}
+
+	sec_delay(8000);
+	for (i = 0; i < 100; i++) {
+		fts_read_reg(0x11, &value);
+		if (value == 0x01)
+			break;
+		sec_delay(100);
+	}
+
+	if (i >= 100) {
+		FTS_ERROR("wait for finish fail\n");
+		goto OUT_JITTER_DELTA;
+	}
+
+	cmd = 0x96;
+	fts_read(&cmd, 1, data, 6);
+	min_of_min = (0x80 & data[0]) ? (0 - (0x7F & data[0])) : (0x7F & data[0]);
+	max_of_min = (0x80 & data[1]) ? (0 - (0x7F & data[1])) : (0x7F & data[1]);
+
+	min_of_max = (0x80 & data[2]) ? (0 - (0x7F & data[2])) : (0x7F & data[2]);
+	max_of_max = (0x80 & data[3]) ? (0 - (0x7F & data[3])) : (0x7F & data[3]);
+
+	min_of_avg = (0x80 & data[4]) ? (0 - (0x7F & data[4])) : (0x7F & data[4]);
+	max_of_avg = (0x80 & data[5]) ? (0 - (0x7F & data[5])) : (0x7F & data[5]);
+
+	ts_data->pFrame[0] = min_of_min;
+	ts_data->pFrame[1] = max_of_min;
+
+	ts_data->pFrame[2] = min_of_max;
+	ts_data->pFrame[3] = max_of_max;
+
+	ts_data->pFrame[4] = min_of_avg;
+	ts_data->pFrame[5] = max_of_avg;
+
+	result = 0;
+
+OUT_JITTER_DELTA:
+	if (result < 0) {
+		snprintf(buff, sizeof(buff), "NG");
+		sec->cmd_state = SEC_CMD_STATUS_FAIL;
+		if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING) {
+			sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "JITTER_DELTA_MIN");
+			sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "JITTER_DELTA_MAX");
+			sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "JITTER_DELTA_AVG");
+		}
+	} else {
+		snprintf(buff, sizeof(buff), "%d,%d,%d,%d,%d,%d",
+		min_of_min, max_of_min, min_of_max, max_of_max, min_of_avg, max_of_avg);
+		sec->cmd_state = SEC_CMD_STATUS_OK;
+
+		if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING) {
+			char buffer[SEC_CMD_STR_LEN] = { 0 };
+
+			snprintf(buffer, sizeof(buffer), "%d,%d", min_of_min, max_of_min);
+			sec_cmd_set_cmd_result_all(sec, buffer, strnlen(buffer, sizeof(buffer)), "JITTER_DELTA_MIN");
+
+			memset(buffer, 0x00, sizeof(buffer));
+			snprintf(buffer, sizeof(buffer), "%d,%d", min_of_max, max_of_max);
+			sec_cmd_set_cmd_result_all(sec, buffer, strnlen(buffer, sizeof(buffer)), "JITTER_DELTA_MAX");
+
+			memset(buffer, 0x00, sizeof(buffer));
+			snprintf(buffer, sizeof(buffer), "%d,%d", min_of_avg, max_of_avg);
+			sec_cmd_set_cmd_result_all(sec, buffer, strnlen(buffer, sizeof(buffer)), "JITTER_DELTA_AVG");
+		}
+	}
+
+	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
+	FTS_INFO("%s", buff);
+
+	fts_write_reg(0x10, 0x0);
+	fts_write_reg(0x11, 0x0);
+	fts_write_reg(0x06, 0x0);
+}
 
 static void get_noise(void *device_data)
 {
@@ -1409,6 +1719,88 @@ out:
 	FTS_INFO("%s", buff);
 }
 
+static void run_cs_delta_read_all(void *device_data)
+{
+	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+	int ret = 0;
+	int min_value = 0, max_value = 0;
+	u8 reg06_val = 0;
+	int byte_num = 0;
+	char *buff;
+	char temp[SEC_CMD_STR_LEN] = { 0 };
+	int i, j;
+
+	FTS_FUNC_ENTER();
+
+	buff = kzalloc(ts_data->tx_num * ts_data->rx_num * CMD_RESULT_WORD_LEN, GFP_KERNEL);
+
+	if (!buff) {
+		FTS_ERROR("failed to alloc allnode buff");
+		sec->cmd_state = SEC_CMD_STATUS_FAIL;
+		return;
+	}
+
+	fts_write_reg(0xEE, 1);
+	enter_factory_mode();
+
+	byte_num = 2 * (ts_data->rx_num * ts_data->tx_num);
+	/* save origin value */
+	ret = fts_read_reg(FACTORY_REG_DATA_SELECT, &reg06_val);
+	if (ret < 0) {
+		FTS_ERROR("read reg06 fail,ret=%d", ret);
+		goto out;
+	}
+	FTS_INFO("reg06_val = [%d]", reg06_val);
+
+	ret = fts_write_reg(FACTORY_REG_DATA_SELECT, 0x01);
+	if (ret < 0) {
+		FTS_ERROR("set reg06 fail,ret=%d", ret);
+		goto out_testmode;
+	}
+
+	ret = fts_write_reg(FACTORY_REG_LINE_ADDR, FACTORY_REG_RAWADDR_SET);
+	if (ret < 0) {
+		FTS_ERROR("failed to write rawdata addr setting");
+		goto out_testmode;
+	}
+
+	FTS_RAW_INFO("%s", __func__);
+	ret = read_mass_data(FACTORY_REG_RAWDATA_ADDR_MC_SC, byte_num, ts_data->pFrame);
+	if (ret < 0) {
+		FTS_ERROR("failed to read diff");
+		goto out_testmode;
+	}
+
+	fts_print_frame(ts_data, (short *)&min_value, (short *)&max_value);
+
+	for (i = 0; i < ts_data->rx_num; i++) {
+		for (j = 0; j < ts_data->tx_num; j++) {
+			snprintf(temp, CMD_RESULT_WORD_LEN, "%d,", ts_data->pFrame[i + (j * ts_data->rx_num)]);
+			strlcat(buff, temp, ts_data->tx_num * ts_data->rx_num * CMD_RESULT_WORD_LEN);
+		}
+	}
+
+out_testmode:
+	/* set the origin value */
+	ret = fts_write_reg(FACTORY_REG_DATA_SELECT, reg06_val);
+	if (ret < 0)
+		FTS_ERROR("restore normalize fail,ret=%d", ret);
+
+out:
+	if (ret < 0) {
+		sec->cmd_state = SEC_CMD_STATUS_FAIL;
+		snprintf(buff, sizeof(buff), "NG");
+	} else
+		sec->cmd_state = SEC_CMD_STATUS_OK;
+
+	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
+	FTS_INFO("%s", buff);
+
+	enter_work_mode();
+	kfree(buff);
+}
+
 extern int ft3519_pram_test_write_buf(u8 *buf, u32 len);
 extern int ft3519_pram_test_ecc_cal(u32 saddr, u32 len);
 extern int fts_fwupg_reset_in_boot(void);
@@ -1423,7 +1815,7 @@ static void get_pram_test(void *device_data)
 	u8 cmd[4] = { 0 };
 	u8 val[5] = { 0 };
 	u8 *pb_test_buf = ft3519_pram_test_file;
-	u32 pb_test_len = sizeof(ft3519_pram_test_file);
+	u32 pb_test_len = (u32)sizeof(ft3519_pram_test_file);
 	int result = 0;
 	u8 mode_temp = 0;
 
@@ -1471,10 +1863,9 @@ static void get_pram_test(void *device_data)
 		goto test_reset;
 	}
 	if (val[0] == 0x54 && val[1] == 0x52 && val[2] == 0xAA) {
-		FTS_INFO("pram test enter into romboot success");
+		FTS_RAW_INFO("pram test enter into romboot success");
 	} else {
-		FTS_ERROR("pram test enter into romboot fail");
-		ret = -EINVAL;
+		FTS_RAW_INFO("pram test enter into romboot fail");
 		goto test_reset;
 	}
 
@@ -1549,7 +1940,7 @@ out:
 	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
 	if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING)
 		sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "PRAM");
-	FTS_INFO("%s", buff);
+	FTS_RAW_INFO("%s : %s", __func__, buff);
 	
 }
 
@@ -1558,10 +1949,10 @@ static void get_int_test(void *device_data)
 	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
 	char buff[SEC_CMD_STR_LEN] = { 0 };
 	int ret = 0;
-	u8 int_val_before = 0;
-	u8 int_val_after = 0;
-	u8 i = 0;
-	u8 int_test_result = false;
+	int int_val_before = 0;
+	int int_val_after = 0;
+	int i = 0;
+	bool int_test_result = false;
 	struct fts_ts_data *ts_data = fts_data;
 
 	FTS_FUNC_ENTER();
@@ -1617,7 +2008,7 @@ out:
 	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
 	if (sec->cmd_all_factory_state == SEC_CMD_STATUS_RUNNING)
 		sec_cmd_set_cmd_result_all(sec, buff, strnlen(buff, sizeof(buff)), "INT_GPIO");
-	FTS_INFO("%s", buff);
+	FTS_RAW_INFO("%s : %s", __func__, buff);
 }
 
 #define ID_G_SEC_SPEC_TEST_TYPE			0x90 //1:rawdata test 2:short test
@@ -1648,7 +2039,7 @@ static int fts_fw_self_test_entry(int type, u8 cmd, u8 mode,
 	threshold[2] = min & 0xFF;
 	threshold[3] = (max >> 8) & 0xFF;
 	threshold[4] = max & 0xFF;
-	ret = fts_write(threshold, sizeof(threshold));
+	ret = fts_write(threshold, (u32)sizeof(threshold));
 	if (ret < 0) {
 		FTS_ERROR("set min value fail ret = %d", ret);
 		goto out;
@@ -1828,6 +2219,10 @@ static void run_allnode_data(void *device_data, int test_type)
 	case ALL_NODE_TYPE_INT:
 		get_int_test(sec);
 		break;
+	case ALL_NODE_TYPE_DELTA_JITTER:
+		get_jitter_delta(sec);
+		data_num = 6;
+		break;
 	default:
 		FTS_ERROR("test type is not supported %d", test_type);
 		break;
@@ -1855,7 +2250,7 @@ static void run_allnode_data(void *device_data, int test_type)
 	}
 
 	sec->cmd_state = SEC_CMD_STATUS_OK;
-	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
+	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, ts_data->tx_num * ts_data->rx_num * CMD_RESULT_WORD_LEN));
 	FTS_INFO("%s", buff);
 
 	kfree(buff);
@@ -1909,6 +2304,17 @@ static void run_noise_all(void *device_data)
 	FTS_FUNC_ENTER();
 	run_allnode_data(sec, ALL_NODE_TYPE_NOISE);
 }
+
+
+static void run_jitter_delta_all(void *device_data)
+{
+	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
+
+	FTS_FUNC_ENTER();
+	run_allnode_data(sec, ALL_NODE_TYPE_DELTA_JITTER);
+}
+
+
 
 static void run_pram_test_all(void *device_data)
 {
@@ -2026,6 +2432,29 @@ static void run_gap_data_y_all(void *device_data)
 	sec->cmd_state = SEC_CMD_STATUS_OK;
 	kfree(buff);
 }
+
+static void factory_cmd_result_all_imagetest(void *dev_data)
+{
+	struct sec_cmd_data *sec = (struct sec_cmd_data *)dev_data;
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+
+	sec->item_count = 0;
+
+	memset(sec->cmd_result_all, 0x00, SEC_CMD_RESULT_STR_LEN);
+	sec->cmd_all_factory_state = SEC_CMD_STATUS_RUNNING;
+
+	mutex_lock(&ts_data->device_lock);
+
+	enter_factory_mode();
+	get_jitter_delta(sec);
+	enter_work_mode();
+
+	sec->cmd_all_factory_state = SEC_CMD_STATUS_OK;
+	mutex_unlock(&ts_data->device_lock);
+
+	FTS_RAW_INFO("%d%s", sec->item_count, sec->cmd_result_all);
+}
+
 
 static void factory_cmd_result_all(void *dev_data)
 {
@@ -2469,7 +2898,7 @@ static void fod_enable(void *device_data)
 			ts_data->pdata->lowpower_mode, ts_data->power_mode);
 
 	if (!atomic_read(&ts_data->pdata->enabled) && sec_input_need_ic_off(ts_data->pdata)) {
-		if (device_may_wakeup(ts_data->sec.fac_dev) && sec_input_cmp_ic_status(ts_data->dev, CHECK_LPMODE))
+		if (sec_input_cmp_ic_status(ts_data->dev, CHECK_LPMODE))
 			disable_irq_wake(ts_data->irq);
 
 		ts_data->suspended = false;
@@ -2481,7 +2910,8 @@ static void fod_enable(void *device_data)
 
 		if (!(ts_data->fod_mode & 0x01)) {
 			ts_data->fod_state = 2;
-			sec_input_gesture_report(ts_data->dev, SPONGE_EVENT_TYPE_FOD_RELEASE, 540, 2190);
+			sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_FOD_RELEASE, 540, 2190);
+
 		}
 	}
 
@@ -3027,9 +3457,30 @@ static void dead_zone_enable(void *device_data)
 	sec->cmd_state = SEC_CMD_STATUS_OK;
 }
 
+int fts_write_grip_data(u8 *reg_addr, u8 *data, int data_size)
+{
+	int ret, i = 0;
+
+	for (i = 0; i < data_size; i++) {
+		ret = fts_write_reg(reg_addr[i], data[i]);
+		if (ret < 0) {
+			FTS_ERROR("failed to write 0x%02X 0x%02X", reg_addr[i], data[i]);
+			return ret;
+		}
+	}
+
+	ret = fts_write_reg(FTS_REG_BANK_MODE, 0);
+	if (ret < 0) {
+		FTS_ERROR("failed to write bank mode 0, ret=%d", ret);
+		return ret;
+	}
+
+	return ret;
+}
+
 static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 {
-	int ret, i, data_size = 0;
+	int ret, data_size = 0;
 	u8 regAddr[9] = { 0 };
 	u8 data[9] = { 0 };
 
@@ -3038,7 +3489,9 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 		return;
 	}
 
-	if (flag == G_SET_EDGE_HANDLER) {
+	FTS_INFO("flag: 0x%02X (clr,lan,nor,edg,han)\n", flag);
+
+	if (flag & G_SET_EDGE_HANDLER) {
 		FTS_INFO("set edge handler");
 
 		ret = fts_write_reg(FTS_REG_BANK_MODE, 1);
@@ -3046,7 +3499,9 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 			FTS_ERROR("failed to write bank mode 1, ret=%d", ret);
 			return;
 		}
-		
+
+		memset(regAddr, 0x00, 9);
+		memset(data, 0x00, 9);
 		regAddr[0] = FTS_REG_EDGE_HANDLER;
 		regAddr[1] = FTS_REG_EDGE_HANDLER_DIRECTION;
 		regAddr[2] = FTS_REG_EDGE_HANDLER_UPPER_H;
@@ -3055,13 +3510,25 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 		regAddr[5] = FTS_REG_EDGE_HANDLER_LOWER_L;
 
 		data[0] = 0x00;
-		data[1] = ts->grip_data.edgehandler_direction & 0xFF;
-		data[2] = (ts->grip_data.edgehandler_start_y >> 8) & 0xFF;
-		data[3] = ts->grip_data.edgehandler_start_y & 0xFF;
-		data[4] = (ts->grip_data.edgehandler_end_y >> 8) & 0xFF;
-		data[5] = ts->grip_data.edgehandler_end_y & 0xFF;
+		if (ts->pdata->grip_data.edgehandler_direction == 0) {
+			data[1] = 0;
+			data[2] = 0;
+			data[3] = 0;
+			data[4] = 0;
+			data[5] = 0;
+		} else {
+			data[1] = ts->pdata->grip_data.edgehandler_direction & 0xFF;
+			data[2] = (ts->pdata->grip_data.edgehandler_start_y >> 8) & 0xFF;
+			data[3] = ts->pdata->grip_data.edgehandler_start_y & 0xFF;
+			data[4] = (ts->pdata->grip_data.edgehandler_end_y >> 8) & 0xFF;
+			data[5] = ts->pdata->grip_data.edgehandler_end_y & 0xFF;
+		}
 		data_size = 6;
-	} else if (flag == G_SET_NORMAL_MODE) {
+		if (fts_write_grip_data(regAddr, data, data_size) < 0)
+			return;
+	}
+
+	if (flag & G_SET_NORMAL_MODE) {
 		FTS_INFO("set portrait mode");
 
 		ret = fts_write_reg(FTS_REG_BANK_MODE, 1);
@@ -3070,6 +3537,8 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 			return;
 		}
 
+		memset(regAddr, 0x00, 9);
+		memset(data, 0x00, 9);
 		regAddr[0] = FTS_REG_GRIP_MODE;
 		regAddr[1] = FTS_REG_GRIP_PORTRAIT_MODE;
 		regAddr[2] = FTS_REG_GRIP_PORTRAIT_GRIP_ZONE;
@@ -3080,13 +3549,18 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 
 		data[0] = 0x01;
 		data[1] = 0x01;
-		data[2] = ts->grip_data.edge_range & 0xFF;
-		data[3] = ts->grip_data.deadzone_up_x & 0xFF;
-		data[4] = ts->grip_data.deadzone_dn_x & 0xFF;
-		data[5] = (ts->grip_data.deadzone_y >> 8) & 0xFF;
-		data[6] = ts->grip_data.deadzone_y & 0xFF;
+		data[2] = ts->pdata->grip_data.edge_range & 0xFF;
+		data[3] = ts->pdata->grip_data.deadzone_up_x & 0xFF;
+		data[4] = ts->pdata->grip_data.deadzone_dn_x & 0xFF;
+		data[5] = (ts->pdata->grip_data.deadzone_y >> 8) & 0xFF;
+		data[6] = ts->pdata->grip_data.deadzone_y & 0xFF;
+
 		data_size = 7;
- 	} else if (flag == G_SET_LANDSCAPE_MODE) {
+		if (fts_write_grip_data(regAddr, data, data_size) < 0)
+			return;
+ 	}
+
+	if (flag & G_SET_LANDSCAPE_MODE) {
 		FTS_INFO("set landscape mode");
 
 		ret = fts_write_reg(FTS_REG_BANK_MODE, 2);
@@ -3095,6 +3569,8 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 			return;
 		}
 
+		memset(regAddr, 0x00, 9);
+		memset(data, 0x00, 9);
 		regAddr[0] = FTS_REG_GRIP_MODE;
 		regAddr[1] = FTS_REG_GRIP_LANDSCAPE_MODE;
 		regAddr[2] = FTS_REG_GRIP_LANDSCAPE_ENABLE;
@@ -3107,119 +3583,56 @@ static void fts_set_grip_data_to_ic(struct fts_ts_data *ts, u8 flag)
 
 		data[0] = 0x02;
 		data[1] = 0x02;
-		data[2] = ts->grip_data.landscape_mode & 0xFF;
-		data[3] = ts->grip_data.landscape_edge & 0xFF;
-		data[4] = ts->grip_data.landscape_deadzone & 0xFF;
-		data[5] = ts->grip_data.landscape_top_deadzone & 0xFF;
-		data[6] = ts->grip_data.landscape_bottom_deadzone & 0xFF;
-		data[7] = ts->grip_data.landscape_top_gripzone & 0xFF;
-		data[8] = ts->grip_data.landscape_bottom_gripzone & 0xFF;
+		data[2] = ts->pdata->grip_data.landscape_mode & 0xFF;
+		data[3] = ts->pdata->grip_data.landscape_edge & 0xFF;
+		data[4] = ts->pdata->grip_data.landscape_deadzone & 0xFF;
+		data[5] = ts->pdata->grip_data.landscape_top_deadzone & 0xFF;
+		data[6] = ts->pdata->grip_data.landscape_bottom_deadzone & 0xFF;
+		data[7] = ts->pdata->grip_data.landscape_top_gripzone & 0xFF;
+		data[8] = ts->pdata->grip_data.landscape_bottom_gripzone & 0xFF;
+
 		data_size = 9;
- 	} else if (flag == G_CLR_LANDSCAPE_MODE) {
+		if (fts_write_grip_data(regAddr, data, data_size) < 0)
+			return;
+ 	}
+
+	if (flag & G_CLR_LANDSCAPE_MODE) {
 		FTS_INFO("clear landscape mode");
 
 		ret = fts_write_reg(FTS_REG_BANK_MODE, 2);
 		if (ret < 0) {
-			FTS_ERROR("failed to write bank mode 1, ret=%d", ret);
+			FTS_ERROR("failed to write bank mode 2, ret=%d", ret);
 			return;
 		}
+
+		memset(regAddr, 0x00, 9);
+		memset(data, 0x00, 9);
 		regAddr[0] = FTS_REG_GRIP_MODE;
 		regAddr[1] = FTS_REG_GRIP_LANDSCAPE_MODE;
 		regAddr[2] = FTS_REG_GRIP_LANDSCAPE_ENABLE;
 
 		data[0] = 0x01;
 		data[1] = 0x02;
-		data[2] = ts->grip_data.landscape_mode & 0xFF;
+		data[2] = ts->pdata->grip_data.landscape_mode & 0xFF;
 		data_size = 3;
-	} else {
-		FTS_ERROR("flag 0x%02X is invalid", flag);
-		return;
-	}
-
-	for (i = 0; i < data_size; i++) {
-		ret = fts_write_reg(regAddr[i], data[i]);
-		if (ret < 0) {
-			FTS_ERROR("failed to write 0x%02X 0x%02X", regAddr[i], data[i]);
+		if (fts_write_grip_data(regAddr, data, data_size) < 0)
 			return;
-		}
-	}
-
-	ret = fts_write_reg(FTS_REG_BANK_MODE, 0);
-	if (ret < 0) {
-		FTS_ERROR("failed to write bank mode 0, ret=%d", ret);
-		return;
 	}
 }
 
-void fts_set_edge_handler(struct fts_ts_data *ts)
-{
-	u8 mode = G_NONE;
-
-	FTS_INFO("re-init direction:%d", ts->grip_data.edgehandler_direction);
-
-	if (ts->grip_data.edgehandler_direction != 0)
-		mode = G_SET_EDGE_HANDLER;
-
-	if (mode)
-		fts_set_grip_data_to_ic(ts, mode);
-}
-
-/*
- *	index  0 :  set edge handler
- *		1 :  portrait (normal) mode
- *		2 :  landscape mode
- *
- *	data
- *		0, X (direction), X (y start), X (y end)
- *		direction : 0 (off), 1 (left), 2 (right)
- *			ex) echo set_grip_data,0,2,600,900 > cmd
- *
- *		1, X (edge zone), X (dead zone up x), X (dead zone down x), X (dead zone up y), X (dead zone bottom x), X (dead zone down y)
- *			ex) echo set_grip_data,1,60,10,32,926,32,3088 > cmd
- *
- *		2, 1 (landscape mode), X (edge zone), X (dead zone x), X (dead zone top y), X (dead zone bottom y), X (edge zone top y), X (edge zone bottom y)
- *			ex) echo set_grip_data,2,1,200,100,120,0 > cmd
- *
- *		2, 0 (portrait mode)
- *			ex) echo set_grip_data,2,0 > cmd
- */
 static int set_grip_data_save(void *device_data)
 {
 	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
-	struct fts_ts_data *ts = container_of(sec, struct fts_ts_data, sec);
+	int mode = G_NONE;
 
-	if (sec->cmd_param[0] == 0) {	// edge handler
-		if (sec->cmd_param[1] >= 0 && sec->cmd_param[1] < 3) {
-			ts->grip_data.edgehandler_direction = sec->cmd_param[1];
-			ts->grip_data.edgehandler_start_y = sec->cmd_param[2];
-			ts->grip_data.edgehandler_end_y = sec->cmd_param[3];
-			return G_SET_EDGE_HANDLER;
-		}
-		FTS_ERROR("cmd1 is abnormal, %d (%d)", sec->cmd_param[1], __LINE__);
-	} else if (sec->cmd_param[0] == 1) {	// normal mode
-		ts->grip_data.edge_range = sec->cmd_param[1];
-		ts->grip_data.deadzone_up_x = sec->cmd_param[2];
-		ts->grip_data.deadzone_dn_x = sec->cmd_param[3];
-		ts->grip_data.deadzone_y = sec->cmd_param[4];
-		return G_SET_NORMAL_MODE;
-	} else if (sec->cmd_param[0] == 2) {	// landscape mode
-		if (sec->cmd_param[1] == 0) {	// normal mode
-			ts->grip_data.landscape_mode = 0;
-			return G_CLR_LANDSCAPE_MODE;
-		} else if (sec->cmd_param[1] == 1) {
-			ts->grip_data.landscape_mode = 1;
-			ts->grip_data.landscape_edge = sec->cmd_param[2];
-			ts->grip_data.landscape_deadzone = sec->cmd_param[3];
-			ts->grip_data.landscape_top_deadzone = sec->cmd_param[4];
-			ts->grip_data.landscape_bottom_deadzone = sec->cmd_param[5];
-			ts->grip_data.landscape_top_gripzone = sec->cmd_param[6];
-			ts->grip_data.landscape_bottom_gripzone = sec->cmd_param[7];
-			return G_SET_LANDSCAPE_MODE;
-		}
-		FTS_ERROR("cmd1 is abnormal, %d (%d)", sec->cmd_param[1], __LINE__);
+	mode = sec_input_store_grip_data(sec->dev, sec->cmd_param);
+	if (mode < 0) {
+		sec->cmd_state = SEC_CMD_STATUS_FAIL;
+		return SEC_ERROR;
 	}
-	FTS_ERROR("cmd0 is abnormal, %d", sec->cmd_param[0]);
-	return -EINVAL;
+	sec->cmd_state = SEC_CMD_STATUS_OK;
+
+	return mode;
 }
 
 static void set_grip_data(void *device_data)
@@ -3269,6 +3682,12 @@ static int clear_cover_mode_save(void *device_data)
 		return SEC_ERROR;
 	}
 
+	if (sec->cmd_param[1] == SEC_COVER_TYPE_NONE) {
+		FTS_ERROR("skip cmd for cover type NONE\n");
+		sec->cmd_state = SEC_CMD_STATUS_OK;
+		return SEC_ERROR;
+	}
+
 	if (sec->cmd_param[0] > 1)
 		ts_data->cover_mode = true;
 	else
@@ -3287,21 +3706,13 @@ static void clear_cover_mode(void *device_data)
 	if (clear_cover_mode_save(device_data) < 0)
 		return;
 
-	if (ts_data->pdata->sense_off_when_cover_closed) {
-#if 0
-		mutex_lock(&ts_data->device_lock);
-		fts_set_scan_off(ts_data->cover_mode);
-		mutex_unlock(&ts_data->device_lock);
-#endif
-
-	} else {
-		ret = fts_write_reg(FTS_REG_COVER_MODE_EN, ts_data->cover_mode);
-		if (ret < 0) {
-			FTS_ERROR("failed to write cover mode");
-			sec->cmd_state = SEC_CMD_STATUS_FAIL;
-			return;
-		}
+	ret = fts_write_reg(FTS_REG_COVER_MODE_EN, ts_data->cover_mode);
+	if (ret < 0) {
+		FTS_ERROR("failed to write cover mode");
+		sec->cmd_state = SEC_CMD_STATUS_FAIL;
+		return;
 	}
+
 	FTS_INFO("%s", ts_data->cover_mode ? "closed" : "opened");
 }
 
@@ -3320,6 +3731,15 @@ static void scan_block(void *device_data)
 	fts_set_scan_off(sec->cmd_param[0]);
 #endif
 
+	sec->cmd_state = SEC_CMD_STATUS_OK;
+}
+
+static void debug(void *device_data)
+{
+	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+
+	ts_data->debug_flag = sec->cmd_param[0];
 	sec->cmd_state = SEC_CMD_STATUS_OK;
 }
 
@@ -3352,12 +3772,14 @@ static struct sec_cmd sec_cmds[] = {
 	{SEC_CMD_V2("run_gap_data_y_all", run_gap_data_y_all, NULL, CHECK_ALL, WAIT_RESULT),},
 	{SEC_CMD_V2("get_noise", get_noise, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_noise_all", run_noise_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
+	{SEC_CMD_V2("run_jitter_delta_test", run_jitter_delta_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("get_pram_test", get_pram_test, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("get_int_test", get_int_test, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_int_test_all", run_int_test_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_pram_test_all", run_pram_test_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_snr_non_touched", run_snr_non_touched, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_snr_touched", run_snr_touched, NULL, CHECK_ON_LP, WAIT_RESULT),},
+	{SEC_CMD_V2("run_cs_delta_read_all", run_cs_delta_read_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_cs_raw_read_all", run_rawdata_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_trx_short_test", run_trx_short_test, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("run_prox_intensity_read_all", run_prox_intensity_read_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
@@ -3365,6 +3787,7 @@ static struct sec_cmd sec_cmds[] = {
 	{SEC_CMD_V2("get_disassemble_count", get_disassemble_count, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("get_crc_check", get_crc_check, NULL, CHECK_ON_LP, WAIT_RESULT),},
 	{SEC_CMD_V2("factory_cmd_result_all", factory_cmd_result_all, NULL, CHECK_ON_LP, WAIT_RESULT),},
+	{SEC_CMD_V2("factory_cmd_result_all_imagetest", factory_cmd_result_all_imagetest, NULL, CHECK_ALL, WAIT_RESULT),},
 	{SEC_CMD_V2("set_sip_mode", set_sip_mode, NULL, CHECK_ON_LP, EXIT_RESULT),},
 	{SEC_CMD_V2_H("set_game_mode", set_game_mode, NULL, CHECK_ON_LP, EXIT_RESULT),},
 	{SEC_CMD_V2("set_note_mode", set_note_mode, NULL, CHECK_ON_LP, EXIT_RESULT),},
@@ -3384,16 +3807,28 @@ static struct sec_cmd sec_cmds[] = {
 	{SEC_CMD_V2_H("singletap_enable", singletap_enable, singletap_enable_save, CHECK_ON_LP, EXIT_RESULT),},
 	{SEC_CMD_V2_H("aod_enable", aod_enable, aod_enable_save, CHECK_ON_LP, EXIT_RESULT),},
 	{SEC_CMD_V2("set_aod_rect", set_aod_rect, set_aod_rect_save, CHECK_ON_LP, EXIT_RESULT),},
+	{SEC_CMD_V2("debug", debug, NULL, CHECK_ALL, EXIT_RESULT),},
 	{SEC_CMD_V2("not_support_cmd", not_support_cmd, NULL, CHECK_ALL, EXIT_RESULT),},
 };
 
 void fts_run_rawdata_all(void *device_data)
 {
+	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+
+	mutex_lock(&ts_data->device_lock);
+
 	enter_factory_mode();
 
 	get_rawdata(device_data);
+	get_int_test(device_data);
+	get_short(device_data);
+	get_panel_differ(device_data);
+	get_scap_rawdata(device_data);
+	get_pram_test(device_data);
 
 	enter_work_mode();
+	mutex_unlock(&ts_data->device_lock);
 }
 
 static int fts_sec_factory_test_init(struct fts_ts_data *ts_data)
@@ -3410,7 +3845,10 @@ static int fts_sec_factory_test_init(struct fts_ts_data *ts_data)
 		FTS_ERROR("get tx_num fail");
 		ts_data->tx_num = TX_NUM_MAX;
 	} else {
-		ts_data->tx_num = rbuf;
+		if (rbuf <= TX_NUM_MAX && rbuf > 0)
+			ts_data->tx_num = rbuf;
+		else
+			ts_data->tx_num = TX_NUM_MAX;
 	}
 
 	ret = fts_read_reg(FTS_REG_RX_NUM, &rbuf);
@@ -3418,7 +3856,10 @@ static int fts_sec_factory_test_init(struct fts_ts_data *ts_data)
 		FTS_ERROR("get rx_num fail");
 		ts_data->rx_num = RX_NUM_MAX;
 	} else {
-		ts_data->rx_num = rbuf;
+		if (rbuf <= RX_NUM_MAX && rbuf > 0)
+			ts_data->rx_num = rbuf;
+		else
+			ts_data->rx_num = RX_NUM_MAX;
 	}
 
 	ts_data->pdata->x_node_num = ts_data->tx_num;
@@ -3444,39 +3885,25 @@ int fts_sec_cmd_init(struct fts_ts_data *ts_data)
 	retval = fts_sec_factory_test_init(ts_data);
 	if (retval < 0) {
 		FTS_ERROR("Failed to init sec_factory_test");
-		goto exit;
+		return retval;
 	}
 
 	retval = sec_cmd_init(&ts_data->sec, &ts_data->client->dev, sec_cmds,
 			ARRAY_SIZE(sec_cmds), SEC_CLASS_DEVT_TSP, &cmd_attr_group);
 	if (retval < 0) {
 		FTS_ERROR("Failed to sec_cmd_init");
-		goto exit;
+		return retval;
 	}
 
 	ts_data->sec.wait_cmd_result_done = true;
 
-	retval = sysfs_create_link(&ts_data->sec.fac_dev->kobj,
-			&ts_data->input_dev->dev.kobj, "input");
-	if (retval < 0) {
-		FTS_ERROR("Failed to create input symbolic link");
-		sec_cmd_exit(&ts_data->sec, SEC_CLASS_DEVT_TSP);
-		goto exit;
-	}
-
 	FTS_FUNC_EXIT();
 	return 0;
-
-exit:
-	return retval;
-
 }
 
 void fts_sec_cmd_exit(struct fts_ts_data *ts_data)
 {
 	FTS_FUNC_ENTER();
-
-	sysfs_remove_link(&ts_data->sec.fac_dev->kobj, "input");
 
 	sec_cmd_exit(&ts_data->sec, SEC_CLASS_DEVT_TSP);
 }

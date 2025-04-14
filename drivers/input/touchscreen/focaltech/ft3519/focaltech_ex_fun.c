@@ -297,30 +297,7 @@ proc_read_err:
 	}
 	return ret;
 }
-/*
-static const struct file_operations fts_proc_fops = {
-	.owner  = THIS_MODULE,
-	.read   = fts_debug_read,
-	.write  = fts_debug_write,
-};
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,6,0))
-#define sec_input_proc_ops(ops_owner, ops_name, read_fn, write_fn)	\
-const struct proc_ops ops_name = {					\
-	.proc_read = read_fn,						\
-	.proc_write = write_fn,						\
-	.proc_lseek = generic_file_llseek,				\
-}
-#else
-#define sec_input_proc_ops(ops_owner, ops_name, read_fn, write_fn)	\
-const struct file_operations ops_name = {				\
-	.owner = ops_owner,						\
-	.read = read_fn,						\
-	.write = write_fn,						\
-	.llseek = generic_file_llseek,					\
-}
-#endif
-*/
 static sec_input_proc_ops(THIS_MODULE, fts_proc_fops, fts_debug_read, fts_debug_write);
 #else
 static int fts_debug_write(
@@ -1315,7 +1292,8 @@ static ssize_t fts_fod_rect_store(
 	}
 //	printk("\n");
 	fod_rect[0] = FTS_REG_FOD_RECT;
-	fts_write(fod_rect, 9);
+	if (fts_write(fod_rect, 9) < 0)
+		FTS_ERROR("Failed to write");
 	mutex_unlock(&ts_data->pdata->enable_mutex);
 
 	return count;

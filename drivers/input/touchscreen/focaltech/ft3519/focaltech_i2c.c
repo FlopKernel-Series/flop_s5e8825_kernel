@@ -74,9 +74,9 @@ int fts_read(u8 *cmd, u32 cmdlen, u8 *data, u32 datalen)
 
 	/* must have data when read */
 	if (!ts_data || !ts_data->client || !data || !datalen
-	    || (datalen > I2C_BUF_LENGTH) || (cmdlen > I2C_BUF_LENGTH)) {
-		FTS_ERROR("fts_data/client/cmdlen(%d)/data/datalen(%d) is invalid",
-		          cmdlen, datalen);
+		|| (datalen > I2C_BUF_LENGTH) || (cmdlen > I2C_BUF_LENGTH)) {
+			FTS_ERROR("fts_data/client/cmdlen(%d)/data/datalen(%d) is invalid",
+				cmdlen, datalen);
 		return -EINVAL;
 	}
 
@@ -114,8 +114,41 @@ int fts_read(u8 *cmd, u32 cmdlen, u8 *data, u32 datalen)
 			break;
 		}
 	}
-
 	mutex_unlock(&ts_data->bus_lock);
+
+	if (ts_data->debug_flag & SEC_TS_DEBUG_PRINT_READ_CMD) {
+		char *reg_buff;
+		char *data_buff;
+		char cbuff[10];
+
+		reg_buff = kzalloc(cmdlen * 3 + 1, GFP_KERNEL);
+		if (!reg_buff)
+			goto not_err;
+
+		data_buff = kzalloc(datalen * 3 + 1, GFP_KERNEL);
+		if (!data_buff) {
+			kfree(reg_buff);
+			goto not_err;
+		}
+
+		for (i = 0; i < cmdlen; i++) {
+			memset(cbuff, 0x00, sizeof(cbuff));
+			snprintf(cbuff, sizeof(cbuff), "%02X ", cmd[i]);
+			strlcat(reg_buff, cbuff, cmdlen * 3);
+		}
+
+		for (i = 0; i < datalen; i++) {
+			memset(cbuff, 0x00, sizeof(cbuff));
+			snprintf(cbuff, sizeof(cbuff), "%02X ", data[i]);
+			strlcat(data_buff, cbuff, datalen * 3);
+		}
+
+		FTS_INFO("debug: reg: %s(%d), data: %s(%d)", reg_buff, cmdlen, data_buff, datalen);
+
+		kfree(reg_buff);
+		kfree(data_buff);
+	}
+not_err:
 	return ret;
 }
 
@@ -127,7 +160,7 @@ int fts_write(u8 *writebuf, u32 writelen)
 	struct i2c_msg msgs;
 
 	if (!ts_data || !ts_data->client || !writebuf || !writelen
-	    || (writelen > I2C_BUF_LENGTH)) {
+		|| (writelen > I2C_BUF_LENGTH)) {
 		FTS_ERROR("fts_data/client/data/datalen(%d) is invalid", writelen);
 		return -EINVAL;
 	}
@@ -153,6 +186,26 @@ int fts_write(u8 *writebuf, u32 writelen)
 		}
 	}
 	mutex_unlock(&ts_data->bus_lock);
+
+	if (ts_data->debug_flag & SEC_TS_DEBUG_PRINT_WRITE_CMD) {
+		char *reg_buff;
+		char cbuff[10];
+
+		reg_buff = kzalloc(writelen * 3 + 1, GFP_KERNEL);
+		if (!reg_buff)
+			goto not_err;
+
+		for (i = 0; i < writelen; i++) {
+			memset(cbuff, 0x00, sizeof(cbuff));
+			snprintf(cbuff, sizeof(cbuff), "%02X ", writebuf[i]);
+			strlcat(reg_buff, cbuff, writelen * 3);
+		}
+
+		FTS_INFO("debug: reg: %s(%d)\n", reg_buff, writelen);
+
+		kfree(reg_buff);
+	}
+not_err:
 	return ret;
 }
 
@@ -167,7 +220,7 @@ int fts_write_reg(u8 addr, u8 value)
 
 	buf[0] = addr;
 	buf[1] = value;
-	return fts_write(buf, sizeof(buf));
+	return fts_write(buf, (u32)sizeof(buf));
 }
 
 int fts_bus_init(struct fts_ts_data *ts_data)
@@ -181,6 +234,7 @@ int fts_bus_init(struct fts_ts_data *ts_data)
 
 	ts_data->bus_rx_buf = kzalloc(I2C_BUF_LENGTH, GFP_KERNEL);
 	if (NULL == ts_data->bus_rx_buf) {
+		kfree(ts_data->bus_tx_buf);
 		FTS_ERROR("failed to allocate memory for bus_rx_buf");
 		return -ENOMEM;
 	}

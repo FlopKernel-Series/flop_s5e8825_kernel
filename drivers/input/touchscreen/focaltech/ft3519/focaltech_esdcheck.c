@@ -332,8 +332,8 @@ int fts_esdcheck_switch(bool enable)
 			fts_esdcheck_data.intr = 0;
 			fts_esdcheck_data.intr_cnt = 0;
 			queue_delayed_work(ts_data->ts_workqueue,
-			                   &ts_data->esdcheck_work,
-			                   msecs_to_jiffies(ESDCHECK_WAIT_TIME));
+					&ts_data->esdcheck_work,
+					msecs_to_jiffies(ESDCHECK_WAIT_TIME));
 		} else {
 			FTS_DEBUG("ESD check stop");
 			cancel_delayed_work_sync(&ts_data->esdcheck_work);
@@ -395,7 +395,7 @@ static ssize_t fts_esdcheck_show(
 
 	mutex_lock(&pdata->enable_mutex);
 	count = snprintf(buf, PAGE_SIZE, "Esd check: %s\n", \
-	                 fts_esdcheck_get_status() ? "On" : "Off");
+				fts_esdcheck_get_status() ? "On" : "Off");
 	mutex_unlock(&pdata->enable_mutex);
 
 	return count;
@@ -420,6 +420,7 @@ static struct attribute_group fts_esd_group = {
 
 int fts_create_esd_sysfs(struct device *dev)
 {
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 	int ret = 0;
 
 	ret = sysfs_create_group(&dev->kobj, &fts_esd_group);
@@ -428,6 +429,7 @@ int fts_create_esd_sysfs(struct device *dev)
 		sysfs_remove_group(&dev->kobj, &fts_esd_group);
 		return ret;
 	}
+#endif
 	return 0;
 }
 
@@ -455,7 +457,9 @@ int fts_esdcheck_init(struct fts_ts_data *ts_data)
 
 int fts_esdcheck_exit(struct fts_ts_data *ts_data)
 {
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 	sysfs_remove_group(&ts_data->dev->kobj, &fts_esd_group);
+#endif
 	return 0;
 }
 #endif /* FTS_ESDCHECK_EN */
