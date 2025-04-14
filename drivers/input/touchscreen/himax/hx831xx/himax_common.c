@@ -1446,7 +1446,7 @@ void himax_cable_detect_func(bool force_renew)
 #endif
 
 
-static void location_detect(struct himax_ts_data *ts, char *loc, int x, int y)
+static void himax_location_detect(struct himax_ts_data *ts, char *loc, int x, int y)
 {
 	memset(loc, 0, 4);
 
@@ -1485,7 +1485,7 @@ void hx_log_touch_event(struct himax_ts_data *ts)
 #else
 			ma = mi = ts->pre_finger_data[loop_i][2];
 #endif
-			location_detect(ts, loc, x, y);
+			himax_location_detect(ts, loc, x, y);
 #if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 			I("[P] tID:%d.%d x:%d y:%d p:%d major:%d minor:%d loc:%s tc:%d\n",
 				loop_i,
@@ -1511,7 +1511,7 @@ void hx_log_touch_event(struct himax_ts_data *ts)
 			y = ts->pre_finger_data[loop_i][1];
 			mc = ts->pre_finger_data[loop_i][3];
 
-			location_detect(ts, loc, x, y);
+			himax_location_detect(ts, loc, x, y);
 #if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 			I("[R] tID:%d loc:%s dd:%d,%d pc:%d mc:%d tc:%d lx:%d ly:%d\n",
 				loop_i, loc, x - ts->p_x[loop_i], y - ts->p_y[loop_i],
@@ -2147,7 +2147,7 @@ static void himax_report_all_leave_event(struct himax_ts_data *ts)
 			y = g_target_report_data->y[loop_i];
 			mc = g_target_report_data->mv_cnt[loop_i];
 
-			location_detect(ts, loc, x, y);
+			himax_location_detect(ts, loc, x, y);
 
 #if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
 			I("[RA] tID:%d loc:%s dd:%d,%d mc:%d tc:%d lx:%d ly:%d\n", loop_i,
