@@ -63,15 +63,20 @@ static ssize_t show_attrs(struct device *dev,
 		char temp_buf[1024] = {0,};
 		int size = 1024;
 		union power_supply_propval dc_state = {0, };
+#if IS_ENABLED(CONFIG_DIRECT_CHARGING)
+		int ret = 0;
+#endif
 
 		dc_state.strval = "NO_CHARGING";
 #if IS_ENABLED(CONFIG_DIRECT_CHARGING)
-		psy_do_property(battery->pdata->charger_name, get,
-			POWER_SUPPLY_EXT_PROP_DIRECT_CHARGER_CHG_STATUS, dc_state);
+		ret = psy_do_property(battery->pdata->charger_name, get,
+				POWER_SUPPLY_EXT_PROP_DIRECT_CHARGER_CHG_STATUS, dc_state);
+		if (ret < 0)
+			dc_state.strval = "NO_CHARGING";
 #endif
 
 		snprintf(temp_buf + strlen(temp_buf), size,
-			"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%s,%s,%s,%s,%d,%s,%d,%d,%lu,0x%x,0x%x,0x%x,%d,%d,",
+			"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%s,%s,%s,%s,%d,%s,%d,%d,%lu,0x%x,0x%x,0x%x,%d,%d,%d,%s,",
 			battery->voltage_now, battery->current_now,
 			battery->current_max, battery->charging_current,
 			battery->capacity,
@@ -88,7 +93,7 @@ static ssize_t show_attrs(struct device *dev,
 			sb_get_tz_str(battery->thermal_zone),
 			is_slate_mode(battery),
 			battery->store_mode,
-			(battery->expired_time / 1000),
+			(battery->safety_timer.remaining_time / 1000),
 			battery->current_event,
 			battery->misc_event,
 			battery->tx_event,
@@ -98,7 +103,9 @@ static ssize_t show_attrs(struct device *dev,
 			battery->wc_rx_phm_mode,
 #endif
 
-			battery->srccap_transit
+			battery->srccap_transit,
+			battery->current_sys_avg,
+			"v0002"
 		);
 		size = sizeof(temp_buf) - strlen(temp_buf);
 
@@ -114,8 +121,8 @@ static ssize_t show_attrs(struct device *dev,
 
 		snprintf(temp_buf+strlen(temp_buf), size,
 			"%d,%d,%d,%d,",
-			battery->voltage_avg_main, battery->voltage_avg_sub,
-			battery->current_avg_main, battery->current_avg_sub);
+			battery->voltage_now_main, battery->voltage_now_sub,
+			battery->current_now_main, battery->current_now_sub);
 		size = sizeof(temp_buf) - strlen(temp_buf);
 
 		snprintf(temp_buf+strlen(temp_buf), size, "%d,", battery->batt_cycle);

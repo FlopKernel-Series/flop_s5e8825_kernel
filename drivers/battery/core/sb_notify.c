@@ -13,8 +13,9 @@
 #include <linux/slab.h>
 #include <linux/mutex.h>
 #include <linux/device.h>
+#if IS_ENABLED(CONFIG_DRV_SAMSUNG)
 #include <linux/sec_class.h>
-
+#endif
 #include <linux/battery/sb_notify.h>
 
 #define SB_NOTIFY_NAME	"sb-notify"
@@ -35,6 +36,7 @@ struct sbn {
 };
 
 static struct sbn sb_notify;
+static BLOCKING_NOTIFIER_HEAD(ocp_warn_chain_head);
 
 struct device *sb_device;
 EXPORT_SYMBOL(sb_device);
@@ -52,6 +54,11 @@ static struct sbn_dev *sbn_create_device(const char *name, enum sb_dev_type type
 	ndev->name = name;
 	ndev->type = type;
 	return ndev;
+}
+
+static void sbn_destroy_device(struct sbn_dev *ndev)
+{
+	kfree(ndev);
 }
 
 static struct sbn_dev *sbn_find_device(struct notifier_block *nb)
@@ -114,6 +121,9 @@ int sb_notify_call(enum sbn_type ntype, sb_data *ndata)
 
 	ret = blocking_notifier_call_chain(&(sb_notify.nb_head),
 		ntype, ndata);
+	if (ret < 0)
+		pr_err("%s: failed to blocking_notifier_call_chain(%d)",
+			__func__, ret);
 
 	mutex_unlock(&noti_lock);
 
@@ -152,6 +162,7 @@ int sb_notify_register(struct notifier_block *nb, notifier_fn_t notifier,
 	if (ret < 0) {
 		pr_err("%s: failed to register nb(%s, %d)",
 			__func__, name, ret);
+		sbn_destroy_device(ndev);
 		goto skip_register;
 	}
 
@@ -177,12 +188,8 @@ int sb_notify_register(struct notifier_block *nb, notifier_fn_t notifier,
 	list_add(&ndev->list, &sb_notify.dev_list);
 	sb_notify.dev_count++;
 
-	mutex_unlock(&noti_lock);
-	return ret;
-
 skip_register:
 	mutex_unlock(&noti_lock);
-	kfree(ndev);
 	return ret;
 }
 EXPORT_SYMBOL(sb_notify_register);
@@ -216,3 +223,21 @@ int sb_notify_unregister(struct notifier_block *nb)
 	return ret;
 }
 EXPORT_SYMBOL(sb_notify_unregister);
+
+int register_ocp_warn_notifier(struct notifier_block *nb)
+{
+	return blocking_notifier_chain_register(&ocp_warn_chain_head, nb);
+}
+EXPORT_SYMBOL_GPL(register_ocp_warn_notifier);
+
+int unregister_ocp_warn_notifier(struct notifier_block *nb)
+{
+	return blocking_notifier_chain_unregister(&ocp_warn_chain_head, nb);
+}
+EXPORT_SYMBOL_GPL(unregister_ocp_warn_notifier);
+
+int ocp_warn_notifier_call_chain(unsigned long val)
+{
+	return blocking_notifier_call_chain(&ocp_warn_chain_head, val, NULL);
+}
+EXPORT_SYMBOL(ocp_warn_notifier_call_chain);

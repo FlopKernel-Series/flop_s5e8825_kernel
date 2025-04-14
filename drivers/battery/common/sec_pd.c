@@ -392,6 +392,16 @@ int sec_pd_register_chg_info_cb(void *cb)
 }
 EXPORT_SYMBOL(sec_pd_register_chg_info_cb);
 
+void sec_pd_get_vid(unsigned short *vid)
+{
+	if (!g_psink_status) {
+		pr_err("%s: g_psink_status is NULL\n", __func__);
+		return;
+	}
+	*vid = g_psink_status->vid;
+}
+EXPORT_SYMBOL(sec_pd_get_vid);
+
 void sec_pd_get_vid_pid(unsigned short *vid, unsigned short *pid, unsigned int *xid)
 {
 	if (!g_psink_status) {

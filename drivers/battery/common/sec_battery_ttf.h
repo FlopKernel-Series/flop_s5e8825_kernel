@@ -28,20 +28,24 @@ struct sec_cv_slope {
 
 struct sec_battery_info;
 
+struct ttf_charge_current {
+    unsigned int hv_12v;
+    unsigned int hv;
+    unsigned int hv_wireless;
+    unsigned int wireless;
+    unsigned int dc25;
+    unsigned int dc45;
+    unsigned int wc20_wireless;
+    unsigned int wc21_wireless;
+    unsigned int fpdo_dc;
+};
+
 struct sec_ttf_data {
 	void *pdev;
 	int timetofull;
 	int old_timetofull;
 
-	unsigned int ttf_hv_12v_charge_current;
-	unsigned int ttf_hv_charge_current;
-	unsigned int ttf_hv_wireless_charge_current;
-	unsigned int ttf_wireless_charge_current;
-	unsigned int ttf_dc25_charge_current;
-	unsigned int ttf_dc45_charge_current;
-	unsigned int ttf_wc20_wireless_charge_current;
-	unsigned int ttf_wc21_wireless_charge_current;
-	unsigned int ttf_fpdo_dc_charge_current;
+	struct ttf_charge_current currents;
 
 	struct sec_cv_slope *cv_data;
 	int cv_data_length;

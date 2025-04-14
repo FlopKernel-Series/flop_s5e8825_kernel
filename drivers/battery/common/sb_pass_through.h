@@ -25,6 +25,7 @@ enum pass_through_mode {
 	PTM_NONE = 0,
 	PTM_1TO1,
 	PTM_2TO1,
+	PTM_3TO1,
 };
 
 struct sb_pt;
@@ -36,6 +37,7 @@ struct sb_pt *sb_pt_init(struct device *parent);
 int sb_pt_psy_set_property(struct sb_pt *pt, enum power_supply_property psp, const union power_supply_propval *value);
 int sb_pt_psy_get_property(struct sb_pt *pt, enum power_supply_property psp, union power_supply_propval *value);
 int sb_pt_monitor(struct sb_pt *pt, int chg_src);
+void sb_pt_change_dc_ic_src(struct sb_pt *pt, char *direct_charger_name);
 
 int sb_pt_check_chg_src(struct sb_pt *pt, int chg_src);
 
