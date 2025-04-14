@@ -30,6 +30,7 @@
 #include <linux/mutex.h>
 #include <linux/i2c.h>
 #include <linux/regulator/consumer.h>
+#include <linux/pinctrl/consumer.h>
 #include <linux/ioctl.h>
 #include <linux/gpio.h>
 #include <linux/version.h>
@@ -155,7 +156,7 @@ static int k250a_poweron(void)
 		usleep_range(1000, 2000);
 		gpio_set_value(g_k250a.reset_gpio, 1);
 
-		usleep_range(15000, 20000);
+		msleep(20);
 		return 0;
 	}
 
@@ -179,7 +180,7 @@ static int k250a_poweron(void)
 	}
 #endif
 
-	usleep_range(14000, 15000);
+	msleep(20);
 
 	return 0;
 }
@@ -238,7 +239,11 @@ static star_dev_t star_dev = {
 	.reset = k250a_reset
 };
 
+#if (KERNEL_VERSION(6, 3, 0) <= LINUX_VERSION_CODE)
+static int k250a_probe(struct i2c_client *client)
+#else
 static int k250a_probe(struct i2c_client *client, const struct i2c_device_id *id)
+#endif
 {
 	struct device_node *np = client->dev.of_node;
 

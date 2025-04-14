@@ -213,6 +213,15 @@ config SEC_NFC_LOGGER_RTC_REG_ADDR
           RTC time is to compare between acpm and kernel.
           address value is hex.
 
+config NFC_LOGGER_LOWMEM
+       bool "NFC logger low memory"
+       default n
+       help
+         Reduces NFC log buffer size.
+         This option reduces the size of the nfc log buffer in order to save memory on low-memory devices.
+         By reducing its size, we can free up memory for other purposes,
+         but it may also result in some log messages being lost if the buffer fills up quickly.
+
 config NFC_QTI_I2C
         tristate "QTI NCI based NFC I2C Driver for ST21NFC"
         depends on I2C
