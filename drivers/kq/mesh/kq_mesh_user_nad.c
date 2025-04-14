@@ -188,7 +188,11 @@ int kq_mesh_user_nad_create_devfs(void)
 		goto error_mesh_add_cdev;
 	}
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
 	kmn_info->class = class_create(THIS_MODULE, KQ_MESH_USER_NAD_DEVICE_NAME);
+#else
+	kmn_info->class = class_create(KQ_MESH_USER_NAD_DEVICE_NAME);
+#endif
 	if (IS_ERR(kmn_info->class)) {
 		ret = PTR_ERR(kmn_info->class);
 		pr_err("%s class_create error %d\n", __func__, ret);
