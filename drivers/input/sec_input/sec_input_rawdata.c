@@ -43,8 +43,8 @@ static long sec_input_rawdata_ioctl(struct file *file, unsigned int cmd,  void _
 		/* rawdata_len is 4K size, and if num is over 1, u8 data[IOCTL_SIZE] is overflow
 		 * will be fixed to support numbers buffer.
 		 */
-		if (t.num > 1) {
-			t.num = 1;
+		if (t.num * raw_dev->rawdata_len > IOCTL_SIZE) {
+			t.num = IOCTL_SIZE / raw_dev->rawdata_len;
 		}
 
 		for (total = 0; total < t.num; total++) {
@@ -93,9 +93,12 @@ static int sec_input_rawdata_ioctl_open(struct inode *inode, struct file *file)
 
 static int sec_input_rawdata_ioctl_close(struct inode *inode, struct file *file)
 {
+	mutex_lock(&raw_dev->lock);
 	raw_dev->raw_write_index++;
 	if (raw_dev->raw_write_index >= RAW_VEC_NUM)
 		raw_dev->raw_write_index = 0;
+	mutex_unlock(&raw_dev->lock);
+
 	sysfs_notify(&raw_dev->fac_dev->kobj, NULL, "raw_irq");
 
 	return 0;
@@ -119,7 +122,14 @@ MODULE_ALIAS_MISCDEV(MISC_DYNAMIC_MINOR);
 
 static ssize_t raw_irq_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	return snprintf(buf, IOCTL_SIZE, "%d,%d", raw_dev->raw_write_index, raw_dev->raw_read_index);
+	int size;
+
+	mutex_lock(&raw_dev->lock);
+	size = snprintf(buf, IOCTL_SIZE, "%d,%d", raw_dev->raw_write_index, raw_dev->raw_read_index);
+	mutex_unlock(&raw_dev->lock);
+
+	return size;
+
 }
 
 static DEVICE_ATTR_RO(raw_irq);
@@ -139,13 +149,15 @@ void sec_input_rawdata_copy_to_user(s16 *data, int len, int press)
 	s16 *buff;
 	int tlength = len;
 
+	raw_dev->rawdata_len = len;
+
+	mutex_lock(&raw_dev->lock);
 	target_mem = raw_dev->rawdata_pool[raw_dev->raw_write_index++];
 	if (raw_dev->raw_write_index >= RAW_VEC_NUM)
 		raw_dev->raw_write_index = 0;
+	mutex_unlock(&raw_dev->lock);
 
 	memcpy(target_mem, data, tlength);
-	if (raw_dev->raw_write_index >= 3)
-		raw_dev->raw_write_index = 0;
 
 	buff = (s16 *)target_mem;
 	buff[3] = press;

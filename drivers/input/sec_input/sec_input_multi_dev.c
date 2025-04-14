@@ -12,13 +12,22 @@
 
 bool sec_input_need_fold_off(struct sec_input_multi_device *mdev)
 {
+	struct sec_ts_plat_data *plat_data;
+
+	plat_data = mdev->dev->platform_data;
+	if (!plat_data) {
+		input_err(true, mdev->dev, "%s: no platform data\n", __func__);
+		return false;
+	}
+
 	if (IS_NOT_FOLD_DEV(mdev))
 		return false;
 
 	if ((mdev->device_count == MULTI_DEV_MAIN) && (mdev->flip_status_current == FOLD_STATUS_FOLDING))
 		return true;
 
-	if ((mdev->device_count == MULTI_DEV_SUB) && (mdev->flip_status_current == FOLD_STATUS_UNFOLDING))
+	if ((mdev->device_count == MULTI_DEV_SUB) &&
+		(mdev->flip_status_current == FOLD_STATUS_UNFOLDING) && !plat_data->always_lpm)
 		return true;
 
 	return false;
@@ -98,6 +107,11 @@ void sec_input_check_fold_status(struct sec_input_multi_device *mdev, bool flip_
 			flip_changed ? "changed to " : "",
 			(mdev->flip_status_current == FOLD_STATUS_FOLDING) ? "" : "un");
 
+	if (plat_data->prox_power_off) {
+		plat_data->prox_power_off = 0;
+		input_info(true, mdev->dev, "%s: clear prox_power_off\n", __func__);
+	}
+
 	switch (mdev->device_count) {
 	case MULTI_DEV_MAIN:
 		if (flip_changed) {
@@ -144,9 +158,21 @@ void sec_input_check_fold_status(struct sec_input_multi_device *mdev, bool flip_
 				}
 			} else {
 				if (sec_input_cmp_ic_status(mdev->dev, CHECK_LPMODE)) {
-					input_info(true, mdev->dev, "%s: [%s] TSP IC LP => IC OFF\n",
-							__func__, mdev->name);
-					plat_data->stop_device(data);
+					if (sec_input_need_fold_off(mdev)) {
+						input_info(true, mdev->dev, "%s: [%s] TSP IC LP => IC OFF\n",
+								__func__, mdev->name);
+						plat_data->stop_device(data);
+					} else {
+						input_info(true, mdev->dev, "%s: [%s] TSP IC LP => on going\n",
+								__func__, mdev->name);
+					}
+				} else if (sec_input_cmp_ic_status(mdev->dev, CHECK_POWEROFF)) {
+					if (!sec_input_need_fold_off(mdev)) {
+						input_info(true, mdev->dev, "%s: [%s] TSP IC OFF => LP[0x%X]\n",
+								__func__, mdev->name, plat_data->lowpower_mode);
+						plat_data->start_device(data);
+						plat_data->lpmode(data, TO_LOWPOWER_MODE);
+					}
 				}
 			}
 		} else {
@@ -174,9 +200,21 @@ void sec_input_check_fold_status(struct sec_input_multi_device *mdev, bool flip_
 				}
 			} else {
 				if (sec_input_cmp_ic_status(mdev->dev, CHECK_LPMODE)) {
-					input_info(true, mdev->dev, "%s: [%s] rear selfie off => IC OFF\n",
-							__func__, mdev->name);
-					plat_data->stop_device(data);
+					if (sec_input_need_fold_off(mdev)) {
+						input_info(true, mdev->dev, "%s: [%s] TSP IC LP => IC OFF\n",
+								__func__, mdev->name);
+						plat_data->stop_device(data);
+					} else {
+						input_info(true, mdev->dev, "%s: [%s] TSP IC LP => on going\n",
+								__func__, mdev->name);
+					}
+				} else if (sec_input_cmp_ic_status(mdev->dev, CHECK_POWEROFF)) {
+					if (!sec_input_need_fold_off(mdev)) {
+						input_info(true, mdev->dev, "%s: [%s] TSP IC OFF => LP[0x%X]\n",
+								__func__, mdev->name, plat_data->lowpower_mode);
+						plat_data->start_device(data);
+						plat_data->lpmode(data, TO_LOWPOWER_MODE);
+					}
 				}
 			}
 
