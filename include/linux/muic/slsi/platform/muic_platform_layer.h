@@ -65,6 +65,7 @@ struct muic_ic_ops {
 	int (*get_hiccup_mode)(void *mdata);
 	int (*set_hiccup)(void *mdata, bool en);
 	void (*set_water_state)(void *, bool en);
+	void (*set_sbu_ovp_state)(void *, bool en);
 
 	int (*show_register)(void *mdata, char *mesg);
 	int (*get_adc)(void *mdata);
