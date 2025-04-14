@@ -56,7 +56,6 @@ static bool usdm_valid_panel_notifier_event(unsigned long event,
 
 	if (event == PANEL_EVENT_PANEL_STATE_CHANGED ||
 		event == PANEL_EVENT_UB_CON_STATE_CHANGED ||
-		event == PANEL_EVENT_COPR_STATE_CHANGED ||
 		event == PANEL_EVENT_TEST_MODE_STATE_CHANGED) {
 		if (ev_data->state == PANEL_EVENT_STATE_NONE) {
 			pr_err("panel event state is none(event:%lu)\n", event);
