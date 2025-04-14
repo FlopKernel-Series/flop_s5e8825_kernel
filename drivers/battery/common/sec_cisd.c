@@ -45,7 +45,7 @@ const char *cisd_cable_data_str[] = {"TA", "AFC", "AFC_FAIL", "QC", "QC_FAIL", "
 EXPORT_SYMBOL(cisd_cable_data_str);
 const char *cisd_tx_data_str[] = {"ON", "OTHER", "GEAR", "PHONE", "BUDS"};
 EXPORT_SYMBOL(cisd_tx_data_str);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY)
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
 const char *cisd_event_data_str[] = {"DC_ERR", "TA_OCP_DET", "TA_OCP_ON", "OVP_EVENT_POWER", "OVP_EVENT_SIGNAL", "OTG", "D2D", "MAIN_BAT_ERR", "SUB_BAT_ERR", "WA_ERR"};
 #else
 const char *cisd_event_data_str[] = {"DC_ERR", "TA_OCP_DET", "TA_OCP_ON", "OVP_EVENT_POWER", "OVP_EVENT_SIGNAL", "OTG", "D2D"};
@@ -65,8 +65,8 @@ bool sec_bat_cisd_check(struct sec_battery_info *battery)
 		return ret;
 	}
 
-#if IS_ENABLED(CONFIG_DUAL_BATTERY)
-	voltage = max(battery->voltage_avg_main, battery->voltage_avg_sub);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	voltage = max(battery->voltage_now_main, battery->voltage_now_sub);
 #endif
 
 	if ((battery->status == POWER_SUPPLY_STATUS_CHARGING) ||
@@ -165,11 +165,6 @@ bool sec_bat_cisd_check(struct sec_battery_info *battery)
 		val.intval = SEC_BATTERY_CAPACITY_FULL;
 		psy_do_property(battery->pdata->fuelgauge_name, get,
 			POWER_SUPPLY_PROP_ENERGY_NOW, val);
-		if (val.intval == -1) {
-			dev_info(battery->dev, "%s: [CISD] FG I2C fail. skip cisd check\n", __func__);
-			return ret;
-		}
-
 		if (val.intval > pcisd->data[CISD_DATA_CAP_MAX])
 			pcisd->data[CISD_DATA_CAP_MAX] = val.intval;
 		if (val.intval < pcisd->data[CISD_DATA_CAP_MIN])
@@ -183,20 +178,12 @@ bool sec_bat_cisd_check(struct sec_battery_info *battery)
 		val.intval = SEC_BATTERY_CAPACITY_AGEDCELL;
 		psy_do_property(battery->pdata->fuelgauge_name, get,
 			POWER_SUPPLY_PROP_ENERGY_NOW, val);
-		if (val.intval == -1) {
-			dev_info(battery->dev, "%s: [CISD] FG I2C fail. skip cisd check\n", __func__);
-			return ret;
-		}
 		pcisd->data[CISD_DATA_CAP_NOM] = val.intval;
 		dev_info(battery->dev, "%s: [CISD] CAP_NOM %dmAh\n", __func__, pcisd->data[CISD_DATA_CAP_NOM]);
 
 		val.intval = SEC_BATTERY_CAPACITY_RC0;
 		psy_do_property(battery->pdata->fuelgauge_name, get,
 			POWER_SUPPLY_PROP_ENERGY_NOW, val);
-		if (val.intval == -1) {
-			dev_info(battery->dev, "%s: [CISD] FG I2C fail. skip cisd check\n", __func__);
-			return ret;
-		}
 		pcisd->data[CISD_DATA_RC0] = val.intval;
 		dev_info(battery->dev, "%s: [CISD] RC0 0x%x\n", __func__, pcisd->data[CISD_DATA_RC0]);
 	}
@@ -376,9 +363,11 @@ void sec_battery_cisd_init(struct sec_battery_info *battery)
 	mutex_init(&battery->cisd.padlock);
 	mutex_init(&battery->cisd.powerlock);
 	mutex_init(&battery->cisd.pdlock);
+	mutex_init(&battery->cisd.dcerrlock);
 	init_cisd_pad_data(&battery->cisd);
 	init_cisd_power_data(&battery->cisd);
 	init_cisd_pd_data(&battery->cisd);
+	init_cisd_dcerr_data(&battery->cisd);
 }
 EXPORT_SYMBOL(sec_battery_cisd_init);
 
@@ -786,9 +775,17 @@ EXPORT_SYMBOL(init_cisd_pd_data);
 void count_cisd_pd_data(unsigned short vid, unsigned short pid)
 {
 	struct power_supply *psy = power_supply_get_by_name("battery");
-	struct sec_battery_info *battery = power_supply_get_drvdata(psy);
-	struct cisd *cisd = &battery->cisd;
+	struct sec_battery_info *battery = NULL;
+	struct cisd *cisd = NULL;
 	struct pd_data *pd_data;
+
+	if (psy == NULL) {
+		pr_info("%s: can't update, psy null\n", __func__);
+		return;
+	}
+
+	battery = power_supply_get_drvdata(psy);	
+	cisd = &battery->cisd;
 
 	pr_info("%s: vid : 0x%04x, pid : 0x%04x\n", __func__, vid, pid);
 	if (cisd->pd_array == NULL) {
@@ -854,3 +851,153 @@ void set_cisd_pd_data(struct sec_battery_info *battery, const char *buf)
 }
 EXPORT_SYMBOL(set_cisd_pd_data);
 
+static struct dcerr_data *create_dcerr_data(unsigned int dcerr_cause, unsigned int dcerr_count)
+{
+	struct dcerr_data *temp_data;
+
+	temp_data = kzalloc(sizeof(struct dcerr_data), GFP_KERNEL);
+	if (temp_data == NULL)
+		return NULL;
+
+	temp_data->cause = dcerr_cause;
+	temp_data->count = dcerr_count;
+	temp_data->prev = temp_data->next = NULL;
+
+	return temp_data;
+}
+
+static struct dcerr_data *find_dcerr_data_by_cause(struct cisd *cisd, unsigned int dcerr_cause)
+{
+	struct dcerr_data *temp_data = cisd->dcerr_array->next;
+
+	if (cisd->dcerr_count <= 0 || temp_data == NULL)
+		return NULL;
+
+	while ((temp_data->cause != dcerr_cause) &&
+		((temp_data = temp_data->next) != NULL));
+
+	return temp_data;
+}
+
+static void add_dcerr_data(struct cisd *cisd, unsigned int dcerr_cause, unsigned int dcerr_count)
+{
+	struct dcerr_data *temp_data = cisd->dcerr_array->next;
+	struct dcerr_data *dcerr_data;
+
+	if (dcerr_cause >= MAX_DCERR_CAUSE)
+		return;
+
+	dcerr_data = create_dcerr_data(dcerr_cause, dcerr_count);
+	if (dcerr_data == NULL)
+		return;
+
+	pr_info("%s: cause(0x%x), count(%d)\n", __func__, dcerr_cause, dcerr_count);
+	while (temp_data) {
+		if (temp_data->cause > dcerr_cause) {
+			temp_data->prev->next = dcerr_data;
+			dcerr_data->prev = temp_data->prev;
+			dcerr_data->next = temp_data;
+			temp_data->prev = dcerr_data;
+			cisd->dcerr_count++;
+			return;
+		}
+		temp_data = temp_data->next;
+	}
+
+	pr_info("%s: failed to add dcerr_data(%d, %d)\n",
+		__func__, dcerr_cause, dcerr_count);
+	kfree(dcerr_data);
+}
+
+void init_cisd_dcerr_data(struct cisd *cisd)
+{
+	struct dcerr_data *temp_data = NULL;
+
+	mutex_lock(&cisd->dcerrlock);
+	temp_data = cisd->dcerr_array;
+	while (temp_data) {
+		struct dcerr_data *next_data = temp_data->next;
+
+		kfree(temp_data);
+		temp_data = next_data;
+	}
+
+	/* create dummy data */
+	cisd->dcerr_array = create_dcerr_data(0, 0);
+	if (cisd->dcerr_array == NULL)
+		goto err_create_dummy_data;
+	temp_data = create_dcerr_data(MAX_DCERR_CAUSE, 0);
+	if (temp_data == NULL) {
+		kfree(cisd->dcerr_array);
+		cisd->dcerr_array = NULL;
+		goto err_create_dummy_data;
+	}
+	cisd->dcerr_count = 0;
+	cisd->dcerr_array->next = temp_data;
+	temp_data->prev = cisd->dcerr_array;
+
+err_create_dummy_data:
+	mutex_unlock(&cisd->dcerrlock);
+}
+EXPORT_SYMBOL(init_cisd_dcerr_data);
+
+void count_cisd_dcerr_data(struct cisd *cisd, unsigned int dcerr_cause)
+{
+	struct dcerr_data *dcerr_data;
+
+	if (cisd->dcerr_array == NULL) {
+		pr_info("%s: can't update the count of dcerr_cause(0x%x) because of null\n",
+			__func__, dcerr_cause);
+		return;
+	}
+
+	mutex_lock(&cisd->dcerrlock);
+	dcerr_data = find_dcerr_data_by_cause(cisd, dcerr_cause);
+	if (dcerr_data != NULL)
+		dcerr_data->count++;
+	else
+		add_dcerr_data(cisd, dcerr_cause, 1);
+	mutex_unlock(&cisd->dcerrlock);
+}
+EXPORT_SYMBOL(count_cisd_dcerr_data);
+
+void set_cisd_dcerr_data(struct sec_battery_info *battery, const char *buf)
+{
+	struct cisd *pcisd = &battery->cisd;
+	unsigned int dcerr_total_count, dcerr_cause, dcerr_count;
+	struct dcerr_data *dcerr_data;
+	int i, x;
+
+	pr_info("%s: %s\n", __func__, buf);
+	if (pcisd->dcerr_count > 0)
+		init_cisd_dcerr_data(pcisd);
+
+	if (pcisd->dcerr_array == NULL) {
+		pr_info("%s: can't set the dcerr data because of null\n", __func__);
+		return;
+	}
+
+	if (sscanf(buf, "%10u %n", &dcerr_total_count, &x) <= 0) {
+		pr_info("%s: failed to read dcerr index\n", __func__);
+		return;
+	}
+	buf += (size_t)x;
+	pr_info("%s: add dcerr data(count: %d)\n", __func__, dcerr_total_count);
+	for (i = 0; i < dcerr_total_count; i++) {
+		if (sscanf(buf, "0x%02x:%10u %n", &dcerr_cause, &dcerr_count, &x) != 2) {
+			pr_info("%s: failed to read dcerr data(0x%x, %d, %d)!!!re-init dcerr data\n",
+				__func__, dcerr_cause, dcerr_count, x);
+			init_cisd_dcerr_data(pcisd);
+			break;
+		}
+		buf += (size_t)x;
+		mutex_lock(&pcisd->dcerrlock);
+		dcerr_data = find_dcerr_data_by_cause(pcisd, dcerr_cause);
+		if (dcerr_data != NULL)
+			dcerr_data->count = dcerr_count;
+		else
+			add_dcerr_data(pcisd, dcerr_cause, dcerr_count);
+		mutex_unlock(&pcisd->dcerrlock);
+	}
+}
+EXPORT_SYMBOL(set_cisd_dcerr_data);

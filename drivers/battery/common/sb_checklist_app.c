@@ -131,13 +131,17 @@ void store_wireless_menu(struct sec_battery_info *battery, int tc, int y)
 		battery->pdata->tx_low_recovery = y;
 	}
 }
-#if defined(CONFIG_STEP_CHARGING)
+#if IS_ENABLED(CONFIG_STEP_CHARGING)
 #if IS_ENABLED(CONFIG_DIRECT_CHARGING)
 void store_dc_step_charging_menu(struct sec_battery_info *battery, int tc,
 					char val[MAX_STEP_CHG_STEP + 2][MAX_STEP_CHG_STEP + 2])
 {
 	int res, i;
 	unsigned int dc_step_chg_type = 0;
+	int dc_op_mode = get_sec_vote_resultf("DCHG_OP");
+
+	if (dc_op_mode < 0 || !is_dc_higher_ratio_support())
+		dc_op_mode = DC_MODE_2TO1;
 
 	for (i = 0; i < battery->dc_step_chg_step; i++)
 		dc_step_chg_type |= battery->dc_step_chg_type[i];
@@ -171,10 +175,10 @@ void store_dc_step_charging_menu(struct sec_battery_info *battery, int tc,
 		}
 		if (dc_step_chg_type & STEP_CHARGING_CONDITION_INPUT_CURRENT) {
 			for (i = 0; i < (battery->dc_step_chg_step - 1); i++) {
-				battery->pdata->dc_step_chg_cond_iin[i] =
+				battery->pdata->dc_step_chg_cond_iin[dc_op_mode][i] =
 					battery->pdata->dc_step_chg_val_iout[battery->pdata->age_step][i+1] / 2;
 				ca_log("Condition Iin [step %d] %dmA",
-					i, battery->pdata->dc_step_chg_cond_iin[i]);
+					i, battery->pdata->dc_step_chg_cond_iin[dc_op_mode][i]);
 			}
 		}
 	}
@@ -231,10 +235,12 @@ int show_battery_checklist_app_values(struct sec_battery_info *battery, char *bu
 {
 	int i = 0;
 	struct device_node *np;
-#if defined(CONFIG_STEP_CHARGING)
+#if IS_ENABLED(CONFIG_DIRECT_CHARGING)
+#if IS_ENABLED(CONFIG_STEP_CHARGING)
 	int j = 0;
 	bool check;
 	unsigned int dc_step_chg_type = 0;
+#endif
 #endif
 
 	np = of_find_node_by_name(NULL, "battery");
@@ -308,7 +314,8 @@ int show_battery_checklist_app_values(struct sec_battery_info *battery, char *bu
 		get_dts_property(np, "battery,mix_high_temp_recovery",
 			buf, &p_size, &i, battery->pdata->mix_high_temp_recovery);
 
-#if defined(CONFIG_STEP_CHARGING)
+#if IS_ENABLED(CONFIG_DIRECT_CHARGING)
+#if IS_ENABLED(CONFIG_STEP_CHARGING)
 		for (j = 0; j < battery->dc_step_chg_step; j++)
 			dc_step_chg_type |= battery->dc_step_chg_type[j];
 
@@ -393,6 +400,7 @@ int show_battery_checklist_app_values(struct sec_battery_info *battery, char *bu
 					i += scnprintf(buf + i, p_size - i, "%d ",
 					battery->pdata->step_chg_vfloat[battery->pdata->age_step][j]);
 		}
+#endif
 #endif
 	}
 

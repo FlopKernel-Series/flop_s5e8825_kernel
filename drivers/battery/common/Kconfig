@@ -6,6 +6,13 @@ config DIRECT_CHARGING
 	 Direct charging models should enable this charging option.
 	 it include some charging scenario for direct charging models.
 
+config MULTI_DIRECT_CHARGER
+	tristate "support for multiple direct chargers"
+	help
+	 Say Y to include support for multiple direct chargers.
+	 By enabling this feature a model can support
+	 multiple direct charging ICs.
+	 It controls in run-time the loading of the correct IC.
 
 menu "Samsung Battery Common drivers"
 
@@ -359,5 +366,23 @@ config SBP_FG
 	help
 	  Say Y here to enable
 	  Support for SBP FUELGAUGE.
+
+config BATTERY_AUTH_EUR_DET_GPIO_SUPPORT
+	bool "BATTERY_AUTH_EUR_DET_GPIO_SUPPORT"
+	default n
+	help
+	  Say Y here to enable
+	  This feature is used for models that support
+	  eur detection gpio pin in battery authentication hardware.
+	  This pin is used to distinguish eur and non eur devices.
+
+config BATTERY_HOTSWAP
+    bool "support battery hotswap"
+    default n
+    help
+	  Say Y here to enable
+	  support battery hotswap.
+	  Some models would have detachable battery and need to detect
+	  removal or insertion of battery.
 
 endmenu

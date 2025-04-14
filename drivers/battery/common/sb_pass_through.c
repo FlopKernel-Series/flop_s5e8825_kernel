@@ -565,6 +565,26 @@ failed_dt:
 }
 EXPORT_SYMBOL(sb_pt_init);
 
+#if defined(CONFIG_MULTI_DIRECT_CHARGER)
+void sb_pt_change_dc_ic_src(struct sb_pt *pt, char *direct_charger_name)
+{
+	int len = 0;
+
+	mutex_lock(&pt->mlock);
+	len = strlen(direct_charger_name);
+	pt->dc_name = kzalloc(len + 1, GFP_KERNEL);
+
+	if (pt->dc_name) {
+		strscpy(pt->dc_name, direct_charger_name, len + 1);
+		pt_log("change dc name to %s\n", pt->dc_name);
+	} else
+		pt_log("failed to alloc memory for dc_name\n");
+
+	mutex_unlock(&pt->mlock);
+}
+EXPORT_SYMBOL(sb_pt_change_dc_ic_src);
+#endif
+
 int sb_pt_psy_set_property(struct sb_pt *pt, enum power_supply_property psp, const union power_supply_propval *value)
 {
 	if (!pt)
