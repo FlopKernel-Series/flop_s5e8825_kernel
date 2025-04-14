@@ -72,6 +72,21 @@ struct panel_event_dms_data {
 	int lfd_max_freq;
 };
 
+#define MAX_COPR_ROI (5)
+
+enum panel_event_copr_wrgb {
+	PANEL_EVENT_COPR_WRGB_W,
+	PANEL_EVENT_COPR_WRGB_R,
+	PANEL_EVENT_COPR_WRGB_G,
+	PANEL_EVENT_COPR_WRGB_B,
+	MAX_PANEL_EVENT_COPR_WRGB,
+};
+
+struct panel_event_copr_data {
+	unsigned int stat[MAX_COPR_ROI][MAX_PANEL_EVENT_COPR_WRGB];
+	unsigned int nr_stat;
+};
+
 struct panel_notifier_event_data {
 	/* base */
 	unsigned int display_index;
@@ -81,6 +96,7 @@ struct panel_notifier_event_data {
 	union {
 		struct panel_event_bl_data bl;
 		struct panel_event_dms_data dms;
+		struct panel_event_copr_data copr;
 		unsigned int screen_mode;
 	} d;
 };
