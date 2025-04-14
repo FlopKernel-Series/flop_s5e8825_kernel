@@ -25,7 +25,7 @@ config TOP_S2MF301_SUPPORT_S2MC501
       ''
 
 config HV_MUIC_S2MF301_AFC
-	tristate "Using S2MF301 MUIC AFC"
+	bool "Using S2MF301 MUIC AFC"
 	depends on MUIC_HV && MUIC_S2MF301
 	default n
 	help

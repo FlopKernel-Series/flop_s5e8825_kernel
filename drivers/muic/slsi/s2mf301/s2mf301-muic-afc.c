@@ -1093,6 +1093,12 @@ static int s2mf301_hv_muic_hv_charger_init(void)
 {
 	struct s2mf301_muic_data *muic_data = static_data;
 
+	if (!muic_data || !muic_data->sdata || !muic_data->sdata->pdata ||
+			!test_bit(MUIC_PROBE_DONE, &muic_data->sdata->pdata->driver_probe_flag)) {
+		pr_info("[%s:%s] skip\n", MUIC_DEV_NAME, __func__);
+		return 0;
+	}
+
 	if (muic_data->is_charger_ready) {
 		s2mf301_info("%s: charger is already ready(%d0, return\n",
 				__func__, muic_data->is_charger_ready);
@@ -1133,6 +1139,41 @@ static void register_muic_hv_ops(struct muic_ic_data *ic_data)
 	ic_data->m_ops.get_vbus_value = s2mf301_ops_get_vbus_value;
 	ic_data->m_ops.pm_chgin_irq = s2mf301_ops_vchgin_isr;
 #endif
+}
+
+static void unregister_muic_hv_ops(struct s2mf301_muic_data *muic_data)
+{
+	struct muic_share_data *sdata = muic_data->sdata;
+	struct muic_ic_data *ic_data = sdata->ic_data;
+
+	cancel_delayed_work_sync(&sdata->hv_work);
+	
+	mutex_lock(&muic_data->afc_mutex);
+
+	ic_data->m_ops.reset_hvcontrol_reg = NULL;
+	ic_data->m_ops.check_id_err = NULL;
+	ic_data->m_ops.set_afc_ready = NULL;
+#ifdef CONFIG_HV_MUIC_VOLTAGE_CTRL
+	ic_data->m_ops.afc_get_voltage = NULL;
+	ic_data->m_ops.handle_hv_work = NULL;
+#endif
+	ic_data->m_ops.set_chgtype_usrcmd = NULL;
+	ic_data->m_ops.hv_reset = NULL;
+	ic_data->m_ops.hv_dcp_charger = NULL;
+	ic_data->m_ops.hv_fast_charge_adaptor = NULL;
+	ic_data->m_ops.hv_fast_charge_communication = NULL;
+	ic_data->m_ops.hv_afc_5v_charger = NULL;
+	ic_data->m_ops.hv_afc_9v_charger = NULL;
+	ic_data->m_ops.hv_qc_charger = NULL;
+	ic_data->m_ops.hv_qc_5v_charger = NULL;
+	ic_data->m_ops.hv_qc_9v_charger = NULL;
+	ic_data->m_ops.hv_qc_failed = NULL;
+#if IS_ENABLED(CONFIG_MUIC_SUPPORT_POWERMETER)
+	ic_data->m_ops.get_vbus_value = NULL;
+	ic_data->m_ops.pm_chgin_irq = NULL;
+#endif
+
+	mutex_unlock(&muic_data->afc_mutex);
 }
 
 int s2mf301_hv_muic_init(struct s2mf301_muic_data *muic_data)
@@ -1189,6 +1230,10 @@ int s2mf301_hv_muic_init(struct s2mf301_muic_data *muic_data)
 
 	muic_platform_hv_init(sdata);
 
+	set_bit(MUIC_PROBE_DONE, &muic_pdata->driver_probe_flag);
+	if (test_bit(CHARGER_PROBE_DONE, &muic_pdata->driver_probe_flag))
+		s2mf301_hv_muic_hv_charger_init();
+
 	return ret;
 }
 EXPORT_SYMBOL(s2mf301_hv_muic_init);
@@ -1197,9 +1242,11 @@ void s2mf301_hv_muic_remove(struct s2mf301_muic_data *muic_data)
 {
 	s2mf301_info("%s\n", __func__);
 
-	mutex_destroy(&muic_data->afc_mutex);
+	s2mf301_ops_change_afc_voltage(muic_data, MUIC_HV_5V);
 	_s2mf301_hv_muic_reset(muic_data);
 	s2mf301_hv_muic_free_irqs(muic_data);
+	unregister_muic_hv_ops(muic_data);
+	mutex_destroy(&muic_data->afc_mutex);
 }
 EXPORT_SYMBOL(s2mf301_hv_muic_remove);
 

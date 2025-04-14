@@ -206,6 +206,8 @@ enum s2mf301_water_irq_type {
 	S2MF301_IRQ_TYPE_CHANGE,
 	S2MF301_IRQ_TYPE_WATER,
 	S2MF301_IRQ_TYPE_RR,
+	S2MF301_IRQ_TYPE_CC1_RR,
+	S2MF301_IRQ_TYPE_CC2_RR,
 };
 
 enum s2mf301_water_gpadc_mode {
@@ -225,11 +227,14 @@ struct s2mf301_pmeter_data {
 	int irq_water_status2;
 	int irq_gpadc1up;
 	int irq_gpadc2up;
+	int irq_vcc1up;
+	int irq_vcc2up;
 	int irq_rid_attach;
 	int irq_rid_detach;
 	int irq_ichgin_th;
 
 	int water_adc_mode;
+	int cc_hiccup;
 
 	struct power_supply	*psy_pm;
 	struct power_supply_desc psy_pm_desc;

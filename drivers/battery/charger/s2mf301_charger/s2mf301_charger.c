@@ -53,7 +53,7 @@ static void s2mf301_test_read(struct i2c_client *i2c)
 	char str[1016] = {0,};
 	int i;
 
-	for (i = 0x05; i <= 0x32; i++) {
+	for (i = 0x05; i <= 0x3D; i++) {
 		s2mf301_read_reg(i2c, i, &data);
 		sprintf(str+strlen(str), "0x%02x:0x%02x, ", i, data);
 	}
@@ -102,25 +102,6 @@ static int s2mf301_get_en_shipmode(struct s2mf301_charger_data *charger)
 	return enable;
 }
 
-static void s2mf301_set_en_shipmode(struct s2mf301_charger_data *charger, bool enable)
-{
-	if (enable)
-		s2mf301_update_reg(charger->i2c, S2MF301_CHG_SHIP_MODE_CTRL, 0x10, 0x10);
-	else
-		s2mf301_update_reg(charger->i2c, S2MF301_CHG_SHIP_MODE_CTRL, 0x00, 0x10);
-
-	pr_info("s2mf301-charger: %s: forced ship mode - %s\n", __func__, enable ? "Enable" : "Disable");
-}
-
-static void s2mf301_set_auto_shipmode(struct s2mf301_charger_data *charger, bool enable)
-{
-	u8 data = (enable ? 0x40 : 0x00);
-
-	s2mf301_update_reg(charger->i2c, S2MF301_CHG_SHIP_MODE_CTRL, data, 0x40);
-
-	pr_info("s2mf301-charger: %s: auto ship mode - %s\n", __func__, enable ? "Enable" : "Disable");
-}
-
 static void s2mf301_set_time_bat2ship_db(struct s2mf301_charger_data *charger, int time)
 {
 	u8 reg_data;
@@ -139,6 +120,28 @@ static void s2mf301_set_time_bat2ship_db(struct s2mf301_charger_data *charger, i
 	pr_info("%s: S2MF301_CHG_OPEN_OTP3: 0x%x\n", __func__, reg_data);
 }
 
+static void s2mf301_set_en_shipmode(struct s2mf301_charger_data *charger, bool enable)
+{
+	if (enable) {
+		s2mf301_set_time_bat2ship_db(charger, charger->pdata->bat2ship_debounce_time);
+		s2mf301_update_reg(charger->i2c, S2MF301_CHG_SHIP_MODE_CTRL, 0x10, 0x10);
+	} else {
+		s2mf301_set_time_bat2ship_db(charger, 0);
+		s2mf301_update_reg(charger->i2c, S2MF301_CHG_SHIP_MODE_CTRL, 0x00, 0x10);
+	}
+
+	pr_info("s2mf301-charger: %s: forced ship mode - %s\n", __func__, enable ? "Enable" : "Disable");
+}
+
+static void s2mf301_set_auto_shipmode(struct s2mf301_charger_data *charger, bool enable)
+{
+	u8 data = (enable ? 0x40 : 0x00);
+
+	s2mf301_update_reg(charger->i2c, S2MF301_CHG_SHIP_MODE_CTRL, data, 0x40);
+
+	pr_info("s2mf301-charger: %s: auto ship mode - %s\n", __func__, enable ? "Enable" : "Disable");
+}
+
 static void s2mf301_set_auto_shipmode_level(struct s2mf301_charger_data *charger, u8 reg_data)
 {
 	u8 read_data = 0;
@@ -149,14 +152,14 @@ static void s2mf301_set_auto_shipmode_level(struct s2mf301_charger_data *charger
 }
 
 #if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
-static bool s2mf301_check_current_level(void)
+static bool s2mf301_check_current_level(char *fuelgauge_name)
 {
 	union power_supply_propval val_avg_curr = {0, }, val_now_curr = {0, };
 
 	val_avg_curr.intval = SEC_BATTERY_CURRENT_MA;
 	val_now_curr.intval = SEC_BATTERY_CURRENT_MA;
-	psy_do_property("s2mf301-fuelgauge", get, POWER_SUPPLY_PROP_CURRENT_AVG, val_avg_curr);
-	psy_do_property("s2mf301-fuelgauge", get, POWER_SUPPLY_PROP_CURRENT_NOW, val_now_curr);
+	psy_do_property(fuelgauge_name, get, POWER_SUPPLY_PROP_CURRENT_AVG, val_avg_curr);
+	psy_do_property(fuelgauge_name, get, POWER_SUPPLY_PROP_CURRENT_NOW, val_now_curr);
 	pr_info("%s: current: %d, %d\n",
 		__func__, val_avg_curr.intval, val_now_curr.intval);
 
@@ -191,7 +194,7 @@ static u8 s2mf301_check_auto_shipmode_level(struct s2mf301_charger_data *charger
 	u8 reg_data = 0;
 	int ari_cond = charger->spcom ? 91 : 0;
 
-	psy_do_property("s2mf301-fuelgauge", get, POWER_SUPPLY_PROP_VOLTAGE_NOW, value);
+	psy_do_property(charger->pdata->fuelgauge_name, get, POWER_SUPPLY_PROP_VOLTAGE_NOW, value);
 	if (value.intval >= 4200)
 		voltage = 4000;
 	else if (value.intval >= 3900)
@@ -324,6 +327,8 @@ static void s2mf301_set_regulation_voltage(struct s2mf301_charger_data *charger,
 		pr_info("%s: Skip in Factory Mode\n", __func__);
 		return;
 	}
+
+	s2mf301_set_regulation_vsys(charger, float_voltage + 100);
 
 	pr_info("[DEBUG]%s: float_voltage %d\n", __func__, float_voltage);
 	if (float_voltage <= 3800)
@@ -489,7 +494,7 @@ static bool s2mf301_chg_init(struct s2mf301_charger_data *charger, struct s2mf30
 	 * Auto shipmode level = 0x00(2.6V, default)
 	 */
 	s2mf301_set_auto_shipmode(charger, false);
-	s2mf301_set_time_bat2ship_db(charger, 0);
+	s2mf301_set_en_shipmode(charger, 0);
 	s2mf301_set_auto_shipmode_level(charger, 0);
 
 	/* factory init code */
@@ -536,17 +541,8 @@ static int s2mf301_get_charging_status(
 	int status = POWER_SUPPLY_STATUS_UNKNOWN;
 	int ret;
 	u8 chg_sts0;
-	union power_supply_propval value;
-	struct power_supply *psy;
 
 	ret = s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS0, &chg_sts0);
-
-	psy = power_supply_get_by_name(charger->pdata->fuelgauge_name);
-	if (!psy)
-		return -EINVAL;
-	ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_CURRENT_AVG, &value);
-	if (ret < 0)
-		pr_err("%s: Fail to execute property\n", __func__);
 
 	if (ret < 0)
 		return status;
@@ -636,7 +632,10 @@ static int s2mf301_get_charging_health(struct s2mf301_charger_data *charger)
 	if (charger->ovp)
 		return POWER_SUPPLY_HEALTH_OVERVOLTAGE;
 
-	return POWER_SUPPLY_HEALTH_GOOD;
+	if (is_pd_wire_type(charger->cable_type))
+		return POWER_SUPPLY_EXT_HEALTH_UNDERVOLTAGE;
+	else
+		return POWER_SUPPLY_HEALTH_GOOD;
 }
 
 static void s2mf301_release_bypass(struct s2mf301_charger_data *charger)
@@ -713,6 +712,73 @@ static void s2mf301_check_multi_tap_off(struct s2mf301_charger_data *charger)
 					(ICR_STATUS_MASK | DET_CV_STATUS_MASK | DET_CC_STATUS_MASK));
 		}
 	}
+}
+
+static bool s2mf301_irq_enable(int irq, bool en)
+{
+	bool ret = false;
+
+	if (irq <= 0)
+		return ret;
+
+	if (en && irqd_irq_disabled(&irq_to_desc(irq)->irq_data)) {
+		enable_irq(irq);
+		ret = true;
+	} else if (!en && !irqd_irq_disabled(&irq_to_desc(irq)->irq_data)) {
+		disable_irq_nosync(irq);
+		ret = true;
+	}
+	pr_info("%s : irq: %d, en: %d, st: %d\n", __func__, irq, en,
+		irqd_irq_disabled(&irq_to_desc(irq)->irq_data));
+
+	return ret;
+}
+
+static void s2mf301_ivr_irq_enable(struct s2mf301_charger_data *charger, bool en)
+{
+	u8 reg_data = 0;
+	bool ret = false;
+
+	ret = s2mf301_irq_enable(charger->irq_ivr, en);
+
+	if (ret) {
+		s2mf301_read_reg(charger->i2c, S2MF301_CHG_INT2M, &reg_data);
+		pr_info("%s: %s ivr : 0x%x\n",
+			__func__, en ? "enable" : "disable", reg_data);
+	}
+}
+
+static irqreturn_t s2mf301_ivr_isr(int irq, void *data)
+{
+	struct s2mf301_charger_data *charger = data;
+
+	if (charger->keystring) {
+		pr_info("%s: Skip in keystring mode\n", __func__);
+		cancel_delayed_work(&charger->ivr_work);
+		__pm_relax(charger->ivr_ws);
+		return IRQ_HANDLED;
+	}
+
+	pr_info("%s: irq(%d)\n", __func__, irq);
+	__pm_stay_awake(charger->ivr_ws);
+
+	queue_delayed_work(charger->charger_wqueue, &charger->ivr_work, msecs_to_jiffies(IVR_WORK_DELAY));
+
+	return IRQ_HANDLED;
+}
+
+static void s2mf301_init_ivr_irq(struct s2mf301_charger_data *charger)
+{
+	int ret;
+
+	charger->irq_ivr = charger->s2mf301_pdata->irq_base + S2MF301_CHG2_IRQ_IVR;
+	ret = request_threaded_irq(charger->irq_ivr, NULL,
+			s2mf301_ivr_isr, 0, "ivr-irq", charger);
+	if (ret < 0) {
+		pr_err("%s: Fail to request IVR in IRQ: %d: %d\n",
+			__func__, charger->irq_ivr, ret);
+	}
+	pr_info("%s: %d\n", __func__, irqd_irq_disabled(&irq_to_desc(charger->irq_ivr)->irq_data));
 }
 
 static int s2mf301_chg_get_property(struct power_supply *psy,
@@ -822,31 +888,19 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 		charger->slow_charging = false;
 		charger->ivr_on = false;
 
-		if (charger->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
-				charger->cable_type == POWER_SUPPLY_TYPE_UNKNOWN) {
+		if (is_nocharge_type(charger->cable_type))
 			pr_err("[DEBUG]%s:[BATT] Type Battery\n", __func__);
-			value.intval = 0;
-		} else
-			value.intval = 1;
 
-		psy = power_supply_get_by_name(charger->pdata->fuelgauge_name);
-		if (!psy)
-			return -EINVAL;
-		ret = power_supply_set_property(psy, POWER_SUPPLY_PROP_ENERGY_AVG, &value);
-		if (ret < 0)
-			pr_err("%s: Fail to execute property\n", __func__);
-		if (is_nocharge_type(charger->cable_type)) {
-			/* At cable removal enable IVR IRQ if it was disabled */
-			if (charger->irq_ivr_enabled == 0) {
-				u8 reg_data;
-
-				charger->irq_ivr_enabled = 1;
-				/* Unmask IRQ */
-				s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT2M, 0 << IVR_M_SHIFT, IVR_M_MASK);
-				enable_irq(charger->irq_ivr);
-				s2mf301_read_reg(charger->i2c, S2MF301_CHG_INT2M, &reg_data);
-				pr_info("%s : enable ivr : 0x%x\n", __func__, reg_data);
-			}
+		if (charger->pdata->boosting_voltage_aicl) {
+			s2mf301_ivr_irq_enable(charger, true);
+		} else if (is_nocharge_type(charger->cable_type)) {
+			s2mf301_ivr_irq_enable(charger, true);
+		} else if (is_hv_wire_type(charger->cable_type) ||
+			(charger->cable_type == SEC_BATTERY_CABLE_HV_TA_CHG_LIMIT)) {
+			s2mf301_ivr_irq_enable(charger, false);
+			cancel_delayed_work_sync(&charger->ivr_work);
+			__pm_relax(charger->ivr_ws);
+			charger->slow_charging = false;
 		}
 		break;
 	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
@@ -875,11 +929,10 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 		{
 			u8 ivr_state = 0;
 
+			s2mf301_init_ivr_irq(charger);
 			s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS2, &ivr_state);
 			if (ivr_state & IVR_STATUS_MASK) {
 				__pm_stay_awake(charger->ivr_ws);
-				/* Mask IRQ */
-				s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT2M, 1 << IVR_M_SHIFT, IVR_M_MASK);
 				queue_delayed_work(charger->charger_wqueue, &charger->ivr_work,
 					msecs_to_jiffies(IVR_WORK_DELAY));
 			}
@@ -927,6 +980,10 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				break;
 			}
 			pr_info("%s: Set Factory Mode (vbus + 523K)\n", __func__);
+			/* EN_MRST, SET_MRSTBTMR 1.0s */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
+			/* VIO RESET OFF */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x01);
 
 			/* forced set buck on /charge off */
 			s2mf301_enable_charger_switch(charger, 0);
@@ -947,17 +1004,13 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON6, 0x02, 0x02);
 			/* CHIP2SYS OFF */
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_OFF5, 0x01, 0x01);
-			/* EN_MRST, SET_MRSTBTMR 1.0s */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
-			/* VIO RESET OFF */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x01);
 			/* SYS Regulation 4.4V(default) */
 			s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL8, 0x78);
 			/* EN_FAC_CHG_301k Enable */
 			s2mf301_update_reg(charger->top, S2MF301_TOP_AUTO_FAC_CHG, 0x44, 0x44);
 
 			/* Switching for fuel gauge to get SYS voltage */
-			value.intval = SEC_BAT_FGSRC_SWITCHING_VSYS;
+			value.intval = SEC_BAT_INBAT_FGSRC_SWITCHING_VSYS;
 			psy_do_property("s2mf301-fuelgauge", set, POWER_SUPPLY_EXT_PROP_FGSRC_SWITCHING, value);
 
 			/* Switching for Flash LED to TA mode */
@@ -971,6 +1024,10 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				break;
 			}
 			pr_info("%s: Set Factory Mode (vbus + 301K)\n", __func__);
+			/* EN_MRST,SET_MRSTBTMR 1.0s */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
+			/* VIO RESET ON */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
 
 			/* forced set buck on /charge off */
 			s2mf301_enable_charger_switch(charger, 0);
@@ -997,32 +1054,19 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				/* BAT2SYS OFF at factory mode release */
 				s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON5, 0x0, 0x40);
 			}
-			/* EN_MRST,SET_MRSTBTMR 1.0s */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
 			/* SYS regulation 4.2V */
 			s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL8, 0x50);
 			/* EN Factory CHG 301K disable */
 			s2mf301_update_reg(charger->top, S2MF301_TOP_AUTO_FAC_CHG, 0x0, 0x44);
-			/* VIO RESET ON */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
 
 			/* FGSRC = VBAT when BAT is connected */
-			psy = power_supply_get_by_name("s2mf301-pmeter");
-			if (!psy) {
-				pr_info("%s, Fail to get pmeter psy\n", __func__);
-				return -EINVAL;
-			}
-			ret = power_supply_get_property(psy, (enum power_supply_property)POWER_SUPPLY_LSI_PROP_VBAT, &value);
+			ret = psy_do_property("s2mf301-pmeter", get,
+					(enum power_supply_property)POWER_SUPPLY_LSI_PROP_VBAT, value);
 			if (ret < 0)
 				pr_err("%s: Fail to execute property(VBAT)\n", __func__);
 			vbat = value.intval;
 
 			pr_info("%s: battery voltage(%d)\n", __func__, vbat);
-			psy = power_supply_get_by_name(charger->pdata->fuelgauge_name);
-			if (!psy) {
-				pr_info("%s, Fail to get FG psy\n", __func__);
-				return -EINVAL;
-			}
 			if (vbat >= 3200) {
 				pr_info("%s: battery exist: FGSRC = VBAT\n", __func__);
 				value.intval = SEC_BAT_FGSRC_SWITCHING_VBAT;
@@ -1037,15 +1081,15 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			if (charger->bypass) {
 				if (val->intval == ATTACHED_DEV_JIG_USB_OFF_MUIC) {
 					pr_info("%s: Bypass + 255K\n", __func__);
+					/* VIO RESET ON */
+					s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
+					/* MRST disable(default) */
+					s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
 					/* RD_ONLY_MUX_SEL */
 					value.intval = 2;
 					psy_do_property("usbpd-manager", set, POWER_SUPPLY_PROP_ENERGY_NOW, value);
-					/* MRST disable(default) */
-					s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
 					/* Type-C VIO reset disable */
 					s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x40);
-					/* VIO RESET ON */
-					s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
 					/* QBAT OFF DLY OFF at factory mode release */
 					s2mf301_update_reg(charger->i2c, S2MF301_CHG_OPEN_OTP0, 0x0, 0x20);
 					/* INOK_INV enable */
@@ -1056,15 +1100,15 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			}
 			if (val->intval == ATTACHED_DEV_JIG_USB_OFF_MUIC) {
 				pr_info("%s: vbus + 255K\n", __func__);
+				/* VIO RESET ON */
+				s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
+				/* MRST disable(default) */
+				s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
 				/* RD_ONLY_MUX_SEL */
 				value.intval = 2;
 				psy_do_property("usbpd-manager", set, POWER_SUPPLY_PROP_ENERGY_NOW, value);
-				/* MRST disable(default) */
-				s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
 				/* Type-C VIO reset disable */
 				s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x40);
-				/* VIO RESET ON */
-				s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
 				/* QBAT OFF DLY OFF at factory mode release */
 				s2mf301_update_reg(charger->i2c, S2MF301_CHG_OPEN_OTP0, 0x0, 0x20);
 				/* ICR MAX */
@@ -1079,20 +1123,27 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			pr_info("%s: Release Factory Mode (vbus + 619K)\n", __func__);
 
 			charger->keystring = false;
+			/* VIO reset on (default) */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
+#if defined(CONFIG_SEC_FACTORY)
+			/* MRST enable */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
+#else
+			/* MRST disable(default) */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
+#endif
 			/* ICR default 1.8A */
 			s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL2, 0x47);
 			/* QBAT ON */
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON6, 0x0, 0x02);
 			/* CHIP2SYS ON */
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_OFF5, 0x0, 0x01);
-			/* MRST disable(default) */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
-			/* VIO reset default */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
 			/* IN2BAT OFF */
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_CHG_OPTION0, 0x01, 0x01);
-			/* SYS Regulation 4.4V(default) */
-			s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL8, 0x78);
+			/* SYS Regulation 4.2V */
+			s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL8, 0x50);
+			/* VBUS UVLO default */
+			s2mf301_write_reg(charger->i2c, S2MF301_CHG_D2A_SC_OTP0, 0x09);
 			/* EN_FAC_CHG_Default */
 			s2mf301_write_reg(charger->top, S2MF301_TOP_AUTO_FAC_CHG, 0x66);
 			/* QBAT OFF DLY OFF at factory mode release */
@@ -1178,6 +1229,10 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				pr_info("%s: set Bypass mode for current measure(power on)\n", __func__);
 
 				charger->keystring = true;
+				/* EN_MRST, SET_MRSTBTMR 1.0s */
+				s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
+				/* VIO RESET OFF */
+				s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x01);
 
 				/* detach */
 				value.intval = 1;
@@ -1194,14 +1249,10 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL2, 0x7F);
 				/* D2A_SC_EN_CHGIN(INPUT TR ON) */
 				s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON0, 0x02, 0x02);
-				/* EN_MRST, SET_MRSTBTMR 1.0s */
-				s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
 				/* QBAT OFF */
 				s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON6, 0x02, 0x02);
 				/* CHIP2SYS OFF */
 				s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_OFF5, 0x01, 0x01);
-				/* VIO RESET OFF */
-				s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x01);
 				/* QBAT OFF DLY OFF at factory mode release */
 				s2mf301_update_reg(charger->i2c, S2MF301_CHG_OPEN_OTP0, 0x0, 0x20);
 				/* LPM_BYPASS */
@@ -1224,6 +1275,23 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				psy_do_property("s2mf301-fuelgauge", set, POWER_SUPPLY_EXT_PROP_FGSRC_SWITCHING, value);
 			}
 			break;
+		case POWER_SUPPLY_EXT_PROP_ENABLE_HW_FACTORY_MODE:
+			if (charger->bypass) {
+				pr_info("%s: Skip Factory Mode in bypass mode\n", __func__);
+				break;
+			}
+			pr_info("%s: no vbus + 523K\n", __func__);
+			/* EN_MRST, SET_MRSTBTMR 1.0s */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
+			/* VIO RESET OFF */
+			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x01);
+			/* QBAT OFF DLY OFF */
+			s2mf301_update_reg(charger->i2c, S2MF301_CHG_OPEN_OTP0, 0x0, 0x20);
+			/* BAT2SYS OFF */
+			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON5, 0x0, 0x40);
+			/* QBAT OFF */
+			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON6, 0x02, 0x02);
+			break;
 		case POWER_SUPPLY_EXT_PROP_CHARGE_OTG_CONTROL:
 			s2mf301_charger_otg_control(charger, val->intval);
 			break;
@@ -1233,12 +1301,7 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			break;
 		case POWER_SUPPLY_EXT_PROP_CHARGING_ENABLED:
 			charger->charge_mode = val->intval;
-
-			psy = power_supply_get_by_name("battery");
-			if (!psy)
-				return -EINVAL;
-
-			ret = power_supply_get_property(psy, POWER_SUPPLY_PROP_ONLINE, &value);
+			ret = psy_do_property("battery", get, POWER_SUPPLY_PROP_ONLINE, value);
 			if (ret < 0)
 				pr_err("%s: Fail to execute property\n", __func__);
 
@@ -1275,6 +1338,24 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			switch (lsi_psp) {
 			case POWER_SUPPLY_LSI_PROP_ICHGIN:
 				s2mf301_check_multi_tap_off(charger);
+				break;
+			case POWER_SUPPLY_LSI_PROP_PD_SUPPORT:
+				{
+					/*
+					 * disable Current SoftDown for PD Cert. (PS.SNK.01 / PS.SRC.03)
+					 * 0xF3[3:0] = 0000 : Disable Current SoftDown (only 0A SourceCap)
+					 * 0xF3[3:0] = 0101 : Enable Current SoftDown (Default)
+					 */
+					u8 reg1;
+
+					if (val->intval == 1)
+						s2mf301_update_reg(charger->i2c, 0xF3, 0x00, 0x0F);
+					else
+						s2mf301_update_reg(charger->i2c, 0xF3, 0x05, 0x0F);
+
+					s2mf301_read_reg(charger->i2c, 0xF3, &reg1);
+					pr_info("%s, 0xF3(0x%x)\n", __func__, reg1);
+				}
 				break;
 			default:
 				return -EINVAL;
@@ -1339,12 +1420,8 @@ static int s2mf301_otg_set_property(struct power_supply *psy,
 		value.intval = val->intval;
 		pr_info("%s: OTG %s\n", __func__, value.intval > 0 ? "ON" : "OFF");
 
-		psy = power_supply_get_by_name(charger->pdata->charger_name);
-		if (!psy)
-			return -EINVAL;
-
 		psp_t = (enum power_supply_property)POWER_SUPPLY_EXT_PROP_CHARGE_OTG_CONTROL;
-		ret = power_supply_set_property(psy, psp_t, &value);
+		ret = psy_do_property("s2mf301-charger", set, psp_t, value);
 		if (ret < 0)
 			pr_err("%s: Fail to execute property\n", __func__);
 
@@ -1412,7 +1489,6 @@ static irqreturn_t s2mf301_event_isr(int irq, void *data)
 	struct s2mf301_charger_data *charger = data;
 	union power_supply_propval value;
 	enum power_supply_property psp_t;
-	struct power_supply *psy;
 	u8 val;
 	int ret = 0;
 	u8 sts0, sts1, sts2, sts3, sts4, sts5, sts6, sts7;
@@ -1436,12 +1512,8 @@ static irqreturn_t s2mf301_event_isr(int irq, void *data)
 		value.intval = 1;
 		pr_info("%s, reset USBPD\n", __func__);
 
-		psy = power_supply_get_by_name("usbpd-manager");
-		if (!psy)
-			return -EINVAL;
-
 		psp_t = (enum power_supply_property)POWER_SUPPLY_LSI_PROP_USBPD_RESET;
-		ret = power_supply_set_property(psy, psp_t, &value);
+		ret = psy_do_property("usbpd-manager", set, psp_t, value);
 		if (ret < 0)
 			pr_err("%s: Fail to execute property\n", __func__);
 	}
@@ -1524,7 +1596,9 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 
 	mutex_lock(&charger->ivr_mutex);
 
-	while ((ivr_state & IVR_STATUS_MASK) && charger->cable_type != SEC_BATTERY_CABLE_NONE) {
+	while ((ivr_state & IVR_STATUS_MASK) &&
+			charger->cable_type != SEC_BATTERY_CABLE_NONE &&
+			!irqd_irq_disabled(&irq_to_desc(charger->irq_ivr)->irq_data)) {
 
 		if (s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS2, &ivr_state)) {
 			pr_err("%s: Error reading S2MF301_CHG_STATUS2\n", __func__);
@@ -1534,6 +1608,10 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 
 		if (++ivr_cnt >= 2) {
 			s2mf301_reduce_input_current(charger);
+			if (s2mf301_get_input_current_limit(charger) <= MINIMUM_INPUT_CURRENT) {
+				s2mf301_ivr_irq_enable(charger, false);
+				break;
+			}
 			ivr_cnt = 0;
 		}
 		msleep(IVR_WORK_DELAY);
@@ -1543,9 +1621,6 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 				ivr_state, charger->input_current);
 			break;
 		}
-
-		if (s2mf301_get_input_current_limit(charger) <= MINIMUM_INPUT_CURRENT)
-			break;
 	}
 
 	if (charger->ivr_on) {
@@ -1554,49 +1629,12 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 		if (is_not_wireless_type(charger->cable_type))
 			s2mf301_check_slow_charging(charger, charger->input_current);
 
-		if ((charger->irq_ivr_enabled == 1) &&
-			(charger->input_current <= MINIMUM_INPUT_CURRENT) &&
-			(charger->slow_charging)) {
-			/* Disable IVR IRQ, can't reduce current any more */
-			u8 reg_data;
-
-			charger->irq_ivr_enabled = 0;
-			disable_irq_nosync(charger->irq_ivr);
-			/* Mask IRQ */
-			s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT2M, 1 << IVR_M_SHIFT, IVR_M_MASK);
-			s2mf301_read_reg(charger->i2c, S2MF301_CHG_INT2M, &reg_data);
-			pr_info("%s : disable ivr : 0x%x\n", __func__, reg_data);
-		}
-
 		value.intval = s2mf301_get_input_current_limit(charger);
 		psy_do_property("battery", set, POWER_SUPPLY_EXT_PROP_AICL_CURRENT, value);
 	}
 
-	if (charger->irq_ivr_enabled == 1) /* Unmask IRQ */
-		s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT2M, 0 << IVR_M_SHIFT, IVR_M_MASK);
 	mutex_unlock(&charger->ivr_mutex);
 	__pm_relax(charger->ivr_ws);
-}
-
-static irqreturn_t s2mf301_ivr_isr(int irq, void *data)
-{
-	struct s2mf301_charger_data *charger = data;
-
-	if (charger->keystring) {
-		pr_info("%s: Skip in keystring mode\n", __func__);
-		cancel_delayed_work(&charger->ivr_work);
-		__pm_relax(charger->ivr_ws);
-		return IRQ_HANDLED;
-	}
-
-	pr_info("%s: irq(%d)\n", __func__, irq);
-	__pm_stay_awake(charger->ivr_ws);
-
-	/* Mask IRQ */
-	s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT2M, 1 << IVR_M_SHIFT, IVR_M_MASK);
-	queue_delayed_work(charger->charger_wqueue, &charger->ivr_work, msecs_to_jiffies(IVR_WORK_DELAY));
-
-	return IRQ_HANDLED;
 }
 
 static irqreturn_t s2mf301_ovp_isr(int irq, void *data)
@@ -1659,6 +1697,18 @@ static int s2mf301_charger_parse_dt(struct s2mf301_charger_data *charger)
 		} else {
 			pr_info("%s : slow_charging_current is %d\n", __func__, pdata->slow_charging_current);
 		}
+
+#if defined(CONFIG_SEC_FACTORY)
+		ret = of_property_read_u32(np, "charger,bat2ship_debounce_time_factory_bin", &pdata->bat2ship_debounce_time);
+#else
+		ret = of_property_read_u32(np, "charger,bat2ship_debounce_time", &pdata->bat2ship_debounce_time);
+#endif
+		if (ret) {
+			pr_info("%s : bat2ship_debounce_time is Empty\n", __func__);
+			pdata->bat2ship_debounce_time = 0;
+		} else {
+			pr_info("%s : bat2ship_debounce_time is %d\n", __func__, pdata->bat2ship_debounce_time);
+		}
 	}
 
 	spss_region_dn = of_find_node_by_name(NULL, "qcom,spcom");
@@ -1688,6 +1738,9 @@ static int s2mf301_charger_parse_dt(struct s2mf301_charger_data *charger)
 			pdata->chg_float_voltage = 4350;
 		}
 		pr_info("%s: battery,chg_float_voltage is %d\n", __func__, pdata->chg_float_voltage);
+
+		pdata->boosting_voltage_aicl = of_property_read_bool(np,
+			     "battery,boosting_voltage_aicl");
 	}
 
 	pr_info("%s DT file parsed successfully, %d\n", __func__, ret);
@@ -1726,6 +1779,7 @@ static int s2mf301_charger_probe(struct platform_device *pdev)
 	charger->slow_charging = false;
 
 	charger->dev = &pdev->dev;
+	charger->s2mf301_pdata = pdata;
 	charger->i2c = s2mf301->chg;
 	charger->top = s2mf301->i2c;
 	charger->fg = s2mf301->fg;
@@ -1905,15 +1959,6 @@ static int s2mf301_charger_probe(struct platform_device *pdev)
 		goto err_reg_irq;
 	}
 
-	charger->irq_ivr = pdata->irq_base + S2MF301_CHG2_IRQ_IVR;
-	charger->irq_ivr_enabled = 1;
-	ret = request_threaded_irq(charger->irq_ivr, NULL, s2mf301_ivr_isr, 0, "ivr-irq", charger);
-	if (ret < 0) {
-		dev_err(s2mf301->dev, "%s: Fail to request IVR in IRQ: %d: %d\n", __func__, charger->irq_ivr, ret);
-		charger->irq_ivr_enabled = -1;
-		goto err_reg_irq;
-	}
-
 #if IS_ENABLED(EN_BAT_DET_IRQ)
 	charger->irq_det_bat = pdata->irq_base + S2MF301_CHG0_IRQ_BATID;
 	ret = request_threaded_irq(charger->irq_det_bat, NULL, s2mf301_det_bat_isr, 0, "det_bat-irq", charger);
@@ -2059,7 +2104,7 @@ static void s2mf301_charger_shutdown(struct platform_device *dev)
 
 		/* case with stray voltage due to TA connection */
 		if (!is_nocharge_type(charger->cable_type) || lpcharge) {
-			if (s2mf301_check_current_level())
+			if (s2mf301_check_current_level(charger->pdata->fuelgauge_name))
 				auto_shipmode_level = s2mf301_check_auto_shipmode_level(charger, 2);
 			else
 				auto_shipmode_level = s2mf301_check_auto_shipmode_level(charger, 1);
@@ -2069,7 +2114,7 @@ static void s2mf301_charger_shutdown(struct platform_device *dev)
 		s2mf301_set_auto_shipmode_level(charger, auto_shipmode_level);
 	}
 #endif
-	s2mf301_set_time_bat2ship_db(charger, 0);
+	s2mf301_set_time_bat2ship_db(charger, charger->pdata->bat2ship_debounce_time);
 	s2mf301_set_auto_shipmode(charger, true);
 
 	pr_info("%s: S2MF301 Charger driver shutdown\n", __func__);
