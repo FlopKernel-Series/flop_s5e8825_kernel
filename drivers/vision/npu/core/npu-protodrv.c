@@ -188,7 +188,6 @@ static const char *NW_CMD_NAMES[NPU_NW_CMD_END - NPU_NW_CMD_BASE] = {
 	NULL,			/* For NPU_NW_CMD_BASE */
 	"LOAD",
 	"UNLOAD",
-	"STREAM_ON",
 	"STREAM_OFF",
 #if (CONFIG_NPU_MAILBOX_VERSION >= 8)
 	"POWER_CONTROL",
@@ -1662,11 +1661,6 @@ static int  npu_protodrv_handler_nw_requested(void)
 			compl_handle_cnt++;
 #endif	/* BYPASS_HW_STREAMOFF */
 			break;
-		case NPU_NW_CMD_STREAMON:
-			/* Move to completed state */
-			proto_nw_lsm.lsm_move_entry(COMPLETED, entry);
-			compl_handle_cnt++;
-			break;
 		case NPU_NW_CMD_UNLOAD:
 			/* Publish if INACTIVE */
 			if (likely(s_state == SESSION_REF_STATE_INACTIVE)) {
@@ -1768,10 +1762,6 @@ static int  npu_protodrv_handler_nw_processing(void)
 		}
 
 		switch (entry->nw.cmd) {
-		case NPU_NW_CMD_STREAMON:
-			npu_uerr("invalid command(%u)\n", &entry->nw, entry->nw.cmd);
-			BUG_ON(1);
-
 		default:
 			/* Result code already set on nw_mbox_ops_get() -> Just change its state */
 			proto_nw_lsm.lsm_move_entry(COMPLETED, entry);
@@ -1872,28 +1862,16 @@ static int npu_protodrv_handler_nw_completed(void)
 					/* Update status */
 					if (likely(entry->nw.result_code == NPU_ERR_NO_ERROR)) {
 						npu_udbg("complete load : Change s_state (%d) -> (%d)\n",
-							&entry->nw, session_ref_entry->s_state, SESSION_REF_STATE_INACTIVE);
-						session_ref_entry->s_state = SESSION_REF_STATE_INACTIVE;
-					} else {
-						npu_uerr("complete load, with error(%u/0x%08x) :"
-							" Keep current s_state [%d]\n",
-							&entry->nw, entry->nw.result_code, entry->nw.result_code,
-							session_ref_entry->s_state);
-						fw_will_note(FW_LOGSIZE);
-					}
-					transition = 1;
-					break;
-				case NPU_NW_CMD_STREAMON:
-					/* Update status */
-					if (likely(entry->nw.result_code == NPU_ERR_NO_ERROR)) {
-						npu_udbg("complete STREAM_ON : change s_state (%d) -> (%d)\n",
 							&entry->nw, session_ref_entry->s_state, SESSION_REF_STATE_ACTIVE);
 						session_ref_entry->s_state = SESSION_REF_STATE_ACTIVE;
 					} else {
-						npu_uerr("complete STREAM_ON, with error(%u/0x%08x) :"
-							" keep current s_state (%d)\n",
-							&entry->nw, entry->nw.result_code, entry->nw.result_code,
-							session_ref_entry->s_state);
+						npu_uerr(
+							"complete load, with error(%u/0x%08x) : Keep current s_state [%d]\n",
+							&entry->nw,
+							entry->nw.result_code,
+							entry->nw.result_code,
+							session_ref_entry
+								->s_state);
 						fw_will_note(FW_LOGSIZE);
 					}
 					transition = 1;
