@@ -5899,7 +5899,7 @@
 	};
 
 	origin_usb_notifier {
-		compatible = "samsung,origin-usb-notifier";
+		compatible = "samsung,usb-notifier";
 		udc = <0xcc>;
 		status = "okay";
 		disable_host_wakelock;
