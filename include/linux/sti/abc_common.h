@@ -218,7 +218,11 @@ int sec_abc_save_pre_events(struct abc_key_data *key_data, char *uevent_type);
 extern struct registered_abc_event_struct abc_event_list[];
 extern int REGISTERED_ABC_EVENT_TOTAL;
 
+#if IS_ENABLED(CONFIG_UML)
+#define ABC_PRINT(format, ...) pr_debug("[sec_abc] %s : " format, __func__, ##__VA_ARGS__)
+#else
 #define ABC_PRINT(format, ...) pr_info("[sec_abc] %s : " format, __func__, ##__VA_ARGS__)
+#endif
 #define ABC_DEBUG(format, ...) pr_debug("[sec_abc] %s : " format, __func__, ##__VA_ARGS__)
 
 #ifdef CONFIG_SEC_KUNIT

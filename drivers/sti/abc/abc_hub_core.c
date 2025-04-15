@@ -49,10 +49,10 @@ static int abc_hub_parse_dt(struct device *dev)
 	}
 
 #if IS_ENABLED(CONFIG_SEC_ABC_HUB_COND)
-	cond_pin_cnt = of_gpio_named_count(np, "sec,det_conn_gpios");
+	cond_pin_cnt = gpiod_count(dev, "sec,det-conn");
 #if IS_ENABLED(CONFIG_QCOM_SEC_ABC_DETECT)
 	/* Setting PM gpio for QC */
-	cond_pin_cnt = cond_pin_cnt + of_gpio_named_count(np, "sec,det_pm_conn_gpios");
+	cond_pin_cnt = cond_pin_cnt + gpiod_count(dev, "sec,det-pm-conn");
 #endif
 	if (cond_pin_cnt) {
 		pdata->cond.init = 1;
@@ -389,7 +389,6 @@ err_create_device:
 	kfree(abc_hub_pinfo);
 err_alloc_abc_hub_pinfo:
 err_parse_dt:
-	devm_kfree(&pdev->dev, pdata);
 	pdev->dev.platform_data =  NULL;
 out:
 	return ret;
