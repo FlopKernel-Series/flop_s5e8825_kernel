@@ -56,11 +56,12 @@ EXPORT_SYMBOL_KUNIT(abc_hub_kunit_test_uevent_str);
 struct registered_abc_event_struct abc_event_list[] = {
 	{"audio", "spk_amp", "it", true, true, 0, ABC_GROUP_NONE},
 	{"audio", "spk_amp_short", "it", true, true, 0, ABC_GROUP_NONE},
+	{"battery", "b2sovrc_rst", "it", true, true, 0, ABC_GROUP_NONE},
+	{"battery", "dc_batt_ov", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "dc_i2c_fail", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "over_voltage", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "pd_input_ocp", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "safety_timer", "it", true, true, 0, ABC_GROUP_NONE},
-	{"battery", "pp_open", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "lim_stuck", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "lim_i2c_fail", "it", true, true, 0, ABC_GROUP_NONE},
 	{"battery", "vsys_ovp", "it", true, true, 0, ABC_GROUP_NONE},
@@ -112,17 +113,18 @@ struct registered_abc_event_struct abc_event_list[] = {
 	{"display", "panel_sub_no_te", "", true, true, 0, ABC_GROUP_NONE},
 	{"gpu", "gpu_fault", "", true, false, 0, ABC_GROUP_NONE},
 	{"gpu", "gpu_job_timeout", "", true, false, 0, ABC_GROUP_NONE},
-	{"gpu_qc", "gpu_fault", "", true, false, 0, ABC_GROUP_NONE},
-	{"gpu_qc", "gpu_page_fault", "", true, false, 0, ABC_GROUP_NONE},
 	{"mm", "venus_data_corrupt", "", true, true, 0, ABC_GROUP_NONE},
 	{"mm", "venus_fw_load_fail", "", true, true, 0, ABC_GROUP_NONE},
 	{"mm", "venus_hung", "", true, false, 0, ABC_GROUP_NONE},
+	{"mm", "vidc_sys_err_type2", "", true, true, 0, ABC_GROUP_NONE},
+	{"mm", "vidc_sys_err_type3", "", true, true, 0, ABC_GROUP_NONE},
 	{"muic", "afc_hv_fail", "", true, true, 0, ABC_GROUP_NONE},
 	{"muic", "cable_short", "", true, true, 0, ABC_GROUP_NONE},
 	{"muic", "qc_hv_fail", "", true, true, 0, ABC_GROUP_NONE},
 	{"npu", "npu_fw_warning", "", true, true, 0, ABC_GROUP_NONE},
 	{"pdic", "i2c_fail", "it", true, true, 0, ABC_GROUP_NONE},
 	{"pdic", "water_det", "", true, true, 0, ABC_GROUP_NONE},
+	{"pdic", "ccic_stuck", "it", true, true, 0, ABC_GROUP_NONE},
 	{"pmic", "s2dos05_bulk_read", "it", true, true, 0, ABC_GROUP_NONE},
 	{"pmic", "s2dos05_bulk_write", "it", true, true, 0, ABC_GROUP_NONE},
 	{"pmic", "s2dos05_read_reg", "it", true, true, 0, ABC_GROUP_NONE},
@@ -148,11 +150,112 @@ struct registered_abc_event_struct abc_event_list[] = {
 	{"ub_sub", "ub_disconnected", "it", true, true, 0, ABC_GROUP_NONE},
 	{"vib", "fw_load_fail", "it", true, true, 0, ABC_GROUP_NONE},
 	{"vib", "int_gnd_short", "", true, false, 0, ABC_GROUP_NONE},
+	{"vib", "standby_error_recovered", "it", true, true, 0, ABC_GROUP_NONE},
 	{"wacom", "digitizer_not_connected", "", true, true, 0, ABC_GROUP_NONE},
 #if IS_ENABLED(CONFIG_SEC_KUNIT)
 	{"kunit", "test_warn", "", true, true, 0, ABC_GROUP_NONE},
 	{"kunit", "test_info", "", true, true, 0, ABC_GROUP_NONE},
 	{"kunit", "test_error", "", true, true, 0, ABC_GROUP_NONE},
+#endif
+#if IS_ENABLED(CONFIG_ARCH_EXYNOS)
+	{"pmic", "buck_sr1m_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "bb1m_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "bb2m_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1m_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "bb1m_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "bb2m_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_m_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_s1_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s2_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s2_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_s2_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s3_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s3_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_s3_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s4_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s4_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_s4_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s5_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck5s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck6s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1s5_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_s5_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1r1_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck_sr1r1_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_r1_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1e_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2e_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3e_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4e_ocp_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck1e_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck2e_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck3e_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "buck4e_oi_irq", "", true, true, 0, ABC_GROUP_NONE},
+	{"pmic", "ovp_e_irq", "", true, true, 0, ABC_GROUP_NONE},
+#endif
+#if IS_ENABLED(CONFIG_ARCH_QCOM) && !IS_ENABLED(CONFIG_ARCH_EXYNOS)
+	{"gpu_qc", "gpu_fault", "", true, false, 0, ABC_GROUP_NONE},
+	{"gpu_qc", "gpu_page_fault", "", true, false, 0, ABC_GROUP_NONE},
 #endif
 };
 EXPORT_SYMBOL_KUNIT(abc_event_list);
@@ -387,6 +490,17 @@ int sec_abc_clear_pre_events(void)
 EXPORT_SYMBOL_KUNIT(sec_abc_clear_pre_events);
 
 __visible_for_testing
+void sec_abc_adjust_pre_event_count(struct abc_pre_event *pre_event)
+{
+	int pre_event_max_count = ABC_SKIP_EVENT_COUNT_THRESHOLD;
+
+	pre_event->error_cnt = min(pre_event->error_cnt, pre_event_max_count);
+	pre_event_max_count -= pre_event->error_cnt;
+	pre_event->all_cnt = min(pre_event->all_cnt, pre_event_max_count);
+}
+EXPORT_SYMBOL_KUNIT(sec_abc_adjust_pre_event_count);
+
+__visible_for_testing
 int sec_abc_process_pre_events(void)
 {
 	struct abc_pre_event *pre_event;
@@ -396,7 +510,7 @@ int sec_abc_process_pre_events(void)
 
 	mutex_lock(&pinfo->pre_event_mutex);
 	list_for_each_entry(pre_event, &abc_pre_event_list, node) {
-
+		sec_abc_adjust_pre_event_count(pre_event);
 		if (abc_enable_mode & ALL_REPORT_MODE_BIT) {
 			ABC_PRINT("All report mode. Send uevent");
 			cnt += pre_event->all_cnt;
@@ -611,10 +725,42 @@ EXPORT_SYMBOL_KUNIT(features_show);
 
 static DEVICE_ATTR_RW(features);
 
+__visible_for_testing
+ssize_t list_store(struct device *dev,
+				   struct device_attribute *attr,
+				   const char *buf,
+				   size_t count)
+{
+	return count;
+}
+EXPORT_SYMBOL_KUNIT(list_store);
+
+__visible_for_testing
+ssize_t list_show(struct device *dev,
+				  struct device_attribute *attr,
+				  char *buf)
+{
+	int count = 0;
+	int i;
+
+	for (i = 0; i < REGISTERED_ABC_EVENT_TOTAL; i++)
+	{
+		count += scnprintf(buf + count, PAGE_SIZE - count, "%s,%s\n",
+			abc_event_list[i].module_name, abc_event_list[i].error_name);
+	}
+	ABC_PRINT("%d", count);
+
+	return count;
+}
+EXPORT_SYMBOL_KUNIT(list_show);
+
+static DEVICE_ATTR_RW(list);
+
 static struct attribute *sec_abc_attr[] = {
 	&dev_attr_enabled.attr,
 	&dev_attr_spec.attr,
 	&dev_attr_features.attr,
+	&dev_attr_list.attr,
 	NULL,
 };
 
@@ -921,7 +1067,6 @@ err_create_device:
 	kfree(pinfo);
 err_alloc_pinfo:
 err_parse_dt:
-	devm_kfree(&pdev->dev, pdata);
 	pdev->dev.platform_data = NULL;
 out:
 	return ret;
