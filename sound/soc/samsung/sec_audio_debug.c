@@ -563,12 +563,12 @@ static ssize_t aboxhalflog_file_read(struct file *file, char __user *user_buf,
 	pr_debug("%s(%zu, %lld)\n", __func__, count, *ppos);
 
 	if (read_half_buff_id == 0)
-		end = (ABOXLOG_BUFF_SIZE / 2) - 1;
+		end = (ABOXLOG_BUFF_SIZE / 2);
 	else
-		end = ABOXLOG_BUFF_SIZE - 1;
+		end = ABOXLOG_BUFF_SIZE;
 
 	mutex_lock(&aboxlog_file_index_lock);
-	if (aboxlog_file_index > end) {
+	if (aboxlog_file_index >= end) {
 		pr_err("%s: read done\n", __func__);
 		mutex_unlock(&aboxlog_file_index_lock);
 		return copy_len;
