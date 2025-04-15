@@ -76,6 +76,12 @@ config CAMERA_AAW_A25X
         default n
         help
           This camera is aaw_a25x
+config CAMERA_AAX_A26X
+        bool "This camera is aax_a26x"
+        depends on CAMERA_VENDER_MCD_V2
+        default n
+        help
+          This camera is aax_a26x
 config CAMERA_AAV_A53X
         bool "This camera is aav_a53x"
         depends on CAMERA_VENDER_MCD_V2

@@ -134,4 +134,5 @@ void is_ois_init_rear2(struct is_core *core);
 void is_ois_init_factory(struct is_core *core);
 void is_ois_parsing_raw_data(struct is_core *core, uint8_t *buf, long efs_size, long *raw_data_x, long *raw_data_y, long *raw_data_z);
 int is_ois_control_gpio(struct is_core *core, int position, int onoff);
+void is_ois_set_center_shift(struct is_core *core, int16_t *value);
 #endif

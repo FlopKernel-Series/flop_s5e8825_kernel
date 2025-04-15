@@ -708,4 +708,12 @@ enum fd_config_orientation {
 	FD_CONFIG_ORIENTATION_DISABLE		= 0,
 	FD_CONFIG_ORIENTATION_ENABLE		= 1
 };
+
+/* ----------------------------  FLIP  ------------------------------------- */
+enum sensor_flip {
+	SENSOR_FLIP_NONE			= 0,
+	SENSOR_FLIP_X				= 1,
+	SENSOR_FLIP_Y				= 2,
+	SENSOR_FLIP_XY				= 3
+};
 #endif

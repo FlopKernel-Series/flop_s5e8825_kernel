@@ -30,6 +30,7 @@ const u32 sensor_imx258full_setfile_A_Global[] = {
 	0x3052, 0x00, 0x01,
 	0x4E21, 0x14, 0x01,
 	0x6B11, 0xCF, 0x01,
+
 	0x7FF0, 0x08, 0x01,
 	0x7FF1, 0x0F, 0x01,
 	0x7FF2, 0x08, 0x01,
@@ -65,6 +66,10 @@ const u32 sensor_imx258full_setfile_A_Global[] = {
 	0x6707, 0x0E, 0x01,
 	0x5F04, 0x00, 0x01,
 	0x5F05, 0xED, 0x01,
+	0x7937, 0x01, 0x01,
+	0x793C, 0x01, 0x01,
+	0x792F, 0x01, 0x01,
+	0x7930, 0x01, 0x01,
 
 	// Init Image Quality adjustment setting
 	0x94C7, 0xFF, 0x01,
@@ -272,14 +277,11 @@ const u32 sensor_imx258full_setfile_A_4128x3096_30fps[] = {
 	0x0307, 0xC8, 0x01,
 	0x0309, 0x0A, 0x01,
 	0x030B, 0x01, 0x01,
-	0x030D, 0x04, 0x01,
+	0x030D, 0x03, 0x01,
 	0x030E, 0x00, 0x01,
-	0x030F, 0xA8, 0x01,
+	0x030F, 0x80, 0x01,
 	0x0310, 0x01, 0x01,
-	0x0820, 0x11, 0x01,
-	0x0821, 0x10, 0x01,
-	0x0822, 0x00, 0x01,
-	0x0823, 0x00, 0x01,
+	0x0808, 0x00, 0x01,
 
 	0x4648, 0x7F, 0x01,
 	0x7420, 0x00, 0x01,
@@ -299,11 +301,11 @@ const u32 sensor_imx258full_setfile_A_4128x3096_30fps[] = {
 	0x0344, 0x00, 0x01,
 	0x0345, 0x00, 0x01,
 	0x0346, 0x00, 0x01,
-	0x0347, 0x00, 0x01,
+	0x0347, 0x0C, 0x01,
 	0x0348, 0x10, 0x01,
 	0x0349, 0x6F, 0x01,
 	0x034A, 0x0C, 0x01,
-	0x034B, 0x2F, 0x01,
+	0x034B, 0x23, 0x01,
 
 	// Analog Image Size Setting
 	0x0381, 0x01, 0x01,
@@ -319,7 +321,7 @@ const u32 sensor_imx258full_setfile_A_4128x3096_30fps[] = {
 	0x0408, 0x00, 0x01,
 	0x0409, 0x28, 0x01,
 	0x040A, 0x00, 0x01,
-	0x040B, 0x0C, 0x01,
+	0x040B, 0x00, 0x01,
 	0x040C, 0x10, 0x01,
 	0x040D, 0x20, 0x01,
 	0x040E, 0x0C, 0x01,
@@ -383,14 +385,11 @@ const u32 sensor_imx258full_setfile_A_4128x2324_30fps[] = {
 	0x0307, 0xC8, 0x01,
 	0x0309, 0x0A, 0x01,
 	0x030B, 0x01, 0x01,
-	0x030D, 0x04, 0x01,
+	0x030D, 0x03, 0x01,
 	0x030E, 0x00, 0x01,
-	0x030F, 0xA8, 0x01,
+	0x030F, 0x80, 0x01,
 	0x0310, 0x01, 0x01,
-	0x0820, 0x11, 0x01,
-	0x0821, 0x10, 0x01,
-	0x0822, 0x00, 0x01,
-	0x0823, 0x00, 0x01,
+	0x0808, 0x00, 0x01,
 
 	0x4648, 0x7F, 0x01,
 	0x7420, 0x00, 0x01,
@@ -495,14 +494,11 @@ const u32 sensor_imx258full_setfile_A_3408x2556_30fps[] = {
 	0x0307, 0xC8, 0x01,
 	0x0309, 0x0A, 0x01,
 	0x030B, 0x01, 0x01,
-	0x030D, 0x04, 0x01,
+	0x030D, 0x03, 0x01,
 	0x030E, 0x00, 0x01,
-	0x030F, 0xA8, 0x01,
+	0x030F, 0x80, 0x01,
 	0x0310, 0x01, 0x01,
-	0x0820, 0x11, 0x01,
-	0x0821, 0x10, 0x01,
-	0x0822, 0x00, 0x01,
-	0x0823, 0x00, 0x01,
+	0x0808, 0x00, 0x01,
 
 	0x4648, 0x7F, 0x01,
 	0x7420, 0x00, 0x01,
@@ -521,12 +517,12 @@ const u32 sensor_imx258full_setfile_A_3408x2556_30fps[] = {
 	// ROI Setting
 	0x0344, 0x00, 0x01,
 	0x0345, 0x00, 0x01,
-	0x0346, 0x00, 0x01,
-	0x0347, 0x00, 0x01,
+	0x0346, 0x01, 0x01,
+	0x0347, 0x1A, 0x01,
 	0x0348, 0x10, 0x01,
 	0x0349, 0x6F, 0x01,
-	0x034A, 0x0C, 0x01,
-	0x034B, 0x2F, 0x01,
+	0x034A, 0x0B, 0x01,
+	0x034B, 0x15, 0x01,
 
 	// Analog Image Size Setting
 	0x0381, 0x01, 0x01,
@@ -541,8 +537,8 @@ const u32 sensor_imx258full_setfile_A_3408x2556_30fps[] = {
 	0x0405, 0x10, 0x01,
 	0x0408, 0x01, 0x01,
 	0x0409, 0x90, 0x01,
-	0x040A, 0x01, 0x01,
-	0x040B, 0x1A, 0x01,
+	0x040A, 0x00, 0x01,
+	0x040B, 0x00, 0x01,
 	0x040C, 0x0D, 0x01,
 	0x040D, 0x50, 0x01,
 	0x040E, 0x09, 0x01,
@@ -606,14 +602,11 @@ const u32 sensor_imx258full_setfile_A_3712x2556_30fps[] = {
 	0x0307, 0xC8, 0x01,
 	0x0309, 0x0A, 0x01,
 	0x030B, 0x01, 0x01,
-	0x030D, 0x04, 0x01,
+	0x030D, 0x03, 0x01,
 	0x030E, 0x00, 0x01,
-	0x030F, 0xA8, 0x01,
+	0x030F, 0x80, 0x01,
 	0x0310, 0x01, 0x01,
-	0x0820, 0x11, 0x01,
-	0x0821, 0x10, 0x01,
-	0x0822, 0x00, 0x01,
-	0x0823, 0x00, 0x01,
+	0x0808, 0x00, 0x01,
 
 	0x4648, 0x7F, 0x01,
 	0x7420, 0x00, 0x01,
@@ -697,6 +690,537 @@ const u32 sensor_imx258full_setfile_A_3712x2556_30fps[] = {
 	0x9519, 0x50, 0x01,
 	0x951B, 0x50, 0x01,
 	// Added Setting(mode)
+	0x3030, 0x00, 0x01,
+	0x3032, 0x00, 0x01,
+	0x0220, 0x00, 0x01,
+	0x0B06, 0x00, 0x01,
+};
+
+const u32 sensor_imx258full_setfile_A_2064x1548_30fps[] = {
+//Output format Setting
+	0x0112, 0x0A, 0x01,
+	0x0113, 0x0A, 0x01,
+	0x0114, 0x03, 0x01,
+
+//Clock Setting
+	0x0301, 0x05, 0x01,
+	0x0303, 0x02, 0x01,
+	0x0305, 0x04, 0x01,
+	0x0306, 0x00, 0x01,
+	0x0307, 0xC8, 0x01,
+	0x0309, 0x0A, 0x01,
+	0x030B, 0x01, 0x01,
+	0x030D, 0x03, 0x01,
+	0x030E, 0x00, 0x01,
+	0x030F, 0x80, 0x01,
+	0x0310, 0x01, 0x01,
+	0x0808, 0x00, 0x01,
+
+	0x4648, 0x7F, 0x01,
+	0x7420, 0x00, 0x01,
+	0x7421, 0x5C, 0x01,
+	0x7422, 0x00, 0x01,
+	0x7423, 0xD7, 0x01,
+	0x9104, 0x04, 0x01,
+
+//Line Length Setting
+	0x0342, 0x14, 0x01,
+	0x0343, 0xE8, 0x01,
+//Frame Length Setting
+	0x0340, 0x0C, 0x01,
+	0x0341, 0xA4, 0x01,
+//ROI Setting
+	0x0344, 0x00, 0x01,
+	0x0345, 0x00, 0x01,
+	0x0346, 0x00, 0x01,
+	0x0347, 0x0C, 0x01,
+	0x0348, 0x10, 0x01,
+	0x0349, 0x6F, 0x01,
+	0x034A, 0x0C, 0x01,
+	0x034B, 0x23, 0x01,
+//Analog Image Size Setting
+	0x0381, 0x01, 0x01,
+	0x0383, 0x01, 0x01,
+	0x0385, 0x01, 0x01,
+	0x0387, 0x01, 0x01,
+	0x0900, 0x01, 0x01,
+	0x0901, 0x12, 0x01,
+//Digital Image Size Setting
+	0x0401, 0x01, 0x01,
+	0x0404, 0x00, 0x01,
+	0x0405, 0x20, 0x01,
+	0x0408, 0x00, 0x01,
+	0x0409, 0x26, 0x01,
+	0x040A, 0x00, 0x01,
+	0x040B, 0x00, 0x01,
+	0x040C, 0x10, 0x01,
+	0x040D, 0x22, 0x01,
+	0x040E, 0x06, 0x01,
+	0x040F, 0x0C, 0x01,
+	0x3038, 0x00, 0x01,
+	0x303A, 0x00, 0x01,
+	0x303B, 0x10, 0x01,
+	0x300D, 0x00, 0x01,
+//Output Size Setting
+	0x034C, 0x08, 0x01,
+	0x034D, 0x10, 0x01,
+	0x034E, 0x06, 0x01,
+	0x034F, 0x0C, 0x01,
+//Integration Time Setting
+	0x0202, 0x06, 0x01,
+	0x0203, 0x46, 0x01,
+//Gain Setting,
+	0x0204, 0x00, 0x01,
+	0x0205, 0x00, 0x01,
+	0x020E, 0x01, 0x01,
+	0x020F, 0x00, 0x01,
+	0x0210, 0x01, 0x01,
+	0x0211, 0x00, 0x01,
+	0x0212, 0x01, 0x01,
+	0x0213, 0x00, 0x01,
+	0x0214, 0x01, 0x01,
+	0x0215, 0x00, 0x01,
+//Added Setting(AF)
+	0x7BCD, 0x01, 0x01,
+//Added Setting(IQ)
+	0x94DC, 0x20, 0x01,
+	0x94DD, 0x20, 0x01,
+	0x94DE, 0x20, 0x01,
+	0x95DC, 0x20, 0x01,
+	0x95DD, 0x20, 0x01,
+	0x95DE, 0x20, 0x01,
+	0x7FB0, 0x00, 0x01,
+	0x9010, 0x3E, 0x01,
+	0x9419, 0x50, 0x01,
+	0x941B, 0x50, 0x01,
+	0x9519, 0x50, 0x01,
+	0x951B, 0x50, 0x01,
+//Added Setting(mode)
+	0x3030, 0x00, 0x01,
+	0x3032, 0x00, 0x01,
+	0x0220, 0x00, 0x01,
+	0x0B06, 0x00, 0x01,
+};
+
+const u32 sensor_imx258full_setfile_A_2064x1160_30fps[] = {
+//Output format Setting
+	0x0112, 0x0A, 0x01,
+	0x0113, 0x0A, 0x01,
+	0x0114, 0x03, 0x01,
+
+	// Clock Setting
+	0x0301, 0x05, 0x01,
+	0x0303, 0x02, 0x01,
+	0x0305, 0x04, 0x01,
+	0x0306, 0x00, 0x01,
+	0x0307, 0xC8, 0x01,
+	0x0309, 0x0A, 0x01,
+	0x030B, 0x01, 0x01,
+	0x030D, 0x03, 0x01,
+	0x030E, 0x00, 0x01,
+	0x030F, 0x80, 0x01,
+	0x0310, 0x01, 0x01,
+	0x0808, 0x00, 0x01,
+
+	0x4648, 0x7F, 0x01,
+	0x7420, 0x00, 0x01,
+	0x7421, 0x5C, 0x01,
+	0x7422, 0x00, 0x01,
+	0x7423, 0xD7, 0x01,
+	0x9104, 0x04, 0x01,
+
+//Line Length Setting
+	0x0342, 0x14, 0x01,
+	0x0343, 0xE8, 0x01,
+//Frame Length Setting
+	0x0340, 0x0C, 0x01,
+	0x0341, 0xA4, 0x01,
+//ROI Setting
+	0x0344, 0x00, 0x01,
+	0x0345, 0x00, 0x01,
+	0x0346, 0x01, 0x01,
+	0x0347, 0x90, 0x01,
+	0x0348, 0x10, 0x01,
+	0x0349, 0x6F, 0x01,
+	0x034A, 0x0A, 0x01,
+	0x034B, 0x9F, 0x01,
+//Analog Image Size Setting
+	0x0381, 0x01, 0x01,
+	0x0383, 0x01, 0x01,
+	0x0385, 0x01, 0x01,
+	0x0387, 0x01, 0x01,
+	0x0900, 0x01, 0x01,
+	0x0901, 0x12, 0x01,
+//Digital Image Size Setting
+	0x0401, 0x01, 0x01,
+	0x0404, 0x00, 0x01,
+	0x0405, 0x20, 0x01,
+	0x0408, 0x00, 0x01,
+	0x0409, 0x26, 0x01,
+	0x040A, 0x00, 0x01,
+	0x040B, 0x00, 0x01,
+	0x040C, 0x10, 0x01,
+	0x040D, 0x22, 0x01,
+	0x040E, 0x04, 0x01,
+	0x040F, 0x88, 0x01,
+	0x3038, 0x00, 0x01,
+	0x303A, 0x00, 0x01,
+	0x303B, 0x10, 0x01,
+	0x300D, 0x00, 0x01,
+//Output Size Setting
+	0x034C, 0x08, 0x01,
+	0x034D, 0x10, 0x01,
+	0x034E, 0x04, 0x01,
+	0x034F, 0x88, 0x01,
+//Integration Time Setting
+	0x0202, 0x06, 0x01,
+	0x0203, 0x46, 0x01,
+//Gain Setting
+	0x0204, 0x00, 0x01,
+	0x0205, 0x00, 0x01,
+	0x020E, 0x01, 0x01,
+	0x020F, 0x00, 0x01,
+	0x0210, 0x01, 0x01,
+	0x0211, 0x00, 0x01,
+	0x0212, 0x01, 0x01,
+	0x0213, 0x00, 0x01,
+	0x0214, 0x01, 0x01,
+	0x0215, 0x00, 0x01,
+//Added Setting(AF)
+	0x7BCD, 0x01, 0x01,
+//Added Setting(IQ)
+	0x94DC, 0x20, 0x01,
+	0x94DD, 0x20, 0x01,
+	0x94DE, 0x20, 0x01,
+	0x95DC, 0x20, 0x01,
+	0x95DD, 0x20, 0x01,
+	0x95DE, 0x20, 0x01,
+	0x7FB0, 0x00, 0x01,
+	0x9010, 0x3E, 0x01,
+	0x9419, 0x50, 0x01,
+	0x941B, 0x50, 0x01,
+	0x9519, 0x50, 0x01,
+	0x951B, 0x50, 0x01,
+//Added Setting(mode)
+	0x3030, 0x00, 0x01,
+	0x3032, 0x00, 0x01,
+	0x0220, 0x00, 0x01,
+	0x0B06, 0x00, 0x01,
+};
+
+const u32 sensor_imx258full_setfile_A_1024x768_120fps[] = {
+	//Output format Setting
+	0x0112, 0x0A, 0x01,
+	0x0113, 0x0A, 0x01,
+	0x0114, 0x03, 0x01,
+
+	// Clock Setting
+	0x0301, 0x05, 0x01,
+	0x0303, 0x02, 0x01,
+	0x0305, 0x04, 0x01,
+	0x0306, 0x00, 0x01,
+	0x0307, 0xC8, 0x01,
+	0x0309, 0x0A, 0x01,
+	0x030B, 0x01, 0x01,
+	0x030D, 0x03, 0x01,
+	0x030E, 0x00, 0x01,
+	0x030F, 0x80, 0x01,
+	0x0310, 0x01, 0x01,
+	0x0808, 0x00, 0x01,
+
+	0x4648, 0x7F, 0x01,
+	0x7420, 0x00, 0x01,
+	0x7421, 0x5C, 0x01,
+	0x7422, 0x00, 0x01,
+	0x7423, 0xD7, 0x01,
+	0x9104, 0x04, 0x01,
+
+	//Line Length Setting
+	0x0342, 0x14, 0x01,
+	0x0343, 0xE8, 0x01,
+
+	// Frame Length Setting
+	0x0340, 0x03, 0x01,
+	0x0341, 0x28, 0x01,
+	//ROI Setting
+	0x0344, 0x00, 0x01,
+	0x0345, 0x00, 0x01,
+	0x0346, 0x00, 0x01,
+	0x0347, 0x18, 0x01,
+	0x0348, 0x10, 0x01,
+	0x0349, 0x6F, 0x01,
+	0x034A, 0x0C, 0x01,
+	0x034B, 0x17, 0x01,
+	//Analog Image Size Setting
+	0x0381, 0x01, 0x01,
+	0x0383, 0x01, 0x01,
+	0x0385, 0x01, 0x01,
+	0x0387, 0x01, 0x01,
+	0x0900, 0x01, 0x01,
+	0x0901, 0x14, 0x01,
+	//Digital Image Size Setting
+	0x0401, 0x01, 0x01,
+	0x0404, 0x00, 0x01,
+	0x0405, 0x40, 0x01,
+	0x0408, 0x00, 0x01,
+	0x0409, 0x36, 0x01,
+	0x040A, 0x00, 0x01,
+	0x040B, 0x00, 0x01,
+	0x040C, 0x10, 0x01,
+	0x040D, 0x04, 0x01,
+	0x040E, 0x03, 0x01,
+	0x040F, 0x00, 0x01,
+	0x3038, 0x00, 0x01,
+	0x303A, 0x00, 0x01,
+	0x303B, 0x10, 0x01,
+	0x300D, 0x00, 0x01,
+	//Output Size Setting
+	0x034C, 0x04, 0x01,
+	0x034D, 0x00, 0x01,
+	0x034E, 0x03, 0x01,
+	0x034F, 0x00, 0x01,
+	//Integration Time Setting
+	0x0202, 0x03, 0x01,
+	0x0203, 0x1E, 0x01,
+	//Gain Setting
+	0x0204, 0x00, 0x01,
+	0x0205, 0x00, 0x01,
+	0x020E, 0x01, 0x01,
+	0x020F, 0x00, 0x01,
+	0x0210, 0x01, 0x01,
+	0x0211, 0x00, 0x01,
+	0x0212, 0x01, 0x01,
+	0x0213, 0x00, 0x01,
+	0x0214, 0x01, 0x01,
+	0x0215, 0x00, 0x01,
+	//Added Setting(AF)
+	0x7BCD, 0x00, 0x01,
+	//Added Setting(IQ)
+	0x94DC, 0x20, 0x01,
+	0x94DD, 0x20, 0x01,
+	0x94DE, 0x20, 0x01,
+	0x95DC, 0x20, 0x01,
+	0x95DD, 0x20, 0x01,
+	0x95DE, 0x20, 0x01,
+	0x7FB0, 0x00, 0x01,
+	0x9010, 0x3E, 0x01,
+	0x9419, 0x50, 0x01,
+	0x941B, 0x50, 0x01,
+	0x9519, 0x50, 0x01,
+	0x951B, 0x50, 0x01,
+	//Added Setting(mode)
+	0x3030, 0x00, 0x01,
+	0x3032, 0x00, 0x01,
+	0x0220, 0x00, 0x01,
+	0x0B06, 0x00, 0x01,
+};
+
+const u32 sensor_imx258full_setfile_A_1856x1044_30fps[] = {
+//Output format Setting
+	0x0112, 0x0A, 0x01,
+	0x0113, 0x0A, 0x01,
+	0x0114, 0x03, 0x01,
+
+	// Clock Setting
+	0x0301, 0x05, 0x01,
+	0x0303, 0x02, 0x01,
+	0x0305, 0x04, 0x01,
+	0x0306, 0x00, 0x01,
+	0x0307, 0xC8, 0x01,
+	0x0309, 0x0A, 0x01,
+	0x030B, 0x01, 0x01,
+	0x030D, 0x03, 0x01,
+	0x030E, 0x00, 0x01,
+	0x030F, 0x80, 0x01,
+	0x0310, 0x01, 0x01,
+	0x0808, 0x00, 0x01,
+
+	0x4648, 0x7F, 0x01,
+	0x7420, 0x00, 0x01,
+	0x7421, 0x5C, 0x01,
+	0x7422, 0x00, 0x01,
+	0x7423, 0xD7, 0x01,
+	0x9104, 0x04, 0x01,
+
+//Line Length Setting
+	0x0342, 0x14, 0x01,
+	0x0343, 0xE8, 0x01,
+//Frame Length Setting
+	0x0340, 0x0C, 0x01,
+	0x0341, 0xA4, 0x01,
+//ROI Setting
+	0x0344, 0x00, 0x01,
+	0x0345, 0x00, 0x01,
+	0x0346, 0x02, 0x01,
+	0x0347, 0x04, 0x01,
+	0x0348, 0x10, 0x01,
+	0x0349, 0x6F, 0x01,
+	0x034A, 0x0A, 0x01,
+	0x034B, 0x2B, 0x01,
+//Analog Image Size Setting
+	0x0381, 0x01, 0x01,
+	0x0383, 0x01, 0x01,
+	0x0385, 0x01, 0x01,
+	0x0387, 0x01, 0x01,
+	0x0900, 0x01, 0x01,
+	0x0901, 0x12, 0x01,
+//Digital Image Size Setting
+	0x0401, 0x01, 0x01,
+	0x0404, 0x00, 0x01,
+	0x0405, 0x20, 0x01,
+	0x0408, 0x00, 0x01,
+	0x0409, 0xF6, 0x01,
+	0x040A, 0x00, 0x01,
+	0x040B, 0x00, 0x01,
+	0x040C, 0x0E, 0x01,
+	0x040D, 0x82, 0x01,
+	0x040E, 0x04, 0x01,
+	0x040F, 0x14, 0x01,
+	0x3038, 0x00, 0x01,
+	0x303A, 0x00, 0x01,
+	0x303B, 0x10, 0x01,
+	0x300D, 0x00, 0x01,
+//Output Size Setting
+	0x034C, 0x07, 0x01,
+	0x034D, 0x40, 0x01,
+	0x034E, 0x04, 0x01,
+	0x034F, 0x14, 0x01,
+//Integration Time Setting
+	0x0202, 0x06, 0x01,
+	0x0203, 0x46, 0x01,
+//Gain Setting
+	0x0204, 0x00, 0x01,
+	0x0205, 0x00, 0x01,
+	0x020E, 0x01, 0x01,
+	0x020F, 0x00, 0x01,
+	0x0210, 0x01, 0x01,
+	0x0211, 0x00, 0x01,
+	0x0212, 0x01, 0x01,
+	0x0213, 0x00, 0x01,
+	0x0214, 0x01, 0x01,
+	0x0215, 0x00, 0x01,
+//Added Setting(AF)
+	0x7BCD, 0x01, 0x01,
+//Added Setting(IQ)
+	0x94DC, 0x20, 0x01,
+	0x94DD, 0x20, 0x01,
+	0x94DE, 0x20, 0x01,
+	0x95DC, 0x20, 0x01,
+	0x95DD, 0x20, 0x01,
+	0x95DE, 0x20, 0x01,
+	0x7FB0, 0x00, 0x01,
+	0x9010, 0x3E, 0x01,
+	0x9419, 0x50, 0x01,
+	0x941B, 0x50, 0x01,
+	0x9519, 0x50, 0x01,
+	0x951B, 0x50, 0x01,
+//Added Setting(mode)
+	0x3030, 0x00, 0x01,
+	0x3032, 0x00, 0x01,
+	0x0220, 0x00, 0x01,
+	0x0B06, 0x00, 0x01,
+};
+
+const u32 sensor_imx258full_setfile_A_1696x1272_30fps[] = {
+//Output format Setting
+	0x0112, 0x0A, 0x01,
+	0x0113, 0x0A, 0x01,
+	0x0114, 0x03, 0x01,
+
+	// Clock Setting
+	0x0301, 0x05, 0x01,
+	0x0303, 0x02, 0x01,
+	0x0305, 0x04, 0x01,
+	0x0306, 0x00, 0x01,
+	0x0307, 0xC8, 0x01,
+	0x0309, 0x0A, 0x01,
+	0x030B, 0x01, 0x01,
+	0x030D, 0x03, 0x01,
+	0x030E, 0x00, 0x01,
+	0x030F, 0x80, 0x01,
+	0x0310, 0x01, 0x01,
+	0x0808, 0x00, 0x01,
+
+	0x4648, 0x7F, 0x01,
+	0x7420, 0x00, 0x01,
+	0x7421, 0x5C, 0x01,
+	0x7422, 0x00, 0x01,
+	0x7423, 0xD7, 0x01,
+	0x9104, 0x04, 0x01,
+
+//Line Length Setting
+	0x0342, 0x14, 0x01,
+	0x0343, 0xE8, 0x01,
+//Frame Length Setting
+	0x0340, 0x0C, 0x01,
+	0x0341, 0xA4, 0x01,
+//ROI Setting
+	0x0344, 0x00, 0x01,
+	0x0345, 0x00, 0x01,
+	0x0346, 0x01, 0x01,
+	0x0347, 0x20, 0x01,
+	0x0348, 0x10, 0x01,
+	0x0349, 0x6F, 0x01,
+	0x034A, 0x0B, 0x01,
+	0x034B, 0x0F, 0x01,
+//Analog Image Size Setting
+	0x0381, 0x01, 0x01,
+	0x0383, 0x01, 0x01,
+	0x0385, 0x01, 0x01,
+	0x0387, 0x01, 0x01,
+	0x0900, 0x01, 0x01,
+	0x0901, 0x12, 0x01,
+//Digital Image Size Setting
+	0x0401, 0x01, 0x01,
+	0x0404, 0x00, 0x01,
+	0x0405, 0x20, 0x01,
+	0x0408, 0x01, 0x01,
+	0x0409, 0x96, 0x01,
+	0x040A, 0x00, 0x01,
+	0x040B, 0x00, 0x01,
+	0x040C, 0x0D, 0x01,
+	0x040D, 0x42, 0x01,
+	0x040E, 0x04, 0x01,
+	0x040F, 0xF8, 0x01,
+	0x3038, 0x00, 0x01,
+	0x303A, 0x00, 0x01,
+	0x303B, 0x10, 0x01,
+	0x300D, 0x00, 0x01,
+//Output Size Setting
+	0x034C, 0x06, 0x01,
+	0x034D, 0xA0, 0x01,
+	0x034E, 0x04, 0x01,
+	0x034F, 0xF8, 0x01,
+//Integration Time Setting
+	0x0202, 0x06, 0x01,
+	0x0203, 0x46, 0x01,
+//Gain Setting
+	0x0204, 0x00, 0x01,
+	0x0205, 0x00, 0x01,
+	0x020E, 0x01, 0x01,
+	0x020F, 0x00, 0x01,
+	0x0210, 0x01, 0x01,
+	0x0211, 0x00, 0x01,
+	0x0212, 0x01, 0x01,
+	0x0213, 0x00, 0x01,
+	0x0214, 0x01, 0x01,
+	0x0215, 0x00, 0x01,
+//Added Setting(AF)
+	0x7BCD, 0x01, 0x01,
+//Added Setting(IQ)
+	0x94DC, 0x20, 0x01,
+	0x94DD, 0x20, 0x01,
+	0x94DE, 0x20, 0x01,
+	0x95DC, 0x20, 0x01,
+	0x95DD, 0x20, 0x01,
+	0x95DE, 0x20, 0x01,
+	0x7FB0, 0x00, 0x01,
+	0x9010, 0x3E, 0x01,
+	0x9419, 0x50, 0x01,
+	0x941B, 0x50, 0x01,
+	0x9519, 0x50, 0x01,
+	0x951B, 0x50, 0x01,
+//Added Setting(mode)
 	0x3030, 0x00, 0x01,
 	0x3032, 0x00, 0x01,
 	0x0220, 0x00, 0x01,
@@ -812,7 +1336,7 @@ const u32 sensor_imx258full_setfile_A_1028x772_60fps[] = {
 
 const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_4128x3096_30fps = {
 	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
-	1092000000,                  /* mipi_datarate = OPSYCK */
+	1109300000,                  /* mipi_datarate = OPSYCK */
 	520000000,                   /* pclk = VTPXCK of Clock Information */
 	3236,                        /* frame_length_lines */
 	5352,                        /* line_length_pck */
@@ -820,7 +1344,7 @@ const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_4128x3096_30fps = {
 
 const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_4128x2324_30fps = {
 	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
-	1092000000,                  /* mipi_datarate = OPSYCK */
+	1109300000,                  /* mipi_datarate = OPSYCK */
 	520000000,                   /* pclk = VTPXCK of Clock Information */
 	3236,                        /* frame_length_lines */
 	5352,                        /* line_length_pck */
@@ -828,7 +1352,7 @@ const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_4128x2324_30fps = {
 
 const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_3408x2556_30fps = {
 	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
-	1092000000,                  /* mipi_datarate = OPSYCK */
+	1109300000,                  /* mipi_datarate = OPSYCK */
 	520000000,                   /* pclk = VTPXCK of Clock Information */
 	3236,                        /* frame_length_lines */
 	5352,                        /* line_length_pck */
@@ -836,7 +1360,47 @@ const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_3408x2556_30fps = {
 
 const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_3712x2556_30fps = {
 	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
-	1092000000,                  /* mipi_datarate = OPSYCK */
+	1109300000,                  /* mipi_datarate = OPSYCK */
+	520000000,                   /* pclk = VTPXCK of Clock Information */
+	3236,                        /* frame_length_lines */
+	5352,                        /* line_length_pck */
+};
+
+const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_2064x1548_30fps = {
+	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
+	1109300000,                  /* mipi_datarate = OPSYCK */
+	520000000,                   /* pclk = VTPXCK of Clock Information */
+	3236,                        /* frame_length_lines */
+	5352,                        /* line_length_pck */
+};
+
+const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_2064x1160_30fps = {
+	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
+	1109300000,                  /* mipi_datarate = OPSYCK */
+	520000000,                   /* pclk = VTPXCK of Clock Information */
+	3236,                        /* frame_length_lines */
+	5352,                        /* line_length_pck */
+};
+
+const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_1024x768_120fps = {
+	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
+	1109300000,                  /* mipi_datarate = OPSYCK */
+	520000000,                   /* pclk = VTPXCK of Clock Information */
+	808,                        /* frame_length_lines */
+	5352,                        /* line_length_pck */
+};
+
+const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_1856x1044_30fps = {
+	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
+	1109300000,                  /* mipi_datarate = OPSYCK */
+	520000000,                   /* pclk = VTPXCK of Clock Information */
+	3236,                        /* frame_length_lines */
+	5352,                        /* line_length_pck */
+};
+
+const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_1696x1272_30fps = {
+	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
+	1109300000,                  /* mipi_datarate = OPSYCK */
 	520000000,                   /* pclk = VTPXCK of Clock Information */
 	3236,                        /* frame_length_lines */
 	5352,                        /* line_length_pck */
@@ -844,7 +1408,7 @@ const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_3712x2556_30fps = {
 
 const struct sensor_pll_info_compact sensor_imx258_pllinfo_A_1028x772_60fps = {
 	EXT_CLK_Mhz * 1000 * 1000, /* ext_clk */
-	1092000000,                  /* mipi_datarate = OPSYCK */
+	1109300000,                  /* mipi_datarate = OPSYCK */
 	436800000,                   /* pclk = VTPXCK of Clock Information */
 	1360,                        /* frame_length_lines */
 	5352,                        /* line_length_pck */
@@ -856,6 +1420,11 @@ static const u32 *sensor_imx258full_setfiles_A[] = {
 	sensor_imx258full_setfile_A_3408x2556_30fps,
 	sensor_imx258full_setfile_A_3712x2556_30fps,
 	sensor_imx258full_setfile_A_1028x772_60fps,
+	sensor_imx258full_setfile_A_2064x1548_30fps,
+	sensor_imx258full_setfile_A_2064x1160_30fps,
+	sensor_imx258full_setfile_A_1024x768_120fps,
+	sensor_imx258full_setfile_A_1856x1044_30fps,
+	sensor_imx258full_setfile_A_1696x1272_30fps,
 };
 
 static const u32 sensor_imx258full_setfile_A_sizes[] = {
@@ -864,6 +1433,11 @@ static const u32 sensor_imx258full_setfile_A_sizes[] = {
 	ARRAY_SIZE(sensor_imx258full_setfile_A_3408x2556_30fps),
 	ARRAY_SIZE(sensor_imx258full_setfile_A_3712x2556_30fps),
 	ARRAY_SIZE(sensor_imx258full_setfile_A_1028x772_60fps),
+	ARRAY_SIZE(sensor_imx258full_setfile_A_2064x1548_30fps),
+	ARRAY_SIZE(sensor_imx258full_setfile_A_2064x1160_30fps),
+	ARRAY_SIZE(sensor_imx258full_setfile_A_1024x768_120fps),
+	ARRAY_SIZE(sensor_imx258full_setfile_A_1856x1044_30fps),
+	ARRAY_SIZE(sensor_imx258full_setfile_A_1696x1272_30fps),
 };
 
 static const struct sensor_pll_info_compact *sensor_imx258full_pllinfos_A[] = {
@@ -872,12 +1446,406 @@ static const struct sensor_pll_info_compact *sensor_imx258full_pllinfos_A[] = {
 	&sensor_imx258_pllinfo_A_3712x2556_30fps,
 	&sensor_imx258_pllinfo_A_3408x2556_30fps,
 	&sensor_imx258_pllinfo_A_1028x772_60fps,
+	&sensor_imx258_pllinfo_A_3712x2556_30fps,
+	&sensor_imx258_pllinfo_A_2064x1548_30fps,
+	&sensor_imx258_pllinfo_A_2064x1160_30fps,
+	&sensor_imx258_pllinfo_A_1024x768_120fps,
+	&sensor_imx258_pllinfo_A_1856x1044_30fps,
+	&sensor_imx258_pllinfo_A_1696x1272_30fps,
 };
 
+#ifdef USE_CAMERA_ADAPTIVE_MIPI
+/* merge into sensor driver */
+enum {
+	CAM_IMX258_SET_A_all_554p667_MHZ = 0,
+	CAM_IMX258_SET_A_all_585_MHZ = 1,
+	CAM_IMX258_SET_A_all_619p667_MHZ = 2,
+	CAM_IMX258_SET_A_all_632p667_MHZ = 3,
+};
+
+static const u32 sensor_imx258_setfile_A_mipi_all_554_mhz[] = {
+	0x030F, 0x80, 0x01,
+};
+
+static const u32 sensor_imx258_setfile_A_mipi_all_585_mhz[] = {
+	0x030F, 0x87, 0x01,
+};
+
+static const u32 sensor_imx258_setfile_A_mipi_all_619_mhz[] = {
+	0x030F, 0x8F, 0x01,
+};
+
+static const u32 sensor_imx258_setfile_A_mipi_all_632_mhz[] = {
+	0x030F, 0x92, 0x01,
+};
+
+static const struct cam_mipi_setting sensor_imx258_setfile_A_mipi_setting_all[] = {
+	{ "554p667 MHz", 1109,
+	  sensor_imx258_setfile_A_mipi_all_554_mhz, ARRAY_SIZE(sensor_imx258_setfile_A_mipi_all_554_mhz) },
+	{ "585 MHz", 1170,
+	  sensor_imx258_setfile_A_mipi_all_585_mhz, ARRAY_SIZE(sensor_imx258_setfile_A_mipi_all_585_mhz) },
+	{ "619p667 MHz", 1239,
+	  sensor_imx258_setfile_A_mipi_all_619_mhz, ARRAY_SIZE(sensor_imx258_setfile_A_mipi_all_619_mhz) },
+	{ "632p667 MHz", 1265,
+	  sensor_imx258_setfile_A_mipi_all_632_mhz, ARRAY_SIZE(sensor_imx258_setfile_A_mipi_all_632_mhz) },
+};
+
+static const struct cam_mipi_channel sensor_imx258_setfile_A_mipi_channel_all[] = {
+	{ CAM_RAT_BAND(CAM_RAT_1_GSM, CAM_BAND_001_GSM_GSM850), 0, 0, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_1_GSM, CAM_BAND_002_GSM_EGSM900), 0, 0, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_1_GSM, CAM_BAND_003_GSM_DCS1800), 0, 0, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_1_GSM, CAM_BAND_004_GSM_PCS1900), 0, 0, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10562, 10576, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10577, 10639, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10640, 10651, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10652, 10714, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10715, 10778, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10779, 10784, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10785, 10806, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_011_WCDMA_WB01), 10807, 10838, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9662, 9669, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9670, 9689, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9690, 9744, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9745, 9807, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9808, 9836, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9837, 9882, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_012_WCDMA_WB02), 9883, 9938, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1162, 1175, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1176, 1239, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1240, 1302, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1303, 1314, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1315, 1378, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1379, 1450, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_013_WCDMA_WB03), 1451, 1513, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_014_WCDMA_WB04), 1537, 1551, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_014_WCDMA_WB04), 1552, 1614, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_014_WCDMA_WB04), 1615, 1626, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_014_WCDMA_WB04), 1627, 1689, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_014_WCDMA_WB04), 1690, 1738, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_015_WCDMA_WB05), 4357, 4399, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_015_WCDMA_WB05), 4400, 4424, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_015_WCDMA_WB05), 4425, 4458, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2237, 2275, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2276, 2324, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2325, 2335, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2336, 2399, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2400, 2429, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2430, 2471, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2472, 2474, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2475, 2538, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2539, 2542, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_017_WCDMA_WB07), 2543, 2563, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_018_WCDMA_WB08), 2937, 2977, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_018_WCDMA_WB08), 2978, 2984, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_018_WCDMA_WB08), 2985, 3017, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_018_WCDMA_WB08), 3018, 3052, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_2_WCDMA, CAM_BAND_018_WCDMA_WB08), 3053, 3088, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 0, 27, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 28, 52, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 53, 179, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 180, 203, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 204, 327, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 328, 456, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 457, 469, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 470, 513, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_091_LTE_LB01), 514, 599, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 600, 638, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 639, 679, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 680, 788, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 789, 915, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 916, 972, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 973, 1065, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_092_LTE_LB02), 1066, 1199, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1200, 1209, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1210, 1251, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1252, 1378, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1379, 1504, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1505, 1528, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1529, 1656, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1657, 1800, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1801, 1933, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1934, 1944, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_093_LTE_LB03), 1945, 1949, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 1950, 1977, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 1978, 2002, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 2003, 2129, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 2130, 2153, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 2154, 2277, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 2278, 2279, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_094_LTE_LB04), 2280, 2399, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_095_LTE_LB05), 2400, 2509, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_095_LTE_LB05), 2510, 2559, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_095_LTE_LB05), 2560, 2649, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 2750, 2851, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 2852, 2949, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 2950, 2971, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 2972, 3098, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 3099, 3158, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 3159, 3242, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 3243, 3248, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 3249, 3376, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 3377, 3384, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_097_LTE_LB07), 3385, 3449, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_098_LTE_LB08), 3450, 3554, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_098_LTE_LB08), 3555, 3569, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_098_LTE_LB08), 3570, 3634, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_098_LTE_LB08), 3635, 3704, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_098_LTE_LB08), 3705, 3799, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_102_LTE_LB12), 5010, 5132, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_102_LTE_LB12), 5133, 5179, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_103_LTE_LB13), 5180, 5249, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_103_LTE_LB13), 5250, 5279, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_104_LTE_LB14), 5280, 5379, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_107_LTE_LB17), 5730, 5802, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_107_LTE_LB17), 5803, 5849, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_108_LTE_LB18), 5850, 5922, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_108_LTE_LB18), 5923, 5999, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_109_LTE_LB19), 6000, 6049, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_109_LTE_LB19), 6050, 6099, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_109_LTE_LB19), 6100, 6149, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_110_LTE_LB20), 6150, 6207, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_110_LTE_LB20), 6208, 6212, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_110_LTE_LB20), 6213, 6354, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_110_LTE_LB20), 6355, 6357, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_110_LTE_LB20), 6358, 6449, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_111_LTE_LB21), 6450, 6483, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_111_LTE_LB21), 6484, 6541, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_111_LTE_LB21), 6542, 6599, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8040, 8078, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8079, 8119, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8120, 8228, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8229, 8355, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8356, 8412, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8413, 8505, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8506, 8638, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_115_LTE_LB25), 8639, 8689, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_116_LTE_LB26), 8690, 8772, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_116_LTE_LB26), 8773, 8899, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_116_LTE_LB26), 8900, 8949, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_116_LTE_LB26), 8950, 9039, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_118_LTE_LB28), 9210, 9320, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_118_LTE_LB28), 9321, 9452, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_118_LTE_LB28), 9453, 9470, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_118_LTE_LB28), 9471, 9597, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_118_LTE_LB28), 9598, 9602, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_118_LTE_LB28), 9603, 9659, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_119_LTE_LB29), 9660, 9727, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_119_LTE_LB29), 9728, 9769, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_120_LTE_LB30), 9770, 9869, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 9920, 10025, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 10026, 10037, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 10038, 10099, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 10100, 10173, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 10174, 10321, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 10322, 10346, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_122_LTE_LB32), 10347, 10359, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_124_LTE_LB34), 36200, 36292, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_124_LTE_LB34), 36293, 36349, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 37750, 37766, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 37767, 37841, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 37842, 37864, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 37865, 37916, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 37917, 38054, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 38055, 38150, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 38151, 38157, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 38158, 38194, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_128_LTE_LB38), 38195, 38249, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_129_LTE_LB39), 38250, 38383, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_129_LTE_LB39), 38384, 38510, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_129_LTE_LB39), 38511, 38537, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_129_LTE_LB39), 38538, 38649, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 38650, 38682, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 38683, 38743, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 38744, 38870, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 38871, 38974, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 38975, 39020, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39021, 39148, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39149, 39267, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39268, 39272, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39273, 39298, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39299, 39425, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39426, 39559, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39560, 39575, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_130_LTE_LB40), 39576, 39649, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 39650, 39724, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 39725, 39852, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 39853, 39861, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 39862, 39919, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 39920, 40002, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40003, 40129, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40130, 40171, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40172, 40212, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40213, 40279, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40280, 40406, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40407, 40481, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40482, 40504, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40505, 40556, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40557, 40694, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40695, 40790, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40791, 40797, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40798, 40834, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40835, 40991, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 40992, 41089, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41090, 41111, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41112, 41238, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41239, 41298, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41299, 41382, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41383, 41388, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41389, 41516, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41517, 41524, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_131_LTE_LB41), 41525, 41589, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 41590, 41627, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 41628, 41742, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 41743, 41777, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 41778, 41904, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 41905, 42042, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42043, 42181, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42182, 42327, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42328, 42459, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42460, 42472, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42473, 42609, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42610, 42736, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42737, 42765, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42766, 42886, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 42887, 43013, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43014, 43057, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43058, 43163, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43164, 43293, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43294, 43350, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43351, 43441, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43442, 43568, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_132_LTE_LB42), 43569, 43589, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55240, 55313, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55314, 55443, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55444, 55500, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55501, 55591, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55592, 55718, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55719, 55741, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55742, 55792, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55793, 55868, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55869, 55995, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 55996, 56054, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56055, 56085, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56086, 56145, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56146, 56273, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56274, 56367, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56368, 56377, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56378, 56423, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56424, 56550, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56551, 56670, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56671, 56700, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_138_LTE_LB48), 56701, 56739, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66436, 66463, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66464, 66488, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66489, 66615, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66616, 66639, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66640, 66763, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66764, 66765, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66766, 66892, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66893, 66905, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66906, 66949, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 66950, 67042, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 67043, 67170, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 67171, 67198, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 67199, 67259, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 67260, 67320, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_156_LTE_LB66), 67321, 67335, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_161_LTE_LB71), 68586, 68592, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_161_LTE_LB71), 68593, 68719, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_161_LTE_LB71), 68720, 68775, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_161_LTE_LB71), 68776, 68847, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_161_LTE_LB71), 68848, 68869, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_3_LTE, CAM_BAND_161_LTE_LB71), 68870, 68935, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_4_TDSCDMA, CAM_BAND_051_TDSCDMA_TD1), 0, 0, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_4_TDSCDMA, CAM_BAND_052_TDSCDMA_TD2), 0, 0, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_4_TDSCDMA, CAM_BAND_053_TDSCDMA_TD3), 0, 0, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_4_TDSCDMA, CAM_BAND_054_TDSCDMA_TD4), 0, 0, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_4_TDSCDMA, CAM_BAND_055_TDSCDMA_TD5), 0, 0, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_4_TDSCDMA, CAM_BAND_056_TDSCDMA_TD6), 0, 0, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_5_CDMA, CAM_BAND_061_CDMA_BC0), 0, 0, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_5_CDMA, CAM_BAND_062_CDMA_BC1), 0, 0, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_5_CDMA, CAM_BAND_071_CDMA_BC10), 0, 0, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_260_NR5G_N005), 173800, 174340, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_260_NR5G_N005), 174341, 175480, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_260_NR5G_N005), 175481, 177880, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_260_NR5G_N005), 177881, 178780, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_263_NR5G_N008), 185000, 186180, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_263_NR5G_N008), 186181, 187820, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_263_NR5G_N008), 187821, 189580, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_263_NR5G_N008), 189581, 190800, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_263_NR5G_N008), 190801, 191980, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_267_NR5G_N012), 145800, 147640, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_267_NR5G_N012), 147641, 149200, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_275_NR5G_N020), 158200, 159340, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_275_NR5G_N020), 159341, 159440, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_275_NR5G_N020), 159441, 162280, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_275_NR5G_N020), 162281, 162340, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_275_NR5G_N020), 162341, 164180, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 151600, 152140, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 152141, 153560, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 153561, 154480, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 154481, 155540, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 155541, 155760, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 155761, 158440, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 158441, 159520, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_283_NR5G_N028), 159521, 160580, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_326_NR5G_N071), 123400, 124120, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_326_NR5G_N071), 124121, 125200, CAM_IMX258_SET_A_all_554p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_326_NR5G_N071), 125201, 126280, CAM_IMX258_SET_A_all_585_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_326_NR5G_N071), 126281, 128920, CAM_IMX258_SET_A_all_619p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_326_NR5G_N071), 128921, 129960, CAM_IMX258_SET_A_all_632p667_MHZ },
+	{ CAM_RAT_BAND(CAM_RAT_7_NR5G, CAM_BAND_326_NR5G_N071), 129961, 130380, CAM_IMX258_SET_A_all_554p667_MHZ },
+};
+
+static const struct cam_mipi_sensor_mode sensor_imx258full_setfile_A_mipi_sensor_mode[] = {
+	{ SENSOR_IMX258_4128x3096_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_4128x2324_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_3408x2556_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_3712x2556_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_2064x1548_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_2064x1160_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_1024x768_120FPS,
+		NULL, 0,
+		NULL, 0
+	},
+	{ SENSOR_IMX258_1856x1044_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+	{ SENSOR_IMX258_1696x1272_30FPS,
+		sensor_imx258_setfile_A_mipi_channel_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_channel_all),
+		sensor_imx258_setfile_A_mipi_setting_all,	ARRAY_SIZE(sensor_imx258_setfile_A_mipi_setting_all)
+	},
+};
+
+/* structure for only verifying channel list. to prevent redundant checking */
+const int sensor_imx258full_setfile_A_verify_sensor_mode[] = {
+	SENSOR_IMX258_4128x3096_30FPS, /* sensor_imx258_setfile_A_mipi_channel_all */
+};
+#else
 static const struct cam_mipi_sensor_mode sensor_imx258full_setfile_A_mipi_sensor_mode[] = {
 };
 
 const int sensor_imx258full_setfile_A_verify_sensor_mode[] = {
 };
+#endif
 
 #endif

@@ -1713,6 +1713,10 @@ static int cis_imx258_probe(struct i2c_client *client,
 			verify_sensor_mode_size = ARRAY_SIZE(sensor_imx258nofull_setfile_A_verify_sensor_mode);
 		}
 	}
+#ifdef USE_CAMERA_ADAPTIVE_MIPI
+	cis->vendor_use_adaptive_mipi = of_property_read_bool(dnode, "vendor_use_adaptive_mipi");
+	probe_info("%s vendor_use_adaptive_mipi(%d)\n", __func__, cis->vendor_use_adaptive_mipi);
+#endif
 
 	if (cis->vendor_use_adaptive_mipi) {
 		for (i = 0; i < verify_sensor_mode_size; i++) {

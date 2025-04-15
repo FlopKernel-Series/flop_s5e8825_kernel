@@ -2220,6 +2220,13 @@ crc_retry:
 exit:
 	/* streaming mode change */
 	is_sec_clear_and_initialize_command_4ha(client);
+
+	ret = is_sensor_write8(client, S5K4HA_STREAM_ON_ADDR, 0x00); /* streaming off */
+	if (ret < 0) {
+		err("failed to turn off streaming");
+		return ret;
+	}
+
 	info("%s X\n", __func__);
 	return ret;
 }

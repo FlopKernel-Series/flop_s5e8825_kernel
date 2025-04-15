@@ -7,7 +7,11 @@
 #include "is-aois-if.h"
 #include "is-ois-mcu.h"
 
+#ifdef OIS_ANGLE_SUPPORT
+#define MAX_NOTIFIER_BUF_SIZE   56
+#else
 #define MAX_NOTIFIER_BUF_SIZE   32
+#endif
 
 static BLOCKING_NOTIFIER_HEAD(cam_ois_cmd_data_nb_head);
 static BLOCKING_NOTIFIER_HEAD(cam_ois_reg_read_data_nb_head);

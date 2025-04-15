@@ -2023,20 +2023,50 @@ int update_sensor_dynamic_meta(struct is_sensor_interface *itf,
 #ifdef USE_OIS_HALL_DATA_FOR_VDIS
 	if (mcd_use_ois_hall_data_for_vdis) {
 		/* update ois hall data */
-		dm->aa.vendor_oisHallData.readTimeStamp = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.readTimeStamp;
-		dm->aa.vendor_oisHallData.counter = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.counter;
-		dm->aa.vendor_oisHallData.X_AngVel[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[0];
-		dm->aa.vendor_oisHallData.Y_AngVel[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[0];
-		dm->aa.vendor_oisHallData.Z_AngVel[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[0];
-		dm->aa.vendor_oisHallData.X_AngVel[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[1];
-		dm->aa.vendor_oisHallData.Y_AngVel[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[1];
-		dm->aa.vendor_oisHallData.Z_AngVel[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[1];
-		dm->aa.vendor_oisHallData.X_AngVel[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[2];
-		dm->aa.vendor_oisHallData.Y_AngVel[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[2];
-		dm->aa.vendor_oisHallData.Z_AngVel[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[2];
-		dm->aa.vendor_oisHallData.X_AngVel[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[3];
-		dm->aa.vendor_oisHallData.Y_AngVel[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[3];
-		dm->aa.vendor_oisHallData.Z_AngVel[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[3];
+#ifdef OIS_ANGLE_SUPPORT
+		if (sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.index == index)	{
+#endif
+			dm->aa.vendor_oisHallData.readTimeStamp = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.readTimeStamp;
+#ifdef OIS_ANGLE_SUPPORT
+					dm->aa.vendor_oisHallData.defaultAngle = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.defaultAngle;
+#else
+			dm->aa.vendor_oisHallData.counter = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.counter;
+#endif
+			dm->aa.vendor_oisHallData.X_AngVel[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[0];
+			dm->aa.vendor_oisHallData.Y_AngVel[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[0];
+			dm->aa.vendor_oisHallData.Z_AngVel[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[0];
+			dm->aa.vendor_oisHallData.X_AngVel[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[1];
+			dm->aa.vendor_oisHallData.Y_AngVel[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[1];
+			dm->aa.vendor_oisHallData.Z_AngVel[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[1];
+			dm->aa.vendor_oisHallData.X_AngVel[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[2];
+			dm->aa.vendor_oisHallData.Y_AngVel[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[2];
+			dm->aa.vendor_oisHallData.Z_AngVel[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[2];
+			dm->aa.vendor_oisHallData.X_AngVel[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[3];
+			dm->aa.vendor_oisHallData.Y_AngVel[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_AngVel[3];
+			dm->aa.vendor_oisHallData.Z_AngVel[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Z_AngVel[3];
+#ifdef OIS_ANGLE_SUPPORT
+			dm->aa.vendor_oisHallData.X_Angle[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[0];
+			dm->aa.vendor_oisHallData.Y_Angle[0] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_Angle[0];
+			dm->aa.vendor_oisHallData.X_Angle[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[1];
+			dm->aa.vendor_oisHallData.Y_Angle[1] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_Angle[1];
+			dm->aa.vendor_oisHallData.X_Angle[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[2];
+			dm->aa.vendor_oisHallData.Y_Angle[2] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_Angle[2];
+			dm->aa.vendor_oisHallData.X_Angle[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[3];
+			dm->aa.vendor_oisHallData.Y_Angle[3] = sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.Y_Angle[3];
+			sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.index = EXPECT_DM_NUM + 1;
+
+			dbg_ois(" %s :(X_AngVel[0]= %d,X_AngVel[1]=%d,X_AngVel[2]=%d,X_AngVel[3]=%d)\n", __func__,
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[0],
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[1],
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[2],
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_AngVel[3]);
+			dbg_ois(" %s :(X_Ang[0]= %d,X_Ang[1]=%d,X_Ang[2]=%d,X_Ang[3]=%d)\n", __func__,
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[0],
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[1],
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[2],
+				sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.X_Angle[3]);
+		}
+#endif
 	}
 #endif
 
