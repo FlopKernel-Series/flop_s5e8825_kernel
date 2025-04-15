@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- *  drivers/usb/notify/usb_notify_sysfs.c
  *
- * Copyright (C) 2015-2021 Samsung, Inc.
+ * Copyright (C) 2015-2023 Samsung, Inc.
  * Author: Dongrak Shin <dongrak.shin@samsung.com>
  *
  */
 
- /* usb notify layer v3.6 */
+ /* usb notify layer v4.0 */
 
 #define pr_fmt(fmt) "usb_notify: " fmt
 
@@ -23,6 +22,7 @@
 #include <linux/usb_notify.h>
 #include <linux/string.h>
 #include "usb_notify_sysfs.h"
+#include <linux/version.h>
 
 #define MAX_STRING_LEN 20
 
@@ -43,6 +43,8 @@ usb_hw_param_print[USB_CCIC_HW_PARAM_MAX][MAX_HWPARAM_STRING] = {
 	{"C_SUPER"},
 	{"C_HIGH"},
 	{"H_AUDIO"},
+	{"H_AUDSS"},
+	{"H_RBYPS"},
 	{"H_COMM"},
 	{"H_HID"},
 	{"H_PHYSIC"},
@@ -80,6 +82,8 @@ usb_hw_param_print[USB_CCIC_HW_PARAM_MAX][MAX_HWPARAM_STRING] = {
 	{"CC_PRS"},
 	{"CC_DRS"},
 	{"C_ARP"},
+	{"CC_UMVS"},
+	{"CC_STUCK"},
 	{"H_SB"},
 	{"H_OAD"},
 	{"CC_VER"},
@@ -95,7 +99,7 @@ static struct notify_data usb_notify_data;
 
 static int is_valid_cmd(char *cur_cmd, char *prev_cmd)
 {
-	pr_info("%s : current state=%s, previous state=%s\n",
+	unl_info("%s : current state=%s, previous state=%s\n",
 		__func__, cur_cmd, prev_cmd);
 
 	if (!strcmp(cur_cmd, "ON") ||
@@ -155,22 +159,22 @@ static int is_valid_cmd(char *cur_cmd, char *prev_cmd)
 		goto invalid;
 	}
 host:
-	pr_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
+	unl_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
 	return NOTIFY_BLOCK_TYPE_HOST;
 client:
-	pr_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
+	unl_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
 	return NOTIFY_BLOCK_TYPE_CLIENT;
 all:
-	pr_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
+	unl_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
 	return NOTIFY_BLOCK_TYPE_ALL;
 off:
-	pr_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
+	unl_info("%s cmd=%s is accepted.\n", __func__, cur_cmd);
 	return NOTIFY_BLOCK_TYPE_NONE;
 ignore:
-	pr_err("%s cmd=%s is ignored but saved.\n", __func__, cur_cmd);
+	unl_err("%s cmd=%s is ignored but saved.\n", __func__, cur_cmd);
 	return -EEXIST;
 invalid:
-	pr_err("%s cmd=%s is invalid.\n", __func__, cur_cmd);
+	unl_err("%s cmd=%s is invalid.\n", __func__, cur_cmd);
 	return -EINVAL;
 }
 
@@ -181,7 +185,7 @@ static ssize_t disable_show(
 	struct usb_notify_dev *udev = (struct usb_notify_dev *)
 		dev_get_drvdata(dev);
 
-	pr_info("read disable_state %s\n", udev->disable_state_cmd);
+	unl_info("read disable_state %s\n", udev->disable_state_cmd);
 	return sprintf(buf, "%s\n", udev->disable_state_cmd);
 }
 
@@ -197,7 +201,7 @@ static ssize_t disable_store(
 	size_t ret = -ENOMEM;
 
 	if (size > MAX_DISABLE_STR_LEN) {
-		pr_err("%s size(%zu) is too long.\n", __func__, size);
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
 		goto error;
 	}
 
@@ -217,9 +221,9 @@ static ssize_t disable_store(
 			ret = param;
 		} else {
 			if (param != -EEXIST) {
-#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION				
+#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 				udev->first_restrict = false;
-#endif				
+#endif
 				udev->set_disable(udev, param);
 			}
 			strncpy(udev->disable_state_cmd,
@@ -227,7 +231,7 @@ static ssize_t disable_store(
 			ret = size;
 		}
 	} else
-		pr_err("set_disable func is NULL\n");
+		unl_err("set_disable func is NULL\n");
 error1:
 	kfree(disable);
 error:
@@ -241,7 +245,7 @@ static ssize_t usb_data_enabled_show(
 	struct usb_notify_dev *udev = (struct usb_notify_dev *)
 		dev_get_drvdata(dev);
 
-	pr_info("read usb_data_enabled %lu\n", udev->usb_data_enabled);
+	unl_info("read usb_data_enabled %lu\n", udev->usb_data_enabled);
 	return sprintf(buf, "%lu\n", udev->usb_data_enabled);
 }
 
@@ -257,7 +261,7 @@ static ssize_t usb_data_enabled_store(
 	char *usb_data_enabled;
 
 	if (size > PAGE_SIZE) {
-		pr_err("%s size(%zu) is too long.\n", __func__, size);
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
 		goto error;
 	}
 
@@ -277,16 +281,16 @@ static ssize_t usb_data_enabled_store(
 			param = NOTIFY_BLOCK_TYPE_NONE;
 			udev->usb_data_enabled = 1;
 		} else {
-			pr_err("%s usb_data_enabled(%s) error.\n",
+			unl_err("%s usb_data_enabled(%s) error.\n",
 				__func__, usb_data_enabled);
 			goto error1;
 		}
-		pr_info("%s usb_data_enabled=%s\n",
+		unl_info("%s usb_data_enabled=%s\n",
 			__func__, usb_data_enabled);
 			udev->set_disable(udev, param);
 		ret = size;
 	} else {
-		pr_err("%s set_disable func is NULL\n", __func__);
+		unl_err("%s set_disable func is NULL\n", __func__);
 	}
 error1:
 	kfree(usb_data_enabled);
@@ -307,8 +311,8 @@ static ssize_t support_show(struct device *dev,
 	else
 		support = "ALL";
 
-	pr_info("read support %s\n", support);
-	return snprintf(buf,  sizeof(support)+1, "%s\n", support);
+	unl_info("read support %s\n", support);
+	return sprintf(buf, "%s\n", support);
 }
 
 static ssize_t otg_speed_show(struct device *dev,
@@ -342,8 +346,8 @@ static ssize_t otg_speed_show(struct device *dev,
 		speed = "UNKNOWN";
 		break;
 	}
-	pr_info("%s : read otg speed %s\n", __func__, speed);
-	return snprintf(buf,  sizeof(speed)+1, "%s\n", speed);
+	unl_info("%s : read otg speed %s\n", __func__, speed);
+	return sprintf(buf, "%s\n", speed);
 }
 
 static ssize_t gadget_speed_show(struct device *dev,
@@ -359,7 +363,7 @@ static ssize_t gadget_speed_show(struct device *dev,
 	else
 		speed = "UNKNOWN";
 
-	pr_info("%s : read gadget speed %s\n", __func__, speed);
+	unl_info("%s : read gadget speed %s\n", __func__, speed);
 	return snprintf(buf,  MAX_STRING_LEN, "%s\n", speed);
 }
 
@@ -396,10 +400,10 @@ static ssize_t usb_maximum_speed_store(
 	char *max_speed;
 	size_t ret = -ENOMEM, i, sret;
 
-	pr_info("%s\n", __func__);
+	unl_info("%s\n", __func__);
 
 	if (size > MAX_USB_SPEED_STR_LEN) {
-		pr_err("%s size(%zu) is too long.\n", __func__, size);
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
 		goto error;
 	}
 
@@ -426,7 +430,7 @@ static ssize_t usb_maximum_speed_store(
 		sret = udev->control_usb_max_speed(udev, max_speed_idx);
 	}
 
-	pr_info("%s req=%s now=%s\n", __func__, max_speed,
+	unl_info("%s req=%s now=%s\n", __func__, max_speed,
 			max_speed_str[max_speed_idx]);
 	ret = size;
 error1:
@@ -530,7 +534,7 @@ static ssize_t usb_hw_param_show(struct device *dev,
 		ret += sprintf(buf + ret, "%llu\n", *p_param);
 	else
 		ret += sprintf(buf + ret, "0\n");
-	pr_info("%s - ret : %d\n", __func__, ret);
+	unl_info("%s - ret : %d\n", __func__, ret);
 
 	return ret;
 }
@@ -549,12 +553,12 @@ static ssize_t usb_hw_param_store(
 	char *token, *str = (char *)buf;
 
 	if (size > MAX_HWPARAM_STR_LEN) {
-		pr_err("%s size(%zu) is too long.\n", __func__, size);
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
 		goto error;
 	}
 	ret = size;
 	if (size < USB_CCIC_HW_PARAM_MAX) {
-		pr_err("%s efs file is not created correctly.\n", __func__);
+		unl_err("%s efs file is not created correctly.\n", __func__);
 		goto error;
 	}
 
@@ -572,7 +576,7 @@ static ssize_t usb_hw_param_store(
 		if (p_param)
 			*p_param += prev_hw_param[index];
 	}
-	pr_info("%s - ret : %zu\n", __func__, ret);
+	unl_info("%s - ret : %zu\n", __func__, ret);
 error:
 	return ret;
 }
@@ -679,7 +683,7 @@ static ssize_t hw_param_show(struct device *dev,
 	} else {
 		ret += sprintf(buf + ret - 1, "\n");
 	}
-	pr_info("%s - ret : %d\n", __func__, ret);
+	unl_info("%s - ret : %d\n", __func__, ret);
 	return ret;
 }
 
@@ -696,11 +700,11 @@ static ssize_t hw_param_store(
 	unsigned long long *p_param = NULL;
 
 	if (size > 2) {
-		pr_err("%s size(%zu) is too long.\n", __func__, size);
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
 		goto error;
 	}
 	ret = size;
-	pr_info("%s : %s\n", __func__, str);
+	unl_info("%s : %s\n", __func__, str);
 	if (!strncmp(str, "c", 1))
 		for (index = 0; index < USB_CCIC_HW_PARAM_MAX; index++) {
 			p_param = get_hw_param(n, index);
@@ -759,7 +763,7 @@ int set_usb_allowlist_array(const char *buf, int *whitelist_array)
 	while ((ptr = strsep(&source, ":")) != NULL) {
 		if (strlen(ptr) < 3)
 			continue;
-		pr_info("%s token = %c%c%c!\n", __func__,
+		unl_info("%s token = %c%c%c!\n", __func__,
 			ptr[0], ptr[1], ptr[2]);
 		for (i = U_CLASS_PER_INTERFACE; i <= U_CLASS_VENDOR_SPEC; i++) {
 			if (!strncmp(ptr, interface_class_name[i], 3))
@@ -771,7 +775,7 @@ int set_usb_allowlist_array(const char *buf, int *whitelist_array)
 		if (whitelist_array[i])
 			valid_class_count++;
 	}
-	pr_info("%s valid_class_count = %d!\n", __func__, valid_class_count);
+	unl_info("%s valid_class_count = %d!\n", __func__, valid_class_count);
 	return valid_class_count;
 }
 
@@ -786,14 +790,14 @@ int set_usb_allowlist_array_for_id(const char *buf, int *whitelist_array)
 	source = (char *)buf;
 	while ((ptr_vid = strsep(&source, ":")) != NULL) {
 		if (strlen(ptr_vid) < 4) {
-			pr_err("%s short strlen(vid)\n", __func__);
+			unl_err("%s short strlen(vid)\n", __func__);
 			break;
 		}
 
 		ptr_pid = strsep(&source, ":");
 
 		if (ptr_pid == NULL || strlen(ptr_pid) < 4) {
-			pr_err("%s short strlen(pid)\n", __func__);
+			unl_err("%s short strlen(pid)\n", __func__);
 			break;
 		}
 
@@ -803,7 +807,7 @@ int set_usb_allowlist_array_for_id(const char *buf, int *whitelist_array)
 
 		ret = kstrtoint(ptr_vid, 16, &vid);
 		if (ret) {
-			pr_err("%s ptr_vid error. ret %d\n", __func__, ret);
+			unl_err("%s ptr_vid error. ret %d\n", __func__, ret);
 			break;
 		}
 
@@ -811,13 +815,13 @@ int set_usb_allowlist_array_for_id(const char *buf, int *whitelist_array)
 
 		ret = kstrtoint(ptr_pid, 16, &pid);
 		if (ret) {
-			pr_err("%s ptr_pid error. ret %d\n", __func__, ret);
+			unl_err("%s ptr_pid error. ret %d\n", __func__, ret);
 			break;
 		}
 
 		whitelist_array[valid_product_count+1] = pid;
 
-		pr_info("%s : allowlist_array[%d]=%04x, allowlist_array[%d]=%04x\n",
+		unl_info("%s : allowlist_array[%d]=%04x, allowlist_array[%d]=%04x\n",
 				__func__, valid_product_count, whitelist_array[valid_product_count],
 				valid_product_count+1, whitelist_array[valid_product_count+1]);
 
@@ -826,7 +830,7 @@ int set_usb_allowlist_array_for_id(const char *buf, int *whitelist_array)
 
 	valid_product_count /= 2;
 
-	pr_info("%s valid_product_count = %d!\n", __func__, valid_product_count);
+	unl_info("%s valid_product_count = %d!\n", __func__, valid_product_count);
 	return valid_product_count;
 }
 
@@ -837,10 +841,10 @@ static ssize_t whitelist_for_mdm_show(struct device *dev,
 		dev_get_drvdata(dev);
 
 	if (udev == NULL) {
-		pr_err("udev is NULL\n");
+		unl_err("udev is NULL\n");
 		return -EINVAL;
 	}
-	pr_info("allowlist_for_mdm read allowlist_classes %s\n",
+	unl_info("allowlist_for_mdm read allowlist_classes %s\n",
 		udev->whitelist_str);
 	return sprintf(buf, "%s\n", udev->whitelist_str);
 }
@@ -858,18 +862,18 @@ static ssize_t whitelist_for_mdm_store(
 	int valid_whilelist_count;
 
 	if (udev == NULL) {
-		pr_err("udev is NULL\n");
+		unl_err("udev is NULL\n");
 		ret = -EINVAL;
 		goto error;
 	}
 
 	if (size < 3) {
-		pr_err("allowlist usage was wrong. The size(%zu) is too short.\n", size);
+		unl_err("allowlist usage was wrong. The size(%zu) is too short.\n", size);
 		goto error;
 	}
-
 	if (size < strlen(buf))
 		goto error;
+	
 	disable = kzalloc(size+1, GFP_KERNEL);
 	if (!disable)
 		goto error;
@@ -881,10 +885,10 @@ static ssize_t whitelist_for_mdm_store(
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 	if (!strncmp(buf, "VPID:", ALLOWLIST_PREFIX_SIZE)) {
 
-		pr_info("allowlist_for_mdm_store VID, PID buf=%s\n", disable);	
+		unl_info("allowlist_for_mdm_store VID, PID buf=%s\n", disable);	
 
 		if (size >= MAX_ALLOWLIST_BUFFER) {
-			pr_err("allowlist_for_lockscreen size(%zu) is invalid.\n", size);
+			unl_err("allowlist_for_lockscreen size(%zu) is invalid.\n", size);
 			goto error1;
 		}
 
@@ -902,14 +906,14 @@ static ssize_t whitelist_for_mdm_store(
 
 		ret = size;
 
-		pr_info("%s vpid allowlist update done!\n", __func__);
+		unl_info("%s vpid allowlist update done!\n", __func__);
 	} else {
 #endif
-		pr_info("allowlist_for_mdm_store interface buf=%s\n", disable);	
+		unl_info("allowlist_for_mdm_store interface buf=%s\n", disable);	
 
 		/* To active displayport, hub class must be enabled */
 		if (size > MAX_WHITELIST_STR_LEN) {
-			pr_err("allowlist_for_mdm_store size(%zu) is invalid.\n", size);
+			unl_err("allowlist_for_mdm_store size(%zu) is invalid.\n", size);
 			goto error1;
 		}
 
@@ -937,7 +941,7 @@ static ssize_t whitelist_for_mdm_store(
 			udev->set_mdm(udev, mdm_disable);
 			ret = size;
 		} else {
-			pr_err("set_mdm func is NULL\n");
+			unl_err("set_mdm func is NULL\n");
 			ret = -EINVAL;
 		}
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
@@ -945,6 +949,209 @@ static ssize_t whitelist_for_mdm_store(
 #endif
 error1:
 	kfree(disable);
+error:
+	return ret;
+}
+
+static ssize_t whitelist_for_disa_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+
+	if (udev == NULL) {
+		unl_err("udev is NULL\n");
+		return -EINVAL;
+	}
+	unl_info("%s read allowlist_classes %s\n",
+		__func__, udev->whitelist_str_for_id);
+	return sprintf(buf, "%s\n", udev->whitelist_str_for_id);
+}
+
+static ssize_t whitelist_for_disa_store(
+		struct device *dev, struct device_attribute *attr,
+		const char *buf, size_t size)
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+	char *disable;
+	int sret;
+	size_t ret = -ENOMEM;
+	int mdm_disable;
+	int valid_whilelist_count;
+
+	if (udev == NULL) {
+		unl_err("udev is NULL\n");
+		ret = -EINVAL;
+		goto error;
+	}
+
+	if (size > MAX_WHITELIST_STR_LEN) {
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
+		goto error;
+	}
+
+	if (size < strlen(buf))
+		goto error;
+	disable = kzalloc(size+1, GFP_KERNEL);
+	if (!disable)
+		goto error;
+
+	sret = sscanf(buf, "%s", disable);
+	if (sret != 1)
+		goto error1;
+	unl_info("allowlist_for_disa_store buf=%s\n", disable);
+
+	init_usb_whitelist_array_for_id(udev->whitelist_array_for_mdm_for_id, MAX_WHITELIST_STR_LEN);
+	/* To active displayport, hub class must be enabled */
+	if (!strncmp(buf, "OFF", 3)) {
+		unl_info("%s OFF\n", __func__);
+		mdm_disable = NOTIFY_MDM_TYPE_OFF;
+	} else {
+		unl_info("%s ALLOWLIST\n", __func__);
+		valid_whilelist_count =	set_usb_allowlist_array_for_id
+			(buf, udev->whitelist_array_for_mdm_for_id);
+		if (valid_whilelist_count > 0)
+			mdm_disable = NOTIFY_MDM_TYPE_ON;
+		else
+			mdm_disable = NOTIFY_MDM_TYPE_OFF;
+	}
+
+	strncpy(udev->whitelist_str_for_id,
+		disable, sizeof(udev->whitelist_str_for_id)-1);
+
+	if (udev->set_mdm_for_id) {
+		udev->set_mdm_for_id(udev, mdm_disable);
+		ret = size;
+	} else {
+		unl_err("set_mdm_for_id func is NULL\n");
+		ret = -EINVAL;
+	}
+error1:
+	kfree(disable);
+error:
+	return ret;
+}
+
+static ssize_t whitelist_for_serial_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+
+	if (udev == NULL) {
+		unl_err("udev is NULL\n");
+		return -EINVAL;
+	}
+	unl_info("%s read allowlist_classes %s\n",
+		__func__, udev->whitelist_array_for_mdm_for_serial);
+	return sprintf(buf, "%s\n", udev->whitelist_array_for_mdm_for_serial);
+}
+
+static ssize_t whitelist_for_serial_store(
+		struct device *dev, struct device_attribute *attr,
+		const char *buf, size_t size)
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+	char *disable;
+	int sret;
+	size_t ret = -ENOMEM;
+	int mdm_disable;
+
+	if (udev == NULL) {
+		unl_err("udev is NULL\n");
+		ret = -EINVAL;
+		goto error;
+	}
+
+	if (size > MAX_WHITELIST_STR_LEN) {
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
+		goto error;
+	}
+
+	if (size < strlen(buf))
+		goto error;
+	disable = kzalloc(size+1, GFP_KERNEL);
+	if (!disable)
+		goto error;
+
+	sret = sscanf(buf, "%s", disable);
+	if (sret != 1)
+		goto error1;
+	unl_info("allowlist_for_serial_store buf=%s\n", disable);
+
+	strncpy(udev->whitelist_array_for_mdm_for_serial,
+		disable, sizeof(udev->whitelist_array_for_mdm_for_serial)-1);
+
+	/* To active displayport, hub class must be enabled */
+	if (!strncmp(buf, "OFF", 3)) {
+		unl_info("%s OFF\n", __func__);
+		mdm_disable = NOTIFY_MDM_TYPE_OFF;
+	} else {
+		unl_info("%s ALLOWLIST\n", __func__);
+		mdm_disable = NOTIFY_MDM_TYPE_ON;
+	}
+
+	if (udev->set_mdm_for_serial) {
+		udev->set_mdm_for_serial(udev, mdm_disable);
+		ret = size;
+	} else {
+		unl_err("set_mdm_for_serial func is NULL\n");
+		ret = -EINVAL;
+	}
+error1:
+	kfree(disable);
+error:
+	return ret;
+}
+
+static ssize_t usb_request_action_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+
+	if (udev == NULL) {
+		unl_err("udev is NULL\n");
+		return -EINVAL;
+	}
+	unl_info("%s request_action = %u\n",
+		__func__, udev->request_action);
+
+	return sprintf(buf, "%u\n", udev->request_action);
+}
+
+static ssize_t usb_request_action_store(
+		struct device *dev, struct device_attribute *attr,
+		const char *buf, size_t size)
+
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+	unsigned int request_action = 0;
+	int sret = -EINVAL;
+	size_t ret = -ENOMEM;
+
+	if (udev == NULL) {
+		unl_err("udev is NULL\n");
+		return -EINVAL;
+	}
+	if (size > PAGE_SIZE) {
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
+		goto error;
+	}
+
+	sret = sscanf(buf, "%u", &request_action);
+	if (sret != 1)
+		goto error;
+
+	udev->request_action = request_action;
+
+	unl_info("%s request_action = %d\n",
+		__func__, udev->request_action);
+	ret = size;
+
 error:
 	return ret;
 }
@@ -966,19 +1173,19 @@ static ssize_t cards_show(
 				"<%scard%d>",
 				udev->usb_audio_cards[i].bundle ? "*" : "", i);
 			if (cnt < 0) {
-				pr_err("%s snprintf return %d\n",
+				unl_err("%s snprintf return %d\n",
 						__func__, cnt);
 				continue;
 			}
 			if (cnt >= MAX_CARD_STR_LEN) {
-				pr_err("%s overflow\n", __func__);
+				unl_err("%s overflow\n", __func__);
 				goto err;
 			}
 			strlcat(card_strings, buf_card, sizeof(card_strings));
 		}
 	}
 err:
-	pr_info("card_strings %s\n", card_strings);
+	unl_info("card_strings %s\n", card_strings);
 	return sprintf(buf, "%s\n", card_strings);
 }
 
@@ -987,32 +1194,48 @@ int usb_notify_dev_uevent(struct usb_notify_dev *udev, char *envp_ext[])
 	int ret = 0;
 
 	if (!udev || !udev->dev) {
-		pr_err("%s udev or udev->dev NULL\n", __func__);
+		unl_err("%s udev or udev->dev NULL\n", __func__);
 		ret = -EINVAL;
 		goto err;
 	}
 
 	if (strncmp("TYPE", envp_ext[0], 4)) {
-		pr_err("%s error.first array must be filled TYPE\n",
+		unl_err("%s error.first array must be filled TYPE\n",
 				__func__);
 		ret = -EINVAL;
 		goto err;
 	}
 
 	if (strncmp("STATE", envp_ext[1], 5)) {
-		pr_err("%s error.second array must be filled STATE\n",
+		unl_err("%s error.second array must be filled STATE\n",
 				__func__);
 		ret = -EINVAL;
 		goto err;
 	}
 
 	kobject_uevent_env(&udev->dev->kobj, KOBJ_CHANGE, envp_ext);
-	pr_info("%s\n", __func__);
+	unl_info("%s\n", __func__);
 
 err:
 	return ret;
 }
 EXPORT_SYMBOL_GPL(usb_notify_dev_uevent);
+
+#if defined(CONFIG_USB_LPM_CHARGING_SYNC)
+static ssize_t lpm_charging_type_done_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct usb_notify_dev *udev = (struct usb_notify_dev *)
+		dev_get_drvdata(dev);
+
+	if (udev == NULL) {
+		pr_err("udev is NULL\n");
+		return -EINVAL;
+	}
+
+	return sprintf(buf, "%u\n", udev->lpm_charging_type_done);
+}
+#endif
 
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 static const char *lock_string(enum usb_lock_state lock_state)
@@ -1039,10 +1262,10 @@ static ssize_t usb_sl_show(struct device *dev,
 		dev_get_drvdata(dev);
 
 	if (udev == NULL) {
-		pr_err("udev is NULL\n");
+		unl_err("udev is NULL\n");
 		return -EINVAL;
 	}
-	pr_info("%s secure_lock = %lu\n",
+	unl_info("%s secure_lock = %lu\n",
 		__func__, udev->secure_lock);
 
 	return sprintf(buf, "%lu\n", udev->secure_lock);
@@ -1063,19 +1286,19 @@ static ssize_t usb_sl_store(
 	size_t ret = -ENOMEM;
 
 	if (udev == NULL) {
-		pr_err("udev is NULL\n");
+		unl_err("udev is NULL\n");
 		return -EINVAL;
 	}
 	if (size > PAGE_SIZE) {
-		pr_err("%s size(%zu) is too long.\n", __func__, size);
+		unl_err("%s size(%zu) is too long.\n", __func__, size);
 		goto error;
 	}
 
-#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION	
-	pr_info("%s before secure_lock = %s first_restrict = %d +\n",
-		__func__, lock_string(udev->secure_lock), udev->first_restrict);		
+#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
+	unl_info("%s before secure_lock = %s first_restrict = %d +\n",
+		__func__, lock_string(udev->secure_lock), udev->first_restrict);
 #else
-	pr_info("%s before secure_lock = %lu +\n",
+	unl_info("%s before secure_lock = %lu +\n",
 		__func__, udev->secure_lock);
 #endif
 
@@ -1085,7 +1308,7 @@ static ssize_t usb_sl_store(
 
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 	prev_secure_lock = udev->secure_lock;
-#endif	
+#endif
 	udev->secure_lock = secure_lock;
 	udev->set_lock_state(udev);
 
@@ -1105,12 +1328,12 @@ static ssize_t usb_sl_store(
 		}
 	}
 
-	pr_info("%s after secure_lock = %s -\n",
+	unl_info("%s after secure_lock = %s -\n",
 		__func__, lock_string(udev->secure_lock));
 #else
-	pr_info("%s after secure_lock = %lu -\n",
+	unl_info("%s after secure_lock = %lu -\n",
 		__func__, udev->secure_lock);
-#endif		
+#endif
 	ret = size;
 
 error:
@@ -1124,10 +1347,16 @@ static DEVICE_ATTR_RO(otg_speed);
 static DEVICE_ATTR_RO(gadget_speed);
 static DEVICE_ATTR_RW(usb_maximum_speed);
 static DEVICE_ATTR_RW(whitelist_for_mdm);
+static DEVICE_ATTR_RW(whitelist_for_disa);
+static DEVICE_ATTR_RW(whitelist_for_serial);
 static DEVICE_ATTR_RO(cards);
 #if defined(CONFIG_USB_HW_PARAM)
 static DEVICE_ATTR_RW(usb_hw_param);
 static DEVICE_ATTR_RW(hw_param);
+#endif
+static DEVICE_ATTR_RW(usb_request_action);
+#if defined(CONFIG_USB_LPM_CHARGING_SYNC)
+static DEVICE_ATTR_RO(lpm_charging_type_done);
 #endif
 static DEVICE_ATTR_RW(usb_sl);
 
@@ -1139,10 +1368,16 @@ static struct attribute *usb_notify_attrs[] = {
 	&dev_attr_gadget_speed.attr,
 	&dev_attr_usb_maximum_speed.attr,
 	&dev_attr_whitelist_for_mdm.attr,
+	&dev_attr_whitelist_for_disa.attr,
+	&dev_attr_whitelist_for_serial.attr,
 	&dev_attr_cards.attr,
 #if defined(CONFIG_USB_HW_PARAM)
 	&dev_attr_usb_hw_param.attr,
 	&dev_attr_hw_param.attr,
+#endif
+	&dev_attr_usb_request_action.attr,
+#if defined(CONFIG_USB_LPM_CHARGING_SYNC)
+	&dev_attr_lpm_charging_type_done.attr,
 #endif
 	&dev_attr_usb_sl.attr,
 	NULL,
@@ -1156,7 +1391,11 @@ static int create_usb_notify_class(void)
 {
 	if (!usb_notify_data.usb_notify_class) {
 		usb_notify_data.usb_notify_class
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
+			= class_create("usb_notify");
+#else
 			= class_create(THIS_MODULE, "usb_notify");
+#endif
 		if (IS_ERR(usb_notify_data.usb_notify_class))
 			return PTR_ERR(usb_notify_data.usb_notify_class);
 		atomic_set(&usb_notify_data.device_count, 0);
@@ -1197,6 +1436,7 @@ int usb_notify_dev_register(struct usb_notify_dev *udev)
 				MKDEV(0, udev->index));
 		return ret;
 	}
+	kobject_uevent(&udev->dev->kobj, KOBJ_CHANGE);
 
 	return 0;
 }

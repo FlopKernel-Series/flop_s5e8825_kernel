@@ -38,7 +38,7 @@ extern char *f_mode;
 static char *f_mode;
 #endif
 
-#if ((IS_MODULE(CONFIG_SEC_PARAM) || IS_ENABLED(CONFIG_SEC_MPARAM)) && !IS_ENABLED(CONFIG_PDIC_USE_MODULE_PARAM))
+#if IS_ENABLED(CONFIG_IFPMIC_BRINGUP)
 extern unsigned int lpcharge;
 extern int factory_mode;
 #else

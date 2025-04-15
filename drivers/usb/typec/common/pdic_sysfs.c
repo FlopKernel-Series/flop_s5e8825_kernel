@@ -76,6 +76,7 @@ static struct device_attribute pdic_attributes[] = {
 	PDIC_SYSFS_ATTR(usb_boot_mode),
 	PDIC_SYSFS_ATTR(dp_sbu_sw_sel),
 	PDIC_SYSFS_ATTR(novbus_rp22k),
+	PDIC_SYSFS_ATTR(cable_connect_ctrl),
 };
 
 __visible_for_testing ssize_t get_pdic_sysfs_property(ppdic_data_t ppdic_data,
