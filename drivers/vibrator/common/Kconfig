@@ -6,7 +6,7 @@ config SEC_VIBRATOR
 	  sec vibrator driver
 
 config SEC_VIB_NOTIFIER
-	tristate "use sec vibrator notifier"
+	bool "use sec vibrator notifier"
 	default n
 	help
 	  Enable notifier functions to get motor enable status
