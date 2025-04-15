@@ -62,7 +62,10 @@ static void fts_prc_func(struct work_struct *work)
 
 	intr_timeout += ts_data->intr_jiffies;
 	if (time_after(cur_jiffies, intr_timeout)) {
-		fts_release_all_finger();
+		if (false)
+			fts_release_all_finger();
+		else
+			old_fts_release_all_finger();
 		ts_data->prc_mode = 0;
 		//FTS_DEBUG("interval:%lu", (cur_jiffies - ts_data->intr_jiffies) * 1000 / HZ);
 	} else {

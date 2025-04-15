@@ -63,6 +63,7 @@ struct fts_ts_data *fts_data;
 void fts_irq_enable(void);
 void fts_irq_disable(void);
 void fts_release_all_finger(void);
+void old_fts_release_all_finger(void);
 
 #if IS_ENABLED(CONFIG_SAMSUNG_TUI)
 extern int stui_i2c_lock(struct i2c_adapter *adap);
@@ -78,7 +79,10 @@ static int fts_stui_tsp_enter(void)
 		return -EINVAL;
 
 	fts_irq_disable();
-	fts_release_all_finger();
+	if (false)
+		fts_release_all_finger();
+	else
+		old_fts_release_all_finger();
 
 	ret = stui_i2c_lock(ts->client->adapter);
 	if (ret) {
@@ -433,6 +437,57 @@ void fts_release_all_finger(void)
 	sec_input_release_all_finger(fts_data->dev);
 }
 
+void old_fts_release_all_finger(void)
+{
+	struct fts_ts_data *ts_data = fts_data;
+	struct input_dev *input_dev = ts_data->pdata->input_dev;
+#if FTS_MT_PROTOCOL_B_EN
+	u32 finger_count = 0;
+	u32 max_touches = ts_data->max_touch_number;
+#endif
+
+	mutex_lock(&ts_data->report_mutex);
+
+	if (ts_data->pdata->prox_power_off == 1) {
+		input_report_key(input_dev, KEY_INT_CANCEL, 1);
+		input_sync(input_dev);
+		input_report_key(input_dev, KEY_INT_CANCEL, 0);
+		input_sync(input_dev);
+	}
+
+	if (ts_data->pdata->input_dev_proximity) {
+		ts_data->pocket_state = ts_data->hover_event = 0xff;
+		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
+		input_sync(ts_data->pdata->input_dev_proximity);
+	}
+
+#if FTS_MT_PROTOCOL_B_EN
+	for (finger_count = 0; finger_count < max_touches; finger_count++) {
+		input_mt_slot(input_dev, finger_count);
+		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, false);
+
+		if (ts_data->touchs & BIT(finger_count))
+			FTS_INFO("[RA] tID:%d", finger_count);
+	}
+#else
+	input_mt_sync(input_dev);
+#endif
+	input_report_key(input_dev, BTN_TOUCH, 0);
+	input_report_key(input_dev, BTN_PALM, 0);
+	input_sync(input_dev);
+
+#if FTS_PEN_EN
+	input_report_key(ts_data->pen_dev, BTN_TOOL_PEN, 0);
+	input_report_key(ts_data->pen_dev, BTN_TOUCH, 0);
+	input_sync(ts_data->pen_dev);
+#endif
+
+	ts_data->touchs = 0;
+	ts_data->key_state = 0;
+	ts_data->palm_flag = 0;
+	mutex_unlock(&ts_data->report_mutex);
+}
+
 /*****************************************************************************
 * Name: fts_input_report_key
 * Brief: process key events,need report key-event if key enable.
@@ -444,7 +499,7 @@ void fts_release_all_finger(void)
 * Output:
 * Return: return 0 if it's key event, otherwise return error code
 *****************************************************************************/
-/*static int fts_input_report_key(struct fts_ts_data *data, int index)
+static int fts_input_report_key(struct fts_ts_data *data, int index)
 {
 	int i = 0;
 	int x = data->events[index].x;
@@ -460,12 +515,12 @@ void fts_release_all_finger(void)
 		    (y >= y_dim[i] - FTS_KEY_DIM) && (y <= y_dim[i] + FTS_KEY_DIM)) {
 			if (EVENT_DOWN(data->events[index].flag)
 			    && !(data->key_state & (1 << i))) {
-				input_report_key(data->input_dev, data->keys[i], 1);
+				input_report_key(data->pdata->input_dev, data->keys[i], 1);
 				data->key_state |= (1 << i);
 				FTS_DEBUG("Key%d(%d,%d) DOWN!", i, x, y);
 			} else if (EVENT_UP(data->events[index].flag)
 			           && (data->key_state & (1 << i))) {
-				input_report_key(data->input_dev, data->keys[i], 0);
+				input_report_key(data->pdata->input_dev, data->keys[i], 0);
 				data->key_state &= ~(1 << i);
 				FTS_DEBUG("Key%d(%d,%d) Up!", i, x, y);
 			}
@@ -475,7 +530,7 @@ void fts_release_all_finger(void)
 	return -EINVAL;
 }
 
-static void location_detect(struct fts_ts_data *ts, char *loc, int x, int y)
+static void fts_location_detect(struct fts_ts_data *ts, char *loc, int x, int y)
 {
 	memset(loc, 0, SEC_TS_LOCATION_DETECT_SIZE);
 
@@ -494,7 +549,188 @@ static void location_detect(struct fts_ts_data *ts, char *loc, int x, int y)
 		else
 			strncat(loc, "N", 1);
 	}
-}*/
+}
+
+#if FTS_MT_PROTOCOL_B_EN
+static int fts_input_report_b(struct fts_ts_data *data)
+{
+	int i = 0;
+	unsigned long touchs = 0;
+	bool va_reported = false;
+	u32 max_touch_num = data->max_touch_number;
+	struct ts_event *events = data->events;
+	char loc[SEC_TS_LOCATION_DETECT_SIZE] = { 0 };
+
+	for (i = 0; i < data->touch_point; i++) {
+		if (fts_input_report_key(data, i) == 0) {
+			continue;
+		}
+
+		va_reported = true;
+		input_mt_slot(data->pdata->input_dev, events[i].id);
+
+		if (EVENT_DOWN(events[i].flag)) {
+			input_mt_report_slot_state(data->pdata->input_dev, MT_TOOL_FINGER, true);
+
+#if FTS_REPORT_PRESSURE_EN
+			if (events[i].p <= 0) {
+				events[i].p = 0x3f;
+			}
+			input_report_abs(data->pdata->input_dev, ABS_MT_PRESSURE, events[i].p);
+#endif
+			//if (events[i].area <= 0) {
+			//events[i].area = 0x09;
+			//}
+			input_report_abs(data->pdata->input_dev, ABS_MT_TOUCH_MAJOR, events[i].area);
+			input_report_abs(data->pdata->input_dev, ABS_MT_TOUCH_MINOR, events[i].area_minor);
+			input_report_abs(data->pdata->input_dev, ABS_MT_POSITION_X, events[i].x);
+			input_report_abs(data->pdata->input_dev, ABS_MT_POSITION_Y, events[i].y);
+			input_report_key(data->pdata->input_dev, BTN_PALM, data->palm_flag);
+
+			touchs |= BIT(events[i].id);
+			data->touchs |= BIT(events[i].id);
+
+			if (events[i].flag == FTS_TOUCH_DOWN) {
+				fts_location_detect(data, loc, events[i].x, events[i].y);
+				events[i].p_x = events[i].x;
+				events[i].p_y = events[i].y;
+				events[i].mcount = 0;
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
+				FTS_INFO("[P] tID:%d.%d x:%d y:%d z:%d p:%d major:%d minor:%d loc:%s tc:%ld",
+						events[i].id, (data->pdata->input_dev->mt->trkid - 1) & TRKID_MAX,
+						events[i].x, events[i].y,
+						events[i].p, events[i].palm,
+						events[i].area, events[i].area_minor, loc,
+						FTS_TOUCH_COUNT(&touchs));
+#else
+				FTS_INFO("[P] tID:%d.%d z:%d p:%d major:%d minor:%d loc:%s tc:%ld",
+						events[i].id, (data->pdata->input_dev->mt->trkid - 1) & TRKID_MAX,
+						events[i].p, events[i].palm,
+						events[i].area, events[i].area_minor, loc,
+						FTS_TOUCH_COUNT(&touchs));
+#endif
+			} else if (events[i].flag == FTS_TOUCH_CONTACT) {
+				events[i].mcount++;
+			}
+		} else {
+			input_mt_report_slot_state(data->pdata->input_dev, MT_TOOL_FINGER, false);
+			data->touchs &= ~BIT(events[i].id);
+			fts_location_detect(data, loc, events[i].x, events[i].y);
+
+			data->palm_flag &= ~BIT(events[i].id);
+			input_report_key(data->pdata->input_dev, BTN_PALM, data->palm_flag);
+
+#if !IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
+			FTS_INFO("[R] tID:%d loc:%s dd:%d,%d pc:%ld mc:%d tc:%ld lx:%d ly:%d",
+					events[i].id, loc, events[i].x - events[i].p_x, events[i].y - events[i].p_y,
+					FTS_TOUCH_COUNT(&data->palm_flag),
+					events[i].mcount, FTS_TOUCH_COUNT(&touchs),
+					events[i].x, events[i].y);
+#else
+			FTS_INFO("[R] tID:%d loc:%s dd:%d,%d pc:%ld mc:%d tc:%ld",
+					events[i].id, loc, events[i].x - events[i].p_x, events[i].y - events[i].p_y,
+					FTS_TOUCH_COUNT(&data->palm_flag),
+					events[i].mcount, FTS_TOUCH_COUNT(&touchs));
+#endif
+		}
+	}
+
+	if (unlikely(data->touchs ^ touchs)) {
+		for (i = 0; i < max_touch_num; i++)  {
+			if (BIT(i) & (data->touchs ^ touchs)) {
+				FTS_INFO("[R] tID:%d", i);
+				va_reported = true;
+				input_mt_slot(data->pdata->input_dev, i);
+				input_mt_report_slot_state(data->pdata->input_dev, MT_TOOL_FINGER, false);
+				data->palm_flag &= ~BIT(i);
+				input_report_key(data->pdata->input_dev, BTN_PALM, data->palm_flag);
+			}
+		}
+	}
+	data->touchs = touchs;
+
+	if (va_reported) {
+		/* touchs==0, there's no point but key */
+		if (EVENT_NO_DOWN(data) || (!touchs)) {
+			data->print_info_cnt_release = 0;
+			if (data->log_level >= 2)
+				FTS_DEBUG("[B]Points All Up!");
+
+			input_report_key(data->pdata->input_dev, BTN_TOUCH, 0);
+		} else {
+			input_report_key(data->pdata->input_dev, BTN_TOUCH, 1);
+		}
+	}
+
+	input_sync(data->pdata->input_dev);
+	return 0;
+}
+
+#else
+static int fts_input_report_a(struct fts_ts_data *data)
+{
+	int i = 0;
+	int touchs = 0;
+	bool va_reported = false;
+	struct ts_event *events = data->events;
+
+	for (i = 0; i < data->touch_point; i++) {
+		if (fts_input_report_key(data, i) == 0) {
+			continue;
+		}
+
+		va_reported = true;
+		if (EVENT_DOWN(events[i].flag)) {
+			input_report_abs(data->pdata->input_dev, ABS_MT_TRACKING_ID, events[i].id);
+#if FTS_REPORT_PRESSURE_EN
+			if (events[i].p <= 0) {
+				events[i].p = 0x3f;
+			}
+			input_report_abs(data->pdata->input_dev, ABS_MT_PRESSURE, events[i].p);
+#endif
+			if (events[i].area <= 0) {
+				events[i].area = 0x09;
+			}
+			input_report_abs(data->pdata->input_dev, ABS_MT_TOUCH_MAJOR, events[i].area);
+
+			input_report_abs(data->pdata->input_dev, ABS_MT_POSITION_X, events[i].x);
+			input_report_abs(data->pdata->input_dev, ABS_MT_POSITION_Y, events[i].y);
+
+			input_mt_sync(data->pdata->input_dev);
+
+			if ((data->log_level >= 2) ||
+			    ((1 == data->log_level) && (FTS_TOUCH_DOWN == events[i].flag))) {
+				FTS_DEBUG("[A]P%d(%d, %d)[p:%d,tm:%d] DOWN!",
+				          events[i].id,
+				          events[i].x, events[i].y,
+				          events[i].p, events[i].area);
+			}
+			touchs++;
+		}
+	}
+
+	/* last point down, current no point but key */
+	if (data->touchs && !touchs) {
+		va_reported = true;
+	}
+	data->touchs = touchs;
+
+	if (va_reported) {
+		if (EVENT_NO_DOWN(data)) {
+			if (data->log_level >= 1) {
+				FTS_DEBUG("[A]Points All Up!");
+			}
+			input_report_key(data->pdata->input_dev, BTN_TOUCH, 0);
+			input_mt_sync(data->pdata->input_dev);
+		} else {
+			input_report_key(data->pdata->input_dev, BTN_TOUCH, 1);
+		}
+	}
+
+	input_sync(data->pdata->input_dev);
+	return 0;
+}
+#endif
 
 #if FTS_PEN_EN
 static int fts_input_pen_report(struct fts_ts_data *data)
@@ -580,7 +816,13 @@ static int fts_read_pocket_result(struct fts_ts_data *ts_data)
 		ts_data->hover_event = IN_POCKET;
 	}
 
-	sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
+	if (false)
+		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
+	else {
+		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
+		input_sync(ts_data->pdata->input_dev_proximity);
+		FTS_INFO("proximity: %d", ts_data->hover_event);
+	}
 
 	return 0;
 }
@@ -601,7 +843,13 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 	else
 		ts_data->hover_event = (val >> 4);
 
-	sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
+	if (false)
+		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
+	else {
+		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
+		input_sync(ts_data->pdata->input_dev_proximity);
+		FTS_INFO("proximity: %d", ts_data->hover_event);
+	}
 
 	return 0;
 }
@@ -663,6 +911,62 @@ int fts_set_fod_rect(struct fts_ts_data *ts_data)
 	return ret;
 }
 
+static int old_fts_read_fod_result(struct fts_ts_data *ts_data)
+{
+	int ret = 0;
+	u8 val = 0;
+	u8 fod_coordinate[4] = {0};
+	int x, y;
+
+	ret = fts_read_reg(FOD_EVENT_REG, &val);
+	if (ret < 0) {
+		FTS_ERROR("read fod event reg fail");
+		return ret;
+	}
+
+	if (ts_data->fod_state == val)
+		return 0;
+	else
+		ts_data->fod_state = val;
+
+	if (val == 0 || val == 1 || val == 2 || val == 3) {
+		fod_coordinate[0] = 0xE7;
+		ret = fts_read(fod_coordinate, 1, fod_coordinate, 4);
+		if (ret < 0) {
+			FTS_ERROR("read fod coordinate fail");
+			ts_data->fod_state = 0xff;
+			return ret;
+		}
+		x = (fod_coordinate[0] << 8) + fod_coordinate[1];
+		y = (fod_coordinate[2] << 8) + fod_coordinate[3];
+	} else {
+		x = 0;
+		y = 0;
+	}
+
+
+	// #0 : long press, #1 : press, #2 : release, #3 : out of area, 0xff : no event
+	if (val == 0 || val == 1) {
+		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_FOD_PRESS, x, y);
+
+		FTS_INFO("FOD %s PRESS (x:%d, y:%d)", val ? "" : "LONG", x, y); // Log coords if helpful
+	} else if (val == 2) {
+		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_FOD_RELEASE, x, y);
+
+		FTS_INFO("FOD RELEASE (x:%d, y:%d)", x, y);
+	} else if (val == 3) {
+		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_FOD_OUT, x, y);
+
+		FTS_INFO("FOD OUT (x:%d, y:%d)", x, y);
+	} else if (val == 0xff) {
+		FTS_INFO("fod has no event");
+	} else {
+		FTS_ERROR("Unknown FOD event value: 0x%02X", val);
+	}
+
+	return 0;
+}
+
 static int fts_read_fod_result(struct fts_ts_data *ts_data)
 {
 	int ret = 0;
@@ -701,6 +1005,67 @@ static int fts_read_fod_result(struct fts_ts_data *ts_data)
 		sec_cmd_send_gesture_uevent(&ts_data->sec, SPONGE_EVENT_TYPE_FOD_OUT, x, y);
 	} else if (val == 0xff) {
 		FTS_INFO("fod has no event");
+	}
+
+	return 0;
+}
+
+static int old_fts_read_touchdata(struct fts_ts_data *data)
+{
+	int ret = 0;
+	int size = 0;
+	u8 *buf = data->point_buf;
+
+	memset(buf, 0xFF, data->pnt_buf_size);
+	buf[0] = 0x01;
+
+	if (atomic_read(&data->pdata->power_state) == SEC_INPUT_STATE_LPM) {
+		if (0 == fts_gesture_readdata(data, NULL)) {
+			FTS_INFO("succuss to get gesture data in irq handler");
+			return 1;
+		}
+	}
+
+#if defined(FTS_HIGH_REPORT) && FTS_HIGH_REPORT
+	if (data->point_num >= data->max_touch_number)
+		size = data->pnt_buf_size - 1;
+	else if (data->point_num > 2)
+		size = data->point_num * 6 + 3;
+	else
+		size = FTS_SIZE_DEFAULT;
+#if defined(FTS_PEN_EN) && FTS_PEN_EN
+	size = FTS_SIZE_DEFAULT;
+#endif
+
+	ret = fts_read(buf, 1, buf + 1, size);
+	if (ret < 0) {
+		FTS_ERROR("read touchdata failed, ret:%d", ret);
+		return ret;
+	}
+
+	if ((buf[size] != 0xFF) && (size < (data->pnt_buf_size - 1))
+#if defined(FTS_PEN_EN) && FTS_PEN_EN
+	    && ((buf[2] & 0xF0) != 0xB0)
+#endif
+	   ) {
+		buf[0] += size;
+		ret = fts_read(buf, 1, buf + 1 + size, data->pnt_buf_size - 1 - size);
+		if (ret < 0) {
+			FTS_ERROR("read touchdata2 failed, ret:%d", ret);
+			return ret;
+		}
+	}
+#else
+	size = data->pnt_buf_size - 1;
+	ret = fts_read(buf, 1, buf + 1, size);
+	if (ret < 0) {
+		FTS_ERROR("read touchdata failed, ret:%d", ret);
+		return ret;
+	}
+#endif
+
+	if (data->log_level >= 3) {
+		fts_show_touch_buffer(buf, data->pnt_buf_size);
 	}
 
 	return 0;
@@ -871,6 +1236,117 @@ static void fts_base_refresh_reason(u8 base_flag)
 	return;
 }
 
+static int old_fts_read_parse_touchdata(struct fts_ts_data *data)
+{
+	int ret = 0;
+	int i = 0;
+	u8 pointid = 0;
+	int base = 0;
+	struct ts_event *events = data->events;
+	int max_touch_num = data->max_touch_number;
+	u8 *buf = data->point_buf;
+	unsigned long palm_temp = data->palm_flag;
+
+	if (false)
+		ret = fts_read_touchdata(data);
+	else
+		ret = old_fts_read_touchdata(data);
+	if (ret) {
+		return ret;
+	}
+
+	if ((buf[1] & 0x01) != data->pdata->wet_mode) {
+		data->pdata->wet_mode = (buf[1] & 0x01);
+
+		if (data->pdata->wet_mode) {
+			FTS_INFO("Waterproof mode on");
+			data->pdata->hw_param.wet_count++;
+		} else {
+			FTS_INFO("Waterproof mode off");
+		}
+	}
+
+	if ((buf[1] & 0x02) != atomic_read(&data->pdata->touch_noise_status)) {
+		atomic_set(&data->pdata->touch_noise_status, (buf[1] & 0x02));
+
+		if (atomic_read(&data->pdata->touch_noise_status)) {
+			FTS_INFO("Noise mode on");
+			data->pdata->hw_param.noise_count++;
+		} else {
+			FTS_INFO("Noise mode off");
+		}
+	}
+
+#if FTS_PEN_EN
+	if ((buf[2] & 0xF0) == 0xB0) {
+		fts_input_pen_report(data);
+		return 2;
+	}
+#endif
+
+	data->point_num = buf[FTS_TOUCH_POINT_NUM] & 0x0F;
+	data->touch_point = 0;
+
+	if ((data->point_num == 0x0F) && (buf[2] == 0xFF) && (buf[3] == 0xFF)
+	    && (buf[4] == 0xFF) && (buf[5] == 0xFF) && (buf[6] == 0xFF)) {
+		FTS_DEBUG("touch buff is 0xff, need recovery state");
+		fts_release_all_finger();
+		fts_tp_state_recovery(data);
+		data->point_num = 0;
+		return -EIO;
+	}
+
+	if (data->point_num > max_touch_num) {
+		FTS_INFO("invalid point_num(%d)", data->point_num);
+		data->point_num = 0;
+		return -EIO;
+	}
+
+	for (i = 0; i < max_touch_num; i++) {
+		base = FTS_ONE_TCH_LEN_OLD * i;
+		pointid = (buf[FTS_TOUCH_ID_POS + base]) >> 4;
+		if (pointid >= FTS_MAX_ID)
+			break;
+		else if (pointid >= max_touch_num) {
+			FTS_ERROR("ID(%d) beyond max_touch_number", pointid);
+			return -EINVAL;
+		}
+
+		data->touch_point++;
+		events[i].x = ((buf[FTS_TOUCH_X_H_POS + base] & 0x0F) << 8) +
+		              (buf[FTS_TOUCH_X_L_POS + base] & 0xFF);
+		events[i].y = ((buf[FTS_TOUCH_Y_H_POS + base] & 0x0F) << 8) +
+		              (buf[FTS_TOUCH_Y_L_POS + base] & 0xFF);
+		events[i].flag = buf[FTS_TOUCH_EVENT_POS + base] >> 6;
+		events[i].id = buf[FTS_TOUCH_ID_POS + base] >> 4;
+		events[i].area = buf[FTS_TOUCH_AREA_POS + base];
+		events[i].p =  buf[FTS_TOUCH_PRE_POS + base];
+		events[i].palm = (buf[FTS_TOUCH_EVENT_POS + base] >> 4) & 0x01;
+		if (events[i].palm)
+			data->palm_flag |= BIT(events[i].id);
+		else
+			data->palm_flag &= ~BIT(events[i].id);
+		events[i].area_minor = buf[FTS_TOUCH_PRE_POS + base];
+
+		if (palm_temp != data->palm_flag) {
+			FTS_INFO("tID:%d palm changed to %d", events[i].id, events[i].palm);
+			palm_temp = data->palm_flag;
+		}
+
+		if (EVENT_DOWN(events[i].flag) && (data->point_num == 0)) {
+			FTS_INFO("abnormal touch data from fw");
+			return -EIO;
+		}
+	}
+
+	if (data->touch_point == 0) {
+		FTS_INFO("no touch point information(%02x)", buf[2]);
+		return -EIO;
+	}
+
+	return 0;
+}
+
 static int fts_read_parse_touchdata(struct fts_ts_data *data)
 {
 	int ret = 0;
@@ -880,7 +1356,10 @@ static int fts_read_parse_touchdata(struct fts_ts_data *data)
 	int event_num;
 	int i;
 
-	ret = fts_read_touchdata(data);
+	if (false)
+		ret = fts_read_touchdata(data);
+	else
+		ret = old_fts_read_touchdata(data);
 	if (ret) {
 		return ret;
 	}
@@ -897,7 +1376,10 @@ static int fts_read_parse_touchdata(struct fts_ts_data *data)
 	if ((buf[2] == 0xFF) && (buf[3] == 0xFF)
 			&& (buf[4] == 0xFF) && (buf[5] == 0xFF) && (buf[6] == 0xFF)) {
 		FTS_ERROR("touch buff is 0xff, need recovery state");
-		fts_release_all_finger();
+		if (false)
+			fts_release_all_finger();
+		else
+			old_fts_release_all_finger();
 		fts_tp_state_recovery(data);
 		return -EIO;
 	}
@@ -953,10 +1435,30 @@ static void fts_irq_read_report(void)
 	if (ts_data->pdata->ed_enable)
 		fts_read_proximity_result(ts_data);
 
-	ret = fts_read_parse_touchdata(ts_data);
+	if (false)
+		ret = fts_read_parse_touchdata(ts_data);
+	else
+		ret = old_fts_read_parse_touchdata(ts_data);
 
-	if (ts_data->fod_mode & 0x01)
-		fts_read_fod_result(ts_data);
+	if (true) {
+		if (ret == 0) {
+			mutex_lock(&ts_data->report_mutex);
+	#if FTS_MT_PROTOCOL_B_EN
+			fts_input_report_b(ts_data);
+	#else
+			fts_input_report_a(ts_data);
+	#endif
+			mutex_unlock(&ts_data->report_mutex);
+		}
+	}
+
+	if (ts_data->fod_mode & 0x01) {
+		if (false) {
+			fts_read_fod_result(ts_data);
+		} else {
+			old_fts_read_fod_result(ts_data);
+		}
+	}
 
 #if FTS_ESDCHECK_EN
 	fts_esdcheck_set_intr(0);
@@ -1094,6 +1596,30 @@ static int fts_input_pen_init(struct fts_ts_data *ts_data)
 	return 0;
 }
 #endif
+
+static int old_fts_report_buffer_init(struct fts_ts_data *ts_data)
+{
+	int point_num = 0;
+	int events_num = 0;
+
+	ts_data->max_touch_number = FTS_MAX_POINTS_SUPPORT;
+	point_num = ts_data->max_touch_number;
+	ts_data->pnt_buf_size = point_num * FTS_ONE_TCH_LEN_OLD + 3;
+	ts_data->point_buf = (u8 *)devm_kzalloc(ts_data->dev, ts_data->pnt_buf_size + 1, GFP_KERNEL);
+	if (!ts_data->point_buf) {
+		FTS_ERROR("failed to alloc memory for point buf");
+		return -ENOMEM;
+	}
+
+	events_num = point_num * sizeof(struct ts_event);
+	ts_data->events = (struct ts_event *)devm_kzalloc(ts_data->dev, events_num, GFP_KERNEL);
+	if (!ts_data->events) {
+		FTS_ERROR("failed to alloc memory for point events");
+		return -ENOMEM;
+	}
+
+	return 0;
+}
 
 static int fts_report_buffer_init(struct fts_ts_data *ts_data)
 {
@@ -1667,7 +2193,10 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ts_data->pdata->power = fts_power_ctrl;
 	ts_data->pdata->set_charger_mode = fts_charger_attached;
 
-	ret = fts_report_buffer_init(ts_data);
+	if (false)
+		ret = fts_report_buffer_init(ts_data);
+	else
+		ret = old_fts_report_buffer_init(ts_data);
 	if (ret) {
 		FTS_ERROR("report buffer init fail");
 		goto err_report_buffer;
@@ -1941,7 +2470,10 @@ int fts_ts_suspend(struct fts_ts_data *ts_data)
 		}
 	}
 
-	fts_release_all_finger();
+	if (false)
+		fts_release_all_finger();
+	else
+		old_fts_release_all_finger();
 	ts_data->suspended = true;
 
 	cancel_delayed_work(&ts_data->print_info_work);
@@ -1973,7 +2505,10 @@ int fts_ts_resume(struct fts_ts_data *ts_data)
 		return 0;
 	}
 
-	fts_release_all_finger();
+	if (false)
+		fts_release_all_finger();
+	else
+		old_fts_release_all_finger();
 
 	if (!ts_data->ic_info.is_incell &&
 		(atomic_read(&ts_data->pdata->power_state) == SEC_INPUT_STATE_POWER_OFF)) {
