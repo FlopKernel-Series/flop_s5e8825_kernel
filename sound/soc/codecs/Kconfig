@@ -1847,6 +1847,16 @@ config SND_SOC_TPA6130A2
 	tristate "Texas Instruments TPA6130A2 headphone amplifier"
 	depends on I2C
 
+config SND_SOC_FS1816
+	tristate "FourSemi fs1816 i2c driver"
+	depends on I2C
+
+config SND_SMARTPA_AW882XX
+	tristate "SoC Audio for Awinic aw882xx series"
+	depends on I2C
+	help
+	  This option enables support for aw882xx series Smart PA.
+
 # TAS2562
 source "sound/soc/codecs/tas2562/Kconfig"
 

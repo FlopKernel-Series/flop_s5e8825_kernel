@@ -1722,6 +1722,12 @@ void snd_usb_ctl_msg_quirk(struct usb_device *dev, unsigned int pipe,
 	     chip->usb_id == USB_ID(0x0951, 0x16ad)) &&
 	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
 		usleep_range(1000, 2000);
+
+#if defined(CONFIG_USB_HOST_SAMSUNG_FEATURE)
+	if (USB_ID_VENDOR(chip->usb_id) == 0x04e8 && /* Samsung */
+	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
+		usleep_range(1000, 2000);
+#endif
 }
 
 /*

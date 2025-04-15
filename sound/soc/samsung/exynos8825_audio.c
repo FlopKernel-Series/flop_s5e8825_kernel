@@ -23,7 +23,22 @@
 #include <sound/soc.h>
 #include <sound/samsung/abox.h>
 
+#if IS_ENABLED(CONFIG_SND_SOC_TFA9878)
 #include "../codecs/tfa9878/bigdata_tfa_sysfs_cb.h"
+#endif
+#if IS_ENABLED(CONFIG_SND_SMARTPA_AW882XX)
+#include "../codecs/aw882xx/aw882xx.h"
+#include "../codecs/aw882xx/bigdata_aw882xx_sysfs_cb.h"
+#endif
+
+#if IS_ENABLED(CONFIG_SEC_ABC)
+#include <linux/sti/abc_common.h>
+#endif
+
+#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_AUDIO)
+#include <sound/samsung/sec_audio_sysfs.h>
+#include <sound/samsung/snd_debug_proc.h>
+#endif
 
 #define ABOX_UAIF_DAI_ID(c, i)		(0xaf00 | (c) << 4 | (i))
 #define ABOX_BE_DAI_ID(c, i)		(0xbe00 | (c) << 4 | (i))
@@ -53,6 +68,8 @@
 	     ((cpu) = &link->cpus[i]);		\
 	     (i)++)
 
+#define SUPPORT_AMP_READY_CALLBACK	0
+
 struct _drvdata {
 	struct device *dev;
 	struct wakeup_source *ws;
@@ -66,6 +83,52 @@ static const struct snd_soc_ops rdma_ops = {
 static const struct snd_soc_ops wdma_ops = {
 };
 
+#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_AUDIO) && SUPPORT_AMP_READY_CALLBACK
+static int get_audio_amp_ready(enum amp_id id)
+{
+	struct sound_drvdata *drvdata = &exynos_drvdata;
+	int ret = NOT_SUPPORT;
+
+	/* Implement codes for amp */
+	dev_info(drvdata->dev, "%s: id %d value %d\n", __func__, id, ret);
+
+	return ret;
+}
+#endif
+
+#if IS_ENABLED(CONFIG_SND_SMARTPA_AW882XX)
+extern void aw882xx_register_i2c_error_callback(int channel, void (*func)(int));
+
+void aw882xx_i2c_fail_callback(int channel)
+{
+	pr_info("%s channel: 0x%02x\n", __func__, channel);
+#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_AUDIO)
+	send_amp_i2c_fail_ev(channel);
+#endif
+#if IS_ENABLED(CONFIG_SEC_ABC)
+#if IS_ENABLED(CONFIG_SEC_FACTORY)
+	sec_abc_send_event("MODULE=audio@INFO=spk_amp");
+#else
+	sec_abc_send_event("MODULE=audio@WARN=spk_amp");
+#endif
+#endif
+}
+
+extern void aw882xx_register_short_circuit_callback(int channel, void (*func)(int));
+
+void aw882xx_short_circuit_callback(int channel)
+{
+	pr_info("%s channel: 0x%02x\n", __func__, channel);
+#if IS_ENABLED(CONFIG_SEC_ABC)
+#if IS_ENABLED(CONFIG_SEC_FACTORY)
+	sec_abc_send_event("MODULE=audio@INFO=spk_amp_short");
+#else
+	sec_abc_send_event("MODULE=audio@WARN=spk_amp_short");
+#endif
+#endif
+}
+#endif
+
 static int uaif0_init(struct snd_soc_pcm_runtime *rtd)
 {
 	return 0;
@@ -73,16 +136,63 @@ static int uaif0_init(struct snd_soc_pcm_runtime *rtd)
 
 static int uaif1_init(struct snd_soc_pcm_runtime *rtd)
 {
-	struct snd_soc_dai *codec_dai = asoc_rtd_to_codec(rtd, 0);
+	struct snd_soc_card *card = rtd->card;
+	struct snd_soc_dai *dai;
 	struct snd_soc_component *component = NULL;
+	unsigned int num_codecs = rtd->dai_link->num_codecs;
+	unsigned int i;
+#if IS_ENABLED(CONFIG_SND_SMARTPA_AW882XX)
+	struct snd_soc_dapm_context *dapm;
+	unsigned int suffix;
+	char buff[80];
+	const int BUFF_SZ = 80;
+	struct aw882xx *drvdata;
+#endif
 
-	if (!codec_dai)
-		return 0;
+	dev_info(card->dev, "%s: num_codecs(%d)\n", __func__, num_codecs);
 
-	component = codec_dai->component;
+	for_each_rtd_codec_dais(rtd, i, dai) {
+		component = dai->component;
+		if (!component)
+			continue;
 
-	if ((component) && strstr(component->name, "tfa98xx"))
-		register_tfa98xx_bigdata_cb(component);
+		dev_info(card->dev, "%s: component[%d]->name=%s\n", __func__, i, component->name);
+#if IS_ENABLED(CONFIG_SND_SOC_TFA9878)
+		if ((component) && strstr(component->name, "tfa98xx"))
+			register_tfa98xx_bigdata_cb(component);
+#endif
+#if IS_ENABLED(CONFIG_SND_SMARTPA_AW882XX)
+		if (strstr(component->name, "aw882xx_smartpa")) {
+			drvdata = (struct aw882xx *)snd_soc_component_get_drvdata(component);
+			suffix = drvdata->aw_pa->channel;
+			dapm = snd_soc_component_get_dapm(component);
+
+			dev_info(card->dev, "%s: component(%s) suffix(%d)\n",
+				__func__, component->name, suffix);
+
+			register_aw882xx_bigdata_cb(component);
+
+			snprintf(buff, BUFF_SZ, "%s_%d", "Speaker_Playback", suffix);
+			snd_soc_dapm_ignore_suspend(dapm, buff);
+
+			snprintf(buff, BUFF_SZ, "%s_%d", "Speaker_Capture", suffix);
+			snd_soc_dapm_ignore_suspend(dapm, buff);
+
+			snprintf(buff, BUFF_SZ, "%s_%d", "audio_out", suffix);
+			snd_soc_dapm_ignore_suspend(dapm, buff);
+
+			snprintf(buff, BUFF_SZ, "%s_%d", "iv_in", suffix);
+			snd_soc_dapm_ignore_suspend(dapm, buff);
+
+			aw882xx_register_i2c_error_callback(drvdata->aw_pa->channel,
+				aw882xx_i2c_fail_callback);
+			aw882xx_register_short_circuit_callback(drvdata->aw_pa->channel,
+				aw882xx_short_circuit_callback);
+
+			snd_soc_dapm_sync(dapm);
+		}
+#endif
+	}
 
 	return 0;
 }
@@ -123,11 +233,22 @@ static int exynos_late_probe(struct snd_soc_card *card)
 {
 	struct snd_soc_pcm_runtime *rtd;
 	struct snd_soc_dai *dai;
-	struct snd_soc_dapm_context *dapm;
 	const char *name;
-	int i;
+	struct snd_soc_dapm_context *dapm = &card->dapm;
+	struct device_node *np = card->dev->of_node;
+	int ret, i;
 
-	dapm = &card->dapm;
+	if (of_property_read_bool(np, "samsung,routing")) {
+		ret = snd_soc_of_parse_audio_routing(card, "samsung,routing");
+		if (ret) {
+			dev_err(card->dev, "snd_soc_of_parse_audio_routing failed: %d", ret);
+			return ret;
+		}
+		ret = snd_soc_dapm_add_routes(dapm, card->of_dapm_routes,
+						card->num_of_dapm_routes);
+		if (ret < 0)
+			dev_err(card->dev, "some routes failed to register: %d", ret);
+	}
 	snd_soc_dapm_ignore_suspend(dapm, "DMIC1");
 	snd_soc_dapm_ignore_suspend(dapm, "DMIC2");
 	snd_soc_dapm_ignore_suspend(dapm, "BLUETOOTH MIC");
@@ -1152,6 +1273,67 @@ static struct snd_soc_card exynos_card = {
 	.num_aux_devs = ARRAY_SIZE(aux_dev),
 };
 
+#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_AUDIO)
+static int sec_dai_link_codecs_component(struct device *dev, struct device_node *np,
+		struct snd_soc_dai_link *dai_link)
+{
+	struct snd_soc_dai_link_component *component;
+	struct of_phandle_args args;
+	int index, num_codecs;
+	int ret;
+
+	num_codecs = of_count_phandle_with_args(np, "sound-dai", "#sound-dai-cells");
+
+	dev_info(dev, "%s : num_codecs : %d dai_link_id : %x\n", __func__, num_codecs, dai_link->id);
+
+	if (num_codecs <= 0)
+		return -EINVAL;
+
+	component = devm_kcalloc(dev, num_codecs, sizeof(*component), GFP_KERNEL);
+	if (!component) {
+		dai_link->codecs = NULL;
+		dai_link->num_codecs = 0;
+		return -ENOMEM;
+	}
+	dai_link->codecs = component;
+	dai_link->num_codecs = num_codecs;
+
+	/* checks each codec component in a given DAI link to see if it has been initialized correctly. */
+	for_each_link_codecs(dai_link, index, component) {
+		dev_info(dev, "%s : dai_link %s[%d] Codec Check\n",
+					__func__, dai_link->name, index);
+
+		of_parse_phandle_with_args(np, "sound-dai",
+						 "#sound-dai-cells", index, &args);
+		component->of_node = args.np;
+
+		ret = snd_soc_get_dai_name(&args, &component->dai_name);
+		if (ret < 0) {
+			dev_err(dev, "%s : dai_link %s[%d] component init fail %d\n",
+					__func__, dai_link->name, index, ret);
+			component->name = "snd-soc-dummy";
+			component->dai_name = "snd-soc-dummy-dai";
+			component->of_node = NULL;
+			dev_err(dev, "%s : Dummy Component (%s : %s)\n",
+					__func__, component->name, component->dai_name);
+		} else {
+			dev_info(dev, "%s : dai_link %s[%d] component init success %d\n",
+					__func__, dai_link->name, index, ret);
+			dev_info(dev, "%s : Normal Component (%s : %s)\n",
+					__func__, component->name, component->dai_name);
+		}
+
+		sdp_boot_print("%s: %s init %s\n",
+				dai_link->name, component->dai_name, ret ? "FAIL" : "SUCCESS");
+		if(dai_link->id == ABOX_UAIF_DAI_ID(0, 1)) {
+			send_amp_ready_ev(index, ret ? INIT_FAIL : INIT_SUCCESS);
+		}
+
+	}
+	return 0;
+}
+#endif
+
 static int read_platform(struct device_node *np, struct device *dev,
 		struct snd_soc_dai_link *dai_link)
 {
@@ -1236,7 +1418,11 @@ static int read_codec(struct device_node *np, struct device *dev,
 		return 0;
 	}
 
+#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_AUDIO)
+	ret = sec_dai_link_codecs_component(dev, np, dai_link);
+#else
 	ret = snd_soc_of_get_dai_link_codecs(dev, np, dai_link);
+#endif
 	of_node_put(np);
 
 	return ret;
@@ -1250,6 +1436,9 @@ static void exynos_register_card_work_func(struct work_struct *work)
 	ret = devm_snd_soc_register_card(card->dev, card);
 	if (ret)
 		dev_err(card->dev, "sound card register failed: %d\n", ret);
+#if IS_ENABLED(CONFIG_SND_SOC_SAMSUNG_AUDIO) && SUPPORT_AMP_READY_CALLBACK
+	audio_register_ready_cb(get_audio_amp_ready);
+#endif
 }
 DECLARE_WORK(exynos_register_card_work, exynos_register_card_work_func);
 

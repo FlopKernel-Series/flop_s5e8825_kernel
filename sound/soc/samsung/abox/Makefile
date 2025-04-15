@@ -19,6 +19,7 @@ snd-soc-samsung-abox-$(CONFIG_SND_SOC_SAMSUNG_ABOX_UDMA) += abox_udma.o
 snd-soc-samsung-abox-gic-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += abox_gic.o abox_util.o
 
 snd-soc-samsung-abox-sync-$(CONFIG_SEC_SND_SYNCHRONIZED_IPC) += abox_synchronized_ipc.o
+snd-soc-samsung-abox-sync-aw-$(CONFIG_SEC_SND_SYNCHRONIZED_IPC_AW) += abox_synchronized_ipc_aw.o
 
 snd-soc-samsung-abox-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += abox_util.o \
 	abox_dump.o abox_log.o abox.o abox_core.o abox_rdma.o\
@@ -33,5 +34,6 @@ endif
 obj-$(CONFIG_SND_SOC_SAMSUNG_ABOX) += snd-soc-samsung-abox-gic.o snd-soc-samsung-abox.o
 
 obj-$(CONFIG_SEC_SND_SYNCHRONIZED_IPC) += snd-soc-samsung-abox-sync.o
+obj-$(CONFIG_SEC_SND_SYNCHRONIZED_IPC_AW) += snd-soc-samsung-abox-sync-aw.o
 
 obj-$(CONFIG_SEC_SND_ADAPTATION) += abox_adaptation.o

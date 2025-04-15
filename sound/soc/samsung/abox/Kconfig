@@ -112,6 +112,13 @@ config SEC_SND_SYNCHRONIZED_IPC
 	  the Samsung SoC ABOX interface. You will also need to
 	  select the audio interfaces to support below.
 
+config SEC_SND_SYNCHRONIZED_IPC_AW
+	tristate "Samsung SYNC IPC AW"
+	help
+	  Say Y or M if you want to add support for external devices attached to
+	  the Samsung SoC ABOX interface. You will also need to
+	  select the audio interfaces to support below.
+
 config SND_SOC_SAMSUNG_ABOX_CHANGE_RMEM_SIZE
 	tristate "Release some reserved memory"
 	depends on SND_SOC_SAMSUNG_ABOX
