@@ -538,6 +538,11 @@ int is_sensor_ctl_update_hall_data(struct is_device_sensor *device,
 	sensor_peri = (struct is_device_sensor_peri *)module->private_data;
 
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.readTimeStamp = halldata->readTimeStamp;
+#ifdef OIS_ANGLE_SUPPORT
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.defaultAngle = halldata->defaultAngle;
+#else
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.counter = halldata->counter;
+#endif
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.counter = halldata->counter;
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.X_AngVel[0] = halldata->X_AngVel[0];
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Y_AngVel[0] = halldata->Y_AngVel[0];
@@ -551,7 +556,20 @@ int is_sensor_ctl_update_hall_data(struct is_device_sensor *device,
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.X_AngVel[3]  = halldata->X_AngVel[3];
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Y_AngVel[3] = halldata->Y_AngVel[3];
 	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Z_AngVel[3] = halldata->Z_AngVel[3];
+#ifdef OIS_ANGLE_SUPPORT
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.X_Angle[0] = halldata->X_Angle[0];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Y_Angle[0] = halldata->Y_Angle[0];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.X_Angle[1] = halldata->X_Angle[1];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Y_Angle[1] = halldata->Y_Angle[1];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.X_Angle[2] = halldata->X_Angle[2];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Y_Angle[2] = halldata->Y_Angle[2];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.X_Angle[3] = halldata->X_Angle[3];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.Y_Angle[3] = halldata->Y_Angle[3];
+	sensor_peri->cis.expecting_aa_dm[dm_index[2]].vendor_oisHallData.index = halldata->index;
 
+	//dbg_ois(" %s :(X_AngVel[0]= %d,X_AngVel[1]=%d,X_AngVel[2]=%d,X_AngVel[3]=%d)\n", __func__, halldata->X_AngVel[0], halldata->X_AngVel[1], halldata->X_AngVel[2], halldata->X_AngVel[3]);
+	//dbg_ois(" %s : (X_Ang[0]= %d,X_Ang[1]=%d,X_Ang[2]=%d,X_Ang[3]=%d)\n",__func__ , halldata->X_Angle[0], halldata->X_Angle[1], halldata->X_Angle[2], halldata->X_Angle[3]);
+#endif
 	return 0;
 }
 #endif
@@ -980,6 +998,9 @@ void is_sensor_ctl_frame_evt(struct is_device_sensor *device)
 					hashkey = module_ctl->sensor_frame_number % IS_TIMESTAMP_HASH_KEY;
 					timestamp = device->timestampboot[hashkey];
 					hall_data.readTimeStamp = timestamp;
+#ifdef OIS_ANGLE_SUPPORT
+				hall_data.index = dm_index[2];
+#endif
 					is_sensor_ctl_update_hall_data(device, module_ctl, dm_index, &hall_data);
 				}
 			}

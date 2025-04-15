@@ -292,6 +292,57 @@ u32 sensor_gc02m1_cis_calc_again_code(u32 permile)
 	return ret;
 }
 
+int sensor_gc02m1_set_flip_register(struct v4l2_subdev *subdev)
+{
+	int ret = 0;
+	struct is_cis *cis = NULL;
+	struct i2c_client *client;
+
+	FIMC_BUG(!subdev);
+
+	cis = (struct is_cis *)v4l2_get_subdevdata(subdev);
+	FIMC_BUG(!cis);
+
+	client = cis->client;
+	if (unlikely(!client)) {
+		err("client is NULL");
+		ret = -EINVAL;
+		return ret;
+	}
+
+	switch (cis->orientation) {
+	case SENSOR_FLIP_X:
+		ret = is_sensor_addr8_write8(client, 0xfe, 0x00);
+		if (ret < 0)
+			goto p_err;
+		ret = is_sensor_addr8_write8(client, 0x17, 0x81);
+		if (ret < 0)
+			goto p_err;
+		break;
+	case SENSOR_FLIP_Y:
+		ret = is_sensor_addr8_write8(client, 0xfe, 0x00);
+		if (ret < 0)
+			goto p_err;
+		ret = is_sensor_addr8_write8(client, 0x17, 0x82);
+		if (ret < 0)
+			goto p_err;
+		break;
+	case SENSOR_FLIP_XY:
+		ret = is_sensor_addr8_write8(client, 0xfe, 0x00);
+		if (ret < 0)
+			goto p_err;
+		ret = is_sensor_addr8_write8(client, 0x17, 0x83);
+		if (ret < 0)
+			goto p_err;
+		break;
+	default:
+		break;
+	}
+
+p_err:
+	return ret;
+}
+
 int sensor_gc02m1_cis_set_exposure_time(struct v4l2_subdev *subdev, u16 multiple_exp)
 {
 	int ret = 0;
@@ -623,11 +674,19 @@ int sensor_gc02m1_cis_set_global_setting(struct v4l2_subdev *subdev)
 {
 	int ret = 0;
 	struct is_cis *cis = NULL;
+	struct i2c_client *client;
 
 	FIMC_BUG(!subdev);
 
 	cis = (struct is_cis *)v4l2_get_subdevdata(subdev);
 	FIMC_BUG(!cis);
+
+	client = cis->client;
+	if (unlikely(!client)) {
+		err("client is NULL");
+		ret = -EINVAL;
+		return ret;
+	}
 
 	info("[%s] global setting start\n", __func__);
 
@@ -638,6 +697,8 @@ int sensor_gc02m1_cis_set_global_setting(struct v4l2_subdev *subdev)
 		err("sensor_gc02m1_set_registers fail!!");
 		goto p_err;
 	}
+
+	ret = sensor_gc02m1_set_flip_register(subdev);
 
 	dbg_sensor(2, "[%s] global setting done\n", __func__);
 
@@ -1902,7 +1963,20 @@ int cis_gc02m1_probe(struct i2c_client *client,
 	cis->cis_ops = &cis_ops;
 
 	/* belows are depend on sensor cis. MUST check sensor spec */
-	cis->bayer_order = OTF_INPUT_ORDER_BAYER_RG_GB;
+	switch (cis->orientation) {
+	case SENSOR_FLIP_X:
+		cis->bayer_order = OTF_INPUT_ORDER_BAYER_GR_BG;
+		break;
+	case SENSOR_FLIP_Y:
+		cis->bayer_order = OTF_INPUT_ORDER_BAYER_GB_RG;
+		break;
+	case SENSOR_FLIP_XY:
+		cis->bayer_order = OTF_INPUT_ORDER_BAYER_BG_GR;
+		break;
+	default:
+		cis->bayer_order = OTF_INPUT_ORDER_BAYER_RG_GB;
+		break;
+	}
 
 	/* Use total gain instead of using dgain */
 	cis->use_dgain = false;

@@ -1269,10 +1269,19 @@ struct osdInfo {
 
 struct oisHallInfo {
 	uint64_t readTimeStamp;
+#ifdef OIS_ANGLE_SUPPORT
+	uint32_t defaultAngle;
+#else
 	uint32_t counter;
+#endif
 	int16_t X_AngVel[4];
 	int16_t Y_AngVel[4];
 	int16_t Z_AngVel[4];
+#ifdef OIS_ANGLE_SUPPORT
+	int16_t X_Angle[4];
+	int16_t Y_Angle[4];
+	uint32_t index;
+#endif
 };
 
 struct camera2_aa_dm {
@@ -1320,9 +1329,16 @@ struct camera2_aa_dm {
 	uint32_t			ispHwTargetFpsRange[2];
 	uint32_t			vendor_aeDarkBoostGain;
 	enum aa_aeb_state	vendor_aebState;
+#ifdef OIS_ANGLE_SUPPORT
+	uint32_t			vendor_skipAFStateCapture;
+#endif
 	uint32_t			vendor_nightModeSuggest;    // 0(off), 1(on)
 	enum				aa_night_indicator vendor_nightIndicator;
+#ifdef OIS_ANGLE_SUPPORT
+	uint32_t			vendor_reserved[23];
+#else
 	uint32_t			vendor_reserved[29];
+#endif
 
 	// For dual
 	uint32_t			vendor_wideTeleConvEv;

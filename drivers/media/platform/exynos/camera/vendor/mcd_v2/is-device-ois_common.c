@@ -955,6 +955,17 @@ void is_ois_parsing_raw_data(struct is_core *core, uint8_t *buf, long efs_size, 
 	return;
 }
 
+void is_ois_set_center_shift(struct is_core *core, int16_t *value)
+{
+	struct is_device_ois *ois_device = NULL;
+	struct is_device_sensor *device = NULL;
+
+	ois_device = is_ois_get_device(core);
+	device = &core->sensor[0];
+
+	CALL_OISOPS(ois_device, ois_center_shift, device->subdev_mcu, value);
+}
+
 #ifdef USE_OIS_SLEEP_MODE
 void is_ois_set_oissel_info(int oissel)
 {

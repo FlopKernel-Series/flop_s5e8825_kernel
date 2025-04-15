@@ -526,6 +526,13 @@ int sensor_cis_parse_dt(struct device *dev, struct v4l2_subdev *subdev)
 	}
 	probe_info("%s f-number %d\n", __func__, cis->aperture_num);
 
+	ret = of_property_read_u32(dnode, "orientation", &cis->orientation);
+	if (ret) {
+		warn("orientation read is fail(%d), use default value", ret);
+		cis->orientation = 0;
+	}
+	probe_info("%s orientation %d\n", __func__, cis->orientation);
+
 	cis->use_initial_ae = of_property_read_bool(dnode, "use_initial_ae");
 	probe_info("%s use initial_ae(%d)\n", __func__, cis->use_initial_ae);
 

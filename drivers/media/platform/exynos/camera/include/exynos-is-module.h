@@ -25,6 +25,7 @@ struct exynos_sensor_pin {
 	char *name;
 	u32 act;
 	u32 voltage;
+	u32 voltage_max;
 
 	u32 shared_rsc_type;
 	spinlock_t *shared_rsc_slock;

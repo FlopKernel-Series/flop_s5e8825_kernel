@@ -1620,6 +1620,38 @@ p_err:
 }
 //#endif
 
+#ifdef USE_OIS_RESET_AUTOTEST
+void is_ois_mcu_reset_sine_wavecheck(struct is_core *core) {
+	u8 val;
+	u16 reg;
+	int ret = 0, retries = 100;
+	struct i2c_client *client = NULL;
+	struct is_mcu *mcu = NULL;
+
+	client = is_mcu_i2c_get_client(core);
+	mcu = i2c_get_clientdata(client);
+
+	info("%s begin", __func__);
+	is_ois_set_reg(client, R_OIS_CMD_START_WAVE_CHECK, 0x00);
+	msleep(10);
+
+	do {
+		reg = R_OIS_CMD_STATUS;
+		ret = is_ois_get_reg(client, reg, &val);
+		if (ret != 0) {
+			MCU_GET_ERR_PRINT(reg);
+			return;
+		}
+
+		msleep(20);
+		if (--retries < 0) {
+			err("%s Read status failed!!!!, data = 0x%04x\n", __func__, val);
+			break;
+		}
+	} while (val != 0x01);
+}
+#endif
+
 /* Which version of the function to call */
 void is_mcu_fw_update(struct is_core *core)
 {
@@ -1683,7 +1715,10 @@ bool is_ois_sine_wavecheck_mcu(struct is_core *core,
 			break;
 		}
 	} while (val);
-
+#ifdef USE_OIS_RESET_AUTOTEST
+	if (val)
+		goto exit;
+#endif
 	reg = R_OIS_CMD_AUTO_TEST_RESULT;
 	ret = is_ois_get_reg(client, reg, &buf);
 	if (ret) {
@@ -1746,12 +1781,13 @@ bool is_ois_sine_wavecheck_mcu(struct is_core *core,
 		cam_ois_set_aois_fac_mode_off();
 #endif
 
-	dbg_ois("threshold = %d, sinx = %d, siny = %d, sinx_count = %d, syny_count = %d\n",
-		threshold, *sinx, *siny, sinx_count, siny_count);
+	info("%s threshold = %d, sinx = %d, siny = %d, sinx_count = %d, syny_count = %d\n",
+		__func__, threshold, *sinx, *siny, sinx_count, siny_count);
 
 	if (buf == 0x0) {
 		return true;
 	} else {
+		err("Ois auto test result is abnormal (0x%X)", buf);
 		return false;
 	}
 
@@ -1787,6 +1823,12 @@ bool is_ois_auto_test_mcu(struct is_core *core,
 	mcu = i2c_get_clientdata(client);
 
 	value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
+#ifdef USE_OIS_RESET_AUTOTEST
+	if (value == false) {
+		is_ois_mcu_reset_sine_wavecheck(core);
+		value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
+	}
+#endif
 	if (*sin_x == -1 && *sin_y == -1) {
 		err("OIS device is not prepared.");
 		*x_result = false;
@@ -2474,7 +2516,7 @@ int is_ois_init_mcu(struct v4l2_subdev *subdev)
 			if (ret < 0)
 				err("ois coef data write is fail");
 #ifdef CAMERA_2ND_OIS
-			/* ENABLE DUAL SHIFT */
+			/* ENABLE DUAL SHIFT for ois_center_shift */
 			ret = is_ois_set_reg(client, R_OIS_CMD_ENABLE_DUALCAL, 0x01);
 			if (ret < 0)
 				err("ois dual shift is fail");
@@ -3775,6 +3817,50 @@ exit:
 }
 #endif
 
+void ois_mcu_set_center_shift(struct v4l2_subdev *subdev, int16_t *shiftValue)
+{
+	int ret = 0;
+	int i = 0;
+	int j = 0;
+	u8 data[2];
+	struct is_mcu *mcu = NULL;
+	struct i2c_client *client = NULL;
+	u16 reg;
+	WARN_ON(!subdev);
+
+	mcu = (struct is_mcu *)v4l2_get_subdevdata(subdev);
+	if (!mcu) {
+		err("%s, mcu is NULL", __func__);
+		return;
+	}
+
+	client = mcu->client;
+	if (!client) {
+		err("client is NULL");
+		return;
+	}
+
+	info("%s wide x = %hd, wide y = %hd, tele x = %hd, tele y = %hd, tele2 x = %hd, tele2 y = %hd",
+		__func__, shiftValue[0], shiftValue[1], shiftValue[2], shiftValue[3], shiftValue[4], shiftValue[5]);
+
+	for (i = 0; i < 6; i++) {
+		data[0] = shiftValue[i] & 0xFF;
+		data[1] = (shiftValue[i] >> 8) & 0xFF;
+		reg = R_OIS_CMD_XCOEF_M1_1 + j++;
+		ret = is_ois_set_reg(client, reg, data[0]);
+		if (ret) {
+			MCU_SET_ERR_PRINT(reg);
+			return;
+		}
+		reg = R_OIS_CMD_XCOEF_M1_1 + j++;
+		ret = is_ois_set_reg(client, reg, data[1]);
+		if (ret) {
+			MCU_SET_ERR_PRINT(reg);
+			return;
+		}		
+	}
+}
+
 int is_ois_shift_mcu(struct v4l2_subdev *subdev)
 {
 	struct is_ois *ois = NULL;
@@ -4148,8 +4234,13 @@ int ois_mcu_get_hall_data_mcu(struct v4l2_subdev *subdev, struct is_ois_hall_dat
 	struct is_ois *ois = NULL;
 	struct is_mcu *mcu = NULL;
 	struct i2c_client *client = NULL;
+#ifdef OIS_ANGLE_SUPPORT
+	u16 hall_data[24] = {0, };
+	u8 arr[52];
+#else
 	u16 hall_data[12] = {0, };
 	u8 arr[28];
+#endif
 	int count = 0;
 	int i = 0;
 	u16 reg;
@@ -4174,7 +4265,11 @@ int ois_mcu_get_hall_data_mcu(struct v4l2_subdev *subdev, struct is_ois_hall_dat
 	I2C_MUTEX_LOCK(ois->i2c_lock);
 
 	reg = R_OIS_CMD_VDIS_TIME_STAMP_1;
+#ifdef OIS_ANGLE_SUPPORT
+	ret = is_ois_get_reg_multi(client, reg, &arr[0], 52);
+#else
 	ret = is_ois_get_reg_multi(client, reg, &arr[0], 28);
+#endif
 	if (ret) {
 		MCU_GET_ERR_PRINT(reg);
 		I2C_MUTEX_UNLOCK(ois->i2c_lock);
@@ -4182,14 +4277,23 @@ int ois_mcu_get_hall_data_mcu(struct v4l2_subdev *subdev, struct is_ois_hall_dat
 	}
 	I2C_MUTEX_UNLOCK(ois->i2c_lock);
 
-	halldata->counter = (arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0];
+#ifdef OIS_ANGLE_SUPPORT
+	halldata->defaultAngle = (arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0];
+	for (i = 4; i < 52; i += 2) {
+		hall_data[count] = arr[i] & 0x00ff;
+		hall_data[count] |= (arr[i + 1] << 8) & 0xff00;
 
+		count++;
+	}
+#else
+	halldata->counter = (arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0];
 	for (i = 4; i < 28; i += 2) {
 		hall_data[count] = arr[i] & 0x00ff;
 		hall_data[count] |= (arr[i + 1] << 8) & 0xff00;
 
 		count++;
 	}
+#endif
 	halldata->X_AngVel[0] = hall_data[0];
 	halldata->Y_AngVel[0] = hall_data[1];
 	halldata->Z_AngVel[0] = hall_data[2];
@@ -4202,6 +4306,23 @@ int ois_mcu_get_hall_data_mcu(struct v4l2_subdev *subdev, struct is_ois_hall_dat
 	halldata->X_AngVel[3] = hall_data[9];
 	halldata->Y_AngVel[3] = hall_data[10];
 	halldata->Z_AngVel[3] = hall_data[11];
+#ifdef OIS_ANGLE_SUPPORT
+	halldata->X_Angle[0] = hall_data[12];
+	halldata->Y_Angle[0] = hall_data[13];
+	//halldata->Z_Angle[0] = hall_data[14]; //not required
+	halldata->X_Angle[1] = hall_data[15];
+	halldata->Y_Angle[1] = hall_data[16];
+	//halldata->Z_Angle[1] = hall_data[17]; //not required
+	halldata->X_Angle[2] = hall_data[18];
+	halldata->Y_Angle[2] = hall_data[19];
+	//halldata->Z_Angle[2] = hall_data[20]; //not required
+	halldata->X_Angle[3] = hall_data[21];
+	halldata->Y_Angle[3] = hall_data[22];
+	//halldata->Z_Angle[3] = hall_data[23]; //not required
+	
+	dbg_ois("%s :(X_AngVel[0]= %d,X_AngVel[1]=%d,X_AngVel[2]=%d,X_AngVel[3]=%d)\n", __func__, halldata->X_AngVel[0], halldata->X_AngVel[1], halldata->X_AngVel[2], halldata->X_AngVel[3]);
+	dbg_ois("%s :(X_Angle[0]= %d,X_Angle[1]=%d,X_Angle[2]=%d,X_AngVel[3]=%d)\n", __func__, halldata->X_Angle[0], halldata->X_Angle[1], halldata->X_Angle[2], halldata->X_Angle[3]);
+#endif
 
 	return ret;
 }
@@ -4453,7 +4574,10 @@ static struct is_ois_ops ois_ops_mcu = {
 	.ois_read_cal_checksum = is_ois_read_cal_checksum_mcu,
 	.ois_set_coef = is_ois_set_coef_mcu,
 	.ois_read_fw_ver = is_mcu_read_fw_ver,
-	.ois_center_shift = is_ois_shift_mcu,
+	// OLD ONE
+	// .ois_center_shift = is_ois_shift_mcu,
+	// FIXME!!!
+	.ois_center_shift = ois_mcu_set_center_shift,
 	.ois_set_center = is_ois_set_centering_mcu,
 	.ois_read_mode = is_read_ois_mode_mcu,
 	.ois_calibration_test = is_ois_gyro_cal_mcu,

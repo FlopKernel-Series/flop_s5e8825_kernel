@@ -1098,10 +1098,8 @@ int sensor_gc5035_cis_stream_on(struct v4l2_subdev *subdev)
 	}
 	I2C_MUTEX_UNLOCK(cis->i2c_lock);
 
-	if (core->scenario == IS_SCENARIO_SECURE) {
-		/* Delay is required to avoid mipi overflow for face recoginition in low light */
-		msleep(50);
-	}
+	/* Workaround:Delay is required to avoid mipi overflow/SNR for all scenario*/
+	msleep(50);
 
 	cis_data->stream_on = true;
 
