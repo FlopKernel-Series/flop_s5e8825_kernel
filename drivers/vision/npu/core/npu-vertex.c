@@ -283,8 +283,6 @@ enum npu_vertex_state check_done_state(u32 state)
 		ret = NPU_VERTEX_GRAPH;
 	if (state & BIT(NPU_VERTEX_FORMAT))
 		ret = NPU_VERTEX_FORMAT;
-	if (state & BIT(NPU_VERTEX_STREAMON))
-		ret = NPU_VERTEX_STREAMON;
 	if (state & BIT(NPU_VERTEX_STREAMOFF))
 		ret = NPU_VERTEX_STREAMOFF;
 	return ret;
@@ -315,9 +313,8 @@ static int npu_vertex_close(struct file *file)
 	switch (done_state) {
 	case NPU_VERTEX_STREAMOFF:
 		goto normal_complete;
-	case NPU_VERTEX_STREAMON:
-		goto force_streamoff;
 	case NPU_VERTEX_FORMAT:
+		goto force_streamoff;
 	case NPU_VERTEX_GRAPH:
 #ifdef CONFIG_NPU_USE_BOOT_IOCTL
 	case NPU_VERTEX_POWER:
@@ -475,33 +472,11 @@ p_err:
 static int npu_vertex_flush(struct file *file)
 {
 	int ret = 0;
-	struct npu_vertex_ctx *vctx = file->private_data;
-	struct npu_session *session = container_of(
-			vctx, struct npu_session, vctx);
-	struct npu_vertex *vertex = vctx->vertex;
-	struct mutex *lock = &vertex->lock;
 
-	if (fatal_signal_pending(current) || (current->exit_code != 0)) {
-		mutex_lock(lock);
-		npu_info("Flush caused by forced terminated.\n");
-#ifdef CONFIG_NPU_USE_BOOT_IOCTL
-		if (!(vctx->state & BIT(NPU_VERTEX_STREAMOFF)) &&
-				(vctx->state & BIT(NPU_VERTEX_POWER))) {
-#else
-		if (!(vctx->state & BIT(NPU_VERTEX_STREAMOFF))) {
-#endif
-			ret = __force_streamoff(file);
-			if (ret)
-				npu_err("fail(%d) in flush, __force_streamoff\n", ret);
-		}
+	if (fatal_signal_pending(current) || (current->exit_code != 0))
+		npu_dump("Flush caused by forced terminated. PID(%d), CUR(%s), EXIT_CODE(%d)\n",
+				task_pid_nr(current), current->comm, current->exit_code);
 
-		ret = npu_session_flush(session);
-		if (ret)
-			npu_err("fail(%d) in npu_session_flush\n", ret);
-		mutex_unlock(lock);
-	}
-
-	npu_idbg("%s: (%d)\n", vctx, __func__, ret);
 	return ret;
 }
 
@@ -561,6 +536,30 @@ int npu_vertex_probe(struct npu_vertex *vertex, struct device *parent)
 	probe_info("%s: (%d)\n", __func__, ret);
 
 p_err:
+	return ret;
+}
+
+static int npu_streamon(struct npu_vertex_ctx *vctx)
+{
+	int ret = 0;
+	struct npu_vertex *vertex = vctx->vertex;
+	struct npu_queue *queue = &vctx->queue;
+
+	ret = __vref_get(&vertex->start_cnt);
+	if (ret) {
+		npu_err("fail(%d) in vref_get\n", ret);
+		goto p_err;
+	}
+
+	ret = npu_queue_start(queue);
+	if (ret) {
+		npu_ierr("fail(%d) in npu_queue_start\n", vctx, ret);
+		goto p_err;
+	}
+
+p_err:
+	npu_iinfo("%s: (%d), start_ref(%d)\n", vctx, __func__, ret,
+						atomic_read(&vertex->start_cnt.refcount));
 	return ret;
 }
 
@@ -646,6 +645,12 @@ static int npu_vertex_s_format(struct file *file, struct vs4l_format_list *flist
 		if (ret == NPU_ERR_NO_ERROR) {
 			vctx->state |= BIT(NPU_VERTEX_FORMAT);
 		} else {
+			goto p_err;
+		}
+
+		ret = npu_streamon(vctx);
+		if (ret) {
+			npu_ierr("npu_stream_on is fail(%d)\n", vctx, ret);
 			goto p_err;
 		}
 	}
@@ -762,7 +767,7 @@ static int npu_vertex_qbuf(struct file *file, struct vs4l_container_list *clist)
 		return -ERESTARTSYS;
 	}
 
-	if (!(vctx->state & BIT(NPU_VERTEX_STREAMON))) {
+	if (!(vctx->state & BIT(NPU_VERTEX_FORMAT))) {
 		npu_ierr("(%d) invalid state(%X)\n", vctx, clist->direction, vctx->state);
 		ret = -EINVAL;
 		goto p_err;
@@ -796,7 +801,7 @@ static int npu_vertex_dqbuf(struct file *file, struct vs4l_container_list *clist
 		npu_ierr("fail in mutex_lock_interruptible\n", vctx);
 		return -ERESTARTSYS;
 	}
-	if (!(vctx->state & BIT(NPU_VERTEX_STREAMON))) {
+	if (!(vctx->state & BIT(NPU_VERTEX_FORMAT))) {
 		npu_ierr("(%d) invalid state(%X)\n", vctx, clist->direction, vctx->state);
 		ret = -EINVAL;
 		goto p_err;
@@ -891,33 +896,9 @@ p_err:
 
 static int npu_vertex_streamon(struct file *file)
 {
+	/* No OP */
 	int ret = 0;
 	struct npu_vertex_ctx *vctx = file->private_data;
-	struct npu_vertex *vertex = vctx->vertex;
-#ifdef CONFIG_NPU_SECURE_MODE
-	struct npu_device *device = container_of(vertex, struct npu_device, vertex);
-#endif
-	struct npu_queue *queue = &vctx->queue;
-	struct mutex *lock = &vctx->lock;
-	struct npu_session *session = container_of(vctx, struct npu_session, vctx);
-
-	/* check npu_device emergency error */
-	ret = check_emergency_vctx(vctx);
-	if (ret)
-		return ret;
-
-#ifdef CONFIG_NPU_SECURE_MODE
-	if (device->is_secure) {
-		npu_ierr("Aleady in secure mode; will not honour a blocking call\n", vctx);
-		return -EINVAL;
-	}
-#endif
-
-	profile_point1(PROBE_ID_DD_NW_VS4L_ENTER, 0, 0, NPU_NW_CMD_STREAMON);
-	if (mutex_lock_interruptible(lock)) {
-		npu_ierr("fail in mutex_lock_interruptible\n", vctx);
-		return -ERESTARTSYS;
-	}
 
 	if (vctx->state & BIT(NPU_VERTEX_STREAMON)) {
 		npu_ierr("invalid state(%X)\n", vctx, vctx->state);
@@ -925,41 +906,8 @@ static int npu_vertex_streamon(struct file *file)
 		goto p_err;
 	}
 
-	if (!(vctx->state & BIT(NPU_VERTEX_FORMAT))
-	    || !(vctx->state & BIT(NPU_VERTEX_GRAPH))) {
-		npu_ierr("invalid state(%X)\n", vctx, vctx->state);
-		ret = -EINVAL;
-		goto p_err;
-	}
-
-	ret = __vref_get(&vertex->start_cnt);
-	if (ret) {
-		npu_err("fail(%d) in vref_get\n", ret);
-		goto p_err;
-	}
-
-	ret = npu_queue_start(queue);
-	if (ret) {
-		npu_ierr("fail(%d) in npu_queue_start\n", vctx, ret);
-		goto p_err;
-	}
-
-	ret = npu_session_NW_CMD_STREAMON(session);
-	if (ret) {
-		npu_ierr("fail(%d) in npu_session_NW_CMD_STREAMON\n", vctx, ret);
-		goto p_err;
-	}
-	ret = chk_nw_result_no_error(session);
-	if (ret == NPU_ERR_NO_ERROR) {
-		vctx->state |= BIT(NPU_VERTEX_STREAMON);
-	} else {
-		goto p_err;
-	}
+	vctx->state |= BIT(NPU_VERTEX_STREAMON);
 p_err:
-	npu_iinfo("%s: (%d), start_ref(%d)\n", vctx, __func__, ret,
-						atomic_read(&vertex->start_cnt.refcount));
-	mutex_unlock(lock);
-	profile_point1(PROBE_ID_DD_NW_VS4L_RET, 0, 0, NPU_NW_CMD_STREAMON);
 	return ret;
 }
 
@@ -993,12 +941,6 @@ static int npu_vertex_streamoff(struct file *file)
 		return -ERESTARTSYS;
 	}
 
-	if (!(vctx->state & BIT(NPU_VERTEX_STREAMON))) {
-		npu_ierr("invalid state(0x%X)\n", vctx, vctx->state);
-		ret = -EINVAL;
-		goto p_err;
-	}
-
 	if (!(vctx->state & BIT(NPU_VERTEX_FORMAT))
 	    || !(vctx->state & BIT(NPU_VERTEX_GRAPH))) {
 		npu_ierr("invalid state(%X)\n", vctx, vctx->state);
@@ -1020,7 +962,7 @@ static int npu_vertex_streamoff(struct file *file)
 	ret = chk_nw_result_no_error(session);
 	if (ret == NPU_ERR_NO_ERROR) {
 		vctx->state |= BIT(NPU_VERTEX_STREAMOFF);
-		vctx->state &= (~BIT(NPU_VERTEX_STREAMON));
+		vctx->state &= (~BIT(NPU_VERTEX_FORMAT));
 	} else {
 		goto p_err;
 	}
@@ -1618,7 +1560,7 @@ static int __force_streamoff(struct file *file)
 		ret = chk_nw_result_no_error(session);
 		if (ret == NPU_ERR_NO_ERROR) {
 			vctx->state |= BIT(NPU_VERTEX_STREAMOFF);
-			vctx->state &= (~BIT(NPU_VERTEX_STREAMON));
+			vctx->state &= (~BIT(NPU_VERTEX_FORMAT));
 		} else
 			npu_warn("%s() : NPU DEVICE IS EMERGENCY ERROR\n", __func__);
 	} else {

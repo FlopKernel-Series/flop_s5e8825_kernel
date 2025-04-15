@@ -868,26 +868,6 @@ p_err:
 	return ret;
 }
 
-int _undo_streamon_each_state(struct npu_session *session)
-{
-	int ret = 0;
-
-	BUG_ON(!session);
-
-	if (unlikely(session->ss_state < BIT(NPU_SESSION_STATE_FORMAT_OT))) {
-		ret = -EINVAL;
-		goto p_err;
-	}
-
-	if (session->ss_state <= BIT(NPU_SESSION_STATE_START))
-		goto release_streamon;
-
-release_streamon:
-
-p_err:
-	return ret;
-}
-
 int _undo_streamoff_each_state(struct npu_session *session)
 {
 	int ret = 0;
@@ -2754,22 +2734,6 @@ int npu_session_start(struct npu_queue *queue)
 
 	session->ss_state |= BIT(NPU_SESSION_STATE_START);
 	return ret;
-}
-
-int npu_session_NW_CMD_STREAMON(struct npu_session *session)
-{
-	nw_cmd_e nw_cmd = NPU_NW_CMD_STREAMON;
-
-	BUG_ON(!session);
-
-	profile_point1(PROBE_ID_DD_NW_RECEIVED, session->uid, 0, nw_cmd);
-	session->nw_result.result_code = NPU_NW_JUST_STARTED;
-	npu_session_put_nw_req(session, nw_cmd);
-
-	wait_event(session->wq, session->nw_result.result_code != NPU_NW_JUST_STARTED);
-	profile_point1(PROBE_ID_DD_NW_NOTIFIED, session->uid, 0, nw_cmd);
-
-	return 0;
 }
 
 int npu_session_streamoff(struct npu_queue *queue)
