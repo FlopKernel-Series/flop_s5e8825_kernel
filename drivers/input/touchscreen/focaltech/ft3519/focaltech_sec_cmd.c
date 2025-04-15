@@ -647,7 +647,10 @@ static void fw_update(void *device_data)
 	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
 	int ret = 0, update_type;
 
-	fts_release_all_finger();
+	if (false)
+		fts_release_all_finger();
+	else
+		old_fts_release_all_finger();
 
 	update_type = sec->cmd_param[0];
 
