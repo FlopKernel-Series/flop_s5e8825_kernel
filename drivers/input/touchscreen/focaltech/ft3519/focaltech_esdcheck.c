@@ -92,7 +92,10 @@ int idc_esdcheck_lcderror(struct fts_ts_data *ts_data)
 	if ( (tp_need_recovery == 1) && (lcd_need_reset == 0) ) {
 		tp_need_recovery = 0;
 		/* LCD reset, need recover TP state */
-		fts_release_all_finger();
+		if (false)
+			fts_release_all_finger();
+		else
+			old_fts_release_all_finger();
 		fts_tp_state_recovery(ts_data);
 	}
 
@@ -125,7 +128,10 @@ static int fts_esdcheck_tp_reset(struct fts_ts_data *ts_data)
 	fts_esdcheck_data.hardware_reset_cnt++;
 
 	fts_reset_proc(200);
-	fts_release_all_finger();
+	if (false)
+		fts_release_all_finger();
+	else
+		old_fts_release_all_finger();
 	fts_tp_state_recovery(ts_data);
 
 	FTS_FUNC_EXIT();

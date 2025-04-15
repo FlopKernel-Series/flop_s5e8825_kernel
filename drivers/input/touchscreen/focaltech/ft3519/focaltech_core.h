@@ -97,6 +97,7 @@ extern struct device *ptsp;
 #define FTS_MAX_KEYS                        4
 #define FTS_KEY_DIM                         10
 #define FTS_ONE_TCH_LEN                     16
+#define FTS_ONE_TCH_LEN_OLD                 6
 #define FTS_TOUCH_DATA_LEN  (FTS_MAX_POINTS_SUPPORT * FTS_ONE_TCH_LEN + 3)
 #define IRQ_EVENT_HEAD_LEN			1
 
@@ -381,6 +382,7 @@ int fts_reset_proc(int hdelayms);
 int fts_check_cid(struct fts_ts_data *ts_data, u8 id_h);
 int fts_wait_tp_to_valid(void);
 void fts_release_all_finger(void);
+void old_fts_release_all_finger(void);
 void fts_tp_state_recovery(struct fts_ts_data *ts_data);
 int fts_ex_mode_init(struct fts_ts_data *ts_data);
 int fts_ex_mode_exit(struct fts_ts_data *ts_data);
