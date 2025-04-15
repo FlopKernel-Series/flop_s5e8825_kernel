@@ -1360,6 +1360,7 @@ static int parse_power_seq_data(struct exynos_platform_is_module *pdata, struct 
 			of_property_read_u32_index(node_table[i], "pin", idx_prop++, &pin->value);
 			of_property_read_u32_index(node_table[i], "pin", idx_prop++, &pin->delay);
 			of_property_read_u32_index(node_table[i], "pin", idx_prop++, &pin->voltage);
+			of_property_read_u32_index(node_table[i], "pin", idx_prop++, &pin->voltage_max);
 
 			idx_prop = 0;
 			if (of_find_property(node_table[i], "share", NULL)) {
@@ -1419,6 +1420,30 @@ static int parse_power_seq_data(struct exynos_platform_is_module *pdata, struct 
 							err("regulator_force_disable fail(%d)\n", ret);
 					}
 					regulator_put(regulator);
+				}
+			}
+
+			if (pin->act == PIN_REGULATOR_RANGE) {
+				bool reg_cap = true;
+				struct is_module_regulator *is_module_regulator;
+
+				list_for_each_entry(is_module_regulator, &core->resourcemgr.regulator_list, list) {
+					if (!strcmp(is_module_regulator->name, pin->name)) {
+						reg_cap = false;
+						break;
+					}
+				}
+
+				if (reg_cap) {
+					is_module_regulator = kzalloc(sizeof(struct is_module_regulator), GFP_KERNEL);
+					if (!is_module_regulator) {
+						err("%s: failed to alloc is_regulator", __func__);
+						return -ENOMEM;
+					}
+
+					is_module_regulator->name = pin->name;
+					list_add_tail(&is_module_regulator->list, &core->resourcemgr.regulator_list);
+					dbg("%s is registered in regulator_list", is_module_regulator->name);
 				}
 			}
 

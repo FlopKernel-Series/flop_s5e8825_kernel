@@ -179,6 +179,66 @@ static int is_module_regulator_ctrl(struct is_module_regulator *imr,
 	return 0;
 }
 
+static int is_module_regulator_ctrl_range(struct is_module_regulator *imr,
+				struct exynos_sensor_pin *pin_ctrls,
+				struct is_module_enum *module,
+				struct device *dev)
+{
+	char *name = pin_ctrls->name;
+	u32 delay = pin_ctrls->delay;
+	u32 value = pin_ctrls->value;
+	u32 vol = pin_ctrls->voltage;
+	u32 vol_max = pin_ctrls->voltage_max;
+	int ret;
+
+	if (value) {
+		if (!imr->regulator)
+			imr->regulator = devm_regulator_get(dev, name);
+
+		if (IS_ERR_OR_NULL(imr->regulator)) {
+			merr("regulator_get(%s) fail", module, name);
+
+			ret = PTR_ERR(imr->regulator);
+			imr->regulator = NULL;
+			return ret;
+		}
+
+		if (vol > 0) {
+			minfo("regulator_set_voltage(%d, %d)", module, vol, vol_max);
+			ret = regulator_set_voltage(imr->regulator, vol, vol_max);
+			if (ret)
+				merr("regulator_set_voltage(%d) fail", module, ret);
+		}
+
+		if (pin_ctrls->actuator_i2c_delay > 0)
+			module->act_available_time = ktime_add_us(ktime_get_boottime(),
+				pin_ctrls->actuator_i2c_delay);
+	} else {
+		if (IS_ERR_OR_NULL(imr->regulator)) {
+			merr("regulator(%s) get failed", module, name);
+			return PTR_ERR(imr->regulator);
+		}
+
+		if (vol > 0) {
+			minfo("regulator_set_voltage(%d, %d)", module, vol, vol_max);
+			ret = regulator_set_voltage(imr->regulator, vol, vol_max);
+			if (ret)
+				merr("regulator_set_voltage(%d) fail", module, ret);
+		}
+
+		if (pin_ctrls->actuator_i2c_delay > 0)
+			module->act_available_time = ktime_add_us(ktime_get_boottime(),
+				pin_ctrls->actuator_i2c_delay);
+
+		devm_regulator_put(imr->regulator);
+		imr->regulator = NULL;
+	}
+
+	udelay(delay);
+
+	return 0;
+}
+
 static int is_module_regulator_opt(struct exynos_sensor_pin *pin_ctrls,
 				struct is_module_enum *module,
 				struct device *dev)
@@ -374,6 +434,17 @@ static int exynos_is_module_pin_control(struct is_module_enum *module,
 			}
 
 			return is_module_regulator_ctrl(imr, pin_ctrls, module, dev);
+		}
+		break;
+	case PIN_REGULATOR_RANGE:
+		{
+			struct is_module_regulator *imr = NULL;
+			list_for_each_entry(imr, &resourcemgr->regulator_list, list) {
+				if (!strcmp(imr->name, name))
+					break;
+			}
+
+			return is_module_regulator_ctrl_range(imr, pin_ctrls, module, dev);
 		}
 		break;
 	case PIN_REGULATOR_OPTION:

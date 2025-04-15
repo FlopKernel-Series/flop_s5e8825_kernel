@@ -706,10 +706,19 @@ struct is_long_term_expo_mode {
 
 struct is_ois_hall_data {
 	u64 readTimeStamp;
+#ifdef OIS_ANGLE_SUPPORT
+	u32 defaultAngle;
+#else
 	u32 counter;
+#endif
 	int16_t X_AngVel[4];
 	int16_t Y_AngVel[4];
 	int16_t Z_AngVel[4];
+#ifdef OIS_ANGLE_SUPPORT
+	int16_t X_Angle[4];
+	int16_t Y_Angle[4];
+	uint32_t index;
+#endif
 };
 
 /* OIS */
@@ -760,7 +769,6 @@ struct is_ois_ops {
 #else
 	int (*ois_read_fw_ver)(struct is_core *core, char *name, char *ver);
 #endif
-	int (*ois_center_shift)(struct v4l2_subdev *subdev);
 	int (*ois_set_center)(struct v4l2_subdev *subdev);
 	u8 (*ois_read_mode)(struct v4l2_subdev *subdev);
 #if defined (CONFIG_CAMERA_USE_MCU) || defined (CONFIG_CAMERA_USE_INTERNAL_MCU)
@@ -779,6 +787,7 @@ struct is_ois_ops {
 	bool(*ois_get_active)(void);
 	int(*ois_read_ext_clock)(struct v4l2_subdev *subdev, u32 *clock);
 	void(*ois_parsing_raw_data)(uint8_t *buf, long efs_size, long *raw_data_x, long *raw_data_y, long *raw_data_z);
+	void (*ois_center_shift)(struct v4l2_subdev *subdev, int16_t *value);
 };
 
 struct is_sensor_interface;

@@ -69,6 +69,7 @@
 #define PIN_I2C		6
 #define PIN_MCLK	7
 #define PIN_REGULATOR_OPTION	8
+#define PIN_REGULATOR_RANGE	9
 
 #define MATCH_ENTRY_MAX	3
 #define MATCH_GROUP_MAX	5
