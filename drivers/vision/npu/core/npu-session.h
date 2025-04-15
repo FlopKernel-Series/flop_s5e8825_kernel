@@ -194,7 +194,6 @@ void npu_session_ion_sync_for_device(struct npu_memory_buffer *pbuf, off_t offse
 					enum dma_data_direction dir);
 int npu_session_NW_CMD_LOAD(struct npu_session *session);
 int npu_session_NW_CMD_UNLOAD(struct npu_session *session);
-int npu_session_NW_CMD_STREAMON(struct npu_session *session);
 int npu_session_NW_CMD_STREAMOFF(struct npu_session *session);
 #ifdef CONFIG_NPU_USE_BOOT_IOCTL
 #ifdef CONFIG_NPU_USE_HW_DEVICE
