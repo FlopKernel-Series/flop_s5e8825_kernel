@@ -1230,6 +1230,9 @@ int exynos_pm_qos_update_target(struct exynos_pm_qos_constraints *c, struct plis
 	curr_value = exynos_pm_qos_get_value(c);
 	exynos_pm_qos_set_value(c, curr_value);
 
+	// Save PM QoS Log
+	exynos_pm_qos_update_log(c, req, action);
+
 	spin_unlock_irqrestore(&c->lock, flags);
 
 //	trace_pm_qos_update_target((enum pm_qos_req_action)action, prev_value, curr_value);
@@ -1242,9 +1245,6 @@ int exynos_pm_qos_update_target(struct exynos_pm_qos_constraints *c, struct plis
 	} else {
 		ret = 0;
 	}
-
-	// Save PM QoS Log
-	exynos_pm_qos_update_log(c, req, action);
 
 	if (!nosync)
 		mutex_unlock(&c->mlock);
