@@ -1323,8 +1323,10 @@ static int sec_dai_link_codecs_component(struct device *dev, struct device_node 
 					__func__, component->name, component->dai_name);
 		}
 
+#if defined(CONFIG_SND_SOC_SAMSUNG_ABOX_DEBUG)
 		sdp_boot_print("%s: %s init %s\n",
 				dai_link->name, component->dai_name, ret ? "FAIL" : "SUCCESS");
+#endif
 		if(dai_link->id == ABOX_UAIF_DAI_ID(0, 1)) {
 			send_amp_ready_ev(index, ret ? INIT_FAIL : INIT_SUCCESS);
 		}
