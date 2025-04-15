@@ -18,6 +18,7 @@
 #include <linux/err.h>
 #include <linux/slab.h>
 #include <linux/fs.h>
+#include <linux/version.h>
 #if defined(CONFIG_SEC_KUNIT)
 #include "kunit_test/vibrator_vib_info_test.h"
 #else
@@ -308,7 +309,11 @@ static int vib_info_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, ddata);
 	dev_set_drvdata(dev, ddata);
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
 	ddata->vib_info_class = class_create(THIS_MODULE, "vib_info_class");
+#else
+	ddata->vib_info_class = class_create("vib_info_class");
+#endif
 	if (IS_ERR(ddata->vib_info_class)) {
 		ret = PTR_ERR(ddata->vib_info_class);
 		goto err1;
