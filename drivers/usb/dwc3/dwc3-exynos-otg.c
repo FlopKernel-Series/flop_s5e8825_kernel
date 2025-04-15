@@ -538,6 +538,7 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 
 		dwc3_otg_set_host_mode(dotg);
 
+		dwc3_core_susphy_set(dwc, 1);
 		exynos->usb_host_ready = true;
 
 		ret = platform_device_add(dwc->xhci);

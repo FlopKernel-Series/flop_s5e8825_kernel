@@ -119,6 +119,9 @@ int pdic_core_register_chip(ppdic_data_t ppdic_data)
 	ret = sysfs_create_group(&pdic_device->kobj, &pdic_sysfs_group);
 	if (ret)
 		pr_err("%s: pdic sysfs fail, ret %d", __func__, ret);
+	else
+		kobject_uevent(&pdic_device->kobj, KOBJ_CHANGE);
+
 	pr_info("%s-\n", __func__);
 out:
 	return ret;

@@ -170,13 +170,15 @@ static void manager_event_notify(struct work_struct *data)
 	switch (event_work->event.dest) {
 	case PDIC_NOTIFY_DEV_BATT:
 		if (event_work->event.sub3 == typec_manager.water.report_type) {
-			if (typec_manager.water.wVbus_det != event_work->event.sub1) {
-				typec_manager.water.wVbus_det = event_work->event.sub1;
+			if (typec_manager.water.detected || typec_manager.water.wVbus_det) {
+				if (typec_manager.water.wVbus_det != event_work->event.sub1) {
+					typec_manager.water.wVbus_det = event_work->event.sub1;
 #if defined(CONFIG_USB_HW_PARAM)
-				wVbus_time_update(typec_manager.water.wVbus_det);
+					wVbus_time_update(typec_manager.water.wVbus_det);
 #endif
-			} else if (!is_hiccup_event_saved)
-				return;
+				} else if (!is_hiccup_event_saved)
+					return;
+			}
 		}
 		break;
 	case PDIC_NOTIFY_DEV_USB:
@@ -272,6 +274,17 @@ static void manager_event_work(int src, int dest, int id, int sub1, int sub2, in
 
 	utmanager_info("%s src:%s dest:%s\n", __func__,
 		pdic_event_src_string(src), pdic_event_dest_string(dest));
+
+	if (!typec_manager.manager_noti_wq) {
+		utmanager_err("%s: manager_noti_wq is null\n", __func__);
+		return;
+	}
+
+	if (!typec_manager.manager_muic_noti_wq) {
+		utmanager_err("%s: manager_muic_noti_wq is null\n", __func__);
+		return;
+	}
+
 	event_work = kmalloc(sizeof(struct typec_manager_event_work), GFP_ATOMIC);
 	if (!event_work) {
 		utmanager_err("%s: failed to alloc for event_work\n", __func__);
@@ -431,7 +444,7 @@ static void manager_usb_enum_state_check_work(struct work_struct *work)
 	typec_manager.usb_enum_check.pending = false;
 	dwc3_link_check= dwc3_gadget_get_cmply_link_state_wrapper();
 
-#if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER) && !IS_ENABLED(CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION)
+#if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER)
 	if (is_blocked(get_otg_notify(), NOTIFY_BLOCK_TYPE_CLIENT)) {
 		utmanager_info("%s usb device is blocked. skip.\n", __func__);
 		return;
@@ -439,11 +452,12 @@ static void manager_usb_enum_state_check_work(struct work_struct *work)
 #endif
 
 	if ((typec_manager.usb.dr != USB_STATUS_NOTIFY_ATTACH_UFP)
-			|| (dwc3_link_check == 1)) {
-		utmanager_info("%s: skip case : dwc3_link = %d\n", __func__, dwc3_link_check);
+			|| (dwc3_link_check != 0)) {
+		utmanager_info("%s: skip case : usb.dr=%s, dwc3_link_check = %d\n", __func__,
+			pdic_usbstatus_string(typec_manager.usb.dr), dwc3_link_check);
 		return;
 	}
-	utmanager_info("%s: usb=0x%X, pd=%d dwc3_link=%d\n", __func__,
+	utmanager_info("%s: usb=0x%X, pd=%d dwc3_link_check=%d\n", __func__,
 		typec_manager.usb.enum_state, typec_manager.pd_con_state, dwc3_link_check);
 
 	if (!typec_manager.usb.enum_state) {
@@ -470,7 +484,7 @@ static void manager_usb_enum_state_check_work(struct work_struct *work)
 
 __visible_for_testing void manager_usb_enum_state_check(uint time_ms)
 {
-#if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER) && !IS_ENABLED(CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION)
+#if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER)
 	struct otg_notify *o_notify = get_otg_notify();
 	int enum_check_skip = 0;
 
@@ -488,7 +502,7 @@ __visible_for_testing void manager_usb_enum_state_check(uint time_ms)
 			cancel_delayed_work(&typec_manager.usb_enum_check.dwork);
 
 		if (time_ms && typec_manager.usb.dr == USB_STATUS_NOTIFY_ATTACH_UFP) {
-#if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER) && !IS_ENABLED(CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION)
+#if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER)
 			if (enum_check_skip) {
 				utmanager_info("%s skip. booting_delay(%d)\n", __func__, o_notify->booting_delay_sec);
 				return;
@@ -517,6 +531,16 @@ void set_usb_enumeration_state(int state)
 #if defined(CONFIG_USB_HW_PARAM)
 		usb_enum_hw_param_data_update(typec_manager.usb.enum_state);
 #endif
+		if (state && typec_manager.usb_enum_check.pending) {
+			cancel_delayed_work(&typec_manager.usb_enum_check.dwork);
+			typec_manager.usb_enum_check.pending = false;
+#ifndef CONFIG_USB_CONFIGFS_F_MBIM
+		/* PD-USB cable Type */
+		if (typec_manager.pd_con_state)
+			manager_event_work(PDIC_NOTIFY_DEV_MANAGER, PDIC_NOTIFY_DEV_BATT,
+				PDIC_NOTIFY_ID_USB, 0, 0, PD_USB_TYPE);
+#endif
+		}
 	}
 }
 EXPORT_SYMBOL(set_usb_enumeration_state);
@@ -881,7 +905,8 @@ __visible_for_testing int manager_handle_pdic_notification(struct notifier_block
 		} else {
 			manager_event_work(p_noti.src, PDIC_NOTIFY_DEV_MUIC,
 					PDIC_NOTIFY_ID_WATER, p_noti.sub1, p_noti.sub2, p_noti.sub3);
-			manager_water_status_update(p_noti.sub1);
+			if (typec_manager.water.detected)
+				manager_water_status_update(p_noti.sub1);
 		}
 		return 0;
 	case PDIC_NOTIFY_ID_POFF_WATER:
@@ -1447,10 +1472,6 @@ int manager_notifier_register(struct notifier_block *nb, notifier_fn_t notifier,
 		if (typec_manager.usb.dr) {
 			m_noti.sub1 = PDIC_NOTIFY_ATTACH;
 			m_noti.sub2 = typec_manager.usb.dr;
-		} else if (typec_manager.classified_cable_type == MANAGER_NOTIFY_MUIC_USB) {
-			m_noti.sub1 = PDIC_NOTIFY_ATTACH;
-			typec_manager.usb.dr = USB_STATUS_NOTIFY_ATTACH_UFP;
-			m_noti.sub2 = USB_STATUS_NOTIFY_ATTACH_UFP;
 #if IS_ENABLED(CONFIG_MUIC_POGO)
 		} else if (typec_manager.is_muic_pogo) {
 			m_noti.sub1 = typec_manager.muic.attach_state;
@@ -1682,8 +1703,12 @@ static int manager_notifier_init(void)
 
 	typec_manager.manager_noti_wq =
 		alloc_ordered_workqueue("typec_manager_event", WQ_FREEZABLE | WQ_MEM_RECLAIM);
+	if (!typec_manager.manager_noti_wq)
+		utmanager_err("%s: Failed to allocate noti workqueue\n", __func__);
 	typec_manager.manager_muic_noti_wq =
 		alloc_ordered_workqueue("typec_manager_muic_event", WQ_FREEZABLE | WQ_MEM_RECLAIM);
+	if (!typec_manager.manager_muic_noti_wq)
+		pr_err("%s: Failed to allocate muic noti workqueue\n", __func__);
 
 	BLOCKING_INIT_NOTIFIER_HEAD(&(typec_manager.manager_notifier));
 	BLOCKING_INIT_NOTIFIER_HEAD(&(typec_manager.manager_muic_notifier));

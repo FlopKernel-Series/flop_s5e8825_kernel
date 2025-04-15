@@ -35,6 +35,7 @@ struct usbpd_ops {
 	void (*usbpd_set_host_on)(void *data, int mode);
 	void (*usbpd_cc_control_command)(void *data, int is_off);
 	void (*usbpd_wait_entermode)(void *data, int on);
+	void (*usbpd_water_pd_ta_notify)(void *data);
 	void (*usbpd_sbu_switch_control)(void *data, int on);
 };
 
@@ -82,6 +83,7 @@ extern int usbpd_sbu_test_read(struct if_cb_manager *man_core);
 extern void usbpd_set_host_on(struct if_cb_manager *man_core, int mode);
 extern void usbpd_cc_control_command(struct if_cb_manager *man_core, int is_off);
 extern void usbpd_wait_entermode(struct if_cb_manager *man_core, int on);
+extern void usbpd_water_pd_ta_notify(struct if_cb_manager *man_core);
 extern void usbpd_sbu_switch_control(int on);
 
 #endif /* __IF_CB_MANAGER_H__ */

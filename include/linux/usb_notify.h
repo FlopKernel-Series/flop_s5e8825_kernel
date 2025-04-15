@@ -2,12 +2,12 @@
 /*
  *  usb notify header
  *
- * Copyright (C) 2011-2021 Samsung, Inc.
+ * Copyright (C) 2011-2023 Samsung, Inc.
  * Author: Dongrak Shin <dongrak.shin@samsung.com>
  *
  */
 
- /* usb notify layer v3.6 */
+ /* usb notify layer v4.0 */
 
 #ifndef __LINUX_USB_NOTIFY_H__
 #define __LINUX_USB_NOTIFY_H__
@@ -41,6 +41,8 @@ enum otg_notify_events {
 	NOTIFY_EVENT_HOST_DISABLE,
 	NOTIFY_EVENT_CLIENT_DISABLE,
 	NOTIFY_EVENT_MDM_ON_OFF,
+	NOTIFY_EVENT_MDM_ON_OFF_FOR_ID,
+	NOTIFY_EVENT_MDM_ON_OFF_FOR_SERIAL,
 	NOTIFY_EVENT_OVERCURRENT,
 	NOTIFY_EVENT_SMSC_OVC,
 	NOTIFY_EVENT_SMTD_EXT_CURRENT,
@@ -51,6 +53,7 @@ enum otg_notify_events {
 	NOTIFY_EVENT_LANHUB_CONNECT,
 	NOTIFY_EVENT_POWER_SOURCE,
 	NOTIFY_EVENT_PD_CONTRACT,
+	NOTIFY_EVENT_PD_USB_COMM_CAPABLE,
 	NOTIFY_EVENT_VBUS_RESET,
 	NOTIFY_EVENT_RESERVE_BOOSTER,
 	NOTIFY_EVENT_USB_CABLE,
@@ -59,6 +62,8 @@ enum otg_notify_events {
 	NOTIFY_EVENT_USBD_CONFIGURED,
 	NOTIFY_EVENT_VBUSPOWER,
 	NOTIFY_EVENT_DR_SWAP,
+	NOTIFY_EVENT_REVERSE_BYPASS_DEVICE_CONNECT,
+	NOTIFY_EVENT_REVERSE_BYPASS_DEVICE_ATTACH,
 	NOTIFY_EVENT_VIRTUAL,
 };
 
@@ -160,6 +165,24 @@ enum usb_current_state {
 	NOTIFY_USB_CONFIGURED,
 };
 
+enum usb_allowlist_state {
+	NOTIFY_MDM_NONE = 0,
+	NOTIFY_MDM_SERIAL,
+	NOTIFY_MDM_ID,
+	NOTIFY_MDM_ID_AND_SERIAL,
+};
+
+enum usb_request_action_type {
+	USB_REQUEST_NOTHING,
+	USB_REQUEST_DUMPSTATE,
+};
+
+enum otg_notify_reverse_bypass_status {
+	NOTIFY_EVENT_REVERSE_BYPASS_OFF,
+	NOTIFY_EVENT_REVERSE_BYPASS_PREPARE,
+	NOTIFY_EVENT_REVERSE_BYPASS_ON,
+};
+
 enum otg_notify_illegal_type {
 	NOTIFY_EVENT_AUDIO_DESCRIPTOR,
 	NOTIFY_EVENT_SECURE_DISCONNECTION,
@@ -174,15 +197,21 @@ enum usb_lock_state {
 
 enum usb_check_allowlist_result {
 	USB_NOTIFY_NOLIST = 0,
-	USB_NOTIFY_ALLOWLOST,
+	USB_NOTIFY_ALLOWLIST,
 	USB_NOTIFY_NORESTRICT,
+};
+
+enum usb_comm_capable {
+	USB_NOTIFY_NO_COMM_CAPABLE = 0,
+	USB_NOTIFY_COMM_CAPABLE = 1,
+	USB_NOTIFY_INIT_COM_CAPABLE = 2,
 };
 
 struct otg_notify {
 	int vbus_detect_gpio;
 	int redriver_en_gpio;
 	int is_wakelock;
-	int is_host_wakelock;
+	int is_host_wakelock; /*unused field*/
 	int unsupport_host;
 	int smsc_ovc_poll_sec;
 	int auto_drive_vbus;
@@ -194,6 +223,8 @@ struct otg_notify {
 	int (*pre_gpio)(int gpio, int use);
 	int (*post_gpio)(int gpio, int use);
 	int (*vbus_drive)(bool enable);
+	int (*reverse_bypass_drive)(int mode);
+	int (*get_support_reverse_bypass_en)(void *data);
 	int (*set_host)(bool enable);
 	int (*set_peripheral)(bool enable);
 	int (*set_charger)(bool enable);
@@ -221,9 +252,14 @@ extern void send_usb_mdm_uevent(void);
 extern void send_usb_certi_uevent(int usb_certi);
 extern void send_usb_err_uevent(int usb_certi, int mode);
 extern void send_usb_itracker_uevent(int err_type);
+extern void send_usb_restrict_uevent(int usb_restrict);
+extern int usb_check_whitelist_for_id(struct usb_device *dev);
+extern int usb_check_whitelist_for_serial(struct usb_device *dev);
 extern int usb_check_whitelist_for_mdm(struct usb_device *dev);
+extern int usb_check_whitelist_enable_state(void);
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 extern int usb_check_allowlist_for_lockscreen_enabled_id(struct usb_device *dev);
+extern bool check_usb_restrict_lock_state(struct otg_notify *n);
 #endif
 extern int usb_otg_restart_accessory(struct usb_device *dev);
 extern void send_otg_notify(struct otg_notify *n,
@@ -243,21 +279,21 @@ extern int get_con_dev_max_speed(struct otg_notify *n);
 extern void set_con_dev_max_speed
 		(struct otg_notify *n, int speed);
 extern void set_con_dev_hub(struct otg_notify *n, int speed, int conn);
+extern void set_request_action(struct otg_notify *n, unsigned int request_action);
 extern int is_known_usbaudio(struct usb_device *dev);
+extern int check_usbaudio(struct usb_device *dev);
+extern int check_usbgroup(struct usb_device *dev);
+extern int is_usbhub(struct usb_device *dev);
 extern void set_usb_audio_cardnum(int card_num, int bundle, int attach);
 extern void send_usb_audio_uevent(struct usb_device *dev,
 		int cardnum, int attach);
 extern int send_usb_notify_uevent
 		(struct otg_notify *n, char *envp_ext[]);
+extern int check_new_device_added(struct usb_device *udev);
+extern int set_lpm_charging_type_done(struct otg_notify *n,
+		unsigned int state);
 extern int detect_illegal_condition(int type);
-extern int check_usbaudio(struct usb_device *dev);
-extern int check_usbgroup(struct usb_device *dev);
-extern int is_usbhub(struct usb_device *dev);
-#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 extern int disconnect_unauthorized_device(struct usb_device *dev);
-extern bool check_usb_restrict_lock_state(struct otg_notify *n);
-#endif
-extern void send_usb_restrict_uevent(int usb_restrict);
 #if defined(CONFIG_USB_HW_PARAM)
 extern unsigned long long *get_hw_param(struct otg_notify *n,
 					enum usb_hw_param index);
@@ -271,9 +307,9 @@ extern int register_hw_param_manager(struct otg_notify *n,
 extern void *get_notify_data(struct otg_notify *n);
 extern void set_notify_data(struct otg_notify *n, void *data);
 extern struct otg_notify *get_otg_notify(void);
+extern void enable_usb_notify(void);
 extern int set_otg_notify(struct otg_notify *n);
 extern void put_otg_notify(struct otg_notify *n);
-extern void enable_usb_notify(void);
 #else
 static inline const char *event_string(enum otg_notify_events event)
 			{return NULL; }
@@ -283,11 +319,19 @@ static inline void send_usb_mdm_uevent(void) {}
 static inline void send_usb_certi_uevent(int usb_certi) {}
 static inline void send_usb_err_uevent(int usb_certi, int mode) {}
 static inline void send_usb_itracker_uevent(int err_type) {}
+static inline void send_usb_restrict_uevent(int usb_restrict) {}
 static inline int usb_check_whitelist_for_mdm(struct usb_device *dev)
 			{return 0; }
-#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
-extern inline int usb_check_allowlist_for_lockscreen_enabled_id(struct usb_device *dev)
+static inline int usb_check_whitelist_for_id(struct usb_device *dev)
 			{return 0; }
+static inline int usb_check_whitelist_for_serial(struct usb_device *dev)
+			{return 0; }
+extern inline int usb_check_whitelist_enable_state(void)
+			{return 0; }
+#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
+static inline int usb_check_allowlist_for_lockscreen_enabled_id(struct usb_device *dev)
+			{return 0; }
+static inline bool check_usb_restrict_lock_state(struct otg_notify *n) {return false; }
 #endif
 static inline int usb_otg_restart_accessory(struct usb_device *dev)
 			{return 0; }
@@ -312,21 +356,23 @@ static inline int get_con_dev_max_speed(struct otg_notify *n)
 static inline void set_con_dev_max_speed
 		(struct otg_notify *n, int speed) {}
 static inline void set_con_dev_hub(struct otg_notify *n, int speed, int conn) {}
+static inline  void set_request_action
+		(struct otg_notify *n, unsigned int request_action) {}
 static inline int is_known_usbaudio(struct usb_device *dev) {return 0; }
+static inline int check_usbaudio(struct usb_device *dev) {return 0; }
+static inline int check_usbgroup(struct usb_device *dev) {return 0; }
+static inline int is_usbhub(struct usb_device *dev) {return 0; }
 static inline void set_usb_audio_cardnum(int card_num,
 		int bundle, int attach) {}
 static inline void send_usb_audio_uevent(struct usb_device *dev,
 		int cardnum, int attach) {}
 static inline int send_usb_notify_uevent
 			(struct otg_notify *n, char *envp_ext[]) {return 0; }
+static inline int check_new_device_added(struct usb_device *udev) {return 0; }
+static inline int set_lpm_charging_type_done(struct otg_notify *n,
+		unsigned int state) {return 0; }
 static inline int detect_illegal_condition(int type) {return 0; }
-static inline int check_usbaudio(struct usb_device *dev) {return 0; }
-static inline int check_usbgroup(struct usb_device *dev) {return 0; }
-static inline int is_usbhub(struct usb_device *dev) {return 0; }
-#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 static inline int disconnect_unauthorized_device(struct usb_device *dev) {return 0; }
-static inline bool check_usb_restrict_lock_state(struct otg_notify *n) {return false; }
-#endif
 static inline void send_usb_restrict_uevent(int usb_restrict) {}
 #if defined(CONFIG_USB_HW_PARAM)
 static inline unsigned long long *get_hw_param(struct otg_notify *n,
@@ -342,7 +388,19 @@ static inline void *get_notify_data(struct otg_notify *n) {return NULL; }
 static inline void set_notify_data(struct otg_notify *n, void *data) {}
 static inline struct otg_notify *get_otg_notify(void) {return NULL; }
 static inline int set_otg_notify(struct otg_notify *n) {return 0; }
-static inline void put_otg_notify(struct otg_notify *n) {}
 extern inline void enable_usb_notify(void) {}
+static inline void put_otg_notify(struct otg_notify *n) {}
 #endif
+
+#define unl_info(fmt, ...)						\
+	({								\
+		pr_info(fmt, ##__VA_ARGS__);			\
+		printk_usb(NOTIFY_PRINTK_USB_NORMAL, fmt, ##__VA_ARGS__);			\
+	})
+#define unl_err(fmt, ...)						\
+	({								\
+		pr_err(fmt, ##__VA_ARGS__);			\
+		printk_usb(NOTIFY_PRINTK_USB_NORMAL, fmt, ##__VA_ARGS__);			\
+	})
+
 #endif /* __LINUX_USB_NOTIFY_H__ */
