@@ -209,12 +209,7 @@ int pdic_notifier_register(struct notifier_block *nb, notifier_fn_t notifier,
 			pdic_notifier_device listener)
 {
 	int ret = 0;
-	struct device *pdic_device = get_pdic_device();
 
-	if (!pdic_device) {
-		pr_err("%s: pdic_device is null.\n", __func__);
-		return -ENODEV;
-	}
 	pr_info("%s: listener=%d register\n", __func__, listener);
 
 #if IS_BUILTIN(CONFIG_PDIC_NOTIFIER)

@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-2.0 */
 /*
  * Copyright (C) 2014 Samsung Electronics Co. Ltd.
  *
@@ -12,13 +13,13 @@
 #ifdef CONFIG_USB_DWC3
 extern int dwc3_exynos_id_event(struct device *dev, int state);
 extern int dwc3_exynos_vbus_event(struct device *dev, int state);
-extern int dwc3_gadget_speed(struct device *dev);
+extern int exynos_usbdrd_ldo_manual_control(bool on);
 #else
 static inline int dwc3_exynos_id_event
 		(struct device *dev, int state) {return 0; }
 static inline int dwc3_exynos_vbus_event
 		(struct device *dev, int state) {return 0; }
-static inline int dwc3_gadget_speed(return 0; }
+static inline int exynos_usbdrd_ldo_manual_control(bool on) {return 0; }
 #endif
 #ifdef CONFIG_USB_S3C_OTGD
 extern int exynos_otg_vbus_event(struct platform_device *pdev, int state);

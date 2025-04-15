@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
- * Copyright (C) 2017-2021 Samsung Electronics Co. Ltd.
+ * Copyright (C) 2017-2023 Samsung Electronics Co. Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9,7 +9,7 @@
  */
 
 /* usb hw param */
-/* usb notify layer v3.6 */
+/* usb notify layer v4.0 */
 
 #define MAX_HWPARAM_STR_LEN 1024
 #define MAX_HWPARAM_STRING 10
@@ -30,6 +30,8 @@ enum usb_hw_param {
 	USB_CLIENT_SUPER_SPEED_COUNT,
 	USB_CLIENT_HIGH_SPEED_COUNT,
 	USB_HOST_CLASS_AUDIO_COUNT,
+	USB_HOST_CLASS_AUDIO_SAMSUNG_COUNT,
+	USB_HOST_REVERSE_BYPASS_COUNT,
 	USB_HOST_CLASS_COMM_COUNT,
 	USB_HOST_CLASS_HID_COUNT,
 	USB_HOST_CLASS_PHYSICAL_COUNT,
@@ -67,6 +69,8 @@ enum usb_hw_param {
 	USB_CCIC_PR_SWAP_COUNT,
 	USB_CCIC_DR_SWAP_COUNT,
 	USB_CLIENT_ANDROID_AUTO_RESET_POPUP_COUNT,
+	USB_CCIC_UNMASK_VBUS_COUNT,
+	USB_CCIC_STUCK_COUNT,
 	USB_HOST_SB_COUNT,
 	USB_HOST_OVER_AUDIO_DESCRIPTOR_COUNT,
 	USB_CCIC_VERSION,

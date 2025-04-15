@@ -30,7 +30,7 @@
 #include <linux/usb/typec/common/pdic_notifier.h>
 
 #define TYPEC_MANAGER_MAJ_VERSION 2
-#define TYPEC_MANAGER_MIN_VERSION 2
+#define TYPEC_MANAGER_MIN_VERSION 3
 
 /* USB TypeC Manager notifier call sequence,
  * largest priority number device will be called first. */

@@ -207,6 +207,20 @@ void usbpd_sbu_switch_control(int on)
 }
 EXPORT_SYMBOL(usbpd_sbu_switch_control);
 
+void usbpd_water_pd_ta_notify(struct if_cb_manager *man_core)
+{
+	if (man_core == NULL || man_core->usbpd_d == NULL ||
+			man_core->usbpd_d->ops == NULL ||
+			man_core->usbpd_d->ops->usbpd_water_pd_ta_notify == NULL) {
+		pr_err("%s : Member of if_cb_manager is NULL\n", __func__);
+		return;
+	}
+
+	man_core->usbpd_d->ops->usbpd_water_pd_ta_notify(
+		man_core->usbpd_d->data);
+}
+EXPORT_SYMBOL(usbpd_water_pd_ta_notify);
+
 static int __init if_cb_manager_init(void)
 {
 	if (!man_core)
