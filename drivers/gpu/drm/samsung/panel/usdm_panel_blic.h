@@ -71,6 +71,7 @@ struct panel_blic_dev {
 	bool enable;
 	struct blic_data *blic_data_tbl;
 	struct list_head seq_list;
+	bool skip_op_lock;
 };
 
 int panel_blic_prepare(struct panel_device *panel, struct common_panel_info *info);
@@ -80,5 +81,6 @@ struct panel_gpio *panel_blic_gpio_list_find_by_name(struct panel_blic_dev *blic
 bool panel_blic_power_ctrl_exists(struct panel_blic_dev *blic, const char *name);
 int panel_blic_power_ctrl_execute(struct panel_blic_dev *blic, const char *name);
 int panel_blic_brightness(struct panel_device *panel, bool need_lock);
+void panel_blic_set_skip_op_lock(struct panel_device *panel, bool skip);
 
 #endif /* __PANEL_BLIC_H__ */

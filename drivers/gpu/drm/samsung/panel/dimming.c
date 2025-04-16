@@ -728,7 +728,7 @@ static s32 mtp_vregout_to_offset(struct dimming_info *dim_info,
 	num -= den * ((s64)tp[v].numerator + (s64)tp[v].offset[c]);
 	res = usdm_disp_div64(num, den);
 #endif
-	//if (in_range(v, dim_lut_info->rgb_color_offset_range))
+	//if (dim_in_range(v, dim_lut_info->rgb_color_offset_range))
 	res += rgb_offset[v][c];
 
 #ifdef DEBUG_DIMMING
@@ -1409,8 +1409,8 @@ void print_dim_lut(struct dimming_info *dim_info)
 						max(MAX_PRINT_BUF_SIZE - len, 0),
 						"%3d    ", gamma_curve_lut[arr->g_curve_degree].gamma);
 				break;
-			case DIM_LUT_GRAY_SCALE_OFFSET:
-				for_each_range(i, dim_lut_info->gray_scale_offset_range)
+				case DIM_LUT_GRAY_SCALE_OFFSET:
+				dim_for_each_range(i, dim_lut_info->gray_scale_offset_range)
 					len += snprintf(buf + len,
 							max(MAX_PRINT_BUF_SIZE - len, 0),
 							"%3d ", arr->gray_scale_offset[i]);
@@ -1418,7 +1418,7 @@ void print_dim_lut(struct dimming_info *dim_info)
 						max(MAX_PRINT_BUF_SIZE - len, 0), "\t ");
 				break;
 			case DIM_LUT_COLOR_SHIFT_OFFSET:
-				for_each_range(i, dim_lut_info->rgb_color_offset_range)
+				dim_for_each_range(i, dim_lut_info->rgb_color_offset_range)
 					for_each_color(c)
 						len += snprintf(buf + len,
 								max(MAX_PRINT_BUF_SIZE - len, 0),

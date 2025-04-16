@@ -164,6 +164,7 @@ struct aod_ioctl_props {
 };
 
 struct aod_dev_info {
+	bool support;
 	int reset_flag;
 
 	struct panel_mutex lock;

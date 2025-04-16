@@ -448,6 +448,12 @@ static int panel_debug_panel_event_noti(struct panel_device *panel, char *buf)
 		.display_index = 0U,
 	};
 
+	if (!panel) {
+		panel_err("null panel\n");
+		return -EINVAL;
+	}
+	evt_data.display_index = panel->id;
+
 	rc = sscanf(buf, "%d %d", &event, &state);
 	if (rc < 2) {
 		panel_err("check your input. rc:(%d)\n", rc);

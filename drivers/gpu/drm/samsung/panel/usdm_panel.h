@@ -256,6 +256,7 @@ struct freq_hop_param {
 }
 
 #define PANEL_NONE_SEQ ("panel_none_seq")
+#define PANEL_PRE_INIT_SEQ ("panel_pre_init_seq")
 #define PANEL_INIT_SEQ ("panel_init_seq")
 #define PANEL_EXIT_SEQ ("panel_exit_seq")
 #define PANEL_BOOT_SEQ ("panel_boot_seq")
@@ -283,6 +284,7 @@ struct freq_hop_param {
 #define PANEL_HBM_OFF_SEQ ("panel_hbm_off_seq")
 #if defined(CONFIG_USDM_PANEL_DISPLAY_MODE)
 #define PANEL_DISPLAY_MODE_SEQ ("panel_display_mode_seq")
+#define PANEL_DISPLAY_MODE_POST_SEQ ("panel_display_mode_post_seq")
 #endif
 #define PANEL_FPS_SEQ ("panel_fps_seq")
 #define PANEL_BLACK_AND_FPS_SEQ ("panel_black_and_fps_seq")
@@ -341,9 +343,20 @@ struct freq_hop_param {
 #define PANEL_MASK_LAYER_STOP_DIMMING_SEQ ("panel_mask_layer_stop_dimming_seq")
 #define PANEL_MASK_LAYER_ENTER_BR_SEQ ("panel_mask_layer_enter_br_seq")
 #define PANEL_MASK_LAYER_EXIT_BR_SEQ ("panel_mask_layer_exit_br_seq")
+#define PANEL_FP_GREEN_CIRCLE_OFF ("panel_fp_green_circle_off")
+#define PANEL_FP_GREEN_CIRCLE_ON ("panel_fp_green_circle_on")
 #endif
+#define PANEL_LOCAL_HBM_ON_SEQ ("panel_local_hbm_on_seq")
+#define PANEL_LOCAL_HBM_OFF_SEQ  ("panel_local_hbm_off_seq")
+#define PANEL_LOCAL_HBM_CIRCLE_ON_SEQ ("panel_local_hbm_circle_on_seq")
+#define PANEL_LOCAL_HBM_CIRCLE_OFF_SEQ  ("panel_local_hbm_circle_off_seq")
+
 #ifdef CONFIG_USDM_FACTORY_BRIGHTDOT_TEST
 #define PANEL_BRIGHTDOT_TEST_SEQ ("panel_brightdot_test_seq")
+#endif
+#ifdef CONFIG_USDM_TCON_PRE_EMPHASIS_TEST
+#define PANEL_TCON_PRE_EMPHASIS_TEST_ON_SEQ ("panel_pre_emphasis_test_on_seq")
+#define PANEL_TCON_PRE_EMPHASIS_TEST_OFF_SEQ ("panel_pre_emphasis_test_off_seq")
 #endif
 #ifdef CONFIG_USDM_FACTORY_VGLHIGHDOT_TEST
 #define PANEL_VGLHIGHDOT_TEST_SEQ ("panel_vglhighdot_test_seq")
@@ -372,6 +385,9 @@ struct freq_hop_param {
 #endif
 #define PANEL_AGING_ON_SEQ ("panel_aging_on_seq")
 #define PANEL_AGING_OFF_SEQ ("panel_aging_off_seq")
+
+#define PANEL_FORCE_UPDATE ("panel_force_update")
+#define PANEL_SET_FREQ_STEP ("panel_set_freq_step")
 
 /* structure of sequence table */
 struct brt_map {
@@ -456,6 +472,12 @@ enum {
 	MAX_MASK_LAYER_HOOK,
 };
 
+enum {
+	FP_GREEN_CIRCLE_OFF,
+	FP_GREEN_CIRCLE_ON,
+	MAX_FP_GREEN_CIRCLE,
+};
+
 struct mask_layer_data {
 	u32 req;
 	u32 trigger_time;
@@ -492,6 +514,8 @@ struct ddi_properties {
 	bool init_seq_by_lpdt;
 	bool support_avoid_sandstorm;
 	bool evasion_disp_det;
+	bool mdnie_enable_in_init_seq;
+	bool no_set_pcd_bypass;
 };
 
 struct ddi_ops {
@@ -514,6 +538,11 @@ struct ddi_ops {
 	int (*get_manufacture_date)(struct panel_device *panel, void *data);
 	int (*get_temperature_range)(struct panel_device *panel, void *data);
 	int (*check_mipi_read)(struct panel_device *panel, void *data);
+	bool (*gct_chksum_is_valid)(struct panel_device *panel, void *data);
+#ifdef CONFIG_USDM_PANEL_FIRMWARE_UPDATE
+	int (*firmware_update)(struct panel_device *panel, void *data);
+	int (*firmware_info_print)(struct panel_device *panel, void *data);
+#endif
 };
 
 struct rcd_region {
@@ -654,6 +683,25 @@ enum {
 };
 
 enum {
+	LOCAL_HBM_OFF,
+	LOCAL_HBM_ON,
+	LOCAL_HBM_MAX,
+};
+
+enum {
+	LOCAL_HBM_CIRCLE_OFF,
+	LOCAL_HBM_CIRCLE_ON,
+	LOCAL_HBM_CIRCLE_MAX,
+};
+
+enum {
+	LOCAL_HBM_SYSFS_OFF,
+	LOCAL_HBM_SYSFS_READY,
+	LOCAL_HBM_SYSFS_CIRCLE_ON,
+	LOCAL_HBM_SYSFS_MAX,
+};
+
+enum {
 	ALPM_OFF = 0,
 	ALPM_LOW_BR,
 	HLPM_LOW_BR,
@@ -744,6 +792,12 @@ enum {
 #define MAX_PANEL_LUT (128)
 
 enum {
+	PANEL_DEV_MAIN,
+	PANEL_DEV_SUB,
+	MAX_PANEL_DEV,
+};
+
+enum {
 	PANEL_ID,
 	PANEL_MASK,
 	PANEL_INDEX,
@@ -767,6 +821,8 @@ struct panel_dt_lut {
 	struct list_head head;
 	struct list_head id_mask_list;
 	const char *dqe_suffix;
+	const char *aiqe_suffix;
+	struct device_node *options_node;
 #if defined(CONFIG_USDM_SDP_ADAPTIVE_MIPI) ||\
 	defined(CONFIG_USDM_ADAPTIVE_MIPI)
 	struct device_node *adap_mipi_node;
@@ -847,6 +903,7 @@ struct panel_properties {
 	/* variable refresh rate */
 	u32 vrr_fps;
 	u32 vrr_mode;
+	u32 vrr_te_hw_skip_count;
 	u32 vrr_idx;
 	/* original variable refresh rate */
 	u32 vrr_origin_fps;
@@ -867,11 +924,15 @@ struct panel_properties {
 #ifdef CONFIG_USDM_FACTORY_VGLHIGHDOT_TEST
 	u32 vglhighdot;
 #endif
+#ifdef CONFIG_USDM_TCON_PRE_EMPHASIS_TEST
+	u32 tcon_pre;
+#endif
 	u32 panel_aging;
 	u32 dsi_freq;
 	u32 osc_freq;
 	u32 board_rev;
 	bool is_valid_mtp;
+	u32 dsi_op_mode;
 };
 
 struct panel_info {
@@ -899,6 +960,7 @@ struct panel_info {
 	struct panel_rcd_data *rcd_data;
 #endif
 	const char *dqe_suffix;
+	const char *aiqe_suffix;
 	const char *ezop_json;
 };
 
@@ -929,7 +991,7 @@ struct panel_device_attr {
 	struct device_attribute dev_attr;
 	ssize_t (*store)(struct device *dev, struct device_attribute *attr, const char *buf, size_t count);
 	u32 flags;
-	bool node_created;
+	bool node_created[MAX_PANEL_DEV];
 };
 
 #define __PANEL_ATTR_RO(_name, _mode, _flags) {	\
@@ -1038,6 +1100,10 @@ static inline int search_table(void *tbl, int itemsize, u32 sz_tbl, void *value)
 }
 
 #define disp_div_round(n, m) ((((n) * 10 / (m)) + 5) / 10)
+
+static inline bool is_alphabet_or_num(u8 c) {
+    return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'));
+}
 
 const char *cmd_type_to_string(u32 type);
 int string_to_cmd_type(const char *str);

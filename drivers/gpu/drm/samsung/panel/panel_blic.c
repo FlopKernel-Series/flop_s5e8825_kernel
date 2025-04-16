@@ -40,6 +40,14 @@ __visible_for_testing struct panel_device *to_panel_drv(struct panel_blic_dev *b
 	return container_of(blic_dev, struct panel_device, blic_dev[blic_dev->id]);
 }
 
+void panel_blic_set_skip_op_lock(struct panel_device *panel, bool skip)
+{
+	int i;
+
+	for (i = 0; i < panel->nr_blic_dev; i++)
+		panel->blic_dev[i].skip_op_lock = skip;
+}
+
 struct seqinfo *find_blic_seq(struct panel_blic_dev *blic, char *seqname)
 {
 	struct pnobj *pnobj;
@@ -135,7 +143,9 @@ static int panel_blic_do_seq(struct panel_blic_dev *blic, char *seqname)
 		return -EINVAL;
 	}
 
-	panel_mutex_lock(&panel->op_lock);
+	if (!blic->skip_op_lock)
+		panel_mutex_lock(&panel->op_lock);
+
 	ret = panel_blic_do_seq_nolock(blic, seqname);
 	if (ret < 0) {
 		panel_err("failed to run sequence(%s)\n", seqname);
@@ -144,7 +154,8 @@ static int panel_blic_do_seq(struct panel_blic_dev *blic, char *seqname)
 	}
 
 do_exit:
-	panel_mutex_unlock(&panel->op_lock);
+	if (!blic->skip_op_lock)
+		panel_mutex_unlock(&panel->op_lock);
 
 	return ret;
 }
@@ -401,9 +412,18 @@ static struct regulator_desc ddi_blic_2_regulator_desc = {
 	.owner = THIS_MODULE,
 };
 
+static struct regulator_desc ddi_buck_booster_regulator_desc = {
+	.name = "ddi-buck-booster",
+	.id = 0,
+	.ops = &ddi_blic_regulator_ops,
+	.type = REGULATOR_VOLTAGE,
+	.owner = THIS_MODULE,
+};
+
 static struct regulator_desc *panel_blic_regulator_list[] = {
 	&ddi_blic_regulator_desc,
 	&ddi_blic_2_regulator_desc,
+	&ddi_buck_booster_regulator_desc,
 };
 
 __visible_for_testing struct regulator_desc *panel_blic_find_regulator_desc(const char *name)
@@ -453,7 +473,7 @@ static int panel_blic_regulator_register(struct panel_blic_dev *blic_dev)
 
 	rdev = devm_regulator_register(blic_dev->dev, desc, &config);
 	if (IS_ERR(rdev)) {
-		panel_err("rdev is err. (%s) %d.\n", desc->name, rdev);
+		panel_err("rdev is err.(%s)(%ld)\n", desc->name, PTR_ERR(rdev));
 		return -EINVAL;
 	}
 

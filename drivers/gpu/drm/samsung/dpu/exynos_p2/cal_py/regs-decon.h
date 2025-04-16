@@ -734,6 +734,11 @@ enum decon_regs_type {
 #define PPS58_59_RC_RANGE_PARAM(_v)		((_v) << 0)
 
 #define DSC_PPS60_63(_id)			(COMP_OFFSET(_id) + 0x005C)
+#define PPS60_61_RC_RANGE_PARAM_MASK		(0xffff << 16)
+#define PPS60_61_RC_RANGE_PARAM(_v)		((_v) << 16)
+#define PPS62_63_RC_RANGE_PARAM_MASK		(0xffff << 0)
+#define PPS62_63_RC_RANGE_PARAM(_v)		((_v) << 0)
+
 #define DSC_PPS64_67(_id)			(COMP_OFFSET(_id) + 0x0060)
 #define DSC_PPS68_71(_id)			(COMP_OFFSET(_id) + 0x0064)
 #define DSC_PPS72_75(_id)			(COMP_OFFSET(_id) + 0x0068)

@@ -1148,9 +1148,7 @@ __visible_for_testing int panel_do_dsi_tx_packet(struct panel_device *panel, str
 				addr == MIPI_DCS_SET_DISPLAY_ON ||
 				addr == MIPI_DCS_SET_DISPLAY_OFF ||
 				addr == MIPI_DCS_ENTER_SLEEP_MODE ||
-				addr == MIPI_DCS_EXIT_SLEEP_MODE ||
-				/* poc command */
-				addr == 0xC0 || addr == 0xC1)
+				addr == MIPI_DCS_EXIT_SLEEP_MODE)
 			block = true;
 	}
 

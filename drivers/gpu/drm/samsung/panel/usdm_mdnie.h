@@ -207,6 +207,13 @@ enum ANTI_GLARE {
 	ANTI_GLARE_MAX
 };
 
+#define MDNIE_ADAPTIVE_MODE_PROPERTY ("mdnie_adaptive_mode")
+
+enum ADAPTIVE_MODE {
+	ADAPTIVE_MODE_OFF,
+	ADAPTIVE_MODE_ON,
+	ADAPTIVE_MODE_MAX
+};
 
 #define MDNIE_COLOR_LENS_PROPERTY ("mdnie_color_lens")
 
@@ -429,6 +436,7 @@ struct mdnie_properties {
 	enum HMD_MODE hmd;
 	enum NIGHT_MODE night;
 	enum ANTI_GLARE anti_glare;
+	enum ADAPTIVE_MODE adaptive_mode;
 	enum COLOR_LENS color_lens;
 	enum COLOR_LENS_COLOR color_lens_color;
 	enum COLOR_LENS_LEVEL color_lens_level;
@@ -486,6 +494,7 @@ struct mdnie_properties {
 	u32 color_lens_ofs;
 
 	/* support */
+	bool support;
 	unsigned support_ldu:1;
 	unsigned support_trans:1;
 
@@ -540,6 +549,8 @@ struct mdnie_info {
 
 
 #ifdef CONFIG_USDM_MDNIE
+extern int mdnie_drv_init(void);
+extern void mdnie_drv_exit(void);
 extern int mdnie_init(struct mdnie_info *mdnie);
 extern int mdnie_exit(struct mdnie_info *mdnie);
 extern int mdnie_prepare(struct mdnie_info *mdnie, struct mdnie_tune *mdnie_tune);
@@ -558,7 +569,10 @@ extern int usdm_mdnie_get_anti_glare_ratio(struct mdnie_info *mdnie);
 extern int panel_mdnie_update(struct panel_device *panel);
 extern int usdm_mdnie_update_wrgb(struct mdnie_info *mdnie,
 		unsigned char r, unsigned char g, unsigned char b);
+extern int mdnie_update_lux(struct mdnie_info *mdnie, int value);
 #else
+static inline int mdnie_drv_init(void) { return 0; }
+static inline void mdnie_drv_exit(void) { return; }
 static inline int mdnie_init(struct mdnie_info *mdnie) { return 0; }
 static inline int mdnie_exit(struct mdnie_info *mdnie) { return 0; }
 static inline int mdnie_prepare(struct mdnie_info *mdnie, struct mdnie_tune *mdnie_tune) { return 0; }
@@ -576,6 +590,7 @@ static inline int usdm_mdnie_cur_wrgb_to_byte_array(struct mdnie_info *mdnie,
 		unsigned char *dst, unsigned int stride) { return 0; }
 static inline int usdm_mdnie_update_wrgb(struct mdnie_info *mdnie,
 		unsigned char r, unsigned char g, unsigned char b) { return 0; }
+static inline int mdnie_update_lux(struct mdnie_info *mdnie, int value) { return 0; }
 #endif
 extern int mdnie_do_sequence_nolock(struct mdnie_info *mdnie, char *seqname);
 extern int mdnie_do_sequence(struct mdnie_info *mdnie, char *seqname);

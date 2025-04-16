@@ -827,57 +827,91 @@ static const struct drm_bridge_funcs exynos_panel_bridge_funcs = {
 	.mode_set = exynos_panel_bridge_mode_set,
 };
 
-static void exynos_panel_parse_vendor_pps(struct exynos_panel *ctx)
+static void exynos_panel_parse_vendor_pps(struct device *dev, struct exynos_panel *ctx)
 {
-		struct device_node *np;
-		struct drm_device *drm_dev = NULL;
-		struct drm_crtc *crtc;
-		struct exynos_drm_crtc *exynos_crtc = NULL;
-		struct decon_device *decon;
+	struct device_node *np;
+	struct drm_device *drm_dev = NULL;
+	struct drm_crtc *crtc;
+	struct exynos_drm_crtc *exynos_crtc = NULL;
+	struct decon_device *decon;
+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(dev);
+	struct dsim_device *dsim = container_of(dsi->host, struct dsim_device, dsi_host);
 
-		if (!ctx->mcd_panel_dev) {
-			panel_err(ctx, "mcd_panel_dev has null\n");
-			return;
+	if (!ctx->mcd_panel_dev) {
+		panel_err(ctx, "mcd_panel_dev has null\n");
+		return;
+	}
+
+	drm_dev = ctx->exynos_connector.base.dev;
+	if (!drm_dev) {
+		panel_info(ctx, "drm_dev has null\n");
+		return;
+	}
+
+	drm_for_each_crtc(crtc, drm_dev)
+		if (to_exynos_crtc(crtc)->possible_type & EXYNOS_DISPLAY_TYPE_DSI) {
+			exynos_crtc = to_exynos_crtc(crtc);
+			break;
 		}
 
-		drm_dev = ctx->exynos_connector.base.dev;
-		if (!drm_dev) {
-			panel_info(ctx, "drm_dev has null\n");
-			return;
-		}
+	if (!exynos_crtc) {
+		panel_info(ctx, "exynos_crtc has null\n");
+		return;
+	}
 
-		drm_for_each_crtc(crtc, drm_dev)
-			if (to_exynos_crtc(crtc)->possible_type & EXYNOS_DISPLAY_TYPE_DSI) {
-				exynos_crtc = to_exynos_crtc(crtc);
-				break;
-			}
+	decon = exynos_crtc->ctx;
+	if (!decon) {
+		panel_info(ctx, "decon has null\n");
+		return;
+	}
 
-		if (!exynos_crtc) {
-			panel_info(ctx, "exynos_crtc has null\n");
-			return;
-		}
+	np = ctx->mcd_panel_dev->ap_vendor_setting_node;
+	if (!np) {
+		panel_err(ctx, "mcd_panel ddi-node is null\n");
+		return;
+	}
 
-		decon = exynos_crtc->ctx;
-		if (!decon) {
-			panel_info(ctx, "decon has null\n");
-			return;
-		}
+	/* get vendor pps parameter from panel dt node */
+	if (!of_property_read_u32(np, "initial_xmit_delay",
+			&decon->config.vendor_pps.initial_xmit_delay))
+		panel_info(ctx, "initial_xmit_delay: %d\n", decon->config.vendor_pps.initial_xmit_delay);
 
-		np = ctx->mcd_panel_dev->ap_vendor_setting_node;
-		if (!np) {
-			panel_err(ctx, "mcd_panel ddi-node is null\n");
-			return;
-		}
+	if (!of_property_read_u32(np, "initial_dec_delay",
+			&decon->config.vendor_pps.initial_dec_delay))
+		panel_info(ctx, "initial_dec_delay: %d\n", decon->config.vendor_pps.initial_dec_delay);
 
-		/* get vendor pps parameter from panel dt node */
-		of_property_read_u32(np, "initial_xmit_delay",
-				&decon->config.vendor_pps.initial_xmit_delay);
-		of_property_read_u32(np, "initial_dec_delay",
-				&decon->config.vendor_pps.initial_dec_delay);
-		of_property_read_u32(np, "scale_increment_interval",
-				&decon->config.vendor_pps.scale_increment_interval);
-		of_property_read_u32(np, "final_offset",
-				&decon->config.vendor_pps.final_offset);
+	if (!of_property_read_u32(np, "scale_increment_interval",
+			&decon->config.vendor_pps.scale_increment_interval))
+		panel_info(ctx, "scale_increment_interval: %d\n", decon->config.vendor_pps.scale_increment_interval);
+
+	if (!of_property_read_u32(np, "final_offset",
+			&decon->config.vendor_pps.final_offset))
+		panel_info(ctx, "final_offset: %d\n", decon->config.vendor_pps.final_offset);
+
+	if (!of_property_read_u32(np, "nfl_bpg_offset",
+			&decon->config.vendor_pps.nfl_bpg_offset))
+		panel_info(ctx, "nfl_bpg_offset: %d\n", decon->config.vendor_pps.nfl_bpg_offset);
+
+	if (!of_property_read_u32(np, "slice_bpg_offset",
+			&decon->config.vendor_pps.slice_bpg_offset))
+		panel_info(ctx, "slice_bpg_offset: %d\n", decon->config.vendor_pps.slice_bpg_offset);
+
+	if (!of_property_read_u32(np, "comp_cfg",
+			&decon->config.vendor_pps.comp_cfg))
+		panel_info(ctx, "comp_cfg: %d\n", decon->config.vendor_pps.comp_cfg);
+
+	if (!of_property_read_u32(np, "rc_range_parameters",
+			&decon->config.vendor_pps.rc_range_parameters))
+		panel_info(ctx, "rc_range_parameters: %d\n", decon->config.vendor_pps.rc_range_parameters);
+
+	if (!of_property_read_u32(np, "rc_range_parameters_1",
+			&decon->config.vendor_pps.rc_range_parameters_1))
+		panel_info(ctx, "rc_range_parameters_1: %d\n", decon->config.vendor_pps.rc_range_parameters_1);
+
+	if (dsim != NULL) {
+		dsim->config.ignore_rx_trail = of_property_read_bool(np, "ignore-rx-trail");
+		panel_info(ctx, "ignore_rx_trail: %d\n", dsim->config.ignore_rx_trail);
+	}
 }
 
 static void exynos_panel_parse_vfp_detail(struct exynos_panel *ctx)
@@ -915,6 +949,25 @@ static void exynos_panel_parse_vfp_detail(struct exynos_panel *ctx)
 	} else {
 		panel_err(ctx, "DSIM is not found\n");
 	}
+}
+
+static void exynos_panel_parse_using_dcs_short_write_param(struct exynos_panel *ctx)
+{
+	struct device_node *np;
+
+	if (!ctx->mcd_panel_dev) {
+		panel_err(ctx, "mcd_panel_dev has null\n");
+		return;
+	}
+
+	np = ctx->mcd_panel_dev->ap_vendor_setting_node;
+	if (!np) {
+		panel_err(ctx, "mcd_panel ddi-node is null\n");
+		return;
+	}
+
+	ctx->using_dcs_short_write_param = of_property_read_bool(np, "using_dcs_short_write_param");
+	panel_info(ctx, "using_dcs_short_write_param: %d\n", ctx->using_dcs_short_write_param);
 }
 
 static int exynos_panel_get_bts_fps(const struct exynos_panel *ctx,
@@ -1673,6 +1726,8 @@ static int mipi_write_table(void *_ctx, const struct cmd_set *cmd, int size, u32
 		} else if (cmd[i].cmd_id == MIPI_DSI_WR_GEN_CMD) {
 			if (cmd[i].size == 1)
 				ret = usdm_exynos_drm_cmdset_add(ctx, MIPI_DSI_DCS_SHORT_WRITE, cmd[i].size, cmd[i].buf);
+			else if (ctx->using_dcs_short_write_param && (cmd[i].size == 2) && (cmd[i].buf[0] != 0x35))
+				ret = usdm_exynos_drm_cmdset_add(ctx, MIPI_DSI_DCS_SHORT_WRITE_PARAM, cmd[i].size, cmd[i].buf);
 			else
 				ret = usdm_exynos_drm_cmdset_add(ctx, MIPI_DSI_DCS_LONG_WRITE, cmd[i].size, cmd[i].buf);
 		} else {
@@ -2309,25 +2364,34 @@ __visible_for_testing int mcd_drm_set_freq_hop(void *_ctx,
 	}
 
 	dsim = container_of(dsi->host, struct dsim_device, dsi_host);
-	ret = usdm_mcd_dsim_update_dsi_freq(dsim, param->dsi_freq);
-	if (ret < 0) {
-		pr_err("%s: failed to update dsi_freq(%d)\n",
-				__func__, param->dsi_freq);
-		return ret;
-	}
+	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
+		ret = mcd_drm_panel_set_osc(ctx, param->osc_freq);
+		if (ret < 0) {
+			pr_err("%s: failed to set osc(%d)\n",
+					__func__, param->osc_freq);
+			return ret;
+		}
+	} else {	
+		ret = usdm_mcd_dsim_update_dsi_freq(dsim, param->dsi_freq);
+		if (ret < 0) {
+			pr_err("%s: failed to update dsi_freq(%d)\n",
+					__func__, param->dsi_freq);
+			return ret;
+		}
 
-	ret = mcd_drm_panel_set_ffc(ctx, param->dsi_freq);
-	if (ret < 0) {
-		pr_err("%s: failed to set ffc(%d)\n",
-				__func__, param->dsi_freq);
-		return ret;
-	}
+		ret = mcd_drm_panel_set_ffc(ctx, param->dsi_freq);
+		if (ret < 0) {
+			pr_err("%s: failed to set ffc(%d)\n",
+					__func__, param->dsi_freq);
+			return ret;
+		}
 
-	ret = mcd_drm_panel_set_osc(ctx, param->osc_freq);
-	if (ret < 0) {
-		pr_err("%s: failed to set osc(%d)\n",
-				__func__, param->osc_freq);
-		return ret;
+		ret = mcd_drm_panel_set_osc(ctx, param->osc_freq);
+		if (ret < 0) {
+			pr_err("%s: failed to set osc(%d)\n",
+					__func__, param->osc_freq);
+			return ret;
+		}
 	}
 
 	return 0;
@@ -2728,9 +2792,11 @@ int usdm_exynos_panel_probe(struct mipi_dsi_device *dsi)
 
 		exynos_panel_set_dqe_xml(dev, ctx);
 
-		exynos_panel_parse_vendor_pps(ctx);
+		exynos_panel_parse_vendor_pps(dev, ctx);
 
 		exynos_panel_parse_vfp_detail(ctx);
+
+		exynos_panel_parse_using_dcs_short_write_param(ctx);
 
 		panel_info(ctx, "mcd common panel driver has been probed\n");
 	} else {
