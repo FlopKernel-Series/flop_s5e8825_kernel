@@ -21,6 +21,7 @@ static const char *sec_detect_label = "sec_detect: ";
 enum SEC_devices {
 	DEVICE_UNKNOWN = -1,
 	SEC_A25,
+	SEC_A26XS,
 	SEC_A33,
 	SEC_A53,
 	SEC_M33,
@@ -30,6 +31,7 @@ enum SEC_devices {
 
 static const char *const device_names[] = {
 	[SEC_A25] = "Galaxy A25 5G",
+	[SEC_A26XS] = "Galaxy A26 5G (LATAM)",
 	[SEC_A33] = "Galaxy A33 5G",
 	[SEC_A53] = "Galaxy A53 5G",
 	[SEC_M33] = "Galaxy M33 5G",
@@ -66,6 +68,9 @@ extern bool mcd_use_camera_act_driver_soft_landing;
 extern bool mcd_use_ois_hall_data_for_vdis;
 extern bool mcd_use_hi1336c_setfile;
 extern bool mcd_camera_use_aois;
+extern bool mcd_cal_for_hw_ggc_a26x;
+extern bool mcd_use_ois_reset_autotest;
+extern bool mcd_ois_angle_support;
 
 #ifdef CONFIG_SEC_DETECT_SYSFS
 extern char sec_current_device_name[32];

@@ -93,6 +93,15 @@ EXPORT_SYMBOL(mcd_use_hi1336c_setfile);
 bool mcd_camera_use_aois = false;
 EXPORT_SYMBOL(mcd_camera_use_aois);
 
+bool mcd_cal_for_hw_ggc_a26x = false;
+EXPORT_SYMBOL(mcd_cal_for_hw_ggc_a26x);
+
+bool mcd_use_ois_reset_autotest = false;
+EXPORT_SYMBOL(mcd_use_ois_reset_autotest);
+
+bool mcd_ois_angle_support = false;
+EXPORT_SYMBOL(mcd_ois_angle_support);
+
 #ifdef CONFIG_SEC_DETECT_SYSFS
 // Sysfs attribute to show the current device name
 static ssize_t device_name_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
@@ -139,6 +148,22 @@ static inline void setup_camera_params(void) {
 		mcd_use_camera_adaptive_mipi = true;
 		mcd_read_dual_cal_firmware_data = true;
 		mcd_camera_use_aois = true;
+		break;
+	case SEC_A26XS:
+		mcd_camera_rear_dual_cal = true;
+		mcd_use_imx258_13mp_full_size = true;
+		mcd_use_leds_flash_charging_voltage_control = true;
+		mcd_use_ois_hall_data_for_vdis = true;
+		mcd_apply_mirror_vertical_flip = true;
+		mcd_front_otprom_eeprom = true;
+		mcd_modify_cal_map_for_swremosaic_lib = true;
+		mcd_simplify_ois_init = true;
+		mcd_use_camera_adaptive_mipi = true;
+		mcd_read_dual_cal_firmware_data = true;
+		mcd_camera_use_aois = true;
+		mcd_cal_for_hw_ggc_a26x = true;
+		mcd_use_ois_reset_autotest = true;
+		mcd_ois_angle_support = true;
 		break;
 	case SEC_A33:
 		mcd_camera_front_fixed_focus = true;
@@ -223,6 +248,12 @@ int sec_detect_init(void) {
 	if (strstr(machine_name, "A25") != NULL) {
 		sec_current_device = SEC_A25;
 		strncpy(sec_current_device_name, "a25x", sizeof(sec_current_device_name));
+		sec_needs_decon = false;
+		sec_doze = true;
+		sec_slsi_usbpd = true;
+	} else if (strstr(machine_name, "A26XS") != NULL) {
+		sec_current_device = SEC_A26XS;
+		strncpy(sec_current_device_name, "a26xs", sizeof(sec_current_device_name));
 		sec_needs_decon = false;
 		sec_doze = true;
 		sec_slsi_usbpd = true;
