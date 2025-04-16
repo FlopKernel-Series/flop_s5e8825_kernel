@@ -100,6 +100,8 @@ static int of_parse_panel_display_mode(const struct device_node *np,
 	ret |= of_property_read_string(np, "id", &name);
 	strncpy(pdm->name, name, PANEL_DISPLAY_MODE_NAME_LEN - 1);
 	pdm->name[PANEL_DISPLAY_MODE_NAME_LEN - 1] = '\0';
+	of_property_read_u32(np, "in_width", &pdm->in_width); /* optional */
+	of_property_read_u32(np, "in_height", &pdm->in_height); /* optional */
 	ret |= of_property_read_u32(np, "width", &pdm->width);
 	ret |= of_property_read_u32(np, "height", &pdm->height);
 	ret |= of_property_read_u32(np, "refresh_rate", &pdm->refresh_rate);
@@ -130,6 +132,7 @@ static int of_parse_panel_display_mode(const struct device_node *np,
 
 	ret |= of_property_read_u32(np, "cmd_lp_ref", &pdm->cmd_lp_ref);
 	pdm->panel_video_mode = of_property_read_bool(np, "panel_video_mode");
+	pdm->panel_video_hybrid_mode = of_property_read_bool(np, "panel_video_hybrid_mode");
 	ret |= of_property_read_u32_array(np, "panel_h_porch", pdm->panel_hporch, MAX_PANEL_H_PORCH);
 	ret |= of_property_read_u32_array(np, "panel_v_porch", pdm->panel_vporch, MAX_PANEL_V_PORCH);
 	of_property_read_u32(np, "disp_qos_fps", &pdm->disp_qos_fps);	/* optional */

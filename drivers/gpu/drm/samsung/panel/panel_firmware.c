@@ -236,8 +236,8 @@ int panel_firmware_load(struct panel_device *panel,
 		if (!ret)
 			return 0;
 
-		if (!IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP))
-			panic("panel ezop(%s) loading failure\n", PANEL_BUILT_IN_FW_NAME);
+		panel_err("panel ezop(%s) loading failure\n", PANEL_BUILT_IN_FW_NAME);
+		PANEL_BUG();
 	}
 
 	return -EINVAL;

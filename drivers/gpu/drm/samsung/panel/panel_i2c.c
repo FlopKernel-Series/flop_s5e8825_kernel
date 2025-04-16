@@ -229,6 +229,7 @@ static struct i2c_drv_ops panel_i2c_drv_ops = {
 	.transfer = panel_i2c_transfer,
 };
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0))
 __visible_for_testing int panel_i2c_probe(struct i2c_client *client,
 	const struct i2c_device_id *id)
 {
@@ -280,11 +281,46 @@ __visible_for_testing int panel_i2c_probe(struct i2c_client *client,
 
 	return ret;
 }
-
-static int panel_i2c_remove(struct i2c_client *client)
+#else
+__visible_for_testing int panel_i2c_probe(struct i2c_client *client)
 {
-	return 0;
+	struct panel_i2c_dev *panel_i2c_dev;
+	int ret = 0;
+	if (unlikely(!client)) {
+		panel_err("invalid i2c.\n");
+		return -EINVAL;
+	}
+
+	panel_i2c_dev = kzalloc(sizeof(struct panel_i2c_dev), GFP_KERNEL);
+	
+	if (!panel_i2c_dev) {
+		pr_err("i2c_dev is null\n");
+		return -EINVAL;
+	}
+	panel_i2c_dev->client = client;
+	panel_i2c_dev->reg = client->addr;
+	panel_i2c_dev->ops = &panel_i2c_drv_ops;
+	ret = of_property_read_u32(client->dev.of_node, "len,addr", &panel_i2c_dev->addr_len);
+	ret = of_property_read_u32(client->dev.of_node, "len,data", &panel_i2c_dev->data_len);
+	
+	ret = panel_set_i2c_device(panel_i2c_dev);
+	if (ret != 0)
+		panel_err("failed to set i2c device\n");
+	
+	if (panel_i2c_dev)
+		kfree(panel_i2c_dev);
+	else
+		pr_info("%s: i2c null \n", __func__);
+	panel_info("done\n");
+
+	return ret;
 }
+#endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0))
+static int panel_i2c_remove(struct i2c_client *client) { return 0; }
+#else
+static void panel_i2c_remove(struct i2c_client *client) { return; }
+#endif
 
 
 static struct i2c_device_id panel_i2c_id[] = {

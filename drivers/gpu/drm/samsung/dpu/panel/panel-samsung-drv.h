@@ -213,6 +213,7 @@ struct exynos_panel {
 #if IS_ENABLED(CONFIG_SUPPORT_MASK_LAYER) || IS_ENABLED(CONFIG_USDM_PANEL_MASK_LAYER)
 	bool fingerprint_mask;
 #endif
+	bool using_dcs_short_write_param;
 #endif
 };
 

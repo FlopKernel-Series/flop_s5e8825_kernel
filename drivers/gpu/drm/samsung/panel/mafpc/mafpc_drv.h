@@ -55,6 +55,7 @@ struct comp_mem_info {
 };
 
 struct mafpc_device {
+	u32 version;
 	int id;
 	struct device *dev;
 	struct miscdevice miscdev;
@@ -66,14 +67,15 @@ struct mafpc_device {
 	u32 written;
 
 	u8 *comp_img_buf;
-	int comp_img_len;
+	u32 comp_img_len;
+	u32 comp_img_crc;
 	u8 *scale_buf;
-	u8 scale_len;
+	u32 scale_len;
 	u8 *comp_crc_buf;
-	int comp_crc_len;
+	u32 comp_crc_len;
 	/* table: platform brightness -> scale factor index */
 	u8 *scale_map_br_tbl;
-	int scale_map_br_tbl_len;
+	u32 scale_map_br_tbl_len;
 	u8 ctrl_cmd[MAX_MAFPC_CTRL_CMD_SIZE];
 	u32 ctrl_cmd_len;
 
@@ -93,7 +95,7 @@ struct mafpc_info {
 	u8 *abc_crc;
 	u32 abc_crc_len;
 	u8* abc_scale_map_tbl;
-	int abc_scale_map_tbl_len;
+	u32 abc_scale_map_tbl_len;
 	u32 abc_ctrl_cmd_len;
 };
 
@@ -105,9 +107,11 @@ int mafpc_set_written_to_dev(struct mafpc_device *mafpc);
 int mafpc_clear_written_to_dev(struct mafpc_device *mafpc);
 
 #define MAFPC_IOCTL_MAGIC		'M'
-#define IOCTL_MAFPC_ON			_IOW(MAFPC_IOCTL_MAGIC, 1, int)
-#define IOCTL_MAFPC_ON_INSTANT		_IOW(MAFPC_IOCTL_MAGIC, 2, int)
-#define IOCTL_MAFPC_OFF			_IOW(MAFPC_IOCTL_MAGIC, 3, int)
-#define IOCTL_MAFPC_OFF_INSTANT		_IOW(MAFPC_IOCTL_MAGIC, 4, int)
-#define IOCTL_CLEAR_IMAGE_BUFFER	_IOW(MAFPC_IOCTL_MAGIC, 5, int)
+#define MAFPC_IOCTL_ON			_IOW(MAFPC_IOCTL_MAGIC, 1, int)
+#define MAFPC_IOCTL_ON_INSTANT		_IOW(MAFPC_IOCTL_MAGIC, 2, int)
+#define MAFPC_IOCTL_OFF			_IOW(MAFPC_IOCTL_MAGIC, 3, int)
+#define MAFPC_IOCTL_OFF_INSTANT		_IOW(MAFPC_IOCTL_MAGIC, 4, int)
+#define MAFPC_IOCTL_CLEAR_IMAGE_BUFFER	_IOW(MAFPC_IOCTL_MAGIC, 5, int)
+#define MAFPC_IOCTL_GET_VER		_IOR(MAFPC_IOCTL_MAGIC, 6, __u32)
+#define MAFPC_IOCTL_GET_CRC		_IOR(MAFPC_IOCTL_MAGIC, 7, __u32)
 #endif

@@ -703,10 +703,10 @@ int copr_reg_store(struct copr_info *copr, int index, u32 value)
 }
 
 #if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
-static inline void panel_send_coprstate_notify(u32 state)
+static inline void panel_send_coprstate_notify(int display_idx, u32 state)
 {
 	struct panel_notifier_event_data evt_data = {
-		.display_index = 0U,
+		.display_index = display_idx,
 		.state = state,
 	};
 
@@ -1630,14 +1630,14 @@ int copr_enable(struct copr_info *copr)
 
 	panel_info("-\n");
 #if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
-	panel_send_coprstate_notify(PANEL_EVENT_COPR_STATE_ENABLED);
+	panel_send_coprstate_notify(panel->id, PANEL_EVENT_COPR_STATE_ENABLED);
 #endif
 	return 0;
 }
 
 int copr_disable(struct copr_info *copr)
 {
-#ifdef CONFIG_USDM_COPR_SPI
+#if defined(CONFIG_USDM_COPR_SPI) || IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 	struct panel_device *panel = to_panel_device(copr);
 #endif
 	struct copr_properties *props = &copr->props;
@@ -1668,7 +1668,7 @@ int copr_disable(struct copr_info *copr)
 #endif
 	panel_info("-\n");
 #if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
-	panel_send_coprstate_notify(PANEL_EVENT_COPR_STATE_DISABLED);
+	panel_send_coprstate_notify(panel->id, PANEL_EVENT_COPR_STATE_DISABLED);
 #endif
 	return 0;
 }
@@ -1801,8 +1801,8 @@ int copr_prepare(struct panel_device *panel, struct panel_copr_data *copr_data)
 		return -EINVAL;
 
 	if (!copr_data) {
-		panel_err("copr_data is null\n");
-		return -EINVAL;
+		panel_info("copr is not supported\n");
+		return 0;
 	}
 
 	copr = &panel->copr;
@@ -1844,12 +1844,15 @@ int copr_unprepare(struct panel_device *panel)
 int copr_probe(struct panel_device *panel, struct panel_copr_data *copr_data)
 {
 	struct copr_info *copr;
-//	struct pnobj *pnobj;
-//	int i;
 
-	if (!panel || !copr_data) {
-		panel_err("panel(%p) or copr_data(%p) not exist\n", panel, copr_data);
+	if (!panel) {
+		panel_err("panel(%p) not exist\n", panel);
 		return -EINVAL;
+	}
+
+	if (!copr_data) {
+		panel_warn("copr is not supported\n");
+		return 0;
 	}
 
 	copr = &panel->copr;

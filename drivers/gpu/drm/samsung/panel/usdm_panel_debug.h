@@ -11,6 +11,9 @@
 #define __PANEL_DEBUG_H__
 
 #include <linux/printk.h>
+#include <linux/sec_debug.h>
+#include <linux/kernel.h>
+#include <linux/version.h>
 #include "usdm_util.h"
 
 #ifndef PANEL_PR_TAG
@@ -106,5 +109,32 @@ extern int usdm_panel_cmd_log;
 	} while (0)
 
 #define panel_cmd_log_enabled(_x_)	((usdm_panel_cmd_log) & (1 << (_x_)))
+
+/*
+ * debug level low return 0.
+ * debug level mid or high return over 0.
+ */
+static inline int panel_debug_level(void)
+{
+#if IS_ENABLED(CONFIG_DRM_MEDIATEK_V2)
+	return !is_debug_level_low();
+#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
+	return sec_debug_get_force_upload();
+#else
+	return secdbg_mode_enter_upload();
+#endif
+#endif
+}
+
+#define PANEL_BUG() \
+	do { \
+		if (!panel_debug_level()) \
+			panel_err("PANEL_BUG detected\n"); \
+		else \
+			BUG(); \
+	} while (0)
+
+#define PANEL_BUG_ON(cond) do { if (unlikely(cond)) PANEL_BUG(); } while (0)
 
 #endif /* __PANEL_DEBUG_H__ */

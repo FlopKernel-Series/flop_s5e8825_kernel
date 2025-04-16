@@ -180,6 +180,11 @@ config USDM_FACTORY_VGLHIGHDOT_TEST
 	depends on USDM_PANEL
 	default n
 
+config USDM_TCON_PRE_EMPHASIS_TEST
+	bool "Support TCON Pre Emphasis Test"
+	depends on USDM_PANEL
+	default n
+
 config USDM_FACTORY_DSC_CRC_TEST
 	bool "Support panel decoder test"
 	depends on USDM_PANEL
@@ -286,3 +291,317 @@ config USDM_PANEL_LATE_PROBE
 	depends on USDM_PANEL
 	default n
 
+config LPD_OLED_COMPENSATION
+	bool "Support OLED DeburnIn for Watch"
+	depends on USDM_PANEL
+	default n
+
+config USDM_PANEL_FIRMWARE_UPDATE
+	bool "Support FW update for T-CON"
+	depends on USDM_PANEL
+	default n
+
+########## FOR KUNIT ##########
+
+config PANEL_TEST
+	bool "KUnit test for panel"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_MAPTBL_TEST
+	bool "KUnit test for panel maptbl"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_UTIL_TEST
+	bool "KUnit test for panel utilities"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_ABD_TEST
+	bool "KUnit test for panel abd"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_DRV_IOCTL_TEST
+	bool "KUnit test for panel_drv_ioctl"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_DRV_TEST
+	bool "KUnit test for panel_drv"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_GPIO_TEST
+	bool "KUnit test for panel_gpio"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_REGULATOR_TEST
+	bool "KUnit test for panel_regulator"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_DEBUG_TEST
+	bool "KUnit test for panel_debug"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_DEBUG
+	help
+	  TODO: Describe config fully.
+
+config PANEL_BL_TEST
+	bool "KUnit test for panel_bl"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_IRC_TEST
+	bool "KUnit test for panel_irc"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_MODES_TEST
+	bool "KUnit test for panel_modes"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_DISPLAY_MODE
+	help
+	  TODO: Describe config fully.
+
+config PANEL_POC_TEST
+	bool "KUnit test for panel_poc"
+	depends on SEC_KUNIT && UML
+	depends on USDM_POC_SPI
+	help
+	  TODO: Describe config fully.
+
+config PANEL_SPI_TEST
+	bool "KUnit test for panel_spi"
+	depends on SEC_KUNIT && UML
+	depends on USDM_POC_SPI
+	help
+	  TODO: Describe config fully.
+
+config PANEL_VRR_TEST
+	bool "KUnit test for panel_vrr"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config SYSFS_TEST
+	bool "KUnit test for sysfs"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_SYSFS
+	help
+	  TODO: Describe config fully.
+
+config MDNIE_TEST
+	bool "KUnit test for mdnie"
+	depends on SEC_KUNIT && UML
+	depends on USDM_MDNIE
+	help
+	  TODO: Describe config fully.
+
+config COPR_TEST
+	bool "KUnit test for copr"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_COPR
+	help
+	  TODO: Describe config fully.
+
+config DIMMING_TEST
+	bool "KUnit test for dimming"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config DPUI_TEST
+	bool "KUnit test for dpui"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_DPUI
+	help
+	  TODO: Describe config fully.
+
+config TIMENVAL_TEST
+	bool "KUnit test for timenval"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config AOD_DRV_TEST
+	bool "KUnit test for aod_drv"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_SELF_DISPLAY
+	help
+	  TODO: Describe config fully.
+
+config MAFPC_DRV_TEST
+	bool "KUnit test for mafpc_drv"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_MAFPC
+	help
+	  TODO: Describe config fully.
+
+config PANEL_FREQ_HOP_TEST
+	bool "KUnit test for panel_freq_hop"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_FREQ_HOP
+	help
+	  TODO: Describe config fully.
+
+config PANEL_LIB_TEST
+	bool "KUnit test for panel_lib"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_POWER_CTRL_TEST
+	bool "KUnit test for panel_power_ctrl"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_I2C_TEST
+	bool "KUnit test for panel_I2C"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_BLIC_TEST
+	bool "KUnit test for panel_BLIC"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_OBJ_TEST
+	bool "KUnit test for panel_obj"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_FUNCTION_TEST
+	bool "KUnit test for panel_function"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_PROPERTY_TEST
+	bool "KUnit test for panel_property"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_CONFIG_TEST
+	bool "KUnit test for panel_config"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config JSMN_TEST
+	bool "KUnit test for jsmn"
+	depends on SEC_KUNIT && UML && USDM_PANEL_JSON
+	help
+	  TODO: Describe config fully.
+
+config JSON_TEST
+	bool "KUnit test for json parser"
+	depends on SEC_KUNIT && UML && USDM_PANEL_JSON
+	help
+	  TODO: Describe config fully.
+
+config JSON_WRITER_TEST
+	bool "KUnit test for json_writer"
+	depends on SEC_KUNIT && UML && USDM_PANEL_JSON
+	help
+	  TODO: Describe config fully.
+
+config JSON_READER_TEST
+	bool "KUnit test for json_reader"
+	depends on SEC_KUNIT && UML && USDM_PANEL_JSON
+	help
+	  TODO: Describe config fully.
+
+config PANEL_JSON_TEST
+	bool "KUnit test for panel_json"
+	depends on SEC_KUNIT && UML && USDM_PANEL_JSON
+	help
+	  TODO: Describe config fully.
+
+config PANEL_SEQUENCE_TEST
+	bool "KUnit test for panel_sequence"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_EXPRESSION_TEST
+	bool "KUnit test for panel_expression"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_CONDITION_TEST
+	bool "KUnit test for panel_condition"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_DELAY_TEST
+	bool "KUnit test for panel_delay"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_PACKET_TEST
+	bool "KUnit test for panel_packet"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_RESOURCE_TEST
+	bool "KUnit test for panel_resource"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_DUMP_TEST
+	bool "KUnit test for panel_dump"
+	depends on SEC_KUNIT && UML
+	help
+	  TODO: Describe config fully.
+
+config PANEL_TESTMODE_TEST
+	bool "KUnit test for panel_testmode"
+	depends on SEC_KUNIT && UML
+	depends on USDM_PANEL_TESTMODE
+	help
+	  TODO: Describe config fully.
+
+config PANEL_LPD_CMD_TEST
+	bool "KUnit test for lpd"
+	depends on SEC_KUNIT && UML
+	depends on USDM_LPD_AUTO_BR
+	help
+	  TODO: Describe config fully.
+
+config PANEL_ADAPTIVE_MIPI_TEST
+	bool "KUint test for adaptive mipi"
+	depends on SEC_KUNIT && UML
+	depends on USDM_ADAPTIVE_MIPI
+	help
+	  TODO: Describe config fully.
+
+config SDP_ADAPTIVE_MIPI_TEST
+	bool "KUint test for SDP adaptive mipi"
+	depends on SEC_KUNIT && UML
+	depends on SDP
+	help
+	  TODO: Describe config fully.

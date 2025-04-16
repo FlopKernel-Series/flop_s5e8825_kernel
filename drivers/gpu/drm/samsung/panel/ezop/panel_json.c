@@ -1879,6 +1879,9 @@ bool need_rle(u8 *arr, size_t size)
 {
 	int i;
 
+	if (!arr)
+		return false;
+
 	if (size < 128)
 		return false;
 
@@ -1896,6 +1899,9 @@ __visible_for_testing void jsonw_u8_rle(json_writer_t *w,
 	int i, j = 0, rlen;
 	unsigned int *rle_data = kvmalloc(size, GFP_KERNEL);
 	unsigned int *rle_len = kvmalloc(size, GFP_KERNEL);
+
+	if (!arr)
+		return;
 
 	for (i = 0; i < size; i++) {
 		rle_data[j] = arr[i];

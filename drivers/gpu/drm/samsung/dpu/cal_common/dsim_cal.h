@@ -156,6 +156,7 @@ struct dsim_reg_config {
 	unsigned int		line_cmd_allow;
 	unsigned int		line_stable_vfp;
 	u32			burst_cmd_en;
+	bool			ignore_rx_trail;
 };
 
 void dsim_regs_desc_init(void __iomem *reg_base, const char *name,
