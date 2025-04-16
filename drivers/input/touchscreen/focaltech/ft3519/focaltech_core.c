@@ -79,7 +79,7 @@ static int fts_stui_tsp_enter(void)
 		return -EINVAL;
 
 	fts_irq_disable();
-	if (false)
+	if (!ts->legacy_mode)
 		fts_release_all_finger();
 	else
 		old_fts_release_all_finger();
@@ -816,7 +816,7 @@ static int fts_read_pocket_result(struct fts_ts_data *ts_data)
 		ts_data->hover_event = IN_POCKET;
 	}
 
-	if (false)
+	if (!ts_data->legacy_mode)
 		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
 	else {
 		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
@@ -843,7 +843,7 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 	else
 		ts_data->hover_event = (val >> 4);
 
-	if (false)
+	if (!ts_data->legacy_mode)
 		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
 	else {
 		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
@@ -1247,7 +1247,7 @@ static int old_fts_read_parse_touchdata(struct fts_ts_data *data)
 	u8 *buf = data->point_buf;
 	unsigned long palm_temp = data->palm_flag;
 
-	if (false)
+	if (!data->legacy_mode)
 		ret = fts_read_touchdata(data);
 	else
 		ret = old_fts_read_touchdata(data);
@@ -1356,7 +1356,7 @@ static int fts_read_parse_touchdata(struct fts_ts_data *data)
 	int event_num;
 	int i;
 
-	if (false)
+	if (!data->legacy_mode)
 		ret = fts_read_touchdata(data);
 	else
 		ret = old_fts_read_touchdata(data);
@@ -1376,7 +1376,7 @@ static int fts_read_parse_touchdata(struct fts_ts_data *data)
 	if ((buf[2] == 0xFF) && (buf[3] == 0xFF)
 			&& (buf[4] == 0xFF) && (buf[5] == 0xFF) && (buf[6] == 0xFF)) {
 		FTS_ERROR("touch buff is 0xff, need recovery state");
-		if (false)
+		if (!data->legacy_mode)
 			fts_release_all_finger();
 		else
 			old_fts_release_all_finger();
@@ -1435,25 +1435,25 @@ static void fts_irq_read_report(void)
 	if (ts_data->pdata->ed_enable)
 		fts_read_proximity_result(ts_data);
 
-	if (false)
+	if (!ts_data->legacy_mode)
 		ret = fts_read_parse_touchdata(ts_data);
 	else
 		ret = old_fts_read_parse_touchdata(ts_data);
 
-	if (true) {
+	if (ts_data->legacy_mode) {
 		if (ret == 0) {
 			mutex_lock(&ts_data->report_mutex);
-	#if FTS_MT_PROTOCOL_B_EN
+#if FTS_MT_PROTOCOL_B_EN
 			fts_input_report_b(ts_data);
-	#else
+#else
 			fts_input_report_a(ts_data);
-	#endif
+#endif
 			mutex_unlock(&ts_data->report_mutex);
 		}
 	}
 
 	if (ts_data->fod_mode & 0x01) {
-		if (false) {
+		if (!ts_data->legacy_mode) {
 			fts_read_fod_result(ts_data);
 		} else {
 			old_fts_read_fod_result(ts_data);
@@ -2193,7 +2193,7 @@ static int fts_ts_probe_entry(struct fts_ts_data *ts_data)
 	ts_data->pdata->power = fts_power_ctrl;
 	ts_data->pdata->set_charger_mode = fts_charger_attached;
 
-	if (false)
+	if (!ts_data->legacy_mode)
 		ret = fts_report_buffer_init(ts_data);
 	else
 		ret = old_fts_report_buffer_init(ts_data);
@@ -2470,7 +2470,7 @@ int fts_ts_suspend(struct fts_ts_data *ts_data)
 		}
 	}
 
-	if (false)
+	if (!ts_data->legacy_mode)
 		fts_release_all_finger();
 	else
 		old_fts_release_all_finger();
@@ -2505,7 +2505,7 @@ int fts_ts_resume(struct fts_ts_data *ts_data)
 		return 0;
 	}
 
-	if (false)
+	if (!ts_data->legacy_mode)
 		fts_release_all_finger();
 	else
 		old_fts_release_all_finger();
@@ -2627,6 +2627,7 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	ts_data->log_level = 1;
 	ts_data->fw_is_running = 0;
 	ts_data->bus_type = BUS_TYPE_I2C;
+	ts_data->legacy_mode = (sec_current_device != SEC_A26XS);
 	i2c_set_clientdata(client, ts_data);
 
 	ret = fts_ts_probe_entry(ts_data);
