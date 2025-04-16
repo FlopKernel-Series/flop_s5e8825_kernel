@@ -12,8 +12,8 @@
 
 #ifndef __DB7F2010B_A26X_PANEL_DIMMING_H___
 #define __DB7F2010B_A26X_PANEL_DIMMING_H___
-#include "../dimming.h"
-#include "../panel_dimming.h"
+#include "../usdm_dimming.h"
+#include "../usdm_panel_dimming.h"
 
 /*
  * PANEL INFORMATION

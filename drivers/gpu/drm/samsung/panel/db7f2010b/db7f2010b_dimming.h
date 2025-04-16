@@ -14,7 +14,7 @@
 #define __DB7F2010B_DIMMING_H__
 #include <linux/types.h>
 #include <linux/kernel.h>
-#include "../dimming.h"
+#include "../usdm_dimming.h"
 #include "db7f2010b.h"
 
 #define DB7F2010B_A15_NR_LUMINANCE (256)

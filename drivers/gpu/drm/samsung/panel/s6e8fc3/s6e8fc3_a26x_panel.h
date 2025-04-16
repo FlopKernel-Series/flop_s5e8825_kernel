@@ -13,9 +13,9 @@
 #ifndef __S6E8FC3_A26X_PANEL_H__
 #define __S6E8FC3_A26X_PANEL_H__
 
-#include "../panel.h"
-#include "../panel_drv.h"
-#include "../panel_debug.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_drv.h"
+#include "../usdm_panel_debug.h"
 #include "oled_function.h"
 #include "oled_property.h"
 #include "s6e8fc3.h"

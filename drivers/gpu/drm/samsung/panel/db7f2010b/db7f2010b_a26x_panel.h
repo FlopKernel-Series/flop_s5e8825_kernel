@@ -13,9 +13,9 @@
 #ifndef __DB7F2010B_A26X_PANEL_H__
 #define __DB7F2010B_A26X_PANEL_H__
 
-#include "../panel.h"
-#include "../panel_drv.h"
-#include "../panel_debug.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_drv.h"
+#include "../usdm_panel_debug.h"
 #include "oled_function.h"
 #include "oled_property.h"
 #include "db7f2010b.h"

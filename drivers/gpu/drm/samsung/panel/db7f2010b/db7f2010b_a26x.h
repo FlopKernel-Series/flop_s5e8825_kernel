@@ -12,8 +12,8 @@
 
 #ifndef __DB7F2010B_A26X_H__
 #define __DB7F2010B_A26X_H__
-#include "../panel.h"
-#include "../panel_drv.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_drv.h"
 
 #define DB7F2010B_A26X_BR_INDEX_PROPERTY ("db7f2010b_a26x_br_index")
 #define DB7F2010B_A26X_FIRST_BR_PROP ("db7f2010b_a26x_first_br_prop")
