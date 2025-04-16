@@ -66,11 +66,11 @@
 #define SENSOR_JN1_CAL_DEBUG                    (0)
 #define SENSOR_JN1_DEBUG_INFO                   (0)
 
-#ifdef CAL_FOR_HW_GGC_A26x
-#define SENSOR_JN1_HW_GGC_CAL_BASE_REAR        (0x13B2)
-#else
+// #ifdef CAL_FOR_HW_GGC_A26x
+#define SENSOR_JN1_HW_GGC_CAL_BASE_REAR_A26X   (0x13B2)
+// #else
 #define SENSOR_JN1_HW_GGC_CAL_BASE_REAR        (0x1352)
-#endif
+// #endif
 #define SENSOR_JN1_HW_GGC_CAL_SIZE             (346)
 
 #define WRITE_SENSOR_CAL_FOR_HW_GGC             (1)

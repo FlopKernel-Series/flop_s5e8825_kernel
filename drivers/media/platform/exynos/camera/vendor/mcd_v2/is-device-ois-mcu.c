@@ -1716,8 +1716,10 @@ bool is_ois_sine_wavecheck_mcu(struct is_core *core,
 		}
 	} while (val);
 #ifdef USE_OIS_RESET_AUTOTEST
-	if (val)
-		goto exit;
+	if (mcd_use_ois_reset_autotest) {
+		if (val)
+			goto exit;
+	}
 #endif
 	reg = R_OIS_CMD_AUTO_TEST_RESULT;
 	ret = is_ois_get_reg(client, reg, &buf);
@@ -1824,9 +1826,11 @@ bool is_ois_auto_test_mcu(struct is_core *core,
 
 	value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
 #ifdef USE_OIS_RESET_AUTOTEST
-	if (value == false) {
-		is_ois_mcu_reset_sine_wavecheck(core);
-		value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
+	if (mcd_use_ois_reset_autotest) {
+		if (value == false) {
+			is_ois_mcu_reset_sine_wavecheck(core);
+			value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
+		}
 	}
 #endif
 	if (*sin_x == -1 && *sin_y == -1) {
