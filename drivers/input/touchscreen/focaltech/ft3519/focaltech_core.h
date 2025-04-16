@@ -71,6 +71,8 @@
 #include <linux/vbus_notifier.h>
 #endif
 
+#include <linux/sec_detect.h>
+
 #if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2) && IS_ENABLED(CONFIG_SEC_FACTORY)
 #include <linux/sec_panel_notifier_v2.h>
 #define FTS_PANEL_DETACHED	0
@@ -291,6 +293,8 @@ struct fts_ts_data {
 	u16 ic_name;
 
 	bool support_high_report;
+
+	bool legacy_mode;
 };
 
 enum _FTS_BUS_TYPE {
