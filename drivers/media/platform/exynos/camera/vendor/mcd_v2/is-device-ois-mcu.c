@@ -3911,6 +3911,15 @@ int is_ois_shift_mcu(struct v4l2_subdev *subdev)
 	return ret;
 }
 
+static void ois_center_shift_wrapper(struct v4l2_subdev *subdev, int16_t *value)
+{
+	if (true) {
+		ois_mcu_set_center_shift(subdev, value);
+	} else {
+		is_ois_shift_mcu(subdev);
+	}
+}
+
 int is_ois_set_centering_mcu(struct v4l2_subdev *subdev)
 {
 	int ret = 0;
@@ -4574,10 +4583,11 @@ static struct is_ois_ops ois_ops_mcu = {
 	.ois_read_cal_checksum = is_ois_read_cal_checksum_mcu,
 	.ois_set_coef = is_ois_set_coef_mcu,
 	.ois_read_fw_ver = is_mcu_read_fw_ver,
-	// OLD ONE
+	// OLD
 	// .ois_center_shift = is_ois_shift_mcu,
-	// FIXME!!!
-	.ois_center_shift = ois_mcu_set_center_shift,
+	// NEW
+	// .ois_center_shift = ois_mcu_set_center_shift,
+	.ois_center_shift = ois_center_shift_wrapper,
 	.ois_set_center = is_ois_set_centering_mcu,
 	.ois_read_mode = is_read_ois_mode_mcu,
 	.ois_calibration_test = is_ois_gyro_cal_mcu,
