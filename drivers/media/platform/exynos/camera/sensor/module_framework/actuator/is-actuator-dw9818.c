@@ -305,79 +305,79 @@ p_err:
 }
 
 
-#ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
-int sensor_dw9818_actuator_wait_busy(struct v4l2_subdev *subdev)
-{
-	u32 info;
-	int count = 0;
+// #ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
+// int sensor_dw9818_actuator_wait_busy(struct v4l2_subdev *subdev)
+// {
+// 	u32 info;
+// 	int count = 0;
 
-	msleep(5);
-	do {
-		sensor_dw9818_actuator_get_status(subdev, &info);
-		if (info == ACTUATOR_STATUS_BUSY) {
-			msleep(10);
-		}
-		count += 1;
-	} while (info == ACTUATOR_STATUS_BUSY && count < 15);
-	return 0;
-}
+// 	msleep(5);
+// 	do {
+// 		sensor_dw9818_actuator_get_status(subdev, &info);
+// 		if (info == ACTUATOR_STATUS_BUSY) {
+// 			msleep(10);
+// 		}
+// 		count += 1;
+// 	} while (info == ACTUATOR_STATUS_BUSY && count < 15);
+// 	return 0;
+// }
 
-int sensor_dw9818_actuator_soft_landing(struct v4l2_subdev *subdev)
-{
-	int ret = 0;
-	u8 val = 0;
-	int interval = 0;
-	int position = 0;
-	struct is_actuator *actuator;
-	struct i2c_client *client;
-	int i = 0;
+// int sensor_dw9818_actuator_soft_landing(struct v4l2_subdev *subdev)
+// {
+// 	int ret = 0;
+// 	u8 val = 0;
+// 	int interval = 0;
+// 	int position = 0;
+// 	struct is_actuator *actuator;
+// 	struct i2c_client *client;
+// 	int i = 0;
 
-#ifdef DEBUG_ACTUATOR_TIME
-	ktime_t st = ktime_get();
-#endif
+// #ifdef DEBUG_ACTUATOR_TIME
+// 	ktime_t st = ktime_get();
+// #endif
 
-	WARN_ON(!subdev);
-	actuator = (struct is_actuator *)v4l2_get_subdevdata(subdev);
-	WARN_ON(!actuator);
-	client = actuator->client;
-	if (unlikely(!client)) {
-		err("client is NULL");
-		ret = -EINVAL;
-		goto p_err;
-	}
-	sensor_dw9818_actuator_wait_busy(subdev);
+// 	WARN_ON(!subdev);
+// 	actuator = (struct is_actuator *)v4l2_get_subdevdata(subdev);
+// 	WARN_ON(!actuator);
+// 	client = actuator->client;
+// 	if (unlikely(!client)) {
+// 		err("client is NULL");
+// 		ret = -EINVAL;
+// 		goto p_err;
+// 	}
+// 	sensor_dw9818_actuator_wait_busy(subdev);
 
-	/* Read VCM_MSB(0x03) pos[9:8] and VCM_LSB(0x04) pos[7:0] */
-	ret = is_sensor_addr8_read8(client, REG_VCM_MSB, &val);
-	if (ret < 0)
-		goto p_err;
-	position = (val & 0x03) << 8;
-	ret = is_sensor_addr8_read8(client, REG_VCM_LSB, &val);
-	if (ret < 0)
-		goto p_err;
-	position |= (val & 0x00ff);
+// 	/* Read VCM_MSB(0x03) pos[9:8] and VCM_LSB(0x04) pos[7:0] */
+// 	ret = is_sensor_addr8_read8(client, REG_VCM_MSB, &val);
+// 	if (ret < 0)
+// 		goto p_err;
+// 	position = (val & 0x03) << 8;
+// 	ret = is_sensor_addr8_read8(client, REG_VCM_LSB, &val);
+// 	if (ret < 0)
+// 		goto p_err;
+// 	position |= (val & 0x00ff);
 
-	interval = (actuator->vendor_first_pos - position) / 3;
+// 	interval = (actuator->vendor_first_pos - position) / 3;
 
-	for(i = 0; i < 3; i++)
-	{
-		position += interval;
-		ret = sensor_dw9818_write_position(client, position);
-		if (ret < 0)
-			goto p_err;
-		sensor_dw9818_actuator_wait_busy(subdev);
-	}
+// 	for(i = 0; i < 3; i++)
+// 	{
+// 		position += interval;
+// 		ret = sensor_dw9818_write_position(client, position);
+// 		if (ret < 0)
+// 			goto p_err;
+// 		sensor_dw9818_actuator_wait_busy(subdev);
+// 	}
 
-	pr_info("[%s] Softlanding Successful, final position: [%x]\n",__func__, actuator->vendor_first_pos);
-#ifdef DEBUG_ACTUATOR_TIME
-	pr_info("[%s] time %ldus", __func__, PABLO_KTIME_US_DELTA_NOW(st));
-#endif
-	return ret;
-p_err:
-	err("[%s] Actuator Softlanding Failed \n", __func__);
-	return ret;
-}
-#endif
+// 	pr_info("[%s] Softlanding Successful, final position: [%x]\n",__func__, actuator->vendor_first_pos);
+// #ifdef DEBUG_ACTUATOR_TIME
+// 	pr_info("[%s] time %ldus", __func__, PABLO_KTIME_US_DELTA_NOW(st));
+// #endif
+// 	return ret;
+// p_err:
+// 	err("[%s] Actuator Softlanding Failed \n", __func__);
+// 	return ret;
+// }
+// #endif
 
 int sensor_dw9818_actuator_init(struct v4l2_subdev *subdev, u32 val)
 {
@@ -587,20 +587,20 @@ static int sensor_dw9818_actuator_s_ctrl(struct v4l2_subdev *subdev, struct v4l2
 			goto p_err;
 		}
 		break;
-#ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
-	case V4L2_CID_ACTUATOR_SOFT_LANDING:
-		ret = sensor_dw9818_actuator_soft_landing(subdev);
-		if(ret == HW_SOFTLANDING_FAIL) {
-			err("[%s] NRC Softlanding Failed \n",__func__);
-			goto p_err;
-		}
-		if (ret) {
-			err("[%s] Actuator Softlanding Failed  \n", __func__);
-			ret = -EINVAL;
-			goto p_err;
-		}
-		break;
-#endif
+// #ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
+// 	case V4L2_CID_ACTUATOR_SOFT_LANDING:
+// 		ret = sensor_dw9818_actuator_soft_landing(subdev);
+// 		if(ret == HW_SOFTLANDING_FAIL) {
+// 			err("[%s] NRC Softlanding Failed \n",__func__);
+// 			goto p_err;
+// 		}
+// 		if (ret) {
+// 			err("[%s] Actuator Softlanding Failed  \n", __func__);
+// 			ret = -EINVAL;
+// 			goto p_err;
+// 		}
+// 		break;
+// #endif
 	default:
 		err("err!!! Unknown CID(%#x)", ctrl->id);
 		ret = -EINVAL;
@@ -651,9 +651,9 @@ static const struct v4l2_subdev_ops subdev_ops = {
 };
 
 static struct is_actuator_ops actuator_ops = {
-#ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
-	.nrc_soft_landing = sensor_dw9818_actuator_soft_landing,
-#endif
+// #ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
+// 	.nrc_soft_landing = sensor_dw9818_actuator_soft_landing,
+// #endif
 };
 
 int sensor_dw9818_actuator_probe(struct i2c_client *client,
