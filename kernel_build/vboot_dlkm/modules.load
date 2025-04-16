@@ -246,6 +246,8 @@ mcd-panel-s6e3fc3_a25x.ko
 mcd-panel-s6e3fc3_a33x.ko
 mcd-panel-s6e8fc3_a33x.ko
 mcd-panel-s6e3fc3_a53x.ko
+mcd-panel-s6e8fc3_a26x.ko
+mcd-panel-db7f2010b_a26x.ko
 usdm-panel-oled-common.ko
 usdm-panel-tft-common.ko
 muic_platform.ko
