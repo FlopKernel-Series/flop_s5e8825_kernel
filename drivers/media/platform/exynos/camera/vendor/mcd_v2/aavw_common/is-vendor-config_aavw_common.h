@@ -77,4 +77,9 @@
 /* m33x */
 #define USE_CAMERA_ACT_DRIVER_SOFT_LANDING // Also used by gta4xls
 
+/* a26x */
+#define USE_OIS_RESET_AUTOTEST
+#define CAL_FOR_HW_GGC_A26x
+// #define OIS_ANGLE_SUPPORT
+
 #endif /* IS_VENDOR_CONFIG_AAV_V53X_H */
