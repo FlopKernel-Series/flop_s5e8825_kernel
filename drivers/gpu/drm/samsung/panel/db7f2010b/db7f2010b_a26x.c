@@ -11,10 +11,10 @@
  */
 #include <linux/of_gpio.h>
 #include <video/mipi_display.h>
-#include "../maptbl.h"
-#include "../panel.h"
-#include "../panel_debug.h"
-#include "../panel_function.h"
+#include "../usdm_maptbl.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_debug.h"
+#include "../usdm_panel_function.h"
 #include "db7f2010b_a26x_panel.h"
 #include "db7f2010b_a26x_ezop.h"
 
@@ -31,7 +31,7 @@ static struct panel_prop_enum_item db7f2010b_a26x_osc_change_enum_items[MAX_DB7F
 static int db7f2010b_a26x_osc_clk_property_update(struct panel_property *prop)
 {
 	struct panel_device *panel = prop->panel;
-	u32 osc_clk = panel_get_property_value(panel, PANEL_PROPERTY_OSC_FREQ);
+	u32 osc_clk = usdm_panel_get_property_value(panel, PANEL_PROPERTY_OSC_FREQ);
 	int index;
 
 	switch (osc_clk) {
@@ -48,7 +48,7 @@ static int db7f2010b_a26x_osc_clk_property_update(struct panel_property *prop)
 	}
 	panel_info("osc clock: %d, index: %d\n", osc_clk, index);
 
-	return panel_property_set_value(prop, index);
+	return usdm_panel_property_set_value(prop, index);
 }
 
 
@@ -57,8 +57,8 @@ static int db7f2010b_a26x_br_index_property_update(struct panel_property *prop)
 	struct panel_device *panel = prop->panel;
 	struct panel_bl_device *panel_bl = &panel->panel_bl;
 
-	return panel_property_set_value(prop,
-			get_brightness_pac_step_by_subdev_id(panel_bl,
+	return usdm_panel_property_set_value(prop,
+			usdm_get_brightness_pac_step_by_subdev_id(panel_bl,
 				PANEL_BL_SUBDEV_TYPE_DISP, panel_bl->props.brightness));
 }
 
@@ -77,7 +77,7 @@ static int db7f2010b_a26x_first_br_property_update(struct panel_property *prop)
 	if (index == DB7F2010B_A26X_FIRST_BR_ON)
 		panel_info("first non-zero br!\n");
 
-	return panel_property_set_value(prop, index);
+	return usdm_panel_property_set_value(prop, index);
 }
 
 #ifdef CONFIG_USDM_MDNIE
@@ -86,7 +86,7 @@ static int oled_mdnie_night_level_property_update(struct panel_property *prop)
 	struct panel_device *panel = prop->panel;
 	struct mdnie_info *mdnie = &panel->mdnie;
 
-	return panel_property_set_value(prop, mdnie->props.night_level);
+	return usdm_panel_property_set_value(prop, mdnie->props.night_level);
 }
 #endif
 
@@ -145,14 +145,14 @@ static int __init db7f2010b_a26x_panel_init(void)
 	memcpy(&cpi->dumpinfo[DUMP_SELF_MASK_CHECKSUM],
 		&db7f2010b_a26x_dump_self_mask_checksum, sizeof(struct dumpinfo));
 
-	register_common_panel(&db7f2010b_a26x_panel_info);
+	usdm_register_common_panel(&db7f2010b_a26x_panel_info);
 
 	return 0;
 }
 
 static void __exit db7f2010b_a26x_panel_exit(void)
 {
-	deregister_common_panel(&db7f2010b_a26x_panel_info);
+	usdm_register_common_panel(&db7f2010b_a26x_panel_info);
 }
 
 module_init(db7f2010b_a26x_panel_init);

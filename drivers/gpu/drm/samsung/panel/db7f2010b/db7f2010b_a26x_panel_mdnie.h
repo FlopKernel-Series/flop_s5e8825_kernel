@@ -13,8 +13,8 @@
 #ifndef __DB7F2010B_A26X_PANEL_MDNIE_H__
 #define __DB7F2010B_A26X_PANEL_MDNIE_H__
 
-#include "../panel.h"
-#include "../mdnie.h"
+#include "../usdm_panel.h"
+#include "../usdm_mdnie.h"
 #include "oled_function.h"
 #include "db7f2010b_a26x_panel.h"
 #include "db7f2010b_mdnie.h"

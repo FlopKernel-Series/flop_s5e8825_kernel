@@ -12,8 +12,8 @@
 
 #ifndef __S6E8FC3_A26X_H__
 #define __S6E8FC3_A26X_H__
-#include "../panel.h"
-#include "../panel_drv.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_drv.h"
 
 #define S6E8FC3_A26X_BR_INDEX_PROPERTY ("s6e8fc3_a26x_br_index")
 #define S6E8FC3_A26X_FIRST_BR_PROPERTY ("s6e8fc3_a26x_first_br_property")
