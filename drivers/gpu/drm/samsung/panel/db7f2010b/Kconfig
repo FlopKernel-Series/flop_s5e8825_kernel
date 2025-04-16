@@ -1,0 +1,18 @@
+menuconfig USDM_PANEL_DB7F2010B
+	tristate "DB7F2010B DDI Panel Driver"
+	depends on USDM_PANEL
+	depends on USDM_PANEL_OLED_COMMON
+	default n
+	help
+		This enables DB7F2010B DDI dependent panel drivers of
+		common panel driver. say Y, if you have a panel based on
+		the DB7F2010B DDI.
+
+
+########## FOR KUNIT ##########
+
+config DB7F2010B_TEST
+	bool "KUnit test for db7f2010b ddi driver"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
