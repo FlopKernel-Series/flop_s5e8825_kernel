@@ -15,6 +15,7 @@
 #include <linux/of_irq.h>
 #include <linux/of_gpio.h>
 #include <linux/of_address.h>
+#include <dt-bindings/gpio/gpio.h>
 #include "kernel/irq/internals.h"
 
 #include "usdm_panel_gpio.h"
@@ -346,7 +347,7 @@ int panel_gpio_helper_devm_request_irq(struct panel_gpio *gpio,
 int usdm_of_get_panel_gpio(struct device_node *np, struct panel_gpio *gpio)
 {
 	struct device_node *pend_np;
-	enum of_gpio_flags flags;
+	unsigned int flags;
 	int ret;
 
 	if (of_gpio_count(np) < 1)
@@ -356,12 +357,17 @@ int usdm_of_get_panel_gpio(struct device_node *np, struct panel_gpio *gpio)
 		return -EINVAL;
 
 	gpio->name = np->name;
-	gpio->num = of_get_gpio_flags(np, 0, &flags);
+	gpio->num = of_get_named_gpio(np, "gpios", 0);
 	if (!gpio_is_valid(gpio->num)) {
 		panel_err("%s:invalid gpio %s:%d\n", np->name, gpio->name, gpio->num);
 		return -ENODEV;
 	}
-	gpio->active_low = flags & OF_GPIO_ACTIVE_LOW;
+
+	if (of_property_read_u32_index(np, "gpios", 2, &flags)) {
+		panel_err("%s:failed to read gpio flag\n", np->name);
+		return -EINVAL;
+	}
+	gpio->active_low = flags & GPIO_ACTIVE_LOW;
 
 	if (of_property_read_u32(np, "dir", &gpio->dir))
 		panel_warn("%s:property('dir') not found\n", np->name);
@@ -403,9 +409,9 @@ int usdm_of_get_panel_gpio(struct device_node *np, struct panel_gpio *gpio)
 	gpio->irq_enable = false;
 	gpio->funcs = &panel_gpio_funcs;
 
-	panel_info("gpio(%s:%d) active:%s dir:%d irq_type:%04x\n",
+	panel_info("gpio(%s:%d) active:%s dir:%d irq_type:%04x level:%d\n",
 			gpio->name, gpio->num, gpio->active_low ? "low" : "high",
-			gpio->dir, gpio->irq_type);
+			gpio->dir, gpio->irq_type, panel_gpio_get_value(gpio));
 
 	return 0;
 }

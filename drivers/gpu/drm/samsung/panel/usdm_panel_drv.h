@@ -125,6 +125,15 @@ enum panel_irq_lists {
 	PANEL_IRQ_ALL =			(0xFFFFFFFF),
 };
 
+/* This should be synchrized with bootloader. */
+enum mcd_panel_debug_sel {
+	DEBUG_PANEL_LOG_LEVEL_HIGH,
+	DEBUG_CMD_LOG_ENABLE,
+	DEBUG_EZOP_SKIP_VENDOR_FW,
+	DEBUG_EZOP_SKIP_BUILTIN_FW,
+	MAX_MCD_PANEL_DEBUG_SEL,
+};
+
 #define PANEL_GPIO_NAME_RESET ("disp-reset")
 #define PANEL_GPIO_NAME_DISP_DET ("disp-det")
 #define PANEL_GPIO_NAME_PCD ("pcd")
@@ -154,6 +163,7 @@ enum panel_irq_lists {
 #define PANEL_PROPERTY_SEPARATE_TX ("separate_tx")
 #define PANEL_PROPERTY_PANEL_REFRESH_RATE ("panel_refresh_rate")
 #define PANEL_PROPERTY_PANEL_REFRESH_MODE ("panel_refresh_mode")
+#define PANEL_PROPERTY_PANEL_REFRESH_TE_HW_SKIP_COUNT ("panel_refresh_te_hw_skip_count")
 #define PANEL_PROPERTY_PREV_PANEL_REFRESH_RATE ("prev_panel_refresh_rate")
 #define PANEL_PROPERTY_PREV_PANEL_REFRESH_MODE ("prev_panel_refresh_mode")
 #define PANEL_PROPERTY_RESOLUTION_CHANGED ("resolution_changed")
@@ -169,6 +179,32 @@ enum panel_irq_lists {
 #define PANEL_PROPERTY_IRC_MODE ("irc_mode")
 #define PANEL_PROPERTY_DIA_MODE ("dia_mode")
 #define PANEL_PROPERTY_FD_ENABLED ("fd_enabled")
+#define PANEL_PROPERTY_FIRMWARE_UPDATE_INDEX ("firmware_update_index")
+#define PANEL_PROPERTY_FREQ_STEP ("freq_step")
+#define PANEL_PROPERTY_DSI_OP_MODE ("dsi_op_mode")
+
+enum {
+	DSI_OP_MODE_NONE,
+	DSI_OP_MODE_VDO,
+	DSI_OP_MODE_CMD,
+	DSI_OP_MODE_VHM,
+	MAX_DSI_OP_MODE,
+};
+
+static inline int panel_get_dsi_op_mode(struct panel_device *panel,
+		struct panel_display_mode *pdm)
+{
+	if (!pdm)
+		return DSI_OP_MODE_NONE;
+
+	if (pdm->panel_video_hybrid_mode)
+		return DSI_OP_MODE_VHM;
+
+	if (pdm->panel_video_mode)
+		return DSI_OP_MODE_VDO;
+
+	return DSI_OP_MODE_CMD;
+}
 
 enum {
 	SEPARATE_TX_OFF,    /* TX CMD by using panel drv cmdq */
@@ -259,6 +295,7 @@ struct panel_drv_funcs {
 	int (*register_error_cb)(struct panel_device *, void *);
 	int (*get_panel_state)(struct panel_device *, void *);
 	int (*attach_adapter)(struct panel_device *, void *);
+	int (*set_adapter_fifo_size)(struct panel_device *, unsigned int);
 
 	/* panel control operation */
 	int (*probe)(struct panel_device *);
@@ -273,9 +310,12 @@ struct panel_drv_funcs {
 	int (*doze_suspend)(struct panel_device *);
 	int (*set_display_mode)(struct panel_device *, void *);
 	int (*get_display_mode)(struct panel_device *, void *);
+	int (*set_display_mode_post)(struct panel_device *, void *);
+	int (*execute_sequence)(struct panel_device *, void *);
 #if IS_ENABLED(CONFIG_USDM_PANEL_BIG_LOCK)
 	int (*lock)(struct panel_device *);
 	int (*unlock)(struct panel_device *);
+	int (*set_lock_pid)(struct panel_device *, int);
 #endif
 	int (*reset_lp11)(struct panel_device *);
 	int (*reset_disable)(struct panel_device *);
@@ -292,6 +332,9 @@ struct panel_drv_funcs {
 	int (*first_frame)(struct panel_device *);
 	int (*set_brightness)(struct panel_device *, unsigned int brightness_level);
 	int (*set_uevent_recovery_state)(struct panel_device *, void *);
+
+	int (*get_smooth_dim)(struct panel_device *);
+	int (*set_freq_step)(struct panel_device *, unsigned int index);
 };
 
 int panel_drv_attach_adapter_ioctl(struct panel_device *panel, void *arg);
@@ -579,11 +622,13 @@ struct panel_testmode {
 struct panel_device {
 	int id;
 	int boot_panel_id;
+	bool probe_done;
 	struct panel_adapter adapter;
 
 	const char *of_node_name;
 	struct device_node *ap_vendor_setting_node;
 	struct device_node *power_ctrl_node;
+	struct device_node *options_node;
 
 #if defined(CONFIG_USDM_PANEL_DISPLAY_MODE)
 	struct panel_display_modes *panel_modes;
@@ -612,7 +657,7 @@ struct panel_device {
 	/* Total depth of panel mutex */
 	int panel_mutex_depth;
 	/* commit thread PID */
-	int commit_thread_pid;
+	atomic_t commit_thread_pid;
 	bool big_lock;
 #endif
 
@@ -716,6 +761,8 @@ struct panel_device {
 
 #if defined(CONFIG_USDM_SDP_ADAPTIVE_MIPI)
 	struct adaptive_mipi_v2_info sdp_adap_mipi;
+	struct freq_hop_param sdp_adap_mipi_last_clk;
+	struct freq_hop_param sdp_adap_mipi_test_clk;
 #endif
 #if defined(CONFIG_USDM_SDP_ADAPTIVE_MIPI) ||\
 	defined(CONFIG_USDM_ADAPTIVE_MIPI)
@@ -920,6 +967,8 @@ static inline int panel_get_rcd_info(struct panel_device *panel, void *arg) { re
 #endif
 int panel_set_brightness(struct panel_device *panel, unsigned int level);
 
+bool module_param_debug_is_enabled(enum mcd_panel_debug_sel sel);
+
 struct list_head *panel_get_object_list(struct panel_device *panel,
 		unsigned int type);
 void destroy_panel_object(struct pnobj *pnobj);
@@ -930,6 +979,11 @@ int panel_add_command_from_initdata_maptbl(struct maptbl *arr,
 		unsigned int size, struct list_head *initdata_list);
 int panel_add_command_from_initdata_seqtbl(struct seqinfo *arr,
 		unsigned int size, struct list_head *initdata_list);
+
+int panel_dt_lut_get_option_value(struct panel_device *panel, const char *option_name);
+#ifdef CONFIG_USDM_BLIC_I2C
+int panel_set_i2c_device(struct panel_i2c_dev *panel_i2c_dev);
+#endif
 
 #define PRINT_PANEL_STATE_BEGIN(_old_state_, _new_state_, _start_) \
 	do { \

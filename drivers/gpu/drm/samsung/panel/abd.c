@@ -25,8 +25,13 @@
 #include <linux/pm_runtime.h>
 #include <linux/reboot.h>
 #include <linux/rtc.h>
+#include <linux/irqdesc.h>
+#include <linux/sched/clock.h>
+#include <dt-bindings/gpio/gpio.h>
 
-#include "../../../../../kernel/irq/internals.h"
+#if !IS_ENABLED(CONFIG_DEVICE_MODULES_DRM_MEDIATEK)
+#include "kernel/irq/internals.h"
+#endif
 
 #define USDM_ABD_MTK_UEVENT	1
 
@@ -129,6 +134,24 @@ static struct platform_device *of_find_device_by_path(const char *name)
 }
 #endif
 
+#if IS_ENABLED(CONFIG_DEVICE_MODULES_DRM_MEDIATEK)
+enum {
+	IRQS_AUTODETECT		= 0x00000001,
+	IRQS_SPURIOUS_DISABLED	= 0x00000002,
+	IRQS_POLL_INPROGRESS	= 0x00000008,
+	IRQS_ONESHOT		= 0x00000020,
+	IRQS_REPLAY		= 0x00000040,
+	IRQS_WAITING		= 0x00000080,
+	IRQS_PENDING		= 0x00000200,
+	IRQS_SUSPENDED		= 0x00000800,
+	IRQS_TIMINGS		= 0x00001000,
+	IRQS_NMI		= 0x00002000,
+	IRQS_SYSFS		= 0x00004000,
+};
+#define istate core_internal_state__do_not_mess_with_it
+#define  _IRQ_NOAUTOEN IRQ_NOAUTOEN
+#endif
+
 struct platform_device *of_find_abd_dt_parent_platform_device(void)
 {
 	return of_find_device_by_path("/panel");
@@ -215,21 +238,21 @@ static void set_mipi_rw_bypass(struct abd_protect *abd, unsigned int bypass)
 	container->lcdconnected = bypass ? 0 : !!lcdtype;
 }
 
-static inline int get_boot_lcdtype(void)
+static inline int get_boot_lcdtype(int id)
 {
-	return usdm_get_lk_boot_panel_id();
+	return usdm_get_lk_boot_panel_id(id);
 }
 
-static inline unsigned int get_boot_lcdconnected(void)
+static inline unsigned int get_boot_lcdconnected(int id)
 {
-	return get_boot_lcdtype() ? 1 : 0;
+	return get_boot_lcdtype(id) ? 1 : 0;
 }
 
 static void save_boot_lcd_information(struct abd_protect *abd)
 {
 	abd->islcmconnected = islcmconnected;
 
-	if (get_boot_lcdconnected() && get_frame_bypass(abd))
+	if (get_boot_lcdconnected(0) && get_frame_bypass(abd))
 		usdm_abd_save_str(abd, "islcmconnected abnormal");
 }
 
@@ -547,7 +570,6 @@ static void __usdm_abd_pin_enable(struct abd_protect *abd, struct abd_pin_info *
 
 		if (pin->bug_flag == 1 || pin->bug_flag & IRQ_TYPE_LEVEL_MASK) {
 			dbg_info("%s has bug_flag(%d)\n", pin->name, pin->bug_flag);
-			BUG();
 		}
 
 		list_for_each_entry(sub_info, chain_list, node) {
@@ -619,10 +641,9 @@ static irqreturn_t usdm_abd_handler(int irq, void *dev_id)
 		pin->name, pin->gpio, pin->irq, pin->level, trace->count, lcdon->count,
 		(pin->level == pin->active_level) ? (pin->index == ABD_PIN_LOG ? "undefined" : "abnormal") : "normal");
 
-	if (pin->bug_flag == 1 || pin->bug_flag & IRQ_TYPE_EDGE_BOTH) {
-		dbg_info("%s has bug_flag(%d)\n", pin->name, pin->bug_flag);
-		BUG();
-	}
+		if (pin->bug_flag == 1 || pin->bug_flag & IRQ_TYPE_EDGE_BOTH) {
+			dbg_info("%s has bug_flag(%d)\n", pin->name, pin->bug_flag);
+		}
 
 	if (pin->active_level != pin->level)
 		goto exit;
@@ -834,9 +855,8 @@ static irqreturn_t usdm_abd_detatch_handler(int id, void *dev_id)
 
 int usdm_abd_pin_register_refresh_handler(struct abd_protect *abd, int irq)
 {
-	BUG_ON(!abd);
-
-	BUG_ON(!abd->init_done);
+	if (!abd || !abd->init_done)
+		return -EINVAL;
 
 	return usdm_abd_pin_register_handler(abd, irq, usdm_abd_refresh_handler, abd);
 }
@@ -1036,7 +1056,7 @@ static void of_usdm_abd_pin_register_handler_chain(struct abd_protect *abd)
 
 			dbg_none("info(%s) subinfo(%s)\n", info, subinfo);
 
-			gpio = of_get_named_gpio_flags(np, info, 0, NULL);
+			gpio = of_get_named_gpio(np, info, 0);
 			if (!gpio_is_valid(gpio)) {
 				dbg_info("gpio_is_valid fail, gpio: %s, %d\n", info, gpio);
 				continue;
@@ -1308,7 +1328,7 @@ void usdm_abd_simple_print(struct abd_protect *abd, struct seq_file *m, void *un
 
 	abd_printf(m, "==========_USDM_ABD_==========\n");
 	abd_printf(m, "bypass rw(%d)frame(%d,%d) lcdtype(%6X)\n",
-		get_mipi_rw_bypass(abd), get_boot_frame_bypass(abd), get_frame_bypass(abd), get_boot_lcdtype());
+		get_mipi_rw_bypass(abd), get_boot_frame_bypass(abd), get_frame_bypass(abd), get_boot_lcdtype(0));
 
 	for (i = 0; i < ABD_PIN_MAX; i++) {
 		if (abd->pin[i].p_first.count) {
@@ -1391,7 +1411,7 @@ static int of_usdm_abd_pin_register_handler(struct abd_protect *abd, struct abd_
 		char *keyword, irq_handler_t func)
 {
 	int ret = 0, gpio = 0, to_irq = 0;
-	enum of_gpio_flags flags;
+	unsigned int flags;
 	struct device_node *np = NULL;
 	struct platform_device *pdev = NULL;
 	unsigned int irqf_type = IRQF_TRIGGER_RISING;
@@ -1413,7 +1433,7 @@ static int of_usdm_abd_pin_register_handler(struct abd_protect *abd, struct abd_
 	if (!of_find_property(np, dts_name, NULL))
 		goto exit;
 
-	gpio = of_get_named_gpio_flags(np, dts_name, 0, &flags);
+	gpio = of_get_named_gpio(np, dts_name, 0);
 	if (!gpio_is_valid(gpio)) {
 		dbg_info("gpio_is_valid fail, gpio: %s, %d\n", dts_name, gpio);
 		goto exit;
@@ -1432,8 +1452,12 @@ static int of_usdm_abd_pin_register_handler(struct abd_protect *abd, struct abd_
 
 	pin->desc = (pin->irq) ? irq_to_desc(pin->irq) : kzalloc(sizeof(struct irq_desc), GFP_KERNEL);
 
-	pin->active_level = !(flags & OF_GPIO_ACTIVE_LOW);
-	irqf_type = (flags & OF_GPIO_ACTIVE_LOW) ? IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
+	if (of_property_read_u32_index(np, dts_name, 2, &flags)) {
+		dbg_info("%s:failed to read gpio flag\n", np->name);
+		goto exit;
+	}
+	pin->active_level = !(flags & GPIO_ACTIVE_LOW);
+	irqf_type = (!pin->active_level) ? IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
 	dbg_info("%s is active %s%s\n", keyword, pin->active_level ? "high" : "low",
 		(pin->irq) ? ((irqf_type == IRQF_TRIGGER_RISING) ? ", rising" : ", falling") : "");
 
@@ -1774,13 +1798,13 @@ int usdm_abd_init(void)
 
 	save_boot_lcd_information(abd);
 
-	if (get_boot_lcdconnected())
+	if (get_boot_lcdconnected(0))
 		usdm_abd_pin_register(abd);
 	else
 		set_frame_bypass(abd, 1);
 
 	dbg_info("bypass rw(%d)frame(%d,%d) lcdtype(%6X)\n",
-		get_mipi_rw_bypass(abd), get_boot_frame_bypass(abd), get_frame_bypass(abd), get_boot_lcdtype());
+		get_mipi_rw_bypass(abd), get_boot_frame_bypass(abd), get_frame_bypass(abd), get_boot_lcdtype(0));
 
 	usdm_abd_enable(abd, 1);
 

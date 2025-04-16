@@ -1780,6 +1780,17 @@ static int dsim_wr_data(struct dsim_device *dsim, u32 type, const u8 data[],
 	return ret ? ret : len;
 }
 
+static void dsim_clear_rx_fifo(struct dsim_device *dsim)
+{
+	u32 depth =  DSIM_RX_FIFO_MAX_DEPTH;
+
+	while (depth-- && !dsim_reg_rx_fifo_is_empty(dsim->id))
+		dsim_reg_get_rx_fifo(dsim->id);
+
+	if (!depth)
+		dsim_err(dsim, "rxfifo was incompletely cleared\n");
+}
+
 #define DSIM_RX_PHK_HEADER_SIZE	4
 static int dsim_read_data(struct dsim_device *dsim, u32 id, u32 addr, u32 cnt,
 		u8 *buf)
@@ -1864,13 +1875,22 @@ static int dsim_read_data(struct dsim_device *dsim, u32 id, u32 addr, u32 cnt,
 
 	if (!dsim_reg_rx_fifo_is_empty(dsim->id)) {
 		dsim_err(dsim, "RX FIFO is not empty\n");
+		if (dsim->config.ignore_rx_trail) {
+			ret = rx_size;
+			goto exit;
+		}
+
+		rx_fifo = dsim_reg_get_rx_fifo(dsim->id);
+		if ((rx_fifo & 0xFF) == MIPI_DSI_RX_ACKNOWLEDGE_AND_ERROR_REPORT)
+			dsim_reg_rx_err_handler(dsim->id, rx_fifo);
+
 		dsim_dump(dsim);
 		ret = -EBUSY;
 	} else  {
 		ret = rx_size;
 	}
 exit:
-
+	dsim_clear_rx_fifo(dsim);
 	return ret;
 }
 

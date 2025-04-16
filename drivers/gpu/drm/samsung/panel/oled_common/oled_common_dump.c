@@ -25,7 +25,6 @@ static void make_abd_print_arr(struct dumpinfo *dump)
 {
 	int i, bit;
 	char **print_tbl;
-	unsigned long expect_mask;
 
 	if (dump->abd_print)
 		return;
@@ -33,8 +32,7 @@ static void make_abd_print_arr(struct dumpinfo *dump)
 	print_tbl = kzalloc(sizeof(char *) * dump->res->dlen * BITS_PER_BYTE, GFP_KERNEL);
 
 	for (i = 0; i < dump->nr_expects; i++) {
-		expect_mask = dump->expects[i].mask;
-		for_each_set_bit(bit, &expect_mask, BITS_PER_BYTE)
+		for_each_set_bit(bit, (unsigned long *)&(dump->expects[i].mask), BITS_PER_BYTE)
 			print_tbl[dump->expects[i].offset * BITS_PER_BYTE + bit] = dump->expects[i].msg;
 	}
 
@@ -213,7 +211,9 @@ int oled_dump_show_resource(struct dumpinfo *dump)
 int oled_dump_show_resource_and_panic(struct dumpinfo *dump)
 {
 	oled_dump_show_resource(dump);
-	BUG();
+	PANEL_BUG();
+
+	return 0;
 }
 
 int oled_dump_show_rddpm(struct dumpinfo *dump)
@@ -376,7 +376,7 @@ int oled_dump_show_dsi_err(struct dumpinfo *dump)
 #if IS_ENABLED(CONFIG_SEC_ABC)
 	if (dsi_err[0] > 0)
 #if IS_ENABLED(CONFIG_SEC_FACTORY)
-		sec_abc_send_event("MODULE=display@dump=act_section_dsierr0");
+		sec_abc_send_event("MODULE=display@INFO=act_section_dsierr0");
 #else
 		sec_abc_send_event("MODULE=display@WARN=act_section_dsierr0");
 #endif

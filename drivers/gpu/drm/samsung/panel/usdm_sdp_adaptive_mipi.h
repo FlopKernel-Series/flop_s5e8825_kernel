@@ -90,6 +90,7 @@ struct panel_adaptive_mipi {
 int adaptive_mipi_v2_info_initialize(
 		struct adaptive_mipi_v2_info *sdp_adap_mipi,
 		struct panel_adaptive_mipi *adap_mipi);
+int sdp_adaptive_mipi_v2_apply_freq(int mipi_clk_kbps, int osc_clk_khz, void *ctx);
 int probe_sdp_adaptive_mipi(struct panel_device *panel);
 int remove_sdp_adaptive_mipi(struct panel_device *panel);
 

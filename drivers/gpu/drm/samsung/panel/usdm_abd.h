@@ -262,7 +262,7 @@ static inline u64 get_merged_value(const void *p, u8 byte)
 }
 
 extern unsigned int lcdtype;
-extern int usdm_get_lk_boot_panel_id(void);
+extern int usdm_get_lk_boot_panel_id(int id);
 
 #if defined(CONFIG_MEDIATEK_SOLUTION) || defined(CONFIG_ARCH_MEDIATEK)
 extern int mtkfb_debug_show(struct seq_file *m, void *unused);

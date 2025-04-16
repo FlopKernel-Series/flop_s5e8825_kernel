@@ -296,13 +296,36 @@ static int parse_sdp_adaptive_mipi_dt(struct device_node *np,
 	return 0;
 }
 
-static int sdp_adaptive_mipi_v2_apply_freq(int mipi_clk_kbps, int osc_clk_khz, void *ctx)
+static void sdp_adaptive_mipi_v2_update_clocks(struct panel_device *panel, struct freq_hop_param *param)
+{
+	if (!panel)
+		return;
+
+	panel->sdp_adap_mipi_last_clk.dsi_freq = param->dsi_freq;
+	panel->sdp_adap_mipi_last_clk.osc_freq = param->osc_freq;
+
+	if (panel->sdp_adap_mipi_test_clk.dsi_freq != 0) {
+		panel_info("apply dsi clk to test: %d -> %d\n",
+			param->dsi_freq, panel->sdp_adap_mipi_test_clk.dsi_freq);
+		param->dsi_freq = panel->sdp_adap_mipi_test_clk.dsi_freq;
+	}
+
+	if (panel->sdp_adap_mipi_test_clk.osc_freq != 0) {
+		panel_info("apply osc clk to test: %d -> %d\n",
+			param->osc_freq, panel->sdp_adap_mipi_test_clk.osc_freq);
+		param->osc_freq = panel->sdp_adap_mipi_test_clk.osc_freq;
+	}
+}
+
+int sdp_adaptive_mipi_v2_apply_freq(int mipi_clk_kbps, int osc_clk_khz, void *ctx)
 {
 	struct freq_hop_param param = {
 		.dsi_freq = mipi_clk_kbps,
 		.osc_freq = osc_clk_khz,
 	};
 	int ret;
+
+	sdp_adaptive_mipi_v2_update_clocks(ctx, &param);
 
 	ret = panel_set_freq_hop(ctx, &param);
 	if (ret < 0) {

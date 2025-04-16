@@ -498,3 +498,11 @@ config DRM_LIB_RANDOM
 	default n
 
 MCD_PANEL_PATH := drivers/gpu/drm/samsung/panel
+
+########## FOR KUNIT ##########
+
+config DRM_PANEL_MCD_COMMON_TEST
+    bool "KUnit test for exynos mcd-common-panel test"
+    depends on SEC_KUNIT
+    help
+      TODO: Describe config fully.

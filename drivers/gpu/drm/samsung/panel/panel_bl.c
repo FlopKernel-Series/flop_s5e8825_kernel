@@ -48,6 +48,16 @@ static struct panel_prop_enum_item night_dim_enum_items[] = {
 	__PANEL_PROPERTY_ENUM_ITEM_INITIALIZER(NIGHT_DIM_ON),
 };
 
+static struct panel_prop_enum_item local_hbm_enum_items[] = {
+	__PANEL_PROPERTY_ENUM_ITEM_INITIALIZER(LOCAL_HBM_OFF),
+	__PANEL_PROPERTY_ENUM_ITEM_INITIALIZER(LOCAL_HBM_ON),
+};
+
+static struct panel_prop_enum_item local_hbm_circle_enum_items[] = {
+	__PANEL_PROPERTY_ENUM_ITEM_INITIALIZER(LOCAL_HBM_CIRCLE_OFF),
+	__PANEL_PROPERTY_ENUM_ITEM_INITIALIZER(LOCAL_HBM_CIRCLE_ON),
+};
+
 static struct panel_prop_list panel_bl_property_array[] = {
 	/* enum property */
 	__PANEL_PROPERTY_ENUM_INITIALIZER(PANEL_BL_PROPERTY_SMOOTH_TRANSITION,
@@ -56,6 +66,11 @@ static struct panel_prop_list panel_bl_property_array[] = {
 			ACL_PWRSAVE_OFF, acl_pwrsave_enum_items),
 	__PANEL_PROPERTY_ENUM_INITIALIZER(PANEL_BL_PROPERTY_NIGHT_DIM,
 			NIGHT_DIM_OFF, night_dim_enum_items),
+	__PANEL_PROPERTY_ENUM_INITIALIZER(PANEL_BL_PROPERTY_LOCAL_HBM,
+			LOCAL_HBM_OFF, local_hbm_enum_items),
+	__PANEL_PROPERTY_ENUM_INITIALIZER(PANEL_BL_PROPERTY_LOCAL_HBM_CIRLCE,
+			LOCAL_HBM_CIRCLE_OFF, local_hbm_circle_enum_items),
+
 	/* range property */
 	__PANEL_PROPERTY_RANGE_INITIALIZER(PANEL_BL_PROPERTY_BRIGHTNESS,
 			UI_DEF_BRIGHTNESS, 0, 1000000000),
@@ -106,6 +121,10 @@ int panel_bl_set_property(struct panel_bl_device *panel_bl,
 		propname = PANEL_BL_PROPERTY_ACL_PWRSAVE;
 	else if (property == &panel_bl->props.night_dim)
 		propname = PANEL_BL_PROPERTY_NIGHT_DIM;
+	else if (property == &panel_bl->props.local_hbm)
+		propname = PANEL_BL_PROPERTY_LOCAL_HBM;
+	else if (property == &panel_bl->props.local_hbm_circle)
+		propname = PANEL_BL_PROPERTY_LOCAL_HBM_CIRLCE;
 
 	if (!propname) {
 		panel_err("unknown property\n");
@@ -657,6 +676,28 @@ int panel_bl_get_brightness_non_zero_set_count(struct panel_bl_device *panel_bl)
 inline void panel_bl_inc_brightness_non_zero_set_count(struct panel_bl_device *panel_bl)
 {
 	atomic_inc(&panel_bl->props.brightness_non_zero_set_count);
+}
+
+int panel_bl_get_smooth_dim_request(struct panel_bl_device *panel_bl)
+{
+	if (!panel_bl)
+		return SMOOTH_TRANS_ON;
+
+	if (!panel_bl->props.smooth_transition_mask_layer_req)
+		return SMOOTH_TRANS_OFF;
+
+	if (!panel_bl->props.smooth_transition_sysfs_req)
+		return SMOOTH_TRANS_OFF;
+
+	return SMOOTH_TRANS_ON;
+}
+
+int panel_bl_get_smooth_transition_sysfs_req(struct panel_bl_device *panel_bl)
+{
+	if (!panel_bl)
+		return SMOOTH_TRANS_ON;
+
+	return panel_bl->props.smooth_transition_sysfs_req;
 }
 
 int panel_bl_set_subdev(struct panel_bl_device *panel_bl, int id)
@@ -1260,7 +1301,7 @@ __visible_for_testing int panel_bl_set_name(struct panel_bl_device *panel_bl, un
 				"%s", PANEL_DEV_NAME);
 	else
 		snprintf(panel_bl->name, MAX_PANEL_BL_NAME_SIZE,
-				"%s-%d", PANEL_DEV_NAME, id);
+				"%s%d", PANEL_DEV_NAME, id);
 
 	return 0;
 }
@@ -1286,6 +1327,8 @@ __visible_for_testing int panel_bl_init_property(struct panel_bl_device *panel_b
 	panel_bl->props.acl_pwrsave = ACL_PWRSAVE_OFF;
 	panel_bl->props.acl_opr = 1;
 	panel_bl->props.smooth_transition = SMOOTH_TRANS_ON;
+	panel_bl->props.smooth_transition_sysfs_req = SMOOTH_TRANS_ON;
+	panel_bl->props.smooth_transition_mask_layer_req = SMOOTH_TRANS_ON;
 
 	ret = panel_add_property_from_array(panel,
 			panel_bl_property_array,

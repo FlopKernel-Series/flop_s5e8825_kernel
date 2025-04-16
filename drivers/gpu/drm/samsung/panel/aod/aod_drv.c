@@ -76,7 +76,7 @@ int panel_do_aod_seqtbl_by_name(struct aod_dev_info *aod, char *seqname)
 
 static int aod_init_panel(struct aod_dev_info *aod, int lock)
 {
-	int ret;
+	int ret = 0;
 	struct aod_ioctl_props *props;
 	struct panel_device *panel;
 
@@ -115,13 +115,14 @@ static int aod_init_panel(struct aod_dev_info *aod, int lock)
 		}
 	}
 
-	ret = usdm_panel_do_aod_seqtbl_by_name_nolock(aod, SELF_MASK_ENA_SEQ);
-	if (ret < 0) {
-		panel_err("failed to run sequence(%s)\n",
-				SELF_MASK_ENA_SEQ);
-		goto err;
+	if (usdm_check_aod_seqtbl_exist(aod, SELF_MASK_ENA_SEQ)) {
+		ret = usdm_panel_do_aod_seqtbl_by_name_nolock(aod, SELF_MASK_ENA_SEQ);
+		if (ret < 0) {
+			panel_err("failed to run sequence(%s)\n",
+					SELF_MASK_ENA_SEQ);
+			goto err;
+		}
 	}
-
 err:
 	if (lock == INIT_WITH_LOCK)
 		panel_mutex_unlock(&panel->op_lock);
@@ -1121,8 +1122,8 @@ int aod_drv_prepare(struct panel_device *panel,
 	}
 
 	if (!aod_tune) {
-		panel_err("aod_tune is null\n");
-		return -EINVAL;
+		panel_err("aod is not supported\n");
+		return 0;
 	}
 
 	aod = &panel->aod;
@@ -1179,8 +1180,8 @@ int aod_drv_probe(struct panel_device *panel, struct aod_tune *aod_tune)
 	}
 
 	if (!aod_tune) {
-		panel_err("aod_tune is null\n");
-		return -EINVAL;
+		panel_warn("aod is not supported\n");
+		return 0;
 	}
 
 	aod = &panel->aod;
@@ -1209,10 +1210,17 @@ int aod_drv_probe(struct panel_device *panel, struct aod_tune *aod_tune)
 		return ret;
 	}
 
+	aod->support = true;
+
 	return 0;
 }
 
 int aod_drv_remove(struct panel_device *panel)
 {
+	struct aod_dev_info *aod;
+
+	aod = &panel->aod;
+	aod->support = false;
+
 	return 0;
 }

@@ -60,6 +60,8 @@ struct panel_display_mode {
 	 */
 	char name[PANEL_DISPLAY_MODE_NAME_LEN];
 
+	unsigned int in_width;
+	unsigned int in_height;
 	unsigned int width;
 	unsigned int height;
 	unsigned int refresh_rate;
@@ -79,6 +81,8 @@ struct panel_display_mode {
 	u8 dsc_picture_parameter_set[MAX_PANEL_DISPLAY_DSC_PICTURE_PARAMETER_SET];
 	/* video mode parameters */
 	bool panel_video_mode;
+	bool panel_video_hybrid_mode;
+
 	unsigned int panel_hporch[MAX_PANEL_H_PORCH];
 	unsigned int panel_vporch[MAX_PANEL_V_PORCH];
 	/* power mode parameters */
@@ -108,9 +112,9 @@ struct panel_display_modes {
 	struct panel_display_mode **modes;
 };
 
-#define PANEL_MODE_FMT    "\"%s\" %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
+#define PANEL_MODE_FMT    "\"%s\" %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
 #define PANEL_MODE_ARG(m) \
-	(m)->name, (m)->width, (m)->height, \
+	(m)->name, (m)->in_width, (m)->in_height, (m)->width, (m)->height, \
 	(m)->refresh_rate, (m)->refresh_mode, \
 	(m)->panel_refresh_rate, (m)->panel_refresh_mode, \
 	(m)->panel_te_st, (m)->panel_te_ed, \
@@ -123,8 +127,8 @@ struct panel_display_modes {
 	(m)->doze_mode, \
 	(m)->panel_lp_mode
 
-#define PANEL_MODE(nm, w, h, rr, rm, prr, prm, te_st, te_ed, te_ssc, te_hsc, dsce, dscc, dscsn, dscsh, video_mode, hbp, hfp, hsa, vbp, vfp, vsa, lp_ref, doze, lpm) \
-	.name = (nm), .width = (w), .height = (h), \
+#define PANEL_MODE(nm, in_w, in_h, w, h, rr, rm, prr, prm, te_st, te_ed, te_ssc, te_hsc, dsce, dscc, dscsn, dscsh, video_mode, hbp, hfp, hsa, vbp, vfp, vsa, lp_ref, doze, lpm) \
+	.name = (nm), .in_width = (in_w), .in_height = (in_h), .width = (w), .height = (h), \
 	.refresh_rate = (rr), .refresh_mode = (rm), \
 	.panel_refresh_rate = (prr), .panel_refresh_mode = (prm), \
 	.panel_te_st = (te_st), .panel_te_ed = (te_ed), \
