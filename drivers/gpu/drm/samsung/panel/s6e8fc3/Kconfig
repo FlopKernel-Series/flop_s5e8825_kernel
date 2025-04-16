@@ -1,0 +1,18 @@
+menuconfig USDM_PANEL_S6E8FC3
+	tristate "S6E8FC3 DDI Panel Driver"
+	depends on USDM_PANEL
+	depends on USDM_PANEL_OLED_COMMON
+	default n
+	help
+		This enables S6E8FC3 DDI dependent panel drivers of
+		common panel driver. say Y, if you have a panel based on
+		the S6E8FC3 DDI.
+
+
+########## FOR KUNIT ##########
+
+config S6E8FC3_TEST
+	bool "KUnit test for s6e8fc3 ddi driver"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
