@@ -11,10 +11,10 @@
  */
 #include <linux/of_gpio.h>
 #include <video/mipi_display.h>
-#include "../maptbl.h"
-#include "../panel.h"
-#include "../panel_debug.h"
-#include "../panel_function.h"
+#include "../usdm_maptbl.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_debug.h"
+#include "../usdm_panel_function.h"
 #include "s6e8fc3_a26x_panel.h"
 #include "s6e8fc3_a26x_ezop.h"
 
@@ -23,8 +23,8 @@ static int s6e8fc3_a26x_br_index_property_update(struct panel_property *prop)
 	struct panel_device *panel = prop->panel;
 	struct panel_bl_device *panel_bl = &panel->panel_bl;
 
-	return panel_property_set_value(prop,
-			get_brightness_pac_step_by_subdev_id(panel_bl,
+	return usdm_panel_property_set_value(prop,
+			usdm_get_brightness_pac_step_by_subdev_id(panel_bl,
 				PANEL_BL_SUBDEV_TYPE_DISP, panel_bl->props.brightness));
 }
 
@@ -43,7 +43,7 @@ static int s6e8fc3_a26x_first_br_property_update(struct panel_property *prop)
 	if (index == S6E8FC3_A26X_FIRST_BR_ON)
 		panel_info("first non-zero br!\n");
 
-	return panel_property_set_value(prop, index);
+	return usdm_panel_property_set_value(prop, index);
 }
 
 #ifdef CONFIG_USDM_MDNIE
@@ -52,7 +52,7 @@ static int oled_mdnie_night_level_property_update(struct panel_property *prop)
 	struct panel_device *panel = prop->panel;
 	struct mdnie_info *mdnie = &panel->mdnie;
 
-	return panel_property_set_value(prop, mdnie->props.night_level);
+	return usdm_panel_property_set_value(prop, mdnie->props.night_level);
 }
 #endif
 
@@ -105,14 +105,14 @@ static int __init s6e8fc3_a26x_panel_init(void)
 	memcpy(&cpi->dumpinfo[DUMP_SELF_MASK_CHECKSUM],
 		&s6e8fc3_a26x_dump_self_mask_checksum, sizeof(struct dumpinfo));
 
-	register_common_panel(&s6e8fc3_a26x_panel_info);
+	usdm_register_common_panel(&s6e8fc3_a26x_panel_info);
 
 	return 0;
 }
 
 static void __exit s6e8fc3_a26x_panel_exit(void)
 {
-	deregister_common_panel(&s6e8fc3_a26x_panel_info);
+	usdm_deregister_common_panel(&s6e8fc3_a26x_panel_info);
 }
 
 module_init(s6e8fc3_a26x_panel_init);

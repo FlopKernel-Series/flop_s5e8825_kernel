@@ -14,7 +14,7 @@
 #define __DB7F2010B_A26X_RESOL_H__
 
 #include <dt-bindings/display/panel-display.h>
-#include "../panel.h"
+#include "../usdm_panel.h"
 #include "db7f2010b.h"
 #include "db7f2010b_dimming.h"
 
