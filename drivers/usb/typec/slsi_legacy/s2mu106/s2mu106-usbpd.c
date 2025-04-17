@@ -4848,7 +4848,7 @@ static int __init s2mu106_usbpd_init(void)
 	pr_err("%s\n", __func__);
 	return i2c_add_driver(&s2mu106_usbpd_driver);
 }
-late_initcall(s2mu106_usbpd_init);
+module_init(s2mu106_usbpd_init);
 
 static void __exit s2mu106_usbpd_exit(void)
 {

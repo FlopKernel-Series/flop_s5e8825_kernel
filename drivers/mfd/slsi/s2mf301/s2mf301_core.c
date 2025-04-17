@@ -510,7 +510,7 @@ static int __init s2mf301_i2c_init(void)
 	s2mf301_info("%s:%s\n", MFD_DEV_NAME_, __func__);
 	return i2c_add_driver(&s2mf301_i2c_driver);
 }
-subsys_initcall(s2mf301_i2c_init);
+module_init(s2mf301_i2c_init);
 
 static void __exit s2mf301_i2c_exit(void)
 {

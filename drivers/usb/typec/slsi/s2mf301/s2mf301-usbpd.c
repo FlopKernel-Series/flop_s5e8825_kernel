@@ -5514,7 +5514,7 @@ static int __init s2mf301_usbpd_init(void)
 	s2mf301_err("%s\n", __func__);
 	return i2c_add_driver(&s2mf301_usbpd_driver);
 }
-late_initcall(s2mf301_usbpd_init);
+module_init(s2mf301_usbpd_init);
 
 static void __exit s2mf301_usbpd_exit(void)
 {
