@@ -270,6 +270,7 @@ mfd_s2mf301.ko
 mfd_sm5714.ko
 mfd_s2mu106.ko
 sm5451-charger.ko
+nu2111a_charger.ko
 hl7132_charger.ko
 sm5714-charger.ko
 sx938x.ko
