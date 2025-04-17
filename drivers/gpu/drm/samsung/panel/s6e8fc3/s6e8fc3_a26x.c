@@ -96,6 +96,12 @@ static struct dumpinfo s6e8fc3_a26x_dump_self_mask_checksum = DUMPINFO_INIT_V2(s
 static int __init s6e8fc3_a26x_panel_init(void)
 {
 	struct common_panel_info *cpi = &s6e8fc3_a26x_panel_info;
+
+	if (sec_current_device != SEC_A26XS) {
+		SEC_DETECT_LOG("Skipped s6e8fc3_a26xs panel driver\n");
+		return 0;
+	}
+
 	s6e8fc3_init(cpi);
 	cpi->prop_lists[USDM_DRV_LEVEL_MODEL] = s6e8fc3_a26x_property_array;
 	cpi->num_prop_lists[USDM_DRV_LEVEL_MODEL] = ARRAY_SIZE(s6e8fc3_a26x_property_array);
@@ -107,6 +113,7 @@ static int __init s6e8fc3_a26x_panel_init(void)
 
 	usdm_register_common_panel(&s6e8fc3_a26x_panel_info);
 
+	SEC_DETECT_LOG("Initialized s6e8fc3_a26xs panel driver\n");
 	return 0;
 }
 

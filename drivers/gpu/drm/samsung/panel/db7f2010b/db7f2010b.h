@@ -22,6 +22,7 @@
 #include "../usdm_panel.h"
 #include "../usdm_maptbl.h"
 #include "oled_function.h"
+#include <linux/sec_detect.h>
 
 /*
  * OFFSET ==> OFS means N-param - 1
