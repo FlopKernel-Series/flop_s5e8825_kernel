@@ -1,0 +1,32 @@
+&hsi2c_5 {
+	status = "okay";
+
+	nu2111a_charger: nu2111a@6e {
+		compatible = "nuvolta,nu2111a";
+		reg = <0x6e>;
+#if 0
+		nu2111a,sub_i2c-bus = <&${sub_direct_charger_i2c}>;
+#endif
+		nu2111a,vbat-reg = <4450000>;
+		nu2111a,input-current-limit = <3000000>; /* 3.0A */
+		nu2111a,charging-current = <6000000>; /* 6.0A */
+		nu2111a,topoff-current = <400000>; /* 400mA */
+		nu2111a,chg-mode = <1>; /* 2:1 direct charging mode */
+		nu2111a,cv-polling = <2000>; /* 2000ms */
+		nu2111a,step1-cv=<4200000>; /* 4200mV */
+		nu2111a,wd-tmr=<0x04>; /* 5s */
+		/* WDT enabled */
+		//nu2111a,wd-dis;
+	};
+};
+
+#if 0
+&${sub_direct_charger_i2c} {
+	status = "okay";
+};
+#endif
+
+/* /home/dpi/qb5_8814/workspace/P4_1716/android/kernel/kmodule/battery/suwon/charger/nu2111a/nu2111a_charger.a26xs.dtsi */
+&nu2111a_charger {
+	nu2111a,use-dc-vbat;
+};
