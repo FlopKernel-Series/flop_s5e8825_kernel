@@ -253,6 +253,7 @@ usdm-panel-oled-common.ko
 usdm-panel-tft-common.ko
 muic_platform.ko
 pdic_s2mf301.ko
+pdic_sm5714.ko
 sb-core.ko
 mesh.ko
 fingerprint.ko
@@ -305,7 +306,6 @@ sec-direct-charger.ko
 sec_pd.ko
 sb_wireless.ko
 sec-battery.ko
-pdic_sm5714.ko
 exynos-bts.ko
 exynos-btsops8825.ko
 exynos-usb-audio-offloading.ko

@@ -2598,7 +2598,7 @@ static int __init sm5714_muic_init(void)
 {
 	return platform_driver_register(&sm5714_muic_driver);
 }
-late_initcall(sm5714_muic_init);
+module_init(sm5714_muic_init);
 
 static void __exit sm5714_muic_exit(void)
 {

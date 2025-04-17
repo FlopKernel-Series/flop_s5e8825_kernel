@@ -11012,7 +11012,7 @@ static void __exit sec_battery_exit(void)
 	platform_driver_unregister(&sec_battery_driver);
 }
 
-late_initcall(sec_battery_init);
+module_init(sec_battery_init);
 module_exit(sec_battery_exit);
 
 MODULE_DESCRIPTION("Samsung Battery Driver");

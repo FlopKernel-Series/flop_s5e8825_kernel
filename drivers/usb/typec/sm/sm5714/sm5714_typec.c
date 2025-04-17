@@ -4268,7 +4268,7 @@ static int __init sm5714_usbpd_typec_init(void)
 {
 	return i2c_add_driver(&sm5714_usbpd_driver);
 }
-late_initcall(sm5714_usbpd_typec_init);
+module_init(sm5714_usbpd_typec_init);
 
 static void __exit sm5714_usbpd_typec_exit(void)
 {
