@@ -136,6 +136,12 @@ static struct dumpinfo db7f2010b_a26x_dump_self_mask_checksum = DUMPINFO_INIT_V2
 static int __init db7f2010b_a26x_panel_init(void)
 {
 	struct common_panel_info *cpi = &db7f2010b_a26x_panel_info;
+
+	if (sec_current_device != SEC_A26XS) {
+		SEC_DETECT_LOG("Skipped db7f2010b_a26xs panel driver\n");
+		return 0;
+	}
+
 	db7f2010b_init(cpi);
 	cpi->prop_lists[USDM_DRV_LEVEL_MODEL] = db7f2010b_a26x_property_array;
 	cpi->num_prop_lists[USDM_DRV_LEVEL_MODEL] = ARRAY_SIZE(db7f2010b_a26x_property_array);
@@ -147,6 +153,7 @@ static int __init db7f2010b_a26x_panel_init(void)
 
 	usdm_register_common_panel(&db7f2010b_a26x_panel_info);
 
+	SEC_DETECT_LOG("Initialized db7f2010b_a26xs panel driver\n");
 	return 0;
 }
 
