@@ -36,6 +36,12 @@ char *sec_bat_thermal_zone[] = {
 
 #define THERMAL_HYSTERESIS_2	19
 
+/* Custom */
+#define CUSTOM_THRESH_SEVERE_ENTER      400 /* Map to BAT_THERMAL_WARM */
+#define CUSTOM_THRESH_MODERATE_ENTER    360 /* Map to BAT_THERMAL_COOL1 */
+#define CUSTOM_THRESH_LIGHT_ENTER       320 /* Map to BAT_THERMAL_COOL2 */
+#define CUSTOM_HYSTERESIS               20
+
 const char *sec_usb_conn_str(int usb_conn_sts)
 {
 	switch (usb_conn_sts) {
@@ -1535,6 +1541,7 @@ void sec_usb_protection(struct sec_battery_info *battery)
 	}
 }
 
+#if 0
 void sec_bat_thermal_check(struct sec_battery_info *battery)
 {
 	int bat_thm = battery->temperature;
@@ -1964,6 +1971,204 @@ void sec_bat_thermal_check(struct sec_battery_info *battery)
 		default:
 			break;
 		}
+	}
+
+	return;
+}
+#endif
+
+void sec_bat_thermal_check(struct sec_battery_info *battery)
+{
+	int bat_thm = battery->temperature;
+	int pre_thermal_zone = battery->thermal_zone;
+	//int voter_status = SEC_BAT_CHG_MODE_CHARGING;
+
+	/* --- Custom Threshold Calculation with Hysteresis --- */
+	int severe_thresh     = CUSTOM_THRESH_SEVERE_ENTER;
+	int severe_recovery   = CUSTOM_THRESH_SEVERE_ENTER - CUSTOM_HYSTERESIS;
+	int moderate_thresh   = CUSTOM_THRESH_MODERATE_ENTER;
+	int moderate_recovery = CUSTOM_THRESH_MODERATE_ENTER - CUSTOM_HYSTERESIS;
+	int light_thresh      = CUSTOM_THRESH_LIGHT_ENTER;
+	int light_recovery    = CUSTOM_THRESH_LIGHT_ENTER - CUSTOM_HYSTERESIS;
+
+	/* Safety Thresholds from DT (Keep these!) */
+	int safety_overheat_thresh = battery->warm_overheat_thresh;
+	int safety_cold_thresh     = battery->cold_cool3_thresh;
+
+	/* Apply hysteresis to safety thresholds too */
+	int safety_overheat_recovery = safety_overheat_thresh - THERMAL_HYSTERESIS_2; /* Use original hysteresis */
+	int safety_cold_recovery     = safety_cold_thresh + THERMAL_HYSTERESIS_2;     /* Use original hysteresis */
+
+	/* Use recovery thresholds if already in or above that zone */
+	if (battery->thermal_zone >= BAT_THERMAL_WARM) { /* Includes WARM, OVERHEAT, OVERHEATLIMIT */
+		severe_thresh = severe_recovery;
+	}
+	if (battery->thermal_zone >= BAT_THERMAL_COOL1) {
+		moderate_thresh = moderate_recovery;
+	}
+	if (battery->thermal_zone >= BAT_THERMAL_COOL2) {
+		light_thresh = light_recovery;
+	}
+	/* --- End Custom Threshold Calculation --- */
+
+	if (battery->thermal_zone == BAT_THERMAL_OVERHEAT || battery->thermal_zone == BAT_THERMAL_OVERHEATLIMIT) {
+		safety_overheat_thresh = safety_overheat_recovery;
+	}
+	if (battery->thermal_zone == BAT_THERMAL_COLD) {
+		safety_cold_thresh = safety_cold_recovery;
+	}
+
+
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	bat_thm = sec_bat_get_high_priority_temp(battery);
+#endif
+
+	pr_info("%s: Temp: %d, Current Zone: %s\n", __func__,
+			bat_thm, sec_bat_thermal_zone[pre_thermal_zone]);
+	pr_info("%s: Effective Thresh -> Severe: %d, Moderate: %d, Light: %d\n", __func__,
+			severe_thresh, moderate_thresh, light_thresh);
+	pr_info("%s: Safety Thresh -> Overheat: %d, Cold: %d\n", __func__,
+			safety_overheat_thresh, safety_cold_thresh);
+
+
+	if ((battery->status == POWER_SUPPLY_STATUS_DISCHARGING && battery->usb_conn_status == USB_CONN_NORMAL) ||
+#if defined(CONFIG_BC12_DEVICE) && defined(CONFIG_SEC_FACTORY)
+		battery->vbat_adc_open ||
+#endif
+		battery->skip_swelling) {
+		// ... (existing logic for discharging/factory mode - seems OK) ...
+		battery->health_change = false;
+		pr_debug("%s: DISCHARGING or factory mode. stop thermal check\n", __func__);
+		battery->thermal_zone = BAT_THERMAL_NORMAL;
+		battery->usb_conn_status = USB_CONN_NORMAL;
+		sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
+		sec_vote(battery->fcc_vote, VOTER_SWELLING, false, 0);
+		sec_vote(battery->fv_vote, VOTER_SWELLING, false, 0);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+		sec_vote(battery->vlim_vote, VOTER_SWELLING, false, 0);
+#endif
+		sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+		if (battery->dchg_dc_in_swelling)
+			sec_vote(battery->dc_fv_vote, VOTER_SWELLING, false, 0);
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, false, 0);
+		sec_vote(battery->chgen_vote, VOTER_CHANGE_CHGMODE, false, 0);
+		sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+		sec_bat_set_current_event(battery, 0, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+		/* No need to call sec_bat_set_threshold here */
+		return;
+	}
+
+
+	if (battery->pdata->bat_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE) {
+		pr_err("%s: BAT_THM, Invalid Temp Check Type\n", __func__);
+		return;
+	}
+
+	/* === Start Custom Logic === */
+	/* 1. Check USB connection status first */
+	if (battery->pdata->support_usb_conn_check) {
+		if (battery->usb_conn_status == USB_CONN_NORMAL)
+			sec_usb_conn_protection(battery);
+	} else if (battery->pdata->usb_protection) {
+		sec_usb_protection(battery);
+	} else {
+		sec_usb_thm_overheatlimit(battery);
+	}
+
+	/* Fix usb_conn_status at the request of Reliability Group Test */
+	if (battery->current_event & SEC_BAT_CURRENT_EVENT_TEMP_CTRL_TEST)
+		battery->usb_conn_status = USB_CONN_NORMAL;
+
+	/* 2. Determine new thermal zone based on custom logic and safety fallbacks */
+	if (battery->usb_conn_status != USB_CONN_NORMAL) {
+		battery->thermal_zone = BAT_THERMAL_OVERHEATLIMIT; // Safety: USB issue overrides
+	} else if (bat_thm >= safety_overheat_thresh) {           // Safety: Absolute overheat check
+		battery->thermal_zone = BAT_THERMAL_OVERHEAT;
+	} else if (bat_thm >= severe_thresh) {                    // Custom: Severe threshold
+		battery->thermal_zone = BAT_THERMAL_WARM;
+	} else if (bat_thm >= moderate_thresh) {                  // Custom: Moderate threshold
+		battery->thermal_zone = BAT_THERMAL_COOL1;
+	} else if (bat_thm >= light_thresh) {                     // Custom: Light threshold
+		battery->thermal_zone = BAT_THERMAL_COOL2;
+	} else if (bat_thm <= safety_cold_thresh) {               // Safety: Absolute cold check
+		battery->thermal_zone = BAT_THERMAL_COLD;
+	/* Add more specific 'COOL3' checks here if needed, using original DT vals */
+	/* else if (bat_thm <= battery->cool3_cool2_thresh) {
+	 *	   battery->thermal_zone = BAT_THERMAL_COOL3;
+	 * }
+	 */
+	} else {                                                  // Default to normal
+		battery->thermal_zone = BAT_THERMAL_NORMAL;
+	}
+	/* === End Custom Logic === */
+
+
+	/* 3. Handle Zone Change */
+	if (pre_thermal_zone != battery->thermal_zone) {
+		battery->bat_thm_count++;
+
+		if (battery->bat_thm_count < battery->pdata->temp_check_count) {
+			pr_info("%s : bat_thm_count %d/%d\n", __func__,
+					battery->bat_thm_count, battery->pdata->temp_check_count);
+			battery->thermal_zone = pre_thermal_zone; /* Revert if count not met */
+			return;
+		}
+
+		/* FPDO DC concept - Keep this as it might be relevant safety */
+		if (battery->cable_type == SEC_BATTERY_CABLE_FPDO_DC && battery->thermal_zone != BAT_THERMAL_NORMAL) {
+			union power_supply_propval value = {0, };
+			value.intval = 0;
+			psy_do_property(battery->pdata->charger_name, set,
+					POWER_SUPPLY_EXT_PROP_REFRESH_CHARGING_SOURCE, value);
+		}
+
+		pr_info("%s: thermal zone update (%s -> %s), bat_thm(%d)\n", __func__,
+				sec_bat_thermal_zone[pre_thermal_zone],
+				sec_bat_thermal_zone[battery->thermal_zone], bat_thm);
+		battery->health_change = true;
+		battery->bat_thm_count = 0;
+
+		pr_info("%s : SAFETY TIME RESET due to zone change!\n", __func__);
+		sec_bat_reset_safety_timer(battery);
+
+		/* We now handle hysteresis above, so this call is removed from here. */
+		/* sec_bat_set_threshold(battery, battery->cable_type); */
+
+		/* Apply health status and votes based on the NEW zone */
+		/* This logic relies on sec_bat_thermal_charging_health to be called later */
+		/* We mainly need to handle the CHARGING_OFF/NOT_CHARGING states here */
+		switch (battery->thermal_zone) {
+			case BAT_THERMAL_OVERHEATLIMIT:
+			case BAT_THERMAL_OVERHEAT:
+			case BAT_THERMAL_COLD:
+				/* These zones should stop charging */
+				sec_bat_thermal_charging_health(battery); /* Sets health, status, and votes */
+				break;
+			case BAT_THERMAL_WARM:
+			case BAT_THERMAL_COOL1:
+			case BAT_THERMAL_COOL2:
+			case BAT_THERMAL_NORMAL:
+			default:
+				/* These zones allow charging (potentially throttled) */
+				/* Ensure swelling event is cleared initially, sec_bat_thermal_charging_health will set if needed */
+				sec_bat_set_current_event(battery, 0, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+				/* Let sec_bat_thermal_charging_health handle the specific votes */
+				sec_bat_thermal_charging_health(battery);
+				break;
+		}
+		/* Log the zone change */
+		store_battery_log(
+				"THM_ZCHG:%s->%s,%d%%,%dmV,tbat(%d),ct(%s)",
+				sec_bat_thermal_zone[pre_thermal_zone],
+				sec_bat_thermal_zone[battery->thermal_zone],
+				battery->capacity, battery->voltage_now,
+				bat_thm, sb_get_ct_str(battery->cable_type));
+
+	} else { /* pre_thermal_zone == battery->thermal_zone (No zone change) */
+		battery->health_change = false;
+		/* Still need to call charging_health to potentially adjust votes within the same zone */
+		/* E.g., handle voltage checks within WARM zone */
+		sec_bat_thermal_charging_health(battery);
 	}
 
 	return;
