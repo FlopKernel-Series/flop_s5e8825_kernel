@@ -380,7 +380,7 @@ void ksu_sucompat_exit()
 #ifdef CONFIG_KSU_SUSFS_SUS_SU
 extern bool ksu_su_compat_enabled;
 bool susfs_is_sus_su_hooks_enabled __read_mostly = false;
-int susfs_sus_su_working_mode = 0;
+int susfs_sus_su_working_mode = 2;
 
 static bool ksu_is_su_kps_enabled(void) {
 	for (int i = 0; i < ARRAY_SIZE(su_kps); i++) {
