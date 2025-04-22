@@ -162,7 +162,6 @@ LINUX_VER=$(make kernelversion 2>/dev/null)
 if [[ "$DO_KSU" == "1" ]]; then
     FK_TYPE="KSUNext"
     FK_TYPE_SHORT="KN"
-    DEFCONFIG="s5e8825-unified-ksu_defconfig"
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"
@@ -224,7 +223,7 @@ build() {
 
     rm -rf "$MOD_OUTDIR" 2>/dev/null
 
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$DO_KSU" == "1" ]] && echo "ksu.config") $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
     if [[ "$IS_RELEASE" == "1" ]]; then
         VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
@@ -236,6 +235,10 @@ build() {
     rm -f "$OUT_KERNEL"
 
     if [[ "$DO_REGEN" = "1" ]]; then
+        if [[ "$DO_KSU" = "1" ]]; then
+            echo "ERROR: Can't regenerate with KSU argument"
+            exit 1
+        fi
         cp -f out/.config arch/arm64/configs/$DEFCONFIG
         echo "INFO: Configuration regenerated. Check the changes!"
         exit 0
