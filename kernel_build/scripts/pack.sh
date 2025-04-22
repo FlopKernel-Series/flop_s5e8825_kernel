@@ -9,9 +9,6 @@ packing() {
                 exit 1
             fi
         fi
-        if [ ! -d "kernel_build/FireAsf/$DIR_DATE" ]; then
-            mkdir -p "kernel_build/FireAsf/$DIR_DATE" 
-        fi
         echo -e "\nINFO: Building zip..."
         cd "$AK3_DIR"
         cp -f "$OUT_VENDORBOOTIMG" vendor_boot.img
