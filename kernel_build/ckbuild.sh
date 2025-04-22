@@ -102,7 +102,7 @@ DO_TG=0
 DO_REGEN=0
 DO_OC=0
 DO_FLTO=0
-QUIET=0
+DO_QUIET=0
 DEFCONFIG=$DEFAULT_DEFCONFIG
 
 for arg in "$@"; do
@@ -146,7 +146,7 @@ for arg in "$@"; do
     if [[ "$arg" == *q* ]]; then
         echo "INFO: Quiet argument passed"
         echo "WARNING: Only errors and warnings will be shown"
-        DO_FLTO=1
+        DO_QUIET=1
     fi
 done
 
@@ -224,7 +224,7 @@ build() {
 
     rm -rf "$MOD_OUTDIR" 2>/dev/null
 
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
     if [[ "$IS_RELEASE" == "1" ]]; then
         VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
@@ -255,7 +255,7 @@ build() {
     fi
 
     if [[ "$DO_MENUCONFIG" == "1" ]]; then
-        make O=out menuconfig $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '')
+        make O=out menuconfig $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '')
     fi
 
     if [[ "$DO_FLTO" == "1" ]]; then
@@ -265,13 +265,13 @@ build() {
 
     echo -e "\nINFO: Starting compilation...\n"
 
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" dtbs $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" dtbs $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
     if [[ "$USE_CCACHE" == "1" ]]; then
-        make -j"$(nproc --all)" O=out CC="ccache clang" CROSS_COMPILE="$CCARM64_PREFIX" $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+        make -j"$(nproc --all)" O=out CC="ccache clang" CROSS_COMPILE="$CCARM64_PREFIX" $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
     else
-        make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+        make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
     fi
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 }
 
 clean() {
