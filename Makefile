@@ -1019,15 +1019,25 @@ endif
 
 ifdef CONFIG_LTO_CLANG
 ifdef CONFIG_LTO_CLANG_THIN
-CC_FLAGS_LTO	:= -flto=thin -fsplit-lto-unit -funified-lto
+CC_FLAGS_LTO	:= -flto=thin -funified-lto -fno-split-lto-unit
+
+# Merge into single partition
+KBUILD_LDFLAGS += --lto-partitions=1
+
+# LLVM tunings
+KBUILD_LDFLAGS += -mllvm -import-hot-multiplier=2
+KBUILD_LDFLAGS += -mllvm -inline-threshold=1000
+KBUILD_LDFLAGS += -mllvm -import-instr-limit=10
 else
 CC_FLAGS_LTO	:= -flto
 endif
 
 CC_FLAGS_LTO	+= -fvisibility=hidden
 
+ifndef CONFIG_LTO_CLANG_THIN
 # Limit inlining across translation units to reduce binary size
 KBUILD_LDFLAGS += -mllvm -import-instr-limit=5
+endif
 
 ifeq ($(shell echo $(CONFIG_CC_VERSION_TEXT) | grep -qE 'Android|Neutron' && echo true || echo false),true)
 KBUILD_LDFLAGS += -mllvm -regalloc-enable-advisor=release
