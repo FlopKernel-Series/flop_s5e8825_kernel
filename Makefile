@@ -797,7 +797,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
 KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
 KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
 
-ifeq ($(shell echo "$CONFIG_CC_VERSION_TEXT" | grep -qE 'Android|Neutron'; echo $?),0)
+ifeq ($(shell echo $(CONFIG_CC_VERSION_TEXT) | grep -qE 'Android|Neutron' && echo true || echo false),true)
 KBUILD_CFLAGS   += -mllvm -regalloc-enable-advisor=release
 endif
 
