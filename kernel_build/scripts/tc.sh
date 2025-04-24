@@ -28,7 +28,7 @@ fi
 
 # aosp, proton, lolz, slim, greenforce, zyc, rv, custom
 if [[ -z "$CLANG_TYPE" ]]; then
-    export CLANG_TYPE="rv"
+    export CLANG_TYPE="aosp"
 else
     echo -e "\nINFO: Overriding default toolchain"
 fi
