@@ -8,9 +8,9 @@ else
 fi
 
 # Define dependency lists for each distro
-UBUNTU_DEPS="lz4 brotli flex bc cpio kmod ccache zip binutils-aarch64-linux-gnu"
-ARCH_DEPS="lz4 brotli flex bc cpio kmod ccache zip aarch64-linux-gnu-binutils"
-GENTOO_DEPS="app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip"
+UBUNTU_DEPS="lz4 brotli flex bc cpio kmod ccache zip binutils-aarch64-linux-gnu ccache"
+ARCH_DEPS="lz4 brotli flex bc cpio kmod ccache zip aarch64-linux-gnu-binutils ccache"
+GENTOO_DEPS="app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip dev-util/ccache"
 COMMON_DEPS=$UBUNTU_DEPS
 
 if [ ! -f "$KDIR/kernel_build/.deps" ]; then
