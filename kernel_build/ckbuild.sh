@@ -103,6 +103,7 @@ DO_REGEN=0
 DO_OC=0
 DO_FLTO=0
 DO_QUIET=0
+DO_PERM=0
 DEFCONFIG=$DEFAULT_DEFCONFIG
 
 for arg in "$@"; do
@@ -148,6 +149,10 @@ for arg in "$@"; do
         echo "WARNING: Only errors and warnings will be shown"
         DO_QUIET=1
     fi
+    if [[ "$arg" == *p* ]]; then
+        echo "INFO: Permissive argument passed"
+        DO_PERM=1
+    fi
 done
 
 if [[ "$IS_RELEASE" == "1" ]]; then
@@ -172,6 +177,11 @@ if [[ "$DO_OC" == "1" ]]; then
     FK_TYPE_SHORT="$FK_TYPE_SHORT+U"
 fi
 
+if [[ "$DO_PERM" == "1" ]]; then
+    FK_TYPE="$FK_TYPE+Permissive"
+    FK_TYPE_SHORT="$FK_TYPE_SHORT+P"
+fi
+
 ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
 TAR_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
 
@@ -184,6 +194,7 @@ echo -e "\nINFO: Build info:
 - Build date: $DATE
 - Build type: $BUILD_TYPE
 - Clean build: $([ "$DO_CLEAN" -eq 1 ] && echo "Yes" || echo "No")
+- Permissive: $([ "$DO_PERM" -eq 1 ] && echo "Yes" || echo "No")
 "
 
 # Dependencies
@@ -239,6 +250,10 @@ build() {
             echo "ERROR: Can't regenerate with KSU argument"
             exit 1
         fi
+        if [[ "$DO_PERM" = "1" ]]; then
+            echo "ERROR: Can't regenerate with Permissive argument"
+            exit 1
+        fi
         cp -f out/.config arch/arm64/configs/$DEFCONFIG
         echo "INFO: Configuration regenerated. Check the changes!"
         exit 0
@@ -264,6 +279,10 @@ build() {
     if [[ "$DO_FLTO" == "1" ]]; then
         scripts/config --file "$KDIR/out/.config" --enable CONFIG_LTO_CLANG_FULL
         scripts/config --file "$KDIR/out/.config" --disable CONFIG_LTO_CLANG_THIN
+    fi
+
+    if [[ "$DO_PERM" == "1" ]]; then
+        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SECURITY_SELINUX_ALWAYS_PERMISSIVE
     fi
 
     echo -e "\nINFO: Starting compilation...\n"
