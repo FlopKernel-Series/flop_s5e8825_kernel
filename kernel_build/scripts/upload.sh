@@ -9,6 +9,7 @@ CAPTION_BUILD="Build info:
 *Commit*: [($(git rev-parse HEAD | cut -c -7))]($(echo $KERNEL_URL)/commit/$(git rev-parse HEAD))
 *Build type*: \`${BUILD_TYPE}\`
 *Clean build*: \`$( [ "$DO_CLEAN" -eq 1 ] && echo Yes || echo No )\`
+*Permissive*: \`$( [ "$DO_PERM" -eq 1 ] && echo Yes || echo No )\`
 "
 
 
