@@ -15,39 +15,36 @@ GENTOO_DEPS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/
 
 . /etc/os-release
 
-case "$ID" in
-	ubuntu|debian)
-		MISSING=()
-		for pkg in "${UBUNTU_DEPS[@]}"; do
-			if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-				MISSING+=("$pkg")
-			fi
-		done
-		if [ ${#MISSING[@]} -gt 0 ]; then
-			$ROOT apt-get update -qq
-			$ROOT apt-get install -y "${MISSING[@]}"
+DISTRO_IDS="$ID $ID_LIKE"
+
+if echo "$DISTRO_IDS" | grep -Eq 'ubuntu|debian'; then
+	MISSING=()
+	for pkg in "${UBUNTU_DEPS[@]}"; do
+		if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+			MISSING+=("$pkg")
 		fi
-		;;
-	arch)
-		MISSING=$(pacman -T "${ARCH_DEPS[@]}" 2>/dev/null)
-		if [ -n "$MISSING" ]; then
-			$ROOT pacman -Syyuu --needed --noconfirm $MISSING
+	done
+	if [ ${#MISSING[@]} -gt 0 ]; then
+		$ROOT apt-get update -qq
+		$ROOT apt-get install -y "${MISSING[@]}"
+	fi
+elif echo "$DISTRO_IDS" | grep -Eq 'arch'; then
+	MISSING=$(pacman -T "${ARCH_DEPS[@]}" 2>/dev/null)
+	if [ -n "$MISSING" ]; then
+		$ROOT pacman -Syyuu --needed --noconfirm $MISSING
+	fi
+elif echo "$DISTRO_IDS" | grep -Eq 'gentoo'; then
+	for dep in "${GENTOO_DEPS[@]}"; do
+		if ! equery list "$dep" >/dev/null 2>&1; then
+			$ROOT emerge -av "$dep"
 		fi
-		;;
-	gentoo)
-		for dep in "${GENTOO_DEPS[@]}"; do
-			if ! equery list "$dep" >/dev/null 2>&1; then
-				$ROOT emerge -av "$dep"
-			fi
-		done
-		if ! equery list crossdev >/dev/null 2>&1; then
-			$ROOT emerge -av sys-devel/crossdev
-			$ROOT crossdev --target aarch64-linux-gnu
-		fi
-		;;
-	*)
-		echo
-		echo "INFO: distro not supported, install manually: ${UBUNTU_DEPS[*]}"
-		echo
-		;;
-esac
+	done
+	if ! equery list crossdev >/dev/null 2>&1; then
+		$ROOT emerge -av sys-devel/crossdev
+		$ROOT crossdev --target aarch64-linux-gnu
+	fi
+else
+	echo
+	echo "INFO: distro not supported, install manually: ${UBUNTU_DEPS[*]}"
+	echo
+fi
