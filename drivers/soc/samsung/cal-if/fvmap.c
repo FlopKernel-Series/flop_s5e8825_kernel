@@ -9,6 +9,7 @@
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <soc/samsung/fvmap.h>
+#include <linux/sysfs.h>
 
 #include "cmucal.h"
 #include "vclk.h"
@@ -16,6 +17,9 @@
 
 #define FVMAP_SIZE		(SZ_8K)
 #define STEP_UV			(6250)
+
+#define MAX_FV_LEVELS   50 // Arbitrary safe limit for table size loop
+static struct kobject *fvmap_kobj;
 
 void __iomem *fvmap_base;
 void __iomem *sram_fvmap_base;
@@ -539,12 +543,101 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 	}
 }
 
+static ssize_t show_fv_table(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	struct fvmap_header *fvmap_header;
+	struct rate_volt_header *fv_table;
+	int idx = -1, i, num_of_lv, margin_id = -1, vclk_id;
+	ssize_t len = 0;
+	const char *name = attr->attr.name;
+	void __iomem *base_to_read = fvmap_base;
+
+	if (!base_to_read) {
+		pr_err("fvmap: base not initialized\n");
+		return -EIO;
+	}
+
+	// Determine margin_id based on attribute name
+	if (strcmp(name, "cpucl0_fv_table") == 0) {
+		margin_id = MARGIN_CPUCL0;
+	} else if (strcmp(name, "cpucl1_fv_table") == 0) {
+		margin_id = MARGIN_CPUCL1;
+	} else if (strcmp(name, "intg3d_fv_table") == 0) {
+		margin_id = MARGIN_INTG3D;
+	} else {
+		pr_err("fvmap: Unknown attribute %s\n", name);
+		return -EINVAL;
+	}
+
+	vclk_id = get_vclk_id_from_margin_id(margin_id);
+	if (vclk_id < 0) {
+		pr_err("fvmap: Could not find vclk_id for margin_id %d (name: %s)\n", margin_id, name);
+		return -EINVAL;
+	}
+	idx = GET_IDX(vclk_id | ACPM_VCLK_TYPE);
+
+
+	fvmap_header = (struct fvmap_header *)base_to_read; // Cast needed
+
+	if (idx < 0 || idx >= cmucal_get_list_size(ACPM_VCLK_TYPE)) {
+		 pr_err("fvmap: Invalid index %d derived for margin_id %d\n", idx, margin_id);
+		 return -EINVAL;
+	}
+
+	fv_table = (struct rate_volt_header *)(base_to_read + fvmap_header[idx].o_ratevolt);
+	num_of_lv = fvmap_header[idx].num_of_lv;
+
+	if (num_of_lv <= 0 || num_of_lv > MAX_FV_LEVELS) {
+		 pr_err("fvmap: Invalid num_of_lv %d for index %d\n", num_of_lv, idx);
+		 return -EINVAL;
+	}
+
+
+	len += scnprintf(buf + len, PAGE_SIZE - len, "Freq(kHz)\tVolt(uV)\n");
+
+	for (i = 0; i < num_of_lv; i++) {
+		if (len >= PAGE_SIZE - 30) {
+			pr_warn_ratelimited("fvmap: Buffer full when printing FV table for %s\n", name);
+			break;
+		}
+		// Read rate and volt (in STEP_UV units) and convert volt to uV
+		len += scnprintf(buf + len, PAGE_SIZE - len, "%-10u\t%-10u\n",
+						 fv_table->table[i].rate,
+						 fv_table->table[i].volt * STEP_UV);
+	}
+
+	return len;
+}
+
+static struct kobj_attribute cpucl0_fv_table_attr =
+	__ATTR(cpucl0_fv_table, 0444, show_fv_table, NULL);
+static struct kobj_attribute cpucl1_fv_table_attr =
+	__ATTR(cpucl1_fv_table, 0444, show_fv_table, NULL);
+static struct kobj_attribute intg3d_fv_table_attr =
+	__ATTR(intg3d_fv_table, 0444, show_fv_table, NULL);
+
+static struct attribute *fvmap_attrs[] = {
+	&cpucl0_fv_table_attr.attr,
+	&cpucl1_fv_table_attr.attr,
+	&intg3d_fv_table_attr.attr,
+	NULL,
+};
+
+static const struct attribute_group fvmap_group = {
+	.attrs = fvmap_attrs,
+	.name = "fv_tables",
+};
+
 int fvmap_init(void __iomem *sram_base)
 {
 	void __iomem *map_base;
 	struct kobject *kobj;
 
 	map_base = kzalloc(FVMAP_SIZE, GFP_KERNEL);
+	if (!map_base) {
+		pr_err("%s: Failed to allocate memory for fvmap\n", __func__);
+		return -ENOMEM;
+	}
 
 	fvmap_base = map_base;
 	sram_fvmap_base = sram_base;
@@ -554,18 +647,29 @@ int fvmap_init(void __iomem *sram_base)
 
 	/* percent margin for each doamin at runtime */
 	kobj = kobject_create_and_add("percent_margin", kernel_kobj);
-	if (!kobj)
+	if (!kobj) {
 		pr_err("Fail to create percent_margin kboject\n");
-
-	if (sysfs_create_group(kobj, &percent_margin_group))
-		pr_err("Fail to create percent_margin group\n");
+	} else {
+		if (sysfs_create_group(kobj, &percent_margin_group))
+			pr_err("Fail to create percent_margin group\n");
+	}
 
 	kobj = kobject_create_and_add("asv-g", kernel_kobj);
-	if (!kobj)
+	if (!kobj) {
 		pr_err("Fail to create asv-g kboject\n");
+	} else {
+		if (sysfs_create_group(kobj, &asv_g_spec_grp))
+			pr_err("Fail to create asv_g_spec group\n");
+	}
 
-	if (sysfs_create_group(kobj, &asv_g_spec_grp))
-		pr_err("Fail to create asv_g_spec group\n");
+	fvmap_kobj = kobject_create_and_add("fvmap", kernel_kobj);
+	if (!fvmap_kobj) {
+		pr_err("fvmap: Failed to create fvmap kobject\n");
+	} else {
+		if (sysfs_create_group(fvmap_kobj, &fvmap_group)) {
+			pr_err("fvmap: Failed to create fvmap sysfs group\n");
+		}
+	}
 
 	return 0;
 }
