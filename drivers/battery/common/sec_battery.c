@@ -7437,13 +7437,13 @@ static int sec_bat_get_property(struct power_supply *psy,
 		val->intval = battery->voltage_avg * 1000;
 		break;
 	case POWER_SUPPLY_PROP_CURRENT_NOW:
-		value.intval = SEC_BATTERY_CURRENT_UA;
+		value.intval = SEC_BATTERY_CURRENT_MA;
 		psy_do_property(battery->pdata->fuelgauge_name, get,
 			POWER_SUPPLY_PROP_CURRENT_NOW, value);
 		val->intval = value.intval;
 		break;
 	case POWER_SUPPLY_PROP_CURRENT_AVG:
-		value.intval = SEC_BATTERY_CURRENT_UA;
+		value.intval = SEC_BATTERY_CURRENT_MA;
 		psy_do_property(battery->pdata->fuelgauge_name, get,
 			POWER_SUPPLY_PROP_CURRENT_AVG, value);
 		val->intval = value.intval;
