@@ -10,18 +10,19 @@ RV_REPO="https://api.github.com/repos/Rv-Project/RvClang/releases/latest"
 GCC64_REPO="https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-gnu-9.3"
 
 # Toolchain Dirs
-export GCC64_DIR="$WP/gcc64"
-export AC_DIR="$WP/aospclang"
-export PC_DIR="$WP/protonclang"
-export LZ_DIR="$WP/lolzclang"
-export SL_DIR="$WP/slimllvm"
-export GC_DIR="$WP/greenforceclang"
-export ZC_DIR="$WP/zycclang"
-export RV_DIR="$WP/rvclang"
+export TC_DIR="$WP/toolchains"
+export GCC64_DIR="$TC_DIR/gcc64"
+export AC_DIR="$TC_DIR/aospclang"
+export PC_DIR="$TC_DIR/protonclang"
+export LZ_DIR="$TC_DIR/lolzclang"
+export SL_DIR="$TC_DIR/slimllvm"
+export GC_DIR="$TC_DIR/greenforceclang"
+export ZC_DIR="$TC_DIR/zycclang"
+export RV_DIR="$TC_DIR/rvclang"
 
 # Custom toolchain directory
 if [[ -z "$CUST_DIR" ]]; then
-    export CUST_DIR="$WP/custom-toolchain"
+    export CUST_DIR="$TC_DIR/custom-toolchain"
 else
     echo -e "\nINFO: Overriding custom toolchain path..."
 fi
