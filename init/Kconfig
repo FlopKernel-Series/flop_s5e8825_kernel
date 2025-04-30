@@ -1295,6 +1295,8 @@ config CHECKPOINT_RESTORE
 	  data and heap segment sizes, and a few additional /proc filesystem
 	  entries.
 
+	  If unsure, say N here.
+
 config SCHED_AUTOGROUP
 	bool "Automatic process group scheduling"
 	select CGROUPS
@@ -1317,67 +1319,6 @@ config RT_SOFTINT_OPTIMIZATION
 	 occupied by nonpreemptible tasks, such as a long softint, or CPUs
 	 which may soon block preemptions, such as a CPU running a ksoftirq
 	 thread which handles slow softints.
-
-config CPUSET_ASSIST
-	bool "Cpuset configuration helper"
-	depends on CPUSETS
-	depends on ANDROID
-	help
-	  This option enables in-kernel overrides for cpuset values.
-
-	  If unsure, say N.
-
-if CPUSET_ASSIST
-
-config CPUSET_BG
-	string "Value for 'background' cpuset"
-	default "0-5"
-	help
-	  Background apps confined to LITTLE for efficiency
-
-config CPUSET_CAMERA
-	string "Value for 'camera-daemon' cpuset"
-	default "0-7"
-	help
-	  Camera service uses all cores for peak throughput
-
-config CPUSET_DEXOPT
-	string "Value for 'dexopt' cpuset"
-	default "0-5"
-	help
-	  Dex2oat compiles on LITTLE only to avoid UI jank
-
-config CPUSET_FG
-	string "Value for 'foreground' cpuset"
-	default "0-7"
-	help
-	  Foreground apps need all cores for responsiveness
-
-config CPUSET_FOREGROUND_WINDOW
-	string "Value for 'foreground_window' cpuset"
-	default "0-7"
-	help
-	  Window threads are UI-critical
-
-config CPUSET_RESTRICTED
-	string "Value for 'restricted' cpuset"
-	default "0-5"
-	help
-	  Restricted tasks kept on LITTLE
-
-config CPUSET_SYSTEM_BG
-	string "Value for 'system-background' cpuset"
-	default "0-5"
-	help
-	  System services on LITTLE only
-
-config CPUSET_TOP_APP
-	string "Value for 'top-app' cpuset"
-	default "0-7"
-	help
-	  Top app gets full CPU access
-
-endif
 
 config SYSFS_DEPRECATED
 	bool "Enable deprecated sysfs features to support old userspace tools"
@@ -1582,6 +1523,8 @@ config MULTIUSER
 	  possible capabilities.  Saying N here also compiles out support for
 	  system calls related to UIDs, GIDs, and capabilities, such as setuid,
 	  setgid, and capset.
+
+	  If unsure, say Y here.
 
 config SGETMASK_SYSCALL
 	bool "sgetmask/ssetmask syscalls support" if EXPERT
@@ -2247,7 +2190,10 @@ menuconfig MODULES
 	  many parts of the kernel can be built as modules (by
 	  answering M instead of Y where indicated): this is most
 	  useful for infrequently used options which are not required
-	  for booting.  If you say Y here, you will need to run "make
+	  for booting.  For more information, see the man pages for
+	  modprobe, lsmod, modinfo, insmod and rmmod.
+
+	  If you say Y here, you will need to run "make
 	  modules_install" to put the modules under /lib/modules/
 	  where modprobe can find them (you may need to be root to do
 	  this).
