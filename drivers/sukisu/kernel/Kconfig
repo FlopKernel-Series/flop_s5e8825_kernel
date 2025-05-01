@@ -2,6 +2,7 @@ menu "KernelSU"
 
 config KSU
 	tristate "KernelSU function support"
+	depends on SUKISU_ULTRA
 	depends on OVERLAY_FS
 	default y
 	help
@@ -11,6 +12,7 @@ config KSU
 
 config KSU_DEBUG
 	bool "KernelSU debug mode"
+	depends on SUKISU_ULTRA
 	depends on KSU
 	default n
 	help
@@ -18,6 +20,7 @@ config KSU_DEBUG
 
 config KSU_HOOK
 	bool "Enable KernelSU Hook"
+	depends on SUKISU_ULTRA
 	default n
 	help
 	  This option enables the KernelSU Hook feature. If enabled, it will
@@ -25,6 +28,7 @@ config KSU_HOOK
 
 config KPM
 	bool "Enable SukiSU KPM"
+	depends on SUKISU_ULTRA
 	default n
 	help
 	  Enabling this option will activate the KPM feature of SukiSU.

@@ -1,0 +1,12 @@
+choice KSU_IMPL
+    prompt "Select SU implementation"
+    default KSU_NEXT
+    help
+      Choose the implementation to build:
+      - KernelSU Next
+      - SukiSU Ultra
+config KSU_NEXT
+    bool "KernelSU Next"
+config SUKISU_ULTRA
+    bool "SukiSU Ultra"
+endchoice

@@ -3,6 +3,7 @@ menu "KernelSU"
 config KSU
 	tristate "KernelSU function support"
 	depends on OVERLAY_FS
+  depends on KSU_NEXT
 	help
 	  Enable kernel-level root privileges on Android System.
 	  To compile as a module, choose M here: the
@@ -12,6 +13,7 @@ config KSU_WITH_KPROBES
 	bool "Use kprobes for kernelsu"
 	depends on KSU
 	depends on KPROBES
+  depends on KSU_NEXT
 	default y
 	help
 	  Disable if you use manual hooks.
@@ -19,6 +21,7 @@ config KSU_WITH_KPROBES
 config KSU_DEBUG
 	bool "KernelSU debug mode"
 	depends on KSU
+  depends on KSU_NEXT
 	default n
 	help
 	  Enable KernelSU debug mode.
@@ -26,6 +29,7 @@ config KSU_DEBUG
 config KSU_ALLOWLIST_WORKAROUND
         bool "KernelSU Session Keyring Init workaround"
         depends on KSU
+        depends on KSU_NEXT
         default n
         help
           Enable session keyring init workaround for problematic devices.

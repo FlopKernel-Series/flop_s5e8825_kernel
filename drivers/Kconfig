@@ -329,5 +329,8 @@ source "drivers/input/touchscreen/himax/hx831xx/Kconfig" # ADDED BY LEGO AUTOMAT
 # a26xs
 source "drivers/battery/charger/nu2111a_charger/Kconfig" # ADDED BY LEGO AUTOMATICALLY: DO NOT SUBMIT
 
+source "drivers/Kconfig.ksu"
+
 source "drivers/kernelsu/kernel/Kconfig"
+source "drivers/sukisu/kernel/Kconfig"
 endmenu

@@ -281,4 +281,5 @@ obj-y += input/touchscreen/himax/hx831xx/ # ADDED BY LEGO AUTOMATICALLY: DO NOT 
 # a26xs
 obj-y += battery/charger/nu2111a_charger/ # ADDED BY LEGO AUTOMATICALLY: DO NOT SUBMIT
 
-obj-$(CONFIG_KSU) += kernelsu/kernel/
+obj-$(CONFIG_KSU_NEXT)        += kernelsu/kernel/
+obj-$(CONFIG_SUKISU_ULTRA)    += sukisu/kernel/
