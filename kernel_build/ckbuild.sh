@@ -104,6 +104,7 @@ DO_OC=0
 DO_FLTO=0
 DO_QUIET=0
 DO_PERM=0
+DO_SSU=0
 DEFCONFIG=$DEFAULT_DEFCONFIG
 
 for arg in "$@"; do
@@ -153,6 +154,10 @@ for arg in "$@"; do
         echo "INFO: Permissive argument passed"
         DO_PERM=1
     fi
+    if [[ "$arg" == *s* ]]; then
+        echo "INFO: SukiSU argument passed, a SukiSU build will be made"
+        DO_SSU=1
+    fi
 done
 
 if [[ "$IS_RELEASE" == "1" ]]; then
@@ -164,9 +169,17 @@ fi
 ## Build type
 LINUX_VER=$(make kernelversion 2>/dev/null)
 
+if [[ "$DO_KSU" == 1 && "$DO_SSU" == "1" ]]; then
+    echo "ERROR: Can't use both KernelSU and SukiSU arguments at the same time"
+    exit 1
+fi
+
 if [[ "$DO_KSU" == "1" ]]; then
     FK_TYPE="KSUNext"
     FK_TYPE_SHORT="KN"
+elif [[ "$DO_SSU" == "1" ]]; then
+    FK_TYPE="SukiSU-Ultra"
+    FK_TYPE_SHORT="SSU"
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"
@@ -234,7 +247,10 @@ build() {
 
     rm -rf "$MOD_OUTDIR" 2>/dev/null
 
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$DO_KSU" == "1" ]] && echo "ksu.config") $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" \
+    $([[ "$DO_KSU" == "1" ]] && echo "ksu.config") \
+    $([[ "$DO_SSU" == "1" ]] && echo "sukisu.config") \
+    $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
     if [[ "$IS_RELEASE" == "1" ]]; then
         VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
