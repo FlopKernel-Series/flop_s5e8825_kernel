@@ -334,12 +334,14 @@ static irqreturn_t exynos_s2mpu_irq_handler_thread(int irq, void *dev_id)
 
 	ret = exynos_s2mpu_notifier_call(data);
 do_halt:
-	if (ret) {
+	if (0) {
 #if IS_ENABLED(CONFIG_DEBUG_SNAPSHOT)
 		if (dbg_snapshot_expire_watchdog())
 			pr_err("WDT reset fails\n");
 #endif
 		BUG();
+	} else {
+		pr_info("S2MPU is not allowed to panic!\n");
 	}
 
 	return IRQ_HANDLED;
