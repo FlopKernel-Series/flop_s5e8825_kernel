@@ -20,6 +20,11 @@ export GC_DIR="$TC_DIR/greenforceclang"
 export ZC_DIR="$TC_DIR/zycclang"
 export RV_DIR="$TC_DIR/rvclang"
 
+# Ensure the toolchains directory exists
+if [[ ! -d "$TC_DIR" ]]; then
+    mkdir -p "$TC_DIR"
+fi
+
 # Custom toolchain directory
 if [[ -z "$CUST_DIR" ]]; then
     export CUST_DIR="$TC_DIR/custom-toolchain"
