@@ -209,4 +209,7 @@ int ufs_sec_streamid_ctrl(struct ufs_hba *hba, bool value);
 
 void ufs_sec_check_device_stuck(void);
 void ufs_sec_print_err(void);
+
+bool ufs_sec_is_wb_supported(void);
+int ufs_sec_wb_ctrl_for_block(bool enable);
 #endif
