@@ -211,10 +211,28 @@ config BLK_INLINE_ENCRYPTION_FALLBACK
 	  by falling back to the kernel crypto API when inline
 	  encryption hardware is not present.
 
+config BLK_SEC_COMMON
+	tristate "Samsung specific module in block layer"
+	default n
+	help
+	  Say Y here if you want to be enable samsung specific module
+	  in block layer.
+
 config BLK_SEC_STATS
-        tristate "SEC module for various block layer info"
-        help
-          Say Y here if you want to be enable sec module for blk stats
+	tristate "Samsung statistics module in block layer"
+	default n
+	select BLK_SEC_COMMON
+	help
+	  Say Y here if you want to be enable samsung statistics module
+	  in block layer.
+
+config BLK_SEC_WB
+	tristate "Samsung Write Booster module in block layer"
+	default n
+	select BLK_SEC_COMMON
+	help
+	  Say Y here if you want to be enable samsung write booster module
+	  in block layer.
 
 menu "Partition Types"
 
