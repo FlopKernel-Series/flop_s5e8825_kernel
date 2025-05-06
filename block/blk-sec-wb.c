@@ -16,6 +16,11 @@
 #include "blk-sec.h"
 #include "../drivers/scsi/ufs/ufs-sec-feature.h"
 
+static inline void ufs_sec_wb_register_reset_notify(void (*notify_func)(void))
+{
+    pr_warn_once("STUB: %s: ufs_sec_wb_register_reset_notify() not implemented.\n", __func__);
+}
+
 struct blk_sec_wb {
 	struct mutex lock;
 
@@ -65,7 +70,7 @@ static int wb_ctrl(bool enable)
 	if (!enable && (wb.state == WB_OFF))
 		goto out;
 
-	ret = ufs_sec_wb_ctrl(enable);
+	ret = ufs_sec_wb_ctrl_for_block(enable);
 	if (ret)
 		goto out;
 

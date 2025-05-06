@@ -49,7 +49,7 @@ static inline void blk_sec_stat_account_io_finish(struct request *rq,
 {
 }
 
-static inline bool is_internal_disk(struct gendisk *gd);
+static inline bool is_internal_disk(struct gendisk *gd)
 {
 	return false;
 }
