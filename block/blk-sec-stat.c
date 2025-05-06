@@ -61,22 +61,24 @@ static inline void get_monotonic_boottime(struct timespec64 *ts)
 static ssize_t diskios_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
 	struct gendisk *gd = blk_sec_internal_disk();
-	struct block_device *bdev;
+	// struct block_device *bdev;
+	struct hd_struct *part0_stat;
 	long hours;
 	int ret;
 
 	if (unlikely(!gd))
 		return -EINVAL;
 
-	bdev = gd->part0;
+	// bdev = gd->part0;
+	part0_stat = &gd->part0;
 
-	new.ios[STAT_READ] = part_stat_read(bdev, ios[STAT_READ]);
-	new.ios[STAT_WRITE] = part_stat_read(bdev, ios[STAT_WRITE]);
-	new.ios[STAT_DISCARD] = part_stat_read(bdev, ios[STAT_DISCARD]);
-	new.sectors[STAT_READ] = part_stat_read(bdev, sectors[STAT_READ]);
-	new.sectors[STAT_WRITE] = part_stat_read(bdev, sectors[STAT_WRITE]);
-	new.sectors[STAT_DISCARD] = part_stat_read(bdev, sectors[STAT_DISCARD]);
-	new.iot = jiffies_to_msecs(part_stat_read(bdev, io_ticks)) / 1000;
+	new.ios[STAT_READ] = part_stat_read(part0_stat, ios[STAT_READ]);
+	new.ios[STAT_WRITE] = part_stat_read(part0_stat, ios[STAT_WRITE]);
+	new.ios[STAT_DISCARD] = part_stat_read(part0_stat, ios[STAT_DISCARD]);
+	new.sectors[STAT_READ] = part_stat_read(part0_stat, sectors[STAT_READ]);
+	new.sectors[STAT_WRITE] = part_stat_read(part0_stat, sectors[STAT_WRITE]);
+	new.sectors[STAT_DISCARD] = part_stat_read(part0_stat, sectors[STAT_DISCARD]);
+	new.iot = jiffies_to_msecs(part_stat_read(part0_stat, io_ticks)) / 1000;
 
 	get_monotonic_boottime(&(new.uptime));
 	hours = (new.uptime.tv_sec - old.uptime.tv_sec) / 60;
