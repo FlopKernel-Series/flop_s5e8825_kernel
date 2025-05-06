@@ -196,7 +196,7 @@ void ssg_wb_depth_updated(struct blk_mq_hw_ctx *hctx)
 void ssg_wb_init(struct ssg_data *ssg)
 {
 	struct ssg_wb_data *ssg_wb;
-	struct gendisk *gd = ssg->queue->disk;
+	struct gendisk *gd = (struct gendisk *)ssg->queue->queuedata;
 
 	if (!gd)
 		return;

@@ -28,14 +28,14 @@
 #include "blk-mq-tag.h"
 #include "blk-mq-sched.h"
 #include "ssg.h"
-#include "blk-sec.h"
+//#include "blk-sec.h"
 
 #define MAX_ASYNC_WRITE_RQS	8
 
 static const int read_expire = HZ / 2;		/* max time before a read is submitted. */
 static const int write_expire = 5 * HZ;		/* ditto for writes, these limits are SOFT! */
 static const int max_write_starvation = 2;	/* max times reads can starve a write */
-static const int congestion_threshold = 90;	/* percentage of congestion threshold */
+static const int congestion_threshold = 85;	/* percentage of congestion threshold */
 static const int max_tgroup_io_ratio = 50;	/* maximum service ratio for each thread group */
 static const int max_async_write_ratio = 25;	/* maximum service ratio for async write */
 
@@ -374,7 +374,7 @@ static void ssg_completed_request(struct request *rq, u64 now)
 	rqi = ssg_rq_info(ssg, rq);
 	if (likely(rqi && rqi->sector == blk_rq_pos(rq))) {
 		ssg_stat_account_io_done(ssg, rq, rqi->data_size, now);
-		blk_sec_stat_account_io_complete(rq, rqi->data_size, rqi->pio);
+		// blk_sec_stat_account_io_complete(rq, rqi->data_size, rqi->pio);
 	}
 }
 
@@ -495,7 +495,7 @@ static void ssg_exit_queue(struct elevator_queue *e)
 
 	ssg_stat_exit(ssg);
 	ssg_wb_exit(ssg);
-	blk_sec_stat_account_exit(e);
+	// blk_sec_stat_account_exit(e);
 
 	kfree(ssg->rq_info);
 	kfree(ssg);
@@ -550,7 +550,7 @@ static int ssg_init_queue(struct request_queue *q, struct elevator_type *e)
 
 	ssg_stat_init(ssg);
 	blk_stat_enable_accounting(q);
-	blk_sec_stat_account_init(q);
+	// blk_sec_stat_account_init(q);
 	ssg_wb_init(ssg);
 
 	return 0;
@@ -605,7 +605,6 @@ static void ssg_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
 	struct request_queue *q = hctx->queue;
 	struct ssg_data *ssg = q->elevator->elevator_data;
 	const int data_dir = rq_data_dir(rq);
-	LIST_HEAD(free);
 
 	/*
 	 * This may be a requeue of a write request that has locked its
@@ -613,12 +612,11 @@ static void ssg_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
 	 */
 	blk_req_zone_write_unlock(rq);
 
-	if (blk_mq_sched_try_insert_merge(q, rq, &free)) {
-		blk_mq_free_requests(&free);
+	if (blk_mq_sched_try_insert_merge(q, rq)) {
 		return;
 	}
 
-	trace_block_rq_insert(rq);
+	blk_mq_sched_request_inserted(rq);
 
 	if (at_head || blk_rq_is_passthrough(rq)) {
 		if (at_head)
@@ -681,7 +679,7 @@ static void ssg_prepare_request(struct request *rq)
 		ssg_blkcg_inc_rq(rqi->blkg);
 		rcu_read_unlock();
 
-		blk_sec_stat_account_io_prepare(rq, &rqi->pio);
+		// blk_sec_stat_account_io_prepare(rq, &rqi->pio);
 	}
 
 	if (ssg_op_is_async_write(rq->cmd_flags))
@@ -730,7 +728,7 @@ static void ssg_finish_request(struct request *rq)
 		ssg_blkcg_dec_rq(rqi->blkg);
 		rqi->blkg = NULL;
 
-		blk_sec_stat_account_io_finish(rq, &rqi->pio);
+		// blk_sec_stat_account_io_finish(rq, &rqi->pio);
 	}
 
 	if (ssg_op_is_async_write(rq->cmd_flags))
