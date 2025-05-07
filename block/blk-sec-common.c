@@ -16,6 +16,7 @@
 #include <linux/genhd.h>
 #include <linux/part_stat.h>
 #include <linux/sec_class.h>
+#include <linux/mutex.h>
 
 #include "blk-sec.h"
 
@@ -30,6 +31,9 @@ EXPORT_SYMBOL(blk_sec_dev);
 
 struct workqueue_struct *blk_sec_common_wq;
 EXPORT_SYMBOL(blk_sec_common_wq);
+
+static bool internal_disk_info_fully_initialized = false;
+static DEFINE_MUTEX(internal_disk_info_mutex);
 
 static struct disk_info internal_disk;
 static unsigned int internal_min_size_mb = 10 * 1024; /* 10GB */
@@ -100,6 +104,7 @@ static struct gendisk *find_internal_disk(void)
 	return NULL;
 }
 
+#if 0
 static inline int init_internal_disk_info(void)
 {
 	if (!internal_disk.gd) {
@@ -113,19 +118,50 @@ static inline int init_internal_disk_info(void)
 
 	return 0;
 }
+#endif
 
 static inline void clear_internal_disk_info(void)
 {
+	mutex_lock(&internal_disk_info_mutex);
 	internal_disk.gd = NULL;
 	internal_disk.queue = NULL;
+	internal_disk_info_fully_initialized = false;
+	mutex_unlock(&internal_disk_info_mutex);
+}
+
+static int ensure_internal_disk_info_initialized(void)
+{
+	if (likely(internal_disk_info_fully_initialized)) {
+		return 0;
+	}
+
+	mutex_lock(&internal_disk_info_mutex);
+	if (internal_disk_info_fully_initialized) {
+		mutex_unlock(&internal_disk_info_mutex);
+		return 0;
+	}
+
+	if (!internal_disk.gd) {
+		internal_disk.gd = find_internal_disk();
+		if (unlikely(!internal_disk.gd)) {
+			pr_err("%s: Failed to find internal disk.\n", __func__);
+			mutex_unlock(&internal_disk_info_mutex);
+			return -ENODEV;
+		}
+		internal_disk.queue = internal_disk.gd->queue;
+		pr_info("%s: Successfully found internal disk %s.\n", __func__, internal_disk.gd->disk_name);
+	}
+	internal_disk_info_fully_initialized = true;
+	mutex_unlock(&internal_disk_info_mutex);
+	return 0;
 }
 
 struct gendisk *blk_sec_internal_disk(void)
 {
-	if (unlikely(!internal_disk.gd))
-		init_internal_disk_info();
+	if (likely(internal_disk_info_fully_initialized))
+		return internal_disk.gd;
 
-	return internal_disk.gd;
+	return NULL;
 }
 EXPORT_SYMBOL(blk_sec_internal_disk);
 
@@ -140,24 +176,28 @@ static struct device_type blk_sec_type = {
 
 static int __init blk_sec_common_init(void)
 {
-	int retval;
-
 #if IS_ENABLED(CONFIG_DRV_SAMSUNG)
 	blk_sec_dev = sec_device_create(NULL, "blk_sec");
 	if (unlikely(IS_ERR(blk_sec_dev))) {
 		pr_err("%s: Failed to create blk-sec device\n", __func__);
 		return PTR_ERR(blk_sec_dev);
 	}
-
 	blk_sec_dev->type = &blk_sec_type;
 #endif
 
 	blk_sec_common_wq = create_freezable_workqueue("blk_sec_common");
+    if (!blk_sec_common_wq) {
+        pr_err("%s: Failed to create blk_sec_common workqueue\n", __func__);
+#if IS_ENABLED(CONFIG_DRV_SAMSUNG)
+        if (blk_sec_dev) { /* Basic cleanup if wq fails */
+             sec_device_destroy(blk_sec_dev->devt); blk_sec_dev = NULL;
+        }
+#endif
+        return -ENOMEM;
+    }
 
-	retval = init_internal_disk_info();
-	if (retval) {
-		clear_internal_disk_info();
-		pr_err("%s: Can't find internal disk info!", __func__);
+	if (ensure_internal_disk_info_initialized() != 0) {
+		pr_warn("%s: Could not find internal disk during module init. Will try again on first use if context allows, or features may be disabled.\n", __func__);
 	}
 
 	return 0;
@@ -166,6 +206,10 @@ static int __init blk_sec_common_init(void)
 static void __exit blk_sec_common_exit(void)
 {
 	clear_internal_disk_info();
+	if (blk_sec_common_wq) {
+		destroy_workqueue(blk_sec_common_wq);
+		blk_sec_common_wq = NULL;
+	}
 }
 
 module_init(blk_sec_common_init);
