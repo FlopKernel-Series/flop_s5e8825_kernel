@@ -39,41 +39,39 @@ static const char *const device_names[] = {
 	[SEC_GTA4XLS] = "Galaxy Tab S6 Lite 2024",
 };
 
-extern enum SEC_devices sec_devices;
-extern int sec_current_device;
-extern bool sec_needs_decon;
-extern bool sec_needs_blic;
-extern bool sec_doze;
-extern bool sec_lcd_device;
-extern bool sec_legacy_sinput;
-extern bool sec_legacy_usbpd;
-extern bool sec_slsi_usbpd;
+// Device feature helpers
+enum SEC_devices sec_get_current_device(void);
+bool sec_feat_needs_decon(void);
+bool sec_feat_needs_blic(void);
+bool sec_feat_doze(void);
+bool sec_feat_lcd_device(void);
+bool sec_feat_legacy_sinput(void);
+bool sec_feat_legacy_usbpd(void);
+bool sec_feat_slsi_usbpd(void);
 
-// Camera params
-extern bool mcd_disable_dual_sync;
-extern bool mcd_camera_rear_dual_cal;
-extern bool mcd_use_leds_flash_charging_voltage_control;
-extern bool mcd_use_camera_adaptive_mipi;
-extern bool mcd_use_imx258_13mp_full_size;
-extern bool mcd_apply_mirror_vertical_flip;
-extern bool mcd_simplify_ois_init;
-extern bool mcd_camera_front_fixed_focus;
-extern bool mcd_modify_cal_map_for_swremosaic_lib;
-extern bool mcd_front_otprom_eeprom;
-extern bool mcd_camera_uwide_dualized;
-extern bool mcd_read_dual_cal_firmware_data;
-extern bool mcd_config_camera_eeprom_dualized;
-extern bool mcd_config_check_hw_version_for_mcu_fw_upload;
-extern bool mcd_use_camera_act_driver_soft_landing;
-extern bool mcd_use_ois_hall_data_for_vdis;
-extern bool mcd_use_hi1336c_setfile;
-extern bool mcd_camera_use_aois;
-extern bool mcd_cal_for_hw_ggc_a26x;
-extern bool mcd_use_ois_reset_autotest;
-extern bool mcd_ois_angle_support;
+// Camera param helpers
+bool sec_has_mcd_disable_dual_sync(void);
+bool sec_has_mcd_camera_rear_dual_cal(void);
+bool sec_has_mcd_use_leds_flash_charging_voltage_control(void);
+bool sec_has_mcd_use_camera_adaptive_mipi(void);
+bool sec_has_mcd_use_imx258_13mp_full_size(void);
+bool sec_has_mcd_apply_mirror_vertical_flip(void);
+bool sec_has_mcd_simplify_ois_init(void);
+bool sec_has_mcd_camera_front_fixed_focus(void);
+bool sec_has_mcd_modify_cal_map_for_swremosaic_lib(void);
+bool sec_has_mcd_front_otprom_eeprom(void);
+bool sec_has_mcd_camera_uwide_dualized(void);
+bool sec_has_mcd_read_dual_cal_firmware_data(void);
+bool sec_has_mcd_config_camera_eeprom_dualized(void);
+bool sec_has_mcd_config_check_hw_version_for_mcu_fw_upload(void);
+bool sec_has_mcd_use_camera_act_driver_soft_landing(void);
+bool sec_has_mcd_use_ois_hall_data_for_vdis(void);
+bool sec_has_mcd_use_hi1336c_setfile(void);
+bool sec_has_mcd_camera_use_aois(void);
+bool sec_has_mcd_cal_for_hw_ggc_a26x(void);
+bool sec_has_mcd_use_ois_reset_autotest(void);
+bool sec_has_mcd_ois_angle_support(void);
 
-#ifdef CONFIG_SEC_DETECT_SYSFS
-extern char sec_current_device_name[32];
-#endif
+bool sec_is_detection_complete(void);
 
 #endif /* _LINUX_SEC_H */
