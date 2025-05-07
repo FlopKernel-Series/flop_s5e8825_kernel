@@ -124,7 +124,7 @@ struct pnobj_func s6e3fc3_a25x_function_table[MAX_S6E3FC3_A25X_FUNCTION] = {
 
 static int __init s6e3fc3_a25x_panel_init(void)
 {
-	if (sec_current_device != SEC_A25) {
+	if (sec_get_current_device() != SEC_A25) {
 		SEC_DETECT_LOG("Skipped s6e3fc3_a25x panel driver\n");
 		return 0;
 	}

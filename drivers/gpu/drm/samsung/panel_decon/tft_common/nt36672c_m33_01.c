@@ -16,7 +16,7 @@
 
 static int __init nt36672c_m33_01_panel_init(void)
 {
-	if (sec_current_device != SEC_M33) {
+	if (sec_get_current_device() != SEC_M33) {
 		SEC_DETECT_LOG("Skipped nt36672c_m33_01 panel driver\n");
 		return 0;
 	}

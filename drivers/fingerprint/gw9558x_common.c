@@ -946,7 +946,7 @@ static int __init gw9558_init(void)
 {
 	int retval = 0;
 
-	if (sec_current_device != SEC_A53)
+	if (sec_get_current_device() != SEC_A53)
 		return 0;
 
 	pr_info("Entry\n");

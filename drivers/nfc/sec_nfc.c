@@ -1586,14 +1586,14 @@ extern void st54spi_exit(void);
 static int __init sec_nfc_init(void)
 {
 	// DO NOT initialize for M33, as it uses NXP.
-	if (sec_current_device == SEC_M33)
+	if (sec_get_current_device() == SEC_M33)
 		return 0;
 #if IS_ENABLED(CONFIG_ESE_P3_LSI)
-	if (sec_current_device == SEC_A53)
+	if (sec_get_current_device() == SEC_A53)
 		spip3_dev_init();
 #endif
 #if IS_ENABLED(CONFIG_NFC_ST21NFC)
-	if (sec_current_device == SEC_A25 || sec_current_device == SEC_M34)
+	if (sec_get_current_device() == SEC_A25 || sec_get_current_device() == SEC_M34)
 		st21nfc_dev_init();
 #endif
 #if IS_ENABLED(CONFIG_NFC_ST54SPI_ESE_SUPPORT)
@@ -1604,14 +1604,14 @@ static int __init sec_nfc_init(void)
 
 static void __exit sec_nfc_exit(void)
 {
-	if (sec_current_device == SEC_M33)
+	if (sec_get_current_device() == SEC_M33)
 		return;
 #if IS_ENABLED(CONFIG_ESE_P3_LSI)
-	if (sec_current_device == SEC_A53)
+	if (sec_get_current_device() == SEC_A53)
 		spip3_dev_exit();
 #endif
 #if IS_ENABLED(CONFIG_NFC_ST21NFC)
-	if (sec_current_device == SEC_A25 || sec_current_device == SEC_M34)
+	if (sec_get_current_device() == SEC_A25 || sec_get_current_device() == SEC_M34)
 		st21nfc_dev_exit();
 #endif
 #if IS_ENABLED(CONFIG_NFC_ST54SPI_ESE_SUPPORT)

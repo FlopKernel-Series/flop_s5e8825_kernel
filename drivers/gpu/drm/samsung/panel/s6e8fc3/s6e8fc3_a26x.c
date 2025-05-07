@@ -97,7 +97,7 @@ static int __init s6e8fc3_a26x_panel_init(void)
 {
 	struct common_panel_info *cpi = &s6e8fc3_a26x_panel_info;
 
-	if (sec_current_device != SEC_A26XS) {
+	if (sec_get_current_device() != SEC_A26XS) {
 		SEC_DETECT_LOG("Skipped s6e8fc3_a26xs panel driver\n");
 		return 0;
 	}

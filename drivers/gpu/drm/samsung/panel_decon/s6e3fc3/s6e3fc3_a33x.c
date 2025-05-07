@@ -17,7 +17,7 @@
 
 static int __init s6e3fc3_a33x_panel_init(void)
 {
-	if (sec_current_device != SEC_A33) {
+	if (sec_get_current_device() != SEC_A33) {
 		SEC_DETECT_LOG("Skipped s6e3fc3_a33x panel driver\n");
 		return 0;
 	}

@@ -1697,7 +1697,7 @@ int cis_hi1336_probe(struct i2c_client *client,
 		setfile = "default";
 	}
 
-	if (mcd_use_hi1336c_setfile) {
+	if (sec_has_mcd_use_hi1336c_setfile()) {
 		if (strcmp(setfile, "default") == 0 || strcmp(setfile, "setA") == 0) {
 			probe_info("%s setfile_A\n", __func__);
 			sensor_hi1336_global = sensor_hi1336c_setfile_A_Global;

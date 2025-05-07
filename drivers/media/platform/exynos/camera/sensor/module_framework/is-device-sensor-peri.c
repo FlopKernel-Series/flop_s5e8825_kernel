@@ -524,8 +524,8 @@ void is_sensor_flash_fire_work(struct work_struct *data)
 				if (ret) {
 					err("failed to turn off flash at flash expired handler\n");
 #ifdef USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL
-					if (mcd_use_leds_flash_charging_voltage_control) {
-						if (sec_legacy_usbpd)
+					if (sec_has_mcd_use_leds_flash_charging_voltage_control()) {
+						if (sec_feat_legacy_usbpd())
 							legacy_pdo_ctrl_by_flash(0);
 						else
 							pdo_ctrl_by_flash(0);
@@ -558,8 +558,8 @@ void is_sensor_flash_fire_work(struct work_struct *data)
 			}
 
 #ifdef USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL
-			if (mcd_use_leds_flash_charging_voltage_control) {
-				if (sec_legacy_usbpd)
+			if (sec_has_mcd_use_leds_flash_charging_voltage_control()) {
+				if (sec_feat_legacy_usbpd())
 					legacy_pdo_ctrl_by_flash(0);
 				else
 					pdo_ctrl_by_flash(0);
@@ -841,7 +841,7 @@ void is_sensor_muic_ctrl_and_flash_fire(struct work_struct *data)
 
 	/* Pre-flash on */
 	if (flash->flash_data.mode == CAM2_FLASH_MODE_TORCH) {
-		if (sec_legacy_usbpd)
+		if (sec_feat_legacy_usbpd())
 			legacy_pdo_ctrl_by_flash(1);
 		else
 			pdo_ctrl_by_flash(1);
@@ -857,7 +857,7 @@ void is_sensor_muic_ctrl_and_flash_fire(struct work_struct *data)
 	if (is_sensor_flash_fire(sensor_peri, flash->flash_data.intensity)) {
 		err("failed to turn off flash at flash expired handler\n");
 		if(flash->flash_data.mode == CAM2_FLASH_MODE_TORCH) {
-			if (sec_legacy_usbpd)
+			if (sec_feat_legacy_usbpd())
 				legacy_pdo_ctrl_by_flash(0);
 			else
 				pdo_ctrl_by_flash(0);
@@ -866,7 +866,7 @@ void is_sensor_muic_ctrl_and_flash_fire(struct work_struct *data)
 		}
 	}
 	else if (flash->flash_data.mode == CAM2_FLASH_MODE_OFF) { /* Torch off - used only in Video Mode */
-		if (sec_legacy_usbpd)
+		if (sec_feat_legacy_usbpd())
 			legacy_pdo_ctrl_by_flash(0);
 		else
 			pdo_ctrl_by_flash(0);
@@ -1249,7 +1249,7 @@ int is_sensor_peri_pre_flash_fire(struct v4l2_subdev *subdev, void *arg)
 		flash->flash_data.intensity = flash_uctl->firingPower;
 		flash->flash_data.firing_time_us = flash_uctl->firingTime;
 #ifdef USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL
-		if (mcd_use_leds_flash_charging_voltage_control)
+		if (sec_has_mcd_use_leds_flash_charging_voltage_control())
 			schedule_work(&sensor_peri->flash->flash_data.muic_ctrl_and_flash_fire_work);
 #else
 
@@ -1625,7 +1625,7 @@ void is_sensor_peri_init_work(struct is_device_sensor_peri *sensor_peri)
 		INIT_WORK(&sensor_peri->flash->flash_data.flash_fire_work, is_sensor_flash_fire_work);
 		INIT_WORK(&sensor_peri->flash->flash_data.flash_expire_work, is_sensor_flash_expire_work);
 #ifdef USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL
-		if (mcd_use_leds_flash_charging_voltage_control)
+		if (sec_has_mcd_use_leds_flash_charging_voltage_control())
 			INIT_WORK(&sensor_peri->flash->flash_data.muic_ctrl_and_flash_fire_work, is_sensor_muic_ctrl_and_flash_fire);
 #endif
 	}
@@ -2240,8 +2240,8 @@ int is_sensor_peri_s_stream(struct is_device_sensor *device,
 					sensor_peri->flash->flash_ae.pre_fls_ae_reset = false;
 					sensor_peri->flash->flash_ae.frm_num_pre_fls = 0;
 #if defined(USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL)
-					if (mcd_use_leds_flash_charging_voltage_control) {
-						if (sec_legacy_usbpd)
+					if (sec_has_mcd_use_leds_flash_charging_voltage_control()) {
+						if (sec_feat_legacy_usbpd())
 							legacy_pdo_ctrl_by_flash(0);
 						else
 							pdo_ctrl_by_flash(0);
@@ -2257,7 +2257,7 @@ int is_sensor_peri_s_stream(struct is_device_sensor *device,
 
 		memset(&sensor_peri->cis.cur_sensor_uctrl, 0, sizeof(camera2_sensor_uctl_t));
 #ifdef USE_OIS_HALL_DATA_FOR_VDIS
-		if (mcd_use_ois_hall_data_for_vdis)
+		if (sec_has_mcd_use_ois_hall_data_for_vdis())
 			memset(&sensor_peri->cis.expecting_aa_dm[0], 0, sizeof(camera2_aa_dm_t) * EXPECT_DM_NUM);
 #endif
 		memset(&sensor_peri->cis.expecting_sensor_dm[0], 0, sizeof(camera2_sensor_dm_t) * EXPECT_DM_NUM);
@@ -3072,7 +3072,7 @@ int is_sensor_peri_actuator_softlanding(struct is_device_sensor_peri *device)
 	}
 
 #ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
-	if (mcd_use_camera_act_driver_soft_landing) {
+	if (sec_has_mcd_use_camera_act_driver_soft_landing()) {
 		v4l2_ctrl.id = V4L2_CID_ACTUATOR_SOFT_LANDING;
 		ret = v4l2_subdev_call(device->subdev_actuator, core, ioctl, SENSOR_IOCTL_ACT_S_CTRL, &v4l2_ctrl);
 		if(ret != HW_SOFTLANDING_FAIL) {

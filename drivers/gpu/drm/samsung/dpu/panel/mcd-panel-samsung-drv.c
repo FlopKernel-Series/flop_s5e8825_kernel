@@ -594,7 +594,7 @@ static int exynos_panel_attach_properties(struct exynos_panel *ctx)
 	drm_object_attach_property(obj, p->fingerprint_mask, 0);
 #endif
 
-	if (IS_ENABLED(CONFIG_DRM_SAMSUNG_DOZE) && sec_doze) {
+	if (IS_ENABLED(CONFIG_DRM_SAMSUNG_DOZE) && sec_feat_doze()) {
 		ret = exynos_panel_attach_lp_mode(&ctx->exynos_connector, desc);
 		if (ret)
 			panel_err(ctx, "Failed to attach lp mode (%d)\n", ret);
@@ -2745,7 +2745,7 @@ int usdm_exynos_panel_probe(struct mipi_dsi_device *dsi)
 	struct exynos_panel *ctx;
 	int ret = 0;
 
-	if (!sec_needs_decon) {
+	if (!sec_feat_needs_decon()) {
 		SEC_DETECT_LOG("Initialized mcd common panel driver for usdm\n");
 		ctx = devm_kzalloc(dev, sizeof(struct exynos_panel), GFP_KERNEL);
 		if (!ctx)

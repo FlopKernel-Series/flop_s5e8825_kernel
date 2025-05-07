@@ -26,7 +26,7 @@ static void cmdline_panel_patch(char *command_line)
 
 	// Tokenize the buffer to process each entry
 	while ((token = strsep(&pos, delim)) != NULL) {
-		if (sec_needs_decon) {
+		if (sec_feat_needs_decon()) {
 			if (strstr(token, "mcd-panel.") == token) {
 				offset += snprintf(command_line + offset, BUF_SIZE - offset, "mcd-panel-decon%s ", token + strlen("mcd-panel"));
 			} else if (strstr(token, "exynos-drm.") == token) {

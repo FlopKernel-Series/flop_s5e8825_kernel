@@ -251,7 +251,7 @@ int sensor_imx754_cis_init(struct v4l2_subdev *subdev)
 	cis->need_mode_change = false;
 	cis->long_term_mode.sen_strm_off_on_enable = false;
 #ifdef USE_CAMERA_ADAPTIVE_MIPI
-	if (mcd_use_camera_adaptive_mipi) {
+	if (sec_has_mcd_use_camera_adaptive_mipi()) {
 		cis->mipi_clock_index_cur = CAM_MIPI_NOT_INITIALIZED;
 		cis->mipi_clock_index_new = CAM_MIPI_NOT_INITIALIZED;
 	}

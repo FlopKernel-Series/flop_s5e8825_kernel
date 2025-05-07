@@ -2627,7 +2627,7 @@ static int fts_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	ts_data->log_level = 1;
 	ts_data->fw_is_running = 0;
 	ts_data->bus_type = BUS_TYPE_I2C;
-	ts_data->legacy_mode = (sec_current_device != SEC_A26XS);
+	ts_data->legacy_mode = (sec_get_current_device() != SEC_A26XS);
 	i2c_set_clientdata(client, ts_data);
 
 	ret = fts_ts_probe_entry(ts_data);

@@ -1392,7 +1392,7 @@ static int panel_do_tx_packet(struct panel_device *panel, struct pktinfo *info, 
 #ifdef CONFIG_USDM_BLIC_I2C
 	case I2C_PKT_TYPE_WR:
 	case I2C_PKT_TYPE_RD:
-		if (sec_needs_blic)
+		if (sec_feat_needs_blic())
 			ret = panel_do_i2c_packet(panel, info);
 		else
 			ret = panel_do_dsi_tx_packet(panel, info, block);

@@ -50,7 +50,7 @@ static int __init hx83102e_gta4xls_00_panel_init(void)
 {
 	struct common_panel_info *cpi = &hx83102e_gta4xls_00_panel_info;
 
-	if (sec_current_device != SEC_GTA4XLS) {
+	if (sec_get_current_device() != SEC_GTA4XLS) {
 		SEC_DETECT_LOG("Skipped hx83102e_gta4xls_00 panel driver\n");
 		return 0;
 	}

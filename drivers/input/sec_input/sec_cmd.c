@@ -1035,7 +1035,7 @@ int sec_cmd_init(struct sec_cmd_data *data, struct device *dev, struct sec_cmd *
 	const char *device_name;
 	int ret, i;
 
-	if (sec_legacy_sinput)
+	if (sec_feat_legacy_sinput())
 		return 0;
 
 	switch (devt) {

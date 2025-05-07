@@ -209,7 +209,7 @@ int sensor_imx374_cis_init(struct v4l2_subdev *subdev)
 	cis->cis_data->low_expo_start = 33000;
 	cis->need_mode_change = false;
 #ifdef USE_CAMERA_ADAPTIVE_MIPI
-	if (mcd_use_camera_adaptive_mipi) {
+	if (sec_has_mcd_use_camera_adaptive_mipi()) {
 		cis->mipi_clock_index_cur = CAM_MIPI_NOT_INITIALIZED;
 		cis->mipi_clock_index_new = CAM_MIPI_NOT_INITIALIZED;
 	}
