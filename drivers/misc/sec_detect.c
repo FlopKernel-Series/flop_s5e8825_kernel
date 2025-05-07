@@ -336,6 +336,11 @@ static int __init sec_detect_init(void) {
 		strscpy(g_sec_current_device_name, "m34x", sizeof(g_sec_current_device_name));
 		g_sec_needs_decon = false;
 		g_sec_doze = true;
+	} else if (strstr(machine_name, "F34") != NULL) {
+		g_sec_current_device = SEC_M34;
+		strscpy(g_sec_current_device_name, "m34x", sizeof(g_sec_current_device_name));
+		g_sec_needs_decon = false;
+		g_sec_doze = true;
 	} else if (strstr(machine_name, "GTA4XLS") != NULL) {
 		g_sec_current_device = SEC_GTA4XLS;
 		strscpy(g_sec_current_device_name, "gta4xls", sizeof(g_sec_current_device_name));
