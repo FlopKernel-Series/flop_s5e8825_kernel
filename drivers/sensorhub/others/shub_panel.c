@@ -333,7 +333,7 @@ void init_shub_panel_callback(void)
 		panel_event_bl[i].level = -1;
 	}
 
-	if (sec_needs_decon)
+	if (sec_feat_needs_decon())
 		ret = decon_panel_notifier_register(&panel_notify);
 	else
 		ret = usdm_panel_notifier_register(&panel_notify);
@@ -345,7 +345,7 @@ void init_shub_panel_callback(void)
 
 void remove_shub_panel_callback(void)
 {
-	if (sec_needs_decon)
+	if (sec_feat_needs_decon())
 		decon_panel_notifier_unregister(&panel_notify);
 	else
 		usdm_panel_notifier_unregister(&panel_notify);

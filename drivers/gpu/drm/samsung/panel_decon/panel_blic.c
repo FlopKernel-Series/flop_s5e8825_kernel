@@ -122,7 +122,7 @@ static int panel_blic_do_seq(struct panel_blic_dev *blic, enum panel_blic_seq in
 	 */
 
 #ifdef CONFIG_MCD_PANEL_I2C
-	if (sec_needs_blic) {
+	if (sec_feat_needs_blic()) {
 		if (blic->i2c_dev)
 			panel->i2c_dev_selected = blic->i2c_dev;
 	}
@@ -648,7 +648,7 @@ exit_power:
 exit:
 
 #ifdef CONFIG_MCD_PANEL_I2C
-	if (sec_needs_blic) {
+	if (sec_feat_needs_blic()) {
 		if (temp->i2c_reg) {
 			temp->i2c_dev = panel_blic_find_i2c_drv(temp, panel);
 

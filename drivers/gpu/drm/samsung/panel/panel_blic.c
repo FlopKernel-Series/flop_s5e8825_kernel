@@ -104,7 +104,7 @@ static int panel_blic_do_seq_nolock(struct panel_blic_dev *blic, char *seqname)
 	 */
 
 #ifdef CONFIG_USDM_BLIC_I2C
-	if (sec_needs_blic) {
+	if (sec_feat_needs_blic()) {
 		if (blic->i2c_dev) {
 			struct panel_device *panel =
 				to_panel_drv(blic);
@@ -675,7 +675,7 @@ exit_power:
 exit:
 
 #ifdef CONFIG_USDM_BLIC_I2C
-	if (sec_needs_blic) {
+	if (sec_feat_needs_blic()) {
 		if (temp->i2c_reg) {
 			temp->i2c_dev = panel_blic_find_i2c_drv(temp, panel);
 

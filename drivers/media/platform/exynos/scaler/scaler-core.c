@@ -2779,7 +2779,7 @@ static void sc_vb2_buf_queue(struct vb2_buffer *vb)
 	int ret;
 
 	if (sc_buf->tws) {
-		if (!sec_needs_decon)
+		if (!sec_feat_needs_decon())
 			ret = usdm_exynos_dpuf_set_votf(sc_buf->tws->sink.dpu_dma_idx, true);
 		else
 			ret = decon_exynos_dpuf_set_votf(sc_buf->tws->sink.dpu_dma_idx, true);
@@ -3420,7 +3420,7 @@ static bool sc_clear_votf(struct sc_tws *tws)
 	if (!ret)
 		return ret;
 
-	if (!sec_needs_decon)
+	if (!sec_feat_needs_decon())
 		usdm_exynos_dpuf_set_votf(tws->sink.dpu_dma_idx, false);
 	else
 		decon_exynos_dpuf_set_votf(tws->sink.dpu_dma_idx, false);
@@ -4208,7 +4208,7 @@ static void sc_m2m_device_run(void *priv)
 			list_add_tail(&dst_sc_buf->tws->node, &sc->tws_avail_list);
 			spin_unlock_irqrestore(&sc->tws_lock, flags);
 
-			if (!sec_needs_decon)
+			if (!sec_feat_needs_decon())
 				usdm_exynos_dpuf_set_votf(dst_sc_buf->tws->sink.dpu_dma_idx, false);
 			else
 				decon_exynos_dpuf_set_votf(dst_sc_buf->tws->sink.dpu_dma_idx, false);

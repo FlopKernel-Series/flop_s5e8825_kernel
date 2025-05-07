@@ -1097,7 +1097,7 @@ static int __init el7xx_init(void)
 {
 	int retval = 0;
 
-	if (sec_current_device != SEC_A33)
+	if (sec_get_current_device() != SEC_A33)
 		return 0;
 
 	pr_info("Entry\n");

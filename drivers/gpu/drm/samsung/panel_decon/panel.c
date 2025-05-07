@@ -713,7 +713,7 @@ panel_do_vsync_delay(struct panel_device *panel, struct delayinfo *info)
 			panel->panel_data.props.vrr_fps);
 
 #ifdef CONFIG_SUPPORT_MASK_LAYER
-	if (!sec_lcd_device) {
+	if (!sec_feat_lcd_device()) {
 		if (panel->panel_bl.props.mask_layer_br_hook == MASK_LAYER_HOOK_ON)
 			panel_info("elapsed:%2d.%03d ms (cnt:%d)in %d FPS\n",
 				usec / 1000, usec % 1000, info->nframe,
@@ -1962,7 +1962,7 @@ static int _panel_do_seqtbl(struct panel_device *panel,
 			break;
 #endif
 #ifdef CONFIG_MCD_PANEL_I2C
-		if (sec_needs_blic) {
+		if (sec_feat_needs_blic()) {
 			case I2C_PKT_TYPE_WR:
 			case I2C_PKT_TYPE_RD:
 				ret = panel_do_i2c_packet(panel, (struct pktinfo *)cmdtbl[i]);
@@ -2482,13 +2482,13 @@ int read_panel_id_tft(struct panel_device *panel, u8 *buf)
 	if (!IS_PANEL_ACTIVE(panel))
 		return -ENODEV;
 
-	if (sec_lcd_device)
+	if (sec_feat_lcd_device())
 		panel_info("id read from 0x%02X\n", PANEL_ID_REG_TFT);
 	else
 		panel_info("id read from 0x%02X\n", PANEL_ID_REG_OLED);
 	mutex_lock(&panel->op_lock);
 	for (i = 0; i < PANEL_ID_LEN; i++) {
-		if (sec_lcd_device)
+		if (sec_feat_lcd_device())
 			len = panel_rx_nbytes(panel, DSI_PKT_TYPE_RD, buf + i, PANEL_ID_REG_TFT + i, 0, 1);
 		else
 			len = panel_rx_nbytes(panel, DSI_PKT_TYPE_RD, buf + i, PANEL_ID_REG_OLED + i, 0, 1);
@@ -2516,13 +2516,13 @@ int read_panel_id_oled(struct panel_device *panel, u8 *buf)
 	if (!IS_PANEL_ACTIVE(panel))
 		return -ENODEV;
 
-	if (sec_lcd_device)
+	if (sec_feat_lcd_device())
 		panel_info("id read from 0x%02X 3bytes\n", PANEL_ID_REG_TFT);
 	else
 		panel_info("id read from 0x%02X 3bytes\n", PANEL_ID_REG_OLED);
 	mutex_lock(&panel->op_lock);
 	panel_set_key(panel, 3, true);
-	if (sec_lcd_device)
+	if (sec_feat_lcd_device())
 		len = panel_rx_nbytes(panel, DSI_PKT_TYPE_RD, buf, PANEL_ID_REG_TFT, 0, 3);
 	else
 		len = panel_rx_nbytes(panel, DSI_PKT_TYPE_RD, buf, PANEL_ID_REG_OLED, 0, 3);

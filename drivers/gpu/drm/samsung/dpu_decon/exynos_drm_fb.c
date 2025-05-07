@@ -780,7 +780,7 @@ void exynos_atomic_commit_tail(struct drm_atomic_state *old_state)
 	exynos_atomic_wait_for_vblanks(dev, old_state);
 	DPU_ATRACE_END("wait_for_vblanks");
 
-	if (!sec_lcd_device) {
+	if (!sec_feat_lcd_device()) {
 		for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state,
 					new_crtc_state, i) {
 			const struct exynos_drm_crtc_ops *ops;

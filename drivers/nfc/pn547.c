@@ -2091,7 +2091,7 @@ static int __init pn547_dev_init(void)
 {
 	int ret;
 
-	if (sec_current_device != SEC_M33)
+	if (sec_get_current_device() != SEC_M33)
 		return 0;
 
 #ifdef CONFIG_NFC_FEATURE_SN100U

@@ -137,7 +137,7 @@ static int __init db7f2010b_a26x_panel_init(void)
 {
 	struct common_panel_info *cpi = &db7f2010b_a26x_panel_info;
 
-	if (sec_current_device != SEC_A26XS) {
+	if (sec_get_current_device() != SEC_A26XS) {
 		SEC_DETECT_LOG("Skipped db7f2010b_a26xs panel driver\n");
 		return 0;
 	}

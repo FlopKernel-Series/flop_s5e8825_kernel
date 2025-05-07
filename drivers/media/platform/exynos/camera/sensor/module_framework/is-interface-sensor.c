@@ -2021,7 +2021,7 @@ int update_sensor_dynamic_meta(struct is_sensor_interface *itf,
 	udm->sensor.midDigitalGain = sensor_peri->cis.expecting_sensor_udm[index].midDigitalGain;
 
 #ifdef USE_OIS_HALL_DATA_FOR_VDIS
-	if (mcd_use_ois_hall_data_for_vdis) {
+	if (sec_has_mcd_use_ois_hall_data_for_vdis()) {
 		/* update ois hall data */
 #ifdef OIS_ANGLE_SUPPORT
 		if (sensor_peri->cis.expecting_aa_dm[index].vendor_oisHallData.index == index)	{
@@ -3980,7 +3980,7 @@ int get_delayed_preflash_time(struct is_sensor_interface *itf, u32 *delayedTime)
 	struct v4l2_subdev *subdev_flash;
 	struct v4l2_control ctrl;
 
-	if (!mcd_use_leds_flash_charging_voltage_control)
+	if (!sec_has_mcd_use_leds_flash_charging_voltage_control())
 		return 0;
 
 	WARN_ON(!itf);

@@ -1024,7 +1024,7 @@ static void decon_atomic_flush(struct exynos_drm_crtc *exynos_crtc,
 		decon_reg_sec_win_shadow_update_req(decon);
 #endif
 #if IS_ENABLED(CONFIG_SUPPORT_MASK_LAYER) || IS_ENABLED(CONFIG_USDM_PANEL_MASK_LAYER)
-	if (!sec_lcd_device)
+	if (!sec_feat_lcd_device())
 		exynos_crtc->ops->set_fingerprint_mask(exynos_crtc, old_crtc_state, 0);
 #endif
 	decon_reg_all_win_shadow_update_req(decon->id);
@@ -1129,7 +1129,7 @@ static int decon_late_register(struct exynos_drm_crtc *exynos_crtc)
 			urgent_dent, &decon->config.urgent.dta_lo_thres);
 
 #if IS_ENABLED(CONFIG_DECON_EXYNOS_FREQ_HOP)
-	if (!sec_lcd_device)
+	if (!sec_feat_lcd_device())
 		dpu_freq_hop_debugfs(exynos_crtc);
 #endif
 
@@ -2446,7 +2446,7 @@ static int decon_probe(struct platform_device *pdev)
 
 #if IS_ENABLED(CONFIG_DRM_MCD_COMMON)
 #if IS_ENABLED(CONFIG_DISPLAY_USE_INFO) || IS_ENABLED(CONFIG_USDM_PANEL_DPUI)
-	if (!sec_lcd_device) {
+	if (!sec_feat_lcd_device()) {
 		decon->dpui_notif.notifier_call = decon_dpui_notifier_callback;
 		ret = decon_dpui_logging_register(&decon->dpui_notif, DPUI_TYPE_CTRL);
 		if (ret)

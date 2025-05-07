@@ -1120,7 +1120,7 @@ static int __init exynos_drm_init(void)
 {
 	int ret;
 
-	if (sec_needs_decon)
+	if (sec_feat_needs_decon())
 		return 0;
 
 	SEC_DETECT_LOG("Initialized Exynos DPU driver for usdm\n");

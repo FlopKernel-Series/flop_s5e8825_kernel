@@ -234,7 +234,7 @@ EXPORT_SYMBOL_GPL(is_sec_set_front_dualized_rom_probe);
 int is_sec_get_sysfs_finfo(struct is_rom_info **finfo, int rom_id)
 {
 //#if defined(CAMERA_UWIDE_DUALIZED)
-	if (mcd_camera_uwide_dualized) {
+	if (sec_has_mcd_camera_uwide_dualized()) {
 		if(rom_id == ROM_ID_REAR3 && rear3_dualized_rom_probe) {
 			*finfo = &sysfs_finfo_rear3_otp;
 			rear3_dualized_rom_probe = false;
@@ -243,7 +243,7 @@ int is_sec_get_sysfs_finfo(struct is_rom_info **finfo, int rom_id)
 			*finfo = &sysfs_finfo[rom_id];
 		}
 //#elif defined(FRONT_OTPROM_EEPROM)
-	} else if (mcd_front_otprom_eeprom) {
+	} else if (sec_has_mcd_front_otprom_eeprom()) {
 		if(rom_id == ROM_ID_FRONT && front_dualized_rom_probe) {
 			*finfo = &sysfs_finfo_front_otp;
 			front_dualized_rom_probe = false;
@@ -1811,7 +1811,7 @@ int is_sec_readcal_otprom_hi1339(int rom_id)
 	subdev_cis = sensor_peri->subdev_cis;
 
 #if defined(FRONT_OTPROM_EEPROM)
-	if (mcd_front_otprom_eeprom)
+	if (sec_has_mcd_front_otprom_eeprom())
 		sysfs_finfo[ROM_ID_FRONT] = sysfs_finfo_front_otp;
 #endif
 	is_sec_get_sysfs_finfo(&finfo, rom_id);
@@ -5005,7 +5005,7 @@ int is_get_remosaic_cal_buf(int sensor_position, char **buf, int *size)
 
 //#ifdef MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB
 // Modify cal_buf for some sensors (if required)
-	if (mcd_modify_cal_map_for_swremosaic_lib) {
+	if (sec_has_mcd_modify_cal_map_for_swremosaic_lib()) {
 		switch(sensor_id) {
 			case SENSOR_NAME_S5KJN1:
 				ret = is_modify_remosaic_cal_buf(sensor_position, cal_buf, buf, size);

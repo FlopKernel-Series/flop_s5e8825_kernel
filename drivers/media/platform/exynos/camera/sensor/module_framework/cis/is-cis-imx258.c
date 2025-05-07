@@ -1626,7 +1626,7 @@ static int cis_imx258_probe(struct i2c_client *client,
 	cis->cis_ops = &cis_ops;
 	/* belows are depend on sensor cis. MUST check sensor spec */
 //#ifdef USE_IMX258_13MP_FULL_SIZE
-	if (mcd_use_imx258_13mp_full_size)
+	if (sec_has_mcd_use_imx258_13mp_full_size())
 		cis->bayer_order = OTF_INPUT_ORDER_BAYER_BG_GR;
 //#else
 	else
@@ -1642,7 +1642,7 @@ static int cis_imx258_probe(struct i2c_client *client,
 		setfile = "default";
 	}
 
-	if (mcd_use_imx258_13mp_full_size) {
+	if (sec_has_mcd_use_imx258_13mp_full_size()) {
 		if (strcmp(setfile, "default") == 0 ||
 				strcmp(setfile, "setA") == 0) {
 			probe_info("%s setfile_A\n", __func__);

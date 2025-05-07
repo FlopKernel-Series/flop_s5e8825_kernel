@@ -1576,7 +1576,7 @@ int is_vender_hw_init(struct is_vender *vender)
 	}
 
 #ifdef USE_CAMERA_ADAPTIVE_MIPI
-	if (mcd_use_camera_adaptive_mipi)
+	if (sec_has_mcd_use_camera_adaptive_mipi())
 		is_vendor_register_ril_notifier();
 #endif
 	is_hw_init_running = false;

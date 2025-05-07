@@ -1418,7 +1418,7 @@ static ssize_t camera_rear3_dualcal_show(struct device *dev,
 	}
 
 #ifdef READ_DUAL_CAL_FIRMWARE_DATA
-	if (mcd_read_dual_cal_firmware_data) {
+	if (sec_has_mcd_read_dual_cal_firmware_data()) {
 		info("  load multical Cal Data %s \n", DUAL_CAL_DATA_PATH);
 		copy_size = DUAL_CAL_DATA_SIZE_DEFAULT;
 #ifdef USE_KERNEL_VFS_READ_WRITE
@@ -1457,7 +1457,7 @@ static ssize_t camera_rear3_dualcal_size_show(struct device *dev,
 	}
 
 #ifdef READ_DUAL_CAL_FIRMWARE_DATA
-	if (mcd_read_dual_cal_firmware_data) {
+	if (sec_has_mcd_read_dual_cal_firmware_data()) {
 		info("  load multical Cal Data %s \n", DUAL_CAL_DATA_PATH);
 		copy_size = DUAL_CAL_DATA_SIZE_DEFAULT;
 #ifdef USE_KERNEL_VFS_READ_WRITE
@@ -1954,12 +1954,12 @@ static bool read_ois_version(void)
 		ois_power_control(1);
 #endif
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-		if (mcd_camera_use_aois)
+		if (sec_has_mcd_camera_use_aois())
 			cam_ois_set_aois_fac_mode_on();
 #endif
 		ret = is_ois_check_fw(sysfs_core);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-		if (mcd_camera_use_aois)
+		if (sec_has_mcd_camera_use_aois())
 			cam_ois_set_aois_fac_mode_off();
 #endif
 #ifndef CONFIG_CAMERA_USE_INTERNAL_MCU
@@ -2017,12 +2017,12 @@ static ssize_t camera_ois_set_mode_store(struct device *dev,
 
 	if (check_ois_power) {
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-		if (mcd_camera_use_aois)
+		if (sec_has_mcd_camera_use_aois())
 			cam_ois_set_aois_fac_mode_on();
 #endif
 		is_ois_set_mode(sysfs_core, value);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-		if (mcd_camera_use_aois)
+		if (sec_has_mcd_camera_use_aois())
 			cam_ois_set_aois_fac_mode_off();
 #endif
 	} else
@@ -3673,7 +3673,7 @@ int is_create_sysfs(struct is_core *core)
 					dev_attr_front_mtf_exif.attr.name);
 		}
 //#ifndef CAMERA_FRONT_FIXED_FOCUS
-		if (!mcd_camera_front_fixed_focus) {
+		if (!sec_has_mcd_camera_front_fixed_focus()) {
 #ifdef CAMERA_FRONT_PAFCAL
 			if (device_create_file(camera_front_dev, &dev_attr_front_paf_cal_check) < 0) {
 				pr_err("failed to create front device file, %s\n",
@@ -3818,7 +3818,7 @@ int is_create_sysfs(struct is_core *core)
 				dev_attr_rear_phy_tune.attr.name);
 		}
 #ifdef CAMERA_REAR_DUAL_CAL
-		if (mcd_camera_rear_dual_cal) {
+		if (sec_has_mcd_camera_rear_dual_cal()) {
 			if (device_create_file(camera_rear_dev, &dev_attr_rear_dualcal) < 0) {
 				pr_err("failed to create rear device file, %s\n",
 						dev_attr_rear_dualcal.attr.name);
@@ -4186,7 +4186,7 @@ int is_destroy_sysfs(struct is_core *core)
 		device_remove_file(camera_front_dev, &dev_attr_front_camfw);
 #if defined(CAMERA_EEPROM_SUPPORT_FRONT)
 //#ifndef CAMERA_FRONT_FIXED_FOCUS
-		if (!mcd_camera_front_fixed_focus) {
+		if (!sec_has_mcd_camera_front_fixed_focus()) {
 			device_remove_file(camera_front_dev, &dev_attr_front_afcal);
 #ifdef CAMERA_FRONT_PAFCAL
 			device_remove_file(camera_front_dev, &dev_attr_front_paf_cal_check);
@@ -4228,7 +4228,7 @@ int is_destroy_sysfs(struct is_core *core)
 		device_remove_file(camera_rear_dev, &dev_attr_rear_moduleid);
 		device_remove_file(camera_rear_dev, &dev_attr_rear_phy_tune);
 #ifdef CAMERA_REAR_DUAL_CAL
-		if (mcd_camera_rear_dual_cal) {
+		if (sec_has_mcd_camera_rear_dual_cal()) {
 			device_remove_file(camera_rear_dev, &dev_attr_rear_dualcal);
 			device_remove_file(camera_rear_dev, &dev_attr_rear2_dualcal);
 			device_remove_file(camera_rear_dev, &dev_attr_rear3_dualcal);

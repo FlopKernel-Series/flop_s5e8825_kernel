@@ -207,7 +207,7 @@ static void exynos_panel_connector_print_state(struct drm_printer *p,
 	drm_printf(p, "\thdr_formats: 0x%x\n", desc->hdr_formats);
 	drm_printf(p, "\tadjusted_fps: %d\n", exynos_conn_state->adjusted_fps);
 #if IS_ENABLED(CONFIG_SUPPORT_MASK_LAYER) || IS_ENABLED(CONFIG_USDM_PANEL_MASK_LAYER)
-	if (!sec_lcd_device)
+	if (!sec_feat_lcd_device())
 		drm_printf(p, "\tfingerprint_mask_req: 0x%x\n", exynos_conn_state->fingerprint_mask);
 #endif
 }
@@ -306,7 +306,7 @@ exynos_panel_connector_set_property(struct exynos_drm_connector *exynos_conn,
 	const struct exynos_drm_connector_properties *p;
 
 	// Don't even assign values to the pointers unless the condition is met.
-	if (sec_lcd_device)
+	if (sec_feat_lcd_device())
 		return 0;
 
 	ctx = exynos_connector_to_panel(exynos_conn);
@@ -339,7 +339,7 @@ exynos_panel_connector_get_property(struct exynos_drm_connector *exynos_conn,
 		*val = exynos_conn_state->adjusted_fps;
 #if IS_ENABLED(CONFIG_SUPPORT_MASK_LAYER) || IS_ENABLED(CONFIG_USDM_PANEL_MASK_LAYER)
 	else if (property == p->fingerprint_mask) {
-		if (!sec_lcd_device)
+		if (!sec_feat_lcd_device())
 			*val = ctx->fingerprint_mask;
 		else
 			return -EINVAL;
@@ -602,11 +602,11 @@ static int exynos_panel_attach_properties(struct exynos_panel *ctx)
 	drm_object_attach_property(obj, p->hdr_formats, 0);
 	drm_object_attach_property(obj, p->adjusted_fps, 0);
 #if IS_ENABLED(CONFIG_SUPPORT_MASK_LAYER) || IS_ENABLED(CONFIG_USDM_PANEL_MASK_LAYER)
-	if (!sec_lcd_device)
+	if (!sec_feat_lcd_device())
 		drm_object_attach_property(obj, p->fingerprint_mask, 0);
 #endif
 
-	if (IS_ENABLED(CONFIG_DRM_SAMSUNG_DOZE) && sec_doze) {
+	if (IS_ENABLED(CONFIG_DRM_SAMSUNG_DOZE) && sec_feat_doze()) {
 		ret = exynos_panel_attach_lp_mode(&ctx->exynos_connector, desc);
 		if (ret)
 			panel_err(ctx, "Failed to attach lp mode (%d)\n", ret);
@@ -2693,7 +2693,7 @@ int decon_exynos_panel_probe(struct mipi_dsi_device *dsi)
 	struct exynos_panel *ctx;
 	int ret = 0;
 
-	if (sec_needs_decon) {
+	if (sec_feat_needs_decon()) {
 		SEC_DETECT_LOG("Initialized mcd common panel driver for decon\n");
 		ctx = devm_kzalloc(dev, sizeof(struct exynos_panel), GFP_KERNEL);
 		if (!ctx)
