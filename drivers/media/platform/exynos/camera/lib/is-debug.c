@@ -75,7 +75,7 @@ module_param_named(debug_phy_tune, debug_param[IS_DEBUG_PARAM_PHY_TUNE], int, 06
 module_param_named(debug_crc_seed, debug_param[IS_DEBUG_PARAM_CRC_SEED], int, 0644);
 
 static int debug_assert_crash;
-module_param(debug_assert_crash, int, S_IRUGO | S_IWUSR);
+// module_param(debug_assert_crash, int, S_IRUGO | S_IWUSR);
 
 /*
  * Decimal digit dot pattern.

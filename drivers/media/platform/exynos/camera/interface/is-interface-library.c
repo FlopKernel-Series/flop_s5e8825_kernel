@@ -1118,15 +1118,17 @@ int is_lib_logdump(void)
 
 void is_assert(bool en_s2d)
 {
-	int i;
-	struct is_core *core = is_get_is_core();
+	// int i;
+	// struct is_core *core = is_get_is_core();
 
-	if (core && is_get_debug_assert_crash()) {
-		for (i = 0; i < IS_SENSOR_COUNT; i++)
-			set_bit(IS_SENSOR_ASSERT_CRASH, &core->sensor[i].state);
-	} else {
-		is_debug_s2d(en_s2d, "DDK/RTA ASSERT");
-	}
+	// if (core && is_get_debug_assert_crash()) {
+	// 	for (i = 0; i < IS_SENSOR_COUNT; i++)
+	// 		set_bit(IS_SENSOR_ASSERT_CRASH, &core->sensor[i].state);
+	// } else {
+	// 	is_debug_s2d(en_s2d, "DDK/RTA ASSERT");
+	// }
+
+	pr_err("FIMC-IS: Firmware assertion triggered (en_s2d=%d). Ignoring.\n", en_s2d);
 }
 
 /*
