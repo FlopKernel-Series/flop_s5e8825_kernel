@@ -351,10 +351,10 @@ static int ego_mode_update_callback(struct notifier_block *nb,
 		if (!egp)
 			continue;
 
-		egp->pelt_boost = cur_set->cpufreq_gov.pelt_boost[cpu];
-		egp->htask_boost = cur_set->cpufreq_gov.htask_boost[cpu];
-		egp->pelt_margin = DEFAULT_PELT_MARGIN;
-		egp->split_pelt_margin = cur_set->cpufreq_gov.split_pelt_margin[cpu];
+		egp->pelt_boost = 0;
+		egp->htask_boost = 0;
+		egp->pelt_margin = 0;
+		egp->split_pelt_margin = 0;
 		egp->split_pelt_margin_freq = cur_set->cpufreq_gov.split_pelt_margin_freq[cpu];
 		egp->up_rate_limit_ns = 4 * NSEC_PER_MSEC; /* 4 ms in default */
 		egp->split_up_rate_limit_ns =
@@ -610,9 +610,16 @@ static unsigned int get_next_freq(struct ego_policy *egp,
 {
 	struct cpufreq_policy *policy = egp->policy;
 	unsigned int freq, org_freq, eng_freq = 0;
+	unsigned long base_freq_for_map;
+
+	if (arch_scale_freq_invariant()) {
+		base_freq_for_map = policy->cpuinfo.max_freq;
+	} else {
+		base_freq_for_map = policy->cur;
+	}
 
 	/* compute pure frequency base on util */
-	org_freq = ego_map_util_freq(egp, util, policy->cpuinfo.max_freq, max);
+	org_freq = ego_map_util_freq(egp, util, base_freq_for_map, max);
 	if ((org_freq == egp->cached_raw_freq || egp->work_in_progress)
 					&& !egp->need_freq_update) {
 		freq = max(egp->org_freq, egp->next_freq);
@@ -635,12 +642,15 @@ static unsigned int get_next_freq(struct ego_policy *egp,
 	} else {
 		egp->eng_freq = 0;
 	}
-	freq = max(org_freq, eng_freq);
+	// freq = max(org_freq, eng_freq);
+	egp->eng_freq = 0;
+	eng_freq = 0;
+	freq = org_freq;
 
 skip_find_next_freq:
 
 	/* Apply fclamp */
-	freq = fclamp_apply(policy, freq);
+	// freq = fclamp_apply(policy, freq);
 	freq = clamp_val(freq, policy->min, policy->max);
 
 	freq = egp->build_somac_wall ? min(freq, egp->somac_wall) : freq;
