@@ -24,6 +24,8 @@
 #define HIST_SIZE		40
 #define	RATIO_UNIT		1000
 
+#define UTIL_REDUCTION_FACTOR 70 // Reduce utilization to 70% (30% reduction)
+
 struct ego_idle {
 	int		avg_ratio[CSTATE_MAX];
 	int		last_ratio[CSTATE_MAX];
@@ -930,6 +932,8 @@ static unsigned int ego_next_freq_shared(struct ego_cpu *egc, u64 time)
 	unsigned long util = 0, io_util = 0, max = 1;
 	unsigned int cpu;
 
+	unsigned long capacity_at_max_util = 1;
+
 	for_each_cpu(cpu, policy->cpus) {
 		struct ego_cpu *egc = &per_cpu(ego_cpu, cpu);
 		unsigned long cpu_util, cpu_io_util, cpu_max;
@@ -951,6 +955,7 @@ static unsigned int ego_next_freq_shared(struct ego_cpu *egc, u64 time)
 		if (util < cpu_boosted_util) {
 			util = cpu_boosted_util;
 			egp->heaviest_cpu = cpu;
+			capacity_at_max_util = cpu_max;
 		}
 		/* find heaviest io util */
 		io_util = max(io_util, cpu_io_util);
@@ -961,7 +966,12 @@ static unsigned int ego_next_freq_shared(struct ego_cpu *egc, u64 time)
 	}
 
 	util = max(util, io_util);
-	return get_next_freq(egp, util, max);
+
+	if (UTIL_REDUCTION_FACTOR < 100) {
+		util = (util * UTIL_REDUCTION_FACTOR) / 100;
+	}
+
+	return get_next_freq(egp, util, capacity_at_max_util > 1 ? capacity_at_max_util : max);
 }
 
 static void
