@@ -24,7 +24,7 @@
 #define HIST_SIZE		40
 #define	RATIO_UNIT		1000
 
-#define UTIL_REDUCTION_FACTOR 70 // Reduce utilization to 70% (30% reduction)
+#define UTIL_REDUCTION_FACTOR 100 // No reduction by default
 
 struct ego_idle {
 	int		avg_ratio[CSTATE_MAX];
