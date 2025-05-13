@@ -650,7 +650,7 @@ static unsigned int get_next_freq(struct ego_policy *egp,
 skip_find_next_freq:
 
 	/* Apply fclamp */
-	// freq = fclamp_apply(policy, freq);
+	freq = fclamp_apply(policy, freq);
 	freq = clamp_val(freq, policy->min, policy->max);
 
 	freq = egp->build_somac_wall ? min(freq, egp->somac_wall) : freq;
