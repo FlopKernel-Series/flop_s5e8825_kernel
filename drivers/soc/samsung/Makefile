@@ -1,11 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0
 
 obj-$(CONFIG_EXYNOS_CHIPID_V2)	+= exynos-chipid_v2.o
-
-obj-$(CONFIG_EXYNOS_ASV)	+= exynos-asv.o
 obj-$(CONFIG_EXYNOS_ASV_ARM)	+= exynos5422-asv.o
 
-obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o exynos-asv.o
 obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o
 obj-$(CONFIG_EXYNOS_PMU_IF)	+= exynos-pmu-if.o
 obj-$(CONFIG_EXYNOS_FLEXPMU_DBG)            += exynos-flexpmu-dbg.o
