@@ -81,6 +81,7 @@
 #include "internal.h"
 #include "shuffle.h"
 #include "page_reporting.h"
+#include <linux/binfmts.h>
 
 /* Free Page Internal flags: for internal, non-pcp variants of free_pages(). */
 typedef int __bitwise fpi_t;
@@ -322,7 +323,7 @@ compound_page_dtor * const compound_page_dtors[NR_COMPOUND_DTORS] = {
 int min_free_kbytes = 1024;
 int user_min_free_kbytes = -1;
 int watermark_boost_factor __read_mostly;
-int watermark_scale_factor = 10;
+int watermark_scale_factor = 200;
 
 /*
  * Extra memory for the system to try freeing. Used to temporarily
@@ -8354,6 +8355,9 @@ int watermark_scale_factor_sysctl_handler(struct ctl_table *table, int write,
 		void *buffer, size_t *length, loff_t *ppos)
 {
 	int rc;
+
+	if (task_is_booster(current))
+		return 0;
 
 	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
 	if (rc)
