@@ -335,7 +335,7 @@ static struct notifier_block ego_sysbusy_notifier = {
 /*********************************************************************/
 /*		      EGO mode change notifier		     */
 /*********************************************************************/
-#define DEFAULT_PELT_MARGIN	(5)	/* 5% in default */
+#define DEFAULT_PELT_MARGIN	(25)	/* 25% in default */
 static int ego_mode_update_callback(struct notifier_block *nb,
 				unsigned long val, void *v)
 {
@@ -353,8 +353,8 @@ static int ego_mode_update_callback(struct notifier_block *nb,
 
 		egp->pelt_boost = 0;
 		egp->htask_boost = 0;
-		egp->pelt_margin = DEFAULT_PELT_MARGIN;
-		egp->split_pelt_margin = cur_set->cpufreq_gov.split_pelt_margin[cpu];
+		egp->pelt_margin = 0;
+		egp->split_pelt_margin = 0;
 		egp->split_pelt_margin_freq = cur_set->cpufreq_gov.split_pelt_margin_freq[cpu];
 		egp->up_rate_limit_ns = 4 * NSEC_PER_MSEC; /* 4 ms in default */
 		egp->split_up_rate_limit_ns =
