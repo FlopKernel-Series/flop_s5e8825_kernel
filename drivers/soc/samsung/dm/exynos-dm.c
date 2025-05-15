@@ -1274,7 +1274,7 @@ int exynos_dm_fast_switch(int dm_type, unsigned long *target_freq)
 	if (ret) {
 		if (!is_acpm_ipc_busy(exynos_dm->fast_switch_ch))
 			exynos_update_ip_idle_status(dm_fast_switch_idle_ip_index, 1);
-		pr_err("[%s] freq request fail: %d\n", __func__, ret);
+		pr_err_ratelimited("[%s] freq request fail: %d\n", __func__, ret);
 		spin_unlock_irqrestore(&fast_switch_glb_lock, flags);
 		return ret;
 	}
