@@ -1,12 +1,6 @@
-post_build() {
-    if [[ ! -f "$OUT_KERNEL" ]]; then
-        echo -e "\nERROR: Kernel files not found! Compilation failed?"
-        if [[ "$DO_OSHI" == "1" ]]; then
-            echo -e "\nINFO: Uploading log to oshi.at\n"
-            curl -T log.txt oshi.at
-        fi
-        exit 1
-    fi
+kernel_modules() {
+    local i
+    local missing_modules
 
     rm -rf "$TMPDIR"
     rm -f "$OUT_BOOTIMG" "$OUT_VENDORBOOTIMG"
@@ -21,17 +15,16 @@ post_build() {
         exit 1
     fi
 
-    missing_modules=""
     for module in $(cat "$IN_DLKM/modules.load"); do
         i=$(find "$MOD_OUTDIR/lib/modules" -name "$module")
-        if [[ -f "$i" ]]; then
+        if [ -f "$i" ]; then
             cp -f "$i" "$MODULES_DIR/0.0/$module"
         else
             missing_modules="$missing_modules $module"
         fi
     done
 
-    if [[ -n "$missing_modules" ]]; then
+    if [ -n "$missing_modules" ]; then
         echo "ERROR: the following modules were not found: $missing_modules"
         exit 1
     fi
@@ -44,9 +37,15 @@ post_build() {
             rm -f "$i"
         fi
     done
+  
     cd "$KDIR"
 
     cp -f "$IN_DLKM/modules.load" "$MODULES_DIR/0.0/modules.load"
     mv "$MODULES_DIR/0.0"/* "$MODULES_DIR/"
     rm -rf "$MODULES_DIR/0.0"
+}
+
+clean_tmp() {
+    echo -e "INFO: Cleaning after build..."
+    rm -rf "$TMPDIR" "$MOD_OUTDIR" "$OUT_VENDORBOOTIMG" "$OUT_BOOTIMG"
 }

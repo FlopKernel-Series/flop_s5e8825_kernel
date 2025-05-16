@@ -6,6 +6,8 @@
 # Copyright (C) 2022-2025 Flopster101 (rewrite)
 
 ## Variables
+set -e
+
 # Other
 DEFAULT_DEFCONFIG="s5e8825-unified_defconfig"
 KERNEL_URL="https://github.com/FlopKernel-Series/flop_s5e8825_kernel"
@@ -17,24 +19,24 @@ BUILD_HOST="$USER@$(hostname)"
 SCRIPTS_DIR="kernel_build/scripts"
 
 # Workspace
-if [[ -d /workspace ]]; then
+if [ -d /workspace ]; then  
     WP="/workspace"
     IS_GP=1
 else
     IS_GP=0
 fi
 
-if [[ -z "$WP" ]]; then
+if [ -z "$WP" ]; then
     echo -e "\nERROR: Environment not Gitpod! Please set the WP env var...\n"
     exit 1
 fi
 
-if [[ ! -d drivers ]]; then
+if [ ! -d drivers ]; then
     echo -e "\nERROR: Please execute from top-level kernel tree\n"
     exit 1
 fi
 
-if [[ "$IS_GP" == "1" ]]; then
+if [ "$IS_GP" == "1" ]; then
     export KBUILD_BUILD_USER="Flopster101"
     export KBUILD_BUILD_HOST="buildbot"
 fi
@@ -86,11 +88,12 @@ DEVICE="Exynos 1280 Family"
 CODENAME="exynos1280"
 
 ## Secrets
-if [ -f "../chat_ci" ]; then
+if [ -f "../chat_ci" ] && [ -f "../bot_token" ]; then
     TELEGRAM_CHAT_ID="$(cat ../chat_ci)"
-fi
-if [ -f "../bot_token" ]; then
     TELEGRAM_BOT_TOKEN="$(cat ../bot_token)"
+    SECRETS="1"
+else
+    SECRETS="0"
 fi
 
 ## Parse arguments
@@ -124,8 +127,12 @@ for arg in "$@"; do
         IS_RELEASE=1
     fi
     if [[ "$arg" == *t* ]]; then
-        echo "INFO: Telegram argument passed, build will be uploaded to CI"
-        DO_TG=1
+        if [ "$SECRETS" = "1" ]; then
+            echo "WARNING: Telegram argument was passed, but secrets were not found. Skipping Telegram Upload"  
+        else
+            echo "INFO: Telegram argument passed, build will be uploaded to CI"
+            DO_TG=1
+        fi
     fi
     if [[ "$arg" == *b* ]]; then
         echo "INFO: bashupload.com argument passed, build will be uploaded to bashupload.com"
@@ -155,7 +162,7 @@ for arg in "$@"; do
     fi
 done
 
-if [[ "$IS_RELEASE" == "1" ]]; then
+if [ "$IS_RELEASE" == "1" ]; then
     BUILD_TYPE="Release"
 else
     BUILD_TYPE="Testing"
@@ -164,7 +171,7 @@ fi
 ## Build type
 LINUX_VER=$(make kernelversion 2>/dev/null)
 
-if [[ "$DO_KSU" == "1" ]]; then
+if [ "$DO_KSU" == "1" ]; then
     FK_TYPE="KSUNext"
     FK_TYPE_SHORT="KN"
 else
@@ -172,12 +179,12 @@ else
     FK_TYPE_SHORT="V"
 fi
 
-if [[ "$DO_OC" == "1" ]]; then
+if [ "$DO_OC" == "1" ]; then
     FK_TYPE="$FK_TYPE+Unlocked"
     FK_TYPE_SHORT="$FK_TYPE_SHORT+U"
 fi
 
-if [[ "$DO_PERM" == "1" ]]; then
+if [ "$DO_PERM" == "1" ]; then
     FK_TYPE="$FK_TYPE+Permissive"
     FK_TYPE_SHORT="$FK_TYPE_SHORT+P"
 fi
@@ -204,15 +211,16 @@ source "$SCRIPTS_DIR/deps.sh"
 source "$SCRIPTS_DIR/tc.sh"
 
 # Setup other things
-source "$SCRIPTS_DIR/upload.sh"
+source "$SCRIPTS_DIR/build.sh"
 source "$SCRIPTS_DIR/post.sh"
 source "$SCRIPTS_DIR/images.sh"
 source "$SCRIPTS_DIR/pack.sh"
+source "$SCRIPTS_DIR/upload.sh"
 
 prep_build() {
-    if [[ "$USE_CCACHE" == "1" ]]; then
+    if [ "$USE_CCACHE" == "1" ]; then
         echo "INFO: Using ccache"
-        if [[ "$IS_GP" == "1" ]]; then
+        if [ "$IS_GP" == "1" ]; then
             export CCACHE_DIR="$WP/.ccache"
             ccache -M 10G
         else
@@ -223,98 +231,29 @@ prep_build() {
     echo -e "INFO: Compiler: $KBUILD_COMPILER_STRING\n"
 }
 
-build() {
-    export PLATFORM_VERSION="12"
-    export ANDROID_MAJOR_VERSION="s"
-    export TARGET_SOC="s5e8825"
-
-    export LLVM=1
-    export LLVM_IAS=1
-    export ARCH=arm64
-
-    rm -rf "$MOD_OUTDIR" 2>/dev/null
-
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" "$DEFCONFIG" $([[ "$DO_KSU" == "1" ]] && echo "ksu.config") $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
-
-    if [[ "$IS_RELEASE" == "1" ]]; then
-        VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
-        VERSION_NOAUTO="1"
-    else
-        VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/\""
-    fi
-
-    rm -f "$OUT_KERNEL"
-
-    if [[ "$DO_REGEN" = "1" ]]; then
-        if [[ "$DO_KSU" = "1" ]]; then
-            echo "ERROR: Can't regenerate with KSU argument"
-            exit 1
-        fi
-        if [[ "$DO_PERM" = "1" ]]; then
-            echo "ERROR: Can't regenerate with Permissive argument"
-            exit 1
-        fi
-        cp -f out/.config arch/arm64/configs/$DEFCONFIG
-        echo "INFO: Configuration regenerated. Check the changes!"
-        exit 0
-    fi
-
-    scripts/config --file "$KDIR/out/.config" --set-val LOCALVERSION "$VERSION_STR"
-
-    if [[ "$VERSION_NOAUTO" == "1" ]]; then
-        scripts/config --file "$KDIR/out/.config" --disable LOCALVERSION_AUTO
-    fi
-
-    if [[ "$DO_OC" == "1" ]]; then
-        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_OVERCLOCK
-        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_GPU_OC
-        scripts/config --file "$KDIR/out/.config" --set-val CONFIG_SOC_S5E8825_CL1_UV 0
-        scripts/config --file "$KDIR/out/.config" --set-val CONFIG_SOC_S5E8825_CL0_UV 0
-    fi
-
-    if [[ "$DO_MENUCONFIG" == "1" ]]; then
-        make O=out menuconfig $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '')
-    fi
-
-    if [[ "$DO_FLTO" == "1" ]]; then
-        scripts/config --file "$KDIR/out/.config" --enable CONFIG_LTO_CLANG_FULL
-        scripts/config --file "$KDIR/out/.config" --disable CONFIG_LTO_CLANG_THIN
-    fi
-
-    if [[ "$DO_PERM" == "1" ]]; then
-        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SECURITY_SELINUX_ALWAYS_PERMISSIVE
-    fi
-
-    echo -e "\nINFO: Starting compilation...\n"
-
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" dtbs $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
-    if [[ "$USE_CCACHE" == "1" ]]; then
-        make -j"$(nproc --all)" O=out CC="ccache clang" CROSS_COMPILE="$CCARM64_PREFIX" $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
-    else
-        make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
-    fi
-    make -j"$(nproc --all)" O=out CC="clang" CROSS_COMPILE="$CCARM64_PREFIX" INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install $([[ "$DO_QUIET" == "1" ]] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
-}
 
 clean() {
     make clean $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '')
     make mrproper $([[ "$arg" == *q* ]] && echo '> /dev/null 2>&1' || echo '')
 }
 
-clean_tmp() {
-    echo -e "INFO: Cleaning after build..."
-    rm -rf "$TMPDIR" "$MOD_OUTDIR" "$OUT_VENDORBOOTIMG" "$OUT_BOOTIMG"
-}
 
 # Do a clean build?
-if [[ "$DO_CLEAN" == "1" ]]; then
+if [ "$DO_CLEAN" = "1" ]; then
     clean
 fi
 
 ## Run build
 prep_build
 build
-post_build
+
+# Technically this should not be needed since we have "set -e" but still let's keep it
+if [ ! -f "$OUT_KERNEL" ]; then
+    echo -e "\nERROR: Kernel files not found! Compilation failed?"
+    exit 1
+fi
+
+kernel_modules
 build_images
 packing
 clean_tmp
