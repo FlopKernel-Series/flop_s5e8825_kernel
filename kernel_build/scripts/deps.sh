@@ -1,50 +1,77 @@
 #!/usr/bin/env bash
 
-if [ -f /etc/doas.conf ] && [ -x /usr/bin/doas ]; then
-	ROOT="doas"
-elif [ -x /usr/bin/sudo ]; then
-	ROOT="sudo"
+if [ -f /etc/doas.conf ] && command -v "doas" &>/dev/null; then
+	  ROOT="doas"
+elif command -v "sudo" &>/dev/null; then
+	  ROOT="sudo"
 else
-	echo "ERROR: neither doas nor sudo found." >&2
-	return 1
+	  echo "ERROR: neither doas nor sudo found." >&2
+	  return 1
 fi
 
-UBUNTU_DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache )
-ARCH_DEPS=( lz4 brotli flex bc cpio kmod zip aarch64-linux-gnu-binutils ccache )
-GENTOO_DEPS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip )
+DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache )
 
-. /etc/os-release
+UBUNTU(){
+	  local DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache )
+    local MISSING
 
+    for d in "${DEPS[@]}"; do
+		    if ! dpkg -s "$d" >/dev/null 2>&1; then
+			      MISSING+=("$d")
+		    fi
+	  done
+	
+    if [ ${#MISSING[@]} -gt 0 ]; then
+		    $ROOT apt-get update -qq
+		    $ROOT apt-get install -y "${MISSING[@]}"
+	  fi
+}
+
+ARCH(){
+    local DEPS=( lz4 brotli flex bc cpio kmod zip aarch64-linux-gnu-binutils ccache )
+    local MISSING=$(pacman -T "${DEPS[@]}" 2>/dev/null)
+
+    if [ -n "$MISSING" ]; then
+		    $ROOT pacman -Syyuu --needed --noconfirm $MISSING
+	  fi
+}
+
+GENTOO(){
+    local DEPS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip )
+    local MISSING
+  
+    if ! command -v "equery" &>/dev/null; then
+        $ROOT emerge -avq app-portage/gentoolkit
+    fi
+
+    for d in "${DEPS[@]}"; do	
+        if ! equery list "$d" >/dev/null 2>&1; then
+		        MISSING+=("$d")
+		    fi
+	  done
+
+    if [ ${#MISSING[@]} -gt 0 ]; then
+        $ROOT emerge -avq ${MISSING[@]}    
+    fi
+}
+
+source "/etc/os-release"
 DISTRO_IDS="$ID $ID_LIKE"
 
 if echo "$DISTRO_IDS" | grep -Eq 'ubuntu|debian'; then
-	MISSING=()
-	for pkg in "${UBUNTU_DEPS[@]}"; do
-		if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-			MISSING+=("$pkg")
-		fi
-	done
-	if [ ${#MISSING[@]} -gt 0 ]; then
-		$ROOT apt-get update -qq
-		$ROOT apt-get install -y "${MISSING[@]}"
-	fi
+    UBUNTU
 elif echo "$DISTRO_IDS" | grep -Eq 'arch'; then
-	MISSING=$(pacman -T "${ARCH_DEPS[@]}" 2>/dev/null)
-	if [ -n "$MISSING" ]; then
-		$ROOT pacman -Syyuu --needed --noconfirm $MISSING
-	fi
+    ARCH
 elif echo "$DISTRO_IDS" | grep -Eq 'gentoo'; then
-	for dep in "${GENTOO_DEPS[@]}"; do
-		if ! equery list "$dep" >/dev/null 2>&1; then
-			$ROOT emerge -av "$dep"
-		fi
-	done
-	if ! equery list crossdev >/dev/null 2>&1; then
-		$ROOT emerge -av sys-devel/crossdev
-		$ROOT crossdev --target aarch64-linux-gnu
-	fi
+    GENTOO
 else
-	echo
-	echo "INFO: distro not supported, install manually: ${UBUNTU_DEPS[*]}"
-	echo
+	  echo ""
+	  echo "INFO: distro not supported, install manually: ${DEPS[*]}"
+	  echo ""
+fi
+
+if [ "$DO_ZIP" = "1" ]; then
+    if [ ! -d "$AK3_DIR" ]; then
+        git clone -q -b "$AK3_BRANCH" --depth=1 "$AK3_URL" "$AK3_DIR"
+    fi
 fi
