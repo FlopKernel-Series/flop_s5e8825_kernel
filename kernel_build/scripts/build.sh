@@ -47,7 +47,7 @@ build() {
       scripts/config --file "$KDIR/out/.config" --disable LOCALVERSION_AUTO
   fi
 
-  if [ "$DO_OC"== "1" ]; then
+  if [ "$DO_OC" == "1" ]; then
       scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_OVERCLOCK
       scripts/config --file "$KDIR/out/.config" --enable CONFIG_SOC_S5E8825_GPU_OC
       scripts/config --file "$KDIR/out/.config" --set-val CONFIG_SOC_S5E8825_CL1_UV 0
