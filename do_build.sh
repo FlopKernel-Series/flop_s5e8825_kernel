@@ -27,24 +27,24 @@ if $contains_u && $contains_d; then
         echo "INFO: Two subsequent clean builds will be made"
         # Remove only "d" from arguments
         filtered_args="${args//d/}"
-        bash kernel_build/ckbuild.sh $filtered_args
+        ./kernel_build/ckbuild.sh $filtered_args
         # Remove "u" and "d" from arguments
         filtered_args="${filtered_args//u/}"
-        bash kernel_build/ckbuild.sh $filtered_args
+        ./kernel_build/ckbuild.sh $filtered_args
     else
         # Remove only "d" from arguments
         filtered_args="${args//d/}"
-        bash kernel_build/ckbuild.sh $filtered_args
+        ./kernel_build/ckbuild.sh $filtered_args
         # Remove "u" and "c" from arguments
         filtered_args="${filtered_args//u/}"
         filtered_args="${filtered_args//c/}"
-        bash kernel_build/ckbuild.sh $filtered_args
+        ./kernel_build/ckbuild.sh $filtered_args
     fi
 elif $contains_d; then
     echo "INFO: Dual build argument ignored"
     # Remove "d" from arguments
     filtered_args="${args//d/}"
-    bash kernel_build/ckbuild.sh $filtered_args
+    ./kernel_build/ckbuild.sh $filtered_args
 else
-    bash kernel_build/ckbuild.sh "$@"
+    ./kernel_build/ckbuild.sh "$@"
 fi
