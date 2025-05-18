@@ -127,7 +127,7 @@ for arg in "$@"; do
         IS_RELEASE=1
     fi
     if [[ "$arg" == *t* ]]; then
-        if [ "$SECRETS" = "1" ]; then
+        if [ "$SECRETS" = "0" ]; then
             echo "WARNING: Telegram argument was passed, but secrets were not found. Skipping Telegram Upload"  
         else
             echo "INFO: Telegram argument passed, build will be uploaded to CI"
