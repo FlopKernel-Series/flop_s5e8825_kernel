@@ -36,6 +36,19 @@ struct panfrost_gem_object {
 	 */
 	atomic_t gpu_usecount;
 
+	/**
+	 * @label: BO tagging fields. The label can be assigned within the
+	 * driver itself or through a specific IOCTL.
+	 */
+	struct {
+		/**
+		 * @label.str: Pointer to NULL-terminated string,
+		 */
+		const char *str;
+
+		/** @lock.str: Protects access to the @label.str field. */
+		struct mutex lock;
+	} label;
 	bool noexec		:1;
 	bool is_heap		:1;
 };
@@ -83,5 +96,8 @@ void panfrost_gem_teardown_mappings_locked(struct panfrost_gem_object *bo);
 
 void panfrost_gem_shrinker_init(struct drm_device *dev);
 void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
+
+void panfrost_gem_set_label(struct drm_gem_object *obj, const char *label);
+void panfrost_gem_internal_set_label(struct drm_gem_object *obj, const char *label);
 
 #endif /* __PANFROST_GEM_H__ */
