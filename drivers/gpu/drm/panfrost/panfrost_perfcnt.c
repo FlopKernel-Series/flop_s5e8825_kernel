@@ -109,6 +109,8 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
 		goto err_put_mapping;
 	}
 
+	panfrost_gem_internal_set_label(&bo->base, "Perfcnt sample buffer");
+
 	/*
 	 * Invalidate the cache and clear the counters to start from a fresh
 	 * state.
