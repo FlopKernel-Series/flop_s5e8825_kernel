@@ -1,6 +1,6 @@
 build() {
   if [ "$USE_CCACHE" == "1" ]; then
-      export CC="clang ccache"
+      export CC="ccache clang"
   else
       export CC="clang"
   fi
@@ -15,7 +15,7 @@ build() {
 
   rm -rf "$MOD_OUTDIR" 2>/dev/null
 
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX "$DEFCONFIG" \
+  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
       $([ "$DO_KSU" = "1" ] && echo "ksu.config") $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
   if [ "$IS_RELEASE" = "1" ]; then
@@ -55,7 +55,7 @@ build() {
   fi
 
   if [ "$DO_MENUCONFIG" = "1" ]; then
-      make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX menuconfig \
+      make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" menuconfig \
           $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '')
   fi
 
@@ -70,13 +70,13 @@ build() {
 
   echo -e "\nINFO: Starting compilation...\n"
 
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX dtbs \
+  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs \
       $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
 
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX \
+  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
       $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
     
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX \
+  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
       INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
       INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install \
       $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
