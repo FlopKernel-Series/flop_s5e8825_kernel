@@ -2214,7 +2214,8 @@ static void ear_detect_enable(void *device_data)
 		goto out;
 	}
 
-	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1 || sec->cmd_param[0] == 3)) {
+	// Only allow 0 (disable) or 1 (enable), disallow 3
+	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1)) {
 		input_err(true, &ts->client->dev, "%s: invalid parameter %d\n", __func__, sec->cmd_param[0]);
 		goto out;
 	} else {
