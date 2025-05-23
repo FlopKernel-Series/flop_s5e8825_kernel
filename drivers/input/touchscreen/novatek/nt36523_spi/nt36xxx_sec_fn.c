@@ -2214,13 +2214,15 @@ static void ear_detect_enable(void *device_data)
 		goto out;
 	}
 
-	// Only allow 0 (disable) or 1 (enable), disallow 3
-	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1)) {
+	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1 || sec->cmd_param[0] == 3)) {
 		input_err(true, &ts->client->dev, "%s: invalid parameter %d\n", __func__, sec->cmd_param[0]);
 		goto out;
 	} else {
 		ts->ear_detect_mode = sec->cmd_param[0];
 	}
+
+	if (sec->cmd_param[0] == 3)
+		sec->cmd_param[0] = 1;
 
 	if (ts->power_status == POWER_OFF_STATUS || ts->power_status == LP_MODE_EXIT) {
 		ts->ed_reset_flag = true;

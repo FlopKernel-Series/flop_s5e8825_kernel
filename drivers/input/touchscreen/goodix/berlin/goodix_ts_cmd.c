@@ -1125,6 +1125,7 @@ static void run_self_diffdata_read_all(void *device_data)
 	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
 	struct goodix_ts_data *ts = container_of(sec, struct goodix_ts_data, sec);
 	int ret;
+
 	struct goodix_ts_test_type test;
 
 	test.type = RAWDATA_TEST_TYPE_SELF_DIFF;
@@ -1747,12 +1748,14 @@ static int ear_detect_enable_save(void *device_data)
 		return SEC_ERROR;
 	}
 
-	// Only allow 0 (disable) or 1 (enable), disallow 3
-	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1)) {
+	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1 || sec->cmd_param[0] == 3)) {
 		ts_err("abnormal parm (%d)", sec->cmd_param[0]);
 		sec->cmd_state = SEC_CMD_STATUS_FAIL;
 		return SEC_ERROR;
 	}
+
+	if (sec->cmd_param[0] == 3)
+		sec->cmd_param[0] = 1;
 
 	ts->plat_data->ed_enable = sec->cmd_param[0];
 	ts_info("ear detect mode(%d)", ts->plat_data->ed_enable);
@@ -1789,7 +1792,7 @@ static int low_sensitivity_mode_enable_save(void *device_data)
 	if (sec->cmd_param[0] < 0 || sec->cmd_param[0] > 3) {
 		ts_err("abnormal parm (%d)", sec->cmd_param[0]);
 		sec->cmd_state = SEC_CMD_STATUS_FAIL;
-		return SEC_ERROR;
+			return SEC_ERROR;
 	}
 
 	ts->plat_data->low_sensitivity_mode = sec->cmd_param[0];
