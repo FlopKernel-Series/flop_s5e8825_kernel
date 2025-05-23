@@ -3024,12 +3024,14 @@ static int ear_detect_enable_save(void *device_data)
 	struct sec_cmd_data *sec = (struct sec_cmd_data *)device_data;
 	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
 
-	// Only allow 0 (disable) or 1 (enable), disallow 3
-	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1)) {
+	if (!(sec->cmd_param[0] == 0 || sec->cmd_param[0] == 1 || sec->cmd_param[0] == 3)) {
 		FTS_ERROR("abnormal parm (%d)", sec->cmd_param[0]);
 		sec->cmd_state = SEC_CMD_STATUS_FAIL;
 		return SEC_ERROR;
 	}
+
+	if (sec->cmd_param[0] == 3)
+		sec->cmd_param[0] = 1;
 
 	if (sec->cmd_param[0])
 		ts_data->power_mode |= FTS_POWER_MODE_EAR_DETECT;
