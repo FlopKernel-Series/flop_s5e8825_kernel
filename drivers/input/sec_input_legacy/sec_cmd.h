@@ -147,6 +147,7 @@ struct sec_cmd_data {
 #if IS_ENABLED(CONFIG_TOUCHSCREEN_DUAL_FOLDABLE)
 	struct sec_ts_virtual_sysfs_function *sysfs_functions;
 #endif
+	bool block_ed3;
 };
 
 extern void legacy_sec_cmd_set_cmd_exit(struct sec_cmd_data *data);

@@ -1754,11 +1754,13 @@ static int ear_detect_enable_save(void *device_data)
 		return SEC_ERROR;
 	}
 
-	if (sec->cmd_param[0] == 3)
-		sec->cmd_param[0] = 1;
+	if (sec->cmd_param[0] == 3) {
+		if (sec->block_ed3)
+			sec->cmd_param[0] = 1;
+	}
 
 	ts->plat_data->ed_enable = sec->cmd_param[0];
-	ts_info("ear detect mode(%d)", ts->plat_data->ed_enable);
+	ts_info("ear detect mode(%d), block_ed3=%d", ts->plat_data->ed_enable, sec->block_ed3);
 
 	sec->cmd_state = SEC_CMD_STATUS_OK;
 	return SEC_SUCCESS;
