@@ -652,6 +652,42 @@ static ssize_t sec_cmd_list_show(struct device *dev,
 	return ret;
 }
 
+/* ear detect mode 3 blocker */
+static ssize_t block_ed3_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct sec_cmd_data *sec = dev_get_drvdata(dev);
+
+	if (!sec)
+		return -EINVAL;
+
+	pr_info("%s: %d\n", __func__, sec->block_ed3);
+
+	return snprintf(buf, SEC_CMD_BUF_SIZE, "%d\n", sec->block_ed3 ? 1 : 0);
+}
+
+static ssize_t block_ed3_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct sec_cmd_data *sec = dev_get_drvdata(dev);
+	long val;
+	int ret;
+
+	if (!sec)
+		return -EINVAL;
+
+	ret = kstrtol(buf, 10, &val);
+	if (ret < 0)
+		return ret;
+
+	sec->block_ed3 = !!val;
+
+	pr_info("%s: set to %ld\n", __func__, val);
+
+	return count;
+}
+
+static DEVICE_ATTR_RW(block_ed3);
+// end ear detect mode 3 blocker ---
+
 static DEVICE_ATTR(cmd, 0220, NULL, sec_cmd_store);
 static DEVICE_ATTR(cmd_status, 0444, sec_cmd_show_status, NULL);
 static DEVICE_ATTR(cmd_status_all, 0444, sec_cmd_show_status_all, NULL);
@@ -666,6 +702,7 @@ static struct attribute *sec_fac_attrs[] = {
 	&dev_attr_cmd_result.attr,
 	&dev_attr_cmd_result_all.attr,
 	&dev_attr_cmd_list.attr,
+	&dev_attr_block_ed3.attr,
 	NULL,
 };
 
@@ -698,6 +735,9 @@ int legacy_sec_cmd_init(struct sec_cmd_data *data, struct sec_cmd *cmds,
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+
+	// Don't block by default
+	data->block_ed3 = 0;
 
 	data->cmd_result = kzalloc(SEC_CMD_RESULT_STR_LEN_EXPAND, GFP_KERNEL);
 	if (!data->cmd_result)

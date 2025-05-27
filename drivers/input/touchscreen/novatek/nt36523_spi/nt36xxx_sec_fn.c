@@ -2221,8 +2221,10 @@ static void ear_detect_enable(void *device_data)
 		ts->ear_detect_mode = sec->cmd_param[0];
 	}
 
-	if (sec->cmd_param[0] == 3)
-		sec->cmd_param[0] = 1;
+	if (sec->cmd_param[0] == 3) {
+		if (sec->block_ed3)
+			sec->cmd_param[0] = 1;
+	}
 
 	if (ts->power_status == POWER_OFF_STATUS || ts->power_status == LP_MODE_EXIT) {
 		ts->ed_reset_flag = true;

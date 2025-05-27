@@ -147,6 +147,7 @@ struct sec_cmd_data {
 	char cmd_result_all[SEC_CMD_RESULT_STR_LEN];
 	u8 cmd_all_factory_state;
 	struct attribute_group *vendor_attr_group;
+	bool block_ed3;
 };
 
 void sec_cmd_set_cmd_exit(struct sec_cmd_data *data);
