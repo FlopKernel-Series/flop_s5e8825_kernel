@@ -1,0 +1,10 @@
+#
+# CMDLine Helper
+#
+config CMDLINE_HELPER
+    tristate "Command Line Parameter Helper"
+    default n
+    help
+      Can help a driver read the values of parameters from cmdline and set variables manually.
+
+      If "m", requires saved_command_line to be exported.

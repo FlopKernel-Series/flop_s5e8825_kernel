@@ -1,0 +1,1 @@
+obj-$(CONFIG_CMDLINE_HELPER) += cmdline_helper.o
