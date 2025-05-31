@@ -256,6 +256,7 @@ fi
 kernel_modules
 build_images
 packing
+echo -e "\nINFO: Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !\n"
 clean_tmp
 
 upload
