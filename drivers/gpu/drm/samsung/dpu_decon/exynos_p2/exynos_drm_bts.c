@@ -22,6 +22,10 @@
 #include <dt-bindings/soc/samsung/s5e8825-devfreq.h>
 #include <soc/samsung/exynos-pd.h>
 
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+#include <linux/cmdline_helper.h>
+#endif
+
 #if defined(CONFIG_CAL_IF)
 #include <soc/samsung/cal-if.h>
 #endif
@@ -68,6 +72,22 @@ module_param(boot_mode, int, 0444);
 static inline bool dpu_bts_is_normal_boot(void)
 {
 	return (boot_mode >> 16) ? false : true;
+}
+#endif
+
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+static const struct cmdline_param_map bts_p2_decon_legacy_map[] = {
+#if IS_ENABLED(CONFIG_DRM_MCD_COMMON)
+	{ "boot_mode", &boot_mode, CMDLINE_TYPE_INT, 0 },
+#endif
+};
+
+void exynos_drm_bts_p2_decon_legacy_params_init(void) {
+	parse_cmdline_params(
+		"exynos-drm-decon-bts-p2",	  // Log prefix
+		"exynos-drm.",				  // cmdline prefix to search for
+		bts_p2_decon_legacy_map,
+		ARRAY_SIZE(bts_p2_decon_legacy_map));
 }
 #endif
 

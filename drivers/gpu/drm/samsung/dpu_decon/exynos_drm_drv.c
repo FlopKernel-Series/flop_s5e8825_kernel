@@ -39,6 +39,10 @@
 #include <exynos_drm_tui.h>
 #include <exynos_drm_recovery.h>
 
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+#include <linux/cmdline_helper.h>
+#endif
+
 #if IS_ENABLED(CONFIG_DRM_MCD_COMMON)
 #include <mcd_drm_helper.h>
 #include <linux/delay.h>
@@ -62,6 +66,14 @@ int decon_bypass_display;
 EXPORT_SYMBOL(decon_bypass_display);
 int decon_commit_retry;
 EXPORT_SYMBOL(decon_commit_retry);
+#endif
+
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+static const struct cmdline_param_map exynos_drm_drv_legacy_map[] = {
+	{ "no_display", &decon_no_display, CMDLINE_TYPE_INT, 0 },
+};
+
+extern void exynos_drm_bts_p2_decon_legacy_params_init(void);
 #endif
 
 #define for_each_crtc_in_state(__state, crtc, __i)			\
@@ -1124,6 +1136,15 @@ static int __init exynos_drm_init(void)
 		return 0;
 
 	SEC_DETECT_LOG("Initialized Exynos DPU driver for decon\n");
+
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+	parse_cmdline_params(
+		"exynos-drm-decon-drv",			 // Log prefix
+		"exynos-drm.",					  // cmdline prefix to search for
+		exynos_drm_drv_legacy_map,		  // The map
+		ARRAY_SIZE(exynos_drm_drv_legacy_map));
+#endif
+
 	ret = exynos_drm_register_devices();
 	if (ret)
 		return ret;
