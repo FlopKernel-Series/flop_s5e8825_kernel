@@ -85,6 +85,10 @@
 #include "panel_freq_hop.h"
 #endif
 
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+#include <linux/cmdline_helper.h>
+#endif
+
 __visible_for_testing struct class *lcd_class;
 
 static char *panel_state_names[] = {
@@ -353,6 +357,14 @@ static int __init get_boot_panel_id(char *arg)
 early_param("lcdtype", get_boot_panel_id);
 #else
 module_param(boot_panel_id, int, S_IRUGO);
+#endif
+
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+static const struct cmdline_param_map mcd_panel_decon_legacy_map[] = {
+	{ "decon_panel_log_level", &decon_panel_log_level, CMDLINE_TYPE_INT, 0 },
+	{ "decon_panel_cmd_log", &decon_panel_cmd_log, CMDLINE_TYPE_INT, 0 },
+	{ "boot_panel_id", &boot_panel_id, CMDLINE_TYPE_INT, 0 },
+};
 #endif
 
 /**
@@ -5596,6 +5608,15 @@ static int __init panel_drv_init(void)
 	SEC_DETECT_LOG("Initialized DECON core panel driver\n");
 
 	panel_info("++\n");
+
+#if IS_ENABLED(CONFIG_CMDLINE_HELPER)
+    parse_cmdline_params(
+        "mcd-panel-decon",                     // Log prefix for messages from helper
+        "mcd-panel.",                          // cmdline prefix to search for
+        mcd_panel_decon_legacy_map,            // The map
+        ARRAY_SIZE(mcd_panel_decon_legacy_map));
+#endif
+
 	ret = panel_create_lcd_class();
 	if (ret < 0) {
 		panel_err("panel_create_lcd_class returned %d\n", ret);
