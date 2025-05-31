@@ -1162,7 +1162,11 @@ int smb_inherit_dacl(struct ksmbd_conn *conn,
 #endif
 	int inherited_flags = 0, flags = 0, i, nt_size = 0, pdacl_size;
 	int rc = 0, pntsd_type, pntsd_size, acl_len, aces_size;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
+	unsigned long dacloffset;
+#else
 	unsigned int dacloffset;
+#endif
 	size_t dacl_struct_end;
 	u16 num_aces, ace_cnt = 0;
 	char *aces_base;
@@ -1394,7 +1398,11 @@ int smb_check_perm_dacl(struct ksmbd_conn *conn, const struct path *path,
 	struct smb_acl *pdacl;
 	struct posix_acl *posix_acls;
 	int rc = 0, pntsd_size, acl_size, aces_size, pdacl_size;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
+	unsigned long dacl_offset;
+#else
 	unsigned int dacl_offset;
+#endif
 	size_t dacl_struct_end;
 	struct smb_sid sid;
 	int granted = le32_to_cpu(*pdaccess & ~FILE_MAXIMAL_ACCESS_LE);
