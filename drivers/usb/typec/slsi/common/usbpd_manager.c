@@ -530,8 +530,12 @@ void usbpd_manager_ccopen_req(int is_on)
 
 void usbpd_manager_pps_request_handler(struct work_struct *work)
 {
+#if IS_ENABLED(CONFIG_PDIC_PD30)
 	usbpd_info("%s: call pps request handler\n", __func__);
 	usbpd_manager_select_pps(2, 5000, 3000);
+#else
+	usbpd_info("%s: pps request handler is not supported\n", __func__);
+#endif
 }
 
 void usbpd_manager_buck_off_clear_handler(struct work_struct *work)
