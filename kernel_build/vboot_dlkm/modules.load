@@ -233,7 +233,6 @@ sec_hard_reset_hook.ko
 sec_key_notifier.ko
 sec_class.ko
 sec_argos.ko
-s2m_pdic_notifier_module.ko
 sec_panel_notifier_v2.ko
 pmic_class.ko
 s2mu106-usbpd.ko
@@ -339,7 +338,6 @@ snd-soc-samsung-slif.ko
 exynos8825_audio.ko
 exynos8825_rt5665.ko
 exynos8825_rt5691.ko
-exynos8825_audio.ko
 sec_audio_sysfs.ko
 cfg80211.ko
 input_booster_lkm.ko
