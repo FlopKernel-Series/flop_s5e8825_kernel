@@ -434,20 +434,24 @@ void muic_pdic_notifier_attach_attached_dev(muic_attached_dev_t new_dev)
 {
 	pr_info("%s: (%d)\n", __func__, new_dev);
 
-// #if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
+#if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
 	if (sec_feat_slsi_usbpd()) {
 		__set_pdic_noti_cxt(MUIC_PDIC_NOTIFY_CMD_ATTACH, new_dev);
 
 		/* muic's attached_device attach broadcast */
 		muic_pdic_notifier_notify();
-// #else
 	} else {
 		__set_noti_cxt(MUIC_PDIC_NOTIFY_CMD_ATTACH, new_dev);
 
 		/* muic's attached_device attach broadcast */
 		muic_notifier_notify();
 	}
-// #endif
+#else
+	__set_noti_cxt(MUIC_PDIC_NOTIFY_CMD_ATTACH, new_dev);
+
+	/* muic's attached_device attach broadcast */
+	muic_notifier_notify();
+#endif
 
 }
 EXPORT_SYMBOL(muic_pdic_notifier_attach_attached_dev);
@@ -456,19 +460,22 @@ void muic_pdic_notifier_detach_attached_dev(muic_attached_dev_t new_dev)
 {
 	pr_info("%s: (%d)\n", __func__, new_dev);
 
-// #if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
+#if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
 	if (sec_feat_slsi_usbpd()) {
 		__set_pdic_noti_cxt(MUIC_PDIC_NOTIFY_CMD_DETACH, new_dev);
 
 		/* muic's attached_device attach broadcast */
 		muic_pdic_notifier_notify();
 	} else {
-// #else
 		__set_noti_cxt(MUIC_PDIC_NOTIFY_CMD_DETACH, muic_notifier.attached_dev);
 		/* muic's attached_device attach broadcast */
 		muic_notifier_notify();
 	}
-// #endif
+#else
+	__set_noti_cxt(MUIC_PDIC_NOTIFY_CMD_DETACH, muic_notifier.attached_dev);
+	/* muic's attached_device attach broadcast */
+	muic_notifier_notify();
+#endif
 }
 EXPORT_SYMBOL(muic_pdic_notifier_detach_attached_dev);
 
