@@ -29,6 +29,25 @@ kernel_modules() {
         exit 1
     fi
 
+	# Check for duplicate modules in modules.load
+	if [ -f "$IN_DLKM/modules.load" ]; then
+		dupes=$(sort "$IN_DLKM/modules.load" | uniq -d | xargs)
+		if [ -n "$dupes" ]; then
+			echo -e "\nERROR: Duplicate module entries found in modules.load: $dupes\n"
+			exit 1
+		fi
+	fi
+
+	# Warn for modules present but not in modules.load
+	if [ -d "$MOD_OUTDIR/lib/modules" ] && [ -f "$IN_DLKM/modules.load" ]; then
+		all_built=$(find "$MOD_OUTDIR/lib/modules" -type f -name "*.ko" -exec basename {} \; | sort)
+		all_load=$(sort "$IN_DLKM/modules.load")
+		not_in_load=$(comm -23 <(echo "$all_built") <(echo "$all_load") | xargs)
+		if [ -n "$not_in_load" ]; then
+			echo -e "\nWARNING: The following modules exist but are NOT in modules.load: $not_in_load\n"
+		fi
+	fi
+
     depmod 0.0 -b "$DLKM_RAMDISK_DIR"
     sed -i 's/\([^ ]\+\)/\/lib\/modules\/\1/g' "$MODULES_DIR/0.0/modules.dep"
     cd "$MODULES_DIR/0.0"
