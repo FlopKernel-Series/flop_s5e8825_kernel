@@ -16,6 +16,14 @@ config KSU_KPROBES_HOOK
 	help
 	  Disable if you use manual hooks.
 
+config KSU_MANUAL_HOOK
+  bool "Use manual hooks for kernelsu"
+  depends on KSU
+  depends on !KSU_KPROBES_HOOK
+  default n
+  help
+    Enable if you want to use manual hooks instead of kprobes.
+
 config KSU_DEBUG
 	bool "KernelSU debug mode"
 	depends on KSU
