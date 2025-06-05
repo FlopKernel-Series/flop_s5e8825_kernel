@@ -2694,13 +2694,27 @@ static int abox_ext_bin_request(struct device *dev,
 		struct abox_extra_firmware *efw)
 {
 	int ret;
+	int retries = 10;  /* Try up to 10 times */
 
-	abox_dbg(dev, "%s\n", __func__);
+	abox_dbg(dev, "%s: requesting %s\n", __func__, efw->name);
 
 	mutex_lock(&efw->lock);
 
 	release_firmware(efw->firmware);
-	ret = request_firmware_direct(&efw->firmware, efw->name, dev);
+
+	while (retries--) {
+		ret = request_firmware_direct(&efw->firmware, efw->name, dev);
+		if (ret == 0)
+			break;
+
+		/* The firmware might not be available yet, expect EINVAL (-22) or ENOENT (-2) */
+		abox_warn(dev, "%s loading failed (error: %d), retrying... (%d attempts left)\n",
+				efw->name, ret, retries);
+
+		if (retries > 0)
+			msleep(100);  /* Wait 100ms before trying again */
+	}
+
 	if (ret == -ENOENT)
 		abox_warn(dev, "%s doesn't exist\n", efw->name);
 	else if (ret < 0)
