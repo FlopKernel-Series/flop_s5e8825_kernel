@@ -1,4 +1,7 @@
 build() {
+  # Delete log.txt at the start
+  rm -f log.txt
+
   if [ "$USE_CCACHE" == "1" ]; then
       export CC="ccache clang"
   else
@@ -15,8 +18,13 @@ build() {
 
   rm -rf "$MOD_OUTDIR" 2>/dev/null
 
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
-      $([ "$DO_KSU" = "1" ] && echo "ksu.config") $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+  if [ "$DO_QUIET" = "1" ]; then
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
+      $([ "$DO_KSU" = "1" ] && echo "ksu.config") > /dev/null 2>&1
+  else
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
+      $([ "$DO_KSU" = "1" ] && echo "ksu.config") 2>&1 | tee log.txt
+  fi
 
   if [ "$IS_RELEASE" = "1" ]; then
       VERSION_STR="\"-Floppy-$FK_VER-$FK_TYPE_SHORT/release\""
@@ -55,8 +63,11 @@ build() {
   fi
 
   if [ "$DO_MENUCONFIG" = "1" ]; then
-      make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" menuconfig \
-          $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '')
+    if [ "$DO_QUIET" = "1" ]; then
+      make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" menuconfig > /dev/null 2>&1
+    else
+      make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" menuconfig 2>&1 >> log.txt
+    fi
   fi
 
   if [ "$DO_FLTO" = "1" ]; then
@@ -70,14 +81,21 @@ build() {
 
   echo -e "\nINFO: Starting compilation...\n"
 
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs \
-      $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+  if [ "$DO_QUIET" = "1" ]; then
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs > /dev/null 2>&1
 
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
-      $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" > /dev/null 2>&1
     
-  make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
       INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
-      INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install \
-      $([ "$DO_QUIET" = "1" ] && echo '> /dev/null 2>&1' || echo '2>&1 | tee log.txt')
+      INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install > /dev/null 2>&1
+  else
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs 2>&1 | tee -a log.txt
+
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" 2>&1 | tee -a log.txt
+    
+    make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
+      INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
+      INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install 2>&1 | tee -a log.txt
+  fi
 }
