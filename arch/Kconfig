@@ -739,6 +739,10 @@ config CFI_PERMISSIVE
 	  warning instead of a kernel panic. This option is useful for finding
 	  CFI violations during development.
 
+config CFI_FORCE_SKIP_CHECK
+	bool "Skip execution of __cfi_check function"
+	depends on CFI_CLANG
+
 config LLVM_POLLY
 	bool "Enable LLVM's polyhedral loop optimizer (Polly)"
 	help
