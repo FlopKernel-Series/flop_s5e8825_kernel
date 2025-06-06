@@ -66,5 +66,5 @@ kernel_modules() {
 
 clean_tmp() {
     echo -e "INFO: Cleaning after build..."
-    rm -rf "$TMPDIR" "$MOD_OUTDIR" "$OUT_VENDORBOOTIMG" "$OUT_BOOTIMG"
+    rm -rf "$TMPDIR" "$MOD_OUTDIR"
 }
