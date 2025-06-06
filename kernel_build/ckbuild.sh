@@ -229,6 +229,9 @@ prep_build() {
     fi
 
     echo -e "INFO: Compiler: $KBUILD_COMPILER_STRING\n"
+
+    [ -f "$OUT_BOOTIMG" ] && rm -f "$OUT_BOOTIMG" || true
+    [ -f "$OUT_VENDORBOOTIMG" ] && rm -f "$OUT_VENDORBOOTIMG" || true
 }
 
 
