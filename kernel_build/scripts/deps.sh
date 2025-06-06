@@ -51,7 +51,7 @@ GENTOO(){
 	  done
 
     if [ ${#MISSING[@]} -gt 0 ]; then
-        $ROOT emerge -avq ${MISSING[@]}    
+        $ROOT emerge -nvq ${MISSING[@]}
     fi
 }
 
