@@ -36,22 +36,19 @@ ARCH(){
 	  fi
 }
 
-GENTOO(){
-    local DEPS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip )
-    local MISSING
-  
-    if ! command -v "equery" &>/dev/null; then
-        $ROOT emerge -avq app-portage/gentoolkit
-    fi
+GENTOO() {
+    local DEPS=( lz4 brotli flex bc cpio kmod ccache zip )
+    local PKGS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip )
+    local MISSING=()
 
-    for d in "${DEPS[@]}"; do	
-        if ! equery list "$d" >/dev/null 2>&1; then
-		        MISSING+=("$d")
-		    fi
-	  done
+    for i in "${!DEPS[@]}"; do
+        if ! command -v "${DEPS[i]}" >/dev/null 2>&1; then
+            MISSING+=("${PKGS[i]}")
+        fi
+    done
 
     if [ ${#MISSING[@]} -gt 0 ]; then
-        $ROOT emerge -nvq ${MISSING[@]}
+        $ROOT emerge -nvq "${MISSING[@]}"
     fi
 }
 
