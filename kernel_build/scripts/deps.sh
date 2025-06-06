@@ -11,20 +11,21 @@ fi
 
 DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache )
 
-UBUNTU(){
-	  local DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache )
-    local MISSING
+UBUNTU() {
+    local DEPS=( lz4 brotli flex bc cpio kmod zip ccache binutils-aarch64-linux-gnu )
+    local MISSING=()
 
+    # Check command presence
     for d in "${DEPS[@]}"; do
-		    if ! dpkg -s "$d" >/dev/null 2>&1; then
-			      MISSING+=("$d")
-		    fi
-	  done
-	
+        if ! command -v "$d" >/dev/null 2>&1; then
+            MISSING+=("$d")
+        fi
+    done
+
     if [ ${#MISSING[@]} -gt 0 ]; then
-		    $ROOT apt-get update -qq
-		    $ROOT apt-get install -y "${MISSING[@]}"
-	  fi
+        $ROOT apt-get update -qq
+        $ROOT apt-get install -y "${MISSING[@]}"
+    fi
 }
 
 ARCH(){
