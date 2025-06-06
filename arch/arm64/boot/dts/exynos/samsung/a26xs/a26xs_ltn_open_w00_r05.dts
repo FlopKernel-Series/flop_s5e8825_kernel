@@ -1602,12 +1602,12 @@
 					cmd_underrun_cnt = <0x88c>;
 				};
 
-				1080x2340@60hs {
-					mode-name = "1080x2340@60hs";
+				1080x2340@60phs {
+					mode-name = "1080x2340@60phs";
 					pmsk = <0x02 0x8a 0x02 0x2762 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
 					hs-clk = <0x382>;
 					esc-clk = <0x14>;
-					cmd_underrun_cnt = <0x1e3d>;
+					cmd_underrun_cnt = <0x88c>;
 				};
 			};
 		};
@@ -1648,27 +1648,27 @@
 					phandle = <0x0f>;
 				};
 
-				a26xs_db7f2010b_panel_display_mode_1080x2340_60hs {
-					id = "1080x2340_60HS";
+				a26xs_db7f2010b_panel_display_mode_1080x2340_60phs {
+					id = "1080x2340_60HS_120HS_TE_HW_SKIP_1";
 					width = <0x438>;
 					height = <0x924>;
 					refresh_rate = <0x3c>;
-					refresh_mode = <0x01>;
-					panel_refresh_rate = <0x3c>;
+					refresh_mode = <0x02>;
+					panel_refresh_rate = <0x78>;
 					panel_refresh_mode = <0x01>;
 					panel_te_st = <0x00>;
 					panel_te_ed = <0x00>;
 					panel_te_sw_skip_count = <0x00>;
-					panel_te_hw_skip_count = <0x00>;
+					panel_te_hw_skip_count = <0x01>;
 					panel_video_mode;
 					panel_h_porch = <0x32 0x22 0x0a>;
-					panel_v_porch = <0x0e 0x98c 0x02>;
+					panel_v_porch = <0x0e 0x2c 0x02>;
 					dsc_en = <0x01>;
 					dsc_cnt = <0x01>;
 					dsc_slice_num = <0x02>;
 					dsc_slice_w = <0x21c>;
 					dsc_slice_h = <0x2d>;
-					cmd_lp_ref = <0x1d32>;
+					cmd_lp_ref = <0x6e1>;
 					disp_qos_fps = <0x78>;
 					phandle = <0x10>;
 				};
@@ -1704,27 +1704,27 @@
 					phandle = <0x11>;
 				};
 
-				a26xs_panel_display_mode_1080x2340_60hs {
-					id = "1080x2340_60HS";
+				a26xs_panel_display_mode_1080x2340_60phs {
+					id = "1080x2340_60HS_120HS_TE_HW_SKIP_1";
 					width = <0x438>;
 					height = <0x924>;
 					refresh_rate = <0x3c>;
-					refresh_mode = <0x01>;
-					panel_refresh_rate = <0x3c>;
+					refresh_mode = <0x02>;
+					panel_refresh_rate = <0x78>;
 					panel_refresh_mode = <0x01>;
 					panel_te_st = <0x00>;
 					panel_te_ed = <0x00>;
 					panel_te_sw_skip_count = <0x00>;
-					panel_te_hw_skip_count = <0x00>;
+					panel_te_hw_skip_count = <0x01>;
 					panel_video_mode;
 					panel_h_porch = <0x3c 0xa2 0x22>;
-					panel_v_porch = <0x12 0x4e4 0x02>;
+					panel_v_porch = <0x12 0x30 0x02>;
 					dsc_en = <0x01>;
 					dsc_cnt = <0x01>;
 					dsc_slice_num = <0x02>;
 					dsc_slice_w = <0x21c>;
 					dsc_slice_h = <0x2d>;
-					cmd_lp_ref = <0x1d32>;
+					cmd_lp_ref = <0x6e1>;
 					disp_qos_fps = <0x5a>;
 					phandle = <0x12>;
 				};
@@ -2078,12 +2078,12 @@
 					cmd_underrun_cnt = <0xf77>;
 				};
 
-				1080x2340@60hs {
-					mode-name = "1080x2340@60hs";
+				1080x2340@60phs {
+					mode-name = "1080x2340@60phs";
 					pmsk = <0x02 0x8a 0x02 0x2762 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
 					hs-clk = <0x382>;
 					esc-clk = <0x14>;
-					cmd_underrun_cnt = <0x1e3d>;
+					cmd_underrun_cnt = <0xf77>;
 				};
 			};
 		};
@@ -8441,10 +8441,10 @@
 		db7f2010b_a26xs_freq_hop_table = "/fragment@freq_hop/__overlay__/db7f2010b_a26xs_freq_hop_table";
 		a26xs_db7f2010b_panel_display_modes = "/fragment@panel_display_mode/__overlay__/a26xs_db7f2010b_panel_display_modes";
 		a26xs_db7f2010b_panel_display_mode_1080x2340_120hs = "/fragment@panel_display_mode/__overlay__/a26xs_db7f2010b_panel_display_modes/a26xs_db7f2010b_panel_display_mode_1080x2340_120hs";
-		a26xs_db7f2010b_panel_display_mode_1080x2340_60hs = "/fragment@panel_display_mode/__overlay__/a26xs_db7f2010b_panel_display_modes/a26xs_db7f2010b_panel_display_mode_1080x2340_60hs";
+		a26xs_db7f2010b_panel_display_mode_1080x2340_60phs = "/fragment@panel_display_mode/__overlay__/a26xs_db7f2010b_panel_display_modes/a26xs_db7f2010b_panel_display_mode_1080x2340_60phs";
 		a26xs_panel_display_modes = "/fragment@panel_display_mode/__overlay__/a26xs_panel_display_modes";
 		a26xs_panel_display_mode_1080x2340_90hs = "/fragment@panel_display_mode/__overlay__/a26xs_panel_display_modes/a26xs_panel_display_mode_1080x2340_90hs";
-		a26xs_panel_display_mode_1080x2340_60hs = "/fragment@panel_display_mode/__overlay__/a26xs_panel_display_modes/a26xs_panel_display_mode_1080x2340_60hs";
+		a26xs_panel_display_mode_1080x2340_60phs = "/fragment@panel_display_mode/__overlay__/a26xs_panel_display_modes/a26xs_panel_display_mode_1080x2340_60phs";
 		panel_drv_0 = "/fragment@panel_drv/__overlay__/panel_drv_0";
 		db7f2010b_a26xs_power_ctrl = "/fragment@panel_drv/__overlay__/panel_drv_0/db7f2010b_a26xs_power_ctrl";
 		db7f2010b_a26xs_vci_on = "/fragment@panel_drv/__overlay__/panel_drv_0/db7f2010b_a26xs_power_ctrl/actions/vci-on";
