@@ -1502,12 +1502,12 @@
 					cmd_underrun_cnt = <0x6e1>;
 				};
 
-				1080x2340@60hs {
-					mode-name = "1080x2340@60hs";
+				1080x2340@60phs {
+					mode-name = "1080x2340@60phs";
 					pmsk = <0x02 0xaa 0x02 0x7627 0x0d 0x04 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
 					hs-clk = <0x454>;
 					esc-clk = <0x14>;
-					cmd_underrun_cnt = <0x1d32>;
+					cmd_underrun_cnt = <0x6e1>;
 				};
 
 				1080x2340@30ns {
@@ -1555,27 +1555,27 @@
 					phandle = <0x10>;
 				};
 
-				m34x_panel_display_mode_1080x2340_60hs {
-					id = "1080x2340_60HS";
+				m34x_panel_display_mode_1080x2340_60phs {
+					id = "1080x2340_60HS_120HS_TE_HW_SKIP_1";
 					width = <0x438>;
 					height = <0x924>;
 					refresh_rate = <0x3c>;
-					refresh_mode = <0x01>;
-					panel_refresh_rate = <0x3c>;
+					refresh_mode = <0x02>;
+					panel_refresh_rate = <0x78>;
 					panel_refresh_mode = <0x01>;
 					panel_te_st = <0x00>;
 					panel_te_ed = <0x00>;
 					panel_te_sw_skip_count = <0x00>;
-					panel_te_hw_skip_count = <0x00>;
+					panel_te_hw_skip_count = <0x01>;
 					panel_h_porch = <0x00 0x00 0x00>;
-					panel_v_porch = <0x980 0x00 0x00>;
+					panel_v_porch = <0x10 0x00 0x00>;
 					dsc_en = <0x01>;
 					dsc_cnt = <0x01>;
 					dsc_slice_num = <0x02>;
 					dsc_slice_w = <0x21c>;
 					dsc_slice_h = <0x1e>;
-					cmd_lp_ref = <0x1d32>;
-					disp_qos_fps = <0x3c>;
+					cmd_lp_ref = <0x6e1>;
+					disp_qos_fps = <0x78>;
 					phandle = <0x11>;
 				};
 
@@ -5426,12 +5426,12 @@
 
 			dsim-modes {
 
-				1080x2408@60hs {
-					mode-name = "1080x2408@60hs";
+				1080x2408@60phs {
+					mode-name = "1080x2408@60phs";
 					pmsk = <0x02 0xad 0x02 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
 					hs-clk = <0x465>;
 					esc-clk = <0x14>;
-					cmd_underrun_cnt = <0x1e3d>;
+					cmd_underrun_cnt = <0xf77>;
 				};
 
 				1080x2408@120hs {
@@ -8097,7 +8097,7 @@
 		s6e3fc3_m34x_freq_hop_table = "/fragment@freq_hop/__overlay__/s6e3fc3_m34x_freq_hop_table";
 		m34x_panel_display_modes = "/fragment@panel_display_mode/__overlay__/m34x_panel_display_modes";
 		m34x_panel_display_mode_1080x2340_120hs = "/fragment@panel_display_mode/__overlay__/m34x_panel_display_modes/m34x_panel_display_mode_1080x2340_120hs";
-		m34x_panel_display_mode_1080x2340_60hs = "/fragment@panel_display_mode/__overlay__/m34x_panel_display_modes/m34x_panel_display_mode_1080x2340_60hs";
+		m34x_panel_display_mode_1080x2340_60phs = "/fragment@panel_display_mode/__overlay__/m34x_panel_display_modes/m34x_panel_display_mode_1080x2340_60phs";
 		m34x_panel_display_mode_1080x2340_30ns = "/fragment@panel_display_mode/__overlay__/m34x_panel_display_modes/m34x_panel_display_mode_1080x2340_30ns";
 		panel_drv_0 = "/fragment@panel_drv/__overlay__/panel_drv_0";
 		s6e3fc3_m34x_power_ctrl = "/fragment@panel_drv/__overlay__/panel_drv_0/s6e3fc3_m34x_power_ctrl";
