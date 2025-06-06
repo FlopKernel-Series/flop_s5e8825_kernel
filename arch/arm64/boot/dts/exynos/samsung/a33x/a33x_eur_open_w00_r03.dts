@@ -1051,12 +1051,12 @@
 					cmd_underrun_cnt = <0xf77>;
 				};
 
-				1080x2400@60hs {
-					mode-name = "1080x2400@60hs";
+				1080x2400@60phs {
+					mode-name = "1080x2400@60phs";
 					pmsk = <0x02 0x8a 0x02 0x2762 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
 					hs-clk = <0x382>;
 					esc-clk = <0x14>;
-					cmd_underrun_cnt = <0x1e3d>;
+					cmd_underrun_cnt = <0xf77>;
 				};
 			};
 		};
@@ -1096,18 +1096,18 @@
 					phandle = <0x25>;
 				};
 
-				a33x_s6e8fc3_panel_display_mode_1080x2400_60hs {
-					id = "1080x2400_60HS";
+				a33x_s6e8fc3_panel_display_mode_1080x2400_60phs {
+					id = "1080x2400_60HS_120HS_TE_HW_SKIP_1";
 					width = <0x438>;
 					height = <0x960>;
 					refresh_rate = <0x3c>;
-					refresh_mode = <0x01>;
-					panel_refresh_rate = <0x3c>;
+					refresh_mode = <0x02>;
+					panel_refresh_rate = <0x5a>;
 					panel_refresh_mode = <0x01>;
 					panel_te_st = <0x00>;
 					panel_te_ed = <0x00>;
 					panel_te_sw_skip_count = <0x00>;
-					panel_te_hw_skip_count = <0x00>;
+					panel_te_hw_skip_count = <0x01>;
 					dsc_en = <0x01>;
 					dsc_cnt = <0x01>;
 					dsc_slice_num = <0x02>;
@@ -1115,8 +1115,8 @@
 					dsc_slice_h = <0x28>;
 					panel_video_mode;
 					panel_h_porch = <0x1e 0x46 0x14>;
-					panel_v_porch = <0x0e 0x500 0x02>;
-					cmd_lp_ref = <0x1e3d>;
+					panel_v_porch = <0x0e 0x30 0x02>;
+					cmd_lp_ref = <0xf77>;
 					phandle = <0x26>;
 				};
 			};
@@ -8158,7 +8158,7 @@
 		ddi_vdd3 = "/fragment@panel_drv/__overlay__/panel_drv_0/regulators/ddi-vdd3";
 		a33x_s6e8fc3_panel_display_modes = "/fragment@panel_display_mode/__overlay__/a33x_s6e8fc3_panel_display_modes";
 		a33x_s6e8fc3_panel_display_mode_1080x2400_90hs = "/fragment@panel_display_mode/__overlay__/a33x_s6e8fc3_panel_display_modes/a33x_s6e8fc3_panel_display_mode_1080x2400_90hs";
-		a33x_s6e8fc3_panel_display_mode_1080x2400_60hs = "/fragment@panel_display_mode/__overlay__/a33x_s6e8fc3_panel_display_modes/a33x_s6e8fc3_panel_display_mode_1080x2400_60hs";
+		a33x_s6e8fc3_panel_display_mode_1080x2400_60phs = "/fragment@panel_display_mode/__overlay__/a33x_s6e8fc3_panel_display_modes/a33x_s6e8fc3_panel_display_mode_1080x2400_60phs";
 		sm5451_charger = "/fragment@2/__overlay__/sm5451@63";
 		hall_irq = "/fragment@4/__overlay__/hall_irq";
 		certify_hall_irq = "/fragment@5/__overlay__/certify_hall_irq";
