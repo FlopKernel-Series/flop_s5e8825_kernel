@@ -62,8 +62,8 @@ DLKM_RAMDISK_DIR="$TMPDIR/ramdisk_dlkm"
 PREBUILT_RAMDISK="$KDIR/kernel_build/boot/ramdisk"
 MODULES_DIR="$DLKM_RAMDISK_DIR/lib/modules"
 OUT_KERNEL="$OUTDIR/arch/arm64/boot/Image"
-OUT_BOOTIMG="$KDIR/kernel_build/zip/boot.img"
-OUT_VENDORBOOTIMG="$KDIR/kernel_build/zip/vendor_boot.img"
+OUT_BOOTIMG="$KDIR/kernel_build/boot.img"
+OUT_VENDORBOOTIMG="$KDIR/kernel_build/vendor_boot.img"
 OUT_DTBIMAGE="$TMPDIR/dtb.img"
 
 # Tools
