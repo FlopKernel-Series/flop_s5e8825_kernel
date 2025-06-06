@@ -2297,12 +2297,12 @@
 					cmd_underrun_cnt = <0xf77>;
 				};
 
-				1080x2400@60hs {
-					mode-name = "1080x2400@60hs";
+				1080x2400@60phs {
+					mode-name = "1080x2400@60phs";
 					pmsk = <0x03 0xfe 0x02 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
 					hs-clk = <0x44c>;
 					esc-clk = <0x14>;
-					cmd_underrun_cnt = <0x1e3d>;
+					cmd_underrun_cnt = <0xf77>;
 				};
 
 				1080x2400@30ns {
@@ -2349,26 +2349,26 @@
 					phandle = <0x2b>;
 				};
 
-				a33x_s6e3fc3_panel_display_mode_1080x2400_60hs {
-					id = "1080x2400_60HS";
+				a33x_s6e3fc3_panel_display_mode_1080x2400_60phs {
+					id = "1080x2400_60HS_120HS_TE_HW_SKIP_1";
 					width = <0x438>;
 					height = <0x960>;
 					refresh_rate = <0x3c>;
-					refresh_mode = <0x01>;
-					panel_refresh_rate = <0x3c>;
+					refresh_mode = <0x02>;
+					panel_refresh_rate = <0x5a>;
 					panel_refresh_mode = <0x01>;
 					panel_te_st = <0x00>;
 					panel_te_ed = <0x00>;
 					panel_te_sw_skip_count = <0x00>;
-					panel_te_hw_skip_count = <0x00>;
+					panel_te_hw_skip_count = <0x01>;
 					panel_h_porch = <0x00 0x00 0x00>;
-					panel_v_porch = <0x00 0x4b0 0x00>;
+					panel_v_porch = <0x00 0x00 0x00>;
 					dsc_en = <0x01>;
 					dsc_cnt = <0x01>;
 					dsc_slice_num = <0x02>;
 					dsc_slice_w = <0x21c>;
 					dsc_slice_h = <0x28>;
-					cmd_lp_ref = <0x1e3d>;
+					cmd_lp_ref = <0xf77>;
 					phandle = <0x2c>;
 				};
 
@@ -8026,7 +8026,7 @@
 		ddi_vdd3 = "/fragment@panel_drv/__overlay__/panel_drv_0/regulators/ddi-vdd3";
 		a33x_s6e3fc3_panel_display_modes = "/fragment@panel_display_mode/__overlay__/a33x_s6e3fc3_panel_display_modes";
 		a33x_s6e3fc3_panel_display_mode_1080x2400_90hs = "/fragment@panel_display_mode/__overlay__/a33x_s6e3fc3_panel_display_modes/a33x_s6e3fc3_panel_display_mode_1080x2400_90hs";
-		a33x_s6e3fc3_panel_display_mode_1080x2400_60hs = "/fragment@panel_display_mode/__overlay__/a33x_s6e3fc3_panel_display_modes/a33x_s6e3fc3_panel_display_mode_1080x2400_60hs";
+		a33x_s6e3fc3_panel_display_mode_1080x2400_60phs = "/fragment@panel_display_mode/__overlay__/a33x_s6e3fc3_panel_display_modes/a33x_s6e3fc3_panel_display_mode_1080x2400_60phs";
 		a33x_s6e3fc3_panel_display_mode_1080x2400_30ns = "/fragment@panel_display_mode/__overlay__/a33x_s6e3fc3_panel_display_modes/a33x_s6e3fc3_panel_display_mode_1080x2400_30ns";
 		hl7132_charger = "/fragment@4/__overlay__/hl7132@5E";
 		hall_irq = "/fragment@5/__overlay__/hall_irq";
