@@ -474,7 +474,7 @@ static int mt7921_set_key(struct ieee80211_hw *hw, enum set_key_cmd cmd,
 		 * reassociating. But we should trigger the deletion process
 		 * to avoid using incorrect cipher after disconnection,
 		 */
-		if (vif->type != NL80211_IFTYPE_STATION || vif->cfg.assoc)
+		if (vif->type != NL80211_IFTYPE_STATION || vif->bss_conf.assoc)
 			goto out;
 	}
 
@@ -586,8 +586,7 @@ out:
 }
 
 static int
-mt7921_conf_tx(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-	       unsigned int link_id, u16 queue,
+mt7921_conf_tx(struct ieee80211_hw *hw, struct ieee80211_vif *vif, u16 queue,
 	       const struct ieee80211_tx_queue_params *params)
 {
 	struct mt7921_vif *mvif = (struct mt7921_vif *)vif->drv_priv;
@@ -657,7 +656,7 @@ static void mt7921_configure_filter(struct ieee80211_hw *hw,
 static void mt7921_bss_info_changed(struct ieee80211_hw *hw,
 				    struct ieee80211_vif *vif,
 				    struct ieee80211_bss_conf *info,
-				    u64 changed)
+				    u32 changed)
 {
 	struct mt7921_phy *phy = mt7921_hw_phy(hw);
 	struct mt7921_dev *dev = mt7921_hw_dev(hw);
@@ -688,7 +687,7 @@ static void mt7921_bss_info_changed(struct ieee80211_hw *hw,
 	if (changed & BSS_CHANGED_ASSOC) {
 		mt7921_mcu_sta_update(dev, NULL, vif, true,
 				      MT76_STA_INFO_STATE_ASSOC);
-		mt7921_mcu_set_beacon_filter(dev, vif, vif->cfg.assoc);
+		mt7921_mcu_set_beacon_filter(dev, vif, vif->bss_conf.assoc);
 	}
 
 	if (changed & BSS_CHANGED_ARP_FILTER) {
@@ -1534,8 +1533,8 @@ mt7921_channel_switch_beacon(struct ieee80211_hw *hw,
 }
 
 static int
-mt7921_start_ap(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-		struct ieee80211_bss_conf *link_conf)
+mt7921_start_ap(struct ieee80211_hw *hw,
+		struct ieee80211_vif *vif)
 {
 	struct mt7921_vif *mvif = (struct mt7921_vif *)vif->drv_priv;
 	struct mt7921_phy *phy = mt7921_hw_phy(hw);
@@ -1562,8 +1561,8 @@ out:
 }
 
 static void
-mt7921_stop_ap(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-	       struct ieee80211_bss_conf *link_conf)
+mt7921_stop_ap(struct ieee80211_hw *hw,
+	       struct ieee80211_vif *vif)
 {
 	struct mt7921_vif *mvif = (struct mt7921_vif *)vif->drv_priv;
 	struct mt7921_phy *phy = mt7921_hw_phy(hw);
