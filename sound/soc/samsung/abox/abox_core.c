@@ -516,7 +516,7 @@ static int abox_core_load_firmware(struct abox_core *core,
 	struct device *dev = core->dev;
 	int ret;
 
-	ret = request_firmware_direct(&fw->firmware, fw->name, core->dev);
+	ret = request_firmware(&fw->firmware, fw->name, core->dev);
 	if (ret >= 0)
 		return 0;
 
