@@ -2700,7 +2700,7 @@ static int abox_ext_bin_request(struct device *dev,
 	mutex_lock(&efw->lock);
 
 	release_firmware(efw->firmware);
-	ret = request_firmware_direct(&efw->firmware, efw->name, dev);
+	ret = request_firmware(&efw->firmware, efw->name, dev);
 	if (ret == -ENOENT)
 		abox_warn(dev, "%s doesn't exist\n", efw->name);
 	else if (ret < 0)
