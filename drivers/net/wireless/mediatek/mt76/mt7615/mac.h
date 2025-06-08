@@ -33,6 +33,9 @@ enum rx_pkt_type {
 
 #define MT_RXD1_NORMAL_BSSID		GENMASK(31, 26)
 #define MT_RXD1_NORMAL_PAYLOAD_FORMAT	GENMASK(25, 24)
+#define MT_RXD1_FIRST_AMSDU_FRAME	GENMASK(1, 0)
+#define MT_RXD1_MID_AMSDU_FRAME		BIT(1)
+#define MT_RXD1_LAST_AMSDU_FRAME	BIT(0)
 #define MT_RXD1_NORMAL_HDR_TRANS	BIT(23)
 #define MT_RXD1_NORMAL_HDR_OFFSET	BIT(22)
 #define MT_RXD1_NORMAL_MAC_HDR_LEN	GENMASK(21, 16)
@@ -77,6 +80,13 @@ enum rx_pkt_type {
 #define MT_RXD3_NORMAL_PATTERN_DROP	BIT(9)
 #define MT_RXD3_NORMAL_TSF_COMPARE_LOSS	BIT(8)
 #define MT_RXD3_NORMAL_RXV_SEQ		GENMASK(7, 0)
+
+#define MT_RXD4_FRAME_CONTROL		GENMASK(15, 0)
+
+#define MT_RXD6_SEQ_CTRL		GENMASK(15, 0)
+#define MT_RXD6_QOS_CTL			GENMASK(31, 16)
+
+#define MT_RXD7_HT_CONTROL		GENMASK(31, 0)
 
 #define MT_RXV1_ACID_DET_H		BIT(31)
 #define MT_RXV1_ACID_DET_L		BIT(30)
@@ -154,12 +164,6 @@ enum tx_phy_bandwidth {
 #define MT_CT_INFO_MGMT_FRAME		BIT(2)
 #define MT_CT_INFO_NONE_CIPHER_FRAME	BIT(3)
 #define MT_CT_INFO_HSR2_TX		BIT(4)
-
-#define MT_TXD_SIZE			(8 * 4)
-
-#define MT_USB_TXD_SIZE			(MT_TXD_SIZE + 8 * 4)
-#define MT_USB_HDR_SIZE			4
-#define MT_USB_TAIL_SIZE		4
 
 #define MT_TXD0_P_IDX			BIT(31)
 #define MT_TXD0_Q_IDX			GENMASK(30, 26)
@@ -239,56 +243,6 @@ enum tx_phy_bandwidth {
 #define MT_TX_RATE_NSS			GENMASK(10, 9)
 #define MT_TX_RATE_MODE			GENMASK(8, 6)
 #define MT_TX_RATE_IDX			GENMASK(5, 0)
-
-#define MT_TXP_MAX_BUF_NUM		6
-#define MT_HW_TXP_MAX_MSDU_NUM		4
-#define MT_HW_TXP_MAX_BUF_NUM		4
-
-#define MT_MSDU_ID_VALID		BIT(15)
-
-#define MT_TXD_LEN_MASK			GENMASK(11, 0)
-#define MT_TXD_LEN_MSDU_LAST		BIT(14)
-#define MT_TXD_LEN_AMSDU_LAST		BIT(15)
-/* mt7663 */
-#define MT_TXD_LEN_LAST			BIT(15)
-
-struct mt7615_txp_ptr {
-	__le32 buf0;
-	__le16 len0;
-	__le16 len1;
-	__le32 buf1;
-} __packed __aligned(4);
-
-struct mt7615_hw_txp {
-	__le16 msdu_id[MT_HW_TXP_MAX_MSDU_NUM];
-	struct mt7615_txp_ptr ptr[MT_HW_TXP_MAX_BUF_NUM / 2];
-} __packed __aligned(4);
-
-struct mt7615_fw_txp {
-	__le16 flags;
-	__le16 token;
-	u8 bss_idx;
-	u8 rept_wds_wcid;
-	u8 rsv;
-	u8 nbuf;
-	__le32 buf[MT_TXP_MAX_BUF_NUM];
-	__le16 len[MT_TXP_MAX_BUF_NUM];
-} __packed __aligned(4);
-
-struct mt7615_txp_common {
-	union {
-		struct mt7615_fw_txp fw;
-		struct mt7615_hw_txp hw;
-	};
-};
-
-struct mt7615_tx_free {
-	__le16 rx_byte_cnt;
-	__le16 ctrl;
-	u8 txd_cnt;
-	u8 rsv[3];
-	__le16 token[];
-} __packed __aligned(4);
 
 #define MT_TX_FREE_MSDU_ID_CNT		GENMASK(6, 0)
 
@@ -374,61 +328,6 @@ struct mt7615_dfs_radar_spec {
 	struct mt7615_dfs_pulse pulse_th;
 	struct mt7615_dfs_pattern radar_pattern[16];
 };
-
-enum mt7615_cipher_type {
-	MT_CIPHER_NONE,
-	MT_CIPHER_WEP40,
-	MT_CIPHER_TKIP,
-	MT_CIPHER_TKIP_NO_MIC,
-	MT_CIPHER_AES_CCMP,
-	MT_CIPHER_WEP104,
-	MT_CIPHER_BIP_CMAC_128,
-	MT_CIPHER_WEP128,
-	MT_CIPHER_WAPI,
-	MT_CIPHER_CCMP_256 = 10,
-	MT_CIPHER_GCMP,
-	MT_CIPHER_GCMP_256,
-};
-
-static inline enum mt7615_cipher_type
-mt7615_mac_get_cipher(int cipher)
-{
-	switch (cipher) {
-	case WLAN_CIPHER_SUITE_WEP40:
-		return MT_CIPHER_WEP40;
-	case WLAN_CIPHER_SUITE_WEP104:
-		return MT_CIPHER_WEP104;
-	case WLAN_CIPHER_SUITE_TKIP:
-		return MT_CIPHER_TKIP;
-	case WLAN_CIPHER_SUITE_AES_CMAC:
-		return MT_CIPHER_BIP_CMAC_128;
-	case WLAN_CIPHER_SUITE_CCMP:
-		return MT_CIPHER_AES_CCMP;
-	case WLAN_CIPHER_SUITE_CCMP_256:
-		return MT_CIPHER_CCMP_256;
-	case WLAN_CIPHER_SUITE_GCMP:
-		return MT_CIPHER_GCMP;
-	case WLAN_CIPHER_SUITE_GCMP_256:
-		return MT_CIPHER_GCMP_256;
-	case WLAN_CIPHER_SUITE_SMS4:
-		return MT_CIPHER_WAPI;
-	default:
-		return MT_CIPHER_NONE;
-	}
-}
-
-static inline struct mt7615_txp_common *
-mt7615_txwi_to_txp(struct mt76_dev *dev, struct mt76_txwi_cache *t)
-{
-	u8 *txwi;
-
-	if (!t)
-		return NULL;
-
-	txwi = mt76_get_txwi_ptr(dev, t);
-
-	return (struct mt7615_txp_common *)(txwi + MT_TXD_SIZE);
-}
 
 static inline u32 mt7615_mac_wtbl_addr(struct mt7615_dev *dev, int wcid)
 {
