@@ -342,4 +342,9 @@ exynos8825_rt5691.ko
 sec_audio_sysfs.ko
 cfg80211.ko
 mac80211.ko
+mt76.ko
+mt76-connac-lib.ko
+mt76-usb.ko
+mt7921-common.ko
+mt7921u.ko
 input_booster_lkm.ko
