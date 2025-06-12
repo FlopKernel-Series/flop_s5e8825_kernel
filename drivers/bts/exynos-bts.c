@@ -37,12 +37,12 @@ static struct exynos_pm_qos_request exynos_int_qos;
 
 static struct bts_device *btsdev;
 
-static void bts_calc_bw(void)
+/* This must be called with btsdev->mutex_lock held */
+static void __bts_calc_bw(unsigned int *mif_freq_out, unsigned int *int_freq_out)
 {
 	unsigned int i = 0;
 	unsigned int total_read = 0;
 	unsigned int total_write = 0;
-	unsigned int mif_freq, int_freq;
 	struct bts_bw_params *bw_params = &btsdev->bw_params;
 
 	btsdev->peak_bw = 0;
@@ -61,11 +61,20 @@ static void bts_calc_bw(void)
 	if (btsdev->peak_bw < (total_write / bw_params->num_channel))
 		btsdev->peak_bw = (total_write / bw_params->num_channel);
 
-	mif_freq = (btsdev->total_bw * 100) / bw_params->mif_bus_width / bw_params->mif_util;
-	int_freq = (btsdev->peak_bw * 100) / bw_params->bus_width / bw_params->int_util;
+	*mif_freq_out = (btsdev->total_bw * 100) / bw_params->mif_bus_width / bw_params->mif_util;
+	*int_freq_out = (btsdev->peak_bw * 100) / bw_params->bus_width / bw_params->int_util;
 
 	BTSDBG_LOG(btsdev->dev, "BW: T:%.8u R:%.8u W:%.8u P:%.8u MIF:%.8u INT:%.8u\n",
-			btsdev->total_bw, total_read, total_write, btsdev->peak_bw, mif_freq, int_freq);
+			btsdev->total_bw, total_read, total_write, btsdev->peak_bw, *mif_freq_out, *int_freq_out);
+}
+
+static void bts_update_and_notify_bw(void)
+{
+	unsigned int mif_freq, int_freq;
+
+	rt_mutex_lock(&btsdev->mutex_lock);
+	__bts_calc_bw(&mif_freq, &int_freq);
+	rt_mutex_unlock(&btsdev->mutex_lock);
 
 #if defined(CONFIG_EXYNOS_PM_QOS) || defined(CONFIG_EXYNOS_PM_QOS_MODULE)
 	exynos_pm_qos_update_request(&exynos_mif_qos, mif_freq);
@@ -186,9 +195,9 @@ int bts_update_bw(unsigned int index, struct bts_bw bw)
 	btsdev->bts_bw[index].read = bw.read;
 	btsdev->bts_bw[index].write = bw.write;
 
-	bts_calc_bw();
 	rt_mutex_unlock(&btsdev->mutex_lock);
 
+	bts_update_and_notify_bw();
 	return 0;
 }
 EXPORT_SYMBOL(bts_update_bw);
