@@ -253,7 +253,7 @@ static inline void ethr_ii_to_subframe_msdu(struct sk_buff *skb)
  * So keep the platform active for some time after receiving any data packet.
  * This timeout value can be fine-tuned based on the test results.
  */
-#define SLSI_RX_WAKELOCK_TIME (200)
+#define SLSI_RX_WAKELOCK_TIME (50)
 #define SLSI_RX_PN_LEN     6
 #define MAX_BA_BUFFER_SIZE 64
 #define NUM_BA_SESSIONS_PER_PEER 8
