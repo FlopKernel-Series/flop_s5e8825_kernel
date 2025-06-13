@@ -83,6 +83,9 @@ struct bts_device {
 	spinlock_t		lock;
 	struct rt_mutex mutex_lock;
 
+	struct work_struct	qos_update_work;
+	struct workqueue_struct	*qos_update_wq;
+
 	unsigned int		num_bts;
 	unsigned int		num_scen;
 	unsigned int		top_scen;

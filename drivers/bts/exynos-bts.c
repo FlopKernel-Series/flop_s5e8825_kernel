@@ -68,19 +68,24 @@ static void __bts_calc_bw(unsigned int *mif_freq_out, unsigned int *int_freq_out
 			btsdev->total_bw, total_read, total_write, btsdev->peak_bw, *mif_freq_out, *int_freq_out);
 }
 
-static void bts_update_and_notify_bw(void)
+static void bts_qos_update_work_fn(struct work_struct *work)
 {
 	unsigned int mif_freq, int_freq;
 
+	/*
+	 * Lock, re-calculate to get the latest values, then unlock.
+	 * This ensures we never notify with stale data. Since this is a
+	 * single-threaded workqueue, all notifications are serialized.
+	 */
 	rt_mutex_lock(&btsdev->mutex_lock);
 	__bts_calc_bw(&mif_freq, &int_freq);
 	rt_mutex_unlock(&btsdev->mutex_lock);
 
+	/* Now notify PM QoS outside the lock */
 #if defined(CONFIG_EXYNOS_PM_QOS) || defined(CONFIG_EXYNOS_PM_QOS_MODULE)
 	exynos_pm_qos_update_request(&exynos_mif_qos, mif_freq);
 	exynos_pm_qos_update_request(&exynos_int_qos, int_freq);
 #endif
-
 }
 
 static void bts_set(unsigned int scen, unsigned int index)
@@ -194,10 +199,10 @@ int bts_update_bw(unsigned int index, struct bts_bw bw)
 	btsdev->bts_bw[index].peak = bw.peak;
 	btsdev->bts_bw[index].read = bw.read;
 	btsdev->bts_bw[index].write = bw.write;
-
 	rt_mutex_unlock(&btsdev->mutex_lock);
 
-	bts_update_and_notify_bw();
+	/* Queue the work to calculate and notify QoS. */
+	queue_work(btsdev->qos_update_wq, &btsdev->qos_update_work);
 	return 0;
 }
 EXPORT_SYMBOL(bts_update_bw);
@@ -1495,6 +1500,14 @@ static int bts_probe(struct platform_device *pdev)
 		rt_mutex_init(&btsdev->mutex_lock);
 		INIT_LIST_HEAD(&btsdev->scen_node);
 
+		btsdev->qos_update_wq = create_singlethread_workqueue("bts_qos_wq");
+		if (!btsdev->qos_update_wq) {
+			dev_err(btsdev->dev, "failed to create bts_qos_wq\n");
+			devm_kfree(btsdev->dev, btsdev);
+			return -ENOMEM;
+		}
+		INIT_WORK(&btsdev->qos_update_work, bts_qos_update_work_fn);
+
 		ret = bts_initialize(btsdev);
 		if (ret) {
 			dev_err(btsdev->dev, "failed to initialize (err=%d)\n", ret);
@@ -1527,6 +1540,7 @@ static int bts_probe(struct platform_device *pdev)
 
 static int bts_remove(struct platform_device *pdev)
 {
+	destroy_workqueue(btsdev->qos_update_wq);
 	devm_kfree(&pdev->dev, btsdev);
 	platform_set_drvdata(pdev, NULL);
 
