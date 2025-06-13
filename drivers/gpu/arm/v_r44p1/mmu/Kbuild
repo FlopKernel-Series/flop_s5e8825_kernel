@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: GPL-2.0
+# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
 #
-# (C) COPYRIGHT 2012, 2020-2021 ARM Limited. All rights reserved.
+# (C) COPYRIGHT 2021 ARM Limited. All rights reserved.
 #
 # This program is free software and is provided to you under the terms of the
 # GNU General Public License version 2 as published by the Free Software
@@ -18,18 +18,13 @@
 #
 #
 
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R26P0),y)
-	obj-$(CONFIG_MALI_MIDGARD) += bv_r26p0/
-endif
+mali_kbase-y += \
+    mmu/mali_kbase_mmu.o \
+    mmu/mali_kbase_mmu_hw_direct.o \
+    mmu/mali_kbase_mmu_mode_aarch64.o
 
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R32P1),y)
-	obj-$(CONFIG_MALI_MIDGARD) += bv_r32p1/
-endif
-
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R38P1),y)
-	obj-$(CONFIG_MALI_MIDGARD) += bv_r38p1/
-endif
-
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R44P1),y)
-	obj-$(CONFIG_MALI_MIDGARD) += v_r44p1/
+ifeq ($(CONFIG_MALI_CSF_SUPPORT),y)
+    mali_kbase-y += mmu/backend/mali_kbase_mmu_csf.o
+else
+    mali_kbase-y += mmu/backend/mali_kbase_mmu_jm.o
 endif
