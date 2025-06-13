@@ -2,6 +2,9 @@
 # Makefile for BTS device driver
 #
 
+CFLAGS_exynos-bts.o := -O3
+CFLAGS_exynos-btsops8825.o := -O3
+
 obj-$(CONFIG_EXYNOS_BTS)	+= exynos-bts.o
 
 # Chipset Dependent code
