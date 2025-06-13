@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.10.237 Kernel Configuration
+# Linux/arm64 5.10.238 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="Android (13174946, +pgo, +bolt, +lto, +mlgo, based on r547379) clang version 20.0.0 (https://android.googlesource.com/toolchain/llvm-project b718bcaf8c198c82f3021447d943401e3ab5bd54)"
 CONFIG_GCC_VERSION=0
@@ -963,6 +963,7 @@ CONFIG_HUGEPAGE_POOL=y
 # CONFIG_HUGEPAGE_POOL_DEBUG is not set
 CONFIG_HUGEPAGE_POOL_ALLOW_ALL=y
 CONFIG_HIGHATOMIC_PAGEBLOCKS=1
+# CONFIG_MEMFD_ASHMEM_SHIM is not set
 
 #
 # Data Access Monitoring
@@ -4154,7 +4155,8 @@ CONFIG_VIDEO_IR_I2C=y
 # CONFIG_MALI_DDK_NONE is not set
 # CONFIG_MALI_DDK_VALHALL_R26P0 is not set
 # CONFIG_MALI_DDK_VALHALL_R32P1 is not set
-CONFIG_MALI_DDK_VALHALL_R38P1=y
+# CONFIG_MALI_DDK_VALHALL_R38P1 is not set
+CONFIG_MALI_DDK_VALHALL_R44P1=y
 CONFIG_MALI_MIDGARD=m
 # CONFIG_MALI_GATOR_SUPPORT is not set
 # CONFIG_MALI_MIDGARD_DVFS is not set
