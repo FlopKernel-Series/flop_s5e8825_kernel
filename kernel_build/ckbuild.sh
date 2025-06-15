@@ -71,8 +71,8 @@ MKBOOTIMG="$(pwd)/kernel_build/mkbootimg/mkbootimg.py"
 MKDTBOIMG="$(pwd)/kernel_build/dtb/mkdtboimg.py"
 
 ## Customizable vars
-# Kernel verison
-FK_VER="v5.2"
+# Kernel version
+FK_VER="v5.3"
 
 # Toggles
 USE_CCACHE=1
