@@ -48,7 +48,7 @@ void exynos_usbcon_init_link(struct exynos_usbphy_info *cal_info)
 	udelay(500);
 	((USBCON_REG_LINKCTRL_p) (&reg))->b.force_qact = 1;
 	((USBCON_REG_LINKCTRL_p) (&reg))->b.bus_filter_bypass = 0xf;
-	((USBCON_REG_LINKCTRL_p) (&reg))->b.sel_sof = 0x1;
+	((USBCON_REG_LINKCTRL_p) (&reg))->b.sel_sof = cal_info->sel_sof;
 	writel(reg, regs_base + USBCON_REG_LINKCTRL);
 
 	pr_info("%s %d USBCON_REG_LINKCTRL: 0x %08x\n", __func__, __LINE__, readl(regs_base + USBCON_REG_LINKCTRL));

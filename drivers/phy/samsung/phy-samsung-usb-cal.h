@@ -278,6 +278,9 @@ struct exynos_usbphy_info {
 
 	/* Dual PHY */
 	bool dual_phy;
+
+	/* SOF tick for UDMA */
+	int sel_sof;
 };
 
 struct usb_eom_result_s {
