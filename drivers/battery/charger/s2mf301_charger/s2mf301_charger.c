@@ -448,6 +448,16 @@ static void s2mf301_set_topoff_current(struct s2mf301_charger_data *charger, int
 	int data;
 
 	pr_info("[DEBUG]%s: current %d\n", __func__, current_limit);
+	if (current_limit < charger->pdata->full_check_current_1st) {
+		/* 2nd topoff : default 0xF6[7] = 0*/
+		s2mf301_update_reg(charger->i2c, S2MF301_CHG_CHG_OPTION15,
+				0, TOP_OFF_ICR_MASK);
+	} else {
+		/* 1st topoff : Set ICR done disable 0xF6[7] = 1*/
+		s2mf301_update_reg(charger->i2c, S2MF301_CHG_CHG_OPTION15,
+				TOP_OFF_ICR_MASK, TOP_OFF_ICR_MASK);
+	}
+
 	if (current_limit <= 100)
 		data = 0;
 	else if (current_limit > 100 && current_limit <= 1000)
@@ -480,6 +490,9 @@ static bool s2mf301_chg_init(struct s2mf301_charger_data *charger, struct s2mf30
 
 	/* Set battery BAT OCP disable */
 	s2mf301_update_reg(charger->i2c, S2MF301_CHG_TRIM_D2A_LC_OTP_02, 1 << BAT_OCP_ENB_SHIFT, BAT_OCP_ENB_MASK);
+
+	/* 2nd topoff minimum set : 100mA */
+	s2mf301_update_reg(charger->i2c, S2MF301_CHG_CTRL17, 0x00, SECOND_TOPOFF_CURRENT_MASK);
 
 	/* Set topoff timer 90m */
 	s2mf301_update_reg(charger->i2c, S2MF301_CHG_CTRL20,
@@ -1743,6 +1756,16 @@ static int s2mf301_charger_parse_dt(struct s2mf301_charger_data *charger)
 			     "battery,boosting_voltage_aicl");
 	}
 
+	np = of_find_node_by_name(NULL, "cable-info");
+	if (!np) {
+		pr_err("%s : np NULL\n", __func__);
+	} else {
+		ret = of_property_read_u32(np, "full_check_current_1st", &pdata->full_check_current_1st);
+		if (ret < 0)
+			pdata->full_check_current_1st = 400;
+
+		pr_info("%s 1st topoff current : %d\n", __func__, pdata->full_check_current_1st);
+	}
 	pr_info("%s DT file parsed successfully, %d\n", __func__, ret);
 	return ret;
 }
