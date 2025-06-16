@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+	// SPDX-License-Identifier: GPL-2.0
 /*
  * Samsung EXYNOS SoC series USB DRD PHY driver
  *
@@ -1336,6 +1336,14 @@ static int exynos_usbdrd_get_phyinfo(struct exynos_usbdrd_phy *phy_drd)
 	} else {
 		dev_err(dev, "can't get common_block_disable\n");
 		return -EINVAL;
+	}
+
+	if (!of_property_read_u32(dev->of_node, "sel_sof", &value)) {
+		phy_drd->usbphy_blkcon_info.sel_sof = value;
+		dev_info(dev, "sel_sof = %d\n", value);
+	} else {
+		phy_drd->usbphy_blkcon_info.sel_sof = 0;
+		dev_info(dev, "set sel_sof to default value 0\n");
 	}
 
 	phy_drd->usbphy_info.refclk = phy_drd->extrefclk;
