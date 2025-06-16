@@ -21,10 +21,19 @@
 #endif
 
 #include <trace/events/ufs_exynos_perf.h>
+#include <linux/arch_topology.h>
+
+static struct cpumask masks_per_cluster[5];
+const struct cpumask *get_cpu_coregroup_mask(int cpu)
+{
+	return &cpu_topology[cpu].core_sibling;
+}
 
 /* control knob */
 static int __ctrl_dvfs(struct ufs_perf *perf, enum ctrl_op op)
 {
+	struct cpumask mask;
+
 	trace_ufs_perf_lock("dvfs", op);
 #if IS_ENABLED(CONFIG_EXYNOS_PM_QOS) || IS_ENABLED(CONFIG_EXYNOS_PM_QOS_MODULE)
 	if (op == CTRL_OP_UP) {
@@ -45,19 +54,27 @@ static int __ctrl_dvfs(struct ufs_perf *perf, enum ctrl_op op)
 	if (unlikely(!perf->val_pm_qos_cluster0))
 		ufs_init_cpufreq_request(perf, false);
 
+	cpumask_clear(&mask);
+
 	if (op == CTRL_OP_UP) {
-		if (perf->val_pm_qos_cluster0)
+		if (perf->val_pm_qos_cluster0 &&
+		    cpumask_and(&mask, &masks_per_cluster[0], cpu_online_mask))
 			freq_qos_update_request(&perf->pm_qos_cluster0, perf->val_pm_qos_cluster0);
-		if (perf->val_pm_qos_cluster1)
+		if (perf->val_pm_qos_cluster1 &&
+		    cpumask_and(&mask, &masks_per_cluster[1], cpu_online_mask))
 			freq_qos_update_request(&perf->pm_qos_cluster1, perf->val_pm_qos_cluster1);
-		if (perf->val_pm_qos_cluster2)
+		if (perf->val_pm_qos_cluster2 &&
+		    cpumask_and(&mask, &masks_per_cluster[2], cpu_online_mask))
 			freq_qos_update_request(&perf->pm_qos_cluster2, perf->val_pm_qos_cluster2);
 	} else if (op == CTRL_OP_DOWN) {
-		if (perf->val_pm_qos_cluster0)
+		if (perf->val_pm_qos_cluster0 &&
+		    cpumask_and(&mask, &masks_per_cluster[0], cpu_online_mask))
 			freq_qos_update_request(&perf->pm_qos_cluster0, 0);
-		if (perf->val_pm_qos_cluster1)
+		if (perf->val_pm_qos_cluster1 &&
+		    cpumask_and(&mask, &masks_per_cluster[1], cpu_online_mask))
 			freq_qos_update_request(&perf->pm_qos_cluster1, 0);
-		if (perf->val_pm_qos_cluster2)
+		if (perf->val_pm_qos_cluster2 &&
+		    cpumask_and(&mask, &masks_per_cluster[2], cpu_online_mask))
 			freq_qos_update_request(&perf->pm_qos_cluster2, 0);
 	} else {
 		return -1;
@@ -490,7 +507,8 @@ int ufs_perf_init_v1(struct ufs_perf *perf)
 {
 	struct ufs_perf_stat_v1 *stat = &perf->stat_v1;
 	int index;
-	int res;
+	int res, cluster = 0;
+	struct cpumask mask;
 
 	/* register callbacks */
 	perf->update[__UPDATE_V1] = __update_v1;
@@ -530,6 +548,15 @@ int ufs_perf_init_v1(struct ufs_perf *perf)
 	/* reset timer */
 	timer_setup(&stat->reset_timer, __reset_timer, 0);
 
+	/* set mask per cluster */
+	cpumask_clear(&mask);
+	for (index = 0; index < (int)nr_cpu_ids; index++) {
+		const struct cpumask *mask_cur = get_cpu_coregroup_mask(index);
+		if (!cpumask_equal(&mask, mask_cur)) {
+			cpumask_copy(&mask, mask_cur);
+			cpumask_copy(&masks_per_cluster[cluster++], mask_cur);
+		}
+	}
 	return res;
 }
 

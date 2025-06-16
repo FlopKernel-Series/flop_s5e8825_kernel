@@ -18,6 +18,7 @@
 
 #include "ufs-sec-feature.h"
 #include "ufs-sec-sysfs.h"
+#include "ufs-exynos.h"
 
 struct ufs_vendor_dev_info ufs_vdi;
 

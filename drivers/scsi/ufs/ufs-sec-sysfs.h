@@ -26,15 +26,6 @@ extern struct ufs_sec_err_info ufs_err_hist;
 extern struct ufs_sec_wb_info ufs_wb;
 extern struct ufs_sec_feature_info ufs_sec_features;
 
-/* UFSHCD states : in ufshcd.c */
-enum {
-	UFSHCD_STATE_RESET,
-	UFSHCD_STATE_ERROR,
-	UFSHCD_STATE_OPERATIONAL,
-	UFSHCD_STATE_EH_SCHEDULED_FATAL,
-	UFSHCD_STATE_EH_SCHEDULED_NON_FATAL,
-};
-
 /* UFSHCD UIC layer error flags : in ufshcd.c */
 enum {
 	UFSHCD_UIC_DL_PA_INIT_ERROR = (1 << 0), /* Data link layer error */
