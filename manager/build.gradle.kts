@@ -18,7 +18,7 @@ cmaker {
                 "-DANDROID_STL=none",
             )
         )
-        abiFilters("arm64-v8a", "armeabi-v7a")
+        abiFilters("arm64-v8a", "armeabi-v7a", "x86_64")
     }
     buildTypes {
         if (it.name == "release") {
@@ -28,8 +28,8 @@ cmaker {
 }
 
 val androidMinSdkVersion = 26
-val androidTargetSdkVersion = 35
-val androidCompileSdkVersion = 35
+val androidTargetSdkVersion = 36
+val androidCompileSdkVersion = 36
 val androidCompileNdkVersion = "28.1.13356709"
 val androidSourceCompatibility = JavaVersion.VERSION_21
 val androidTargetCompatibility = JavaVersion.VERSION_21
@@ -78,7 +78,7 @@ subprojects {
                     versionName = managerVersionName
                 }
                 ndk {
-                    abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+                    abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
                 }
             }
 
