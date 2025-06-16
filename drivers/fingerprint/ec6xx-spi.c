@@ -826,7 +826,7 @@ static int ec6xx_parse_dt(struct device *dev, struct ec6xx_data *etspi)
 	}
 
 	if (strcmp(etspi->position, "NA") == 0) {
-		etspi->position = "0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00";
+		etspi->position = "52.255840,14.160";
 	}
 
 	pr_info("position: %s\n", etspi->position);
