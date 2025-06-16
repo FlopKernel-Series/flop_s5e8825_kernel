@@ -1288,6 +1288,12 @@ static int npu_vertex_bootup(struct file *file, struct vs4l_ctrl *ctrl)
 
 	info = npu_scheduler_get_info();
 
+#ifndef CONFIG_DSP_USE_VS4L
+	if (ctrl->value == NPU_HWDEV_ID_DSP) {
+		npu_err("recv err cmd\n");
+		return -EINVAL;
+	}
+#endif
 	session->hids = ctrl->value;
 
 	if ((ctrl->ctrl & MASK_BIT_UP_DOWN) == BOOT_UP) {
