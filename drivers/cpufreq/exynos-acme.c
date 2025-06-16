@@ -332,6 +332,12 @@ static int exynos_cpufreq_verify(struct cpufreq_policy_data *new_policy)
 	struct cpufreq_policy *policy;
 	unsigned int min = new_policy->min, max = new_policy->max;
 
+	/* policy_cpu cluster is offline, freq_table isn't exist. */
+	if (!new_policy->freq_table) {
+		pr_err("%s: cpu%d and cluster are offline. verify error.", __func__, policy_cpu);
+		return -EINVAL;
+	}
+
 	domain = find_domain(policy_cpu);
 	if (!domain)
 		return -EINVAL;
