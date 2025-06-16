@@ -126,6 +126,7 @@
 #define S2MF301_CHG_D2A_SC_OTP5	0x7A
 #define S2MF301_CHG_SET_TRIM_MUX_24	0xC7
 #define S2MF301_CHG_CHG_OPTION0	0xE8
+#define S2MF301_CHG_CHG_OPTION15	0xF6
 
 /* S2MF301_CHG_STATUS0 */
 #define CHG_UVLOB_STATUS_SHIFT	0
@@ -334,10 +335,13 @@
 #define BAT_OCP_ENB_WIDTH		1
 #define BAT_OCP_ENB_MASK		MASK(BAT_OCP_ENB_WIDTH, BAT_OCP_ENB_SHIFT)
 
-/* S2MF301_CHG_STRL24 */
+/* S2MF301_CHG_CTRL24 */
 #define SET_DBAT_SHIFT		4
 #define SET_DBAT_WIDTH		2
 #define SET_DBAT_MASK		MASK(SET_DBAT_WIDTH, SET_DBAT_SHIFT)
+
+/* S2MF301_CHG_OPTION15[7] */
+#define TOP_OFF_ICR_MASK	0x80
 
 enum {
 	CHIP_ID = 0,
@@ -427,6 +431,7 @@ struct s2mf301_charger_platform_data {
 	char *charger_name;
 	char *fuelgauge_name;
 	int slow_charging_current;
+	unsigned int full_check_current_1st;
 	int bat2ship_debounce_time;
 	bool boosting_voltage_aicl;
 };
