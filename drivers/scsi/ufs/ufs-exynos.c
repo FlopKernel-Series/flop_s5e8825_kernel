@@ -14,9 +14,6 @@
 #include <linux/of_address.h>
 #include <linux/clk.h>
 #include <linux/delay.h>
-#include "ufs-cal-if.h"
-#include "ufs-vs-mmio.h"
-#include "ufs-vs-regs.h"
 #include "ufshcd.h"
 #include "ufshcd-crypto.h"
 #include "ufshci.h"

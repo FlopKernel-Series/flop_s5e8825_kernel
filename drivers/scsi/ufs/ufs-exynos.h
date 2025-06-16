@@ -12,6 +12,10 @@
 #ifndef _UFS_EXYNOS_H_
 #define _UFS_EXYNOS_H_
 
+#include "ufs-cal-if.h"
+#include "ufs-vs-mmio.h"
+#include "ufs-vs-regs.h"
+
 #if IS_ENABLED(CONFIG_EXYNOS_PM_QOS)
 #include <soc/samsung/exynos_pm_qos.h>
 #endif

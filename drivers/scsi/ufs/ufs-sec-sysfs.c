@@ -11,6 +11,7 @@
 #include <linux/sysfs.h>
 
 #include "ufs-sec-sysfs.h"
+#include "ufs-exynos.h"
 
 /* sec specific vendor sysfs nodes */
 struct device *sec_ufs_cmd_dev;
@@ -182,6 +183,178 @@ static ssize_t ufs_sec_stid_info_store(struct device *dev,
 }
 static DEVICE_ATTR(stid, 0664, ufs_sec_stid_info_show, ufs_sec_stid_info_store);
 
+static bool ufs_sec_wait_for_clear_pending(struct ufs_hba *hba, u64 timeout_us)
+{
+	unsigned long flags;
+	unsigned int tm_pending = 0;
+	unsigned int tr_pending = 0;
+	bool timeout = true;
+	ktime_t start;
+
+	ufshcd_hold(hba, false);
+
+	start = ktime_get();
+
+	do {
+		spin_lock_irqsave(hba->host->host_lock, flags);
+
+		tr_pending = 0;
+
+		tm_pending = ufshcd_readl(hba, REG_UTP_TASK_REQ_DOOR_BELL);
+		tr_pending = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
+
+		spin_unlock_irqrestore(hba->host->host_lock, flags);
+
+		if (!tm_pending && !tr_pending) {
+			dev_info(hba->dev, "doorbell clr complete.\n");
+			timeout = false;
+			break;
+		}
+
+		usleep_range(5000, 5100);
+	} while (ktime_to_us(ktime_sub(ktime_get(), start)) < timeout_us);
+
+	ufshcd_release(hba);
+
+	return timeout;
+}
+
+static int ufs_sec_send_pon(struct ufs_hba *hba)
+{
+	const unsigned char cmd[6] = { START_STOP, 0, 0, 0, UFS_POWERDOWN_PWR_MODE << 4, 0 };
+	struct scsi_sense_hdr sshdr;
+	struct scsi_device *sdp = hba->sdev_ufs_device;
+	int ret, retries;
+
+	for (retries = 3; retries > 0; --retries) {
+		ret = scsi_execute(sdp, cmd, DMA_NONE, NULL, 0, NULL, &sshdr,
+				10 * HZ, 0, 0, RQF_PM, NULL);
+		if (ret <= 0)
+			break;
+	}
+
+	if (ret) {
+		if (driver_byte(ret) == DRIVER_SENSE)
+			scsi_print_sense_hdr(sdp, NULL, &sshdr);
+	} else {
+		dev_info(hba->dev, "pon done.\n");
+		hba->curr_dev_pwr_mode = UFS_POWERDOWN_PWR_MODE;
+	}
+
+	return ret;
+}
+
+static void ufs_sec_reset_device(struct ufs_hba *hba)
+{
+	struct exynos_ufs *host = to_exynos_ufs(hba);
+	unsigned long flags;
+
+	spin_lock_irqsave(hba->host->host_lock, flags);
+
+	hba->force_reset = true;
+	host->skip_flush = true;
+	hba->ufshcd_state = UFSHCD_STATE_EH_SCHEDULED_FATAL;
+
+	queue_work(hba->eh_wq, &hba->eh_work);
+
+	spin_unlock_irqrestore(hba->host->host_lock, flags);
+
+	flush_work(&hba->eh_work);
+
+	dev_info(hba->dev, "reset done.\n");
+
+	if (host->skip_flush)
+		host->skip_flush = false;
+}
+
+static ssize_t ufs_sec_post_ffu_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct ufs_hba *hba = dev_get_drvdata(dev);
+	struct scsi_device *sdp_wlu;
+	struct scsi_device *sdp;
+	u32 ahit_backup = hba->ahit;
+	unsigned long flags;
+	int ret = 0;
+
+#if IS_ENABLED(CONFIG_SCSI_UFS_TEST_MODE)
+	dev_err(hba->dev, "post_ffu is not allowed if test mode is enabled\n");
+
+	return -EINVAL;
+#endif
+
+	/* check product name string */
+	if (strncmp(buf, (char *)hba->dev_info.model, strlen(hba->dev_info.model)))
+		return -EINVAL;
+
+	dev_info(hba->dev, "post_ffu start\n");
+
+	pm_runtime_get_sync(hba->dev);
+
+	spin_lock_irqsave(hba->host->host_lock, flags);
+	sdp_wlu = hba->sdev_ufs_device;
+	if (sdp_wlu) {
+		ret = scsi_device_get(sdp_wlu);
+		if (!ret && !scsi_device_online(sdp_wlu)) {
+			ret = -ENODEV;
+			scsi_device_put(sdp_wlu);
+		}
+	} else {
+		ret = -ENODEV;
+	}
+	spin_unlock_irqrestore(hba->host->host_lock, flags);
+
+	if (ret)
+		goto resume_rpm;
+
+	/* set SDEV_QUIESCE */
+	shost_for_each_device(sdp, hba->host)
+		scsi_device_quiesce(sdp);
+
+	/* wait for clear outstanding requests after queue quiesce */
+	if (ufs_sec_wait_for_clear_pending(hba, USEC_PER_SEC)) {
+		dev_err(dev, "post_ffu: doorbell clr timedout 1s.\n");
+		ret = -ETIMEDOUT;
+		goto resume_scsi_dev;
+	}
+
+	/* disable AH8 */
+	ufshcd_auto_hibern8_update(hba, 0);
+
+	ret = ufs_sec_send_pon(hba);
+	if (ret) {
+		/* if PON fails, do not reset UFS device */
+		dev_err(dev, "post_ffu: pon failed.(%d)\n", ret);
+		ret = -EBUSY;
+	} else {
+		/* reset UFS by eh_work */
+		ufs_sec_reset_device(hba);
+	}
+
+	/* enable AH8 after UFS reset */
+	ufshcd_auto_hibern8_update(hba, ahit_backup);
+
+resume_scsi_dev:
+	/* set SDEV_RUNNING */
+	shost_for_each_device(sdp, hba->host)
+		scsi_device_resume(sdp);
+
+	scsi_device_put(sdp_wlu);
+
+resume_rpm:
+	pm_runtime_put(hba->dev);
+
+	if (ret) {
+		dev_err(hba->dev, "post_ffu error(%d).\n", ret);
+		return ret;
+	}
+
+	dev_info(hba->dev, "post_ffu finish\n");
+
+	return count;
+}
+static DEVICE_ATTR(post_ffu, 0220, NULL, ufs_sec_post_ffu_store);
+
 void ufs_sec_create_sysfs(struct ufs_hba *hba)
 {
 	/* sec specific vendor sysfs nodes */
@@ -201,6 +374,9 @@ void ufs_sec_create_sysfs(struct ufs_hba *hba)
 					&dev_attr_flt) < 0)
 			pr_err("Fail to create status sysfs file\n");
 		if (device_create_file(sec_ufs_cmd_dev,
+					&dev_attr_flt) < 0)
+			pr_err("Fail to create status sysfs file\n");
+		if (device_create_file(sec_ufs_cmd_dev,
 					&dev_attr_lc) < 0)
 			pr_err("Fail to create status sysfs file\n");
 		if (device_create_file(sec_ufs_cmd_dev,
@@ -212,6 +388,9 @@ void ufs_sec_create_sysfs(struct ufs_hba *hba)
 		if (device_create_file(sec_ufs_cmd_dev,
 					&dev_attr_hist) < 0)
 			pr_err("Fail to create hist sysfs file\n");
+		if (device_create_file(sec_ufs_cmd_dev,
+					&dev_attr_post_ffu) < 0)
+			pr_err("Fail to create post_ffu sysfs file\n");
 	}
 }
 /* UFS info nodes : end */
