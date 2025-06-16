@@ -2069,10 +2069,15 @@ int __prepare_IMB_info(struct npu_session *session, struct addr_info **IMB_av, s
 	return ret;
 
 p_err:
-	if (likely(IMB_info))
+	if (likely(IMB_info)) {
 		kfree(IMB_info);
-	if (likely(IMB_mem_buf))
+		session->IMB_info = NULL;
+	}
+	if (likely(IMB_mem_buf)) {
 		kfree(IMB_mem_buf);
+		session->IMB_mem_buf = NULL;
+	}
+
 	return ret;
 }
 
@@ -2132,9 +2137,10 @@ p_err:
 #ifndef CONFIG_NPU_USE_IMB_ALLOCATOR
 	npu_memory_free(session->memory, IMB_mem_buf);
 #endif
-
-	kfree(IMB_mem_buf);
-	session->IMB_mem_buf = NULL;
+	if (likely(IMB_mem_buf)) {
+		kfree(IMB_mem_buf);
+		session->IMB_mem_buf = NULL;
+	}
 
 	return ret;
 }

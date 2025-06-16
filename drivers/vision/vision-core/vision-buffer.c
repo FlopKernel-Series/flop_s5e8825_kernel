@@ -358,6 +358,7 @@ static int __vb_unmap_dmabuf(struct vb_queue *q, struct vb_buffer *buffer)
 		dma_buf_put(buffer->dma_buf);
 
 	buffer->attachment = NULL;
+	buffer->dma_buf = NULL;
 	buffer->sgt = NULL;
 	buffer->daddr = 0;
 	buffer->vaddr = NULL;
@@ -1309,7 +1310,10 @@ static int __vb_queue_stop(struct vb_queue *q, int is_forced)
 		}
 	}
 
-	kfree(q->format.formats);
+	if (q->format.formats) {
+		kfree(q->format.formats);
+		q->format.formats = NULL;
+	}
 
 	if (q->num_buffers != 0) {
 		vision_err("memroy leakage is issued(%d)\n", q->num_buffers);
