@@ -46,3 +46,9 @@ jobs:
         run: |
           cross clippy --manifest-path userspace/ksud_magic/Cargo.toml --target aarch64-linux-android --release
           cross clippy --manifest-path userspace/ksud_overlayfs/Cargo.toml --target aarch64-linux-android --release
+
+          cross clippy --manifest-path userspace/ksud_magic/Cargo.toml --target armv7-linux-androideabi --release
+          cross clippy --manifest-path userspace/ksud_overlayfs/Cargo.toml --target armv7-linux-androideabi --release
+
+          cross clippy --manifest-path userspace/ksud_magic/Cargo.toml --target x86_64-linux-android --release
+          cross clippy --manifest-path userspace/ksud_overlayfs/Cargo.toml --target x86_64-linux-android --release

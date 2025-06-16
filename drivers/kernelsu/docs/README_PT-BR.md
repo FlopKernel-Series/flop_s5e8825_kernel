@@ -11,9 +11,6 @@ Uma solução root baseada em kernel para dispositivos Android.
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![GitHub License](https://img.shields.io/github/license/KernelSU-Next/KernelSU-Next?logo=gnu)](/LICENSE)
 
-> [!IMPORTANT]  
-> O suporte para instalação do KernelSU Next no modo LKM através do gerenciador foi desativado. Você ainda pode atualizá-lo manualmente reempacotando `init_boot`.
-
 ## Características
 
 1. `su` e gerenciamento de acesso root baseado em kernel.
@@ -27,7 +24,7 @@ KernelSU Next suporta oficialmente a maioria dos kernels Android a partir de 4.4
  - Os kernels GKI 1.0 (4.19 - 5.4) precisam ser reconstruídos com o driver KernelSU.
  - Os kernels EOL (<4.14) também precisam ser reconstruídos com o driver KernelSU (3.18+ é experimental e pode precisar portar algumas funções).
 
-Atualmente, apenas a arquitetura `arm64-v8a` é compatível.
+Atualmente, apenas as arquiteturas `arm64-v8a`, `armeabi-v7a` & `x86_64` são compatíveis.
 
 ## Uso
 
