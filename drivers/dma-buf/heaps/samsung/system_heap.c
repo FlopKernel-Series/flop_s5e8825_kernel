@@ -62,6 +62,7 @@ static struct page *alloc_largest_available(unsigned long size,
 	return NULL;
 }
 
+#define DMA_HEAP_ALLOC_MAX	(totalram_pages() >> 1)
 static struct dma_buf *system_heap_allocate(struct dma_heap *heap, unsigned long len,
 					    unsigned long fd_flags, unsigned long heap_flags)
 {
@@ -76,6 +77,12 @@ static struct dma_buf *system_heap_allocate(struct dma_heap *heap, unsigned long
 	int i, ret;
 
 	dma_heap_event_begin();
+
+	if (len / PAGE_SIZE > DMA_HEAP_ALLOC_MAX) {
+		perrfn("Requested size %zu is too large, it should be under %ld",
+		       len, DMA_HEAP_ALLOC_MAX << PAGE_SHIFT);
+		return ERR_PTR(-ENOMEM);
+	}
 
 	if (dma_heap_flags_video_aligned(samsung_dma_heap->flags))
 		len = dma_heap_add_video_padding(len);
