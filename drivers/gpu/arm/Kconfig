@@ -39,9 +39,6 @@ config MALI_DDK_VALHALL_R32P1
 config MALI_DDK_VALHALL_R38P1
 	bool "Valhall r38p1 driver"
 
-config MALI_DDK_VALHALL_R44P1
-	bool "Valhall r44p1 driver"
-
 endchoice
 
 if MALI_DDK_VALHALL_R26P0
@@ -54,10 +51,6 @@ endif
 
 if MALI_DDK_VALHALL_R38P1
 source "drivers/gpu/arm/bv_r38p1/Kconfig"
-endif
-
-if MALI_DDK_VALHALL_R44P1
-source "drivers/gpu/arm/v_r44p1/Kconfig"
 endif
 
 endmenu
