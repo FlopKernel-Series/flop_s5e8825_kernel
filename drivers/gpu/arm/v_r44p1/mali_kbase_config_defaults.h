@@ -29,7 +29,6 @@
 
 /* Include mandatory definitions per platform */
 #include <mali_kbase_config_platform.h>
-#include <linux/exynos/s5e8825_clk_gpu.h>
 
 enum {
 	/* Use unrestricted Address ID width on the AXI bus. */
@@ -262,7 +261,7 @@ enum {
  * is enabled the value will be read from there, otherwise this should be
  * overridden by defining GPU_FREQ_KHZ_MAX in the platform file.
  */
-#define DEFAULT_GPU_FREQ_KHZ_MAX (GPU_FREQ_KHZ_MAX)
+#define DEFAULT_GPU_FREQ_KHZ_MAX (5000)
 
 /* Default timeout for task execution on an endpoint
  *
