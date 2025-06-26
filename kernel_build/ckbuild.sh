@@ -4,6 +4,9 @@
 # Based on build script for Quicksilver, by Ghostrider.
 # Copyright (C) 2020-2021 Adithya R. (original version)
 # Copyright (C) 2022-2025 Flopster101 (rewrite)
+#
+# Credits to Gabriel2392 for logic in post.sh, see file for more info.
+#
 
 ## Variables
 set -e

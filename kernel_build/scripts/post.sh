@@ -1,3 +1,8 @@
+#
+# The following logic for module packaging was originally written by Gabriel2392.
+#
+# https://github.com/Gabriel2392/android_kernel_samsung_a33x_xy
+#
 kernel_modules() {
     local i
     local missing_modules
