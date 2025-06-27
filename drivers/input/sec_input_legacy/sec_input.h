@@ -53,6 +53,7 @@
 #endif
 #endif
 #include <linux/sec_detect.h>
+#include <linux/workarounds.h>
 
 #include "sec_cmd.h"
 #include "sec_tclm_v2.h"

@@ -55,6 +55,7 @@
 #include <linux/errno.h>
 #include <linux/init.h>
 #include <linux/sec_detect.h>
+#include <linux/workarounds.h>
 
 #if IS_ENABLED(CONFIG_INPUT_SEC_TRUSTED_TOUCH)
 #include "sec_trusted_touch.h"
