@@ -176,6 +176,30 @@ static bool initargs_found;
 static char *execute_command;
 static char *ramdisk_execute_command = "/init";
 
+/* Workarounds */
+static bool aosp_mode = false;
+
+static int __init set_aosp_mode(char *val)
+{
+	int tmp = aosp_mode;
+
+	if (get_option(&val, &tmp)) {
+		aosp_mode = tmp != 0;
+	}
+
+	pr_info("Workaround: aosp_mode=%s\n",
+			aosp_mode ? "enabled" : "disabled");
+
+	return 0;
+}
+__setup("aosp_mode=", set_aosp_mode);
+
+bool is_aosp_mode(void)
+{
+	return aosp_mode;
+}
+EXPORT_SYMBOL(is_aosp_mode);
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.
