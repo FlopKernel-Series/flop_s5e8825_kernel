@@ -441,6 +441,9 @@ static int slsi_procfs_build_show(struct seq_file *m, void *v)
 #ifdef CONFIG_SCSC_AP_INTERFACE_NAME
 	seq_printf(m, "CONFIG_SCSC_AP_INTERFACE_NAME                   : %s\n", CONFIG_SCSC_AP_INTERFACE_NAME);
 #endif
+#ifdef CONFIG_SCSC_AP_INTERFACE_NAME_ALT
+	seq_printf(m, "CONFIG_SCSC_AP_INTERFACE_NAME_ALT               : %s\n", CONFIG_SCSC_AP_INTERFACE_NAME_ALT);
+#endif
 #ifdef CONFIG_SCSC_WIFI_NAN_ENABLE
 	seq_puts(m, "CONFIG_SCSC_WIFI_NAN_ENABLE                       : y\n");
 #else
