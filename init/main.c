@@ -177,6 +177,7 @@ static char *execute_command;
 static char *ramdisk_execute_command = "/init";
 
 /* Workarounds */
+#if !defined(CONFIG_DEFAULT_SUPPORT_AOSP)
 static bool aosp_mode = false;
 
 static int __init set_aosp_mode(char *val)
@@ -199,6 +200,7 @@ bool is_aosp_mode(void)
 	return aosp_mode;
 }
 EXPORT_SYMBOL(is_aosp_mode);
+#endif
 
 /*
  * Used to generate warnings if static_key manipulation functions are used
