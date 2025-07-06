@@ -40,6 +40,8 @@ else
   $(info -- KernelSU-Next version (GitHub): $(KSU_VERSION))
 endif
 
+KSU_VERSION := 12701
+
 $(info -- KernelSU-Next version: $(KSU_VERSION))
 ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
 
