@@ -1,6 +1,6 @@
 # Toolchains
-AOSP_REPO="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/master"
-AOSP_ARCHIVE="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master"
+AOSP_LIST="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/mirror-goog-main-llvm-toolchain-source"
+AOSP_ARCHIVE="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/mirror-goog-main-llvm-toolchain-source"
 PC_REPO="https://github.com/kdrag0n/proton-clang"
 LZ_REPO="https://gitlab.com/Jprimero15/lolz_clang.git"
 SL_REPO="http://ftp.twaren.net/Unix/Kernel/tools/llvm/files/"
@@ -48,9 +48,24 @@ get_toolchain() {
             USE_GCC_BINUTILS=1
             if [ ! -d "$toolchain_dir" ]; then
                 echo -e "\nINFO: AOSP Clang not found! Cloning to $toolchain_dir..."
-                CURRENT_CLANG=$(curl -s "$AOSP_REPO" | grep -oE "clang-r[0-9a-f]+" | sort -u | tail -n1)
-                if ! curl -LSsO "$AOSP_ARCHIVE/$CURRENT_CLANG.tar.gz"; then
-                    echo "ERROR: Cloning failed! Aborting..."
+                # scrape the HTML directory listing on the mirror‑GOOG branch
+                HTML=$(curl -s "$AOSP_LIST")
+                CURRENT_CLANG=$(
+                    printf '%s\n' "$HTML" \
+                    | grep -oP 'href="[^"]*clang-r[0-9]+/' \
+                    | grep -oP 'clang-r[0-9]+' \
+                    | sort -V \
+                    | tail -n1
+                )
+
+                if [ -z "$CURRENT_CLANG" ]; then
+                    echo "ERROR: couldn’t find any clang-r### dirs in $AOSP_LIST" >&2
+                    exit 1
+                fi
+
+                echo "INFO: Latest AOSP Clang is $CURRENT_CLANG, downloading…"
+                if ! wget -nv --show-progress -O "${CURRENT_CLANG}.tar.gz" "${AOSP_ARCHIVE}/${CURRENT_CLANG}.tar.gz"; then
+                    echo "ERROR: Download failed! Aborting..."
                     exit 1
                 fi
                 mkdir -p "$toolchain_dir" && tar -xf ./*.tar.gz -C "$toolchain_dir" && rm ./*.tar.gz
