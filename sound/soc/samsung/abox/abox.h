@@ -552,6 +552,7 @@ struct abox_data {
 	struct work_struct boot_done_work;
 	struct delayed_work boot_clear_work;
 	struct delayed_work wdt_work;
+	struct delayed_work retry_firmware_work;
 	unsigned long long audio_mode_time;
 	enum audio_mode audio_mode;
 	enum sound_type sound_type;

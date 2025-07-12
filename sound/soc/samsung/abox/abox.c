@@ -131,6 +131,33 @@ static void abox_cpu_power(bool on);
 static int abox_cpu_enable(bool enable);
 static int abox_cpu_pm_ipc(struct abox_data *data, bool resume);
 static void abox_boot_done(struct device *dev, unsigned int version);
+static int abox_ext_bin_request(struct device *dev, struct abox_extra_firmware *efw);
+
+static void abox_retry_firmware_work_func(struct work_struct *work)
+{
+	struct delayed_work *dwork = to_delayed_work(work);
+	struct abox_data *data = container_of(dwork, struct abox_data, retry_firmware_work);
+	struct device *dev = data->dev;
+	struct abox_extra_firmware *efw;
+	bool any_retried = false;
+
+	abox_dbg(dev, "%s\n", __func__);
+
+	/* Only retry extra firmware */
+	list_for_each_entry(efw, &data->firmware_extra, list) {
+		if (!efw->firmware) {
+			abox_dbg(dev, "Retrying firmware load for %s\n", efw->name);
+			abox_ext_bin_request(dev, efw);
+			any_retried = true;
+		}
+	}
+
+	/* If we retried any firmware, schedule another retry in case some still failed */
+	if (any_retried) {
+		abox_dbg(dev, "Scheduling another firmware retry\n");
+		schedule_delayed_work(&data->retry_firmware_work, msecs_to_jiffies(500));
+	}
+}
 
 void abox_set_magic(struct abox_data *data, unsigned int val)
 {
@@ -2705,8 +2732,19 @@ static int abox_ext_bin_request(struct device *dev,
 		abox_warn(dev, "%s doesn't exist\n", efw->name);
 	else if (ret < 0)
 		abox_err(dev, "%s request fail: %d\n", efw->name, ret);
-	else
-		abox_info(dev, "%s is loaded\n", efw->name);
+	else {
+		/* Validate firmware - reject empty files */
+		if (!efw->firmware || efw->firmware->size == 0) {
+			abox_warn(dev, "%s invalid firmware (0 bytes) - will retry later\n",
+					efw->name);
+			release_firmware(efw->firmware);
+			efw->firmware = NULL;
+			ret = -EAGAIN;
+		} else {
+			abox_info(dev, "%s is loaded (%zu bytes)\n",
+					efw->name, efw->firmware->size);
+		}
+	}
 
 	mutex_unlock(&efw->lock);
 
@@ -2723,8 +2761,17 @@ static void abox_ext_bin_download(struct abox_data *data,
 	abox_dbg(dev, "%s\n", __func__);
 
 	mutex_lock(&efw->lock);
-	if (!efw->firmware)
+	if (!efw->firmware) {
+		abox_err(dev, "%s: no firmware to download\n", efw->name);
 		goto unlock;
+	}
+
+	/* Validate firmware before downloading */
+	if (!efw->firmware || efw->firmware->size == 0) {
+		abox_err(dev, "%s: invalid firmware (0 bytes)\n",
+				efw->name);
+		goto unlock;
+	}
 
 	switch (efw->area) {
 	case 0:
@@ -2755,8 +2802,8 @@ static void abox_ext_bin_download(struct abox_data *data,
 	}
 
 	memcpy(base + efw->offset, efw->firmware->data, efw->firmware->size);
-	abox_dbg(dev, "%s is downloaded %u, %#x\n", efw->name,
-			efw->area, efw->offset);
+	abox_dbg(dev, "%s is downloaded %u, %#x (%zu bytes)\n", efw->name,
+			efw->area, efw->offset, efw->firmware->size);
 unlock:
 	mutex_unlock(&efw->lock);
 }
@@ -3159,8 +3206,16 @@ static int abox_download_firmware(struct device *dev)
 	int ret;
 
 	ret = abox_core_download_firmware();
-	if (ret)
-		return ret;
+	if (ret < 0) {
+		/* If core firmware failed, try one more time after a short delay */
+		abox_dbg(dev, "Core firmware download failed, retrying once\n");
+		msleep(100);
+		ret = abox_core_download_firmware();
+		if (ret < 0) {
+			abox_dbg(dev, "Core firmware download failed after retry\n");
+			return ret;
+		}
+	}
 
 	/* Requesting missing extra firmware is waste of time. */
 	if (!requested) {
@@ -4029,6 +4084,7 @@ static int samsung_abox_probe(struct platform_device *pdev)
 	INIT_WORK(&data->boot_done_work, abox_boot_done_work_func);
 	INIT_DEFERRABLE_WORK(&data->boot_clear_work, abox_boot_clear_work_func);
 	INIT_DELAYED_WORK(&data->wdt_work, abox_wdt_work_func);
+	INIT_DELAYED_WORK(&data->retry_firmware_work, abox_retry_firmware_work_func);
 	INIT_LIST_HEAD(&data->firmware_extra);
 	INIT_LIST_HEAD(&data->ipc_actions);
 	INIT_LIST_HEAD(&data->iommu_maps);
@@ -4339,6 +4395,7 @@ static int samsung_abox_remove(struct platform_device *pdev)
 
 	abox_remove_pcmc(data);
 	abox_proc_remove();
+	cancel_delayed_work_sync(&data->retry_firmware_work);
 	pm_runtime_disable(dev);
 #ifndef CONFIG_PM
 	abox_runtime_suspend(dev);

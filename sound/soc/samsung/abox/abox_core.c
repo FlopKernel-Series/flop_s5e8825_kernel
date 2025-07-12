@@ -427,6 +427,13 @@ int abox_imgloader_mem_setup(struct imgloader_desc *desc, const u8 *metadata, si
 	if (!fw)
 		return -EINVAL;
 
+	/* Validate firmware before processing */
+	if (!fw->firmware || fw->firmware->size < 1024) {
+		abox_err(desc->dev, "%s: firmware is invalid (%zu bytes)\n",
+				fw->name, fw->firmware ? fw->firmware->size : 0);
+		return -EINVAL;
+	}
+
 	switch (fw->area) {
 	default:
 		abox_err(desc->dev, "%s: unknown area(%d)\n", __func__,
@@ -448,7 +455,8 @@ int abox_imgloader_mem_setup(struct imgloader_desc *desc, const u8 *metadata, si
 		*fw_phys_base = data->sram_phys + fw->offset;
 		*fw_bin_size = fw->firmware->size;
 		*fw_mem_size = fw->firmware->size;
-		abox_info(desc->dev, "Loaded ABOX Signed Firmware : %s\n", fw->name);
+		abox_info(desc->dev, "Loaded ABOX Signed Firmware : %s (%zu bytes)\n",
+				fw->name, fw->firmware->size);
 	}
 
 	return 0;
@@ -517,8 +525,20 @@ static int abox_core_load_firmware(struct abox_core *core,
 	int ret;
 
 	ret = request_firmware(&fw->firmware, fw->name, core->dev);
-	if (ret >= 0)
-		return 0;
+	if (ret >= 0) {
+		/* Validate firmware - reject empty files */
+		if (!fw->firmware || fw->firmware->size == 0) {
+			abox_warn(dev, "%s invalid firmware (0 bytes) - will retry later\n",
+					fw->name);
+			release_firmware(fw->firmware);
+			fw->firmware = NULL;
+			ret = -EAGAIN;
+		} else {
+			abox_info(dev, "%s is loaded (%zu bytes)\n", 
+				fw->name, fw->firmware->size);
+			return 0;
+		}
+	}
 
 	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
 			fw->name, dev, GFP_KERNEL, &fw->firmware,
@@ -554,9 +574,29 @@ int abox_core_download_firmware(void)
 
 			if (!fw->firmware) {
 				ret |= abox_core_load_firmware(core, fw);
-				if (ret < 0)
+				if (ret < 0) {
+					/* If firmware loading failed, clear any invalid firmware and continue */
+					if (fw->firmware) {
+						release_firmware(fw->firmware);
+						fw->firmware = NULL;
+					}
 					continue;
+				}
 			}
+
+			/* Validate firmware before processing */
+			if (!fw->firmware || fw->firmware->size == 0) {
+				abox_err(dev, "%s: firmware is invalid (0 bytes)\n", 
+					fw->name);
+				/* Clear invalid firmware so it can be retried */
+				if (fw->firmware) {
+					release_firmware(fw->firmware);
+					fw->firmware = NULL;
+				}
+				ret = -EAGAIN;
+				continue;
+			}
+
 			if (IS_ENABLED(CONFIG_EXYNOS_IMGLOADER)) {
 				if (fw->code_signed && fw->fw_imgloader_desc) {
 					ret |= imgloader_boot(fw->fw_imgloader_desc);
@@ -569,7 +609,7 @@ int abox_core_download_firmware(void)
 					continue;
 				}
 			}
-			abox_dbg(dev, "%s: download %s\n", __func__, fw->name);
+			abox_dbg(dev, "%s: download %s (%zu bytes)\n", __func__, fw->name, fw->firmware->size);
 			left = fw->offset + fw->firmware->size;
 			switch (fw->area) {
 			default:
