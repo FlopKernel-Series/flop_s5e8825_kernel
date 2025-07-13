@@ -682,10 +682,8 @@ static void write_softap_info_file(struct slsi_dev *sdev)
 
 	if (!fp)  {
 		SLSI_WARN(sdev, "%s doesn't exist\n", filepath);
-		buf = NULL;
 	} else if (IS_ERR(fp)) {
 		SLSI_WARN(sdev, "%s open returned error %d\n", filepath, IS_ERR(fp));
-		buf = NULL;
 	} else {
 		kernel_write(fp, buf, strlen(buf), 0);
 	}
@@ -7970,7 +7968,9 @@ void slsi_collect_chipset_logs(struct work_struct *work)
 	void                    *buffer = NULL;
 	size_t size;
 	size_t bytes = 0;
+#ifdef CONFIG_SCSC_WLBTD
 	int ret = 0;
+#endif
 	char build_id_fw[128];
 	char build_id_drv[64];
 	size_t total_header;
