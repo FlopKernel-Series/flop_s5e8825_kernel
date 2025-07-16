@@ -17,6 +17,8 @@
  */
 #include "goodix_ts_core.h"
 
+#include <linux/workarounds.h>
+
 int goodix_set_cmd(struct goodix_ts_data *ts, u8 reg, u8 mode)
 {
 	struct goodix_ts_cmd temp_cmd;
@@ -1758,6 +1760,10 @@ static int ear_detect_enable_save(void *device_data)
 		if (sec->block_ed3)
 			sec->cmd_param[0] = 1;
 	}
+
+	// Force ed3 for aosp
+	if (is_aosp_mode() && sec->cmd_param[0] == 1)
+		sec->cmd_param[0] = 3;
 
 	ts->plat_data->ed_enable = sec->cmd_param[0];
 	ts_info("ear detect mode(%d), block_ed3=%d", ts->plat_data->ed_enable, sec->block_ed3);

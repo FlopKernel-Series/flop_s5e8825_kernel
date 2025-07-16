@@ -15,6 +15,8 @@
 
 #include "nt36xxx.h"
 
+#include <linux/workarounds.h>
+
 //int nvt_ts_nt36523_ics_i2c_read(struct nvt_ts_data *ts, u32 address, u8 *data, u16 len);
 //int nvt_ts_nt36523_ics_i2c_write(struct nvt_ts_data *ts, u32 address, u8 *data, u16 len);
 
@@ -2225,6 +2227,10 @@ static void ear_detect_enable(void *device_data)
 		if (sec->block_ed3)
 			sec->cmd_param[0] = 1;
 	}
+
+	// Force ed3 for aosp
+	if (is_aosp_mode() && sec->cmd_param[0] == 1)
+		sec->cmd_param[0] = 3;
 
 	if (ts->power_status == POWER_OFF_STATUS || ts->power_status == LP_MODE_EXIT) {
 		ts->ed_reset_flag = true;
