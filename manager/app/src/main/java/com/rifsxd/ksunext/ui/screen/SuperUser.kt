@@ -22,10 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.ramcosta.composedestinations.annotation.Destination
@@ -57,7 +57,11 @@ fun SuperUserScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             SearchAppBar(
-                title = { Text(stringResource(R.string.superuser)) },
+                title = { Text(
+                    text = stringResource(R.string.superuser),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Black,
+                ) },
                 searchText = viewModel.search,
                 onSearchTextChange = { viewModel.search = it },
                 onClearClick = { viewModel.search = "" },
@@ -92,7 +96,7 @@ fun SuperUserScreen(navigator: DestinationsNavigator) {
                                     }
                                 )
                             }, onClick = {
-                                viewModel.showSystemApps = !viewModel.showSystemApps
+                                viewModel.updateShowSystemApps(!viewModel.showSystemApps)
                                 showDropdown = false
                             })
                         }
@@ -134,10 +138,17 @@ private fun AppItem(
 ) {
     ListItem(
         modifier = Modifier.clickable(onClick = onClickListener),
-        headlineContent = { Text(app.label) },
+        headlineContent = { Text(
+            text = app.label,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+        ) },
         supportingContent = {
             Column {
-                Text(app.packageName)
+                Text(
+                    text = app.packageName,
+                    style = MaterialTheme.typography.bodySmall
+                )
 
                 Spacer(modifier = Modifier.height(4.dp))
                 
@@ -163,8 +174,16 @@ private fun AppItem(
                         LabelItem(
                             text = "CUSTOM",
                             style = LabelItemDefaults.style.copy(
-                                containerColor = MaterialTheme.colorScheme.onTertiary,
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        )
+                    } else if (!app.allowSu && !Natives.uidShouldUmount(app.uid)) {
+                        LabelItem(
+                            text = "DEFAULT",
+                            style = LabelItemDefaults.style.copy(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             )
                         )
                     }

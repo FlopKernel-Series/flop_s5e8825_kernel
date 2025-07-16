@@ -9,8 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,6 +21,7 @@ import com.rifsxd.ksunext.ksuApp
 import com.rifsxd.ksunext.ui.util.HanziToPinyin
 import com.rifsxd.ksunext.ui.util.listModules
 import com.rifsxd.ksunext.ui.util.getModuleSize
+import com.rifsxd.ksunext.ui.util.zygiskRequired
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -48,7 +47,8 @@ class ModuleViewModel : ViewModel() {
         val hasActionScript: Boolean,
         val dirId: String,
         val size: Long,
-        val banner: String
+        val banner: String,
+        val zygiskRequired: Boolean
     )
 
     data class ModuleUpdateInfo(
@@ -67,9 +67,15 @@ class ModuleViewModel : ViewModel() {
     var sortZToA by mutableStateOf(false)
     var sortSizeLowToHigh by mutableStateOf(false)
     var sortSizeHighToLow by mutableStateOf(false)
+    var sortEnabledFirst by mutableStateOf(false)
+    var sortActionFirst by mutableStateOf(false)
+    var sortWebUiFirst by mutableStateOf(false)
 
     val moduleList by derivedStateOf {
         val comparator = when {
+            sortWebUiFirst -> compareByDescending<ModuleInfo> { it.hasWebUi }
+            sortEnabledFirst -> compareByDescending<ModuleInfo> { it.enabled }
+            sortActionFirst -> compareByDescending<ModuleInfo> { it.hasActionScript }
             sortAToZ -> compareBy<ModuleInfo> { it.name.lowercase() }
             sortZToA -> compareByDescending<ModuleInfo> { it.name.lowercase() }
             sortSizeLowToHigh -> compareBy<ModuleInfo> { it.size }
@@ -108,21 +114,9 @@ class ModuleViewModel : ViewModel() {
         
         viewModelScope.launch {
 
-            withContext(Dispatchers.Main) {
-                isRefreshing = true
-            }
+            isRefreshing = true
 
             withContext(Dispatchers.IO) {
-                withTimeoutOrNull(TIMEOUT_MILLIS) {
-                    while (!Platform.isAlive) {
-                        delay(500)
-                    }
-                } ?: run {
-                    isRefreshing = false
-                    Log.e(TAG, "Platform is not alive, aborting fetchModuleList")
-                    return@withContext
-                }
-
                 val start = SystemClock.elapsedRealtime()
                 val oldModuleList = modules
 
@@ -139,6 +133,7 @@ class ModuleViewModel : ViewModel() {
                             val dirId = obj.getString("dir_id")
                             val moduleDir = File("/data/adb/modules/$dirId")
                             val size = getModuleSize(moduleDir)
+                            val zygiskRequired = zygiskRequired(moduleDir)
 
                             ModuleInfo(
                                 id,
@@ -155,7 +150,8 @@ class ModuleViewModel : ViewModel() {
                                 obj.optBoolean("action"),
                                 dirId,
                                 size,
-                                obj.optString("banner")
+                                obj.optString("banner"),
+                                zygiskRequired
                             )
                         }.toList()
                     isNeedRefresh = false
