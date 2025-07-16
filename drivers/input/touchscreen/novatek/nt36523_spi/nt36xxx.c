@@ -2403,6 +2403,9 @@ void nvt_ts_proximity_report(uint8_t *data)
 	if (is_aosp_mode_fast() && ts->power_status != LP_MODE_STATUS && ts->touch_count)
 		return;
 
+	if (is_aosp_mode_fast())
+		status = !status;
+
 	input_info(true, &ts->client->dev,"proximity->status = %d\n", status);
 
 	input_info(true, &ts->client->dev, "%s hover : %d\n", __func__, status);

@@ -1415,6 +1415,8 @@ static void goodix_ts_report_status(struct goodix_ts_data *ts, struct goodix_ts_
 	} else if (ts_event->status_type == TYPE_STATUS_EVENT_VENDOR_INFO) {
 		if (ts_event->status_id == STATUS_EVENT_VENDOR_PROXIMITY) {
 			ts->ts_event.hover_event = ts_event->status_data[0];
+			if (is_aosp_mode_fast())
+				ts_event->status_data[0] = !ts_event->status_data[0];
 			if (!is_aosp_mode_fast() ||
 			    atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM ||
 			    !ts->plat_data->touch_count)
