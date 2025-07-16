@@ -1,5 +1,6 @@
 package com.rifsxd.ksunext.ui.screen
 
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
@@ -41,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -66,6 +68,9 @@ import com.rifsxd.ksunext.R
 import com.rifsxd.ksunext.ui.component.rememberConfirmDialog
 import com.rifsxd.ksunext.ui.component.ConfirmResult
 import com.rifsxd.ksunext.ui.component.KeyEventBlocker
+import com.rifsxd.ksunext.ui.theme.ORANGE
+import com.rifsxd.ksunext.ui.theme.GREEN
+import com.rifsxd.ksunext.ui.theme.RED
 import com.rifsxd.ksunext.ui.util.FlashResult
 import com.rifsxd.ksunext.ui.util.LkmSelection
 import com.rifsxd.ksunext.ui.util.LocalSnackbarHost
@@ -78,9 +83,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-import androidx.compose.ui.platform.LocalContext
-import android.app.Activity
 
 enum class FlashingStatus {
     FLASHING,
@@ -149,6 +151,10 @@ fun FlashScreen(
         onDispose {
             view.keepScreenOn = false
         }
+    }
+
+    BackHandler(enabled = flashing == FlashingStatus.FLASHING) {
+        // Disable back button if flashing is running
     }
 
     BackHandler(enabled = flashing != FlashingStatus.FLASHING) {
@@ -400,7 +406,14 @@ private fun TopBar(
                         FlashingStatus.SUCCESS -> R.string.flash_success
                         FlashingStatus.FAILED -> R.string.flash_failed
                     }
-                )
+                ),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Black,
+                color = when (status) {
+                    FlashingStatus.FLASHING -> ORANGE
+                    FlashingStatus.SUCCESS -> GREEN
+                    FlashingStatus.FAILED -> RED
+                }
             )
         },
         navigationIcon = {
