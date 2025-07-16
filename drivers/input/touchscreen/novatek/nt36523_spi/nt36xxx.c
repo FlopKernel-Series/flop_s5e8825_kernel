@@ -31,6 +31,8 @@
 #include <linux/jiffies.h>
 #endif /* #if NVT_TOUCH_ESD_PROTECT */
 
+#include <linux/workarounds.h>
+
 int nvt_ts_sec_fn_init(struct nvt_ts_data *ts);
 void nvt_ts_sec_fn_remove(struct nvt_ts_data *ts);
 
@@ -2399,6 +2401,9 @@ void nvt_ts_proximity_report(uint8_t *data)
 	}
 
 	status = p_event_proximity->status;
+
+	if (is_aosp_mode())
+		status = !status;
 
 	input_info(true, &ts->client->dev,"proximity->status = %d\n", status);
 
