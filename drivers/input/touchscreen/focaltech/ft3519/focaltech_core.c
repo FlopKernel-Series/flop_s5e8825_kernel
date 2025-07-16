@@ -458,7 +458,7 @@ void old_fts_release_all_finger(void)
 	}
 
 	if (is_aosp_mode())
-		ts_data->hover_event = !ts_data->hover_event;
+		ts_data->hover_event = !ts_data->hover_event ? 5 : 0;
 
 	if (ts_data->pdata->input_dev_proximity) {
 		ts_data->pocket_state = ts_data->hover_event = 0xff;
@@ -822,7 +822,7 @@ static int fts_read_pocket_result(struct fts_ts_data *ts_data)
 	}
 
 	if (is_aosp_mode())
-		ts_data->hover_event = !ts_data->hover_event;
+		ts_data->hover_event = !ts_data->hover_event ? 5 : 0;
 
 	if (!ts_data->legacy_mode)
 		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
@@ -852,7 +852,7 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 		ts_data->hover_event = (val >> 4);
 
 	if (is_aosp_mode())
-		ts_data->hover_event = !ts_data->hover_event;
+		ts_data->hover_event = !ts_data->hover_event ? 5 : 0;
 
 	if (!ts_data->legacy_mode)
 		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
