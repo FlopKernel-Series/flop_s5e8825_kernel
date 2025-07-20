@@ -1942,7 +1942,7 @@ static void emstune_boot(void)
 	spin_unlock_irqrestore(&emstune_lock, flags);
 
 	INIT_DELAYED_WORK(&emstune.boot.work, emstune_boot_done);
-	schedule_delayed_work(&emstune.boot.work, msecs_to_jiffies(40000));
+	queue_delayed_work(system_power_efficient_wq, &emstune.boot.work, msecs_to_jiffies(40000));
 }
 
 static int emstune_mode_init(struct device_node *dn)
