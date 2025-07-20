@@ -66,6 +66,8 @@ PREBUILT_RAMDISK="$KDIR/kernel_build/boot/ramdisk"
 MODULES_DIR="$DLKM_RAMDISK_DIR/lib/modules"
 OUT_KERNEL="$OUTDIR/arch/arm64/boot/Image"
 OUT_BOOTIMG="$KDIR/kernel_build/boot.img"
+OUT_BOOTIMG_ONEUI="$KDIR/kernel_build/boot_oneui.img"
+OUT_BOOTIMG_AOSP="$KDIR/kernel_build/boot_aosp.img"
 OUT_VENDORBOOTIMG="$KDIR/kernel_build/vendor_boot.img"
 OUT_DTBIMAGE="$TMPDIR/dtb.img"
 
@@ -193,7 +195,8 @@ if [ "$DO_PERM" == "1" ]; then
 fi
 
 ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
-TAR_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
+TAR_PATH_ONEUI="$KDIR/kernel_build/FloppyOneUI_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
+TAR_PATH_AOSP="$KDIR/kernel_build/FloppyAOSP_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
 
 echo -e "\nINFO: Build info:
 - Device: $DEVICE ($CODENAME)
@@ -234,6 +237,8 @@ prep_build() {
     echo -e "INFO: Compiler: $KBUILD_COMPILER_STRING\n"
 
     [ -f "$OUT_BOOTIMG" ] && rm -f "$OUT_BOOTIMG" || true
+    [ -f "$OUT_BOOTIMG_ONEUI" ] && rm -f "$OUT_BOOTIMG_ONEUI" || true
+    [ -f "$OUT_BOOTIMG_AOSP" ] && rm -f "$OUT_BOOTIMG_AOSP" || true
     [ -f "$OUT_VENDORBOOTIMG" ] && rm -f "$OUT_VENDORBOOTIMG" || true
 }
 

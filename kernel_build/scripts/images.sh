@@ -8,14 +8,33 @@ build_images() {
         python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
     fi
 
-    echo -e "\nINFO: Building boot image..."
+    # Build OneUI boot image (original kernel with aosp_mode=0)
     "$MKBOOTIMG" --header_version 4 \
         --kernel "$OUT_KERNEL" \
-        --output "$OUT_BOOTIMG" \
+        --output "$OUT_BOOTIMG_ONEUI" \
         --ramdisk "$PREBUILT_RAMDISK" \
         --os_version 15.0.0 \
         --os_patch_level "$MONTH" || exit 1
-    echo -e "INFO: Done!"
+    echo -e "INFO: OneUI boot.img created!"}
+
+    # Create AOSP boot image (patch kernel for aosp_mode=1)
+    local AOSP_KERNEL="$TMPDIR/Image_aosp"
+    cp "$OUT_KERNEL" "$AOSP_KERNEL"
+
+    # Patch kernel: aosp_mode=0 -> aosp_mode=1
+    "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_KERNEL" \
+        616f73705f6d6f64653d30 \
+        616f73705f6d6f64653d31 || exit 1
+
+    "$MKBOOTIMG" --header_version 4 \
+        --kernel "$AOSP_KERNEL" \
+        --output "$OUT_BOOTIMG_AOSP" \
+        --ramdisk "$PREBUILT_RAMDISK" \
+        --os_version 15.0.0 \
+        --os_patch_level "$MONTH" || exit 1
+    echo -e "INFO: AOSP boot.img created!"
+
+    rm -f "$AOSP_KERNEL"
 
     echo -e "\nINFO: Building vendor_boot image..."
     cd "$DLKM_RAMDISK_DIR"
