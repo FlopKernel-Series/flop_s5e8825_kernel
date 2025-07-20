@@ -63,9 +63,9 @@ elif echo "$DISTRO_IDS" | grep -Eq 'arch'; then
 elif echo "$DISTRO_IDS" | grep -Eq 'gentoo'; then
     GENTOO
 else
-	  echo ""
-	  echo "INFO: distro not supported, install manually: ${DEPS[*]}"
-	  echo ""
+    echo ""
+    echo "INFO: distro not supported, install manually: ${DEPS[*]}"
+    echo ""
 fi
 
 if [ "$DO_ZIP" = "1" ]; then
