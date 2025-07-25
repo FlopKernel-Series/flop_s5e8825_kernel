@@ -3917,7 +3917,7 @@ int is_ois_shift_mcu(struct v4l2_subdev *subdev)
 
 static void ois_center_shift_wrapper(struct v4l2_subdev *subdev, int16_t *value)
 {
-	if (true) {
+	if (sec_has_mcd_ois_angle_support()) {
 		ois_mcu_set_center_shift(subdev, value);
 	} else {
 		is_ois_shift_mcu(subdev);
