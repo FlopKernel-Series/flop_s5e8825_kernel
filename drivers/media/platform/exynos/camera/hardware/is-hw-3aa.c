@@ -770,10 +770,6 @@ config:
 		ret = __is_hw_3aa_change_sram_offset(hw_ip, instance, mode);
 	}
 #endif
-	if (!frame->shot) {
-		mserr_hw("frame->shot is NULL, skipping is_lib_isp_shot", instance, hw_ip);
-		return -EINVAL;
-	}
 	ret = is_lib_isp_shot(hw_ip, &hw_3aa->lib[instance], param_set, frame->shot);
 
 	/* Restore the CMDs in param_set. */
