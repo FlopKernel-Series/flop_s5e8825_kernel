@@ -1288,14 +1288,10 @@ void is_debug_s2d(bool en_s2d, const char *fmt, ...)
 		err("[DBG] S2D!!!: %s", buf);
 		dump_stack();
 
-        //if (dbg_snapshot_expire_watchdog() < 0)
-        //    panic("DSS doesn't support S2D", buf);
-		return;
+		if (dbg_snapshot_expire_watchdog() < 0)
+			panic("DSS doesn't support S2D", buf);
 	} else {
-		err("[DBG] S2D!!!: %s", buf);
-		//panic(buf);
-		//dump_stack();
-		return;
+		panic(buf);
 	}
 }
 EXPORT_SYMBOL(is_debug_s2d);
