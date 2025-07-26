@@ -84,9 +84,6 @@ USE_CCACHE=1
 DO_TAR=1
 DO_ZIP=1
 
-# Upload build log
-BUILD_LOG=1
-
 ## Info message
 LINKER="ld.lld"
 DEVICE="Exynos 1280 Family"
