@@ -28,17 +28,13 @@ upload() {
     cd "$KDIR"
 
     if [ "$DO_BASHUP" = "1" ]; then
-        echo -e "\nINFO: Uploading to bashupload.com\n"
+        echo -e "\nINFO: Uploading build and log to bashupload.com\n"
         curl -T "$ZIP_PATH" bashupload.com
+        curl -T log.txt bashupload.com
     fi
 
     if [ "$DO_TG" = "1" ]; then
         echo -e "\nINFO: Uploading to Telegram\n"
         tgs "$ZIP_PATH"
-    fi
-
-    if [ "$BUILD_LOG" = "1" ]; then
-        echo -e "\nINFO: Uploading log to bashupload.com\n"
-        curl -T log.txt bashupload.com
     fi
 }
