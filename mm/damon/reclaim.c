@@ -47,13 +47,13 @@ module_param(commit_inputs, bool, 0600);
  * If a memory region is not accessed for this or longer time, DAMON_RECLAIM
  * identifies the region as cold, and reclaims.  30 seconds by default.
  */
-static unsigned long min_age __read_mostly = 30000000;
+static unsigned long min_age __read_mostly = 60000000;
 module_param(min_age, ulong, 0600);
 
 static struct damos_quota damon_reclaim_quota = {
 	/* reclaim up to 512 MiB per 1 sec by default */
 	.ms = 0,
-	.sz = 512 * 1024 * 1024,
+	.sz = 256 * 1024 * 1024,
 	.reset_interval = 1000,
 	/* Within the quota, page out older regions first. */
 	.weight_sz = 0,
@@ -65,9 +65,9 @@ DEFINE_DAMON_MODULES_DAMOS_QUOTAS(damon_reclaim_quota);
 static struct damos_watermarks damon_reclaim_wmarks = {
 	.metric = DAMOS_WMARK_FREE_MEM_RATE,
 	.interval = 20000000,	/* 20 seconds */
-	.high = 700,		/* 70 percent */
-	.mid = 500,		/* 50 percent */
-	.low = 100,		/* 10 percent */
+	.high = 500,		/* 50 percent */
+	.mid = 300,		/* 30 percent */
+	.low = 200,		/* 20 percent */
 };
 DEFINE_DAMON_MODULES_WMARKS_PARAMS(damon_reclaim_wmarks);
 
