@@ -15,7 +15,7 @@ build_images() {
         --ramdisk "$PREBUILT_RAMDISK" \
         --os_version 15.0.0 \
         --os_patch_level "$MONTH" || exit 1
-    echo -e "INFO: OneUI boot.img created!"}
+    echo -e "INFO: OneUI boot.img created!"
 
     # Create AOSP boot image (patch kernel for aosp_mode=1)
     local AOSP_KERNEL="$TMPDIR/Image_aosp"
