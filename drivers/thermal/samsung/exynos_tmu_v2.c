@@ -1182,7 +1182,7 @@ static int exynos_tmu_pm_notify(struct notifier_block *nb,
 #if IS_ENABLED(CONFIG_SEC_PM)
 		if (tmu_log_work_canceled) {
 			tmu_log_work_canceled = 0;
-			schedule_delayed_work(&tmu_log_work, TMU_LOG_PERIOD * HZ);
+			queue_delayed_work(system_power_efficient_wq, &tmu_log_work, TMU_LOG_PERIOD * HZ);
 		}
 #endif /* CONFIG_SEC_PM */
 		break;
@@ -2822,7 +2822,7 @@ static void exynos_tmu_show_curr_temp_work(struct work_struct *work)
 
 	exynos_tmu_get_curr_temp_all(buf);
 
-	schedule_delayed_work(&tmu_log_work, TMU_LOG_PERIOD * HZ);
+	queue_delayed_work(system_power_efficient_wq, &tmu_log_work, TMU_LOG_PERIOD * HZ);
 }
 
 static ssize_t exynos_tmu_curr_temp(struct device *dev,
@@ -2863,7 +2863,7 @@ static int exynos_tmu_sec_pm_init(void)
 		goto err_create_sysfs;
 	}
 
-	schedule_delayed_work(&tmu_log_work, 60 * HZ);
+	queue_delayed_work(system_power_efficient_wq, &tmu_log_work, 60 * HZ);
 	tmu_sec_pm_init_done = 1;
 
 	return ret;
