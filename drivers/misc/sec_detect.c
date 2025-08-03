@@ -47,6 +47,17 @@ bool sec_get_mcd_feat(enum mcd_feat feat) {
 }
 EXPORT_SYMBOL_GPL(sec_get_mcd_feat);
 
+// PMIC usage flags
+static bool pmic_usage_flags[6] = {0};
+
+// Getter for PMIC usage
+bool sec_get_uses_pmic(enum sec_pmic pmic) {
+	if (pmic < 0 || pmic >= SEC_PMIC_COUNT)
+		return false;
+	return pmic_usage_flags[pmic];
+}
+EXPORT_SYMBOL_GPL(sec_get_uses_pmic);
+
 static bool g_detection_complete = false;
 
 bool sec_is_detection_complete(void) {
@@ -212,23 +223,31 @@ static int __init sec_detect_init(void) {
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_DOZE] = true;
 		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
+		pmic_usage_flags[SEC_DC_HL7132] = true;
+		pmic_usage_flags[SEC_PMIC_S2MF301] = true;
 	} else if (strstr(machine_name, "A26XS") != NULL) {
 		g_sec_current_device = SEC_A26XS;
 		strscpy(g_sec_current_device_name, "a26xs", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_DOZE] = true;
 		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
+		pmic_usage_flags[SEC_DC_NU2111A] = true;
+		pmic_usage_flags[SEC_PMIC_S2MF301] = true;
 	} else if (strstr(machine_name, "A33") != NULL) {
 		g_sec_current_device = SEC_A33;
 		strscpy(g_sec_current_device_name, "a33x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
 		sec_feat_flags[SEC_FEAT_LEGACY_USBPD] = true;
 		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
+		pmic_usage_flags[SEC_DC_SM5451] = true;
+		pmic_usage_flags[SEC_PMIC_S2MU106] = true;
 	} else if (strstr(machine_name, "A53") != NULL) {
 		g_sec_current_device = SEC_A53;
 		strscpy(g_sec_current_device_name, "a53x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
 		sec_feat_flags[SEC_FEAT_DOZE] = true;
+		pmic_usage_flags[SEC_DC_SM5451] = true;
+		pmic_usage_flags[SEC_PMIC_SM5714] = true;
 	} else if (strstr(machine_name, "M33") != NULL) {
 		g_sec_current_device = SEC_M33;
 		strscpy(g_sec_current_device_name, "m33x", sizeof(g_sec_current_device_name));
@@ -236,21 +255,28 @@ static int __init sec_detect_init(void) {
 		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
 		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
 		sec_feat_flags[SEC_FEAT_LEGACY_SINPUT] = true;
+		pmic_usage_flags[SEC_DC_SM5451] = true;
+		pmic_usage_flags[SEC_PMIC_SM5714] = true;
 	} else if (strstr(machine_name, "M34") != NULL) {
 		g_sec_current_device = SEC_M34;
 		strscpy(g_sec_current_device_name, "m34x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_DOZE] = true;
+		pmic_usage_flags[SEC_DC_SM5451] = true;
+		pmic_usage_flags[SEC_PMIC_SM5714] = true;
 	} else if (strstr(machine_name, "F34") != NULL) {
 		g_sec_current_device = SEC_M34;
 		strscpy(g_sec_current_device_name, "m34x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_DOZE] = true;
+		pmic_usage_flags[SEC_DC_SM5451] = true;
+		pmic_usage_flags[SEC_PMIC_SM5714] = true;
 	} else if (strstr(machine_name, "GTA4XLS") != NULL) {
 		g_sec_current_device = SEC_GTA4XLS;
 		strscpy(g_sec_current_device_name, "gta4xls", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
+		pmic_usage_flags[SEC_PMIC_SM5714] = true;
 	}
 
 	// Print machine name and sec_ variables
