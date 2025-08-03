@@ -39,7 +39,18 @@ static const char *const device_names[] = {
 	[SEC_GTA4XLS] = "Galaxy Tab S6 Lite 2024",
 };
 
-// Device feature helpers
+// Device feature flags
+enum sec_feat {
+	SEC_FEAT_NEEDS_DECON,		// Uses DECON protocol for display
+	SEC_FEAT_NEEDS_BLIC,		// Uses BLIC (backlight IC?)
+	SEC_FEAT_DOZE, 				// Uses Samsung DRM Doze
+	SEC_FEAT_LCD_DEVICE,		// Uses LCD panel
+	SEC_FEAT_LEGACY_SINPUT,		// Uses old sec_input driver
+	SEC_FEAT_LEGACY_USBPD,		// Uses old slsi usbpd platform
+	SEC_FEAT_SLSI_USBPD,		// Uses slsi usbpd platform
+	SEC_FEAT_COUNT
+};
+
 enum SEC_devices sec_get_current_device(void);
 bool sec_feat_needs_decon(void);
 bool sec_feat_needs_blic(void);
@@ -48,6 +59,8 @@ bool sec_feat_lcd_device(void);
 bool sec_feat_legacy_sinput(void);
 bool sec_feat_legacy_usbpd(void);
 bool sec_feat_slsi_usbpd(void);
+
+bool sec_get_feat(enum sec_feat feat);
 
 // Camera feature flags
 enum mcd_feat {

@@ -22,37 +22,41 @@
 
 static int g_sec_current_device = DEVICE_UNKNOWN;
 static char g_sec_current_device_name[32] = "Unknown";
-static bool g_sec_needs_decon;
-static bool g_sec_needs_blic = false;
-static bool g_sec_doze = false; // Uses Samsung DRM Doze?
-static bool g_sec_lcd_device = false;
-static bool g_sec_legacy_sinput = false; // Uses old sec_input driver?
-static bool g_sec_legacy_usbpd = false; // Uses old slsi usbpd platform?
-static bool g_sec_slsi_usbpd = false;
+
+// Device feature flags
+static bool sec_feat_flags[SEC_FEAT_COUNT] = {0};
+
+bool sec_get_feat(enum sec_feat feat) {
+	if (feat < 0 || feat >= SEC_FEAT_COUNT)
+		return false;
+	return sec_feat_flags[feat];
+}
+EXPORT_SYMBOL_GPL(sec_get_feat);
 
 // Helper functions for each g_sec_ variable
 enum SEC_devices sec_get_current_device(void) { return g_sec_current_device; }
 EXPORT_SYMBOL_GPL(sec_get_current_device);
 
-bool sec_feat_needs_decon(void) { return g_sec_needs_decon; }
+// Legacy wrappers
+bool sec_feat_needs_decon(void) { return sec_get_feat(SEC_FEAT_NEEDS_DECON); }
 EXPORT_SYMBOL_GPL(sec_feat_needs_decon);
 
-bool sec_feat_needs_blic(void) { return g_sec_needs_blic; }
+bool sec_feat_needs_blic(void) { return sec_get_feat(SEC_FEAT_NEEDS_BLIC); }
 EXPORT_SYMBOL_GPL(sec_feat_needs_blic);
 
-bool sec_feat_doze(void) { return g_sec_doze; }
+bool sec_feat_doze(void) { return sec_get_feat(SEC_FEAT_DOZE); }
 EXPORT_SYMBOL_GPL(sec_feat_doze);
 
-bool sec_feat_lcd_device(void) { return g_sec_lcd_device; }
+bool sec_feat_lcd_device(void) { return sec_get_feat(SEC_FEAT_LCD_DEVICE); }
 EXPORT_SYMBOL_GPL(sec_feat_lcd_device);
 
-bool sec_feat_legacy_sinput(void) { return g_sec_legacy_sinput; }
+bool sec_feat_legacy_sinput(void) { return sec_get_feat(SEC_FEAT_LEGACY_SINPUT); }
 EXPORT_SYMBOL_GPL(sec_feat_legacy_sinput);
 
-bool sec_feat_legacy_usbpd(void) { return g_sec_legacy_usbpd; }
+bool sec_feat_legacy_usbpd(void) { return sec_get_feat(SEC_FEAT_LEGACY_USBPD); }
 EXPORT_SYMBOL_GPL(sec_feat_legacy_usbpd);
 
-bool sec_feat_slsi_usbpd(void) { return g_sec_slsi_usbpd; }
+bool sec_feat_slsi_usbpd(void) { return sec_get_feat(SEC_FEAT_SLSI_USBPD); }
 EXPORT_SYMBOL_GPL(sec_feat_slsi_usbpd);
 
 // Camera feature flags
@@ -186,13 +190,13 @@ static inline void setup_camera_params(void) {
 // New function to print machine name and sec_ variables
 static inline void print_sec_variables(const char *machine_name) {
 	SEC_DETECT_LOG("Current machine name: %s\n", machine_name);
-	SEC_DETECT_LOG("g_sec_needs_blic = %s\n", g_sec_needs_blic ? "true" : "false");
-	SEC_DETECT_LOG("g_sec_needs_decon = %s\n", g_sec_needs_decon ? "true" : "false");
-	SEC_DETECT_LOG("g_sec_doze = %s\n", g_sec_doze ? "true" : "false");
-	SEC_DETECT_LOG("g_sec_lcd_device = %s\n", g_sec_lcd_device ? "true" : "false");
-	SEC_DETECT_LOG("g_sec_legacy_sinput = %s\n", g_sec_legacy_sinput ? "true" : "false");
-	SEC_DETECT_LOG("g_sec_legacy_usbpd = %s\n", g_sec_legacy_usbpd ? "true" : "false");
-	SEC_DETECT_LOG("g_sec_slsi_usbpd = %s\n", g_sec_slsi_usbpd ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_needs_blic = %s\n", sec_get_feat(SEC_FEAT_NEEDS_BLIC) ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_needs_decon = %s\n", sec_get_feat(SEC_FEAT_NEEDS_DECON) ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_doze = %s\n", sec_get_feat(SEC_FEAT_DOZE) ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_lcd_device = %s\n", sec_get_feat(SEC_FEAT_LCD_DEVICE) ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_legacy_sinput = %s\n", sec_get_feat(SEC_FEAT_LEGACY_SINPUT) ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_legacy_usbpd = %s\n", sec_get_feat(SEC_FEAT_LEGACY_USBPD) ? "true" : "false");
+	SEC_DETECT_LOG("sec_feat_slsi_usbpd = %s\n", sec_get_feat(SEC_FEAT_SLSI_USBPD) ? "true" : "false");
 }
 
 static int __init sec_detect_init(void) {
@@ -227,48 +231,48 @@ static int __init sec_detect_init(void) {
 	if (strstr(machine_name, "A25") != NULL) {
 		g_sec_current_device = SEC_A25;
 		strscpy(g_sec_current_device_name, "a25x", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = false;
-		g_sec_doze = true;
-		g_sec_slsi_usbpd = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
+		sec_feat_flags[SEC_FEAT_DOZE] = true;
+		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
 	} else if (strstr(machine_name, "A26XS") != NULL) {
 		g_sec_current_device = SEC_A26XS;
 		strscpy(g_sec_current_device_name, "a26xs", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = false;
-		g_sec_doze = true;
-		g_sec_slsi_usbpd = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
+		sec_feat_flags[SEC_FEAT_DOZE] = true;
+		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
 	} else if (strstr(machine_name, "A33") != NULL) {
 		g_sec_current_device = SEC_A33;
 		strscpy(g_sec_current_device_name, "a33x", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = true;
-		g_sec_legacy_usbpd = true;
-		g_sec_slsi_usbpd = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+		sec_feat_flags[SEC_FEAT_LEGACY_USBPD] = true;
+		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
 	} else if (strstr(machine_name, "A53") != NULL) {
 		g_sec_current_device = SEC_A53;
 		strscpy(g_sec_current_device_name, "a53x", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = true;
-		g_sec_doze = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+		sec_feat_flags[SEC_FEAT_DOZE] = true;
 	} else if (strstr(machine_name, "M33") != NULL) {
 		g_sec_current_device = SEC_M33;
 		strscpy(g_sec_current_device_name, "m33x", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = true;
-		g_sec_needs_blic = true;
-		g_sec_lcd_device = true;
-		g_sec_legacy_sinput = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
+		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
+		sec_feat_flags[SEC_FEAT_LEGACY_SINPUT] = true;
 	} else if (strstr(machine_name, "M34") != NULL) {
 		g_sec_current_device = SEC_M34;
 		strscpy(g_sec_current_device_name, "m34x", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = false;
-		g_sec_doze = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
+		sec_feat_flags[SEC_FEAT_DOZE] = true;
 	} else if (strstr(machine_name, "F34") != NULL) {
 		g_sec_current_device = SEC_M34;
 		strscpy(g_sec_current_device_name, "m34x", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = false;
-		g_sec_doze = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
+		sec_feat_flags[SEC_FEAT_DOZE] = true;
 	} else if (strstr(machine_name, "GTA4XLS") != NULL) {
 		g_sec_current_device = SEC_GTA4XLS;
 		strscpy(g_sec_current_device_name, "gta4xls", sizeof(g_sec_current_device_name));
-		g_sec_needs_decon = false;
-		g_sec_needs_blic = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
+		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
 	}
 
 	// Print machine name and sec_ variables
