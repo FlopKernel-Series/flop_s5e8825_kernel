@@ -1026,7 +1026,7 @@ int panel_bl_set_brightness(struct panel_bl_device *panel_bl, int id, u32 send_c
 			goto set_br_exit;
 		}
 #ifdef CONFIG_USDM_BLIC_I2C
-		if (sec_feat_needs_blic()) {
+		if (sec_get_feat(SEC_FEAT_NEEDS_BLIC)) {
 			ret = panel_bl_set_brightness_blic(panel_bl);
 			if (unlikely(ret < 0)) {
 				panel_err("failed to write panel_bl_set_brightness_blic\n");

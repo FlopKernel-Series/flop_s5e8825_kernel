@@ -165,8 +165,8 @@ static int __init s2m_pdic_notifier_init(void)
 {
 	int ret = 0;
 
-	if (sec_feat_slsi_usbpd()) {
-		if (!sec_feat_legacy_usbpd()) {
+	if (sec_get_feat(SEC_FEAT_SLSI_USBPD)) {
+		if (!sec_get_feat(SEC_FEAT_LEGACY_USBPD)) {
 			SEC_DETECT_LOG("Legacy usbpd slsi driver skipped\n");
 			return 0;
 		} else

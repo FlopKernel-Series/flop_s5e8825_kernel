@@ -2157,7 +2157,7 @@ static int dsim_probe(struct platform_device *pdev)
 	}
 
 #if IS_ENABLED(CONFIG_DECON_EXYNOS_FREQ_HOP)
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		if (!dsim->id)
 			dpu_init_freq_hop(dsim);
 	}

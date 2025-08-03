@@ -1144,14 +1144,14 @@ int decon_set_panel_poc(struct panel_poc_device *poc_dev, u32 cmd, void *arg)
 			return ret;
 		}
 #ifdef CONFIG_DISPLAY_USE_INFO
-		if (!sec_feat_lcd_device())
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 			poc_info->erase_trycount++;
 #endif
 		ret = poc_erase(panel, addr, len);
 		if (unlikely(ret < 0)) {
 			panel_err("failed to write poc-erase-seq\n");
 #ifdef CONFIG_DISPLAY_USE_INFO
-			if (!sec_feat_lcd_device())
+			if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 				poc_info->erase_failcount++;
 #endif
 			poc_info->erased = false;
@@ -2029,7 +2029,7 @@ int panel_poc_probe(struct panel_device *panel, struct panel_poc_data *poc_data)
 			poc_info->total_size * sizeof(u8), GFP_KERNEL);
 
 #ifdef CONFIG_DISPLAY_USE_INFO
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		poc_info->total_trycount = -1;
 		poc_info->total_failcount = -1;
 

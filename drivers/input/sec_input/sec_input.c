@@ -660,7 +660,7 @@ static int __init sec_input_init(void)
 {
 	int ret = 0;
 
-	if (sec_feat_legacy_sinput())
+	if (sec_get_feat(SEC_FEAT_LEGACY_SINPUT))
 		return ret;
 
 	pr_info("%s %s: 2024: ++\n", SECLOG, __func__);

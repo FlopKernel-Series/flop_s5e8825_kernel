@@ -5505,7 +5505,7 @@ static struct i2c_driver s2mf301_usbpd_driver = {
 
 static int __init s2mf301_usbpd_init(void)
 {
-	if (sec_feat_legacy_usbpd()) {
+	if (sec_get_feat(SEC_FEAT_LEGACY_USBPD)) {
 		SEC_DETECT_LOG("s2mf301 usbpd driver cannot start without new usbpd\n");
 		return 0;
 	} else

@@ -405,7 +405,7 @@ static int __init __init_sec_virtual_tsp(void)
 {
 	int ret;
 
-	if (!sec_feat_legacy_sinput())
+	if (!sec_get_feat(SEC_FEAT_LEGACY_SINPUT))
 		return 0;
 
 	dual_sec = kzalloc(sizeof(struct sec_cmd_data), GFP_KERNEL);

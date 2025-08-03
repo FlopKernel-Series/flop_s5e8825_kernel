@@ -1001,7 +1001,7 @@ int sec_input_parse_dt(struct device *dev)
 	}
 #endif
 #if IS_ENABLED(CONFIG_EXYNOS_DPU30)
-	if (!sec_feat_needs_decon())
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
 		connected = usdm_get_lcd_info("connected");
 	else
 		connected = decon_get_lcd_info("connected");
@@ -1018,7 +1018,7 @@ int sec_input_parse_dt(struct device *dev)
 
 	input_info(true, dev, "%s: lcd is connected\n", __func__);
 
-	if (!sec_feat_needs_decon())
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
 		lcdtype = usdm_get_lcd_info("id");
 	else
 		lcdtype = decon_get_lcd_info("id");

@@ -344,7 +344,7 @@ static int __init sec_tsp_dumpkey_init(void)
 	int err;
 	size_t i;
 
-	if (!sec_feat_legacy_sinput())
+	if (!sec_get_feat(SEC_FEAT_LEGACY_SINPUT))
 		return 0;
 
 	pr_info("%s %s\n", SECLOG, __func__);

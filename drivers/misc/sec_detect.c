@@ -37,28 +37,6 @@ EXPORT_SYMBOL_GPL(sec_get_feat);
 enum SEC_devices sec_get_current_device(void) { return g_sec_current_device; }
 EXPORT_SYMBOL_GPL(sec_get_current_device);
 
-// Legacy wrappers
-bool sec_feat_needs_decon(void) { return sec_get_feat(SEC_FEAT_NEEDS_DECON); }
-EXPORT_SYMBOL_GPL(sec_feat_needs_decon);
-
-bool sec_feat_needs_blic(void) { return sec_get_feat(SEC_FEAT_NEEDS_BLIC); }
-EXPORT_SYMBOL_GPL(sec_feat_needs_blic);
-
-bool sec_feat_doze(void) { return sec_get_feat(SEC_FEAT_DOZE); }
-EXPORT_SYMBOL_GPL(sec_feat_doze);
-
-bool sec_feat_lcd_device(void) { return sec_get_feat(SEC_FEAT_LCD_DEVICE); }
-EXPORT_SYMBOL_GPL(sec_feat_lcd_device);
-
-bool sec_feat_legacy_sinput(void) { return sec_get_feat(SEC_FEAT_LEGACY_SINPUT); }
-EXPORT_SYMBOL_GPL(sec_feat_legacy_sinput);
-
-bool sec_feat_legacy_usbpd(void) { return sec_get_feat(SEC_FEAT_LEGACY_USBPD); }
-EXPORT_SYMBOL_GPL(sec_feat_legacy_usbpd);
-
-bool sec_feat_slsi_usbpd(void) { return sec_get_feat(SEC_FEAT_SLSI_USBPD); }
-EXPORT_SYMBOL_GPL(sec_feat_slsi_usbpd);
-
 // Camera feature flags
 static bool mcd_feat_flags[MCD_FEAT_COUNT] = {0};
 

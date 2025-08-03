@@ -52,13 +52,6 @@ enum sec_feat {
 };
 
 enum SEC_devices sec_get_current_device(void);
-bool sec_feat_needs_decon(void);
-bool sec_feat_needs_blic(void);
-bool sec_feat_doze(void);
-bool sec_feat_lcd_device(void);
-bool sec_feat_legacy_sinput(void);
-bool sec_feat_legacy_usbpd(void);
-bool sec_feat_slsi_usbpd(void);
 
 bool sec_get_feat(enum sec_feat feat);
 

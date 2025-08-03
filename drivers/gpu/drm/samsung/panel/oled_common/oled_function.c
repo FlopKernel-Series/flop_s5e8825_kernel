@@ -110,7 +110,7 @@ static int __init oled_function_init(void)
 {
 	int ret;
 
-	if (sec_feat_needs_decon()) {
+	if (sec_get_feat(SEC_FEAT_NEEDS_DECON)) {
 		SEC_DETECT_LOG("Skipped USDM OLED driver\n");
 		return 0;
 	}

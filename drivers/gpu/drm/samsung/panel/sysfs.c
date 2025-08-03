@@ -1302,7 +1302,7 @@ static void clear_gct_mode(struct panel_device *panel)
 
 // FIXME!!!
 #ifdef CONFIG_USDM_PANEL_BLIC
-	if (sec_feat_needs_blic())
+	if (sec_get_feat(SEC_FEAT_NEEDS_BLIC))
 		panel_blic_set_skip_op_lock(panel, true);
 #endif
 
@@ -1315,7 +1315,7 @@ static void clear_gct_mode(struct panel_device *panel)
 		panel_err("failed to set power on\n");
 
 #ifdef CONFIG_USDM_PANEL_BLIC
-	if (sec_feat_needs_blic())
+	if (sec_get_feat(SEC_FEAT_NEEDS_BLIC))
 		panel_blic_set_skip_op_lock(panel, false);
 #endif
 

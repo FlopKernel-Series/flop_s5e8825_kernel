@@ -525,7 +525,7 @@ void is_sensor_flash_fire_work(struct work_struct *data)
 					err("failed to turn off flash at flash expired handler\n");
 #ifdef USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL
 					if (sec_get_mcd_feat(MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL)) {
-						if (sec_feat_legacy_usbpd())
+						if (sec_get_feat(SEC_FEAT_LEGACY_USBPD))
 							legacy_pdo_ctrl_by_flash(0);
 						else
 							pdo_ctrl_by_flash(0);
@@ -559,7 +559,7 @@ void is_sensor_flash_fire_work(struct work_struct *data)
 
 #ifdef USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL
 			if (sec_get_mcd_feat(MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL)) {
-				if (sec_feat_legacy_usbpd())
+				if (sec_get_feat(SEC_FEAT_LEGACY_USBPD))
 					legacy_pdo_ctrl_by_flash(0);
 				else
 					pdo_ctrl_by_flash(0);
@@ -841,7 +841,7 @@ void is_sensor_muic_ctrl_and_flash_fire(struct work_struct *data)
 
 	/* Pre-flash on */
 	if (flash->flash_data.mode == CAM2_FLASH_MODE_TORCH) {
-		if (sec_feat_legacy_usbpd())
+		if (sec_get_feat(SEC_FEAT_LEGACY_USBPD))
 			legacy_pdo_ctrl_by_flash(1);
 		else
 			pdo_ctrl_by_flash(1);
@@ -857,7 +857,7 @@ void is_sensor_muic_ctrl_and_flash_fire(struct work_struct *data)
 	if (is_sensor_flash_fire(sensor_peri, flash->flash_data.intensity)) {
 		err("failed to turn off flash at flash expired handler\n");
 		if(flash->flash_data.mode == CAM2_FLASH_MODE_TORCH) {
-			if (sec_feat_legacy_usbpd())
+			if (sec_get_feat(SEC_FEAT_LEGACY_USBPD))
 				legacy_pdo_ctrl_by_flash(0);
 			else
 				pdo_ctrl_by_flash(0);
@@ -866,7 +866,7 @@ void is_sensor_muic_ctrl_and_flash_fire(struct work_struct *data)
 		}
 	}
 	else if (flash->flash_data.mode == CAM2_FLASH_MODE_OFF) { /* Torch off - used only in Video Mode */
-		if (sec_feat_legacy_usbpd())
+		if (sec_get_feat(SEC_FEAT_LEGACY_USBPD))
 			legacy_pdo_ctrl_by_flash(0);
 		else
 			pdo_ctrl_by_flash(0);
@@ -2241,7 +2241,7 @@ int is_sensor_peri_s_stream(struct is_device_sensor *device,
 					sensor_peri->flash->flash_ae.frm_num_pre_fls = 0;
 #if defined(USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL)
 					if (sec_get_mcd_feat(MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL)) {
-						if (sec_feat_legacy_usbpd())
+						if (sec_get_feat(SEC_FEAT_LEGACY_USBPD))
 							legacy_pdo_ctrl_by_flash(0);
 						else
 							pdo_ctrl_by_flash(0);

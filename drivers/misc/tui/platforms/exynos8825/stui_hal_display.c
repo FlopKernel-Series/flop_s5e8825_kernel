@@ -60,21 +60,21 @@ static int fb_protection_for_tui(bool tui_en)
 		return -1;
 
 	if (tui_en) {
-		if (!sec_feat_needs_decon()) 
+		if (!sec_get_feat(SEC_FEAT_NEEDS_DECON)) 
 			ret = usdm_exynos_atomic_enter_tui();
 		else
 			ret = decon_exynos_atomic_enter_tui();
 		if (ret)
 			pr_err(TUIHW_LOG_TAG "protect error - %d\n", __func__, ret);
 	} else {
-		if (!sec_feat_needs_decon()) 
+		if (!sec_get_feat(SEC_FEAT_NEEDS_DECON)) 
 			ret = usdm_exynos_atomic_exit_tui();
 		else
 			ret = decon_exynos_atomic_exit_tui();
 		if (ret)
 			pr_err(TUIHW_LOG_TAG "unprotect error - %d\n", ret);
 	}
-	if (!sec_feat_needs_decon())
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
 		usdm_exynos_tui_set_stui_funcs(stui_get_buf_info, stui_free_video_space);
 	else
 		decon_exynos_tui_set_stui_funcs(stui_get_buf_info, stui_free_video_space);
@@ -128,7 +128,7 @@ int stui_alloc_video_space(struct tui_hw_buffer *buffer)
 	size_t workbuf_size;
 	struct resolution_info lcd_info;
 
-	if (!sec_feat_needs_decon())
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
 		usdm_exynos_tui_get_resolution(&lcd_info);
 	else
 		decon_exynos_tui_get_resolution(&lcd_info);
@@ -194,7 +194,7 @@ int stui_get_resolution(struct tui_hw_buffer *buffer)
 {
 	struct resolution_info lcd_info;
 
-	if (!sec_feat_needs_decon())
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
 		usdm_exynos_tui_get_resolution(&lcd_info);
 	else
 		decon_exynos_tui_get_resolution(&lcd_info);
@@ -229,7 +229,7 @@ int stui_get_lcd_info(uint64_t *lcd_buf, int size)
 	unsigned int i;
 
 	pr_info(TUIHW_LOG_TAG " %s - start\n", __func__);
-	if (!sec_feat_needs_decon())
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
 		ret = usdm_exynos_tui_get_panel_info(lcd_buf, size);
 	else
 		ret = decon_exynos_tui_get_panel_info(lcd_buf, size);

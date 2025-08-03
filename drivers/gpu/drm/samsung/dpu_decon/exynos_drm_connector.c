@@ -279,7 +279,7 @@ int exynos_drm_connector_create_properties(struct drm_device *dev)
 	int ret;
 
 #if IS_ENABLED(CONFIG_SUPPORT_MASK_LAYER) || IS_ENABLED(CONFIG_USDM_PANEL_MASK_LAYER)
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = exynos_drm_plane_create_fingerprint_mask_property(dev);
 		if (ret)
 			return ret;

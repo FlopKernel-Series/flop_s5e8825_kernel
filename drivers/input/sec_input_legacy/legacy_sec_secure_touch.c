@@ -381,7 +381,7 @@ static int __init sec_secure_touch_init(void)
 {
 	pr_info("%s: %s\n", SECLOG, __func__);
 
-	if (!sec_feat_legacy_sinput())
+	if (!sec_get_feat(SEC_FEAT_LEGACY_SINPUT))
 		return 0;
 
 	platform_driver_register(&sec_secure_touch_driver);

@@ -3954,7 +3954,7 @@ static int32_t __init nvt_driver_init(void)
 {
 	int32_t ret = 0;
 
-	if (!sec_feat_legacy_sinput())
+	if (!sec_get_feat(SEC_FEAT_LEGACY_SINPUT))
 		return ret;
 
 	pr_info("[sec_input] %s : start\n", __func__);

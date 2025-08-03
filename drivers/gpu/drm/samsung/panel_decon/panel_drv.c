@@ -1054,7 +1054,7 @@ check_pcd:
 	panel_enable_pcd_irq(panel);
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = panel_aod_init_panel(panel, INIT_WITH_LOCK);
 		if (ret)
 			panel_err("failed to aod init_panel\n");
@@ -1166,7 +1166,7 @@ static int __panel_seq_exit_alpm(struct panel_device *panel)
 		panel_err("failed to panel_power_exit_alpm_pre\n");
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = panel_aod_exit_from_lpm(panel);
 		if (ret)
 			panel_err("failed to exit_lpm ops\n");
@@ -1280,7 +1280,7 @@ static int __panel_seq_set_alpm(struct panel_device *panel)
 		panel_err("failed to panel_power_enter_alpm\n");
 
 #ifdef CONFIG_SUPPORT_AOD_BL
-	if (!sec_feat_lcd_device())
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 		panel_bl_set_subdev(panel_bl, PANEL_BL_SUBDEV_TYPE_AOD);
 #endif
 	ret = decon_decon_panel_do_seqtbl_by_index_nolock(panel, PANEL_ALPM_SET_BL_SEQ);
@@ -1291,7 +1291,7 @@ static int __panel_seq_set_alpm(struct panel_device *panel)
 	mutex_unlock(&panel_bl->lock);
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = panel_aod_enter_to_lpm(panel);
 		if (ret) {
 			panel_err("failed to enter to lpm\n");
@@ -1386,12 +1386,12 @@ int panel_display_on(struct panel_device *panel)
 	}
 
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-	if (!sec_feat_lcd_device())
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 		mdnie_enable(&panel->mdnie);
 #endif
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 	// Transmit Black Frame
 		if (panel->state.cur_state == PANEL_STATE_ALPM) {
 			ret = panel_aod_black_grid_on(panel);
@@ -1409,7 +1409,7 @@ int panel_display_on(struct panel_device *panel)
 	state->disp_on = PANEL_DISPLAY_ON;
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		if (panel->state.cur_state == PANEL_STATE_ALPM) {
 			usleep_range(33400, 33500);
 			ret = panel_aod_black_grid_off(panel);
@@ -1495,7 +1495,7 @@ static struct common_panel_info *panel_detect(struct panel_device *panel)
 #if IS_ENABLED(CONFIG_PANEL_ID_READ_BY_LPDT)
 	panel_dsi_set_lpdt(panel, true);
 #endif
-	if (sec_feat_lcd_device())
+	if (sec_get_feat(SEC_FEAT_LCD_DEVICE))
 		ret = read_panel_id_tft(panel, id);
 	else
 		ret = read_panel_id_oled(panel, id);
@@ -1622,7 +1622,7 @@ static int panel_prepare(struct panel_device *panel, struct common_panel_info *i
 #endif
 	/* backlight IC table */
 #ifdef CONFIG_MCD_PANEL_BLIC
-	if (sec_feat_needs_blic()) {
+	if (sec_get_feat(SEC_FEAT_NEEDS_BLIC)) {
 		panel_data->blic_data_tbl = info->blic_data_tbl;
 		panel_data->nr_blic_data_tbl = info->nr_blic_data_tbl;
 	}
@@ -2277,7 +2277,7 @@ static int panel_init_property(struct panel_device *panel)
 			sizeof(panel_data->props.mcd_rs_range));
 
 #ifdef CONFIG_SUPPORT_GRAM_CHECKSUM
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		panel_data->props.gct_on = GRAM_TEST_OFF;
 		panel_data->props.gct_vddm = VDDM_ORIG;
 		panel_data->props.gct_pattern = GCT_PATTERN_NONE;
@@ -2319,7 +2319,7 @@ static int panel_init_property(struct panel_device *panel)
 	panel_data->props.vrr_origin_mode = VRR_NORMAL_MODE;
 	panel_data->props.vrr_origin_idx = 0;
 #ifdef CONFIG_PANEL_VRR_BRIDGE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		mutex_lock(&panel->io_lock);
 		panel_data->props.vrr_bridge_enable = true;
 		mutex_unlock(&panel->io_lock);
@@ -2493,7 +2493,7 @@ int panel_probe(struct panel_device *panel)
 	}
 
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = mdnie_probe(&panel->mdnie, info->mdnie_tune);
 		if (unlikely(ret)) {
 			panel_err("failed to probe mdnie driver\n");
@@ -2513,7 +2513,7 @@ int panel_probe(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = aod_drv_probe(panel, info->aod_tune);
 		if (unlikely(ret)) {
 			panel_err("failed to probe aod driver\n");
@@ -2568,7 +2568,7 @@ int panel_probe(struct panel_device *panel)
 	if (ret >= 0) {
 		panel_data->props.panel_mode = ret;
 #if defined(CONFIG_PANEL_VRR_BRIDGE)
-		if (!sec_feat_lcd_device())
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 			panel->panel_data.props.target_panel_mode = ret;
 #endif
 		panel_info("apply default panel_mode %d\n", ret);
@@ -2606,7 +2606,7 @@ int panel_remove(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = aod_drv_remove(panel);
 		if (ret < 0) {
 			panel_err("failed to remove aod driver\n");
@@ -2624,7 +2624,7 @@ int panel_remove(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = mdnie_remove(&panel->mdnie);
 		if (ret < 0) {
 			panel_err("failed to remove mdnie driver\n");
@@ -2689,7 +2689,7 @@ __visible_for_testing int panel_sleep_in(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-		if (!sec_feat_lcd_device())
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 			mdnie_disable(&panel->mdnie);
 #endif
 		ret = panel_display_off(panel);
@@ -2815,7 +2815,7 @@ __visible_for_testing int panel_power_off(struct panel_device *panel)
 
 	panel_set_cur_state(panel, PANEL_STATE_OFF);
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = panel_aod_power_off(panel);
 		if (ret)
 			panel_err("failed to aod power off\n");
@@ -2907,7 +2907,7 @@ __visible_for_testing int panel_sleep_out(struct panel_device *panel)
 		goto do_exit;
 	case PANEL_STATE_ALPM:
 #ifdef CONFIG_MCD_PANEL_LPM
-		if (!sec_feat_lcd_device()) {
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 			ret = __panel_seq_exit_alpm(panel);
 			if (ret) {
 				panel_err("failed to panel exit alpm\n");
@@ -2964,7 +2964,7 @@ __visible_for_testing int panel_sleep_out(struct panel_device *panel)
 	clear_check_wq_var(&panel->condition_check);
 	mutex_unlock(&panel->work[PANEL_WORK_CHECK_CONDITION].lock);
 #ifdef CONFIG_PANEL_VRR_BRIDGE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		if (prev_state == PANEL_STATE_ALPM) {
 			mutex_lock(&panel->op_lock);
 			panel->panel_data.props.panel_mode =
@@ -3027,7 +3027,7 @@ __visible_for_testing int panel_doze(struct panel_device *panel)
 			panel_err("failed to write alpm\n");
 		panel_set_cur_state(panel, PANEL_STATE_ALPM);
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-		if (!sec_feat_lcd_device())
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 			panel_mdnie_update(panel);
 #endif
 		break;
@@ -3590,7 +3590,7 @@ static int panel_set_display_mode(struct panel_device *panel, void *arg)
 	}
 
 #ifdef CONFIG_PANEL_VRR_BRIDGE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		props->target_panel_mode = panel_mode;
 		if (panel_vrr_bridge_changeable(panel) &&
 			!panel_display_mode_is_mres_mode_changed(panel, panel_mode)) {
@@ -3928,7 +3928,7 @@ static int panel_set_mask_layer(struct panel_device *panel, void *arg)
 				panel_bl->props.brightness = panel_bl->bd->props.brightness;
 				panel_bl->subdev[PANEL_BL_SUBDEV_TYPE_DISP].brightness = panel_bl->props.brightness;
 #ifdef CONFIG_SUPPORT_AOD_BL
-				if (!sec_feat_lcd_device())
+				if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 					panel_bl->subdev[PANEL_BL_SUBDEV_TYPE_AOD].brightness = panel_bl->props.brightness;
 #endif
 				decon_panel_do_seqtbl_by_index(panel, PANEL_MASK_LAYER_EXIT_BR_SEQ);
@@ -5334,7 +5334,7 @@ int panel_device_register_notifiers(struct panel_device *panel)
 	}
 
 #ifdef CONFIG_DISPLAY_USE_INFO
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		panel->panel_dpui_notif.notifier_call = panel_dpui_notifier_callback;
 		ret = decon_dpui_logging_register(&panel->panel_dpui_notif, DPUI_TYPE_PANEL);
 		if (ret < 0) {
@@ -5435,7 +5435,7 @@ int decon_panel_device_init(struct panel_device *panel)
 	INIT_LIST_HEAD(&panel->panel_lut_list);
 
 #ifdef CONFIG_MCD_PANEL_I2C
-	if (sec_feat_needs_blic()) {
+	if (sec_get_feat(SEC_FEAT_NEEDS_BLIC)) {
 		ret = panel_i2c_drv_probe(panel);
 		if (ret < 0) {
 			panel_err("panel-%d:failed to parse i2c\n", panel->id);
@@ -5445,7 +5445,7 @@ int decon_panel_device_init(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_MCD_PANEL_BLIC
-	if (sec_feat_needs_blic()) {
+	if (sec_get_feat(SEC_FEAT_NEEDS_BLIC)) {
 		ret = panel_blic_probe(panel);
 		if (ret < 0) {
 			panel_err("panel-%d:failed to parse blic\n", panel->id);
@@ -5487,7 +5487,7 @@ int decon_panel_device_init(struct panel_device *panel)
 	}
 
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = mdnie_init(&panel->mdnie);
 		if (ret < 0) {
 			panel_err("failed to init mdnie\n");
@@ -5538,7 +5538,7 @@ int decon_panel_device_exit(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
-	if (!sec_feat_lcd_device()) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		ret = mdnie_exit(&panel->mdnie);
 		if (ret < 0) {
 			panel_err("failed to exit mdnie driver\n");
@@ -5570,7 +5570,7 @@ int decon_panel_device_exit(struct panel_device *panel)
 #endif
 
 #ifdef CONFIG_DISPLAY_USE_INFO
-	if (!sec_feat_lcd_device())
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 		decon_dpui_logging_unregister(&panel->panel_dpui_notif);
 #endif
 	fb_unregister_client(&panel->fb_notif);
@@ -5650,7 +5650,7 @@ static int __init panel_drv_init(void)
 {
 	int ret;
 
-	if (!sec_feat_needs_decon()) {
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON)) {
 		SEC_DETECT_LOG("Skipped DRM DECON panel driver\n");
 		return 0;
 	}

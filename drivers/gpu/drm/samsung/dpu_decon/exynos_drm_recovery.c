@@ -548,7 +548,7 @@ static void exynos_recovery_handler(struct work_struct *work)
 			recov_info("recovery condition not matched\n");
 #if IS_ENABLED(CONFIG_DRM_MCD_COMMON)
 #if IS_ENABLED(CONFIG_DISPLAY_USE_INFO) || IS_ENABLED(CONFIG_USDM_PANEL_DPUI)
-			if (!sec_feat_lcd_device())
+			if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
 				log_decon_bigdata(decon);
 #endif
 #endif

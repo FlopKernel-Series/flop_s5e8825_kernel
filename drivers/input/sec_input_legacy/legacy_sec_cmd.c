@@ -717,7 +717,7 @@ int legacy_sec_cmd_init(struct sec_cmd_data *data, struct sec_cmd *cmds,
 	const char *dev_name;
 	int ret, i;
 
-	if (!sec_feat_legacy_sinput())
+	if (!sec_get_feat(SEC_FEAT_LEGACY_SINPUT))
 		return 0;
 
 	INIT_LIST_HEAD(&data->cmd_list_head);

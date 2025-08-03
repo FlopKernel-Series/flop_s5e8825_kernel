@@ -435,7 +435,7 @@ void muic_pdic_notifier_attach_attached_dev(muic_attached_dev_t new_dev)
 	pr_info("%s: (%d)\n", __func__, new_dev);
 
 #if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
-	if (sec_feat_slsi_usbpd()) {
+	if (sec_get_feat(SEC_FEAT_SLSI_USBPD)) {
 		__set_pdic_noti_cxt(MUIC_PDIC_NOTIFY_CMD_ATTACH, new_dev);
 
 		/* muic's attached_device attach broadcast */
@@ -461,7 +461,7 @@ void muic_pdic_notifier_detach_attached_dev(muic_attached_dev_t new_dev)
 	pr_info("%s: (%d)\n", __func__, new_dev);
 
 #if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
-	if (sec_feat_slsi_usbpd()) {
+	if (sec_get_feat(SEC_FEAT_SLSI_USBPD)) {
 		__set_pdic_noti_cxt(MUIC_PDIC_NOTIFY_CMD_DETACH, new_dev);
 
 		/* muic's attached_device attach broadcast */
@@ -601,7 +601,7 @@ static int muic_notifier_init(void)
 	BLOCKING_INIT_NOTIFIER_HEAD(&(muic_notifier.notifier_call_chain));
 	__set_noti_cxt(0, ATTACHED_DEV_NONE_MUIC);
 #if IS_ENABLED(CONFIG_PDIC_SLSI_NON_MCU)
-	if (sec_feat_slsi_usbpd()) {
+	if (sec_get_feat(SEC_FEAT_SLSI_USBPD)) {
 		BLOCKING_INIT_NOTIFIER_HEAD(&(muic_pdic_notifier.notifier_call_chain));
 		__set_pdic_noti_cxt(0, ATTACHED_DEV_UNKNOWN_MUIC);
 		muic_pdic_uses_new_noti = 1;
