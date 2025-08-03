@@ -1249,6 +1249,9 @@ static int __init s2mf301_pmeter_init(void)
 {
 	int ret = 0;
 
+	if (!sec_get_uses_pmic(SEC_PMIC_S2MF301))
+		return 0;
+
 	pr_info("%s\n", __func__);
 	ret = platform_driver_register(&s2mf301_pmeter_driver);
 

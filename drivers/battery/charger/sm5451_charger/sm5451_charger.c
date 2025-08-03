@@ -2192,6 +2192,9 @@ static struct i2c_driver sm5451_charger_driver = {
 
 static int __init sm5451_i2c_init(void)
 {
+	if (!sec_get_uses_pmic(SEC_DC_SM5451))
+		return 0;
+
 	pr_info("sm5451-charger: %s\n", __func__);
 	return i2c_add_driver(&sm5451_charger_driver);
 }

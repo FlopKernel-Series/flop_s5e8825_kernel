@@ -13,6 +13,7 @@
 #define __SM5714_H__
 #include <linux/platform_device.h>
 #include <linux/regmap.h>
+#include <linux/sec_detect.h>
 
 #define MFD_DEV_NAME "sm5714"
 

@@ -835,6 +835,9 @@ static struct platform_driver sm5714_led_driver = {
 
 static int __init sm5714_led_driver_init(void)
 {
+	if (!sec_get_uses_pmic(SEC_PMIC_SM5714))
+		return 0;
+
 	return platform_driver_register(&sm5714_led_driver);
 }
 module_init(sm5714_led_driver_init);

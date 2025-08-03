@@ -1470,6 +1470,9 @@ static int __init s2mu106_pmeter_init(void)
 {
 	int ret = 0;
 
+	if (!sec_get_uses_pmic(SEC_PMIC_S2MU106))
+		return 0;
+
 	ret = platform_driver_register(&s2mu106_pmeter_driver);
 
 	return ret;

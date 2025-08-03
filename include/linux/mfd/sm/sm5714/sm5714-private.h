@@ -15,6 +15,7 @@
 #include <linux/i2c.h>
 #include <linux/interrupt.h>
 #include <linux/pm_wakeup.h>
+#include <linux/sec_detect.h>
 
 #define SM5714_I2C_SADR_MUIC	(0x4A >> 1)
 #define SM5714_I2C_SADR_CHG     (0x92 >> 1)

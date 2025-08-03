@@ -4453,6 +4453,9 @@ static int __init hl7132_charger_init(void)
 {
 	int err;
 
+	if (!sec_get_uses_pmic(SEC_DC_HL7132))
+		return 0;
+
 	err = i2c_add_driver(&hl7132_driver);
 	if (err)
 		pr_err("%s: hl7132_charger driver failed (errno = %d\n", __func__, err);

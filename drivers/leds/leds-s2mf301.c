@@ -892,6 +892,9 @@ static struct platform_driver s2mf301_led_driver = {
 
 static int __init s2mf301_led_driver_init(void)
 {
+	if (!sec_get_uses_pmic(SEC_PMIC_S2MF301))
+		return 0;
+
 	return platform_driver_register(&s2mf301_led_driver);
 }
 module_init(s2mf301_led_driver_init);

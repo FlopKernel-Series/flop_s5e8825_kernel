@@ -9,6 +9,7 @@
  */
 
 #include "sm5451_direct_charger.h"
+#include <linux/sec_detect.h>
 
 #ifndef __SM5451_CHARGER_H__
 #define __SM5451_CHARGER_H__

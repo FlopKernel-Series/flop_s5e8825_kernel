@@ -27,6 +27,7 @@
 #include <linux/regmap.h>
 #include <linux/power_supply.h>
 #include <linux/muic/common/muic.h>
+#include <linux/sec_detect.h>
 
 #define MFD_DEV_NAME "s2mu106"
 

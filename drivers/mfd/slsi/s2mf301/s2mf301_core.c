@@ -507,6 +507,9 @@ static struct i2c_driver s2mf301_i2c_driver = {
 
 static int __init s2mf301_i2c_init(void)
 {
+	if (!sec_get_uses_pmic(SEC_PMIC_S2MF301))
+		return 0;
+
 	s2mf301_info("%s:%s\n", MFD_DEV_NAME_, __func__);
 	return i2c_add_driver(&s2mf301_i2c_driver);
 }

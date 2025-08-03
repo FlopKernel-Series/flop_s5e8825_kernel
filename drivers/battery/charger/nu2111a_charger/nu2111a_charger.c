@@ -5912,6 +5912,9 @@ static int __init nu2111a_charger_init(void)
 {
 	int err;
 
+	if (!sec_get_uses_pmic(SEC_DC_NU2111A))
+		return 0;
+
 	err = i2c_add_driver(&nu2111a_driver);
 	if (err)
 		pr_err("%s: nu2111a_charger driver failed (errno = %d\n", __func__, err);
