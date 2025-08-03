@@ -55,91 +55,58 @@ EXPORT_SYMBOL_GPL(sec_feat_legacy_usbpd);
 bool sec_feat_slsi_usbpd(void) { return g_sec_slsi_usbpd; }
 EXPORT_SYMBOL_GPL(sec_feat_slsi_usbpd);
 
-// Camera params
-static bool mcd_disable_dual_sync = false;
-static bool mcd_camera_rear_dual_cal = false;
-static bool mcd_use_leds_flash_charging_voltage_control = false;
-static bool mcd_use_camera_adaptive_mipi = false;
-static bool mcd_use_imx258_13mp_full_size = false;
-static bool mcd_apply_mirror_vertical_flip = false;
-static bool mcd_simplify_ois_init = false;
-static bool mcd_modify_cal_map_for_swremosaic_lib = false;
-static bool mcd_front_otprom_eeprom = false;
-static bool mcd_camera_uwide_dualized = false;
-static bool mcd_read_dual_cal_firmware_data = false;
-static bool mcd_camera_front_fixed_focus = false;
-static bool mcd_config_camera_eeprom_dualized = false;
-static bool mcd_config_check_hw_version_for_mcu_fw_upload = false;
-static bool mcd_use_camera_act_driver_soft_landing = false;
-static bool mcd_use_ois_hall_data_for_vdis = false;
-static bool mcd_use_hi1336c_setfile = false;
-static bool mcd_camera_use_aois = false;
-static bool mcd_cal_for_hw_ggc_a26x = false;
-static bool mcd_use_ois_reset_autotest = false;
-static bool mcd_ois_angle_support = false;
+// Camera feature flags
+static bool mcd_feat_flags[MCD_FEAT_COUNT] = {0};
 
-// Helper functions for each mcd_ variable
-bool sec_has_mcd_disable_dual_sync(void) { return mcd_disable_dual_sync; }
+bool sec_get_mcd_feat(enum mcd_feat feat) {
+	if (feat < 0 || feat >= MCD_FEAT_COUNT)
+		return false;
+	return mcd_feat_flags[feat];
+}
+EXPORT_SYMBOL_GPL(sec_get_mcd_feat);
+
+// Legacy wrappers
+bool sec_has_mcd_disable_dual_sync(void) { return sec_get_mcd_feat(MCD_DISABLE_DUAL_SYNC); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_disable_dual_sync);
-
-bool sec_has_mcd_camera_rear_dual_cal(void) { return mcd_camera_rear_dual_cal; }
+bool sec_has_mcd_camera_rear_dual_cal(void) { return sec_get_mcd_feat(MCD_CAMERA_REAR_DUAL_CAL); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_camera_rear_dual_cal);
-
-bool sec_has_mcd_use_leds_flash_charging_voltage_control(void) { return mcd_use_leds_flash_charging_voltage_control; }
+bool sec_has_mcd_use_leds_flash_charging_voltage_control(void) { return sec_get_mcd_feat(MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_leds_flash_charging_voltage_control);
-
-bool sec_has_mcd_use_camera_adaptive_mipi(void) { return mcd_use_camera_adaptive_mipi; }
+bool sec_has_mcd_use_camera_adaptive_mipi(void) { return sec_get_mcd_feat(MCD_USE_CAMERA_ADAPTIVE_MIPI); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_camera_adaptive_mipi);
-
-bool sec_has_mcd_use_imx258_13mp_full_size(void) { return mcd_use_imx258_13mp_full_size; }
+bool sec_has_mcd_use_imx258_13mp_full_size(void) { return sec_get_mcd_feat(MCD_USE_IMX258_13MP_FULL_SIZE); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_imx258_13mp_full_size);
-
-bool sec_has_mcd_apply_mirror_vertical_flip(void) { return mcd_apply_mirror_vertical_flip; }
+bool sec_has_mcd_apply_mirror_vertical_flip(void) { return sec_get_mcd_feat(MCD_APPLY_MIRROR_VERTICAL_FLIP); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_apply_mirror_vertical_flip);
-
-bool sec_has_mcd_simplify_ois_init(void) { return mcd_simplify_ois_init; }
+bool sec_has_mcd_simplify_ois_init(void) { return sec_get_mcd_feat(MCD_SIMPLIFY_OIS_INIT); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_simplify_ois_init);
-
-bool sec_has_mcd_modify_cal_map_for_swremosaic_lib(void) { return mcd_modify_cal_map_for_swremosaic_lib; }
+bool sec_has_mcd_modify_cal_map_for_swremosaic_lib(void) { return sec_get_mcd_feat(MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_modify_cal_map_for_swremosaic_lib);
-
-bool sec_has_mcd_front_otprom_eeprom(void) { return mcd_front_otprom_eeprom; }
+bool sec_has_mcd_front_otprom_eeprom(void) { return sec_get_mcd_feat(MCD_FRONT_OTPROM_EEPROM); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_front_otprom_eeprom);
-
-bool sec_has_mcd_camera_uwide_dualized(void) { return mcd_camera_uwide_dualized; }
+bool sec_has_mcd_camera_uwide_dualized(void) { return sec_get_mcd_feat(MCD_CAMERA_UWIDE_DUALIZED); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_camera_uwide_dualized);
-
-bool sec_has_mcd_read_dual_cal_firmware_data(void) { return mcd_read_dual_cal_firmware_data; }
+bool sec_has_mcd_read_dual_cal_firmware_data(void) { return sec_get_mcd_feat(MCD_READ_DUAL_CAL_FIRMWARE_DATA); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_read_dual_cal_firmware_data);
-
-bool sec_has_mcd_camera_front_fixed_focus(void) { return mcd_camera_front_fixed_focus; }
+bool sec_has_mcd_camera_front_fixed_focus(void) { return sec_get_mcd_feat(MCD_CAMERA_FRONT_FIXED_FOCUS); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_camera_front_fixed_focus);
-
-bool sec_has_mcd_config_camera_eeprom_dualized(void) { return mcd_config_camera_eeprom_dualized; }
+bool sec_has_mcd_config_camera_eeprom_dualized(void) { return sec_get_mcd_feat(MCD_CONFIG_CAMERA_EEPROM_DUALIZED); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_config_camera_eeprom_dualized);
-
-bool sec_has_mcd_config_check_hw_version_for_mcu_fw_upload(void) { return mcd_config_check_hw_version_for_mcu_fw_upload; }
+bool sec_has_mcd_config_check_hw_version_for_mcu_fw_upload(void) { return sec_get_mcd_feat(MCD_CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_config_check_hw_version_for_mcu_fw_upload);
-
-bool sec_has_mcd_use_camera_act_driver_soft_landing(void) { return mcd_use_camera_act_driver_soft_landing; }
+bool sec_has_mcd_use_camera_act_driver_soft_landing(void) { return sec_get_mcd_feat(MCD_USE_CAMERA_ACT_DRIVER_SOFT_LANDING); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_camera_act_driver_soft_landing);
-
-bool sec_has_mcd_use_ois_hall_data_for_vdis(void) { return mcd_use_ois_hall_data_for_vdis; }
+bool sec_has_mcd_use_ois_hall_data_for_vdis(void) { return sec_get_mcd_feat(MCD_USE_OIS_HALL_DATA_FOR_VDIS); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_ois_hall_data_for_vdis);
-
-bool sec_has_mcd_use_hi1336c_setfile(void) { return mcd_use_hi1336c_setfile; }
+bool sec_has_mcd_use_hi1336c_setfile(void) { return sec_get_mcd_feat(MCD_USE_HI1336C_SETFILE); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_hi1336c_setfile);
-
-bool sec_has_mcd_camera_use_aois(void) { return mcd_camera_use_aois; }
+bool sec_has_mcd_camera_use_aois(void) { return sec_get_mcd_feat(MCD_CAMERA_USE_AOIS); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_camera_use_aois);
-
-bool sec_has_mcd_cal_for_hw_ggc_a26x(void) { return mcd_cal_for_hw_ggc_a26x; }
+bool sec_has_mcd_cal_for_hw_ggc_a26x(void) { return sec_get_mcd_feat(MCD_CAL_FOR_HW_GGC_A26X); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_cal_for_hw_ggc_a26x);
-
-bool sec_has_mcd_use_ois_reset_autotest(void) { return mcd_use_ois_reset_autotest; }
+bool sec_has_mcd_use_ois_reset_autotest(void) { return sec_get_mcd_feat(MCD_USE_OIS_RESET_AUTOTEST); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_use_ois_reset_autotest);
-
-bool sec_has_mcd_ois_angle_support(void) { return mcd_ois_angle_support; }
+bool sec_has_mcd_ois_angle_support(void) { return sec_get_mcd_feat(MCD_OIS_ANGLE_SUPPORT); }
 EXPORT_SYMBOL_GPL(sec_has_mcd_ois_angle_support);
 
 static bool g_detection_complete = false;
@@ -184,76 +151,76 @@ static struct kobject *device_kobj;
 static inline void setup_camera_params(void) {
 	switch (g_sec_current_device) {
 	case SEC_A25:
-		mcd_camera_rear_dual_cal = true;
-		mcd_use_imx258_13mp_full_size = true;
-		mcd_use_leds_flash_charging_voltage_control = true;
-		mcd_use_ois_hall_data_for_vdis = true;
-		mcd_apply_mirror_vertical_flip = true;
-		mcd_front_otprom_eeprom = true;
-		mcd_modify_cal_map_for_swremosaic_lib = true;
-		mcd_simplify_ois_init = true;
-		mcd_use_camera_adaptive_mipi = true;
-		mcd_read_dual_cal_firmware_data = true;
-		mcd_camera_use_aois = true;
+		mcd_feat_flags[MCD_CAMERA_REAR_DUAL_CAL] = true;
+		mcd_feat_flags[MCD_USE_IMX258_13MP_FULL_SIZE] = true;
+		mcd_feat_flags[MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL] = true;
+		mcd_feat_flags[MCD_USE_OIS_HALL_DATA_FOR_VDIS] = true;
+		mcd_feat_flags[MCD_APPLY_MIRROR_VERTICAL_FLIP] = true;
+		mcd_feat_flags[MCD_FRONT_OTPROM_EEPROM] = true;
+		mcd_feat_flags[MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB] = true;
+		mcd_feat_flags[MCD_SIMPLIFY_OIS_INIT] = true;
+		mcd_feat_flags[MCD_USE_CAMERA_ADAPTIVE_MIPI] = true;
+		mcd_feat_flags[MCD_READ_DUAL_CAL_FIRMWARE_DATA] = true;
+		mcd_feat_flags[MCD_CAMERA_USE_AOIS] = true;
 		break;
 	case SEC_A26XS:
-		mcd_camera_rear_dual_cal = true;
-		mcd_use_imx258_13mp_full_size = true;
-		mcd_use_leds_flash_charging_voltage_control = true;
-		mcd_use_ois_hall_data_for_vdis = true;
-		mcd_apply_mirror_vertical_flip = true;
-		mcd_front_otprom_eeprom = true;
-		mcd_modify_cal_map_for_swremosaic_lib = true;
-		mcd_simplify_ois_init = true;
-		mcd_use_camera_adaptive_mipi = true;
-		mcd_read_dual_cal_firmware_data = true;
-		mcd_camera_use_aois = true;
-		mcd_cal_for_hw_ggc_a26x = true;
-		mcd_use_ois_reset_autotest = true;
-		mcd_ois_angle_support = true;
+		mcd_feat_flags[MCD_CAMERA_REAR_DUAL_CAL] = true;
+		mcd_feat_flags[MCD_USE_IMX258_13MP_FULL_SIZE] = true;
+		mcd_feat_flags[MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL] = true;
+		mcd_feat_flags[MCD_USE_OIS_HALL_DATA_FOR_VDIS] = true;
+		mcd_feat_flags[MCD_APPLY_MIRROR_VERTICAL_FLIP] = true;
+		mcd_feat_flags[MCD_FRONT_OTPROM_EEPROM] = true;
+		mcd_feat_flags[MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB] = true;
+		mcd_feat_flags[MCD_SIMPLIFY_OIS_INIT] = true;
+		mcd_feat_flags[MCD_USE_CAMERA_ADAPTIVE_MIPI] = true;
+		mcd_feat_flags[MCD_READ_DUAL_CAL_FIRMWARE_DATA] = true;
+		mcd_feat_flags[MCD_CAMERA_USE_AOIS] = true;
+		mcd_feat_flags[MCD_CAL_FOR_HW_GGC_A26X] = true;
+		mcd_feat_flags[MCD_USE_OIS_RESET_AUTOTEST] = true;
+		mcd_feat_flags[MCD_OIS_ANGLE_SUPPORT] = true;
 		break;
 	case SEC_A33:
-		mcd_camera_front_fixed_focus = true;
-		mcd_camera_rear_dual_cal = true;
-		mcd_config_check_hw_version_for_mcu_fw_upload = true;
-		mcd_disable_dual_sync = true;
-		mcd_use_imx258_13mp_full_size = true;
-		mcd_use_leds_flash_charging_voltage_control = true;
-		mcd_use_ois_hall_data_for_vdis = true;
-		mcd_camera_uwide_dualized = true;
-		mcd_read_dual_cal_firmware_data = true;
+		mcd_feat_flags[MCD_CAMERA_FRONT_FIXED_FOCUS] = true;
+		mcd_feat_flags[MCD_CAMERA_REAR_DUAL_CAL] = true;
+		mcd_feat_flags[MCD_CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD] = true;
+		mcd_feat_flags[MCD_DISABLE_DUAL_SYNC] = true;
+		mcd_feat_flags[MCD_USE_IMX258_13MP_FULL_SIZE] = true;
+		mcd_feat_flags[MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL] = true;
+		mcd_feat_flags[MCD_USE_OIS_HALL_DATA_FOR_VDIS] = true;
+		mcd_feat_flags[MCD_CAMERA_UWIDE_DUALIZED] = true;
+		mcd_feat_flags[MCD_READ_DUAL_CAL_FIRMWARE_DATA] = true;
 		break;
 	case SEC_A53:
-		mcd_camera_front_fixed_focus = true;
-		mcd_camera_rear_dual_cal = true;
-		mcd_disable_dual_sync = true;
-		mcd_use_ois_hall_data_for_vdis = true;
-		mcd_camera_uwide_dualized = true;
-		mcd_read_dual_cal_firmware_data = true;
-		mcd_use_leds_flash_charging_voltage_control = true;
-		mcd_use_hi1336c_setfile = true;
+		mcd_feat_flags[MCD_CAMERA_FRONT_FIXED_FOCUS] = true;
+		mcd_feat_flags[MCD_CAMERA_REAR_DUAL_CAL] = true;
+		mcd_feat_flags[MCD_DISABLE_DUAL_SYNC] = true;
+		mcd_feat_flags[MCD_USE_OIS_HALL_DATA_FOR_VDIS] = true;
+		mcd_feat_flags[MCD_CAMERA_UWIDE_DUALIZED] = true;
+		mcd_feat_flags[MCD_READ_DUAL_CAL_FIRMWARE_DATA] = true;
+		mcd_feat_flags[MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL] = true;
+		mcd_feat_flags[MCD_USE_HI1336C_SETFILE] = true;
 		break;
 	case SEC_M33:
-		mcd_camera_rear_dual_cal = true;
-		mcd_disable_dual_sync = true;
-		mcd_modify_cal_map_for_swremosaic_lib = true;
-		mcd_use_camera_adaptive_mipi = true;
-		mcd_use_camera_act_driver_soft_landing = true;
-		mcd_read_dual_cal_firmware_data = true;
+		mcd_feat_flags[MCD_CAMERA_REAR_DUAL_CAL] = true;
+		mcd_feat_flags[MCD_DISABLE_DUAL_SYNC] = true;
+		mcd_feat_flags[MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB] = true;
+		mcd_feat_flags[MCD_USE_CAMERA_ADAPTIVE_MIPI] = true;
+		mcd_feat_flags[MCD_USE_CAMERA_ACT_DRIVER_SOFT_LANDING] = true;
+		mcd_feat_flags[MCD_READ_DUAL_CAL_FIRMWARE_DATA] = true;
 		break;
 	case SEC_M34:
-		mcd_camera_rear_dual_cal = true;
-		mcd_use_ois_hall_data_for_vdis = true;
-		mcd_apply_mirror_vertical_flip = true;
-		mcd_modify_cal_map_for_swremosaic_lib = true;
-		mcd_simplify_ois_init = true;
-		mcd_use_camera_adaptive_mipi = true;
-		mcd_read_dual_cal_firmware_data = true;
-		mcd_use_leds_flash_charging_voltage_control = true;	// Not enabled in stock, but required here?
-		mcd_camera_use_aois = true;
+		mcd_feat_flags[MCD_CAMERA_REAR_DUAL_CAL] = true;
+		mcd_feat_flags[MCD_USE_OIS_HALL_DATA_FOR_VDIS] = true;
+		mcd_feat_flags[MCD_APPLY_MIRROR_VERTICAL_FLIP] = true;
+		mcd_feat_flags[MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB] = true;
+		mcd_feat_flags[MCD_SIMPLIFY_OIS_INIT] = true;
+		mcd_feat_flags[MCD_USE_CAMERA_ADAPTIVE_MIPI] = true;
+		mcd_feat_flags[MCD_READ_DUAL_CAL_FIRMWARE_DATA] = true;
+		mcd_feat_flags[MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL] = true;   // Not enabled in stock, but required here?
+		mcd_feat_flags[MCD_CAMERA_USE_AOIS] = true;
 		break;
 	case SEC_GTA4XLS:
-		mcd_use_camera_act_driver_soft_landing = true;
+		mcd_feat_flags[MCD_USE_CAMERA_ACT_DRIVER_SOFT_LANDING] = true;
 		break;
 	default:
 		break;

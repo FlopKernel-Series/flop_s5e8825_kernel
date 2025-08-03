@@ -49,7 +49,36 @@ bool sec_feat_legacy_sinput(void);
 bool sec_feat_legacy_usbpd(void);
 bool sec_feat_slsi_usbpd(void);
 
-// Camera param helpers
+
+// Camera feature flags
+enum mcd_feat {
+	MCD_DISABLE_DUAL_SYNC = 0,
+	MCD_CAMERA_REAR_DUAL_CAL,
+	MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL,
+	MCD_USE_CAMERA_ADAPTIVE_MIPI,
+	MCD_USE_IMX258_13MP_FULL_SIZE,
+	MCD_APPLY_MIRROR_VERTICAL_FLIP,
+	MCD_SIMPLIFY_OIS_INIT,
+	MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB,
+	MCD_FRONT_OTPROM_EEPROM,
+	MCD_CAMERA_UWIDE_DUALIZED,
+	MCD_READ_DUAL_CAL_FIRMWARE_DATA,
+	MCD_CAMERA_FRONT_FIXED_FOCUS,
+	MCD_CONFIG_CAMERA_EEPROM_DUALIZED,
+	MCD_CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD,
+	MCD_USE_CAMERA_ACT_DRIVER_SOFT_LANDING,
+	MCD_USE_OIS_HALL_DATA_FOR_VDIS,
+	MCD_USE_HI1336C_SETFILE,
+	MCD_CAMERA_USE_AOIS,
+	MCD_CAL_FOR_HW_GGC_A26X,
+	MCD_USE_OIS_RESET_AUTOTEST,
+	MCD_OIS_ANGLE_SUPPORT,
+	MCD_FEAT_COUNT
+};
+
+bool sec_get_mcd_feat(enum mcd_feat feat);
+
+// Legacy wrappers
 bool sec_has_mcd_disable_dual_sync(void);
 bool sec_has_mcd_camera_rear_dual_cal(void);
 bool sec_has_mcd_use_leds_flash_charging_voltage_control(void);
