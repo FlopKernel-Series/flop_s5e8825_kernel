@@ -1533,7 +1533,7 @@ int is_vender_hw_init(struct is_vender *vender)
 			if (ret) {
 				err("is_sec_run_fw_sel for ROM_ID(%d) is fail(%d)", i, ret);
 //#if defined(CAMERA_UWIDE_DUALIZED)
-				if (sec_has_mcd_camera_uwide_dualized()) {
+				if (sec_get_mcd_feat(MCD_CAMERA_UWIDE_DUALIZED)) {
 					if(i == ROM_ID_REAR3) {
 						ret = is_sec_run_fw_sel(i);
 						if (ret) {
@@ -1541,7 +1541,7 @@ int is_vender_hw_init(struct is_vender *vender)
 						}
 					}
 //#elif defined(FRONT_OTPROM_EEPROM)
-				} else if (sec_has_mcd_front_otprom_eeprom()) {
+				} else if (sec_get_mcd_feat(MCD_FRONT_OTPROM_EEPROM)) {
 					if(i == ROM_ID_FRONT) {
 						ret = is_sec_run_fw_sel(i);
 						if (ret) {
@@ -1584,7 +1584,7 @@ int is_vender_hw_init(struct is_vender *vender)
 	}
 
 #ifdef USE_CAMERA_ADAPTIVE_MIPI
-	if (sec_has_mcd_use_camera_adaptive_mipi())
+	if (sec_get_mcd_feat(MCD_USE_CAMERA_ADAPTIVE_MIPI))
 		is_vendor_register_ril_notifier();
 #endif
 	is_hw_init_running = false;

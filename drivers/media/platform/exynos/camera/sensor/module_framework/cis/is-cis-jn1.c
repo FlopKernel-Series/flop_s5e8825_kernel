@@ -213,7 +213,7 @@ int sensor_jn1_cis_HW_GGC_write(struct v4l2_subdev *subdev)
 	}
 
 	/* Big Endian */
-	if (sec_has_mcd_cal_for_hw_ggc_a26x()) {
+	if (sec_get_mcd_feat(MCD_CAL_FOR_HW_GGC_A26X)) {
 		start_addr = SENSOR_JN1_HW_GGC_CAL_BASE_REAR_A26X;
 		data_size = SENSOR_JN1_HW_GGC_CAL_SIZE;
 	} else {

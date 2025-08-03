@@ -694,7 +694,7 @@ int sensor_gc02m2_cis_mode_change(struct v4l2_subdev *subdev, u32 mode)
 	}
 
 #ifdef APPLY_MIRROR_VERTICAL_FLIP
-	if (sec_has_mcd_apply_mirror_vertical_flip()) {
+	if (sec_get_mcd_feat(MCD_APPLY_MIRROR_VERTICAL_FLIP)) {
 		/* Page Select */
 		ret = is_sensor_addr8_write8(client, 0xfe, 0x00);
 		if (ret < 0) {
@@ -910,7 +910,7 @@ int sensor_gc02m2_cis_stream_on(struct v4l2_subdev *subdev)
 	cis_data = cis->cis_data;
 
 //#if !defined(DISABLE_DUAL_SYNC)
-	if (!sec_has_mcd_disable_dual_sync()) {
+	if (!sec_get_mcd_feat(MCD_DISABLE_DUAL_SYNC)) {
 		if ((this_device != &core->sensor[0]) && test_bit(IS_SENSOR_OPEN, &(core->sensor[0].state))) {
 			single_mode = false;
 		}
@@ -1926,7 +1926,7 @@ int cis_gc02m2_probe(struct i2c_client *client,
 
 	/* belows are depend on sensor cis. MUST check sensor spec */
 //#ifdef APPLY_MIRROR_VERTICAL_FLIP
-	if (sec_has_mcd_apply_mirror_vertical_flip())
+	if (sec_get_mcd_feat(MCD_APPLY_MIRROR_VERTICAL_FLIP))
 		cis->bayer_order = OTF_INPUT_ORDER_BAYER_BG_GR;
 //#else
 	else

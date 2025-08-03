@@ -65,50 +65,6 @@ bool sec_get_mcd_feat(enum mcd_feat feat) {
 }
 EXPORT_SYMBOL_GPL(sec_get_mcd_feat);
 
-// Legacy wrappers
-bool sec_has_mcd_disable_dual_sync(void) { return sec_get_mcd_feat(MCD_DISABLE_DUAL_SYNC); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_disable_dual_sync);
-bool sec_has_mcd_camera_rear_dual_cal(void) { return sec_get_mcd_feat(MCD_CAMERA_REAR_DUAL_CAL); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_camera_rear_dual_cal);
-bool sec_has_mcd_use_leds_flash_charging_voltage_control(void) { return sec_get_mcd_feat(MCD_USE_LEDS_FLASH_CHARGING_VOLTAGE_CONTROL); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_leds_flash_charging_voltage_control);
-bool sec_has_mcd_use_camera_adaptive_mipi(void) { return sec_get_mcd_feat(MCD_USE_CAMERA_ADAPTIVE_MIPI); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_camera_adaptive_mipi);
-bool sec_has_mcd_use_imx258_13mp_full_size(void) { return sec_get_mcd_feat(MCD_USE_IMX258_13MP_FULL_SIZE); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_imx258_13mp_full_size);
-bool sec_has_mcd_apply_mirror_vertical_flip(void) { return sec_get_mcd_feat(MCD_APPLY_MIRROR_VERTICAL_FLIP); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_apply_mirror_vertical_flip);
-bool sec_has_mcd_simplify_ois_init(void) { return sec_get_mcd_feat(MCD_SIMPLIFY_OIS_INIT); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_simplify_ois_init);
-bool sec_has_mcd_modify_cal_map_for_swremosaic_lib(void) { return sec_get_mcd_feat(MCD_MODIFY_CAL_MAP_FOR_SWREMOSAIC_LIB); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_modify_cal_map_for_swremosaic_lib);
-bool sec_has_mcd_front_otprom_eeprom(void) { return sec_get_mcd_feat(MCD_FRONT_OTPROM_EEPROM); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_front_otprom_eeprom);
-bool sec_has_mcd_camera_uwide_dualized(void) { return sec_get_mcd_feat(MCD_CAMERA_UWIDE_DUALIZED); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_camera_uwide_dualized);
-bool sec_has_mcd_read_dual_cal_firmware_data(void) { return sec_get_mcd_feat(MCD_READ_DUAL_CAL_FIRMWARE_DATA); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_read_dual_cal_firmware_data);
-bool sec_has_mcd_camera_front_fixed_focus(void) { return sec_get_mcd_feat(MCD_CAMERA_FRONT_FIXED_FOCUS); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_camera_front_fixed_focus);
-bool sec_has_mcd_config_camera_eeprom_dualized(void) { return sec_get_mcd_feat(MCD_CONFIG_CAMERA_EEPROM_DUALIZED); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_config_camera_eeprom_dualized);
-bool sec_has_mcd_config_check_hw_version_for_mcu_fw_upload(void) { return sec_get_mcd_feat(MCD_CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_config_check_hw_version_for_mcu_fw_upload);
-bool sec_has_mcd_use_camera_act_driver_soft_landing(void) { return sec_get_mcd_feat(MCD_USE_CAMERA_ACT_DRIVER_SOFT_LANDING); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_camera_act_driver_soft_landing);
-bool sec_has_mcd_use_ois_hall_data_for_vdis(void) { return sec_get_mcd_feat(MCD_USE_OIS_HALL_DATA_FOR_VDIS); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_ois_hall_data_for_vdis);
-bool sec_has_mcd_use_hi1336c_setfile(void) { return sec_get_mcd_feat(MCD_USE_HI1336C_SETFILE); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_hi1336c_setfile);
-bool sec_has_mcd_camera_use_aois(void) { return sec_get_mcd_feat(MCD_CAMERA_USE_AOIS); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_camera_use_aois);
-bool sec_has_mcd_cal_for_hw_ggc_a26x(void) { return sec_get_mcd_feat(MCD_CAL_FOR_HW_GGC_A26X); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_cal_for_hw_ggc_a26x);
-bool sec_has_mcd_use_ois_reset_autotest(void) { return sec_get_mcd_feat(MCD_USE_OIS_RESET_AUTOTEST); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_use_ois_reset_autotest);
-bool sec_has_mcd_ois_angle_support(void) { return sec_get_mcd_feat(MCD_OIS_ANGLE_SUPPORT); }
-EXPORT_SYMBOL_GPL(sec_has_mcd_ois_angle_support);
-
 static bool g_detection_complete = false;
 
 bool sec_is_detection_complete(void) {

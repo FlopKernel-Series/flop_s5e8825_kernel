@@ -86,13 +86,13 @@ static int sensor_otprom_probe(struct i2c_client *client,
 
 	if (client->dev.of_node) {
 //#if defined(CAMERA_UWIDE_DUALIZED)
-		if (sec_has_mcd_camera_uwide_dualized()) {
+		if (sec_get_mcd_feat(MCD_CAMERA_UWIDE_DUALIZED)) {
 			if(otprom->driver_data == ROM_ID_REAR3)
 				is_sec_set_rear3_dualized_rom_probe();
 		}
 //#endif
 //#if defined(FRONT_OTPROM_EEPROM)
-		if (sec_has_mcd_front_otprom_eeprom()) {
+		if (sec_get_mcd_feat(MCD_FRONT_OTPROM_EEPROM)) {
 			if(otprom->driver_data == ROM_ID_FRONT)
 				is_sec_set_front_dualized_rom_probe();
 		}

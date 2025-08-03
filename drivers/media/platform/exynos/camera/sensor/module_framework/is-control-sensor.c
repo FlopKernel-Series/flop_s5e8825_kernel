@@ -981,7 +981,7 @@ void is_sensor_ctl_frame_evt(struct is_device_sensor *device)
 			}
 
 #ifdef USE_OIS_HALL_DATA_FOR_VDIS
-			if (sec_has_mcd_use_ois_hall_data_for_vdis()) {
+			if (sec_get_mcd_feat(MCD_USE_OIS_HALL_DATA_FOR_VDIS)) {
 				cur_frame_duration = is_sensor_convert_ns_to_us(sensor_peri->cis.cur_sensor_uctrl.frameDuration);
 				/* in case of under 60fps, enable ois hall data */
 				if (cur_frame_duration >= 16666) {

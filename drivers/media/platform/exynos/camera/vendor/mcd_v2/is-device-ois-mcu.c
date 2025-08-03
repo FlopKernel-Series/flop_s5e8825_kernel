@@ -1398,7 +1398,7 @@ void is_mcu_fw_update_aois(struct is_core *core)
 	ret = is_mcu_fw_version(subdev);
 	if (ret) {
 //#ifdef CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD
-		if (sec_has_mcd_config_check_hw_version_for_mcu_fw_upload()) {
+		if (sec_get_mcd_feat(MCD_CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD)) {
 			int isUpload = 0;
 
 			if (!is_mcu_version_compare(mcu->hw_bin, mcu->hw_mcu))
@@ -1481,7 +1481,7 @@ void is_mcu_fw_update_ois(struct is_core *core)
 	ret = is_mcu_fw_version(subdev);
 	if (ret) {
 //#ifdef CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD
-		if (sec_has_mcd_config_check_hw_version_for_mcu_fw_upload()) {
+		if (sec_get_mcd_feat(MCD_CONFIG_CHECK_HW_VERSION_FOR_MCU_FW_UPLOAD)) {
 			int isUpload = 0;
 
 			if (!is_mcu_version_compare(mcu->hw_bin, mcu->hw_mcu))
@@ -1655,7 +1655,7 @@ void is_ois_mcu_reset_sine_wavecheck(struct is_core *core) {
 /* Which version of the function to call */
 void is_mcu_fw_update(struct is_core *core)
 {
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		is_mcu_fw_update_aois(core);
 	else
 		is_mcu_fw_update_ois(core);
@@ -1681,7 +1681,7 @@ bool is_ois_sine_wavecheck_mcu(struct is_core *core,
 	info("%s autotest started", __func__);
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 
@@ -1716,7 +1716,7 @@ bool is_ois_sine_wavecheck_mcu(struct is_core *core,
 		}
 	} while (val);
 #ifdef USE_OIS_RESET_AUTOTEST
-	if (sec_has_mcd_use_ois_reset_autotest()) {
+	if (sec_get_mcd_feat(MCD_USE_OIS_RESET_AUTOTEST)) {
 		if (val)
 			goto exit;
 	}
@@ -1779,7 +1779,7 @@ bool is_ois_sine_wavecheck_mcu(struct is_core *core,
 	}
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 
@@ -1797,7 +1797,7 @@ exit:
 	*sinx = -1;
 	*siny = -1;
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 
@@ -1826,7 +1826,7 @@ bool is_ois_auto_test_mcu(struct is_core *core,
 
 	value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
 #ifdef USE_OIS_RESET_AUTOTEST
-	if (sec_has_mcd_use_ois_reset_autotest()) {
+	if (sec_get_mcd_feat(MCD_USE_OIS_RESET_AUTOTEST)) {
 		if (value == false) {
 			is_ois_mcu_reset_sine_wavecheck(core);
 			value = is_ois_sine_wavecheck_mcu(core, threshold, sin_x, sin_y, &result);
@@ -2507,7 +2507,7 @@ int is_ois_init_mcu(struct v4l2_subdev *subdev)
 				err("ois gyro data write is fail");
 
 //#if !IS_ENABLED(SIMPLIFY_OIS_INIT)
-			if (!sec_has_mcd_simplify_ois_init()) {
+			if (!sec_get_mcd_feat(MCD_SIMPLIFY_OIS_INIT)) {
 				ret = is_ois_set_reg_u16(client, R_OIS_CMD_XCOEF_M1_1,  ois_pinfo.wide_romdata.xcoef);
 				ret |= is_ois_set_reg_u16(client, R_OIS_CMD_YCOEF_M1_1, ois_pinfo.wide_romdata.ycoef);
 #ifdef CAMERA_2ND_OIS
@@ -2685,7 +2685,7 @@ int is_ois_set_ggfadeupdown_mcu(struct v4l2_subdev *subdev, int up, int down)
 	 * write 0x3F558106
 	 */
 //#if !IS_ENABLED(SIMPLIFY_OIS_INIT)
-	if (!sec_has_mcd_simplify_ois_init()) {
+	if (!sec_get_mcd_feat(MCD_SIMPLIFY_OIS_INIT)) {
 		write_data[0] = 0x06;
 		write_data[1] = 0x81;
 		write_data[2] = 0x55;
@@ -2914,7 +2914,7 @@ int is_ois_self_test_mcu(struct is_core *core)
 
 	info("%s : E\n", __func__);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 	reg = R_OIS_CMD_GYRO_CAL;
@@ -2959,7 +2959,7 @@ int is_ois_self_test_mcu(struct is_core *core)
 
 	info("%s(%d) : X\n", __func__, val);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 
@@ -3336,7 +3336,7 @@ bool is_ois_gyro_cal_mcu(struct is_core *core, long *x_value, long *y_value, lon
 
 	info("%s : E\n", __func__);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 
@@ -3421,7 +3421,7 @@ bool is_ois_gyro_cal_mcu(struct is_core *core, long *x_value, long *y_value, lon
 
 exit:
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 	info("%s X (x = %ld, y = %ld, z = %ld) : result = %d\n", __func__, *x_value, *y_value, *z_value, result);
@@ -3442,7 +3442,7 @@ bool is_ois_offset_test_mcu(struct is_core *core, long *raw_data_x, long *raw_da
 
 	info("%s : E\n", __func__);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 
@@ -3531,7 +3531,7 @@ bool is_ois_offset_test_mcu(struct is_core *core, long *raw_data_x, long *raw_da
 exit:
 	//is_mcu_fw_version(core);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 	info("%s : X raw_x = %ld, raw_y = %ld, raw_z = %ld\n", __func__, *raw_data_x, *raw_data_y, *raw_data_z);
@@ -3917,7 +3917,7 @@ int is_ois_shift_mcu(struct v4l2_subdev *subdev)
 
 static void ois_center_shift_wrapper(struct v4l2_subdev *subdev, int16_t *value)
 {
-	if (sec_has_mcd_ois_angle_support()) {
+	if (sec_get_mcd_feat(MCD_OIS_ANGLE_SUPPORT)) {
 		ois_mcu_set_center_shift(subdev, value);
 	} else {
 		is_ois_shift_mcu(subdev);
@@ -4079,7 +4079,7 @@ void ois_mcu_check_valid_mcu(struct v4l2_subdev *subdev, u8 *value)
 	ois_mcu_init_factory_mcu(subdev);
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 
@@ -4098,7 +4098,7 @@ void ois_mcu_check_valid_mcu(struct v4l2_subdev *subdev, u8 *value)
 
 p_err:
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 	return;
@@ -4132,7 +4132,7 @@ bool ois_mcu_read_gyro_noise_mcu(struct is_core *core, long *x_value, long *y_va
 	}
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 
@@ -4142,7 +4142,7 @@ bool ois_mcu_read_gyro_noise_mcu(struct is_core *core, long *x_value, long *y_va
 	if (ret) {
 		MCU_SET_ERR_PRINT(reg);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-		if (sec_has_mcd_camera_use_aois())
+		if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 			cam_ois_set_aois_fac_mode_off();
 #endif
 		return false;
@@ -4179,7 +4179,7 @@ bool ois_mcu_read_gyro_noise_mcu(struct is_core *core, long *x_value, long *y_va
 	if (ret) {
 		MCU_SET_ERR_PRINT(reg);
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-		if (sec_has_mcd_camera_use_aois())
+		if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 			cam_ois_set_aois_fac_mode_off();
 #endif
 		return false;
@@ -4233,7 +4233,7 @@ bool ois_mcu_read_gyro_noise_mcu(struct is_core *core, long *x_value, long *y_va
 	info("result: %d, stdev_x: %ld (0x%x), stdev_y: %ld (0x%x)", result, *x_value, xgnoise_val, *y_value, ygnoise_val);
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 
@@ -4366,7 +4366,7 @@ void ois_mcu_get_hall_position_mcu(struct is_core *core, u16 *targetPos, u16 *ha
 	}
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_on();
 #endif
 
@@ -4406,7 +4406,7 @@ void ois_mcu_get_hall_position_mcu(struct is_core *core, u16 *targetPos, u16 *ha
 	is_ois_set_reg(client, R_OIS_CMD_FWINFO_CTRL, 0x00);
 
 #if IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (sec_has_mcd_camera_use_aois())
+	if (sec_get_mcd_feat(MCD_CAMERA_USE_AOIS))
 		cam_ois_set_aois_fac_mode_off();
 #endif
 
@@ -4765,7 +4765,7 @@ static int is_mcu_probe(struct i2c_client *client,
 	}
 
 //#if !IS_ENABLED(CONFIG_CAMERA_USE_AOIS)
-	if (!sec_has_mcd_camera_use_aois()) {
+	if (!sec_get_mcd_feat(MCD_CAMERA_USE_AOIS)) {
 		gpio_mcu_boot0 = of_get_named_gpio(dnode, "gpio_mcu_boot0", 0);
 		if (gpio_is_valid(gpio_mcu_boot0)) {
 			gpio_request_one(gpio_mcu_boot0, GPIOF_OUT_INIT_LOW, "CAM_GPIO_OUTPUT_LOW");

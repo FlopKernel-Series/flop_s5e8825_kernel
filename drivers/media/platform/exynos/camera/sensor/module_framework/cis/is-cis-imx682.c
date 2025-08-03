@@ -1320,7 +1320,7 @@ int sensor_imx682_cis_stream_on(struct v4l2_subdev *subdev)
 
 	I2C_MUTEX_LOCK(cis->i2c_lock);
 //#ifdef DISABLE_DUAL_SYNC
-	if (sec_has_mcd_disable_dual_sync()) {
+	if (sec_get_mcd_feat(MCD_DISABLE_DUAL_SYNC)) {
 		info("[%s] start (single mode)\n", __func__);
 //#else
 	} else {

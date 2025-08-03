@@ -269,7 +269,7 @@ int sensor_module_deinit(struct v4l2_subdev *subdev)
 	}
 
 #ifdef USE_CAMERA_ACT_DRIVER_SOFT_LANDING
-	if (sec_has_mcd_use_camera_act_driver_soft_landing()) {
+	if (sec_get_mcd_feat(MCD_USE_CAMERA_ACT_DRIVER_SOFT_LANDING)) {
 		if (sensor_peri->actuator) {
 			flush_work(&sensor_peri->actuator->actuator_init_work);
 
