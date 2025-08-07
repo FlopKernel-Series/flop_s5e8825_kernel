@@ -92,9 +92,17 @@ CODENAME="exynos1280"
 
 ## Secrets
 if [ -f "../chat_ci" ] && [ -f "../bot_token" ]; then
-    TELEGRAM_CHAT_ID="$(cat ../chat_ci)"
-    TELEGRAM_BOT_TOKEN="$(cat ../bot_token)"
-    SECRETS="1"
+    chat_ci_hash=$(md5sum ../chat_ci | awk '{print $1}')
+    bot_token_hash=$(md5sum ../bot_token | awk '{print $1}')
+
+    if [ "$chat_ci_hash" != "68b329da9893e34099c7d8ad5cb9c940" ] || \
+       [ "$bot_token_hash" != "68b329da9893e34099c7d8ad5cb9c940" ]; then
+        TELEGRAM_CHAT_ID="$(<../chat_ci)"
+        TELEGRAM_BOT_TOKEN="$(<../bot_token)"
+        SECRETS="1"
+    else
+        SECRETS="0"
+    fi
 else
     SECRETS="0"
 fi
