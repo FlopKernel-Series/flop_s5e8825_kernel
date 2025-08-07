@@ -65,11 +65,12 @@ DLKM_RAMDISK_DIR="$TMPDIR/ramdisk_dlkm"
 PREBUILT_RAMDISK="$KDIR/kernel_build/boot/ramdisk"
 MODULES_DIR="$DLKM_RAMDISK_DIR/lib/modules"
 OUT_KERNEL="$OUTDIR/arch/arm64/boot/Image"
-OUT_BOOTIMG="$KDIR/kernel_build/boot.img"
-OUT_BOOTIMG_ONEUI="$KDIR/kernel_build/boot_oneui.img"
-OUT_BOOTIMG_AOSP="$KDIR/kernel_build/boot_aosp.img"
-OUT_VENDORBOOTIMG="$KDIR/kernel_build/vendor_boot.img"
-OUT_DTBIMAGE="$TMPDIR/dtb.img"
+IMAGES_DIR="$KDIR/kernel_build/images"
+OUT_BOOTIMG="$IMAGES_DIR/boot.img"
+OUT_BOOTIMG_ONEUI="$IMAGES_DIR/boot_oneui.img"
+OUT_BOOTIMG_AOSP="$IMAGES_DIR/boot_aosp.img"
+OUT_VENDORBOOTIMG="$IMAGES_DIR/vendor_boot.img"
+OUT_DTBIMAGE="$IMAGES_DIR/dtb.img"
 
 # Tools
 MKBOOTIMG="$(pwd)/kernel_build/mkbootimg/mkbootimg.py"
@@ -207,6 +208,10 @@ echo -e "\nINFO: Build info:
 - Permissive: $([ "$DO_PERM" -eq 1 ] && echo "Yes" || echo "No")
 "
 
+# Clean images dir
+[ -d "$IMAGES_DIR" ] && rm -rf "$IMAGES_DIR" || true
+mkdir -p "$IMAGES_DIR"
+
 # Dependencies
 source "$SCRIPTS_DIR/deps.sh"
 
@@ -232,11 +237,6 @@ prep_build() {
     fi
 
     echo -e "INFO: Compiler: $KBUILD_COMPILER_STRING\n"
-
-    [ -f "$OUT_BOOTIMG" ] && rm -f "$OUT_BOOTIMG" || true
-    [ -f "$OUT_BOOTIMG_ONEUI" ] && rm -f "$OUT_BOOTIMG_ONEUI" || true
-    [ -f "$OUT_BOOTIMG_AOSP" ] && rm -f "$OUT_BOOTIMG_AOSP" || true
-    [ -f "$OUT_VENDORBOOTIMG" ] && rm -f "$OUT_VENDORBOOTIMG" || true
 }
 
 

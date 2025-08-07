@@ -162,7 +162,7 @@ sphinx_*/
 *__pycache__*
 *.br
 /kernel_build/*.zip
-/kernel_build/*.img
+/kernel_build/images
 !/kernel_build/vboot_platform/vendor/firmware/*.bin
 log.txt
 
