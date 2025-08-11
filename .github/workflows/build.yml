@@ -1,0 +1,30 @@
+name: Build FloppyKernel
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 16 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Clean
+        uses: rokibhasansagar/slimhub_actions@main
+
+      - name: Prepare enviroment
+        run: |
+          sudo apt update
+          DEBIAN_FRONTEND=noninteractive sudo apt install -yq \
+            brotli zip zstd tar lz4 cpio xz-utils flex bc kmod ccache binutils-aarch64-linux-gnu
+          echo "${{ secrets.CHAT_ID }}" >> "../chat_ci"
+          echo "${{ secrets.TOKEN }}" >> "../bot_token"
+
+      - name: Build
+        run: |
+          ./do_build.sh tkudcbq
+          ./do_build.sh tudbq

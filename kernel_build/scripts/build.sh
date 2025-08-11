@@ -20,7 +20,7 @@ build() {
 
     if [ "$DO_QUIET" = "1" ]; then
         make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
-            $([ "$DO_KSU" = "1" ] && echo "ksu.config") > /dev/null 2>&1
+            $([ "$DO_KSU" = "1" ] && echo "ksu.config") > /dev/null | tee log.txt
     else
         make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
             $([ "$DO_KSU" = "1" ] && echo "ksu.config") 2>&1 | tee log.txt
@@ -82,13 +82,13 @@ build() {
     echo -e "\nINFO: Starting compilation...\n"
 
     if [ "$DO_QUIET" = "1" ]; then
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs > /dev/null 2>&1
+        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs > /dev/null | tee log.txt
 
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" > /dev/null 2>&1
-        
+        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" >/dev/null | tee log.txt
+
         make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
             INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
-            INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install > /dev/null 2>&1
+            INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install >/dev/null | tee log.txt
     else
         make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs 2>&1 | tee -a log.txt
 
