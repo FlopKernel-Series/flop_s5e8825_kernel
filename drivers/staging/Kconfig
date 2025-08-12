@@ -120,4 +120,6 @@ source "drivers/staging/hikey9xx/Kconfig"
 
 source "drivers/staging/nanohub/Kconfig"
 
+source "drivers/staging/kshrink_slabd/Kconfig"
+
 endif # STAGING
