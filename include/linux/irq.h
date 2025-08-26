@@ -246,10 +246,10 @@ enum {
 	IRQD_CAN_RESERVE		= (1 << 26),
 	IRQD_MSI_NOMASK_QUIRK		= (1 << 27),
 	IRQD_HANDLE_ENFORCE_IRQCTX	= (1 << 28),
-	IRQD_PERF_CRITICAL		= (1 << 26),
 	IRQD_AFFINITY_ON_ACTIVATE	= (1 << 29),
 	IRQD_IRQ_ENABLED_ON_SUSPEND	= (1 << 30),
 	IRQD_GIC_MULTI_TARGET		= (1 << 31),
+	IRQD_PERF_CRITICAL		= IRQD_MSI_NOMASK_QUIRK, /* Repurpose MSI quirk flag */
 };
 
 #define __irqd_to_state(d) ACCESS_PRIVATE((d)->common, state_use_accessors)
