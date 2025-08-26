@@ -1995,7 +1995,7 @@ static int decon_register_irqs(struct decon_device *decon)
 	/* 1: FRAME START */
 	decon->irq_fs = of_irq_get_byname(np, "frame_start");
 	ret = devm_request_irq(dev, decon->irq_fs, decon_irq_handler,
-			0, pdev->name, decon);
+			IRQF_PERF_AFFINE, pdev->name, decon);
 	if (ret) {
 		decon_err(decon, "failed to install FRAME START irq\n");
 		return ret;
@@ -2005,7 +2005,7 @@ static int decon_register_irqs(struct decon_device *decon)
 	/* 2: FRAME DONE */
 	decon->irq_fd = of_irq_get_byname(np, "frame_done");
 	ret = devm_request_irq(dev, decon->irq_fd, decon_irq_handler,
-			0, pdev->name, decon);
+			IRQF_PERF_AFFINE, pdev->name, decon);
 	if (ret) {
 		decon_err(decon, "failed to install FRAME DONE irq\n");
 		return ret;
@@ -2065,7 +2065,7 @@ static int decon_register_irqs(struct decon_device *decon)
 	decon_info(decon, "TE irq number(%d)\n", decon->irq_te);
 	irq_set_status_flags(decon->irq_te, IRQ_DISABLE_UNLAZY);
 	ret = devm_request_irq(dev, decon->irq_te, decon_te_irq_handler,
-			IRQF_TRIGGER_RISING, pdev->name, decon);
+			IRQF_TRIGGER_RISING | IRQF_PERF_AFFINE, pdev->name, decon);
 	disable_irq(decon->irq_te);
 
 	return ret;
