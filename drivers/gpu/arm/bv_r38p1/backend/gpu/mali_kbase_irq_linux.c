@@ -452,10 +452,16 @@ int kbase_install_interrupts(struct kbase_device *kbdev)
 	u32 nr = ARRAY_SIZE(kbase_handler_table);
 	int err;
 	u32 i;
+	unsigned long flags;
 
 	for (i = 0; i < nr; i++) {
+		flags = kbdev->irqs[i].flags | IRQF_SHARED;
+
+		if (i == JOB_IRQ_TAG)
+			flags |= IRQF_PERF_AFFINE; /* Apply perf flag only to JOB IRQ */
+
 		err = request_irq(kbdev->irqs[i].irq, kbase_handler_table[i],
-				kbdev->irqs[i].flags | IRQF_SHARED,
+				flags,
 				dev_name(kbdev->dev),
 				kbase_tag(kbdev, i));
 		if (err) {
