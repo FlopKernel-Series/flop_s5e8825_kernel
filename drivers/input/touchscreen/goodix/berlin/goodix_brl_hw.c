@@ -1172,6 +1172,7 @@ static int brl_get_ic_info(struct goodix_ts_data *ts,
 #define GOODIX_ESD_TICK_WRITE_DATA		0xFF
 #define GOODIX_ESD_TICK_WRITE_DATA_BD	0xAA
 
+#if 0
 static int brl_esd_check(struct goodix_ts_data *ts)
 {
 	int ret;
@@ -1204,6 +1205,7 @@ static int brl_esd_check(struct goodix_ts_data *ts)
 	}
 	return 0;
 }
+#endif
 
 #define GOODIX_TOUCH_EVENT			0x80
 #define GOODIX_CMD_RAWDATA	2
@@ -1643,7 +1645,8 @@ static struct goodix_ts_hw_ops brl_hw_ops = {
 	.read_config = brl_read_config,
 	.read_version = brl_read_version,
 	.get_ic_info = brl_get_ic_info,
-	.esd_check = brl_esd_check,
+	/* Disable ESD checks */
+	.esd_check = NULL,
 	.event_handler = brl_event_handler,
 	.after_event_handler = brl_after_event_handler,
 	.get_capacitance_data = brl_get_capacitance_data,
