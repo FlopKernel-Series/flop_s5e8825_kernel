@@ -286,16 +286,30 @@ static int kshrink_lruvecd_status_show(struct seq_file *m, void *arg)
 	return 0;
 }
 
-static int __init kshrink_lruvec_init(void)
+static void register_shrink_lruvecd_vendor_hooks(void)
 {
-	pg_data_t *pgdat = NODE_DATA(0);
-	int ret;
-
 	register_trace_android_vh_handle_failed_page_trylock(handle_failed_page_trylock, NULL);
 	register_trace_android_vh_page_trylock_set(page_trylock_set, NULL);
 	register_trace_android_vh_page_trylock_clear(page_trylock_clear, NULL);
 	register_trace_android_vh_page_trylock_get_result(page_trylock_get_result, NULL);
 	register_trace_android_vh_do_page_trylock(do_page_trylock, NULL);
+}
+
+static void unregister_shrink_lruvecd_vendor_hooks(void)
+{
+	unregister_trace_android_vh_do_page_trylock(do_page_trylock, NULL);
+	unregister_trace_android_vh_page_trylock_get_result(page_trylock_get_result, NULL);
+	unregister_trace_android_vh_page_trylock_clear(page_trylock_clear, NULL);
+	unregister_trace_android_vh_page_trylock_set(page_trylock_set, NULL);
+	unregister_trace_android_vh_handle_failed_page_trylock(handle_failed_page_trylock, NULL);
+}
+
+static int __init kshrink_lruvec_init(void)
+{
+	pg_data_t *pgdat = NODE_DATA(0);
+	int ret;
+
+	register_shrink_lruvecd_vendor_hooks();
 
 	init_waitqueue_head(&shrink_lruvec_wait);
 	spin_lock_init(&l_inactive_lock);
@@ -305,6 +319,7 @@ static int __init kshrink_lruvec_init(void)
 		pr_err("Failed to start shrink_lruvec on node 0\n");
 		ret = PTR_ERR(shrink_lruvec_tsk);
 		shrink_lruvec_tsk = NULL;
+		unregister_shrink_lruvecd_vendor_hooks();
 		return ret;
 	}
 	proc_create_single("kshrink_lruvecd_status", 0, NULL, kshrink_lruvecd_status_show);
@@ -316,17 +331,14 @@ static int __init kshrink_lruvec_init(void)
 
 void kshrink_lruvec_exit(void)
 {
+	remove_proc_entry("kshrink_lruvecd_status", NULL);
+
 	if (shrink_lruvec_tsk) {
 		kthread_stop(shrink_lruvec_tsk);
 		shrink_lruvec_tsk = NULL;
 	}
 
-	unregister_trace_android_vh_do_page_trylock(do_page_trylock, NULL);
-	unregister_trace_android_vh_page_trylock_get_result(page_trylock_get_result, NULL);
-	unregister_trace_android_vh_page_trylock_clear(page_trylock_clear, NULL);
-	unregister_trace_android_vh_page_trylock_set(page_trylock_set, NULL);
-	unregister_trace_android_vh_handle_failed_page_trylock(handle_failed_page_trylock, NULL);
-	remove_proc_entry("kshrink_lruvecd_status", NULL);
+	unregister_shrink_lruvecd_vendor_hooks();
 }
 
 module_init(kshrink_lruvec_init);
