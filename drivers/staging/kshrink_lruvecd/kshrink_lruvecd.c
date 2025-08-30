@@ -316,6 +316,11 @@ static int __init kshrink_lruvec_init(void)
 
 void kshrink_lruvec_exit(void)
 {
+	if (shrink_lruvec_tsk) {
+		kthread_stop(shrink_lruvec_tsk);
+		shrink_lruvec_tsk = NULL;
+	}
+
 	unregister_trace_android_vh_do_page_trylock(do_page_trylock, NULL);
 	unregister_trace_android_vh_page_trylock_get_result(page_trylock_get_result, NULL);
 	unregister_trace_android_vh_page_trylock_clear(page_trylock_clear, NULL);
