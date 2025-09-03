@@ -27,6 +27,8 @@
 #include <linux/dccp.h>
 #include <linux/sctp.h>
 #include <linux/lsm_audit.h>
+#include <linux/dcache.h>
+#include <linux/limits.h>
 
 /**
  * ipv4_skb_to_auditdata : fill auditdata from skb
@@ -281,6 +283,16 @@ static void dump_common_audit_data(struct audit_buffer *ab,
 		audit_log_untrustedstring(ab, a->u.dentry->d_name.name);
 		spin_unlock(&a->u.dentry->d_lock);
 
+		{
+			char *buf = (char *)__getname();
+			if (buf) {
+				char *p = dentry_path_raw(a->u.dentry, buf, PATH_MAX);
+				if (!IS_ERR(p))
+					audit_log_format(ab, " path=%s", p);
+				__putname(buf);
+			}
+		}
+
 		inode = d_backing_inode(a->u.dentry);
 		if (inode) {
 			audit_log_format(ab, " dev=");
@@ -301,6 +313,15 @@ static void dump_common_audit_data(struct audit_buffer *ab,
 			spin_lock(&dentry->d_lock);
 			audit_log_untrustedstring(ab, dentry->d_name.name);
 			spin_unlock(&dentry->d_lock);
+			{
+				char *buf = (char *)__getname();
+				if (buf) {
+					char *p = dentry_path_raw(dentry, buf, PATH_MAX);
+					if (!IS_ERR(p))
+						audit_log_format(ab, " path=%s", p);
+					__putname(buf);
+				}
+			}
 			dput(dentry);
 		}
 		audit_log_format(ab, " dev=");
