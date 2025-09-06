@@ -29,6 +29,7 @@
 #define CMD_SUSFS_SHOW_SUS_SU_WORKING_MODE 0x555e4
 #define CMD_SUSFS_IS_SUS_SU_READY 0x555f0
 #define CMD_SUSFS_SUS_SU 0x60000
+#define CMD_SUSFS_ENABLE_AVC_LOG_SPOOFING 0x60010
 
 #define SUSFS_MAX_LEN_PATHNAME 256 // 256 should address many paths already unless you are doing some strange experimental stuff, then set your own desired length
 #define SUSFS_FAKE_CMDLINE_OR_BOOTCONFIG_SIZE 4096
@@ -95,11 +96,4 @@ static inline void susfs_set_current_proc_su_not_allowed(void) {
 	set_ti_thread_flag(&current->thread_info, TIF_PROC_SU_NOT_ALLOWED);
 }
 
-static inline bool susfs_starts_with(const char *str, const char *prefix) {
-    while (*prefix) {
-        if (*str++ != *prefix++)
-            return false;
-    }
-    return true;
-}
 #endif // #ifndef KSU_SUSFS_DEF_H
