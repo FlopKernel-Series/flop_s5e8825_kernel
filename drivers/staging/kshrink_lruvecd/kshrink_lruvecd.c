@@ -113,7 +113,6 @@ void set_shrink_lruvecd_cpus(void)
 
 static int shrink_lruvecd(void *p)
 {
-	pg_data_t *pgdat;
 	LIST_HEAD(tmp_lru_inactive);
 	struct page *page, *next;
 	struct list_head;
@@ -130,8 +129,6 @@ static int shrink_lruvecd(void *p)
 	 * us from recursively trying to free more memory as we're
 	 * trying to free the first piece of memory in the first place).
 	 */
-	pgdat = (pg_data_t *)p;
-
 	current->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
 	set_freezable();
 
@@ -306,7 +303,6 @@ static void unregister_shrink_lruvecd_vendor_hooks(void)
 
 static int __init kshrink_lruvec_init(void)
 {
-	pg_data_t *pgdat = NODE_DATA(0);
 	int ret;
 
 	register_shrink_lruvecd_vendor_hooks();
@@ -314,7 +310,7 @@ static int __init kshrink_lruvec_init(void)
 	init_waitqueue_head(&shrink_lruvec_wait);
 	spin_lock_init(&l_inactive_lock);
 
-	shrink_lruvec_tsk = kthread_run(shrink_lruvecd, pgdat, "kshrink_lruvecd");
+	shrink_lruvec_tsk = kthread_run(shrink_lruvecd, NULL, "kshrink_lruvecd");
 	if (IS_ERR_OR_NULL(shrink_lruvec_tsk)) {
 		pr_err("Failed to start shrink_lruvec on node 0\n");
 		ret = PTR_ERR(shrink_lruvec_tsk);
