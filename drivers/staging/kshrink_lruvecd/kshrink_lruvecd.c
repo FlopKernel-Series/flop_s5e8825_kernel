@@ -33,7 +33,7 @@
 
 #include "../../../mm/internal.h"
 
-LIST_HEAD(lru_inactive);
+static LIST_HEAD(lru_inactive);
 
 #define SHRINK_LRUVECD_HIGH (0x1000)  //16Mbytes
 
@@ -54,13 +54,13 @@ extern unsigned long reclaim_pages(struct list_head *page_list);
 static bool async_shrink_lruvec_setup = false;
 static struct task_struct *shrink_lruvec_tsk = NULL;
 static atomic_t shrink_lruvec_runnable = ATOMIC_INIT(0);
-unsigned long shrink_lruvec_pages = 0;
-unsigned long shrink_lruvec_pages_max = 0;
-unsigned long shrink_lruvec_handle_pages = 0;
-wait_queue_head_t shrink_lruvec_wait;
-spinlock_t l_inactive_lock;
+static unsigned long shrink_lruvec_pages = 0;
+static unsigned long shrink_lruvec_pages_max = 0;
+static unsigned long shrink_lruvec_handle_pages = 0;
+static wait_queue_head_t shrink_lruvec_wait;
+static spinlock_t l_inactive_lock;
 
-static bool process_is_shrink_lruvecd(struct task_struct *tsk)
+static inline bool process_is_shrink_lruvecd(struct task_struct *tsk)
 {
 	return (shrink_lruvec_tsk->pid == tsk->pid);
 }
@@ -75,7 +75,7 @@ static void add_to_lruvecd_inactive_list(struct page *page)
 		shrink_lruvec_pages_max = shrink_lruvec_pages;
 }
 
-void set_shrink_lruvecd_cpus(void)
+static void set_shrink_lruvecd_cpus(void)
 {
 	struct cpumask mask;
 	struct cpumask *cpumask = &mask;
@@ -325,7 +325,7 @@ static int __init kshrink_lruvec_init(void)
 	return 0;
 }
 
-void kshrink_lruvec_exit(void)
+static void __exit kshrink_lruvec_exit(void)
 {
 	remove_proc_entry("kshrink_lruvecd_status", NULL);
 
