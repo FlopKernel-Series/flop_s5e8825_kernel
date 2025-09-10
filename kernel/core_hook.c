@@ -131,6 +131,7 @@ static void disable_seccomp(void)
 #ifdef CONFIG_SECCOMP
 	current->seccomp.mode = 0;
 	current->seccomp.filter = NULL;
+	atomic_set(&current->seccomp.filter_count, 0);
 #else
 #endif
 }
@@ -255,6 +256,34 @@ static void nuke_ext4_sysfs() {
 	path_put(&path);
 }
 
+static bool is_system_bin_su(void)
+{
+    static const char *su_paths[] = {
+        "/system/bin/su",
+        "/vendor/bin/su",
+        "/product/bin/su",
+        "/system_ext/bin/su",
+		"/odm/bin/su",
+		"/system/xbin/su",
+		"/system_ext/xbin/su"
+    };
+    char path_buf[256];
+    char *pathname;
+    int i;
+
+    struct mm_struct *mm = current->mm;
+    if (mm && mm->exe_file) {
+        pathname = d_path(&mm->exe_file->f_path, path_buf, sizeof(path_buf));
+        if (!IS_ERR(pathname)) {
+            for (i = 0; i < ARRAY_SIZE(su_paths); i++) {
+                if (strcmp(pathname, su_paths[i]) == 0)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
 int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		     unsigned long arg4, unsigned long arg5)
 {
@@ -277,10 +306,18 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 	bool from_root = 0 == current_uid().val;
 	bool from_manager = is_manager();
 
+#ifdef CONFIG_KSU_KPROBES_HOOK
+	if (!from_root && !from_manager 
+		&& !(is_allow_su() && is_system_bin_su())) {
+		// only root or manager can access this interface
+		return 0;
+	}
+#else
 	if (!from_root && !from_manager) {
 		// only root or manager can access this interface
 		return 0;
 	}
+#endif
 
 #ifdef CONFIG_KSU_DEBUG
 	pr_info("option: 0x%x, cmd: %ld\n", option, arg2);
@@ -446,6 +483,32 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		return 0;
 	}
 
+#ifdef CONFIG_KSU_KPROBES_HOOK
+	if (arg2 == CMD_ENABLE_SU) {
+		bool enabled = (arg3 != 0);
+		if (enabled == ksu_su_compat_enabled) {
+			pr_info("cmd enable su but no need to change.\n");
+			if (copy_to_user(result, &reply_ok, sizeof(reply_ok))) {// return the reply_ok directly
+				pr_err("prctl reply error, cmd: %lu\n", arg2);
+			}
+			return 0;
+		}
+
+		if (enabled) {
+			ksu_sucompat_init();
+		} else {
+			ksu_sucompat_exit();
+		}
+		ksu_su_compat_enabled = enabled;
+
+		if (copy_to_user(result, &reply_ok, sizeof(reply_ok))) {
+			pr_err("prctl reply error, cmd: %lu\n", arg2);
+		}
+
+		return 0;
+	}
+#endif
+
 	// all other cmds are for 'root manager'
 	if (!from_manager) {
 		return 0;
@@ -499,7 +562,7 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		}
 		return 0;
 	}
-
+#ifndef CONFIG_KSU_KPROBES_HOOK
 	if (arg2 == CMD_ENABLE_SU) {
 		bool enabled = (arg3 != 0);
 		if (enabled == ksu_su_compat_enabled) {
@@ -523,6 +586,8 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 
 		return 0;
 	}
+#endif
+
 
 	return 0;
 }

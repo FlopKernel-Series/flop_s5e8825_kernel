@@ -53,7 +53,7 @@
   <string name="install">Instalar</string>
   <string name="reboot">Reiniciar</string>
   <string name="uninstalled">Desinstalado</string>
-  <string name="settings">Configurações</string>
+  <string name="settings">Ajustes</string>
   <string name="reboot_userspace">Reiniciar</string>
   <string name="reboot_recovery">Reiniciar em modo Recovery</string>
   <string name="reboot_bootloader">Reiniciar em modo Bootloader</string>
@@ -228,7 +228,9 @@
   <string name="home_module_count_singular">Módulo</string>
   <string name="home_module_count_plural">Módulos</string>
   <string name="module_backup_message">Fazer backup dos módulos instalados.</string>
-  <string name="module_sort_enabled_first">Sort (Enabled first)</string>
-  <string name="module_sort_action_first">Sort (Action first)</string>
-  <string name="module_sort_webui_first">Sort (WebUI first)</string>
+  <string name="module_sort_enabled_first">Ordenar (Habilitado primeiro)</string>
+  <string name="module_sort_action_first">Ordenar (exceto primeiro)</string>
+  <string name="module_sort_webui_first">Ordenar (WebUI primeiro)</string>
+  <string name="settings_global_namespace_mode">Global Namespace Mode</string>
+  <string name="settings_global_namespace_mode_summary">All root sessions use the global mount namespace</string>
 </resources>
