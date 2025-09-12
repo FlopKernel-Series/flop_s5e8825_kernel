@@ -83,19 +83,6 @@ enum mcd_feat {
 
 bool sec_get_mcd_feat(enum mcd_feat feat);
 
-// PMIC usage flags
-enum sec_pmic {
-	SEC_PMIC_SM5714,
-	SEC_PMIC_S2MF301,
-	SEC_PMIC_S2MU106,
-	SEC_DC_SM5451,
-	SEC_DC_HL7132,
-	SEC_DC_NU2111A,
-	SEC_PMIC_COUNT
-};
-
-bool sec_get_uses_pmic(enum sec_pmic pmic);
-
 bool sec_is_detection_complete(void);
 
 #endif /* _LINUX_SEC_H */
