@@ -8591,16 +8591,14 @@ __visible_for_testing int sec_bat_cable_check(struct sec_battery_info *battery,
 		break;
 #if IS_ENABLED(CONFIG_CHARGER_S2MF301)
 	case ATTACHED_DEV_JIG_USB_OFF_MUIC:
-		if (sec_get_uses_pmic(SEC_PMIC_S2MF301)) {
-			val.intval = attached_dev;
-			if (!battery->factory_mode_boot_on)
-				factory_mode = 0;
-			psy_do_property(battery->pdata->charger_name, set,
-				POWER_SUPPLY_PROP_ENERGY_NOW, val);
-			pr_err("%s : FACTORY MODE TEST! (%d, %d)\n", __func__, val.intval,
-				battery->factory_mode_boot_on);
-			break;
-		}
+		val.intval = attached_dev;
+		if (!battery->factory_mode_boot_on)
+			factory_mode = 0;
+		psy_do_property(battery->pdata->charger_name, set,
+			POWER_SUPPLY_PROP_ENERGY_NOW, val);
+		pr_err("%s : FACTORY MODE TEST! (%d, %d)\n", __func__, val.intval,
+			battery->factory_mode_boot_on);
+		break;
 #endif
 #if defined(CONFIG_SIDO_OVP)
 	case ATTACHED_DEV_JIG_UART_ON_MUIC:

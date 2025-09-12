@@ -28,7 +28,6 @@
 #include <linux/proc_fs.h>
 #include <linux/jiffies.h>
 #include <linux/i2c.h>
-#include <linux/sec_detect.h>
 
 #if IS_ENABLED(CONFIG_HALL_NOTIFIER) && !defined(CONFIG_ARCH_MEDIATEK)
 #include <linux/hall/hall_ic_notifier.h>
