@@ -2003,9 +2003,6 @@ static int __init sm5714_charger_init(void)
 {
 	int ret = 0;
 
-	if (!sec_get_uses_pmic(SEC_PMIC_SM5714))
-		return 0;
-
 	ret = platform_driver_register(&sm5714_charger_driver);
 
 	return ret;

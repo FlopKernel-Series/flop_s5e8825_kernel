@@ -26,7 +26,6 @@
 #include <linux/platform_device.h>
 #include <linux/regmap.h>
 #include <linux/power/s2m_chg_manager.h>
-#include <linux/sec_detect.h>
 
 #define MFD_DEV_NAME "s2mu106"
 

@@ -2626,9 +2626,6 @@ static struct platform_driver s2mf301_fuelgauge_driver = {
 
 static int __init s2mf301_fuelgauge_init(void)
 {
-	if (!sec_get_uses_pmic(SEC_PMIC_S2MF301))
-		return 0;
-
 	pr_info("%s\n", __func__);
 	return platform_driver_register(&s2mf301_fuelgauge_driver);
 }

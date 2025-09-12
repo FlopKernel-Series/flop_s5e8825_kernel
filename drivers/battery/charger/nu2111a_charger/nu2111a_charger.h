@@ -3,8 +3,6 @@
 #ifndef _NU2111A_CHARGER_H_
 #define _NU2111A_CHARGER_H_
 
-#include <linux/sec_detect.h>
-
 //#define _NU_DBG
 
 #define BITS(_end, _start)          ((BIT(_end) - BIT(_start)) + BIT(_end))

@@ -1,8 +1,6 @@
 #ifndef _HL7132_CHARGER_H_
 #define _HL7132_CHARGER_H_
 
-#include <linux/sec_detect.h>
-
 #define BITS(_end, _start)          ((BIT(_end) - BIT(_start)) + BIT(_end))
 #define MIN(a, b)                   ((a < b) ? (a):(b))
 #define MASK2SHIFT(_mask)           __ffs(_mask)

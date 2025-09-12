@@ -451,9 +451,6 @@ static struct i2c_driver s2mu106_i2c_driver = {
 
 static int __init s2mu106_i2c_init(void)
 {
-	if (!sec_get_uses_pmic(SEC_PMIC_S2MU106))
-		return 0;
-
 	pr_info("%s:%s\n", MFD_DEV_NAME, __func__);
 	return i2c_add_driver(&s2mu106_i2c_driver);
 }

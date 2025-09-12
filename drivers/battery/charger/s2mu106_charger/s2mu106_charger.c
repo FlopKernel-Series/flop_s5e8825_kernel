@@ -2841,9 +2841,6 @@ static struct platform_driver s2mu106_charger_driver = {
 
 static int __init s2mu106_charger_init(void)
 {
-	if (!sec_get_uses_pmic(SEC_PMIC_S2MU106))
-		return 0;
-
 	pr_info("%s start\n", __func__);
 	return platform_driver_register(&s2mu106_charger_driver);
 }
