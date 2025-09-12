@@ -803,9 +803,14 @@ void object_err(struct kmem_cache *s, struct page *page,
 {
 	pr_auto_once(7);
 	slab_bug(s, "%s", reason);
-	print_trailer(s, page, object);
 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
 	pr_auto_disable(7);
+	if (!object || !check_valid_pointer(s, page, object)) {
+		print_page_info(page);
+		pr_err("Invalid pointer 0x%p\n", object);
+	} else {
+		print_trailer(s, page, object);
+	}
 }
 
 static __printf(3, 4) void slab_err(struct kmem_cache *s, struct page *page,
