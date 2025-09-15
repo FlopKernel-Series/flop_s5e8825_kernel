@@ -36,6 +36,7 @@
 #include "../dwc3/exynos-otg.h"
 #include "xhci-exynos.h"
 #include <soc/samsung/exynos-cpupm.h>
+#include <linux/workarounds.h>
 
 static struct hc_driver __read_mostly xhci_exynos_hc_driver;
 
@@ -1895,22 +1896,27 @@ skip_uram:
 	}
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	ret = of_property_read_u32(parent->of_node,
-			"usb_audio_offloading", &value);
-	if (ret == 0 && value == 1) {
-		ret = exynos_usb_audio_init(parent, pdev);
-		if (ret) {
-			dev_err(&pdev->dev, "USB Audio INIT fail\n");
-			goto dealloc_usb2_hcd;
-		}
-		dev_info(&pdev->dev, "USB Audio offloading is supported\n");
-	} else
-		dev_err(&pdev->dev, "No usb offloading, err = %d\n", ret);
+	if (is_aosp_mode()) {
+		dev_info(&pdev->dev, "AOSP mode: disable USB Audio offloading\n");
+	} else {
+		ret = of_property_read_u32(parent->of_node,
+				"usb_audio_offloading", &value);
+		if (ret == 0 && value == 1) {
+			ret = exynos_usb_audio_init(parent, pdev);
+			if (ret) {
+				dev_err(&pdev->dev, "USB Audio INIT fail\n");
+				goto dealloc_usb2_hcd;
+			}
+			dev_info(&pdev->dev, "USB Audio offloading is supported\n");
 
-	xhci_exynos->out_dma = xhci_data.out_data_dma;
-	xhci_exynos->out_addr = xhci_data.out_data_addr;
-	xhci_exynos->in_dma = xhci_data.in_data_dma;
-	xhci_exynos->in_addr = xhci_data.in_data_addr;
+			xhci_exynos->out_dma = xhci_data.out_data_dma;
+			xhci_exynos->out_addr = xhci_data.out_data_addr;
+			xhci_exynos->in_dma = xhci_data.in_data_dma;
+			xhci_exynos->in_addr = xhci_data.in_data_addr;
+		} else {
+			dev_err(&pdev->dev, "No usb offloading, err = %d\n", ret);
+		}
+	}
 #endif
 
 	device_enable_async_suspend(&pdev->dev);
