@@ -470,7 +470,10 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 	struct device	*dev = dotg->dwc->dev;
 	struct dwc3_exynos *exynos = dotg->exynos;
 	struct device	*exynos_dev = exynos->dev;
-	int ret = 0, i;
+	int ret = 0;
+#ifdef CONFIG_SND_EXYNOS_USB_AUDIO
+	int i;
+#endif
 	int ret1 = -1;
 	int wait_counter = 0;
 
