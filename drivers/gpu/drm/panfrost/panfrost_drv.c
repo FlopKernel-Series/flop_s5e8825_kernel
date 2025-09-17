@@ -291,8 +291,15 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 	struct panfrost_file_priv *file_priv = file->driver_priv;
 	struct drm_panfrost_submit *args = data;
 	struct drm_syncobj *sync_out = NULL;
+	struct panfrost_jm_ctx *jm_ctx;
 	struct panfrost_job *job;
 	int ret = 0;
+
+	if (args->pad)
+		return -EINVAL;
+
+	if (args->jm_ctx_handle)
+		return -EINVAL;
 
 	if (!args->jc)
 		return -EINVAL;
@@ -306,10 +313,16 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 			return -ENODEV;
 	}
 
+	jm_ctx = panfrost_jm_ctx_from_handle(file, args->jm_ctx_handle);
+	if (!jm_ctx) {
+		ret = -EINVAL;
+		goto out_put_syncout;
+	}
+
 	job = kzalloc(sizeof(*job), GFP_KERNEL);
 	if (!job) {
 		ret = -ENOMEM;
-		goto fail_out_sync;
+		goto out_put_jm_ctx;
 	}
 
 	kref_init(&job->refcount);
@@ -319,6 +332,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 	job->requirements = args->requirements;
 	job->flush_id = panfrost_gpu_get_latest_flush_id(pfdev);
 	job->mmu = file_priv->mmu;
+	job->ctx = panfrost_jm_ctx_get(jm_ctx);
 
 	ret = panfrost_copy_in_sync(dev, file, args, job);
 	if (ret)
@@ -328,7 +342,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 	if (ret)
 		goto fail_job;
 
-	ret = panfrost_job_push(job, file_priv);
+	ret = panfrost_job_push(job);
 	if (ret)
 		goto fail_job;
 
@@ -338,7 +352,9 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
 
 fail_job:
 	panfrost_job_put(job);
-fail_out_sync:
+out_put_jm_ctx:
+	panfrost_jm_ctx_put(jm_ctx);
+out_put_syncout:
 	if (sync_out)
 		drm_syncobj_put(sync_out);
 
@@ -561,7 +577,7 @@ panfrost_open(struct drm_device *dev, struct drm_file *file)
 		goto err_free;
 	}
 
-	ret = panfrost_job_open(panfrost_priv);
+	ret = panfrost_job_open(file);
 	if (ret)
 		goto err_job;
 
@@ -580,7 +596,7 @@ panfrost_postclose(struct drm_device *dev, struct drm_file *file)
 	struct panfrost_file_priv *panfrost_priv = file->driver_priv;
 
 	panfrost_perfcnt_close(file);
-	panfrost_job_close(panfrost_priv);
+	panfrost_job_close(file);
 
 	panfrost_mmu_ctx_put(panfrost_priv->mmu);
 	kfree(panfrost_priv);

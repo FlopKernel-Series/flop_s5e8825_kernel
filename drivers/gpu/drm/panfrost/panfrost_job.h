@@ -18,6 +18,7 @@ struct panfrost_job {
 
 	struct panfrost_device *pfdev;
 	struct panfrost_mmu *mmu;
+	struct panfrost_jm_ctx *ctx;
 
 	/* Optional fences userspace can pass in for the job to depend on. */
 	struct dma_fence **in_fences;
@@ -40,12 +41,32 @@ struct panfrost_job {
 	struct dma_fence *render_done_fence;
 };
 
+struct panfrost_js_ctx {
+	struct drm_sched_entity sched_entity;
+	bool enabled;
+};
+
+#define NUM_JOB_SLOTS 3
+
+struct panfrost_jm_ctx {
+	struct kref refcnt;
+	bool destroyed;
+	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
+};
+
+int panfrost_jm_ctx_create(struct drm_file *file,
+			   struct drm_panfrost_jm_ctx_create *args);
+int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
+void panfrost_jm_ctx_put(struct panfrost_jm_ctx *jm_ctx);
+struct panfrost_jm_ctx *panfrost_jm_ctx_get(struct panfrost_jm_ctx *jm_ctx);
+struct panfrost_jm_ctx *panfrost_jm_ctx_from_handle(struct drm_file *file, u32 handle);
+
 int panfrost_job_init(struct panfrost_device *pfdev);
 void panfrost_job_fini(struct panfrost_device *pfdev);
-int panfrost_job_open(struct panfrost_file_priv *panfrost_priv);
-void panfrost_job_close(struct panfrost_file_priv *panfrost_priv);
-int panfrost_job_push(struct panfrost_job *job,
-		      struct panfrost_file_priv *file_priv);
+int panfrost_job_open(struct drm_file *file);
+void panfrost_job_close(struct drm_file *file);
+int panfrost_job_get_slot(struct panfrost_job *job);
+int panfrost_job_push(struct panfrost_job *job);
 void panfrost_job_put(struct panfrost_job *job);
 void panfrost_job_reset_interrupts(struct panfrost_device *pfdev);
 void panfrost_job_enable_interrupts(struct panfrost_device *pfdev);

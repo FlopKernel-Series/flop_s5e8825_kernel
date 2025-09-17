@@ -9,11 +9,13 @@
 #include <linux/io-pgtable.h>
 #include <linux/regulator/consumer.h>
 #include <linux/spinlock.h>
+#include <drm/drm_auth.h>
 #include <drm/drm_device.h>
 #include <drm/drm_mm.h>
 #include <drm/gpu_scheduler.h>
 
 #include "panfrost_devfreq.h"
+#include "panfrost_job.h"
 
 struct panfrost_device;
 struct panfrost_mmu;
@@ -21,7 +23,6 @@ struct panfrost_job_slot;
 struct panfrost_job;
 struct panfrost_perfcnt;
 
-#define NUM_JOB_SLOTS 3
 #define MAX_PM_DOMAINS 5
 
 #define ALL_JS_INT_MASK					\
@@ -155,10 +156,16 @@ struct panfrost_mmu {
 struct panfrost_file_priv {
 	struct panfrost_device *pfdev;
 
-	struct drm_sched_entity sched_entity[NUM_JOB_SLOTS];
+	struct xarray jm_ctxs;
 
 	struct panfrost_mmu *mmu;
 };
+
+static inline bool panfrost_high_prio_allowed(struct drm_file *file)
+{
+	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+	return (capable(CAP_SYS_NICE) || drm_is_current_master(file));
+}
 
 static inline struct panfrost_device *to_panfrost_device(struct drm_device *ddev)
 {
