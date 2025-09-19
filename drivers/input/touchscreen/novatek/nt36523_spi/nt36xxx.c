@@ -2585,7 +2585,7 @@ static irqreturn_t nvt_ts_work_func(int irq, void *data)
 		ret = wait_for_completion_interruptible_timeout(&ts->resume_done, msecs_to_jiffies(500));
 		if (ret == 0) {
 			input_err(true, &ts->client->dev, "%s: LPM: pm resume is not handled\n", __func__);
-			return SEC_ERROR;
+			return (irqreturn_t)SEC_ERROR;
 		}
 
 		if (ret < 0) {
