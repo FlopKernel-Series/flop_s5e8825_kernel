@@ -22,7 +22,7 @@
 		fuelgauge,use_external_temp;
 #if 1
 		fuelgauge,bat_id_gpio = <
-				SEC_GPIO_REF(PM,s2mpu14_gpio,gpio_s,8) 0  /* BAT_ID_1 */
+				SEC_GPIO_REF(AP,gpm3,gpm3,0) 0  /* BAT_ID_1 */
 				>;
 #elif 0
 		fuelgauge,bat_id_gpio = <
@@ -40,7 +40,7 @@
 };
 
 
-/* /home/dpi/qb5_8814/workspace/P4_1716/android/kernel/kmodule/battery/suwon/fuelgauge/s2mf301/a26xs/s2mf301_fuelgauge.dtsi */
+/* /home/dpi/qb5_8814/workspace/P4_1716/android/kernel/kmodule/battery/suwon/fuelgauge/s2mf301/a17x/s2mf301_fuelgauge.dtsi */
 /*
  * s2mf301 battery device tree common
  *
@@ -65,29 +65,31 @@
 		fuelgauge,use_external_temp;
 		/* zadj data [0x12] [0x13] [0x15] */
 		fuelgauge1,zadj_data = <
-			/* zadj data for 4.48 */
+			/* zadj data for 4.45 */
 			0 0 0
-			/* zadj data for 4.46 */
+			/* zadj data for 4.43 */
 			0 0 0
-			/* zadj data for 4.44 */
+			/* zadj data for 4.41 */
 			0 0 0
-			/* zadj data for 4.42 */
+			/* zadj data for 4.39 */
 			0 0 0
-			/* zadj data for 4.37 */
+			/* zadj data for 4.34 */
 			0 0 0
 			>;
 		fuelgauge0,zadj_data = <
-			/* zadj data for 4.48 */
+			/* zadj data for 4.45 */
 			0 0 0
-			/* zadj data for 4.46 */
+			/* zadj data for 4.43 */
 			0 0 0
-			/* zadj data for 4.44 */
+			/* zadj data for 4.41 */
 			0 0 0
-			/* zadj data for 4.42 */
+			/* zadj data for 4.39 */
 			0 0 0
-			/* zadj data for 4.37 */
+			/* zadj data for 4.34 */
 			0 0 0
 			>;
+		fuelgauge,bat_id_cutoff_level = <3400 3400>;
+
 #if 0
 		fuelgauge,bat_id_gpio = <
 				SEC_GPIO_REF(${bat_id_gpio_02}) 0  /* BAT_ID_2 */
@@ -131,13 +133,13 @@
 			30 154
 
 			/* battery,batcap */
-			0x50 0x50 0xb8 0xb /* [0x0E] [0x0F] [0x10] [0x11] */
+			0x80 0x4d 0xb8 0xb /* [0x0E] [0x0F] [0x10] [0x11] */
 
 			/* battery,designcap */
-			0x50 0x50 /* [0x86~0x87] */
+			0x80 0x4d /* [0x86~0x87] */
 
 			/* battery,batcap_ocv_new */
-			0x51 0x50 /* 0x90~0x91 */
+			0x81 0x4d /* 0x90~0x91 */
 
 			/* battery,soc_arr_val */
 			10512 10000 9488 8977 8465 7954 7442 6930 6418 5907
@@ -170,13 +172,13 @@
 			30 154
 
 			/* battery,batcap */
-			0x20 0x4f 0xf4 0xc /* [0x0E] [0x0F] [0x10] [0x11] */
+			0x58 0x4c 0xf4 0xc /* [0x0E] [0x0F] [0x10] [0x11] */
 
 			/* battery,designcap */
-			0x20 0x4f /* [0x86~0x87] */
+			0x58 0x4c /* [0x86~0x87] */
 
 			/* battery,batcap_ocv_new */
-			0x21 0x4f /* 0x90~0x91 */
+			0x59 0x4c /* 0x90~0x91 */
 
 			/* battery,soc_arr_val */
 			10667 10148 9629 9109 8590 8071 7552 7032 6513 5994
@@ -209,13 +211,13 @@
 			30 154
 
 			/* battery,batcap */
-			0xa0 0x4d 0xb5 0xc  /* [0x0E] [0x0F] [0x10] [0x11] */
+			0xe8 0x4a 0xb5 0xc  /* [0x0E] [0x0F] [0x10] [0x11] */
 
 			/* battery,designcap */
-			0xa0 0x4d /* [0x86~0x87] */
+			0xe8 0x4a /* [0x86~0x87] */
 
 			/* battery,batcap_ocv_new */
-			0xa1 0x4d /* 0x90~0x91 */
+			0xe9 0x4a /* 0x90~0x91 */
 
 			/* battery,soc_arr_val */
 			10873 10344 9815 9286 8757 8228 7698 7169 6639 6110
@@ -248,13 +250,13 @@
 			30 154
 
 			/* battery,batcap */
-			0x0C 0x4C 0x73 0xc /* [0x0E] [0x0F] [0x10] [0x11] */
+			0x60 0x49 0x73 0xc /* [0x0E] [0x0F] [0x10] [0x11] */
 
 			/* battery,designcap */
-			0x0C 0x4C /* [0x86~0x87] */
+			0x60 0x49 /* [0x86~0x87] */
 
 			/* battery,batcap_ocv_new */
-			0x0D 0x4C /* 0x90~0x91 */
+			0x61 0x49 /* 0x90~0x91 */
 
 			/* battery,soc_arr_val */
 			11100 10560 10020 9480 8939 8399 7859 7318 6778 6238
@@ -287,13 +289,13 @@
 			30 154
 
 			/* battery,batcap */
-			0x74 0x48 0xdc 0xb /* [0x0E] [0x0F] [0x10] [0x11] */
+			0xe8 0x45 0xdc 0xb /* [0x0E] [0x0F] [0x10] [0x11] */
 
 			/* battery,designcap */
-			0x74 0x48 /* [0x86~0x87] */
+			0xe8 0x45 /* [0x86~0x87] */
 
 			/* battery,batcap_ocv_new */
-			0x75 0x48 /* 0x90~0x91 */
+			0xe9 0x45 /* 0x90~0x91 */
 
 			/* battery,soc_arr_val */
 			11651 11084 10516 9949 9382 8815 8248 7681 7114 6547
@@ -508,6 +510,3 @@
 			>;
 	};
 };
-
-/* /home/dpi/qb5_8814/workspace/P4_1716/android/kernel/kmodule/battery/suwon/fuelgauge/s2mf301/a26xs/s2mf301_fuelgauge.05.dtsi */
-/* Battery data same as s2mf301_fuelgauge.dtsi*/

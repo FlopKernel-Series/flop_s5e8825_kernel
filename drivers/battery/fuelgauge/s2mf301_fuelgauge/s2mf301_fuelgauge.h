@@ -207,6 +207,7 @@ struct s2mf301_fuelgauge_data {
 	bool initial_update_of_soc;
 	bool sleep_initial_update_of_soc;
 	struct mutex fg_lock;
+	struct mutex fg_data_lock;
 	struct delayed_work isr_work;
 
 	/* register programming */

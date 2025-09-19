@@ -311,6 +311,18 @@ static int s2mf301_i2c_probe(struct i2c_client *i2c,
 	s2mf301->dev = &i2c->dev;
 	s2mf301->i2c = i2c;
 	s2mf301->irq = i2c->irq;
+	s2mf301->suspended = false;
+	init_waitqueue_head(&s2mf301->suspend_wait);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 188)
+	wakeup_source_init(s2mf301->irq_ws, "s2mf301_mfd");   // 4.19 R
+	if (!(s2mf301->irq_ws)) {
+		s2mf301->irq_ws = wakeup_source_create("s2mf301_mfd"); // 4.19 Q
+		if (s2mf301->irq_ws)
+			wakeup_source_add(s2mf301->irq_ws);
+	}
+#else
+	s2mf301->irq_ws = wakeup_source_register(NULL, "s2mf301_mfd"); // 5.4 R
+#endif
 	if (pdata) {
 		s2mf301->pdata = pdata;
 #if IS_ENABLED(CONFIG_CHARGER_S2MF301) || IS_ENABLED(CONFIG_LEDS_S2MF301_FLASH) || \
@@ -453,11 +465,10 @@ static int s2mf301_suspend(struct device *dev)
 	struct s2mf301_dev *s2mf301 = i2c_get_clientdata(i2c);
 
 	s2mf301_set_irq_mask(s2mf301, 1);
+	s2mf301->suspended = true;
 
 	if (device_may_wakeup(dev))
 		enable_irq_wake(s2mf301->irq);
-
-	disable_irq(s2mf301->irq);
 
 	return 0;
 }
@@ -470,11 +481,12 @@ static int s2mf301_resume(struct device *dev)
 	pr_debug("%s:%s\n", MFD_DEV_NAME_, __func__);
 
 	s2mf301_set_irq_mask(s2mf301, 0);
+	s2mf301->suspended = false;
+
+	wake_up(&s2mf301->suspend_wait);
 
 	if (device_may_wakeup(dev))
 		disable_irq_wake(s2mf301->irq);
-
-	enable_irq(s2mf301->irq);
 
 	return 0;
 }

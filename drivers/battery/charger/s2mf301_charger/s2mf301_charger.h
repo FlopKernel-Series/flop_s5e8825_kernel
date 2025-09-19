@@ -431,9 +431,9 @@ struct s2mf301_charger_platform_data {
 	char *charger_name;
 	char *fuelgauge_name;
 	int slow_charging_current;
-	unsigned int full_check_current_1st;
 	int bat2ship_debounce_time;
 	bool boosting_voltage_aicl;
+	unsigned int full_check_current_1st;
 };
 
 struct s2mf301_charger_data {
@@ -503,6 +503,7 @@ struct s2mf301_charger_data {
 	int ivr_on;
 	bool slow_charging;
 
+	int attached_dev;
 	bool bypass;
 	bool keystring;
 #if IS_ENABLED(CONFIG_MUIC_NOTIFIER)

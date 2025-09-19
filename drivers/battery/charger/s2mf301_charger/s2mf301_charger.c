@@ -239,6 +239,8 @@ static int s2mf301_charger_otg_control(struct s2mf301_charger_data *charger, boo
 	else {
 		s2mf301_update_reg(charger->i2c,
 			S2MF301_CHG_CTRL4, S2MF301_SET_OTG_OCP_900mA << SET_OTG_OCP_SHIFT, SET_OTG_OCP_MASK);
+		/* OVP on */
+		s2mf301_update_reg(charger->i2c, 0x86, 0x80, 0x80);
 		s2mf301_set_regmode(charger, OTG_MODE);
 	}
 	charger->otg_on = enable;
@@ -701,11 +703,11 @@ static void s2mf301_check_multi_tap_off(struct s2mf301_charger_data *charger)
 		return;
 	}
 
-	pr_info("%s: check multi tap off\n", __func__);
-
 	s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS2, &sts2);
 	s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS7, &sts7);
 	s2mf301_read_reg(charger->pm, S2MF301_REG_PM_ICHG_STATUS, &ichgin_hi);
+
+	pr_info("%s: sts2(0x%02x), sts7(0x%02x), ichgin_sts(0x%02x)\n", __func__, sts2, sts7, ichgin_hi);
 
 	if ((sts2 & IVR_STATUS_MASK) && (sts7 & DET_ASYNC_STATUS_MASK) && !(ichgin_hi & (0x1 << 3))) {
 		pr_info("%s: enable chgin discharging resister\n", __func__);
@@ -850,6 +852,8 @@ static int s2mf301_chg_get_property(struct power_supply *psy,
 		case POWER_SUPPLY_EXT_PROP_MONITOR_WORK:
 			s2mf301_test_read(charger->i2c);
 			break;
+		case POWER_SUPPLY_EXT_PROP_SHIPMODE_TEST_DB_T:
+			break;
 		case POWER_SUPPLY_EXT_PROP_SHIPMODE_TEST:
 			val->intval = s2mf301_get_en_shipmode(charger);
 			pr_info("%s: manual ship mode set as %s\n", __func__, val->intval ? "enable" : "disable");
@@ -890,6 +894,7 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 	union power_supply_propval value;
 	int ret;
 	int vbat = 0;
+	u8 reg_data = 0;
 
 	switch ((int)psp) {
 	case POWER_SUPPLY_PROP_STATUS:
@@ -979,6 +984,8 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 		}
 		break;
 	case POWER_SUPPLY_PROP_ENERGY_NOW:
+		charger->attached_dev = val->intval;
+
 		if (!factory_mode) {
 			pr_info("%s: masking lc, sc, buck interrupt\n", __func__);
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT0M,
@@ -1107,6 +1114,13 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 					s2mf301_update_reg(charger->i2c, S2MF301_CHG_OPEN_OTP0, 0x0, 0x20);
 					/* INOK_INV enable */
 					s2mf301_update_reg(charger->top, S2MF301_TOP_COMMON_OTP5, 0x80, 0x80);
+#if !defined(CONFIG_SEC_FACTORY)
+					if (!factory_mode) {
+						pr_info("%s, User binary, 255K => async buck write\n", __func__);
+						/* Asnyc buckmode enable */
+						s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON3, 0x40, 0x40);
+					}
+#endif
 				} else
 					pr_info("%s: Bypass + 619K, do not enter normal code\n", __func__);
 				break;
@@ -1130,6 +1144,13 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 				s2mf301_write_reg(charger->i2c, S2MF301_CHG_D2A_SC_OTP0, 0x3F);
 				/* D2A_SC_EN_IV OFF */
 				s2mf301_write_reg(charger->i2c, S2MF301_CHG_T_CHG_OFF2, 0x10);
+#if !defined(CONFIG_SEC_FACTORY)
+				if (!factory_mode) {
+					pr_info("%s, User binary, 255K => async buck write\n", __func__);
+					/* Asnyc buckmode enable */
+					s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_ON3, 0x40, 0x40);
+				}
+#endif
 				break;
 			}
 
@@ -1138,13 +1159,8 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			charger->keystring = false;
 			/* VIO reset on (default) */
 			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x01, 0x01);
-#if defined(CONFIG_SEC_FACTORY)
 			/* MRST enable */
 			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
-#else
-			/* MRST disable(default) */
-			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
-#endif
 			/* ICR default 1.8A */
 			s2mf301_write_reg(charger->i2c, S2MF301_CHG_CTRL2, 0x47);
 			/* QBAT ON */
@@ -1298,6 +1314,8 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 			s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x08, 0x0F);
 			/* VIO RESET OFF */
 			s2mf301_update_reg(charger->top, S2MF301_TOP_I2C_RESET_CTRL, 0x0, 0x01);
+			/* CHIP2SYS OFF */
+			s2mf301_update_reg(charger->i2c, S2MF301_CHG_T_CHG_OFF5, 0x01, 0x01);
 			/* QBAT OFF DLY OFF */
 			s2mf301_update_reg(charger->i2c, S2MF301_CHG_OPEN_OTP0, 0x0, 0x20);
 			/* BAT2SYS OFF */
@@ -1308,9 +1326,16 @@ static int s2mf301_chg_set_property(struct power_supply *psy,
 		case POWER_SUPPLY_EXT_PROP_CHARGE_OTG_CONTROL:
 			s2mf301_charger_otg_control(charger, val->intval);
 			break;
+		case POWER_SUPPLY_EXT_PROP_SHIPMODE_TEST_DB_T:
+			break;
 		case POWER_SUPPLY_EXT_PROP_SHIPMODE_TEST:
 			pr_info("%s: manual ship mode is %s\n", __func__, val->intval ? "enable" : "disable");
+			if (val->intval) /* MRST disable(default) */
+				s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
+
 			s2mf301_set_en_shipmode(charger, val->intval);
+			s2mf301_read_reg(charger->top, S2MF301_TOP_MRSTB_RESET, &reg_data);
+			pr_info("%s: S2MF301_MRSTB: 0x%x\n", __func__, reg_data);
 			break;
 		case POWER_SUPPLY_EXT_PROP_CHARGING_ENABLED:
 			charger->charge_mode = val->intval;
@@ -1603,9 +1628,8 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 		s2mf301_update_reg(charger->i2c, S2MF301_CHG_INT2M, 0 << IVR_M_SHIFT, IVR_M_MASK);
 		return;
 	}
-	pr_info("%s: ivr_status 0x0C:0x%02x\n", __func__, ivr_state);
 
-	s2mf301_check_multi_tap_off(charger);
+	pr_info("%s: ivr_status 0x12:0x%02x\n", __func__, ivr_state);
 
 	mutex_lock(&charger->ivr_mutex);
 
@@ -1613,11 +1637,7 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 			charger->cable_type != SEC_BATTERY_CABLE_NONE &&
 			!irqd_irq_disabled(&irq_to_desc(charger->irq_ivr)->irq_data)) {
 
-		if (s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS2, &ivr_state)) {
-			pr_err("%s: Error reading S2MF301_CHG_STATUS2\n", __func__);
-			break;
-		}
-		pr_info("%s: ivr_status 0x0C:0x%02x\n", __func__, ivr_state);
+		s2mf301_check_multi_tap_off(charger);
 
 		if (++ivr_cnt >= 2) {
 			s2mf301_reduce_input_current(charger);
@@ -1630,8 +1650,13 @@ static void s2mf301_ivr_irq_work(struct work_struct *work)
 		msleep(IVR_WORK_DELAY);
 
 		if (!(ivr_state & IVR_STATUS_MASK)) {
-			pr_info("%s: EXIT IVR WORK: check value (0x0C:0x%02x, input current:%d)\n", __func__,
+			pr_info("%s: EXIT IVR WORK: check value (0x12:0x%02x, input current:%d)\n", __func__,
 				ivr_state, charger->input_current);
+			break;
+		}
+
+		if (s2mf301_read_reg(charger->i2c, S2MF301_CHG_STATUS2, &ivr_state)) {
+			pr_err("%s: Error reading S2MF301_CHG_STATUS2\n", __func__);
 			break;
 		}
 	}
@@ -2089,7 +2114,7 @@ static int s2mf301_charger_suspend(struct device *dev)
 {
 	struct s2mf301_charger_data *charger = dev_get_drvdata(dev);
 
-	if (factory_mode) {
+	if (factory_mode && charger->attached_dev == ATTACHED_DEV_JIG_UART_OFF_VB_MUIC) {
 		/* buck async mode */
 		pr_info("%s: buck async mode\n", __func__);
 		/* for protecting normal set in 619K. this is not real Bypass */
@@ -2124,6 +2149,7 @@ static void s2mf301_charger_shutdown(struct platform_device *dev)
 #if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
 	{
 		u8 auto_shipmode_level;
+		u8 reg_data = 0;
 
 		/* case with stray voltage due to TA connection */
 		if (!is_nocharge_type(charger->cable_type) || lpcharge) {
@@ -2135,6 +2161,11 @@ static void s2mf301_charger_shutdown(struct platform_device *dev)
 			auto_shipmode_level = s2mf301_check_auto_shipmode_level(charger, 0);
 
 		s2mf301_set_auto_shipmode_level(charger, auto_shipmode_level);
+
+		/* MRST disable(default) */
+		s2mf301_update_reg(charger->top, S2MF301_TOP_MRSTB_RESET, 0x06, 0x0F);
+		s2mf301_read_reg(charger->top, S2MF301_TOP_MRSTB_RESET, &reg_data);
+		pr_info("%s: S2MF301_MRSTB: 0x%x\n", __func__, reg_data);
 	}
 #endif
 	s2mf301_set_time_bat2ship_db(charger, charger->pdata->bat2ship_debounce_time);

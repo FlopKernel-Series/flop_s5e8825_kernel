@@ -25,3 +25,11 @@ config UI_SOC_PROLONGING
 	  Support for UI Soc prolonging.
 	  This is to enable UI Soc prolonging concept.
 
+config DELETE_UI100_WA
+	bool "Delete UI100 workaround"
+	default n
+	help
+	  Say Y here to enable
+	  Support for Delete UI100 wa.
+	  This is to delete UI100 workaround.
+
