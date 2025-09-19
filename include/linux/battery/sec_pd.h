@@ -23,6 +23,9 @@
 
 #ifndef __SEC_PD_H__
 #define __SEC_PD_H__
+
+#include <linux/types.h>
+
 #define MAX_PDO_NUM 8
 #define AVAILABLE_VOLTAGE 9000
 #define DEFAULT_VOLTAGE 5000
@@ -67,6 +70,12 @@ typedef enum {
 	AUTH_HIGH_PWR,
 } AUTH_TYPE_T;
 
+typedef enum {
+	USB_PD_SPEC_REV_1	= 0,
+	USB_PD_SPEC_REV_2,
+	USB_PD_SPEC_REV_3
+} USB_PD_SPEC_REV;
+
 typedef struct _power_list {
 	int accept;
 	int max_voltage;
@@ -76,7 +85,7 @@ typedef struct _power_list {
 	int apdo;
 	int comm_capable;
 	int suspend;
- } POWER_LIST;
+} POWER_LIST;
 
 typedef struct sec_pd_sink_status
 {
@@ -86,6 +95,7 @@ typedef struct sec_pd_sink_status
 	int available_pdo_num; // the number of available PDO
 	int selected_pdo_num; // selected number of PDO to change
 	int current_pdo_num; // current number of PDO
+	int spec_rev;
 	unsigned short vid;
 	unsigned short pid;
 	unsigned int xid;
@@ -123,6 +133,7 @@ int sec_pd_get_apdo_prog_volt(unsigned int pdo_type, unsigned int max_volt);
 int sec_pd_get_max_power(unsigned int pdo_type, unsigned int min_volt, unsigned int max_volt, unsigned int max_curr);
 int sec_pd_get_pdo_power(unsigned int *pdo, unsigned int *min_volt, unsigned int *max_volt, unsigned int *curr);
 int sec_pd_get_apdo_max_power(unsigned int *pdo_pos, unsigned int *taMaxVol, unsigned int *taMaxCur, unsigned int *taMaxPwr);
+int sec_pd_set_pd_voltage(int volt);
 void sec_pd_init_data(SEC_PD_SINK_STATUS* psink_status);
 int sec_pd_register_chg_info_cb(void *cb);
 int sec_pd_get_chg_info(void);
@@ -132,6 +143,7 @@ void sec_pd_manual_ccopen_req(int is_on);
 void sec_pd_manual_jig_ctrl(bool mode);
 int sec_pd_detach_with_cc(int state);
 int sec_pd_change_src(int max_cur);
+bool sec_pd_enable_rp_current_wa(void);
 #else
 static inline char* sec_pd_pdo_type_str(int pdo_type) { return "\0"; }
 static inline int sec_pd_select_pdo(int num) { return -ENODEV; }
@@ -144,6 +156,7 @@ static inline int sec_pd_get_apdo_prog_volt(unsigned int pdo_type, unsigned int 
 static inline int sec_pd_get_max_power(unsigned int pdo_type, unsigned int min_volt, unsigned int max_volt, unsigned int max_curr) { return -ENODEV; }
 static inline int sec_pd_get_pdo_power(unsigned int *pdo, unsigned int *min_volt, unsigned int *max_volt, unsigned int *curr) { return -ENODEV; }
 static inline int sec_pd_get_apdo_max_power(unsigned int *pdo_pos, unsigned int *taMaxVol, unsigned int *taMaxCur, unsigned int *taMaxPwr) { return -ENODEV; }
+static inline int sec_pd_set_pd_voltage(int volt) { return -ENODEV; }
 static inline void sec_pd_init_data(SEC_PD_SINK_STATUS* psink_status) { }
 static inline int sec_pd_register_chg_info_cb(void *cb) { return 0; }
 static inline void sec_pd_get_vid_pid(unsigned short *vid, unsigned short *pid, unsigned int *xid) { }
@@ -152,5 +165,7 @@ static inline void sec_pd_manual_ccopen_req(int is_on) { }
 static inline void sec_pd_manual_jig_ctrl(bool mode) { }
 static inline int sec_pd_detach_with_cc(int state) { return 0; }
 static inline int sec_pd_change_src(int max_cur) { return 0; }
+static inline bool sec_pd_enable_rp_current_wa(void) { return false; }
 #endif
+
 #endif /* __SEC_PD_H__ */

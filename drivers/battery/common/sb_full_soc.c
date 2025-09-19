@@ -229,6 +229,23 @@ static void eu_eco_work(struct work_struct *work)
 		sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_CHARGING);
 		battery->is_recharging = false;
 		battery->charging_mode = SEC_BATTERY_CHARGING_1ST;
+#if defined(CONFIG_WIRELESS_RX_PHM_CTRL)
+		if (is_wireless_type(battery->cable_type)) {
+			value.intval = EXIT_PHM;
+			psy_do_property(battery->pdata->wireless_charger_name, set,
+				POWER_SUPPLY_EXT_PROP_RX_PHM, value);
+		}
+#endif
+		if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP) {
+			psy_do_property(battery->pdata->wireless_charger_name, get,
+				POWER_SUPPLY_EXT_PROP_WIRELESS_OP_MODE, value);
+			pr_info("%s: @mpp : op_mode %d\n", __func__, value.intval);
+			if (value.intval == MFC_RX_MODE_WPC_MPP_CLOAK) {
+				value.intval = CLOAK_EXIT_CMD;
+				psy_do_property("wireless", set,
+					POWER_SUPPLY_EXT_PROP_MPP_CLOAK, value);
+			}
+		}
 		if (battery->pdata->change_FV_after_full)
 			sec_vote(battery->fv_vote, VOTER_FULL_CHARGE, false, battery->pdata->chg_float_voltage);
 		sec_vote(battery->chgen_vote, VOTER_CABLE, true, SEC_BAT_CHG_MODE_CHARGING);
@@ -365,6 +382,27 @@ static ssize_t sb_full_soc_store_attrs(struct device *dev,
 			set_full_capacity(battery->fs, x);
 			set_full_cap_event(battery->fs, full_cap_event);
 
+#if defined(CONFIG_WIRELESS_RX_PHM_CTRL)
+			if (is_wireless_type(battery->cable_type)) {
+				union power_supply_propval value = { EXIT_PHM, };
+
+				psy_do_property(battery->pdata->wireless_charger_name, set,
+					POWER_SUPPLY_EXT_PROP_RX_PHM, value);
+			}
+#endif
+			if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP) {
+				union power_supply_propval value = { 0, };
+
+				psy_do_property(battery->pdata->wireless_charger_name, get,
+					POWER_SUPPLY_EXT_PROP_WIRELESS_OP_MODE, value);
+				pr_info("%s: @mpp : op_mode %d\n", __func__, value.intval);
+				if (value.intval == MFC_RX_MODE_WPC_MPP_CLOAK) {
+					value.intval = CLOAK_EXIT_CMD;
+					psy_do_property("wireless", set,
+						POWER_SUPPLY_EXT_PROP_MPP_CLOAK, value);
+				}	
+			}
+
 			/* recov full cap */
 			sec_bat_recov_full_capacity(battery);
 
@@ -452,7 +490,15 @@ static void sb_full_soc_remove_attrs(struct device *dev)
 
 void sec_bat_recov_full_capacity(struct sec_battery_info *battery)
 {
+	union power_supply_propval value = {0, };
+
 	sec_bat_set_misc_event(battery, 0, BATT_MISC_EVENT_FULL_CAPACITY);
+	if (battery->pdata->wireless_charger_name) {
+		value.intval = BATT_MISC_EVENT_FULL_CAPACITY;
+		psy_do_property(battery->pdata->wireless_charger_name, set,
+			POWER_SUPPLY_EXT_PROP_MISC_EVENT_CLEAR, value);
+	}
+
 	if (battery->status == POWER_SUPPLY_STATUS_NOT_CHARGING
 		&& battery->health == POWER_SUPPLY_HEALTH_GOOD) {
 #if defined(CONFIG_ENABLE_FULL_BY_SOC)
@@ -465,8 +511,26 @@ void sec_bat_recov_full_capacity(struct sec_battery_info *battery)
 				POWER_SUPPLY_STATUS_CHARGING);
 	}
 
-	if (!is_full_cap_event_highsoc(battery->fs))
+	if (!is_full_cap_event_highsoc(battery->fs)) {
+		if (is_wireless_type(battery->cable_type)) {
+#if IS_ENABLED(CONFIG_WIRELESS_CHARGING)
+			battery->wpc_vout_level = sec_bat_check_wpc_vout(battery,
+				battery->cable_type, battery->chg_limit,
+				battery->wpc_vout_level, battery->current_event);
+#endif	
+			if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP) {
+				psy_do_property(battery->pdata->wireless_charger_name, get,
+					POWER_SUPPLY_EXT_PROP_WIRELESS_OP_MODE, value);
+				pr_info("%s: @mpp : op_mode %d\n", __func__, value.intval);
+				if (value.intval == MFC_RX_MODE_WPC_MPP_CLOAK) {
+					value.intval = CLOAK_EXIT_CMD;
+					psy_do_property("wireless", set,
+						POWER_SUPPLY_EXT_PROP_MPP_CLOAK, value);
+				}
+			}
+		}
 		sec_vote(battery->chgen_vote, VOTER_FULL_CAPACITY, false, 0);
+	}
 }
 EXPORT_SYMBOL(sec_bat_recov_full_capacity);
 
@@ -508,15 +572,25 @@ void sec_bat_check_full_capacity(struct sec_battery_info *battery)
 			conv_full_cap_str(get_full_cap_event(battery->fs)));
 		sec_bat_set_misc_event(battery, BATT_MISC_EVENT_FULL_CAPACITY,
 			BATT_MISC_EVENT_FULL_CAPACITY);
+		if (battery->pdata->wireless_charger_name) {
+			value.intval = BATT_MISC_EVENT_FULL_CAPACITY;
+			psy_do_property(battery->pdata->wireless_charger_name, set,
+				POWER_SUPPLY_EXT_PROP_MISC_EVENT, value);
+		}
 		sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
 		sec_vote(battery->chgen_vote, VOTER_FULL_CAPACITY, true,
 			(is_full_cap_event_highsoc(battery->fs) ?
 				SEC_BAT_CHG_MODE_BUCK_OFF : SEC_BAT_CHG_MODE_CHARGING_OFF));
 
-		if (is_wireless_all_type(battery->cable_type)) {
-			value.intval = POWER_SUPPLY_STATUS_FULL;
+		if (is_wireless_type(battery->cable_type)) {
 			psy_do_property(battery->pdata->wireless_charger_name, set,
-				POWER_SUPPLY_PROP_STATUS, value);
+				POWER_SUPPLY_EXT_PROP_WIRELESS_ECO_DONE, value);
+
+			if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP) {
+				value.intval = CLOAK_GENERIC;
+				psy_do_property("wireless", set,
+					POWER_SUPPLY_EXT_PROP_MPP_CLOAK, value);
+			}
 		}
 	}
 }

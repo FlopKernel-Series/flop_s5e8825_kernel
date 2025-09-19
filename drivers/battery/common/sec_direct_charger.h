@@ -19,7 +19,6 @@
 #define __SEC_DIRECT_CHARGER_H __FILE__
 
 #include "sec_battery.h"
-#include "sec_charging_common.h"
 #include "sb_pass_through.h"
 
 #define SEC_DIRECT_CHG_MIN_IOUT			2000
@@ -31,29 +30,6 @@
 #define ABC_DC_CNT	5
 #endif
 #define MAX_DC_ICS	2
-
-typedef enum _sec_direct_chg_src {
-	SEC_CHARGING_SOURCE_SWITCHING = 0,
-	SEC_CHARGING_SOURCE_DIRECT,
-	SEC_CHARGING_SOURCE_NONE,
-} sec_direct_chg_src_t;
-
-typedef enum _sec_direct_chg_mode {
-	SEC_DIRECT_CHG_MODE_DIRECT_OFF = 0,
-	SEC_DIRECT_CHG_MODE_DIRECT_CHECK_VBAT,
-	SEC_DIRECT_CHG_MODE_DIRECT_PRESET,
-	SEC_DIRECT_CHG_MODE_DIRECT_ON_ADJUST,
-	SEC_DIRECT_CHG_MODE_DIRECT_ON,
-	SEC_DIRECT_CHG_MODE_DIRECT_DONE,
-	SEC_DIRECT_CHG_MODE_DIRECT_BYPASS,
-	SEC_DIRECT_CHG_MODE_MAX,
-} sec_direct_chg_mode_t;
-
-enum {
-	LOW_VBAT_SET = 0,
-	LOW_VBAT_NONE,
-	LOW_VBAT_OFF,
-};
 
 enum {
 	DC_NORMAL_MODE = 0,
@@ -91,6 +67,13 @@ struct sec_direct_charger_platform_data {
 	bool dc_sc_dual_charging;
 	int ovlo_workaround_delay;
 	int dc_ibus_ucp_soc;
+	int abc_dc_current;
+	int dc_ext_input_cfg;
+
+	bool check_rp_current_for_dc;
+
+	bool enable_dc_start_delay;
+	unsigned int dc_start_delay;
 };
 
 struct sec_direct_charger_info {
@@ -98,6 +81,7 @@ struct sec_direct_charger_info {
 	struct sec_direct_charger_platform_data *pdata;
 	struct power_supply*	psy_chg;
 	struct mutex charger_mutex;
+	struct wakeup_source *set_chg_src_ws;
 
 	struct sb_pt	*pt;
 
@@ -137,6 +121,29 @@ struct sec_direct_charger_info {
 	int abc_dc_current_cnt;
 #endif
 	bool dc_err_test;
-	bool force_swc;
+
+	unsigned int dc_start_delay_state;
 };
+
+enum {
+	DC_START_DELAY_INIT = 0,
+	DC_START_DELAY_WAIT,
+	DC_START_DELAY_DONE
+};
+
+#define is_dc_start_delay_enabled(charger) \
+	(charger->pdata->enable_dc_start_delay)
+
+#define is_dc_start_delay_init(charger) \
+	(charger->dc_start_delay_state == DC_START_DELAY_INIT)
+
+#define is_dc_start_delay_wait(charger) \
+	(charger->dc_start_delay_state == DC_START_DELAY_WAIT)
+
+#define is_dc_start_delay_done(charger) \
+	(charger->dc_start_delay_state == DC_START_DELAY_DONE)
+
+#define set_dc_start_delay(charger, state) \
+	(charger->dc_start_delay_state = DC_START_DELAY_##state)
+
 #endif /* __SEC_DIRECT_CHARGER_H */

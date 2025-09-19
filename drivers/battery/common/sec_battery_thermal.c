@@ -52,23 +52,69 @@ const char *sec_usb_conn_str(int usb_conn_sts)
 	}
 }
 
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-#define STANDARD_TEMP 250
-int sec_bat_get_high_priority_temp(struct sec_battery_info *battery)
+int sb_tc_select_thermal_zone(struct sec_battery_info *battery, int bat_thm)
 {
-	int priority_temp = battery->temperature;
+	if (battery->usb_conn_status != USB_CONN_NORMAL)
+		return BAT_THERMAL_OVERHEATLIMIT;
 
-	if (battery->pdata->sub_bat_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE)
-		return battery->temperature;
+	if (bat_thm >= battery->warm_overheat_thresh)
+		return BAT_THERMAL_OVERHEAT;
 
-	/* take a higher temperature when main/sub temperature both have over 25'C, otherwise take a lower temperature */
-	if ((battery->temperature > STANDARD_TEMP) && (battery->sub_bat_temp > STANDARD_TEMP))
-		priority_temp = max(battery->temperature, battery->sub_bat_temp);
-	else
-		priority_temp = min(battery->temperature, battery->sub_bat_temp);
+	if (bat_thm >= battery->normal_warm_thresh)
+		return BAT_THERMAL_WARM;
 
-	pr_info("%s priority_temp = %d\n", __func__, priority_temp);
-	return priority_temp;
+	if (bat_thm <= battery->cold_cool3_thresh)
+		return BAT_THERMAL_COLD;
+
+	if (bat_thm <= battery->cool3_cool2_thresh)
+		return BAT_THERMAL_COOL3;
+
+	if (bat_thm <= battery->cool2_cool1_thresh)
+		return BAT_THERMAL_COOL2;
+
+	if (bat_thm <= battery->cool1_normal_thresh)
+		return BAT_THERMAL_COOL1;
+
+	return BAT_THERMAL_NORMAL;
+}
+
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+int sb_get_high_priority_thermal_zone(struct sec_battery_info *battery)
+{
+#if IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	int max_bat_temp = max(battery->temperature, max(battery->sub_bat_temp, battery->third_bat_temp));
+	int min_bat_temp = min(battery->temperature, min(battery->sub_bat_temp, battery->third_bat_temp));
+#else
+	int max_bat_temp = max(battery->temperature, battery->sub_bat_temp);
+	int min_bat_temp = min(battery->temperature, battery->sub_bat_temp);
+#endif
+	int max_thermal_zone = sb_tc_select_thermal_zone(battery, max_bat_temp);
+	int min_thermal_zone = sb_tc_select_thermal_zone(battery, min_bat_temp);
+
+	if (max_thermal_zone == BAT_THERMAL_OVERHEATLIMIT || max_thermal_zone == BAT_THERMAL_OVERHEAT) {
+		battery->thermal_zone_2nd = min_thermal_zone;
+		return max_thermal_zone;
+	}
+
+	if (min_thermal_zone == BAT_THERMAL_COLD) {
+		battery->thermal_zone_2nd = max_thermal_zone;
+		return min_thermal_zone;
+	}
+
+	if (max_thermal_zone == BAT_THERMAL_WARM) {
+		battery->thermal_zone_2nd = min_thermal_zone;
+		return max_thermal_zone;
+	}
+
+	if (min_thermal_zone == BAT_THERMAL_COOL1 ||
+		min_thermal_zone == BAT_THERMAL_COOL2 ||
+		min_thermal_zone == BAT_THERMAL_COOL3) {
+		battery->thermal_zone_2nd = max_thermal_zone;
+		return min_thermal_zone;
+	}
+
+	battery->thermal_zone_2nd = BAT_THERMAL_NORMAL;
+	return BAT_THERMAL_NORMAL;
 }
 #endif
 
@@ -427,147 +473,247 @@ void sec_bat_check_wpc_temp(struct sec_battery_info *battery, int ct, int siop_l
 }
 EXPORT_SYMBOL_KUNIT(sec_bat_check_wpc_temp);
 
+static bool sec_bat_check_using_lrp_condition(struct sec_battery_info *battery)
+{
+	return (battery->pdata->wpc_high_check_using_lrp && !sec_bat_get_lpmode() && battery->lcd_status);
+}
+
+static bool sec_bat_wpc_temp_v2_exception_handling(struct sec_battery_info *battery)
+{
+	if (battery->pdata->wpc_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE) {
+		battery->wpc_temp_v2_offset = 0;
+
+		return true;
+	}
+
+	if (!battery->pdata->wpc_high_check_with_nv && !is_hv_wireless_type(battery->cable_type)) {
+		battery->wpc_temp_v2_offset = 0;
+
+		return true;
+	}
+
+	if (sec_bat_check_using_lrp_condition(battery)) {
+		if (battery->pdata->lrp_temp_check_type == SEC_BATTERY_TEMP_CHECK_NONE) {
+			battery->wpc_temp_v2_offset = 0;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static void sec_bat_update_lrp_temp_v2_conditions(struct sec_battery_info *battery)
+{
+	battery->wpc_v2.temperature = battery->lrp;
+	if (battery->cable_type == SEC_BATTERY_CABLE_HV_WIRELESS_20 ||
+		battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP) {
+		if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_15W) {
+			battery->wpc_v2.trigger_temp = battery->pdata->wpc_lrp_high_temp_15w;
+			battery->wpc_v2.recovery_temp = battery->pdata->wpc_lrp_high_temp_recovery_15w;
+			battery->wpc_v2.reset_temp = battery->pdata->wpc_lrp_temp_v2_cond_15w;
+		} else if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_12W) {
+			battery->wpc_v2.trigger_temp = battery->pdata->wpc_lrp_high_temp_12w;
+			battery->wpc_v2.recovery_temp = battery->pdata->wpc_lrp_high_temp_recovery_12w;
+			battery->wpc_v2.reset_temp = battery->pdata->wpc_lrp_temp_v2_cond_12w;
+		} else {
+			battery->wpc_v2.trigger_temp = battery->pdata->wpc_lrp_high_temp;
+			battery->wpc_v2.recovery_temp = battery->pdata->wpc_lrp_high_temp_recovery;
+			battery->wpc_v2.reset_temp = battery->pdata->wpc_lrp_temp_v2_cond;
+		}
+	} else {
+		battery->wpc_v2.trigger_temp = battery->pdata->wpc_lrp_high_temp;
+		battery->wpc_v2.recovery_temp = battery->pdata->wpc_lrp_high_temp_recovery;
+		battery->wpc_v2.reset_temp = battery->pdata->wpc_lrp_temp_v2_cond;
+	}
+}
+
+static void sec_bat_update_wpc_temp_v2_conditions(struct sec_battery_info *battery)
+{
+	battery->wpc_v2.temperature = battery->wpc_temp;
+	if ((battery->cable_type == SEC_BATTERY_CABLE_HV_WIRELESS_20) ||
+		(battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP)) {
+		if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_15W) {
+			battery->wpc_v2.trigger_temp = battery->pdata->wpc_high_temp_15w;
+			battery->wpc_v2.recovery_temp = battery->pdata->wpc_high_temp_recovery_15w;
+			battery->wpc_v2.reset_temp = battery->pdata->wpc_temp_v2_cond_15w;
+		} else if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_12W) {
+			battery->wpc_v2.trigger_temp = battery->pdata->wpc_high_temp_12w;
+			battery->wpc_v2.recovery_temp = battery->pdata->wpc_high_temp_recovery_12w;
+			battery->wpc_v2.reset_temp = battery->pdata->wpc_temp_v2_cond_12w;
+		} else {
+			battery->wpc_v2.trigger_temp = battery->pdata->wpc_high_temp;
+			battery->wpc_v2.recovery_temp = battery->pdata->wpc_high_temp_recovery;
+			battery->wpc_v2.reset_temp = battery->pdata->wpc_temp_v2_cond;
+		}
+	} else if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP) {
+		battery->wpc_v2.trigger_temp = battery->pdata->mpp_high_temp;
+		battery->wpc_v2.recovery_temp = battery->pdata->mpp_high_temp_recovery;
+		battery->wpc_v2.reset_temp = battery->pdata->mpp_temp_v2_cond;
+	} else {
+		battery->wpc_v2.trigger_temp = battery->pdata->wpc_high_temp;
+		battery->wpc_v2.recovery_temp = battery->pdata->wpc_high_temp_recovery;
+		battery->wpc_v2.reset_temp = battery->pdata->wpc_temp_v2_cond;
+	}
+}
+
+static void sec_bat_update_wpc_v2_chg_limit(struct sec_battery_info *battery)
+{
+	if (battery->wpc_v2.temperature >= battery->wpc_v2.trigger_temp)
+		battery->wpc_v2.chg_limit = 1;
+	else if (battery->wpc_v2.temperature <= battery->wpc_v2.recovery_temp)
+		battery->wpc_v2.chg_limit = 0;
+	/* else maintain the previous chg_limit value. */
+}
+
+static void sec_bat_update_wpc_vout_level(struct sec_battery_info *battery)
+{
+	battery->wpc_vout_level = sec_bat_check_wpc_vout(battery, battery->cable_type,
+		battery->wpc_v2.chg_limit, battery->wpc_vout_level, battery->current_event);
+}
+
+static void sec_bat_print_log_wpc_temp_v2_conditions(struct sec_battery_info *battery)
+{
+	pr_info("%s: vout_level: %d, chg_limit: %d, %s_temp(%d), trc(%d/%d/%d)\n", __func__,
+		battery->wpc_vout_level, battery->wpc_v2.chg_limit,
+		sec_bat_check_using_lrp_condition(battery) ? "lrp" : "wpc", battery->wpc_v2.temperature,
+		battery->wpc_v2.trigger_temp, battery->wpc_v2.recovery_temp, battery->wpc_v2.reset_temp);
+}
+
+static void sec_bat_run_wpc_temp_v2_trigger_mpp(struct sec_battery_info *battery)
+{
+	if (battery->chg_limit != battery->wpc_v2.chg_limit || battery->input_current > 400) {
+		union power_supply_propval value = {0, };
+
+		value.intval = 400;
+		psy_do_property(battery->pdata->wireless_charger_name, set,
+			POWER_SUPPLY_EXT_PROP_WIRELESS_MPP_PWR, value);
+
+		value.intval = 1;
+		psy_do_property(battery->pdata->wireless_charger_name, set,
+			POWER_SUPPLY_EXT_PROP_MPP_ICL_CTRL, value);
+	}
+}
+
+static void sec_bat_run_wpc_temp_v2_trigger_wpc(struct sec_battery_info *battery)
+{
+	sec_vote(battery->input_vote, VOTER_CHG_TEMP, true, battery->pdata->wpc_input_limit_current);
+	sec_vote(battery->input_vote, VOTER_CABLE, false, 0);
+	sec_vote(battery->fcc_vote, VOTER_CHG_TEMP, true, battery->pdata->wpc_charging_limit_current);
+}
+
+#define WPC_TEMP_V2_ICL_MIN_LIMIT	500
+static void sec_bat_run_wpc_temp_v2_trigger_update_offset_limit(struct sec_battery_info *battery)
+{
+	int offset_limit =
+		battery->pdata->charging_current[battery->cable_type].input_current_limit -
+		WPC_TEMP_V2_ICL_MIN_LIMIT;
+
+	/* work only once for offset change */
+	if (battery->chg_limit == battery->wpc_v2.chg_limit)
+		return;
+
+	battery->wpc_temp_v2_offset += battery->pdata->wpc_temp_offset_step;
+	if (battery->wpc_temp_v2_offset > offset_limit)
+		battery->wpc_temp_v2_offset = offset_limit;
+
+	pr_info("%s: offset++, wpc_temp_v2_offset: (%d), limit(%d)\n", __func__,
+			battery->wpc_temp_v2_offset, offset_limit);
+}
+
+static void sec_bat_run_wpc_temp_v2_trigger(struct sec_battery_info *battery)
+{
+	if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
+		sec_bat_run_wpc_temp_v2_trigger_mpp(battery);
+	else
+		sec_bat_run_wpc_temp_v2_trigger_wpc(battery);
+
+	sec_bat_run_wpc_temp_v2_trigger_update_offset_limit(battery);
+}
+
+static void sec_bat_run_wpc_temp_v2_recovery_update_offset_limit(struct sec_battery_info *battery)
+{
+	if (battery->wpc_v2.temperature <= battery->wpc_v2.reset_temp) {
+		battery->wpc_temp_v2_offset -= battery->pdata->wpc_temp_offset_step;
+		if (battery->wpc_temp_v2_offset < 0)
+			battery->wpc_temp_v2_offset = 0;
+
+		pr_info("%s: offset--, wpc_temp_v2_offset: (%d)\n", __func__, battery->wpc_temp_v2_offset);
+	}
+}
+static void sec_bat_run_wpc_temp_v2_recovery_mpp(struct sec_battery_info *battery, int old_offset)
+{
+	union power_supply_propval value = {0, };
+
+	if ((battery->chg_limit != battery->wpc_v2.chg_limit) || (old_offset != battery->wpc_temp_v2_offset)) {
+		value.intval = 0;
+		psy_do_property(battery->pdata->wireless_charger_name, set,
+			POWER_SUPPLY_EXT_PROP_MPP_ICL_CTRL, value);
+
+		value.intval = 1;
+		psy_do_property(battery->pdata->wireless_charger_name, set,
+			POWER_SUPPLY_EXT_PROP_MPP_INC_INT_CTRL, value);
+
+		value.intval = battery->pdata->charging_current[battery->cable_type].input_current_limit;
+		psy_do_property(battery->pdata->wireless_charger_name, set,
+			POWER_SUPPLY_EXT_PROP_WIRELESS_MPP_PWR, value);
+	}
+}
+
+static void sec_bat_run_wpc_temp_v2_recovery_wpc(struct sec_battery_info *battery)
+{
+	int input_current = battery->pdata->charging_current[battery->cable_type].input_current_limit -
+		battery->wpc_temp_v2_offset;
+
+	sec_vote(battery->fcc_vote, VOTER_CHG_TEMP, false, 0);
+
+	if (battery->cable_type == SEC_BATTERY_CABLE_HV_WIRELESS)
+		input_current = sec_bat_get_icl_by_txid(battery);
+	sec_vote(battery->input_vote, VOTER_CABLE, true, input_current);
+	sec_vote(battery->input_vote, VOTER_CHG_TEMP, false, 0);
+}
+
+static void sec_bat_run_wpc_temp_v2_recovery(struct sec_battery_info *battery)
+{
+	int old_offset = battery->wpc_temp_v2_offset;
+
+	sec_bat_run_wpc_temp_v2_recovery_update_offset_limit(battery);
+
+	if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
+		sec_bat_run_wpc_temp_v2_recovery_mpp(battery, old_offset);
+	else
+		sec_bat_run_wpc_temp_v2_recovery_wpc(battery);
+}
+static void sec_bat_run_wpc_temp_v2(struct sec_battery_info *battery)
+{
+	if (battery->wpc_v2.chg_limit)
+		sec_bat_run_wpc_temp_v2_trigger(battery);
+	else
+		sec_bat_run_wpc_temp_v2_recovery(battery);
+}
+
+static void sec_bat_update_chg_limit_status(struct sec_battery_info *battery)
+{
+	battery->chg_limit = battery->wpc_v2.chg_limit;
+}
+
 /* concept: nv_wireless_type does not control */
 /* concept: no need check LCD ON */
 /* concept: no need step fcc control */
 void sec_bat_check_wpc_temp_v2(struct sec_battery_info *battery)
 {
-	int ct = battery->cable_type;
-	int wpc_temp = battery->wpc_temp;
-	int temp_trigger = battery->pdata->wpc_high_temp;
-	int temp_recovery = battery->pdata->wpc_high_temp_recovery;
-	int temp_reset_condition = battery->pdata->wpc_temp_v2_cond;
-	int chg_limit = battery->chg_limit;
-	bool using_lrp = false;
-	union power_supply_propval value = {0, };
-
-	/* exception handling */
-	if (battery->pdata->wpc_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE) {
-		battery->wpc_temp_v2_offset = 0;
+	if (sec_bat_wpc_temp_v2_exception_handling(battery))
 		return;
-	}
 
-	if (!battery->pdata->wpc_high_check_with_nv && !is_hv_wireless_type(ct)) {
-		battery->wpc_temp_v2_offset = 0;
-		return;
-	}
-
-	if (battery->pdata->wpc_high_check_using_lrp && !sec_bat_get_lpmode() && battery->lcd_status) {
-		if (battery->pdata->lrp_temp_check_type == SEC_BATTERY_TEMP_CHECK_NONE) {
-			battery->wpc_temp_v2_offset = 0;
-			return;
-		}
-		using_lrp = true;
-		wpc_temp = battery->lrp;
-
-		/* operating temperature standard settings */
-		if ((ct == SEC_BATTERY_CABLE_HV_WIRELESS_20) || (ct == SEC_BATTERY_CABLE_WIRELESS_EPP)) {
-			if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_15W) {
-				temp_trigger = battery->pdata->wpc_lrp_high_temp_15w;
-				temp_recovery = battery->pdata->wpc_lrp_high_temp_recovery_15w;
-				temp_reset_condition = battery->pdata->wpc_lrp_temp_v2_cond_15w;
-			} else if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_12W) {
-				temp_trigger = battery->pdata->wpc_lrp_high_temp_12w;
-				temp_recovery = battery->pdata->wpc_lrp_high_temp_recovery_12w;
-				temp_reset_condition = battery->pdata->wpc_lrp_temp_v2_cond_12w;
-			} else {
-				temp_trigger = battery->pdata->wpc_lrp_high_temp;
-				temp_recovery = battery->pdata->wpc_lrp_high_temp_recovery;
-				temp_reset_condition = battery->pdata->wpc_lrp_temp_v2_cond;
-			}
-		} else {
-			temp_trigger = battery->pdata->wpc_lrp_high_temp;
-			temp_recovery = battery->pdata->wpc_lrp_high_temp_recovery;
-			temp_reset_condition = battery->pdata->wpc_lrp_temp_v2_cond;
-		}
-	} else {
-		/* operating temperature standard settings */
-		if ((ct == SEC_BATTERY_CABLE_HV_WIRELESS_20) || (ct == SEC_BATTERY_CABLE_WIRELESS_EPP)) {
-			if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_15W) {
-				temp_trigger = battery->pdata->wpc_high_temp_15w;
-				temp_recovery = battery->pdata->wpc_high_temp_recovery_15w;
-				temp_reset_condition = battery->pdata->wpc_temp_v2_cond_15w;
-			} else if (battery->wc20_rx_power >= SEC_WIRELESS_RX_POWER_12W) {
-				temp_trigger = battery->pdata->wpc_high_temp_12w;
-				temp_recovery = battery->pdata->wpc_high_temp_recovery_12w;
-				temp_reset_condition = battery->pdata->wpc_temp_v2_cond_12w;
-			}
-		} /* else initial value */
-	}
-
-	/* check chg_limit condition */
-	if (wpc_temp >= temp_trigger)
-		chg_limit = true;
-	else if (wpc_temp <= temp_recovery)
-		chg_limit = false;
-	/* else initial value, remain prev chg_limit data */
-
-	/* check vout_level condition */
-	battery->wpc_vout_level = sec_bat_check_wpc_vout(battery, ct, chg_limit,
-			battery->wpc_vout_level, battery->current_event);
-
-	pr_info("%s: vout_level: %d, chg_limit: %d, %s_temp(%d), trc(%d/%d/%d)\n", __func__,
-			battery->wpc_vout_level, chg_limit, using_lrp ? "lrp" : "wpc", wpc_temp,
-			temp_trigger, temp_recovery, temp_reset_condition);
-
-	if (chg_limit) {
-		/* icl min limit = 500mA */
-		int offset_limit = battery->pdata->charging_current[ct].input_current_limit - 500;
-
-		if (ct == SEC_BATTERY_CABLE_WIRELESS_MPP) {
-			if (battery->chg_limit != chg_limit || battery->input_current > 400) {
-				value.intval = 400;
-				psy_do_property(battery->pdata->wireless_charger_name, set,
-					POWER_SUPPLY_EXT_PROP_WIRELESS_MPP_PWR, value);
-				value.intval = 1;
-				psy_do_property(battery->pdata->wireless_charger_name, set,
-					POWER_SUPPLY_EXT_PROP_MPP_ICL_CTRL, value);
-			}
-		} else {
-			/* 10(V)/ICL(mA) -> 5.5(V)/wpc_input_limit_current(mA) */
-			sec_vote(battery->input_vote, VOTER_CHG_TEMP, true, battery->pdata->wpc_input_limit_current);
-			sec_vote(battery->input_vote, VOTER_CABLE, false, 0);
-			sec_vote(battery->fcc_vote, VOTER_CHG_TEMP, true, battery->pdata->wpc_charging_limit_current);
-		}
-		/* work only once for offset change */
-		if (battery->chg_limit != chg_limit) {
-			battery->wpc_temp_v2_offset += battery->pdata->wpc_temp_offset_step;
-			if (battery->wpc_temp_v2_offset > offset_limit)
-				battery->wpc_temp_v2_offset = offset_limit;
-			pr_info("%s: offset++, wpc_temp_v2_offset: (%d), limit(%d)\n", __func__,
-					battery->wpc_temp_v2_offset, offset_limit);
-		}
-	} else {
-		int icl_max = battery->pdata->charging_current[ct].input_current_limit;
-		int old_offset = battery->wpc_temp_v2_offset;
-
-		if (wpc_temp <= temp_reset_condition) {
-			battery->wpc_temp_v2_offset -= battery->pdata->wpc_temp_offset_step;
-			if (battery->wpc_temp_v2_offset < 0)
-				battery->wpc_temp_v2_offset = 0;
-			pr_info("%s: offset--, wpc_temp_v2_offset: (%d)\n", __func__, battery->wpc_temp_v2_offset);
-		}
-
-		if (ct == SEC_BATTERY_CABLE_WIRELESS_MPP) {
-			if ((battery->chg_limit != chg_limit) || (old_offset != battery->wpc_temp_v2_offset)) {
-				value.intval = 0;
-				psy_do_property(battery->pdata->wireless_charger_name, set,
-					POWER_SUPPLY_EXT_PROP_MPP_ICL_CTRL, value);
-				value.intval = 1;
-				psy_do_property(battery->pdata->wireless_charger_name, set,
-					POWER_SUPPLY_EXT_PROP_MPP_INC_INT_CTRL, value);
-				value.intval = icl_max;
-				psy_do_property(battery->pdata->wireless_charger_name, set,
-					POWER_SUPPLY_EXT_PROP_WIRELESS_MPP_PWR, value);
-			}
-		} else {
-			sec_vote(battery->fcc_vote, VOTER_CHG_TEMP, false, 0);
-			/* 5.5(V)/wpc_input_limit_current(mA) -> 10(V)/ICL(mA) */
-			sec_vote(battery->input_vote, VOTER_CABLE, true, icl_max - battery->wpc_temp_v2_offset);
-			sec_vote(battery->input_vote, VOTER_CHG_TEMP, false, 0);
-		}
-	}
-	battery->chg_limit = chg_limit;
+	if (sec_bat_check_using_lrp_condition(battery))
+		sec_bat_update_lrp_temp_v2_conditions(battery);
+	else
+		sec_bat_update_wpc_temp_v2_conditions(battery);
+	sec_bat_update_wpc_v2_chg_limit(battery);
+	sec_bat_update_wpc_vout_level(battery);
+	sec_bat_print_log_wpc_temp_v2_conditions(battery);
+	sec_bat_run_wpc_temp_v2(battery);
+	sec_bat_update_chg_limit_status(battery);
 }
 EXPORT_SYMBOL_KUNIT(sec_bat_check_wpc_temp_v2);
 
@@ -597,19 +743,25 @@ void sec_bat_thermal_warm_wc_fod(struct sec_battery_info *battery, bool is_charg
 #if defined(CONFIG_WIRELESS_TX_MODE)
 void sec_bat_check_tx_temperature(struct sec_battery_info *battery)
 {
-	int bat_temp = battery->temperature;
-
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-	bat_temp = sec_bat_get_high_priority_temp(battery);
+#if IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	int max_bat_temp = max(battery->temperature, max(battery->sub_bat_temp, battery->third_bat_temp));
+	int min_bat_temp = min(battery->temperature, min(battery->sub_bat_temp, battery->third_bat_temp));
+#elif IS_ENABLED(CONFIG_DUAL_BATTERY)
+	int max_bat_temp = max(battery->temperature, battery->sub_bat_temp);
+	int min_bat_temp = min(battery->temperature, battery->sub_bat_temp);
+#else
+	int max_bat_temp = battery->temperature;
+	int min_bat_temp = battery->temperature;
 #endif
+
 	if (battery->wc_tx_enable) {
-		if (bat_temp >= battery->pdata->tx_high_threshold) {
+		if (max_bat_temp >= battery->pdata->tx_high_threshold) {
 			pr_info("@Tx_Mode : %s: Battery temperature is too high. Tx mode should turn off\n", __func__);
 			/* set tx event */
 			sec_bat_set_tx_event(battery, BATT_TX_EVENT_WIRELESS_TX_HIGH_TEMP, BATT_TX_EVENT_WIRELESS_TX_HIGH_TEMP);
 			battery->tx_retry_case |= SEC_BAT_TX_RETRY_HIGH_TEMP;
 			sec_wireless_set_tx_enable(battery, false);
-		} else if (bat_temp <= battery->pdata->tx_low_threshold) {
+		} else if (min_bat_temp <= battery->pdata->tx_low_threshold) {
 			pr_info("@Tx_Mode : %s: Battery temperature is too low. Tx mode should turn off\n", __func__);
 			/* set tx event */
 			sec_bat_set_tx_event(battery, BATT_TX_EVENT_WIRELESS_TX_LOW_TEMP, BATT_TX_EVENT_WIRELESS_TX_LOW_TEMP);
@@ -617,14 +769,14 @@ void sec_bat_check_tx_temperature(struct sec_battery_info *battery)
 			sec_wireless_set_tx_enable(battery, false);
 		}
 	} else if (battery->tx_retry_case & SEC_BAT_TX_RETRY_HIGH_TEMP) {
-		if (bat_temp <= battery->pdata->tx_high_recovery) {
+		if (max_bat_temp <= battery->pdata->tx_high_recovery) {
 			pr_info("@Tx_Mode : %s: Battery temperature goes to normal(High). Retry TX mode\n", __func__);
 			battery->tx_retry_case &= ~SEC_BAT_TX_RETRY_HIGH_TEMP;
 			if (!battery->tx_retry_case)
 				sec_bat_set_tx_event(battery, BATT_TX_EVENT_WIRELESS_TX_RETRY, BATT_TX_EVENT_WIRELESS_TX_RETRY);
 		}
 	} else if (battery->tx_retry_case & SEC_BAT_TX_RETRY_LOW_TEMP) {
-		if (bat_temp >= battery->pdata->tx_low_recovery) {
+		if (min_bat_temp >= battery->pdata->tx_low_recovery) {
 			pr_info("@Tx_Mode : %s: Battery temperature goes to normal(Low). Retry TX mode\n", __func__);
 			battery->tx_retry_case &= ~SEC_BAT_TX_RETRY_LOW_TEMP;
 			if (!battery->tx_retry_case)
@@ -1535,437 +1687,482 @@ void sec_usb_protection(struct sec_battery_info *battery)
 	}
 }
 
+bool sb_tc_is_exception_case(struct sec_battery_info *battery)
+{
+	if (battery->status == POWER_SUPPLY_STATUS_DISCHARGING &&
+		battery->usb_conn_status == USB_CONN_NORMAL)
+		goto is_exception_true;
+
+	if (battery->skip_swelling)
+		goto is_exception_true;
+
+	if (battery->pdata->bat_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE)
+		goto is_exception_true;
+
+#if IS_ENABLED(CONFIG_DUAL_BATTERY)
+	if (battery->pdata->sub_bat_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE)
+		goto is_exception_true;
+#endif
+
+#if IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	if (battery->pdata->third_bat_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE)
+		goto is_exception_true;
+#endif
+
+#if defined(CONFIG_BC12_DEVICE) && defined(CONFIG_SEC_FACTORY)
+	if (battery->vbat_adc_open)
+		goto is_exception_true;
+#endif
+
+	return false;
+
+is_exception_true:
+	pr_info("%s: TRUE!\n", __func__);
+	battery->health_change = false;
+	battery->thermal_zone = BAT_THERMAL_NORMAL;
+	battery->usb_conn_status = USB_CONN_NORMAL;
+	sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->fcc_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->fv_vote, VOTER_SWELLING, false, 0);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	sec_vote(battery->vlim_vote, VOTER_SWELLING, false, 0);
+#endif
+	sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+	if (battery->dchg_dc_in_swelling)
+		sec_vote(battery->dc_fv_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->chgen_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->chgen_vote, VOTER_CHANGE_CHGMODE, false, 0);
+	sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+	sec_bat_set_current_event(battery, 0, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+	sec_bat_set_threshold(battery, battery->cable_type);
+
+	return true;
+}
+
+void sb_tc_usb_connector_check(struct sec_battery_info *battery)
+{
+	if (battery->pdata->support_usb_conn_check) {
+		if (battery->usb_conn_status == USB_CONN_NORMAL) /* 2023.03.20 new concept */
+			sec_usb_conn_protection(battery);
+	} else if (battery->pdata->usb_protection) /* 2022.03.03 new concept */
+		sec_usb_protection(battery);
+	else	/* original usb protection concept */
+		sec_usb_thm_overheatlimit(battery);
+
+	/* Fix usb_conn_status at the request of Reliability Group Test */
+	if (battery->current_event & SEC_BAT_CURRENT_EVENT_TEMP_CTRL_TEST)
+		battery->usb_conn_status = USB_CONN_NORMAL;
+}
+
+void sb_tc_monitoring_thermal_zone_overheat(struct sec_battery_info *battery)
+{
+	int voter_status = SEC_BAT_CHG_MODE_CHARGING;
+	int v_ref = battery->pdata->high_temp_float - battery->pdata->buck_recovery_margin;
+
+	if (get_sec_voter_status(battery->chgen_vote, VOTER_SWELLING, &voter_status) < 0)
+		pr_err("%s: INVALID VOTER ID\n", __func__);
+
+	if (voter_status == SEC_BAT_CHG_MODE_BUCK_OFF && battery->voltage_now < v_ref) {
+		pr_info("%s: Vnow(%dmV) < %dmV, buck on\n", __func__, battery->voltage_now, v_ref);
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+	}
+	sec_bat_thermal_warm_wc_fod(battery, false);
+}
+
+unsigned int sb_tc_get_thermal_zone_cool_current_event(struct sec_battery_info *battery, int cool_step)
+{
+	if (cool_step == BAT_THERMAL_COOL1)
+		return SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL1;
+	else if (cool_step == BAT_THERMAL_COOL2)
+		return SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL2;
+	else
+		return SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL3;
+}
+
+int sb_tc_get_thermal_zone_cool_fcc_current(struct sec_battery_info *battery, int cool_step)
+{
+	if (cool_step == BAT_THERMAL_COOL1) {
+		return is_wireless_all_type(battery->cable_type) ?
+			battery->pdata->wireless_cool1_current : battery->pdata->wire_cool1_current;
+	} else if (cool_step == BAT_THERMAL_COOL2) {
+		return is_wireless_all_type(battery->cable_type) ?
+			battery->pdata->wireless_cool2_current : battery->pdata->wire_cool2_current;
+	} else {
+		return is_wireless_all_type(battery->cable_type) ?
+			battery->pdata->wireless_cool3_current : battery->pdata->wire_cool3_current;
+	}
+}
+
+void sb_tc_monitoring_thermal_zone_warm(struct sec_battery_info *battery)
+{
+	int voter_status = SEC_BAT_CHG_MODE_CHARGING;
+	int v_ref = battery->pdata->high_temp_float - battery->pdata->buck_recovery_margin;
+	int voltage = battery->voltage_now;
+
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	voltage = max(battery->voltage_now_main, battery->voltage_now_sub);
+#endif
+
+	if (get_sec_voter_status(battery->chgen_vote, VOTER_SWELLING, &voter_status) < 0)
+		pr_err("%s: INVALID VOTER ID\n", __func__);
+
+	if (voter_status == SEC_BAT_CHG_MODE_CHARGING && sec_bat_check_fullcharged(battery)) {
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+		union power_supply_propval value = {0, };
+#endif
+
+		pr_info("%s: battery thermal zone WARM. Full charged.\n", __func__);
+		sec_bat_thermal_warm_wc_fod(battery, false);
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+/* Enable supplement mode for swelling full charging done, should cut off charger then limiter sequence */
+		value.intval = SEC_DUAL_BATTERY_CHG_OFF;
+		psy_do_property(battery->pdata->dual_battery_name, set, POWER_SUPPLY_EXT_PROP_CHARGING_ENABLED, value);
+#endif
+	} else if ((voter_status == SEC_BAT_CHG_MODE_CHARGING_OFF || voter_status == SEC_BAT_CHG_MODE_BUCK_OFF) &&
+				(voltage <= battery->pdata->swelling_high_rechg_voltage)) {
+		pr_info("%s: thermal zone WARM. charging recovery. Voltage: %d\n", __func__, voltage);
+		sec_bat_reset_safety_timer(battery);
+		sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+		sec_bat_thermal_warm_wc_fod(battery, true);
+		sec_vote(battery->fv_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
+#ifndef CONFIG_IFPMIC_LIMITER
+		if (battery->dchg_dc_in_swelling)
+			sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
+#endif
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+		sec_vote(battery->vlim_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
+#endif
+		sec_vote(battery->chgen_vote, VOTER_FULL_CHARGE, false, 0);
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
+	} else if (voter_status == SEC_BAT_CHG_MODE_BUCK_OFF && voltage < v_ref) {
+		pr_info("%s: Voltage(%dmV) < %dmV, buck on\n", __func__, voltage, v_ref);
+		sec_bat_thermal_warm_wc_fod(battery, false);
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	} else {
+		if (battery->thermal_zone_2nd <= BAT_THERMAL_COOL1 && battery->thermal_zone_2nd >= BAT_THERMAL_COOL3) {
+			unsigned int c_event =
+				sb_tc_get_thermal_zone_cool_current_event(battery, battery->thermal_zone_2nd);
+
+			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING | c_event,
+				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+			sec_vote(battery->fcc_vote, VOTER_SWELLING, true,
+				sb_tc_get_thermal_zone_cool_fcc_current(battery, battery->thermal_zone_2nd));
+		} else {
+			int fcc = is_wireless_all_type(battery->cable_type) ?
+				battery->pdata->wireless_warm_current : battery->pdata->wire_warm_current;
+			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING,
+				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+			sec_vote(battery->fcc_vote, VOTER_SWELLING, true, fcc);
+		}
+#endif
+	}
+}
+
+void sb_tc_monitoring_thermal_zone(struct sec_battery_info *battery)
+{
+	battery->health_change = false;
+
+	/* does not need buck control at low temperatures */
+	if (battery->thermal_zone == BAT_THERMAL_OVERHEAT && battery->health == POWER_SUPPLY_HEALTH_OVERHEAT)
+		sb_tc_monitoring_thermal_zone_overheat(battery);
+
+	if (battery->thermal_zone == BAT_THERMAL_WARM && battery->health == POWER_SUPPLY_HEALTH_GOOD)
+		sb_tc_monitoring_thermal_zone_warm(battery);
+}
+
+bool sb_tc_is_thm_count_over(struct sec_battery_info *battery, int pre_thermal_zone)
+{
+	battery->bat_thm_count++;
+
+	if (battery->bat_thm_count < battery->pdata->temp_check_count) {
+		pr_info("%s : bat_thm_count %d/%d\n", __func__,
+			battery->bat_thm_count, battery->pdata->temp_check_count);
+		battery->thermal_zone = pre_thermal_zone;
+		return false;
+	}
+
+	return true;
+}
+
+void sb_tc_refresh_charging_source_for_fpdo_dc_case(struct sec_battery_info *battery)
+{
+	if (battery->cable_type == SEC_BATTERY_CABLE_FPDO_DC && battery->thermal_zone != BAT_THERMAL_NORMAL) {
+		union power_supply_propval value = {0, };
+
+		value.intval = 0;
+		psy_do_property(battery->pdata->charger_name, set,
+				POWER_SUPPLY_EXT_PROP_REFRESH_CHARGING_SOURCE, value);
+	}
+}
+
+void sb_tc_init_update_thermal_zone(struct sec_battery_info *battery)
+{
+	pr_info("%s: thermal zone update (%s)\n", __func__, sec_bat_thermal_zone[battery->thermal_zone]);
+
+	battery->health_change = true;
+	battery->bat_thm_count = 0;
+
+	sec_bat_reset_safety_timer(battery);
+	sec_bat_set_threshold(battery, battery->cable_type);
+	sec_bat_set_current_event(battery, 0, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+}
+
+void sb_tc_update_thermal_zone_overheatlimit(struct sec_battery_info *battery)
+{
+	if (battery->status != POWER_SUPPLY_STATUS_DISCHARGING) {
+		sec_bat_set_health(battery, POWER_SUPPLY_EXT_HEALTH_OVERHEATLIMIT);
+		sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_BUCK_OFF);
+		battery->cisd.data[CISD_DATA_UNSAFETY_TEMPERATURE]++;
+		battery->cisd.data[CISD_DATA_UNSAFE_TEMPERATURE_PER_DAY]++;
+		sec_vote(battery->iv_vote, VOTER_MUIC_ABNORMAL, true, SEC_INPUT_VOLTAGE_5V);
+#if !defined(CONFIG_SEC_FACTORY)
+		if (!sec_bat_get_lpmode()) {
+#if IS_ENABLED(CONFIG_MUIC_NOTIFIER)
+			muic_set_hiccup_mode(1);
+#endif
+			if (is_pd_wire_type(battery->cable_type) || battery->pdata->mass_with_usb_thm)
+				sec_pd_manual_ccopen_req(1);
+		}
+	} else { // if already in discharging, just set misc_event
+		pr_info("%s: Set BATT_MISC_EVENT_TEMP_HICCUP_TYPE for discharging\n", __func__);
+		sec_bat_set_misc_event(battery,
+			BATT_MISC_EVENT_TEMP_HICCUP_TYPE, BATT_MISC_EVENT_TEMP_HICCUP_TYPE);
+		battery->usb_conn_status = USB_CONN_NORMAL;
+#endif
+	}
+}
+
+void sb_tc_update_thermal_zone_overheat(struct sec_battery_info *battery)
+{
+	battery->usb_conn_status = USB_CONN_NORMAL;
+	sec_bat_set_current_event(battery,
+		SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+	if (battery->voltage_now > battery->pdata->high_temp_float) {
+#if defined(CONFIG_WIRELESS_TX_MODE)
+		if (get_sec_vote_result(battery->iv_vote) > SEC_INPUT_VOLTAGE_5V) {
+			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, true, SEC_INPUT_VOLTAGE_5V);
+			sec_vote(battery->chgen_vote, VOTER_CHANGE_CHGMODE, true, SEC_BAT_CHG_MODE_NOT_SET);
+		}
+#endif
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_BUCK_OFF);
+	} else {
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+		sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+	}
+	sec_bat_set_health(battery, POWER_SUPPLY_HEALTH_OVERHEAT);
+	sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
+	battery->cisd.data[CISD_DATA_UNSAFETY_TEMPERATURE]++;
+	battery->cisd.data[CISD_DATA_UNSAFE_TEMPERATURE_PER_DAY]++;
+}
+
+void sb_tc_update_thermal_zone_warm(struct sec_battery_info *battery)
+{
+	int fcc = is_wireless_all_type(battery->cable_type) ?
+		battery->pdata->wireless_warm_current : battery->pdata->wire_warm_current;
+
+	battery->usb_conn_status = USB_CONN_NORMAL;
+	sec_bat_set_current_event(battery,
+		SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+	sec_bat_thermal_charging_status(battery);
+	if (battery->voltage_now > battery->pdata->high_temp_float) {
+		if ((battery->wc_tx_enable || battery->uno_en) &&
+			(is_hv_wire_type(battery->cable_type) || is_pd_wire_type(battery->cable_type))) {
+			sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+		} else {
+			sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_BUCK_OFF);
+		}
+		sec_bat_thermal_warm_wc_fod(battery, false);
+	} else if ((battery->voltage_now > battery->pdata->swelling_high_rechg_voltage) &&
+				!battery->pdata->chgen_over_swell_rechg_vol) {
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+		sec_bat_thermal_warm_wc_fod(battery, false);
+	} else {
+		sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
+		sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+		sec_bat_thermal_warm_wc_fod(battery, true);
+	}
+
+	sec_vote(battery->fcc_vote, VOTER_SWELLING, true, fcc);
+	battery->cisd.data[CISD_DATA_HIGH_TEMP_SWELLING]++;
+	battery->cisd.data[CISD_DATA_HIGH_TEMP_SWELLING_PER_DAY]++;
+
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	if (battery->thermal_zone_2nd <= BAT_THERMAL_COOL1 && battery->thermal_zone_2nd >= BAT_THERMAL_COOL3) {
+		unsigned int c_event =
+			sb_tc_get_thermal_zone_cool_current_event(battery, battery->thermal_zone_2nd);
+
+		sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING | c_event,
+			SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+		sec_vote(battery->fcc_vote, VOTER_SWELLING, true,
+			sb_tc_get_thermal_zone_cool_fcc_current(battery, battery->thermal_zone_2nd));
+	}
+#endif
+	sec_vote(battery->fv_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
+#ifndef CONFIG_IFPMIC_LIMITER
+	if (battery->dchg_dc_in_swelling)
+		sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
+#endif
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	sec_vote(battery->vlim_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
+#endif
+#if (IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)) && IS_ENABLED(CONFIG_BATTERY_HOTSWAP)
+	sec_vote(battery->topoff_vote, VOTER_SWELLING, true, battery->pdata->full_check_current_1st);
+#else
+	sec_vote(battery->topoff_vote, VOTER_SWELLING, true, battery->pdata->full_check_current_2nd);
+#endif
+	sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+
+	sec_bat_thermal_charging_health(battery);
+}
+
+int sb_tc_get_thermal_zone_cool_float_voltage(struct sec_battery_info *battery, int cool_step)
+{
+	if (cool_step == BAT_THERMAL_COOL3)
+		return battery->pdata->low_temp_cool3_float;
+	else
+		return battery->pdata->low_temp_float;
+}
+
+unsigned int sb_tc_get_thermal_zone_cool_topoff(struct sec_battery_info *battery, int cool_step)
+{
+	if (cool_step == BAT_THERMAL_COOL3)
+#if (IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)) && IS_ENABLED(CONFIG_BATTERY_HOTSWAP)
+		return battery->pdata->full_check_current_1st;
+#else
+		return battery->pdata->full_check_current_2nd;
+#endif
+	else
+		return 0;
+}
+
+void sb_tc_update_thermal_zone_cool(struct sec_battery_info *battery, int cool_step)
+{
+	unsigned int current_event = sb_tc_get_thermal_zone_cool_current_event(battery, cool_step);
+	int fcc_current = sb_tc_get_thermal_zone_cool_fcc_current(battery, cool_step);
+	int float_voltage = sb_tc_get_thermal_zone_cool_float_voltage(battery, cool_step);
+	unsigned int topoff_current = sb_tc_get_thermal_zone_cool_topoff(battery, cool_step);
+
+	battery->usb_conn_status = USB_CONN_NORMAL;
+	sec_bat_set_current_event(battery, current_event, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+	sec_bat_thermal_charging_status(battery);
+
+	sec_vote(battery->fcc_vote, VOTER_SWELLING, true, fcc_current);
+	sec_vote(battery->fv_vote, VOTER_SWELLING, true, float_voltage);
+	if (battery->dchg_dc_in_swelling)
+		sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true, float_voltage);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	sec_vote(battery->vlim_vote, VOTER_SWELLING, true, float_voltage - battery->pdata->limiter_aging_float_offset);
+#endif
+	sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+	if (topoff_current)
+		sec_vote(battery->topoff_vote, VOTER_SWELLING, true, topoff_current);
+	else
+		sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
+	sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+	sec_bat_thermal_charging_health(battery);
+}
+
+void sb_tc_update_thermal_zone_cold(struct sec_battery_info *battery)
+{
+	battery->usb_conn_status = USB_CONN_NORMAL;
+	sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL3,
+		SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
+	sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
+	sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+	sec_bat_set_health(battery, POWER_SUPPLY_HEALTH_COLD);
+	sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
+	battery->cisd.data[CISD_DATA_UNSAFETY_TEMPERATURE]++;
+	battery->cisd.data[CISD_DATA_UNSAFE_TEMPERATURE_PER_DAY]++;
+}
+
+void sb_tc_update_thermal_zone_normal(struct sec_battery_info *battery)
+{
+	battery->usb_conn_status = USB_CONN_NORMAL;
+	sec_bat_thermal_charging_status(battery);
+	sec_vote(battery->fcc_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->fv_vote, VOTER_SWELLING, false, 0);
+	if (battery->dchg_dc_in_swelling)
+		sec_vote(battery->dc_fv_vote, VOTER_SWELLING, false, 0);
+#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
+	sec_vote(battery->vlim_vote, VOTER_SWELLING, false, 0);
+#endif
+	sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->chgen_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
+	sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
+	sec_bat_thermal_charging_health(battery);
+}
+
+void sb_tc_run_update_thermal_zone(struct sec_battery_info *battery)
+{
+	switch (battery->thermal_zone) {
+	case BAT_THERMAL_OVERHEATLIMIT:
+		sb_tc_update_thermal_zone_overheatlimit(battery);
+		break;
+	case BAT_THERMAL_OVERHEAT:
+		sb_tc_update_thermal_zone_overheat(battery);
+		break;
+	case BAT_THERMAL_WARM:
+		sb_tc_update_thermal_zone_warm(battery);
+		break;
+	case BAT_THERMAL_COOL1:
+	case BAT_THERMAL_COOL2:
+	case BAT_THERMAL_COOL3:
+		sb_tc_update_thermal_zone_cool(battery, battery->thermal_zone);
+		break;
+	case BAT_THERMAL_COLD:
+		sb_tc_update_thermal_zone_cold(battery);
+		break;
+	case BAT_THERMAL_NORMAL:
+	default:
+		sb_tc_update_thermal_zone_normal(battery);
+		break;
+	}
+}
+
+void sb_tc_store_battery_log(struct sec_battery_info *battery)
+{
+	store_battery_log(
+		"TZ[%s]:%d%%,%dmV,ct(%s)",
+		sec_bat_thermal_zone[battery->thermal_zone],
+		battery->capacity, battery->voltage_now, sb_get_ct_str(battery->cable_type));
+}
+
+void sb_tc_update_thermal_zone(struct sec_battery_info *battery, int pre_thermal_zone)
+{
+	if (!sb_tc_is_thm_count_over(battery, pre_thermal_zone))
+		return
+
+	sb_tc_refresh_charging_source_for_fpdo_dc_case(battery);
+	sb_tc_init_update_thermal_zone(battery);
+	sb_tc_run_update_thermal_zone(battery);
+	sb_tc_store_battery_log(battery);
+}
+
 void sec_bat_thermal_check(struct sec_battery_info *battery)
 {
-	int bat_thm = battery->temperature;
 	int pre_thermal_zone = battery->thermal_zone;
-	int voter_status = SEC_BAT_CHG_MODE_CHARGING;
 
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-	union power_supply_propval val = {0, };
-
-	bat_thm = sec_bat_get_high_priority_temp(battery);
-#endif
-
-	pr_err("%s: co_c3: %d, c3_c2: %d, c2_c1: %d, c1_no: %d, no_wa: %d, wa_ov: %d, tz(%s)\n", __func__,
-			battery->cold_cool3_thresh, battery->cool3_cool2_thresh, battery->cool2_cool1_thresh,
-			battery->cool1_normal_thresh, battery->normal_warm_thresh, battery->warm_overheat_thresh,
-			sec_bat_thermal_zone[battery->thermal_zone]);
-
-	if ((battery->status == POWER_SUPPLY_STATUS_DISCHARGING && battery->usb_conn_status == USB_CONN_NORMAL) ||
-#if defined(CONFIG_BC12_DEVICE) && defined(CONFIG_SEC_FACTORY)
-		battery->vbat_adc_open ||
-#endif
-		battery->skip_swelling) {
-		battery->health_change = false;
-		pr_debug("%s: DISCHARGING or 15 test mode. stop thermal check\n", __func__);
-		battery->thermal_zone = BAT_THERMAL_NORMAL;
-		battery->usb_conn_status = USB_CONN_NORMAL;
-		sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
-		sec_vote(battery->fcc_vote, VOTER_SWELLING, false, 0);
-		sec_vote(battery->fv_vote, VOTER_SWELLING, false, 0);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-		sec_vote(battery->vlim_vote, VOTER_SWELLING, false, 0);
-#endif
-		sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-		if (battery->dchg_dc_in_swelling)
-			sec_vote(battery->dc_fv_vote, VOTER_SWELLING, false, 0);
-		sec_vote(battery->chgen_vote, VOTER_SWELLING, false, 0);
-		sec_vote(battery->chgen_vote, VOTER_CHANGE_CHGMODE, false, 0);
-		sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-		sec_bat_set_current_event(battery, 0, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-		sec_bat_set_threshold(battery, battery->cable_type);
+	if (sb_tc_is_exception_case(battery))
 		return;
-	}
 
-	if (battery->pdata->bat_thm_info.check_type == SEC_BATTERY_TEMP_CHECK_NONE) {
-		pr_err("%s: BAT_THM, Invalid Temp Check Type\n", __func__);
-		return;
-	} else {
-		/* COLD - COOL3 - COOL2 - COOL1 - NORMAL - WARM - OVERHEAT - OVERHEATLIMIT*/
-		if (battery->pdata->support_usb_conn_check) {
-			if (battery->usb_conn_status == USB_CONN_NORMAL) /* 2023.03.20 new concept */
-				sec_usb_conn_protection(battery);
-		} else if (battery->pdata->usb_protection) /* 2022.03.03 new concept */
-			sec_usb_protection(battery);
-		else	/* original usb protection concept */
-			sec_usb_thm_overheatlimit(battery);
+	sb_tc_usb_connector_check(battery);
 
-		/* Fix usb_conn_status at the request of Reliability Group Test */
-		if (battery->current_event & SEC_BAT_CURRENT_EVENT_TEMP_CTRL_TEST)
-			battery->usb_conn_status = USB_CONN_NORMAL;
-
-		if (battery->usb_conn_status != USB_CONN_NORMAL) {
-			battery->thermal_zone = BAT_THERMAL_OVERHEATLIMIT;
-		} else if (bat_thm >= battery->normal_warm_thresh) {
-			if (bat_thm >= battery->warm_overheat_thresh) {
-				battery->thermal_zone = BAT_THERMAL_OVERHEAT;
-			} else {
-				battery->thermal_zone = BAT_THERMAL_WARM;
-			}
-		} else if (bat_thm <= battery->cool1_normal_thresh) {
-			if (bat_thm <= battery->cold_cool3_thresh) {
-				battery->thermal_zone = BAT_THERMAL_COLD;
-			} else if (bat_thm <= battery->cool3_cool2_thresh) {
-				battery->thermal_zone = BAT_THERMAL_COOL3;
-			} else if (bat_thm <= battery->cool2_cool1_thresh) {
-				battery->thermal_zone = BAT_THERMAL_COOL2;
-			} else {
-				battery->thermal_zone = BAT_THERMAL_COOL1;
-			}
-		} else {
-			battery->thermal_zone = BAT_THERMAL_NORMAL;
-		}
-	}
-
-	if (pre_thermal_zone != battery->thermal_zone) {
-		battery->bat_thm_count++;
-
-		if (battery->bat_thm_count < battery->pdata->temp_check_count) {
-			pr_info("%s : bat_thm_count %d/%d\n", __func__,
-					battery->bat_thm_count, battery->pdata->temp_check_count);
-			battery->thermal_zone = pre_thermal_zone;
-			return;
-		}
-
-		/* FPDO DC concept */
-		if (battery->cable_type == SEC_BATTERY_CABLE_FPDO_DC && battery->thermal_zone != BAT_THERMAL_NORMAL) {
-			union power_supply_propval value = {0, };
-
-			value.intval = 0;
-			psy_do_property(battery->pdata->charger_name, set,
-					POWER_SUPPLY_EXT_PROP_REFRESH_CHARGING_SOURCE, value);
-
-		}
-
-		pr_info("%s: thermal zone update (%s -> %s), bat_thm(%d), usb_thm(%d)\n", __func__,
-				sec_bat_thermal_zone[pre_thermal_zone],
-				sec_bat_thermal_zone[battery->thermal_zone], bat_thm, battery->usb_temp);
-		battery->health_change = true;
-		battery->bat_thm_count = 0;
-
-		pr_info("%s : SAFETY TIME RESET!\n", __func__);
-		sec_bat_reset_safety_timer(battery);
-
-		sec_bat_set_threshold(battery, battery->cable_type);
-		sec_bat_set_current_event(battery, 0, SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-
-		switch (battery->thermal_zone) {
-		case BAT_THERMAL_OVERHEATLIMIT:
-			if (battery->status != POWER_SUPPLY_STATUS_DISCHARGING) {
-				sec_bat_set_health(battery, POWER_SUPPLY_EXT_HEALTH_OVERHEATLIMIT);
-				sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
-				sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_BUCK_OFF);
-				battery->cisd.data[CISD_DATA_UNSAFETY_TEMPERATURE]++;
-				battery->cisd.data[CISD_DATA_UNSAFE_TEMPERATURE_PER_DAY]++;
-				sec_vote(battery->iv_vote, VOTER_MUIC_ABNORMAL, true, SEC_INPUT_VOLTAGE_5V);
-#if !defined(CONFIG_SEC_FACTORY)
-				if (!sec_bat_get_lpmode()) {
-#if IS_ENABLED(CONFIG_MUIC_NOTIFIER)
-					muic_set_hiccup_mode(1);
-#endif
-					if (is_pd_wire_type(battery->cable_type) || battery->pdata->mass_with_usb_thm)
-						sec_pd_manual_ccopen_req(1);
-				}
-			} else { // if already in discharging, just set misc_event
-				pr_info("%s: Set BATT_MISC_EVENT_TEMP_HICCUP_TYPE for discharging\n", __func__);
-				sec_bat_set_misc_event(battery,
-					BATT_MISC_EVENT_TEMP_HICCUP_TYPE, BATT_MISC_EVENT_TEMP_HICCUP_TYPE);
-				battery->usb_conn_status = USB_CONN_NORMAL;
-#endif
-			}
-			store_battery_log(
-				"OHL:%d%%,%dmV,usb_conn_st(%d),tbat(%d),tusb(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				battery->usb_conn_status, bat_thm,
-				battery->usb_temp, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_OVERHEAT:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING,
-				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-			if (battery->voltage_now > battery->pdata->high_temp_float) {
-#if defined(CONFIG_WIRELESS_TX_MODE)
-				if (get_sec_vote_result(battery->iv_vote) > SEC_INPUT_VOLTAGE_5V) {
-					sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, true, SEC_INPUT_VOLTAGE_5V);
-					sec_vote(battery->chgen_vote, VOTER_CHANGE_CHGMODE, true, SEC_BAT_CHG_MODE_NOT_SET);
-				}
-#endif
-				sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_BUCK_OFF);
-			} else {
-				sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
-				sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-			}
-			sec_bat_set_health(battery, POWER_SUPPLY_HEALTH_OVERHEAT);
-			sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
-			battery->cisd.data[CISD_DATA_UNSAFETY_TEMPERATURE]++;
-			battery->cisd.data[CISD_DATA_UNSAFE_TEMPERATURE_PER_DAY]++;
-			store_battery_log(
-				"OH:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_WARM:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING,
-				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-			sec_bat_thermal_charging_status(battery);
-			if (battery->voltage_now > battery->pdata->high_temp_float) {
-				if ((battery->wc_tx_enable || battery->uno_en) &&
-					(is_hv_wire_type(battery->cable_type) ||
-					is_pd_wire_type(battery->cable_type))) {
-					sec_vote(battery->chgen_vote, VOTER_SWELLING, true,
-							SEC_BAT_CHG_MODE_CHARGING_OFF);
-				} else {
-					sec_vote(battery->chgen_vote, VOTER_SWELLING,
-						true, SEC_BAT_CHG_MODE_BUCK_OFF);
-				}
-				sec_bat_thermal_warm_wc_fod(battery, false);
-			} else if ((battery->voltage_now > battery->pdata->swelling_high_rechg_voltage) &&
-				!battery->pdata->chgen_over_swell_rechg_vol) {
-				sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
-				sec_bat_thermal_warm_wc_fod(battery, false);
-			} else {
-				sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
-				sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-				sec_bat_thermal_warm_wc_fod(battery, true);
-			}
-
-			if (is_wireless_all_type(battery->cable_type)) {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wireless_warm_current);
-				battery->cisd.data[CISD_DATA_WC_HIGH_TEMP_SWELLING]++;
-				battery->cisd.data[CISD_DATA_WC_HIGH_TEMP_SWELLING_PER_DAY]++;
-			} else {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wire_warm_current);
-				battery->cisd.data[CISD_DATA_HIGH_TEMP_SWELLING]++;
-				battery->cisd.data[CISD_DATA_HIGH_TEMP_SWELLING_PER_DAY]++;
-			}
-			sec_vote(battery->fv_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
-#ifndef CONFIG_IFPMIC_LIMITER
-			if (battery->dchg_dc_in_swelling)
-				sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
-#endif
 #if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-			sec_vote(battery->vlim_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
-#endif
-#if (IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)) && IS_ENABLED(CONFIG_BATTERY_HOTSWAP)
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, true, battery->pdata->full_check_current_1st);
+	battery->thermal_zone = sb_get_high_priority_thermal_zone(battery);
 #else
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, true, battery->pdata->full_check_current_2nd);
-#endif
-			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-
-			sec_bat_thermal_charging_health(battery);
-			store_battery_log(
-				"THM_W:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_COOL1:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL1,
-				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-			sec_bat_thermal_charging_status(battery);
-			if (is_wireless_all_type(battery->cable_type)) {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wireless_cool1_current);
-			} else {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wire_cool1_current);
-			}
-			sec_vote(battery->fv_vote, VOTER_SWELLING, true, battery->pdata->low_temp_float);
-			if (battery->dchg_dc_in_swelling)
-				sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true, battery->pdata->low_temp_float);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-			sec_vote(battery->vlim_vote, VOTER_SWELLING, true,
-				battery->pdata->low_temp_float - battery->pdata->limiter_aging_float_offset);
-#endif
-			sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
-			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-			sec_bat_thermal_charging_health(battery);
-			store_battery_log(
-				"THM_C1:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_COOL2:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL2,
-				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-			sec_bat_thermal_charging_status(battery);
-			if (is_wireless_all_type(battery->cable_type)) {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wireless_cool2_current);
-			} else {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wire_cool2_current);
-			}
-			sec_vote(battery->fv_vote, VOTER_SWELLING, true, battery->pdata->low_temp_float);
-			if (battery->dchg_dc_in_swelling)
-				sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true, battery->pdata->low_temp_float);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-			sec_vote(battery->vlim_vote, VOTER_SWELLING, true,
-				battery->pdata->low_temp_float - battery->pdata->limiter_aging_float_offset);
-#endif
-			sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
-			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-			sec_bat_thermal_charging_health(battery);
-			store_battery_log(
-				"THM_C2:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_COOL3:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL3,
-				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-			sec_bat_thermal_charging_status(battery);
-			if (is_wireless_all_type(battery->cable_type)) {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wireless_cool3_current);
-			} else {
-				sec_vote(battery->fcc_vote, VOTER_SWELLING, true, battery->pdata->wire_cool3_current);
-			}
-			sec_vote(battery->fv_vote, VOTER_SWELLING, true, battery->pdata->low_temp_cool3_float);
-			if (battery->dchg_dc_in_swelling)
-				sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true,
-					battery->pdata->low_temp_cool3_float);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-			sec_vote(battery->vlim_vote, VOTER_SWELLING, true,
-				battery->pdata->low_temp_cool3_float - battery->pdata->limiter_aging_float_offset);
-#endif
-			sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-#if (IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)) && IS_ENABLED(CONFIG_BATTERY_HOTSWAP)
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, true, battery->pdata->full_check_current_1st);
-#else
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, true, battery->pdata->full_check_current_2nd);
-#endif
-			sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING);
-			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-			sec_bat_thermal_charging_health(battery);
-			store_battery_log(
-				"THM_C3:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_COLD:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_set_current_event(battery, SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING_COOL3,
-				SEC_BAT_CURRENT_EVENT_SWELLING_MODE);
-			sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->chgen_vote, VOTER_SWELLING, true, SEC_BAT_CHG_MODE_CHARGING_OFF);
-			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-			sec_bat_set_health(battery, POWER_SUPPLY_HEALTH_COLD);
-			sec_bat_set_charging_status(battery, POWER_SUPPLY_STATUS_NOT_CHARGING);
-			battery->cisd.data[CISD_DATA_UNSAFETY_TEMPERATURE]++;
-			battery->cisd.data[CISD_DATA_UNSAFE_TEMPERATURE_PER_DAY]++;
-			store_battery_log(
-				"THM_C:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		case BAT_THERMAL_NORMAL:
-		default:
-			battery->usb_conn_status = USB_CONN_NORMAL;
-			sec_bat_thermal_charging_status(battery);
-			sec_vote(battery->fcc_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->fv_vote, VOTER_SWELLING, false, 0);
-			if (battery->dchg_dc_in_swelling)
-				sec_vote(battery->dc_fv_vote, VOTER_SWELLING, false, 0);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-			sec_vote(battery->vlim_vote, VOTER_SWELLING, false, 0);
-#endif
-			sec_vote(battery->topoff_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->chgen_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-			sec_vote(battery->iv_vote, VOTER_CHANGE_CHGMODE, false, 0);
-			sec_bat_thermal_charging_health(battery);
-			store_battery_log(
-				"THM_N:%d%%,%dmV,tbat(%d),ct(%s)",
-				battery->capacity, battery->voltage_now,
-				bat_thm, sb_get_ct_str(battery->cable_type));
-			break;
-		}
-	} else { /* pre_thermal_zone == battery->thermal_zone */
-		battery->health_change = false;
-
-		switch (battery->thermal_zone) {
-		case BAT_THERMAL_OVERHEAT:
-			/* does not need buck control at low temperatures */
-			if (battery->health == POWER_SUPPLY_HEALTH_OVERHEAT) {
-				int v_ref = battery->pdata->high_temp_float - battery->pdata->buck_recovery_margin;
-
-				if (get_sec_voter_status(battery->chgen_vote, VOTER_SWELLING, &voter_status) < 0)
-					pr_err("%s: INVALID VOTER ID\n", __func__);
-				pr_info("%s: voter_status: %d\n", __func__, voter_status);
-				if ((voter_status == SEC_BAT_CHG_MODE_BUCK_OFF) &&
-					(battery->voltage_now < v_ref)) {
-					pr_info("%s: Vnow(%dmV) < %dmV, buck on\n", __func__,
-						battery->voltage_now, v_ref);
-					sec_vote(battery->chgen_vote, VOTER_SWELLING, true,
-							SEC_BAT_CHG_MODE_CHARGING_OFF);
-				}
-				sec_bat_thermal_warm_wc_fod(battery, false);
-			}
-			break;
-		case BAT_THERMAL_WARM:
-			if (battery->health == POWER_SUPPLY_HEALTH_GOOD) {
-				int v_ref = battery->pdata->high_temp_float - battery->pdata->buck_recovery_margin;
-				int voltage = battery->voltage_now;
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-				voltage = max(battery->voltage_now_main, battery->voltage_now_sub);
+	battery->thermal_zone = sb_tc_select_thermal_zone(battery, battery->temperature);
 #endif
 
-				if (get_sec_voter_status(battery->chgen_vote, VOTER_SWELLING, &voter_status) < 0)
-					pr_err("%s: INVALID VOTER ID\n", __func__);
-				pr_info("%s: voter_status: %d\n", __func__, voter_status);
-				if (voter_status == SEC_BAT_CHG_MODE_CHARGING) {
-					if (sec_bat_check_fullcharged(battery)) {
-						pr_info("%s: battery thermal zone WARM. Full charged.\n", __func__);
-						sec_bat_thermal_warm_wc_fod(battery, false);
-						sec_vote(battery->chgen_vote, VOTER_SWELLING, true,
-							SEC_BAT_CHG_MODE_CHARGING_OFF);
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-						/* Enable supplement mode for swelling full charging done, should cut off charger then limiter sequence */
-						val.intval = SEC_DUAL_BATTERY_CHG_OFF;
-						psy_do_property(battery->pdata->dual_battery_name, set,
-							POWER_SUPPLY_EXT_PROP_CHARGING_ENABLED, val);
-#endif
-					}
-				} else if ((voter_status == SEC_BAT_CHG_MODE_CHARGING_OFF ||
-					voter_status == SEC_BAT_CHG_MODE_BUCK_OFF) &&
-					(voltage <= battery->pdata->swelling_high_rechg_voltage)) {
-					pr_info("%s: thermal zone WARM. charging recovery. Voltage: %d\n",
-						__func__, voltage);
-					sec_bat_reset_safety_timer(battery);
-					sec_vote(battery->input_vote, VOTER_SWELLING, false, 0);
-					sec_bat_thermal_warm_wc_fod(battery, true);
-					sec_vote(battery->fv_vote, VOTER_SWELLING, true,
-						battery->pdata->high_temp_float);
-#ifndef CONFIG_IFPMIC_LIMITER
-					if (battery->dchg_dc_in_swelling)
-						sec_vote(battery->dc_fv_vote, VOTER_SWELLING, true,
-								battery->pdata->high_temp_float);
-#endif
-#if IS_ENABLED(CONFIG_DUAL_BATTERY) || IS_ENABLED(CONFIG_TRIPLE_BATTERY)
-					sec_vote(battery->vlim_vote, VOTER_SWELLING, true, battery->pdata->high_temp_float);
-#endif
-					sec_vote(battery->chgen_vote, VOTER_FULL_CHARGE, false, 0);
-					sec_vote(battery->chgen_vote, VOTER_SWELLING, true,
-						SEC_BAT_CHG_MODE_CHARGING);
-				} else if (voter_status == SEC_BAT_CHG_MODE_BUCK_OFF && voltage < v_ref) {
-					pr_info("%s: Voltage(%dmV) < %dmV, buck on\n", __func__,
-						voltage, v_ref);
-					sec_bat_thermal_warm_wc_fod(battery, false);
-					sec_vote(battery->chgen_vote, VOTER_SWELLING, true,
-						SEC_BAT_CHG_MODE_CHARGING_OFF);
-				}
-			}
-			break;
-		default:
-			break;
-		}
-	}
+	if (pre_thermal_zone == battery->thermal_zone)
+		sb_tc_monitoring_thermal_zone(battery);
+	else
+		sb_tc_update_thermal_zone(battery, pre_thermal_zone);
 
-	return;
 }
 EXPORT_SYMBOL_KUNIT(sec_bat_thermal_check);

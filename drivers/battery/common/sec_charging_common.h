@@ -54,6 +54,7 @@
 
 enum MPP_CLOAK_ENUM {
 	CLOAK_TURN_OFF_PWR,
+	CLOAK_TURN_OFF_PWR_LDO_OFF,
 	CLOAK_EXIT_CMD,
 	CLOAK_GENERIC,
 	CLOAK_FORCED,
@@ -219,6 +220,15 @@ enum sec_wireless_auth_mode {
 	WIRELESS_AUTH_PASS,
 };
 
+enum {
+	MPP_CAL_NONE = 0,
+	MPP_CAL_RSP1,
+	MPP_CAL_RSP2,
+	MPP_CAL_RSP3,
+	MPP_INC_INT,
+	MPP_INC_DONE,
+	MPP_CAL_START,
+};
 enum sec_wireless_pad_id {
 	WC_PAD_UNKNOWN = 0x00,
 	WC_PAD_UNSUPPORTED = 0x09,
@@ -276,6 +286,7 @@ enum sec_wireless_pad_id {
 	/* 0xF0~FF : D1 Flicker */
 	WC_PAD_P3105 = 0xF0, /* P3105 Pad mode */
 	WC_PAD_N3300_L = 0xF2, /* N3300 landscape mode */
+	WC_PAD_P6300 = 0xF3, /* P6300 Pad */
 	WC_PAD_MAX = 0xFF,
 };
 
@@ -307,6 +318,7 @@ enum sec_wireless_pad_id {
 	(pad_id != WC_PAD_N5200_L) && \
 	(pad_id != WC_PAD_U1200) && \
 	(pad_id != WC_PAD_U3300) && \
+	(pad_id != WC_PAD_P6300) && \
 	(pad_id != WC_PAD_UNSUPPORTED))
 
 #define is_samsung_pad(vendor_id) (\
@@ -318,6 +330,18 @@ enum sec_wireless_pad_id {
 
 #define is_3_1_wc_status(wc_stat) (\
 	(wc_stat == SEC_BATTERY_CABLE_HV_WIRELESS_DC))
+
+#define can_use_hv20(wc_stat) (\
+	(wc_stat == SEC_BATTERY_CABLE_HV_WIRELESS_DC) || \
+	(wc_stat == SEC_BATTERY_CABLE_HV_WIRELESS_20))
+
+#define is_wc_dc_status(wc_stat) (\
+	(wc_stat == SEC_BATTERY_CABLE_HV_WIRELESS_DC) || \
+	(wc_stat == SEC_BATTERY_CABLE_WIRELESS_MPP_DC))
+
+#define is_wc_mpp_status(wc_stat) (\
+	(wc_stat == SEC_BATTERY_CABLE_WIRELESS_MPP) || \
+	(wc_stat == SEC_BATTERY_CABLE_WIRELESS_MPP_DC))
 
 #define is_valid_2_1_forced_ta(vid) (\
 	(vid == 0x04E8))
@@ -339,6 +363,7 @@ enum sec_battery_adc_channel {
 	SEC_BAT_ADC_CHANNEL_SUB_BAT_TEMP,
 	SEC_BAT_ADC_CHANNEL_BLKT_TEMP,
 	SEC_BAT_ADC_CHANNEL_DC_TEMP,
+	SEC_BAT_ADC_CHANNEL_THIRD_BAT_TEMP,
 	SEC_BAT_ADC_CHANNEL_NUM,
 };
 
@@ -354,6 +379,7 @@ enum sec_battery_charge_mode {
 	SEC_BAT_CHG_MODE_UNO_OFF,
 	SEC_BAT_CHG_MODE_UNO_ONLY,
 	SEC_BAT_CHG_MODE_NOT_SET,
+	SEC_BAT_CHG_MODE_INIT,
 	SEC_BAT_CHG_MODE_MAX,
 };
 
@@ -520,10 +546,13 @@ enum mfc_rx_mode {
 	MFC_RX_MODE_WPC_BPP = 1,
 	MFC_RX_MODE_WPC_EPP,
 	MFC_RX_MODE_WPC_MPP_RESTRICT,
-	MFC_RX_MODE_WPC_MPP_FULL,
+	MFC_RX_MODE_WPC_MPP_FULL, /* MFC_RX_MODE_WPC_MPP_BUCK */
 	MFC_RX_MODE_WPC_MPP_CLOAK,
 	MFC_RX_MODE_WPC_MPP_NEGO,
 	MFC_RX_MODE_WPC_EPP_NEGO,
+	MFC_RX_MODE_WPC_MPP_DC,
+	MFC_RX_MODE_WPC_MPP_CALIB, /* MFC_RX_MODE_WPC_MPP_CALIBRATION */
+	MFC_RX_MODE_WPC_25W_PPDE /* MFC_RX_MODE_WPC_FWC_3_0 */
 };
 
 enum mfc_ept {
@@ -670,11 +699,9 @@ typedef struct {
 	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP || \
 	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
 
-#define is_epp_mpp_wireless_type(cable_type) ( \
+#define is_epp_wireless_type(cable_type) ( \
 	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP_FAKE || \
-	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP || \
-	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP_FAKE || \
-	cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP)
+	cable_type == SEC_BATTERY_CABLE_WIRELESS_EPP)
 
 #define is_hv_wireless_type(cable_type) ( \
 	cable_type == SEC_BATTERY_CABLE_HV_WIRELESS || \

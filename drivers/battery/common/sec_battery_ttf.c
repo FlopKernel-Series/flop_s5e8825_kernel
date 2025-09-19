@@ -145,7 +145,18 @@ int sec_get_ttf_standard_curr(struct sec_battery_info *battery)
 	if (is_hv_wire_12v_type(battery->cable_type)) {
 		charge = battery->ttf_d->currents.hv_12v;
 #if IS_ENABLED(CONFIG_WIRELESS_CHARGING)
-	} else if (is_epp_mpp_wireless_type(battery->cable_type)) {
+	} else if (battery->cable_type == SEC_BATTERY_CABLE_WIRELESS_MPP) {
+		union power_supply_propval value = {0, };
+
+		if (sec_bat_hv_wc_normal_mode_check(battery)) {
+			charge = battery->ttf_d->currents.wireless;
+		} else {
+			psy_do_property(battery->pdata->wireless_charger_name, get,
+				POWER_SUPPLY_EXT_PROP_NEGO_DONE_PWR, value);
+			charge = check_epp_mpp_current(battery->ttf_d->currents,
+					(value.intval > battery->wc20_rx_power ? value.intval : battery->wc20_rx_power));
+		}
+	} else if (is_epp_wireless_type(battery->cable_type)) {
 		charge = check_epp_mpp_current(battery->ttf_d->currents, battery->wc20_rx_power);
 	} else if (is_hv_wireless_type(battery->cable_type) ||
 		battery->cable_type == SEC_BATTERY_CABLE_PREPARE_WIRELESS_HV ||

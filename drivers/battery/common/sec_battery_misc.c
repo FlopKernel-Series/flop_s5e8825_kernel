@@ -19,7 +19,6 @@
 #include <linux/poll.h>
 
 #include "sec_battery.h"
-#include "sec_battery_misc.h"
 
 static struct sec_bat_misc_dev *c_dev;
 
@@ -297,7 +296,9 @@ static const struct file_operations sec_bat_misc_fops = {
 	.owner		= THIS_MODULE,
 	.open		= sec_bat_misc_open,
 	.release	= sec_bat_misc_close,
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 12, 0)
 	.llseek		= no_llseek,
+#endif
 	.unlocked_ioctl = sec_bat_misc_ioctl,
 #ifdef CONFIG_COMPAT
 	.compat_ioctl = sec_bat_misc_compat_ioctl,

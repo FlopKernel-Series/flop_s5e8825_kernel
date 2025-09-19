@@ -76,7 +76,7 @@ static ssize_t show_attrs(struct device *dev,
 #endif
 
 		snprintf(temp_buf + strlen(temp_buf), size,
-			"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%s,%s,%s,%s,%d,%s,%d,%d,%lu,0x%x,0x%x,0x%x,%d,%d,%d,%s,",
+			"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s,%s,%s,%s,%s,%d,%s,%d,%d,%lu,0x%x,0x%x,0x%x,%d,%d,%d,%s,%d,%d/%d-%d-%d-%d,",
 			battery->voltage_now, battery->current_now,
 			battery->current_max, battery->charging_current,
 			battery->capacity,
@@ -105,7 +105,13 @@ static ssize_t show_attrs(struct device *dev,
 
 			battery->srccap_transit,
 			battery->current_sys_avg,
-			"v0002"
+			"v0004",
+			battery->dc_op_mode,
+			battery->pdata->curr_pdo.current_pdo_num,
+			battery->pdata->curr_pdo.available_pdo_num,
+			battery->pdata->curr_pdo.max_voltage,
+			battery->pdata->curr_pdo.min_voltage,
+			battery->pdata->curr_pdo.max_current
 		);
 		size = sizeof(temp_buf) - strlen(temp_buf);
 
@@ -120,9 +126,9 @@ static ssize_t show_attrs(struct device *dev,
 	}
 
 		snprintf(temp_buf+strlen(temp_buf), size,
-			"%d,%d,%d,%d,",
-			battery->voltage_now_main, battery->voltage_now_sub,
-			battery->current_now_main, battery->current_now_sub);
+			"%d,%d,%d,%d,%d,%d,",
+			battery->voltage_now_main, battery->voltage_now_sub, battery->voltage_now_3rd,
+			battery->current_now_main, battery->current_now_sub, battery->current_now_3rd);
 		size = sizeof(temp_buf) - strlen(temp_buf);
 
 		snprintf(temp_buf+strlen(temp_buf), size, "%d,", battery->batt_cycle);

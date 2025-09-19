@@ -29,17 +29,20 @@ enum sec_chg_dev_info {
 	SC_DEV_MAIN_LIM = 0x40,
 	SC_DEV_SUB_LIM = 0x80,
 	SC_DEV_DUAL_FG = 0x100,
+	SC_DEV_DUAL_SBP_FG = 0x200,
 };
 
 struct dev_init_info {
 	wait_queue_head_t all_dev_wait;
 	wait_queue_head_t depend_dev_wait;
 	unsigned int dev;
+	struct mutex modprobe_lock;
 };
 
 extern int sec_chg_set_dev_init(unsigned int dev);
-extern void sec_chg_check_modprobe(void);
+extern void sec_chg_check_modprobe(unsigned int force_dev);
 extern void sec_chg_check_dev_modprobe(unsigned int dev);
 extern void sec_chg_init_gdev(void);
+extern void sec_chg_unset_gdev(void);
 
 #endif /* __SEC_CHARGING_MODPROBE_H */
