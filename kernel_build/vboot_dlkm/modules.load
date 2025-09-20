@@ -165,7 +165,6 @@ softdog.ko
 dw_mmc.ko
 dw_mmc-pltfm.ko
 dw_mmc-exynos-sec.ko
-fmp-core.ko
 hid-a4tech.ko
 hid-axff.ko
 hid-belkin.ko
