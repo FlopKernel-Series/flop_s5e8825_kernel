@@ -1,8 +1,8 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.10.240 Kernel Configuration
+# Linux/arm64 5.10.244 Kernel Configuration
 #
-CONFIG_CC_VERSION_TEXT="Android (13688100, +pgo, +bolt, +lto, +mlgo, based on r563880) clang version 21.0.0 (https://android.googlesource.com/toolchain/llvm-project 5e96669f06077099aa41290cdb4c5e6fa0f59349)"
+CONFIG_CC_VERSION_TEXT="Android (14054843, +pgo, +bolt, +lto, +mlgo, based on r574158) clang version 21.0.0 (https://android.googlesource.com/toolchain/llvm-project 9f872551d3c681d06fd303b36f16ed5c274735eb)"
 CONFIG_GCC_VERSION=0
 CONFIG_LD_VERSION=0
 CONFIG_CC_IS_CLANG=y
@@ -7117,6 +7117,7 @@ CONFIG_CHARGER_HL7132=m
 CONFIG_TOUCHSCREEN_GOODIX_BRL=m
 CONFIG_FUELGAUGE_S2MF301_USE_5MILLIOHM=y
 CONFIG_UI_SOC_PROLONGING=y
+# CONFIG_DELETE_UI100_WA is not set
 CONFIG_SHUB=m
 CONFIG_SHUB_PM_WAKEUP_LINUX_VER_5_4=y
 CONFIG_SHUB_AOIS=y
@@ -7220,6 +7221,7 @@ CONFIG_BATTERY_SAMSUNG_REBOOT=y
 # CONFIG_SBP_FG is not set
 # CONFIG_BATTERY_AUTH_EUR_DET_GPIO_SUPPORT is not set
 # CONFIG_BATTERY_HOTSWAP is not set
+# CONFIG_DPM_FULL_SOC is not set
 # end of Samsung Battery Common drivers
 
 CONFIG_INPUT_HALL_IC=m
