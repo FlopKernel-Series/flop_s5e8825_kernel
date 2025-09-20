@@ -16,6 +16,9 @@
 #ifndef __SM5714_PD_H__
 #define __SM5714_PD_H__
 #include <linux/usb/typec/common/pdic_core.h>
+#if IS_ENABLED(CONFIG_BATTERY_SAMSUNG)
+#include <linux/battery/sec_pd.h>
+#endif
 
 /* for header */
 #define SEC_UVDM_WAIT_MS (2000)
@@ -225,6 +228,7 @@ enum usbpd_data_msg_type {
 	USBPD_Alert					= 0x6,
 	USBPD_Get_Country_Info		= 0x7,
 	USBPD_Source_Info			= 0xB,
+	USBPD_Revision				= 0xC,
 	USBPD_Vendor_Defined		= 0xF,
 };
 
@@ -422,7 +426,7 @@ typedef enum {
 	PE_Get_Battery_Cap	= 0xE7,
 	PE_Give_Battery_Cap	= 0xE8,
 	PE_Get_Battery_Status	= 0xE9,
-	PE_SNK_Give_Battery_Status	= 0xEA,
+	PE_Give_Battery_Status	= 0xEA,
 	PE_Get_Manufacturer_Info	= 0xEB,
 	PE_Give_Manufacturer_Info	= 0xEC,
 
@@ -437,6 +441,8 @@ typedef enum {
 	PE_Send_Firmware_Update_Response	= 0x15,
 	PE_Firmware_Update_Response_Received	= 0x16,
 	PE_SRC_Send_Source_Info	= 0x17,
+	PE_Give_Revision		= 0x18,
+	PE_SNK_Give_Sink_Cap_Ext	= 0x19,
 
 	Error_Recovery			= 0xFF
 } policy_state;
@@ -542,7 +548,8 @@ enum usbpd_msg_status {
 	MSG_COUNTRY_CODES		= 54,
 	MSG_SNK_CAP_EXT			= 55,
 	MSG_GET_SRC_INFO		= 56,
-	MSG_RESERVED			= 57,
+	MSG_GET_REVISION		= 57,
+	MSG_RESERVED			= 58,
 };
 
 /* Timer */
@@ -584,10 +591,30 @@ enum sm5714_usbpd_policy_informed {
 	PLUG_DETACHED		= 5,
 };
 
+#if !IS_ENABLED(CONFIG_BATTERY_SAMSUNG)
+typedef enum
+{
+	RP_CURRENT_LEVEL_NONE = 0,
+	RP_CURRENT_LEVEL_DEFAULT,
+	RP_CURRENT_LEVEL2,
+	RP_CURRENT_LEVEL3,
+	RP_CURRENT_ABNORMAL,
+} RP_CURRENT_LEVEL;
+#endif
+
 typedef union {
 	u32 object;
 	u16 word[2];
 	u8  byte[4];
+
+	struct {
+		unsigned data_size:9;
+		unsigned reserved:1;
+		unsigned request_chunk:1;
+		unsigned chunk_number:4;
+		unsigned chunked:1;
+		unsigned data : 16;
+	} extended_msg_header;
 
 	struct {
 		unsigned:30;
@@ -787,6 +814,48 @@ typedef union {
 	} bist_data_object;
 
 	struct{
+		unsigned reserved:16;
+		unsigned VID:16;
+	} sink_capabilities_extended_data1;
+
+	struct{
+		unsigned PID:16;
+		unsigned XID1:16;
+	} sink_capabilities_extended_data2;
+
+	struct{
+		unsigned XID2:16;
+		unsigned fw_version:8;
+		unsigned hw_version:8;
+	} sink_capabilities_extended_data3;
+
+	struct{
+		unsigned skedb_version:8;
+		unsigned load_step:8;
+		unsigned sink_load_characteristics:16;
+	} sink_capabilities_extended_data4;
+
+	struct{
+		unsigned compliance:8;
+		unsigned torch_temp:8;
+		unsigned battery_info:8;
+		unsigned sink_mode:8;
+	} sink_capabilities_extended_data5;
+
+	struct{
+		unsigned sink_minimum_pdp:8;
+		unsigned sink_operational_pdp:8;
+		unsigned sink_maximum_pdp:8;
+		unsigned epr_sink_minimum_pdp:8;
+	} sink_capabilities_extended_data6;
+
+	struct {
+		unsigned epr_sink_operational_pdp:8;
+		unsigned epr_sink_maximum_pdp:8;
+		unsigned reserved:16;
+	} sink_capabilities_extended_data7;
+
+	struct{
 		unsigned VID:16;
 		unsigned PID:16;
 	} source_capabilities_extended_data1;
@@ -821,6 +890,26 @@ typedef union {
 	} source_capabilities_extended_data6;
 
 	struct{
+		unsigned battery_cap_ref:32;
+	} get_battery_cap_data;
+
+	struct{
+		unsigned reserved:16;
+		unsigned VID:16;
+	} battery_capabilities1;
+
+	struct {
+		unsigned PID:16;
+		unsigned Battery_Design_Capacity:16;
+	} battery_capabilities2;
+
+	struct {
+		unsigned Last_Full_Charge:16;
+		unsigned Battery_Type:8;
+		unsigned reserved:8;
+	} battery_capabilities3;
+
+	struct{
 		unsigned reserved:8;
 		unsigned batt_info_invalid_batt_ref:1;
 		unsigned batt_info_batt_present:1;
@@ -836,6 +925,14 @@ typedef union {
 		unsigned reserved:7;
 		unsigned port_type:1;
 	} source_info;
+
+	struct{
+		unsigned reserved:16;
+		unsigned version_minor:4;
+		unsigned version_major:4;
+		unsigned revision_minor:4;
+		unsigned revision_major:4;
+	} revision_message;
 } data_obj_type;
 
 typedef union {
@@ -979,6 +1076,7 @@ struct sm5714_usbpd_manager_data {
 #endif
 	bool support_vpdo;
 	bool support_15w_vpdo;
+	bool support_src_vpdo;
 	int short_cable_current;
 };
 
@@ -993,7 +1091,7 @@ struct sm5714_usbpd_data {
 	struct sm5714_protocol_data	protocol_rx;
 	struct sm5714_policy_data	policy;
 	msg_header_type		source_msg_header;
-	data_obj_type           source_data_obj[2];
+	data_obj_type           source_data_obj[3];
 	data_obj_type		source_request_obj;
 	struct sm5714_usbpd_manager_data	manager;
 	struct work_struct	worker;
@@ -1037,12 +1135,55 @@ static inline struct sm5714_usbpd_data *manager_to_usbpd(
 	return container_of(manager, struct sm5714_usbpd_data, manager);
 }
 
+#if IS_ENABLED(CONFIG_BATTERY_SAMSUNG)
 extern int sm5714_usbpd_init(struct device *dev, void *phy_driver_data);
-extern void sm5714_usbpd_init_policy(struct sm5714_usbpd_data *pd_data);
 extern void sm5714_usbpd_dp_detach(struct device *dev);
 extern void sm5714_usbpd_acc_detach(struct device *dev);
 extern int sm5714_usbpd_check_accessory(
 		struct sm5714_usbpd_manager_data *manager);
+extern void sm5714_usbpd_inform_event(struct sm5714_usbpd_data *pd_data,
+		sm5714_usbpd_manager_event_type event);
+extern void sm5714_usbpd_protocol_rx(struct sm5714_usbpd_data *pd_data);
+extern void sm5714_usbpd_kick_policy_work(struct device *dev);
+extern void sm5714_usbpd_rx_hard_reset(struct device *dev);
+extern void sm5714_usbpd_rx_soft_reset(struct sm5714_usbpd_data *pd_data);
+extern void sm5714_usbpd_policy_reset(struct sm5714_usbpd_data *pd_data,
+		unsigned int flag);
+extern void sm5714_usbpd_tx_request_discard(struct sm5714_usbpd_data *pd_data);
+extern void sm5714_usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops);
+extern void sm5714_usbpd_reinit(struct device *dev);
+extern int sm5714_usbpd_uvdm_in_request_message(void *data);
+extern int sm5714_usbpd_uvdm_out_request_message(void *data, int size);
+extern int sm5714_usbpd_uvdm_ready(void);
+extern void sm5714_usbpd_uvdm_close(void);
+#else
+static inline int sm5714_usbpd_init(struct device *dev, void *phy_driver_data)
+			{return 0; }
+static inline void sm5714_usbpd_dp_detach(struct device *dev) {}
+static inline void sm5714_usbpd_acc_detach(struct device *dev) {}
+static inline int sm5714_usbpd_check_accessory(
+		struct sm5714_usbpd_manager_data *manager)
+			{return 0; }
+static inline void sm5714_usbpd_inform_event(struct sm5714_usbpd_data *pd_data,
+		sm5714_usbpd_manager_event_type event) {}
+static inline void sm5714_usbpd_protocol_rx(struct sm5714_usbpd_data *pd_data) {}
+static inline void sm5714_usbpd_kick_policy_work(struct device *dev) {}
+static inline void sm5714_usbpd_rx_hard_reset(struct device *dev) {}
+static inline void sm5714_usbpd_rx_soft_reset(struct sm5714_usbpd_data *pd_data) {}
+static inline void sm5714_usbpd_policy_reset(struct sm5714_usbpd_data *pd_data,
+		unsigned int flag) {}
+static inline void sm5714_usbpd_tx_request_discard(struct sm5714_usbpd_data *pd_data) {}
+static inline void sm5714_usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops) {}
+static inline void sm5714_usbpd_reinit(struct device *dev) {}
+static inline int sm5714_usbpd_uvdm_in_request_message(void *data)
+			{return 0; }	
+static inline int sm5714_usbpd_uvdm_out_request_message(void *data, int size)
+			{return 0; }
+static inline int sm5714_usbpd_uvdm_ready(void)
+			{return 0; }
+static inline void sm5714_usbpd_uvdm_close(void) {}
+#endif
+extern void sm5714_usbpd_init_policy(struct sm5714_usbpd_data *pd_data);
 extern void sm5714_usbpd_power_ready(struct device *dev,
 	PDIC_OTP_MODE power_role);
 extern int  sm5714_usbpd_match_request(struct sm5714_usbpd_data *pd_data);
@@ -1060,8 +1201,6 @@ extern int sm5714_usbpd_get_modes(struct sm5714_usbpd_data *pd_data);
 extern int sm5714_usbpd_enter_mode(struct sm5714_usbpd_data *pd_data);
 extern int sm5714_usbpd_exit_mode(struct sm5714_usbpd_data *pd_data,
 		unsigned int mode);
-extern void sm5714_usbpd_inform_event(struct sm5714_usbpd_data *pd_data,
-		sm5714_usbpd_manager_event_type event);
 extern int sm5714_usbpd_evaluate_capability(struct sm5714_usbpd_data *pd_data);
 extern data_obj_type sm5714_usbpd_select_capability(
 		struct sm5714_usbpd_data *pd_data);
@@ -1075,14 +1214,6 @@ extern void sm5714_usbpd_set_rp_scr_sel(struct sm5714_usbpd_data *pd_data,
 extern void sm5714_usbpd_set_ams_control(struct sm5714_usbpd_data *pd_data,
 		int scr_sel);
 extern void sm5714_usbpd_policy_work(struct work_struct *work_s);
-extern void sm5714_usbpd_protocol_rx(struct sm5714_usbpd_data *pd_data);
-extern void sm5714_usbpd_kick_policy_work(struct device *dev);
-extern void sm5714_usbpd_rx_hard_reset(struct device *dev);
-extern void sm5714_usbpd_rx_soft_reset(struct sm5714_usbpd_data *pd_data);
-extern void sm5714_usbpd_policy_reset(struct sm5714_usbpd_data *pd_data,
-		unsigned int flag);
-extern void sm5714_usbpd_tx_request_discard(struct sm5714_usbpd_data *pd_data);
-extern void sm5714_usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops);
 extern bool sm5714_usbpd_send_msg(struct sm5714_usbpd_data *pd_data,
 		msg_header_type *h, data_obj_type *obj);
 extern bool sm5714_usbpd_send_ctrl_msg(struct sm5714_usbpd_data *pd_data,
@@ -1090,12 +1221,7 @@ extern bool sm5714_usbpd_send_ctrl_msg(struct sm5714_usbpd_data *pd_data,
 		unsigned int pr);
 extern u64 sm5714_usbpd_wait_msg(struct sm5714_usbpd_data *pd_data,
 		u64 msg_status, unsigned int ms);
-extern void sm5714_usbpd_reinit(struct device *dev);
 extern void sm5714_usbpd_init_protocol(struct sm5714_usbpd_data *pd_data);
-extern int sm5714_usbpd_uvdm_in_request_message(void *data);
-extern int sm5714_usbpd_uvdm_out_request_message(void *data, int size);
-extern int sm5714_usbpd_uvdm_ready(void);
-extern void sm5714_usbpd_uvdm_close(void);
 extern void (*fp_select_pdo)(int num);
 extern int (*fp_sec_pd_select_pps)(int num, int ppsVol, int ppsCur);
 extern int (*fp_sec_pd_get_apdo_max_power)(unsigned int *pdo_pos,

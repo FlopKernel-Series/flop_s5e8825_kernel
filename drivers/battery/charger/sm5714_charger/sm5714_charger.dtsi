@@ -22,3 +22,9 @@
 		battery,otg_name = "sm5714-otg";
 	};
 };
+
+/* /home/dpi/qb5_8814/workspace/P4_1716/android/kernel/kmodule/battery/suwon/charger/sm5714/sm5714_charger.a16x.dtsi */
+&sm5714_charger {
+	sm5714,chg_float_voltage_down_en = <1>;
+	sm5714,chg_float_voltage_down_offset_mv = <20>;
+};

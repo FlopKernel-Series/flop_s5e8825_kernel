@@ -86,11 +86,7 @@ static void chg_set_auto_shipmode(struct sm5714_charger_data *charger, u8 vref)
 {
 	sm5714_update_reg(charger->i2c, SM5714_CHG_REG_CHGCNTL11,
 		(vref << 1), (0x3 << 1));	/*	SHIP_AUTO_VREF	*/
-	if (charger->is_sm5714a)
-		pr_info("sm5714-charger: %s: set auto ship vref = %d mV\n",
-				__func__, vref ? (3100 + (vref * 300)) : 2600);
-	else
-		pr_info("sm5714-charger: %s: set auto ship vref = %d mV\n", __func__, (2600 + (vref * 200)));
+		pr_info("sm5714-charger: %s: set auto ship vref = 0x%x\n", __func__, vref);
 }
 
 static void chg_set_auto_shipmode_time(struct sm5714_charger_data *charger, u8 deglitch_time)
@@ -142,9 +138,6 @@ static void chg_set_auto_shipmode_level(struct sm5714_charger_data *charger)
 	int offset = 0;
 	int ari_cond = charger->spcom ? 91 : 0;
 
-	if (!charger->is_sm5714a)
-		return;
-
 	/* case with stray voltage due to TA connection */
 	if (!is_nocharge_type(charger->cable_type)) {
 		if (chg_check_current_level())
@@ -176,9 +169,6 @@ static void chg_set_auto_shipmode_level(struct sm5714_charger_data *charger)
 #if defined(CONFIG_SEC_FACTORY)
 static void chg_set_en_nozx(struct sm5714_charger_data *charger, bool enable)
 {
-	if (!charger->is_sm5714a)
-		return;
-
 	sm5714_update_reg(charger->i2c, SM5714_CHG_REG_FACTORY1,
 				(enable << 0), (0x1 << 0));	/* 0: Enable NOZX, 1: Disable NOZX */
 	dev_info(charger->dev, "%s: NOZX - %s\n",
@@ -1199,14 +1189,9 @@ static int sm5714_chg_set_property(struct power_supply *psy,
 			break;
 #if defined(CONFIG_SEC_FACTORY)
 		case POWER_SUPPLY_EXT_PROP_NOZX_CTRL:
-			if (charger->is_sm5714a) {
-				dev_info(charger->dev, "%s: NOZX is %s\n",
-					__func__, (!val->intval) ? "Enable" : "Disable");
-				chg_set_en_nozx(charger, val->intval);
-			} else {
-				dev_info(charger->dev, "%s: not support nozx ctrl via sysfs",
-					__func__);
-			}
+			dev_info(charger->dev, "%s: NOZX is %s\n",
+				__func__, (!val->intval) ? "Enable" : "Disable");
+			chg_set_en_nozx(charger, val->intval);
 			break;
 #endif
 		default:
@@ -1687,7 +1672,7 @@ static int sm5714_charger_probe(struct platform_device *pdev)
 	struct sm5714_charger_data *charger;
 	struct power_supply_config psy_cfg = {};
 	int ret = 0;
-	u8 reg_data = 0, reg_data1 = 0, reg_data2 = 0, reg_data3 = 0, reg_data4 = 0;
+	u8 reg_data1 = 0, reg_data2 = 0, reg_data3 = 0, reg_data4 = 0;
 
 	dev_info(&pdev->dev, "%s: probe start\n", __func__);
 	charger = kzalloc(sizeof(*charger), GFP_KERNEL);
@@ -1713,11 +1698,6 @@ static int sm5714_charger_probe(struct platform_device *pdev)
 		goto err_parse_dt;
 
 	platform_set_drvdata(pdev, charger);
-	/*Check ifpmic SM5714: 0x08, SM5714A: 0x0C*/
-	charger->is_sm5714a = false;
-	sm5714_read_reg(charger->i2c, 0x51, &reg_data);
-	if (reg_data == 0x0C)
-		charger->is_sm5714a = true;
 
 	sm5714_chg_init(charger);
 	sm5714_charger_oper_table_init(sm5714);
@@ -1958,10 +1938,8 @@ static void sm5714_charger_shutdown(struct platform_device *pdev)
 
 	if (charger->i2c) {
 #if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
-		if (charger->is_sm5714a) {
-			chg_set_auto_shipmode_level(charger);
-			chg_set_auto_shipmode_time(charger, AUTO_SHIP_MODE_TIME_S_4_0);
-		}
+		chg_set_auto_shipmode_level(charger);
+		chg_set_auto_shipmode_time(charger, AUTO_SHIP_MODE_TIME_S_4_0);
 #endif
 		if (!sm5714_get_facmode()) {
 			u8 reg;
