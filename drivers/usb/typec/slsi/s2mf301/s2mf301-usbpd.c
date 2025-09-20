@@ -5335,11 +5335,11 @@ static int s2mf301_usbpd_probe(struct i2c_client *i2c,
 #else
 #if IS_ENABLED(CONFIG_ARCH_QCOM)
 	pdic_data->water_wake = wakeup_source_register(NULL, "water_wake"); // 5.4 R
+	INIT_DELAYED_WORK(&pdic_data->water_wake_work,
+		s2mf301_usbpd_water_wake_work);
 #endif
 	pdic_data->irq_ws = wakeup_source_register(NULL, "usbpd_irq"); // 5.4 R
 #endif
-	INIT_DELAYED_WORK(&pdic_data->water_wake_work,
-		s2mf301_usbpd_water_wake_work);
 
 	ret = s2mf301_usbpd_irq_init(pdic_data);
 	if (ret) {
