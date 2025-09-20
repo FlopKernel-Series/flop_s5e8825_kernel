@@ -17,7 +17,7 @@
   <string name="home_working">Funcionando</string>
   <string name="home_working_version">Versión: %d</string>
   <string name="home_module_update_count">Actualizaciones: %d</string>
-  <string name="home_failure">¡No se encontró la firma de KernelSU Next v2 en el kernel! [ !KSU_NEXT || != size/hash ]</string>
+  <string name="home_failure">¡Firma v2 de KernelSU Next no encontrada en el kernel! [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">¡Pídele a tu desarrollador de kernel que integre KernelSU Next!</string>
   <string name="home_kernel">Versión del kernel</string>
   <string name="hook_mode">Método de intercepción</string>
@@ -119,7 +119,7 @@
   <string name="profile_template">Plantilla</string>
   <string name="profile_custom">Personalizado</string>
   <string name="profile_name">Nombre de perfil</string>
-  <string name="profile_namespace">Espacio de nombres de montaje</string>
+  <string name="profile_namespace">Espacio de montaje aislado</string>
   <string name="profile_namespace_inherited">Heredado</string>
   <string name="profile_namespace_global">Global</string>
   <string name="profile_namespace_individual">Individual</string>
@@ -191,14 +191,11 @@
   <string name="select_file_tip">Se recomienda la imagen de partición %1$s</string>
   <string name="select_kmi">Seleccionar KMI</string>
   <string name="shrink_sparse_image">Minimizar imagen sparse</string>
-  <string name="shrink_sparse_image_message">Redimensiona la imagen sparse donde se encuentra el módulo a su tamaño real. Ten en cuenta que esto puede hacer que el módulo funcione de forma anómala, así que por favor, úsalo solo cuando sea necesario (como para una copia de seguridad).</string>
   <string name="settings_uninstall">Desinstalar</string>
   <string name="settings_uninstall_temporary">Desinstalar temporalmente</string>
   <string name="settings_uninstall_permanent">Desinstalar permanentemente</string>
   <string name="settings_restore_stock_image">Restaurar imagen stock</string>
   <string name="settings_uninstall_temporary_message">Desinstalar temporalmente KernelSU Next, restaurar al estado original después del próximo reinicio.</string>
-  <string name="settings_uninstall_permanent_message">Desinstalar KernelSU Next (Root y todos los módulos) completa y permanentemente.</string>
-  <string name="settings_restore_stock_image_message">Restaura la imagen stock (si existe una copia de seguridad), usado normalmente antes de una OTA; si necesitas desinstalar KernelSU Next, usa \"Desinstalación permanente\".</string>
   <string name="flashing">Flasheando</string>
   <string name="flash_success">Flasheado con éxito</string>
   <string name="flash_failed">Error en el flasheo</string>
@@ -207,7 +204,6 @@
   <string name="log_saved">Logs guardados</string>
   <string name="send_log">Enviar logs</string>
   <string name="settings_disable_su">Deshabilitar compatibilidad su</string>
-  <string name="settings_disable_su_summary">Desactiva temporalmente la capacidad de cualquier app para obtener privilegios root mediante el comando ⁠su (los procesos root existentes no se verán afectados).</string>
   <string name="settings_language">Idioma</string>
   <string name="system_default">Predeterminado del sistema</string>
   <string name="settings_legacyui">Usar interfaz antigua</string>
@@ -228,7 +224,13 @@
   <string name="home_module_count_singular">Módulo</string>
   <string name="home_module_count_plural">Módulos</string>
   <string name="module_backup_message">Respaldar los módulos actualmente instalados.</string>
-  <string name="module_sort_enabled_first">Sort (Enabled first)</string>
-  <string name="module_sort_action_first">Sort (Action first)</string>
-  <string name="module_sort_webui_first">Sort (WebUI first)</string>
+  <string name="module_sort_enabled_first">Ordenar (Activados Primero)</string>
+  <string name="module_sort_action_first">Ordenar (Accionables primero)</string>
+  <string name="module_sort_webui_first">Ordenar (WrbUI primero)</string>
+  <string name="settings_global_namespace_mode_summary">Todas las sesiones root usan el espacio de montaje aislado global</string>
+  <string name="shrink_sparse_image_message">Resize the sparse image where the module is located to its actual size. Note that this may cause the module to work abnormally, so please only use when necessary (such as for backup).</string>
+  <string name="settings_uninstall_permanent_message">Uninstalling KernelSU Next (root and all modules) completely and permanently.</string>
+  <string name="settings_restore_stock_image_message">Restore the stock factory image (if a backup exists), usually used before OTA; if you need to uninstall KernelSU Next, please use \"Uninstall permanently\".</string>
+  <string name="settings_disable_su_summary">Temporarily disable the ability of any app to gain root privileges via the ⁠su command (existing root processes won\'t be affected).</string>
+  <string name="settings_global_namespace_mode">Global namespace mode</string>
 </resources>
