@@ -118,7 +118,7 @@ config USB_CCIC_NOTIFIER_USING_QC
 config USB_AUDIO_ENHANCED_DETECT_TIME
 	bool "USB audio enhanced detect time"
 	depends on USB_NOTIFY_LAYER
-	depends on !SEC_FACTORY
+	default y
 	help
 	 Added uevent for usb audio device(bundle)
 	 uevent includes path, card number, vid, pid
@@ -143,6 +143,16 @@ config DISABLE_LOCKSCREEN_USB_RESTRICTION
 	 it has been applied since v os (oneui 7.0) or higher
 	 This feature is to avoid applying the concept.
 	 Enable this feature to enable usb communication on the lock screen.
+
+config USE_USB_COMMUNICATIONS_CAPABLE
+	bool "use usb communications capable in source capability"
+	depends on USB_NOTIFY_LAYER
+	default y
+	help
+	 usb_notify can receive usb communications capable event.
+	 it can be used for various processing using event.
+	 You can check if the device that supports PD is the actual usb port.
+	 If this function is implemented, this feature will be default y
 
 #
 # USB notify configuration

@@ -41,7 +41,7 @@
 struct usb_notifier_platform_data {
 #if IS_ENABLED(CONFIG_PDIC_NOTIFIER)
 	struct	notifier_block ccic_usb_nb;
-	int is_host;
+	int is_data_role;
 #endif
 #if IS_ENABLED(CONFIG_MUIC_NOTIFIER)
 	struct	notifier_block muic_usb_nb;
@@ -68,6 +68,8 @@ struct usb_notifier_platform_data {
 #endif
 	int  host_wake_lock_enable;
 	int  device_wake_lock_enable;
+	int  reduce_booting_delay;
+	int  reduce_booting_delay_sec;
 };
 
 #ifdef CONFIG_OF
@@ -113,6 +115,14 @@ static void of_get_usb_redriver_dt(struct device_node *np,
 
 	pdata->device_wake_lock_enable =
 		!(of_property_read_bool(np, "disable_device_wakelock"));
+
+	pdata->reduce_booting_delay =
+		(of_property_read_bool(np, "reduce_booting_delay"));
+
+	if (pdata->reduce_booting_delay) {
+		of_property_read_u32(np, "booting_delay_sec",
+				&pdata->reduce_booting_delay_sec);
+	}
 
 	pr_info("%s, host_wake_lock_enable %d ,device_wake_lock_enable %d\n",
 		__func__, pdata->host_wake_lock_enable, pdata->device_wake_lock_enable);
@@ -397,22 +407,27 @@ static int ccic_usb_handle_notification(struct notifier_block *nb,
 	switch (usb_status.drp) {
 	case USB_STATUS_NOTIFY_ATTACH_DFP:
 		pr_info("%s: Turn On Host(DFP)\n", __func__);
+		if (pdata->is_data_role == USB_STATUS_NOTIFY_ATTACH_UFP)
+			send_otg_notify(o_notify, NOTIFY_EVENT_VBUS, 0);
 		send_otg_notify(o_notify, NOTIFY_EVENT_HOST, 1);
-		pdata->is_host = 1;
+		pdata->is_data_role = USB_STATUS_NOTIFY_ATTACH_DFP;
 		break;
 	case USB_STATUS_NOTIFY_ATTACH_UFP:
 		pr_info("%s: Turn On Device(UFP)\n", __func__);
+		if (pdata->is_data_role == USB_STATUS_NOTIFY_ATTACH_DFP)
+			send_otg_notify(o_notify, NOTIFY_EVENT_HOST, 0);
 		send_otg_notify(o_notify, NOTIFY_EVENT_VBUS, 1);
+		pdata->is_data_role = USB_STATUS_NOTIFY_ATTACH_UFP;
 		break;
 	case USB_STATUS_NOTIFY_DETACH:
-		if (pdata->is_host) {
+		if (pdata->is_data_role == USB_STATUS_NOTIFY_ATTACH_DFP) {
 			pr_info("%s: Turn Off Host(DFP)\n", __func__);
 			send_otg_notify(o_notify, NOTIFY_EVENT_HOST, 0);
-			pdata->is_host = 0;
 		} else {
 			pr_info("%s: Turn Off Device(UFP)\n", __func__);
 			send_otg_notify(o_notify, NOTIFY_EVENT_VBUS, 0);
 		}
+		pdata->is_data_role = USB_STATUS_NOTIFY_DETACH;
 		break;
 	default:
 		pr_info("%s: unsupported DRP type : %d.\n", __func__, usb_status.drp);
@@ -860,6 +875,10 @@ static int usb_notifier_probe(struct platform_device *pdev)
 	dwc_lsi_notify.disable_control = pdata->can_disable_usb;
 	dwc_lsi_notify.is_host_wakelock = pdata->host_wake_lock_enable;
 	dwc_lsi_notify.is_wakelock = pdata->device_wake_lock_enable;
+
+	if (pdata->reduce_booting_delay)
+		dwc_lsi_notify.booting_delay_sec = pdata->reduce_booting_delay_sec;
+
 	set_otg_notify(&dwc_lsi_notify);
 	set_notify_data(&dwc_lsi_notify, pdata);
 
@@ -870,7 +889,7 @@ static int usb_notifier_probe(struct platform_device *pdev)
 #endif
 
 #if IS_ENABLED(CONFIG_PDIC_NOTIFIER)
-	pdata->is_host = 0;
+	pdata->is_data_role = USB_STATUS_NOTIFY_DETACH;
 #if IS_ENABLED(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
 	manager_notifier_register(&pdata->ccic_usb_nb, ccic_usb_handle_notification,
 					MANAGER_NOTIFY_PDIC_USB);

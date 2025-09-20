@@ -835,6 +835,8 @@ static void update_cable_status(struct otg_notify *n, unsigned long event,
 	}
 }
 
+static int set_notify_disable(struct usb_notify_dev *udev, int disable);
+
 static void reserve_state_check(struct work_struct *work)
 {
 	struct otg_booting_delay *o_b_d =
@@ -848,7 +850,6 @@ static void reserve_state_check(struct work_struct *work)
 	unl_info("%s +\n", __func__);
 
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
-	/* We can wait up to two minutes. */
 	wait_event_interruptible(u_noti->init_delay,
 		(u_noti->lock_state != USB_NOTIFY_INIT_STATE
 			|| u_noti->b_delay.reserve_state == NOTIFY_EVENT_VBUS));
@@ -886,6 +887,12 @@ static void reserve_state_check(struct work_struct *work)
 	notify_event_unlock(u_noti, NOTIFY_EVENT_STATE);
 
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
+	if (u_noti->lock_state == USB_NOTIFY_INIT_STATE) {
+		u_noti->udev.first_restrict = true;
+		set_notify_disable(&u_noti->udev, NOTIFY_BLOCK_TYPE_HOST);
+		u_noti->skip_possible_usb = 1;
+	}
+
 	if (!u_noti->skip_possible_usb)
 		send_external_notify(EXTERNAL_NOTIFY_POSSIBLE_USB, 1);
 #else

@@ -289,10 +289,44 @@ done:
 }
 
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
+static void intf_authorized_set(struct usb_device *dev)
+{
+	struct usb_hcd *hcd = bus_to_hcd(dev->bus);
+
+	unl_info("%s\n", __func__);
+	if (hcd)
+		set_bit(HCD_FLAG_INTF_AUTHORIZED, &hcd->flags);
+}
+
+static void intf_authorized_clear(struct usb_device *dev)
+{
+	struct usb_hcd *hcd = bus_to_hcd(dev->bus);
+
+	unl_info("%s\n", __func__);
+	if (hcd)
+		clear_bit(HCD_FLAG_INTF_AUTHORIZED, &hcd->flags);
+}
+
+static bool intf_authorized_check(struct usb_device *dev)
+{
+	struct usb_hcd *hcd = bus_to_hcd(dev->bus);
+	bool ret = true;
+
+	if (hcd) {
+		if (!test_bit(HCD_FLAG_INTF_AUTHORIZED, &hcd->flags))
+			ret = false;
+	}
+
+	unl_info("%s ret(%d)\n", __func__, ret);
+
+	return ret;
+}
+
 static void connect_usb_driver(struct usb_device *dev)
 {
 	struct usb_interface *intf = NULL;
-	int i, ret = 0;
+	struct usb_device_driver *udriver = NULL;
+	int i, ret = 0, author = 0;
 
 	if (!dev) {
 		unl_err("%s no dev\n", __func__);
@@ -304,10 +338,18 @@ static void connect_usb_driver(struct usb_device *dev)
 		goto done;
 	}
 
+	if (dev->dev.driver)
+		udriver = to_usb_device_driver(dev->dev.driver);
+
 	for (i = 0; i < dev->actconfig->desc.bNumInterfaces; i++) {
 		intf = dev->actconfig->interface[i];
 		intf->authorized = 1;
 	}
+
+	author = intf_authorized_check(dev);
+
+	if (!author)
+		intf_authorized_set(dev);
 
 	for (i = 0; i < dev->actconfig->desc.bNumInterfaces; i++) {
 		intf = dev->actconfig->interface[i];
@@ -319,17 +361,16 @@ static void connect_usb_driver(struct usb_device *dev)
 				unl_info("%s attach intf->dev\n", __func__);
 		}
 	}
+
+	if (udriver && udriver->generic_subclass) {
+		unl_info("%s udriver->generic_subclass\n", __func__);
+		goto done;
+	} else {
+		if (!author)
+			intf_authorized_clear(dev);
+	}
 done:
 	return;
-}
-
-static void intf_authorized_clear(struct usb_device *dev)
-{
-	struct usb_hcd *hcd = bus_to_hcd(dev->bus);
-
-	unl_info("%s\n", __func__);
-	if (hcd)
-		clear_bit(HCD_FLAG_INTF_AUTHORIZED, &hcd->flags);
 }
 #endif
 
@@ -408,6 +449,7 @@ static int call_device_notify(struct usb_device *dev, int connect)
 				disconnect_usb_driver(dev);
 				usb_set_device_state(dev, USB_STATE_NOTATTACHED);
 				dev->authorized = 0;
+				intf_authorized_clear(dev);
 			} else if (ret == USB_NOTIFY_ALLOWLIST) {
 				if (!match_roothub_vid_pid(dev)) {
 					connect_usb_driver(dev);
@@ -429,6 +471,8 @@ static int call_device_notify(struct usb_device *dev, int connect)
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 			if (!dev->authorized)
 				disconnect_unauthorized_device(dev);
+			if (check_usb_restrict_lock_state(o_notify))
+				intf_authorized_clear(dev);
 #endif
 		}
 	} else {

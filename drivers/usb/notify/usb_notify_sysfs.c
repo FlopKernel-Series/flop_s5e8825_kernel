@@ -1271,6 +1271,23 @@ static ssize_t usb_sl_show(struct device *dev,
 	return sprintf(buf, "%lu\n", udev->secure_lock);
 }
 
+static bool valid_secure_lock_value(unsigned long secure_lock)
+{
+	bool ret = false;
+
+	switch (secure_lock) {
+	case USB_NOTIFY_LOCK_USB_RESTRICT:
+	case USB_NOTIFY_LOCK_USB_WORK:
+	case USB_NOTIFY_UNLOCK:
+		ret = true;
+		break;
+	default:
+		break;
+	}
+
+	return ret;
+}
+
 static ssize_t usb_sl_store(
 		struct device *dev, struct device_attribute *attr,
 		const char *buf, size_t size)
@@ -1306,6 +1323,13 @@ static ssize_t usb_sl_store(
 	if (sret != 1)
 		goto error;
 
+	if (!valid_secure_lock_value(secure_lock)) {
+		unl_err("%s secure_lock is invalid (%lu)\n",
+			__func__, secure_lock);
+		ret = -EINVAL;
+		goto error;
+	}
+
 #ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
 	prev_secure_lock = udev->secure_lock;
 #endif
@@ -1319,9 +1343,9 @@ static ssize_t usb_sl_store(
 			udev->set_disable(udev, NOTIFY_BLOCK_TYPE_ALL);
 			udev->first_restrict = true;
 		}
-	} else if (udev->first_restrict && prev_secure_lock == USB_NOTIFY_LOCK_USB_RESTRICT
-				&& (secure_lock == USB_NOTIFY_UNLOCK
-						|| secure_lock == USB_NOTIFY_LOCK_USB_WORK)) {
+	} else if (udev->first_restrict
+					&& (secure_lock == USB_NOTIFY_UNLOCK
+							|| secure_lock == USB_NOTIFY_LOCK_USB_WORK)) {
 		if (udev->set_disable) {
 			udev->set_disable(udev, NOTIFY_BLOCK_TYPE_NONE);
 			udev->first_restrict = false;

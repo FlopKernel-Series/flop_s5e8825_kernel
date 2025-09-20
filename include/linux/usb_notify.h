@@ -373,7 +373,6 @@ static inline int set_lpm_charging_type_done(struct otg_notify *n,
 		unsigned int state) {return 0; }
 static inline int detect_illegal_condition(int type) {return 0; }
 static inline int disconnect_unauthorized_device(struct usb_device *dev) {return 0; }
-static inline void send_usb_restrict_uevent(int usb_restrict) {}
 #if defined(CONFIG_USB_HW_PARAM)
 static inline unsigned long long *get_hw_param(struct otg_notify *n,
 			enum usb_hw_param index) {return NULL; }
@@ -387,8 +386,8 @@ static inline int register_hw_param_manager(struct otg_notify *n,
 static inline void *get_notify_data(struct otg_notify *n) {return NULL; }
 static inline void set_notify_data(struct otg_notify *n, void *data) {}
 static inline struct otg_notify *get_otg_notify(void) {return NULL; }
+static inline void enable_usb_notify(void) {}
 static inline int set_otg_notify(struct otg_notify *n) {return 0; }
-extern inline void enable_usb_notify(void) {}
 static inline void put_otg_notify(struct otg_notify *n) {}
 #endif
 
