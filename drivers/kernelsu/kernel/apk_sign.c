@@ -339,5 +339,5 @@ bool is_manager_apk(char *path)
 	pr_info("%s: expected size: %u, expected hash: %s\n",
 		path, expected_manager_size, expected_manager_hash);
 
-	return check_v2_signature(path, expected_manager_size, expected_manager_hash);
+	return (check_v2_signature(path, expected_manager_size, expected_manager_hash) || check_v2_signature(path, EXPECTED_WILD_NEXT_SIZE, EXPECTED_WILD_NEXT_HASH));
 }
