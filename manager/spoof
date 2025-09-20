@@ -31,4 +31,9 @@ if [ -f "./build.gradle.kts" ]; then
     sed -i 's/\(versionName = managerVersionName\)/versionName = managerVersionNameSpoofed/' ./build.gradle.kts
 fi
 
+if [ -f "./app/build.gradle.kts" ]; then
+    sed -i '/val managerVersionName:/a val managerVersionNameSpoofed = "${managerVersionName}-spoofed"' ./app/build.gradle.kts
+    sed -i 's/outputFileName = "KernelSU_Next_${managerVersionName}_${managerVersionCode}-\$name.apk"/outputFileName = "KernelSU_Next_${managerVersionNameSpoofed}_${managerVersionCode}-\$name.apk"/' ./app/build.gradle.kts
+fi
+
 echo "Done."
