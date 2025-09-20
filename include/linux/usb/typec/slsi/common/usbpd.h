@@ -539,6 +539,7 @@ typedef enum usbpd_manager_command {
 	MANAGER_REQ_GET_SRC_CAP			= 1 << 18,
 	MANAGER_REQ_ERROR_RECOVERY		= 1 << 19,
 	MANAGER_REQ_SOFT_RESET			= 1 << 20,
+	MANAGER_REQ_GET_SRC_CAP_EXT		= 1 << 21,
 } usbpd_manager_command_type;
 
 typedef enum usbpd_manager_event {
@@ -565,6 +566,7 @@ typedef enum usbpd_manager_event {
 	MANAGER_SEND_PR_SWAP	= 20,
 	MANAGER_SEND_DR_SWAP	= 21,
 	MANAGER_CAP_MISMATCH	= 22,
+	MANAGER_GET_SRC_CAP_EXT	= 23,
 } usbpd_manager_event_type;
 
 enum usbpd_msg_status {
@@ -779,17 +781,17 @@ enum {
 #define PDIC_OPS_FUNC(func, _data) \
 	((pd_data->phy_ops.func) ? \
 	 (pd_data->phy_ops.func(_data)) : \
-	 (pr_info("%s, %s is not enabled\n", __func__, #func), -1))
+	 (-1))
 
 #define PDIC_OPS_PARAM_FUNC(func, _data, param) \
 	((pd_data->phy_ops.func) ? \
 	 (pd_data->phy_ops.func(_data, param)) : \
-	 (pr_info("%s, %s is not enabled\n", __func__, #func), -1))
+	 (-1))
 
 #define PDIC_OPS_PARAM2_FUNC(func, _data, param1, param2) \
 	((pd_data->phy_ops.func) ? \
 	 (pd_data->phy_ops.func(_data, param1, param2))	: \
-	 (pr_info("%s, %s is not enabled\n", __func__, #func), -1))
+	 (-1))
 
 typedef struct usbpd_phy_ops {
 	/*    1st param should be 'usbpd_data *'    */
@@ -799,7 +801,7 @@ typedef struct usbpd_phy_ops {
 	void    (*soft_reset)(void *);
 	int    (*set_power_role)(void *, int);
 	int    (*get_power_role)(void *, int *);
-	void	(*check_hardreset)(void *);	
+	void	(*check_hardreset)(void *);
 	int    (*set_data_role)(void *, int);
 	int    (*get_data_role)(void *, int *);
 	int    (*set_vconn_source)(void *, int);
@@ -873,9 +875,13 @@ typedef struct usbpd_phy_ops {
 	void	(*ops_check_pps_irq_tx_req)(void *);
 	void	(*ops_check_pps_irq)(void *, int);
 	void	(*ops_manual_retry)(void *, int);
+	void	(*ops_read_fac_sbu)(void *, int*, int*);
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
 	void	(*ops_disable_water)(void *, int);
 	void	(*ops_set_fac_sbu)(void *, int);
 	void	(*ops_get_fac_sbu)(void *, int*, int*);
+	void	(*ops_set_vctrl_otg)(void *, int);
+#endif
 } usbpd_phy_ops_type;
 
 struct policy_data {
@@ -902,6 +908,7 @@ struct policy_data {
 	bool			got_pps_apdo;
 	bool			not_support_svid_ack;
 	bool			need_check_pps_clk;
+	bool			get_src_cap_ext;
 	int				selected_pdo_type;
 	int				selected_pdo_num;
 	int				requested_pdo_type;
@@ -991,6 +998,12 @@ struct usbpd_manager_data {
 	bool multi_function_preferred;
 	int pin_assignment;
 	bool dp_attached;
+	int altmode_enable;
+	int is_mpsm_exit;
+	struct delayed_work usb_external_notifier_register_work;
+	struct notifier_block usb_external_notifier_nb;
+	struct completion exit_mpsm_completion;
+
 
 	struct mutex vdm_mutex;
 	struct mutex pdo_mutex;
@@ -1003,6 +1016,7 @@ struct usbpd_manager_data {
 	struct delayed_work pps_request_handler;
 	struct delayed_work buck_off_handler;
 	struct delayed_work buck_off_clear_handler;
+	struct delayed_work get_src_cap_ext_work;
 	muic_attached_dev_t	attached_dev;
 
 	int pd_attached;
@@ -1165,7 +1179,13 @@ extern int usbpd_manager_command_to_policy(struct device *dev, usbpd_manager_com
 extern void usbpd_manager_restart_discover_msg(struct usbpd_data *pd_data);
 extern int usbpd_manager_psy_init(struct usbpd_data *_data, struct device *parent);
 extern void usbpd_manager_vbus_turn_on_ctrl(void *_data, bool enbale);
+extern void usbpd_manager_get_src_cap_ext(struct usbpd_data *pd_data, int attach);
+extern void usbpd_manager_send_new_src_cap(int auth_t, int d2d_t);
 extern void init_source_cap_data(struct usbpd_manager_data *_data);
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+extern void usbpd_manager_set_enable_alternate_mode(int mode);
+extern void usbpd_manager_exit_mode_compl(struct usbpd_manager_data *manager);
+#endif
 extern void usbpd_policy_work(struct work_struct *);
 extern void usbpd_protocol_tx(struct usbpd_data *);
 extern void usbpd_protocol_rx(struct usbpd_data *);

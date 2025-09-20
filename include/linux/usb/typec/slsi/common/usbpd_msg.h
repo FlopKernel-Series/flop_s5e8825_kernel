@@ -653,5 +653,24 @@ enum usbpd_msg_type {
 	USBPD_EXTENDED_MSG		= 2,
 };
 
+enum vdm_port_capability {
+	Reserved_Capable	= 0,
+	UFP_D_Capable		= 1,
+	DFP_D_Capable		= 2,
+	DFP_D_and_UFP_D_Capable	= 3
+};
+
+enum vdm_port_connected {
+	Adaptor_Disable		= 0,
+	Connect_DFP_D		= 1,
+	Connect_UFP_D		= 2,
+	Connect_DFP_D_and_UFP_D	= 3
+};
+
+enum vdm_receptacle_indication {
+	USB_TYPE_C_PLUG			= 0,
+	USB_TYPE_C_Receptacle	= 1
+};
+
 #endif
 

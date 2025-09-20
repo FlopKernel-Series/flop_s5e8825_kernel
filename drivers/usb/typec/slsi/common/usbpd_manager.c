@@ -186,8 +186,6 @@ void usbpd_manager_select_pdo(int num)
 
 #if IS_ENABLED(CONFIG_PDIC_PD30)
 	PDIC_OPS_PARAM_FUNC(get_pps_enable, pd_data, &pps_enable);
-	usbpd_info("%s, pps_enable : %d\n", __func__, pps_enable);
-
 	if (pps_enable == PPS_ENABLE) {
 		usbpd_info(" %s : forced pps disable\n", __func__);
 		PDIC_OPS_PARAM_FUNC(pps_enable, pd_data, PPS_DISABLE);
@@ -252,8 +250,6 @@ int usbpd_manager_select_pps(int num, int ppsVol, int ppsCur)
 	}
 
 	PDIC_OPS_PARAM_FUNC(get_pps_enable, pd_data, &pps_enable);
-	usbpd_info("%s, pps_enable : %d\n", __func__, pps_enable);
-
 	if (pps_enable == PPS_ENABLE) {
 		usbpd_info(" %s : forced pps disable\n", __func__);
 		PDIC_OPS_PARAM_FUNC(pps_enable, pd_data, PPS_DISABLE);
@@ -536,6 +532,23 @@ void usbpd_manager_pps_request_handler(struct work_struct *work)
 #else
 	usbpd_info("%s: pps request handler is not supported\n", __func__);
 #endif
+}
+
+void usbpd_manager_get_src_cap_ext_work(struct work_struct *work)
+{
+	struct usbpd_manager_data *manager =
+		container_of(work, struct usbpd_manager_data, get_src_cap_ext_work.work);
+	struct usbpd_data *pd_data = manager_to_usbpd(manager);
+#if IS_ENABLED(CONFIG_BATTERY_NOTIFIER)
+	PDIC_SINK_STATUS * pdic_sink_status = &pd_data->pd_noti.sink_status;
+#else
+	SEC_PD_SINK_STATUS * pdic_sink_status = &pd_data->pd_noti.sink_status;
+#endif
+
+	usbpd_info("%s: call getSrcCapExt handler\n", __func__);
+
+	if (pdic_sink_status->fp_sec_pd_ext_cb)
+	        pdic_sink_status->fp_sec_pd_ext_cb(pdic_sink_status->vid, pdic_sink_status->pid);
 }
 
 void usbpd_manager_buck_off_clear_handler(struct work_struct *work)
@@ -1131,6 +1144,7 @@ void usbpd_manager_plug_detach(struct device *dev, bool notify)
 	}
 	manager->first_noti_sent = false;
 	manager->vpdo_received = 0;
+	usbpd_manager_get_src_cap_ext(pd_data, false /*detach*/);
 
 #if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER)
 #if IS_ENABLED(CONFIG_USE_USB_COMMUNICATIONS_CAPABLE)
@@ -1259,6 +1273,9 @@ void usbpd_manager_inform_event(struct usbpd_data *pd_data,
 	case MANAGER_CAP_MISMATCH:
 		usbpd_manager_command_to_policy(pd_data->dev,
 				MANAGER_REQ_GET_SNKCAP);
+		break;
+	case MANAGER_GET_SRC_CAP_EXT:
+		usbpd_manager_get_src_cap_ext(pd_data, true /*attach*/);
 		break;
 	default:
 		usbpd_info("%s: not matched event(%d)\n", __func__, event);
@@ -1429,6 +1446,14 @@ static int usbpd_manager_check_accessory(struct usbpd_manager_data *manager)
 					inc_hw_param(o_notify, USB_CCIC_DEX_USE_COUNT);
 #endif
 				break;
+			case DEXPAD_PRODUCT_ID:
+				acc_type = PDIC_DOCK_DEXPAD;
+				usbpd_info("%s : Samsung DEX PAD connected\n", __func__);
+#if defined(CONFIG_USB_HW_PARAM)
+				if (o_notify)
+					inc_hw_param(o_notify, USB_CCIC_DEX_USE_COUNT);
+#endif
+				break;
 			case HDMI_PRODUCT_ID:
 				acc_type = PDIC_DOCK_HDMI;
 				usbpd_info("%s : Samsung HDMI connected.\n", __func__);
@@ -1442,11 +1467,14 @@ static int usbpd_manager_check_accessory(struct usbpd_manager_data *manager)
 				break;
 			default:
 				acc_type = PDIC_DOCK_NEW;
-				usbpd_info("%s : default device connected.\n", __func__);
+				if (pid == FRIENDS_PRODUCT_ID)
+					usbpd_info("%s : Kakao Friends Stand connected\n", __func__);
+				else
+					usbpd_info("%s : default device connected\n", __func__);
 				break;
 			}
 		} else if (vid == SAMSUNG_MPA_VENDOR_ID) {
-			switch(pid) {
+			switch (pid) {
 			case MPA_PRODUCT_ID:
 				acc_type = PDIC_DOCK_MPA;
 				usbpd_info("%s : Samsung MPA connected.\n", __func__);
@@ -1468,7 +1496,7 @@ static int usbpd_manager_check_accessory(struct usbpd_manager_data *manager)
 		pdic_send_dock_intent(acc_type);
 
 	pdic_send_dock_uevent(vid, pid, acc_type);
-	return 1;
+	return (acc_type != PDIC_DOCK_NEW || vid == SAMSUNG_VENDOR_ID) ? 1 : 0;
 }
 
 void usbpd_manager_set_analog_audio(struct usbpd_data *pd_data)
@@ -1482,6 +1510,35 @@ void usbpd_manager_set_analog_audio(struct usbpd_data *pd_data)
 	usbpd_manager_check_accessory(manager);
 }
 EXPORT_SYMBOL(usbpd_manager_set_analog_audio);
+
+void usbpd_manager_get_src_cap_ext(struct usbpd_data *pd_data, int attach)
+{
+	struct usbpd_manager_data *manager = &pd_data->manager;
+	struct policy_data *policy = &pd_data->policy;
+	uint16_t vid = 0, pid = 0;
+	uint32_t xid = 0;
+#if IS_ENABLED(CONFIG_BATTERY_NOTIFIER)
+	PDIC_SINK_STATUS * pdic_sink_status = &pd_data->pd_noti.sink_status;
+#else
+	SEC_PD_SINK_STATUS * pdic_sink_status = &pd_data->pd_noti.sink_status;
+#endif
+
+	if (attach) {
+		vid = policy->rx_data_obj[0].Source_Capabilities_Extended_Data_Block_Type1.VID;
+		pid = policy->rx_data_obj[1].Source_Capabilities_Extended_Data_Block_Type2.PID;
+		xid = *(uint32_t *)&(policy->rx_data_obj[1].word[1]);
+
+		usbpd_info("%s, VID(0x%x), PID(0x%x), XID(0x%x)\n", __func__,
+				vid, pid, xid);
+	}
+
+	pdic_sink_status->vid = vid;
+	pdic_sink_status->pid = pid;
+	pdic_sink_status->xid = xid;
+
+	if (attach)
+		schedule_delayed_work(&manager->get_src_cap_ext_work, 0);
+}
 
 /* Ok : 0, NAK: -1 */
 int usbpd_manager_get_identity(struct usbpd_data *pd_data)
@@ -1620,6 +1677,8 @@ int usbpd_manager_get_modes(struct usbpd_data *pd_data)
 	}
 
 	if (manager->Standard_Vendor_ID == SAMSUNG_VENDOR_ID) {
+		usbpd_info("%s, ready to sourcing VPDO\n", __func__);
+		manager->vpdo_received = 1;
 		return 0;
 	}
 	return -1;
@@ -1639,8 +1698,6 @@ int usbpd_manager_enter_mode(struct usbpd_data *pd_data)
 
 	switch (svid) {
 	case SAMSUNG_VENDOR_ID:
-		pdic_event_work(pd_data, PDIC_NOTIFY_DEV_ALL,
-				PDIC_NOTIFY_ID_SVID_INFO, svid/*Standard Vendor ID*/, 0, 0);
 		ret = 0;
 		break;
 	case TypeC_DP_SUPPORT:
@@ -1940,6 +1997,15 @@ int usbpd_manager_evaluate_capability(struct usbpd_data *pd_data)
 						cap_current * cur_unit[power_type],
 						usb_comm_capable,
 						suspend);
+
+				if (cap_current * cur_unit[power_type] >= 2000
+						&& pd_data->protocol_rx.msg_header.spec_revision >= USBPD_PD3_0
+						&& !policy->get_src_cap_ext) {
+					usbpd_info("%s, PDO[1].current > 2000, send GetSrcCapExt!!\n", __func__);
+					usbpd_manager_command_to_policy(pd_data->dev,
+							MANAGER_REQ_GET_SRC_CAP_EXT);
+					policy->get_src_cap_ext = 1;
+				}
 			} else {
 				dev_info(pd_data->dev, "[%d] FIXED volt(%d)mV, max cap_current(%d)\n",
 						i+1,
@@ -2072,6 +2138,7 @@ int usbpd_manager_evaluate_capability(struct usbpd_data *pd_data)
 			policy->send_sink_cap = 1;
 			pdic_sink_status->selected_pdo_num = 1;
 			
+			usbpd_info("%s, vpdo(%d)\n", __func__, manager->vpdo_received);
 			if(manager->vpdo_received == 1) {
 				for(i=0; i < available_pdo_num; i++) {
 					if(pdic_sink_status->power_list[i + 1].pdo_type == VPDO_TYPE) {
@@ -2107,11 +2174,12 @@ int usbpd_manager_match_request(struct usbpd_data *pd_data)
 	unsigned mismatch, max_min, op, giveback;
 	struct policy_data *policy = &pd_data->policy;
 	unsigned supply_type;
+	unsigned src_cap_num = pd_data->source_msg_header.num_data_objs;
 	unsigned pos = pd_data->source_request_obj.request_data_object.object_position;
 
-	if (pos != 1) {
-		usbpd_info("Pos Number is not 1, Pos : %d\n", pos);
-		return -1;
+	if (pos > src_cap_num) {
+		usbpd_info("Pos Number over %d(tx src_cap), Pos : %d\n", src_cap_num, pos);
+		return 0;
 	}
 	supply_type = pd_data->source_data_obj[pos - 1].power_data_obj_supply_type.supply_type;
 
@@ -2141,7 +2209,7 @@ int usbpd_manager_match_request(struct usbpd_data *pd_data)
 	}
 
     /* Tx Source PDO */
-	src_max_current = pd_data->source_data_obj[0].power_data_obj.max_current;
+	src_max_current = pd_data->source_data_obj[pos - 1].power_data_obj.max_current;
 
     /* Rx Request RDO */
 	mismatch = pd_data->source_request_obj.request_data_object.capability_mismatch;
@@ -2151,7 +2219,7 @@ int usbpd_manager_match_request(struct usbpd_data *pd_data)
 	giveback = pd_data->source_request_obj.request_data_object.give_back;
 
     /*src_max_current is already *10 value ex) src_max_current 500mA */
-	usbpd_info("Tx SourceCap Current : %dmA\n", src_max_current*10);
+	usbpd_info("Tx SourceCap[%d] Current : %dmA\n", pos, src_max_current*10);
 	usbpd_info("Rx Request Current : max(%d)mA, op(%d)mA\n", max_min*10, op*10);
 
 	policy->cap_mismatch = mismatch;
@@ -2177,13 +2245,15 @@ void usbpd_manager_response_req_pdo(struct usbpd_data *pd_data, int req_pdo_type
 	if ((d2d_type == D2D_NONE) || (auth_type == AUTH_NONE))
 		return;
 
+	usbpd_info("D2D: %s: d2d_type(%d), pdo_type(%d), auth_type(%d)\n", __func__,
+			d2d_type, req_pdo_type, auth_type);
+
 	if (d2d_type == D2D_SRCSNK) {
 		if (sel_pdo == 1) {
 			/* 2.5w fpdo */
 			manager->req_pdo_type = PDO_TYPE_FIXED;
-		} else if ((sel_pdo >= 2) &&
-			(auth_type == AUTH_HIGH_PWR)) {
-			/* 15w vpdo */
+		} else if (sel_pdo >= 2) {
+			/* if LOW_PWR, VPDO0.3A / HIGH_PWR VPDO1.65A */
 			manager->req_pdo_type = PDO_TYPE_VARIABLE;
 		}
 	} else
@@ -2195,26 +2265,39 @@ void usbpd_manager_response_req_pdo(struct usbpd_data *pd_data, int req_pdo_type
 }
 EXPORT_SYMBOL(usbpd_manager_response_req_pdo);
 
-static void usbpd_manager_send_new_src_cap(int auth_t, int d2d_t)
+void usbpd_manager_send_new_src_cap(int auth_t, int d2d_t)
 {
 	POWER_LIST power_list[2];
 	int size_of_power_list;
 
 	usbpd_info("@D2D: %s(%d,%d)\n", __func__, auth_t, d2d_t);
 
-	if ((d2d_t == D2D_SRCSNK) &&
-		(auth_t == AUTH_HIGH_PWR)) {
-		size_of_power_list = 2;
-		power_list[0].pdo_type = FPDO_TYPE;
-		power_list[0].max_voltage = 5000;
-		power_list[0].max_current = 500;
-		power_list[0].comm_capable = 1;
-		power_list[0].suspend = 1;
+	if (d2d_t == D2D_SRCSNK) {
+		if (auth_t == AUTH_HIGH_PWR) {
+			size_of_power_list = 2;
+			power_list[0].pdo_type = FPDO_TYPE;
+			power_list[0].max_voltage = 5000;
+			power_list[0].max_current = 500;
+			power_list[0].comm_capable = 1;
+			power_list[0].suspend = 1;
 
-		power_list[1].pdo_type = VPDO_TYPE;
-		power_list[1].max_voltage = 9000;
-		power_list[1].min_voltage = 7000;
-		power_list[1].max_current = 1000;
+			power_list[1].pdo_type = VPDO_TYPE;
+			power_list[1].max_voltage = 9000;
+			power_list[1].min_voltage = 7000;
+			power_list[1].max_current = 1650;
+		} else {
+			size_of_power_list = 2;
+			power_list[0].pdo_type = FPDO_TYPE;
+			power_list[0].max_voltage = 5000;
+			power_list[0].max_current = 500;
+			power_list[0].comm_capable = 1;
+			power_list[0].suspend = 1;
+
+			power_list[1].pdo_type = VPDO_TYPE;
+			power_list[1].max_voltage = 9000;
+			power_list[1].min_voltage = 7000;
+			power_list[1].max_current = 300;
+		}
 	} else if ((d2d_t == D2D_SNKONLY) &&
 		(auth_t == AUTH_HIGH_PWR)) {
 		size_of_power_list = 1;
@@ -2413,6 +2496,10 @@ void usbpd_manager_vbus_turn_on_ctrl(void *_data, bool enable)
 		return;
 	}
 
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	PDIC_OPS_PARAM_FUNC(ops_set_vctrl_otg, pd_data, enable);
+#endif
+
 	auth_type = manager->auth_type;
 	req_pdo_type = manager->req_pdo_type;
 	d2d_type = manager->d2d_type;
@@ -2446,6 +2533,20 @@ void usbpd_manager_vbus_turn_on_ctrl(void *_data, bool enable)
 			 /* disable dc reverse boost before otg on */
 			psy_do_property("battery", set,
 				POWER_SUPPLY_EXT_PROP_CHARGE_OTG_CONTROL, val);
+
+			/* VBUS low check after DC boost off */
+			for (retry_cnt = 0; retry_cnt < 5; retry_cnt++) {
+				usbpd_info("%s, pmeter_name : %s\n", __func__, pd_data->pmeter_name);
+				psy_do_property(pd_data->pmeter_name, get,
+						POWER_SUPPLY_LSI_PROP_VCHGIN, val);
+				usbpd_info("@D2D: %s: VCHGIN(%d)\n", __func__, val.intval);
+				if (val.intval < 2000) {
+					usbpd_info("%s, VBUS off done, sleep 20ms\n", __func__);
+					usleep_range(20000, 21000);
+					break;
+				}
+				usleep_range(10000, 11000);
+			}
 #endif
 		}
 
@@ -2734,6 +2835,206 @@ void usbpd_init_manager_val(struct usbpd_data *pd_data)
 }
 EXPORT_SYMBOL(usbpd_init_manager_val);
 
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+void usbpd_manager_set_enable_alternate_mode(int mode)
+{
+	struct usbpd_data *pd_data = g_pd_data;
+	struct usbpd_manager_data *manager = &pd_data->manager;
+	static int check_is_driver_loaded;
+	static int prev_alternate_mode;
+	int data_role = -1;
+
+	if ((mode & ALTERNATE_MODE_NOT_READY) &&
+	    (mode & ALTERNATE_MODE_READY)) {
+		usbpd_info("%s: mode is invalid!", __func__);
+		return;
+	}
+	if ((mode & ALTERNATE_MODE_START) && (mode & ALTERNATE_MODE_STOP)) {
+		usbpd_info("%s: mode is invalid!", __func__);
+		return;
+	}
+
+	if (mode & ALTERNATE_MODE_RESET) {
+		usbpd_info("%s: mode is reset! check_is_driver_loaded=%d, prev_alternate_mode=%d",
+			__func__, check_is_driver_loaded, prev_alternate_mode);
+		if (check_is_driver_loaded &&
+		    (prev_alternate_mode == ALTERNATE_MODE_START)) {
+
+			usbpd_info("%s: [No process] alternate mode is reset as start!", __func__);
+			prev_alternate_mode = ALTERNATE_MODE_START;
+		} else if (check_is_driver_loaded &&
+			   (prev_alternate_mode == ALTERNATE_MODE_STOP)) {
+			usbpd_info("%s: [No process] alternate mode is reset as stop!", __func__);
+			prev_alternate_mode = ALTERNATE_MODE_STOP;
+		} else {
+			;
+		}
+	} else {
+		if (mode & ALTERNATE_MODE_NOT_READY) {
+			check_is_driver_loaded = 0;
+			usbpd_info("%s: alternate mode is not ready!", __func__);
+		} else if (mode & ALTERNATE_MODE_READY) {
+			check_is_driver_loaded = 1;
+			usbpd_info("%s: alternate mode is ready!", __func__);
+		} else {
+			;
+		}
+
+		if (mode & ALTERNATE_MODE_START) {
+			manager->altmode_enable = 1;
+			prev_alternate_mode = ALTERNATE_MODE_START;
+			usbpd_info("%s: alternate mode is started!\n", __func__);
+			PDIC_OPS_PARAM_FUNC(get_data_role, pd_data, &data_role);
+			if (data_role == USBPD_DFP) {
+				manager->alt_sended = 0;
+				manager->vdm_en = 0;
+				usbpd_manager_vdm_request_enabled(pd_data);
+			}
+		} else if (mode & ALTERNATE_MODE_STOP) {
+			manager->altmode_enable = 0;
+			usbpd_info("%s: alternate mode is stopped!\n", __func__);
+		}
+	}
+}
+
+static void usbpd_manager_enter_mode_change(struct usbpd_manager_data *manager)
+{
+	struct usbpd_data *pd_data = g_pd_data;
+	int power_role = -1;
+
+	PDIC_OPS_PARAM_FUNC(get_power_role, pd_data, &power_role);
+
+	/* when disable alt */
+	switch (power_role) {
+	case PDIC_SINK:
+		usbpd_info("%s, do nothing as SINK\n", __func__);
+		break;
+	case PDIC_SOURCE:
+		usbpd_kick_policy_work(pd_data->dev);
+		break;
+	}
+}
+
+void usbpd_manager_exit_mode_compl(struct usbpd_manager_data *manager)
+{
+	if (manager->is_mpsm_exit == 1) {
+		complete(&manager->exit_mpsm_completion);
+		manager->is_mpsm_exit = 0;
+		usbpd_info("exit mpsm completion\n");
+	}
+}
+EXPORT_SYMBOL_GPL(usbpd_manager_exit_mode_compl);
+
+static void usbpd_manager_exit_mode_change(struct usbpd_manager_data *manager)
+{
+	struct usbpd_data *pd_data = g_pd_data;
+	int power_role = -1;
+	int data_role = -1;
+
+	/* when enable alt */
+	PDIC_OPS_PARAM_FUNC(get_power_role, pd_data, &power_role);
+	PDIC_OPS_PARAM_FUNC(get_data_role, pd_data, &data_role);
+
+	switch (power_role) {
+	case PDIC_SINK:
+		if (data_role == USBPD_DFP) {
+			manager->alt_sended = 0;
+			manager->vdm_en = 1;
+			usbpd_info("%s, start VDM as Snk/DFP\n", __func__);
+			usbpd_manager_vdm_request_enabled(pd_data);
+		} else
+			usbpd_info("%s, do nothing as Snk/UFP\n", __func__);
+		break;
+	case PDIC_SOURCE:
+		manager->is_mpsm_exit = 1;
+		reinit_completion(&manager->exit_mpsm_completion);
+
+		PDIC_OPS_PARAM_FUNC(rprd_mode_change, pd_data->phy_driver_data, TYPE_C_ATTACH_DFP);
+
+		if (!wait_for_completion_timeout(
+				&manager->exit_mpsm_completion,
+				msecs_to_jiffies(400))) {
+			usbpd_err("%s: SRC reattach failed\n", __func__);
+			manager->is_mpsm_exit = 0;
+			PDIC_OPS_PARAM_FUNC(rprd_mode_change, pd_data->phy_driver_data, TYPE_C_ATTACH_DRP);
+		} else {
+			usbpd_info("%s: SRC reattach success\n", __func__);
+		}
+
+		break;
+	}
+}
+
+static int usbpd_manager_handle_usb_external_notifier_notification(
+		struct notifier_block *nb, unsigned long action, void *data)
+{
+	struct usbpd_manager_data *manager = container_of(nb,
+			struct usbpd_manager_data, usb_external_notifier_nb);
+	struct usbpd_data *pd_data = g_pd_data;
+	int ret = 0;
+	int enable = *(int *)data;
+
+	usbpd_info("%s : action=%lu , enable=%d\n", __func__, action, enable);
+	switch (action) {
+	case EXTERNAL_NOTIFY_HOSTBLOCK_PRE:
+		if (enable) {
+			usbpd_info("%s : EXTERNAL_NOTIFY_HOSTBLOCK_PRE\n", __func__);
+#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
+			usbpd_manager_set_enable_alternate_mode(ALTERNATE_MODE_STOP);
+#endif
+			usbpd_manager_enter_mode_change(manager);
+			if (manager->dp_attached == 1)
+				usbpd_manager_exit_mode(pd_data, 0);
+		} else {
+			if (manager->dp_attached == 1)
+				usbpd_manager_exit_mode(pd_data, 0);
+		}
+		break;
+	case EXTERNAL_NOTIFY_HOSTBLOCK_POST:
+		if (enable) {
+		} else {
+			usbpd_info("%s : EXTERNAL_NOTIFY_HOSTBLOCK_POST\n", __func__);
+#ifndef CONFIG_DISABLE_LOCKSCREEN_USB_RESTRICTION
+			usbpd_manager_set_enable_alternate_mode(ALTERNATE_MODE_START);
+#endif
+			usbpd_manager_exit_mode_change(manager);
+		}
+		break;
+	}
+
+	return ret;
+}
+
+static void usbpd_manager_delayed_external_notifier_init(struct work_struct *work)
+{
+	int ret = 0;
+	static int retry_count = 1;
+	int max_retry_count = 5;
+	struct delayed_work *delay_work =
+		container_of(work, struct delayed_work, work);
+	struct usbpd_manager_data *usbpd_data =
+		container_of(delay_work,
+				struct usbpd_manager_data, usb_external_notifier_register_work);
+
+	usbpd_info("%s : %d = times!\n", __func__, retry_count);
+
+	/* Register pdic handler to pdic notifier block list */
+	ret = usb_external_notify_register(&usbpd_data->usb_external_notifier_nb,
+			usbpd_manager_handle_usb_external_notifier_notification,
+			EXTERNAL_NOTIFY_DEV_PDIC);
+	if (ret < 0) {
+		usbpd_err("Manager notifier init time is %d.\n", retry_count);
+		if (retry_count++ != max_retry_count)
+			schedule_delayed_work(
+					&usbpd_data->usb_external_notifier_register_work,
+					msecs_to_jiffies(2000));
+		else
+			usbpd_err("fail to init external notifier\n");
+	} else
+		usbpd_info("%s : external notifier register done!\n", __func__);
+}
+#endif
+
 int usbpd_init_manager(struct usbpd_data *pd_data)
 {
 	int ret = 0;
@@ -2769,7 +3070,11 @@ int usbpd_init_manager(struct usbpd_data *pd_data)
 	manager->pd_data = pd_data;
 	manager->power_role_swap = true;
 	manager->data_role_swap = true;
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	manager->vconn_source_swap = 1;
+#else
 	manager->vconn_source_swap = 0;
+#endif
 	manager->alt_sended = 0;
 	manager->vdm_en = 0;
 	manager->acc_type = 0;
@@ -2799,6 +3104,25 @@ int usbpd_init_manager(struct usbpd_data *pd_data)
 	INIT_DELAYED_WORK(&manager->pps_request_handler, usbpd_manager_pps_request_handler);
 	INIT_DELAYED_WORK(&manager->buck_off_clear_handler, usbpd_manager_buck_off_clear_handler);
 	INIT_DELAYED_WORK(&manager->buck_off_handler, usbpd_manager_buck_off_handler);
+	INIT_DELAYED_WORK(&manager->get_src_cap_ext_work, usbpd_manager_get_src_cap_ext_work);
+
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	manager->altmode_enable = 0;
+	init_completion(&manager->exit_mpsm_completion);
+
+	INIT_DELAYED_WORK(&manager->usb_external_notifier_register_work,
+			usbpd_manager_delayed_external_notifier_init);
+	/* Register pdic handler to pdic notifier block list */
+	ret = usb_external_notify_register(&manager->usb_external_notifier_nb,
+			usbpd_manager_handle_usb_external_notifier_notification,
+			EXTERNAL_NOTIFY_DEV_PDIC);
+	if (ret < 0)
+		schedule_delayed_work(&manager->usb_external_notifier_register_work,
+				msecs_to_jiffies(2000));
+	else
+		usbpd_info("%s : external notifier register done!\n", __func__);
+#endif
+
 
 	usbpd_info("%s done\n", __func__);
 	return ret;

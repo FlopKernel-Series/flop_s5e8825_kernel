@@ -3,7 +3,6 @@
 #include <linux/notifier.h>
 #include <linux/usb/typec/slsi/common/s2m_pdic_notifier.h>
 #include <linux/usb/typec/slsi/common/usbpd_log.h>
-#include <linux/sec_detect.h>
 #define DRIVER_DESC   "S2M PDIC Notifier driver"
 
 #define SET_PDIC_NOTIFIER_BLOCK(nb, fn, dev) do {	\
@@ -165,16 +164,6 @@ void s2m_pdic_notifier_logically_detach_attached_dev(muic_attached_dev_t cur_dev
 static int __init s2m_pdic_notifier_init(void)
 {
 	int ret = 0;
-
-	if (sec_get_feat(SEC_FEAT_SLSI_USBPD)) {
-		if (sec_get_feat(SEC_FEAT_LEGACY_USBPD)) {
-			SEC_DETECT_LOG("New usbpd slsi driver skipped\n");
-			return 0;
-		} else
-			SEC_DETECT_LOG("New usbpd slsi driver initializing\n");
-	} else {
-		return 0;
-	}
 
 	usbpd_info("%s\n", __func__);
 

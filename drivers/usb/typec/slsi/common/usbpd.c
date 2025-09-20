@@ -40,6 +40,8 @@ enum pdic_sysfs_property usbpd_sysfs_properties[] = {
 	PDIC_SYSFS_PROP_ACC_DEVICE_VERSION,
 	PDIC_SYSFS_PROP_USBPD_IDS,
 	PDIC_SYSFS_PROP_USBPD_TYPE,
+	PDIC_SYSFS_PROP_BOOTING_DRY,
+	PDIC_SYSFS_PROP_SBU_ADC,
 #if IS_ENABLED(CONFIG_S2MU106_TYPEC_WATER)
 	PDIC_SYSFS_PROP_SET_WATER_THRESHOLD,
 #endif
@@ -275,6 +277,7 @@ void usbpd_policy_reset(struct usbpd_data *pd_data, unsigned flag)
 		if (!pd_data->policy.plug_valid)
 			pd_data->policy.plug = 1;
 		pd_data->policy.plug_valid = 1;
+		pd_data->policy.get_src_cap_ext = 0;
 		dev_info(pd_data->dev, "%s ATTACHED\n", __func__);
 	} else if (flag == PLUG_DETACHED) {
 #if IS_ENABLED(CONFIG_PDIC_PD30)
@@ -579,9 +582,13 @@ void usbpd_set_ops(struct device *dev, usbpd_phy_ops_type *ops)
 	pd_data->phy_ops.ops_check_pps_irq = ops->ops_check_pps_irq;
 	pd_data->phy_ops.ops_manual_retry = ops->ops_manual_retry;
 	pd_data->phy_ops.ops_cc_hiccup = ops->ops_cc_hiccup;
+	pd_data->phy_ops.ops_read_fac_sbu = ops->ops_read_fac_sbu;
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
 	pd_data->phy_ops.ops_disable_water = ops->ops_disable_water;
 	pd_data->phy_ops.ops_set_fac_sbu = ops->ops_set_fac_sbu;
 	pd_data->phy_ops.ops_get_fac_sbu = ops->ops_get_fac_sbu;
+	pd_data->phy_ops.ops_set_vctrl_otg = ops->ops_set_vctrl_otg;
+#endif
 }
 EXPORT_SYMBOL(usbpd_set_ops);
 
@@ -915,7 +922,21 @@ int usbpd_sysfs_get_prop(struct _pdic_data_t *ppdic_data,
 		retval = sprintf(buf, "%d\n", var == REG_RID_MAX ? REG_RID_OPEN : var);
 		break;
 	case PDIC_SYSFS_PROP_BOOTING_DRY:
-		usbpd_info("%s booting_run_dry is not supported\n", __func__);
+		PDIC_OPS_PARAM2_FUNC(ops_read_fac_sbu, pd_data, &vsbu1, &vsbu2);
+
+		usbpd_info("%s, BOOTING_DRY sbu1(%d), sbu2(%d)\n", __func__, vsbu1, vsbu2);
+
+		if (vsbu1 < 2500 || vsbu2 < 2500)
+			retval = sprintf(buf, "0\n");	/* Spec out */
+		else
+			retval = sprintf(buf, "1\n");	/* Normal */
+		break;
+	case PDIC_SYSFS_PROP_SBU_ADC:
+		PDIC_OPS_PARAM2_FUNC(ops_read_fac_sbu, pd_data, &vsbu1, &vsbu2);
+
+		usbpd_info("%s, SBU_ADC sbu1(%d), sbu2(%d)\n", __func__, vsbu1, vsbu2);
+
+		retval = sprintf(buf, "%d %d\n", vsbu1, vsbu2);
 		break;
 	case PDIC_SYSFS_PROP_FW_UPDATE_STATUS:
 		usbpd_info("Need implementation\n");
@@ -1138,6 +1159,9 @@ int usbpd_init(struct device *dev, void *phy_driver_data)
 	ppdic_data->pdic_sysfs_prop = ppdic_sysfs_prop;
 	ppdic_data->drv_data = pd_data;
 	ppdic_data->name = "s2m_pdic";
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	ppdic_data->set_enable_alternate_mode = usbpd_manager_set_enable_alternate_mode;
+#endif
 	pdic_core_register_chip(ppdic_data);
 	pdic_register_switch_device(1);
 

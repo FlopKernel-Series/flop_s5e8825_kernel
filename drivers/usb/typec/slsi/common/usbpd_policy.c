@@ -144,7 +144,11 @@ policy_state usbpd_policy_src_startup(struct policy_data *policy)
 		if (vbus_check < 0 || vbus_check > 0) {
 			dev_info(pd_data->dev, "%s vbus_check = %d\n", __func__, vbus_check);
 			/* Delay for Charger IRQ */
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+			msleep(100);
+#else
 			msleep(30);
+#endif
 
 			/* Configuration Channel On */
 			PDIC_OPS_PARAM_FUNC(set_pd_control, pd_data, USBPD_CC_ON);
@@ -514,9 +518,6 @@ policy_state usbpd_policy_src_ready(struct policy_data *policy)
 			CHECK_MSG(pd_data, MSG_COUNTRY_CODES, PE_SRC_Send_Not_Supported);
 			CHECK_MSG(pd_data, MSG_SINK_CAPABILITIES_EXTENDED, PE_SRC_Send_Not_Supported);
 
-			/* When PD3.0 state, NOT_SUPPORT message is transmitted instead of REJECT. */
-			CHECK_MSG(pd_data, MSG_VCONN_SWAP, PE_SRC_Send_Not_Supported);
-
 			/* Unrecognized Message Received in Ready State */
 			CHECK_MSG(pd_data, MSG_RESERVED, PE_SRC_Send_Not_Supported);
 			CHECK_MSG(pd_data, MSG_UVDM_MSG_NOT_SAMSUNG, PE_SRC_Send_Not_Supported);
@@ -540,8 +541,8 @@ policy_state usbpd_policy_src_ready(struct policy_data *policy)
 		/* Wait VDM */
 		if (data_role == USBPD_UFP) {
 			CHECK_VDM(pd_data, VDM_DISCOVER_IDENTITY, PE_UFP_VDM_Get_Identity);
-			CHECK_VDM(pd_data, VDM_DISCOVER_SVID, PE_UFP_VDM_Get_SVIDs);
-			CHECK_VDM(pd_data, VDM_DISCOVER_MODE, PE_UFP_VDM_Get_Modes);
+			CHECK_VDM(pd_data, VDM_DISCOVER_SVID, PE_UFP_VDM_Get_SVIDs_NAK);
+			CHECK_VDM(pd_data, VDM_DISCOVER_MODE, PE_UFP_VDM_Get_Modes_NAK);
 			CHECK_VDM(pd_data, VDM_ENTER_MODE, PE_UFP_VDM_Evaluate_Mode_Entry);
 			CHECK_VDM(pd_data, VDM_EXIT_MODE, PE_UFP_VDM_Mode_Exit);
 			CHECK_VDM(pd_data, VDM_ATTENTION, PE_DFP_VDM_Attention_Request);
@@ -1134,6 +1135,10 @@ policy_state usbpd_policy_snk_discovery(struct policy_data *policy)
 			break;
 		}
 
+		if (policy->pd_support) {
+			CHECK_MSG(pd_data, MSG_SRC_CAP, PE_SNK_Evaluate_Capability);
+		}
+
 		/* TimeOver Check */
 		if (ms >= tNoResponse) {
 			/* HardReset Count Check */
@@ -1473,6 +1478,9 @@ policy_state usbpd_policy_snk_ready(struct policy_data *policy)
 	struct usbpd_data *pd_data = policy_to_usbpd(policy);
 	int data_role = 0;
 	long long ms = 0;
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	bool sink_tx_ng_detected = false;
+#endif
 
 	/**********************************************
 	Actions on entry:
@@ -1576,9 +1584,6 @@ policy_state usbpd_policy_snk_ready(struct policy_data *policy)
 			CHECK_MSG(pd_data, MSG_COUNTRY_CODES, PE_SNK_Send_Not_Supported);
 			CHECK_MSG(pd_data, MSG_SINK_CAPABILITIES_EXTENDED, PE_SNK_Send_Not_Supported);
 
-			/* When PD3.0 state, NOT_SUPPORT message is transmitted instead of REJECT. */
-			CHECK_MSG(pd_data, MSG_VCONN_SWAP, PE_SNK_Send_Not_Supported);
-
 			/* Unrecognized Message Received in Ready State */
 			CHECK_MSG(pd_data, MSG_RESERVED, PE_SNK_Send_Not_Supported);
 			CHECK_MSG(pd_data, MSG_UVDM_MSG_NOT_SAMSUNG, PE_SNK_Send_Not_Supported);
@@ -1631,6 +1636,7 @@ policy_state usbpd_policy_snk_ready(struct policy_data *policy)
 
 				PDIC_OPS_PARAM_FUNC(get_rp_level, pd_data, &rp_level);
 				if (rp_level == RP_CURRENT_LEVEL3) {
+					CHECK_CMD(pd_data, MANAGER_REQ_GET_SRC_CAP_EXT, PE_SNK_Get_Source_Cap_Ext, 0);
 					CHECK_CMD(pd_data, MANAGER_REQ_NEW_POWER_SRC, PE_SNK_Select_Capability, 10);
 					CHECK_CMD(pd_data, MANAGER_REQ_GET_SRC_CAP, PE_SNK_Get_Source_Cap, 0);
 					CHECK_CMD(pd_data, MANAGER_REQ_PR_SWAP, PE_PRS_SNK_SRC_Send_Swap, 0);
@@ -1644,9 +1650,13 @@ policy_state usbpd_policy_snk_ready(struct policy_data *policy)
 					CHECK_CMD(pd_data, MANAGER_REQ_VDM_STATUS_UPDATE, PE_DFP_VDM_Status_Update, 0);
 					CHECK_CMD(pd_data, MANAGER_REQ_VDM_DisplayPort_Configure, PE_DFP_VDM_DisplayPort_Configure, 0);
 					CHECK_CMD(pd_data, MANAGER_REQ_UVDM_SEND_MESSAGE, PE_DFP_UVDM_Send_Message, 0);
-				} else
+				} else {
 					usbpd_info("%s, SinkTxNG, cmd(%d) is delayed\n",
 						__func__, pd_data->manager.cmd);
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+					sink_tx_ng_detected = true;
+#endif
+				}
 			}
 		} else {
 #if IS_ENABLED(CONFIG_S2M_SUPPORT_DELAYED_REQUEST_MESSAGE_UFP)
@@ -1673,10 +1683,19 @@ policy_state usbpd_policy_snk_ready(struct policy_data *policy)
 		}
 
 #if IS_ENABLED(CONFIG_S2M_SUPPORT_DELAYED_REQUEST_MESSAGE_UFP)
-		if (ms >= (policy->got_ufp_vdm ? tStartAmsMargin : 0) + 20)
+		if (ms >= (policy->got_ufp_vdm ? tStartAmsMargin : 0) + 20
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+				+ (sink_tx_ng_detected ? 100 : 0)
+#endif
+				)
 			break;
 #else
-		if (ms >= 20)
+		if (ms >= 20
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+				/* Some CtoC Monitor keep SinkTxNG over 50ms */
+				+ (sink_tx_ng_detected ? 100 : 0)
+#endif
+				)
 			break;
 #endif
 	}
@@ -2801,6 +2820,7 @@ policy_state usbpd_policy_prs_snk_src_assert_rp(struct policy_data *policy)
 policy_state usbpd_policy_prs_snk_src_source_on(struct policy_data *policy)
 {
 	struct usbpd_data *pd_data = policy_to_usbpd(policy);
+	struct usbpd_manager_data *manager = &pd_data->manager;
 	int data_role = 0;
 	int ret = 0;
 	long long ms = 0;
@@ -2816,6 +2836,23 @@ policy_state usbpd_policy_prs_snk_src_source_on(struct policy_data *policy)
 
 	PDIC_OPS_PARAM_FUNC(get_data_role, pd_data, &data_role);
 	PDIC_OPS_PARAM_FUNC(pr_swap, pd_data, USBPD_SOURCE_ON);
+
+	if (manager->vpdo_received) {
+		usbpd_info("%s, auth(%d), type(%d), type = Fixed, \n",
+				__func__, manager->auth_type, manager->d2d_type);
+
+		/* for check RxReq changed */
+		policy->requested_pdo_type = 0;
+		policy->requested_pdo_num = 0;
+		policy->selected_pdo_type = 0;
+		policy->selected_pdo_num = 0;
+
+		/* for PRSwap 5V */
+		manager->req_pdo_type = PDO_TYPE_FIXED;
+
+		/* for refresh auth info*/
+		usbpd_manager_send_new_src_cap(manager->auth_type, manager->d2d_type);
+	}
 
 	/* VBUS on */
 	PDIC_OPS_PARAM_FUNC(set_otg_control, pd_data, 1);
@@ -2883,6 +2920,7 @@ policy_state usbpd_policy_vcs_evaluate_swap(struct policy_data *policy)
 	struct usbpd_data *pd_data = policy_to_usbpd(policy);
 	bool vcs_ok;
 	int ret = 0;
+	int power_role = 0;
 
 	/**********************************************
 	Actions on entry:
@@ -2892,11 +2930,21 @@ policy_state usbpd_policy_vcs_evaluate_swap(struct policy_data *policy)
 
 	/* PD State Inform to AP */
 	dev_info(pd_data->dev, "%s\n", __func__);
+	PDIC_OPS_PARAM_FUNC(get_power_role, pd_data, &power_role);
 
 	/* Request from DPM */
 	vcs_ok = usbpd_manager_vconn_source_swap(pd_data);
 
-	ret = vcs_ok ? PE_VCS_Accept_Swap : PE_VCS_Reject_VCONN_Swap;
+	if (vcs_ok)
+		ret = PE_VCS_Accept_Swap;
+	else {
+		if (pd_data->specification_revision == USBPD_PD2_0)
+			ret = PE_VCS_Reject_VCONN_Swap;
+		else
+			ret = (power_role == USBPD_SOURCE)
+				? PE_SRC_Send_Not_Supported
+				: PE_SNK_Send_Not_Supported;
+	}
 
 	return ret;
 }
@@ -2991,8 +3039,8 @@ policy_state usbpd_policy_vcs_wait_for_vconn(struct policy_data *policy)
 		/* TimeOver Check */
 		ms = usbpd_check_time1(pd_data);
 		if (ms >= tVCONNSourceOn) {
-			ret = (pd_data->counter.swap_hard_reset_counter > USBPD_nHardResetCount) ?
-				Error_Recovery : PE_SNK_Hard_Reset;
+			if (pd_data->counter.swap_hard_reset_counter > USBPD_nHardResetCount)
+				ret = PE_SNK_Hard_Reset;
 			break;
 		}
 	}
@@ -3060,7 +3108,7 @@ policy_state usbpd_policy_vcs_send_ps_rdy(struct policy_data *policy)
 
 	usleep_range(5000,5100);
 
-	if (!usbpd_send_ctrl_msg(pd_data, &policy->tx_msg_header, USBPD_PS_RDY, data_role, data_role)) {
+	if (!usbpd_send_ctrl_msg(pd_data, &policy->tx_msg_header, USBPD_PS_RDY, data_role, power_role)) {
 		SOFT_RESET();
 	} else
 		ret = (power_role == USBPD_SOURCE ? PE_SRC_Ready : PE_SNK_Ready);
@@ -3536,7 +3584,7 @@ policy_state usbpd_policy_ufp_vdm_evaluate_mode_entry(struct policy_data *policy
 		pdic_event_work(pd_data, PDIC_NOTIFY_DEV_ALL,
 				PDIC_NOTIFY_ID_SVID_INFO, rx_svid/*Standard Vendor ID*/, 0, 0);
 		manager->Standard_Vendor_ID = rx_svid;
-		ret = PE_UFP_VDM_Mode_Entry_ACK;
+		ret = PE_UFP_VDM_Mode_Entry_NAK;
 		break;
 	case TypeC_DP_SUPPORT:
 		/* Certification: Ellisys: TD.PD.VDMU.E15.Applicability */
@@ -4315,6 +4363,9 @@ policy_state usbpd_policy_dfp_vdm_svids_acked(struct policy_data *policy)
 	struct usbpd_data *pd_data = policy_to_usbpd(policy);
 	int ret = 0;
 	int power_role = 0;
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	struct usbpd_manager_data *manager = &pd_data->manager;
+#endif
 
 	/**********************************************
 	Actions on entry:
@@ -4324,7 +4375,13 @@ policy_state usbpd_policy_dfp_vdm_svids_acked(struct policy_data *policy)
 	dev_info(pd_data->dev, "%s\n", __func__);
 	PDIC_OPS_PARAM_FUNC(get_power_role, pd_data, &power_role);
 
-	usbpd_manager_inform_event(pd_data, MANAGER_DISCOVER_SVID_ACKED);
+#if IS_ENABLED(CONFIG_S2M_PDIC_DP_SUPPORT)
+	if (manager->altmode_enable == 0) {
+		dev_info(pd_data->dev, "%s, alt not enabled -> naked\n", __func__);
+		usbpd_manager_inform_event(pd_data, MANAGER_DISCOVER_SVID_NAKED);
+	} else
+#endif
+		usbpd_manager_inform_event(pd_data, MANAGER_DISCOVER_SVID_ACKED);
 
 	ret = (power_role == USBPD_SOURCE ? PE_SRC_Ready : PE_SNK_Ready);
 
@@ -5320,6 +5377,8 @@ policy_state usbpd_policy_snk_get_source_cap_ext(struct policy_data *policy)
 {
 	struct usbpd_data *pd_data = policy_to_usbpd(policy);
 	int ret = PE_SNK_Get_Source_Cap_Ext;
+	int data_role = 0;
+	long long ms = 0;
 
 	/**********************************************
 	Actions on entry:
@@ -5333,6 +5392,43 @@ policy_state usbpd_policy_snk_get_source_cap_ext(struct policy_data *policy)
 	Actions on exit:
 	Pass source extended capabilities/outcome to Device Policy Manager
 	**********************************************/
+
+	PDIC_OPS_PARAM_FUNC(get_data_role, pd_data, &data_role);
+
+	/* Send Message*/
+	if (!usbpd_send_ctrl_msg(pd_data, &policy->tx_msg_header, USBPD_Get_Source_Cap_Extended, data_role, USBPD_SINK)) {
+		SOFT_RESET();
+	} else {
+		ret = PE_SNK_Ready;
+		/* Wait Message or State */
+		while (1) {
+			if (policy->rx_softreset || policy->rx_hardreset) {
+				ret = 0;
+				break;
+			}
+			if (policy->plug_valid == 0) {
+				ret = PE_SNK_Get_Source_Cap_Ext;
+				break;
+			}
+
+			if (pd_data->phy_ops.get_status(pd_data, MSG_SOURCE_CAPABILITIES_EXTENDED)
+					|| pd_data->phy_ops.get_status(pd_data, MSG_RESERVED)) {
+				usbpd_manager_inform_event(pd_data, MANAGER_GET_SRC_CAP_EXT);
+				ret = PE_SNK_Ready;
+				break;
+			}
+
+			CHECK_MSG_BREAK(MSG_NOT_SUPPORTED, PE_SNK_Ready);
+
+			/* TimeOver Check */
+			ms = usbpd_check_time1(pd_data);
+			if (ms >= tSenderResponse) {
+				ret = PE_SNK_Ready;
+				break;
+			}
+		}
+
+	}
 
 	return ret;
 }
@@ -5493,6 +5589,7 @@ policy_state usbpd_policy_get_status(struct policy_data *policy)
 			}
 	
 			CHECK_MSG_BREAK(MSG_STATUS, (power_role == USBPD_SOURCE) ? PE_SRC_Ready : PE_SNK_Ready);
+			CHECK_MSG_BREAK(MSG_NOT_SUPPORTED, (power_role == USBPD_SOURCE) ? PE_SRC_Ready : PE_SNK_Ready);
 	
 			/* TimeOver Check */
 			ms = usbpd_check_time1(pd_data);

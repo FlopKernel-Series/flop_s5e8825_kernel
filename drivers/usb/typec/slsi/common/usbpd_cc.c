@@ -35,20 +35,17 @@
 #include <linux/usb/typec/slsi/common/usbpd.h>
 #include <linux/usb/typec/slsi/common/usbpd_log.h>
 
-// #if IS_ENABLED(CONFIG_PDIC_S2MU004)
-// #include <linux/usb/typec/slsi/s2mu004/usbpd-s2mu004.h>
-// #elif IS_ENABLED(CONFIG_PDIC_S2MU106)
-// #include <linux/usb/typec/slsi/s2mu106/usbpd-s2mu106.h>
-// #elif IS_ENABLED(CONFIG_PDIC_S2MU205)
-// #include <linux/usb/typec/slsi/s2mu205/usbpd-s2mu205.h>
-// #elif IS_ENABLED(CONFIG_PDIC_S2MU107)
-// #include <linux/usb/typec/slsi/s2mu107/usbpd-s2mu107.h>
-// #elif IS_ENABLED(CONFIG_PDIC_S2MF301)
-// #include <linux/usb/typec/slsi/s2mf301/usbpd-s2mf301.h>
-// #endif
-
-#include <linux/usb/typec/slsi_legacy/s2mu106/usbpd-s2mu106.h>
+#if IS_ENABLED(CONFIG_PDIC_S2MU004)
+#include <linux/usb/typec/slsi/s2mu004/usbpd-s2mu004.h>
+#elif IS_ENABLED(CONFIG_PDIC_S2MU106)
+#include <linux/usb/typec/slsi/s2mu106/usbpd-s2mu106.h>
+#elif IS_ENABLED(CONFIG_PDIC_S2MU205)
+#include <linux/usb/typec/slsi/s2mu205/usbpd-s2mu205.h>
+#elif IS_ENABLED(CONFIG_PDIC_S2MU107)
+#include <linux/usb/typec/slsi/s2mu107/usbpd-s2mu107.h>
+#elif IS_ENABLED(CONFIG_PDIC_S2MF301)
 #include <linux/usb/typec/slsi/s2mf301/usbpd-s2mf301.h>
+#endif
 
 #if IS_ENABLED(CONFIG_SUPPORT_USB_TYPEC_OPS)
 static int typec_dr_set(struct typec_port *_port, enum typec_data_role role);
