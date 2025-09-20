@@ -46,7 +46,6 @@ enum sec_feat {
 	SEC_FEAT_DOZE, 				// Uses Samsung DRM Doze
 	SEC_FEAT_LCD_DEVICE,		// Uses LCD panel
 	SEC_FEAT_LEGACY_SINPUT,		// Uses old sec_input driver
-	SEC_FEAT_LEGACY_USBPD,		// Uses old slsi usbpd platform
 	SEC_FEAT_SLSI_USBPD,		// Uses slsi usbpd platform
 	SEC_FEAT_COUNT
 };

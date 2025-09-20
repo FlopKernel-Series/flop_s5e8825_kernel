@@ -173,7 +173,6 @@ static inline void print_sec_variables(const char *machine_name) {
 	SEC_DETECT_LOG("sec_feat_doze = %s\n", sec_get_feat(SEC_FEAT_DOZE) ? "true" : "false");
 	SEC_DETECT_LOG("sec_feat_lcd_device = %s\n", sec_get_feat(SEC_FEAT_LCD_DEVICE) ? "true" : "false");
 	SEC_DETECT_LOG("sec_feat_legacy_sinput = %s\n", sec_get_feat(SEC_FEAT_LEGACY_SINPUT) ? "true" : "false");
-	SEC_DETECT_LOG("sec_feat_legacy_usbpd = %s\n", sec_get_feat(SEC_FEAT_LEGACY_USBPD) ? "true" : "false");
 	SEC_DETECT_LOG("sec_feat_slsi_usbpd = %s\n", sec_get_feat(SEC_FEAT_SLSI_USBPD) ? "true" : "false");
 }
 
@@ -222,7 +221,6 @@ static int __init sec_detect_init(void) {
 		g_sec_current_device = SEC_A33;
 		strscpy(g_sec_current_device_name, "a33x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
-		sec_feat_flags[SEC_FEAT_LEGACY_USBPD] = true;
 		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
 	} else if (strstr(machine_name, "A53") != NULL) {
 		g_sec_current_device = SEC_A53;
