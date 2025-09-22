@@ -45,7 +45,6 @@ get_toolchain() {
     case "$toolchain_type" in
         aosp)
             toolchain_dir="$AC_DIR"
-            USE_GCC_BINUTILS=1
             if [ ! -d "$toolchain_dir" ]; then
                 echo -e "\nINFO: AOSP Clang not found! Cloning to $toolchain_dir..."
                 # scrape the HTML directory listing on the mirror‑GOOG branch
@@ -112,7 +111,6 @@ get_toolchain() {
             fi
             ;;
         greenforce)
-            USE_GCC_BINUTILS=1
             toolchain_dir="$GC_DIR"
             if [ ! -d "$toolchain_dir" ]; then
                 echo -e "\nINFO: Greenforce Clang not found! Cloning to $toolchain_dir..."
@@ -213,16 +211,6 @@ get_toolchain() {
               exit 1
               ;;
     esac
-
-    if [ "$USE_GCC_BINUTILS" = "1" ]; then
-        if [ ! -d "$GCC64_DIR" ]; then
-            echo "INFO: GCC64 not found! Cloning to $GCC64_DIR..."
-            if ! git clone -q --depth=1 "$GCC64_REPO" "$GCC64_DIR"; then
-                echo "ERROR: Cloning failed! Aborting..."
-                exit 1
-            fi
-        fi
-    fi
 }
 
 prep_toolchain() {
@@ -269,17 +257,8 @@ prep_toolchain() {
       esac
 
     export PATH="${toolchain_dir}/bin:${PATH}"
-    if [ "$USE_GCC_BINUTILS" == "1" ]; then
-        export PATH="${GCC64_DIR}/bin:${PATH}"
-    fi
     KBUILD_COMPILER_STRING=$("$toolchain_dir/bin/clang" -v 2>&1 | head -n 1 | sed 's/(https..*//' | sed 's/ version//')
     export KBUILD_COMPILER_STRING
-
-    if [ "$USE_GCC_BINUTILS" = "1" ]; then
-        export CCARM64_PREFIX="aarch64-linux-"
-    else
-        export CCARM64_PREFIX="aarch64-linux-gnu-"
-    fi
 }
 
 ## Pre-build dependencies

@@ -19,10 +19,10 @@ build() {
     rm -rf "$MOD_OUTDIR" 2>/dev/null
 
     if [ "$DO_QUIET" = "1" ]; then
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" \
             $([ "$DO_KSU" = "1" ] && echo "ksu.config") > /dev/null | tee log.txt
     else
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" "$DEFCONFIG" \
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" \
             $([ "$DO_KSU" = "1" ] && echo "ksu.config") 2>&1 | tee log.txt
     fi
 
@@ -64,9 +64,9 @@ build() {
 
     if [ "$DO_MENUCONFIG" = "1" ]; then
         if [ "$DO_QUIET" = "1" ]; then
-            make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" menuconfig > /dev/null 2>&1
+            make O=$OUTDIR CC="$CC" menuconfig > /dev/null 2>&1
         else
-            make O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" menuconfig 2>&1 >> log.txt
+            make O=$OUTDIR CC="$CC" menuconfig 2>&1 >> log.txt
         fi
     fi
 
@@ -82,19 +82,19 @@ build() {
     echo -e "\nINFO: Starting compilation...\n"
 
     if [ "$DO_QUIET" = "1" ]; then
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs > /dev/null | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs > /dev/null | tee log.txt
 
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" >/dev/null | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" >/dev/null | tee log.txt
 
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" \
             INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
             INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install >/dev/null | tee log.txt
     else
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" dtbs 2>&1 | tee -a log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs 2>&1 | tee -a log.txt
 
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" 2>&1 | tee -a log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" 2>&1 | tee -a log.txt
         
-        make -j$(nproc --all) O=$OUTDIR CROSS_COMPILE=$CCARM64_PREFIX CC="$CC" \
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" \
             INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
             INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install 2>&1 | tee -a log.txt
     fi
