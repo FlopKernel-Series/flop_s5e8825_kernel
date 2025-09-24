@@ -29,8 +29,8 @@ upload() {
 
     if [ "$DO_BASHUP" = "1" ]; then
         echo -e "\nINFO: Uploading build and log to bashupload.com\n"
-        curl -T "$ZIP_PATH" bashupload.com
-        curl -T log.txt bashupload.com
+        curl -T "$ZIP_PATH" bashupload.com || echo "WARNING: bashupload operation failed (ignored)"
+        curl -T log.txt bashupload.com || echo "WARNING: bashupload operation failed (ignored)"
     fi
 
     if [ "$DO_TG" = "1" ]; then
