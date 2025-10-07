@@ -112,9 +112,17 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                     )
                 )
             }
+            
             if (ksuVersion != null && !rootAvailable()) {
                 WarningCard(
-                    stringResource(id = R.string.grant_root_failed)
+                    stringResource(id = R.string.grant_root_failed),
+                    onClick = {
+                        val pm = context.packageManager
+                        val intent = pm.getLaunchIntentForPackage(context.packageName)
+                        intent?.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                        Runtime.getRuntime().exit(0)
+                    }
                 )
             }
             val checkUpdate =
@@ -533,8 +541,14 @@ fun WarningCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .then(onClick?.let { Modifier.clickable { it() } } ?: Modifier)
-                .padding(24.dp)
+                .padding(24.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = Icons.Filled.SentimentDissatisfied,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 20.dp)
+            )
             Text(
                 text = message, style = MaterialTheme.typography.bodyMedium
             )
