@@ -24,6 +24,9 @@
 #include <linux/parser.h>
 #include <linux/fsnotify.h>
 #include <linux/seq_file.h>
+#ifdef CONFIG_KSU_SUSFS_SUS_SU
+#include <linux/susfs_def.h>
+#endif
 
 #define DEVPTS_DEFAULT_MODE 0600
 /*
@@ -600,6 +603,11 @@ struct dentry *devpts_pty_new(struct pts_fs_info *fsi, int index, void *priv)
 extern int ksu_handle_devpts(struct inode*);
 #endif
 
+#if defined(CONFIG_KSU_SUSFS_SUS_SU)
+extern bool ksu_devpts_hook;
+extern int ksu_handle_devpts(struct inode*);
+#endif
+
 /**
  * devpts_get_priv -- get private data for a slave
  * @pts_inode: inode of the slave
@@ -610,6 +618,15 @@ void *devpts_get_priv(struct dentry *dentry)
 {
 #ifdef CONFIG_KSU_MANUAL_HOOK
 	ksu_handle_devpts(dentry->d_inode);
+#endif
+#if defined(CONFIG_KSU_SUSFS_SUS_SU) && !defined(CONFIG_KSU_MANUAL_HOOK)
+	if (likely(susfs_is_current_proc_umounted())) {
+		goto orig_flow;
+	}
+	if (likely(ksu_devpts_hook)) {
+		ksu_handle_devpts(dentry->d_inode);
+	}
+orig_flow:
 #endif
 	if (dentry->d_sb->s_magic != DEVPTS_SUPER_MAGIC)
 		return NULL;
