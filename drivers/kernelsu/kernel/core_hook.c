@@ -374,7 +374,7 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 #ifdef CONFIG_KSU_SUSFS
 	// - We straight up check if process is supposed to be umounted, return 0 if so
 	// - This is to prevent side channel attack as much as possible
-	if (likely(susfs_is_current_proc_umounted())) {
+	if (likely(susfs_is_current_non_root_user_app_proc())) {
 		return 0;
 	}
 #endif
@@ -1248,7 +1248,7 @@ do_umount:
 	susfs_reorder_mnt_id();
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 
-	susfs_is_current_proc_umounted();
+	susfs_set_current_non_root_user_app_proc();
 
 	put_task_struct(current);
 
