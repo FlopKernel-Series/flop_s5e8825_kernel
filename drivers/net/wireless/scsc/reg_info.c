@@ -74,6 +74,7 @@ int slsi_read_regulatory(struct slsi_dev *sdev)
 	char *reg_file_t = "/vendor/etc/wifi/slsi_reg_database.bin";
 #else
 	char *reg_file_t = "../etc/wifi/slsi_reg_database.bin";
+	char *reg_file_t_new = "wifi/slsi_reg_database.bin";
 #endif
 #endif
 	int i = 0, j = 0, index = 0;
@@ -93,9 +94,13 @@ int slsi_read_regulatory(struct slsi_dev *sdev)
 
 	r = mx140_request_file(sdev->maxwell_core, reg_file_t, &firm);
 	if (r) {
-		SLSI_INFO(sdev, "Error Loading %s file %d\n", reg_file_t, r);
-		sdev->regdb.regdb_state = SLSI_REG_DB_ERROR;
-		return -EINVAL;
+		SLSI_INFO(sdev, "Error Loading %s file from old path %d\n", reg_file_t, r);
+		r = mx140_request_file(sdev->maxwell_core, reg_file_t_new, &firm);
+		if (r) {
+		        SLSI_INFO(sdev, "Error Loading %s file from new path %d\n", reg_file_t_new, r);
+		        sdev->regdb.regdb_state = SLSI_REG_DB_ERROR;
+		        return -EINVAL;
+		}
 	}
 
 	if (firmware_read(firm, &script_version, sizeof(uint32_t), &offset) < 0) {
