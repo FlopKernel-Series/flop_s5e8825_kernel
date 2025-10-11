@@ -23,6 +23,7 @@
 #include "panel_drv.h"
 #include "mdnie.h"
 #include "panel_debug.h"
+#include <linux/workarounds.h>
 #ifdef CONFIG_EXYNOS_DECON_LCD_COPR
 #include "copr.h"
 #endif
@@ -499,18 +500,30 @@ static void mdnie_update_scr_white_mode(struct mdnie_info *mdnie)
 	if (mdnie_mode == MDNIE_SCENARIO_MODE) {
 		if ((IS_LDU_MODE(mdnie)) && (mdnie->props.scenario != EBOOK_MODE)) {
 			mdnie->props.scr_white_mode = SCR_WHITE_MODE_ADJUST_LDU;
-		} else if (mdnie->props.update_sensorRGB ||
-			   (mdnie->props.mode == AUTO &&
-			    (mdnie->props.scenario == BROWSER_MODE ||
-			     mdnie->props.scenario == EBOOK_MODE))) {
-			mdnie->props.scr_white_mode = SCR_WHITE_MODE_SENSOR_RGB;
-			mdnie->props.update_sensorRGB = false;
-		} else if (mdnie->props.scenario <= SCENARIO_MAX &&
-				mdnie->props.scenario != EBOOK_MODE) {
-			mdnie->props.scr_white_mode =
-				SCR_WHITE_MODE_COLOR_COORDINATE;
 		} else {
-			mdnie->props.scr_white_mode = SCR_WHITE_MODE_NONE;
+			int sensor_cond;
+
+			if (is_aosp_mode())
+				sensor_cond = mdnie->props.update_sensorRGB ||
+					(mdnie->props.mode == AUTO &&
+					 (mdnie->props.scenario == BROWSER_MODE ||
+					  mdnie->props.scenario == EBOOK_MODE));
+			else
+				sensor_cond = mdnie->props.update_sensorRGB &&
+					mdnie->props.mode == AUTO &&
+					(mdnie->props.scenario == BROWSER_MODE ||
+					 mdnie->props.scenario == EBOOK_MODE);
+
+			if (sensor_cond) {
+				mdnie->props.scr_white_mode = SCR_WHITE_MODE_SENSOR_RGB;
+				mdnie->props.update_sensorRGB = false;
+			} else if (mdnie->props.scenario <= SCENARIO_MAX &&
+					mdnie->props.scenario != EBOOK_MODE) {
+				mdnie->props.scr_white_mode =
+					SCR_WHITE_MODE_COLOR_COORDINATE;
+			} else {
+				mdnie->props.scr_white_mode = SCR_WHITE_MODE_NONE;
+			}
 		}
 	} else if (mdnie_mode == MDNIE_HBM_MODE) {
 		mdnie->props.scr_white_mode =

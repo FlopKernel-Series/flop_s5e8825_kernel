@@ -34,6 +34,7 @@
 #include "panel_testmode.h"
 #endif
 #include "panel_wrapper.h"
+#include <linux/workarounds.h>
 
 __visible_for_testing struct class *mdnie_class;
 
@@ -805,23 +806,39 @@ static void mdnie_update_scr_white_mode(struct mdnie_info *mdnie)
 			mdnie_set_property(mdnie,
 					&mdnie->props.scr_white_mode,
 					SCR_WHITE_MODE_ADJUST_LDU);
-		} else if (mdnie->props.update_sensorRGB ||
-				(mdnie->props.scenario_mode == AUTO &&
-				(mdnie->props.scenario == BROWSER_MODE ||
-				 mdnie->props.scenario == EBOOK_MODE))) {
-			mdnie_set_property(mdnie,
-					&mdnie->props.scr_white_mode,
-					SCR_WHITE_MODE_SENSOR_RGB);
-			mdnie->props.update_sensorRGB = false;
-		} else if (mdnie->props.scenario <= SCENARIO_MAX &&
-				mdnie->props.scenario != EBOOK_MODE) {
-			mdnie_set_property(mdnie,
-					&mdnie->props.scr_white_mode,
-					SCR_WHITE_MODE_COLOR_COORDINATE);
 		} else {
-			mdnie_set_property(mdnie,
-					&mdnie->props.scr_white_mode,
-					SCR_WHITE_MODE_NONE);
+			int sensor_cond = 0;
+
+			if (is_aosp_mode()) {
+				if (mdnie->props.update_sensorRGB)
+					sensor_cond = 1;
+				else if (mdnie->props.scenario_mode == AUTO &&
+						 (mdnie->props.scenario == BROWSER_MODE ||
+						  mdnie->props.scenario == EBOOK_MODE))
+					sensor_cond = 1;
+			} else {
+				if (mdnie->props.update_sensorRGB &&
+					mdnie->props.scenario_mode == AUTO &&
+					(mdnie->props.scenario == BROWSER_MODE ||
+					 mdnie->props.scenario == EBOOK_MODE))
+					sensor_cond = 1;
+			}
+
+			if (sensor_cond) {
+				mdnie_set_property(mdnie,
+						&mdnie->props.scr_white_mode,
+						SCR_WHITE_MODE_SENSOR_RGB);
+				mdnie->props.update_sensorRGB = false;
+			} else if (mdnie->props.scenario <= SCENARIO_MAX &&
+					   mdnie->props.scenario != EBOOK_MODE) {
+				mdnie_set_property(mdnie,
+						&mdnie->props.scr_white_mode,
+						SCR_WHITE_MODE_COLOR_COORDINATE);
+			} else {
+				mdnie_set_property(mdnie,
+						&mdnie->props.scr_white_mode,
+						SCR_WHITE_MODE_NONE);
+			}
 		}
 	} else if (mdnie_mode == MDNIE_HBM_CE_MODE &&
 			!mdnie->props.force_scr_white_mode_none_on_hbm) {
