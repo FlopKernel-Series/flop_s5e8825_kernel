@@ -59,27 +59,6 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_stat_blocked);
 DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
 EXPORT_SYMBOL_GPL(runqueues);
 
-static void check_and_limit_snap_service(struct task_struct *p)
-{
-	static const char snap_service_comm[] = "vendor.samsung.hardware.snap-service";
-	static const struct cpumask snap_service_cpumask = {
-		// This sets the bit for CPU5.
-		.bits = { [0] = (1UL << 5) }
-	};
-
-	// This is a fast check. If the names don't match, we return immediately.
-	if (strcmp(p->comm, snap_service_comm) != 0)
-		return;
-	
-	if (task_nice(p) != 19) {
-		set_user_nice(p, 19);
-	}
-
-	if (!cpumask_equal(&p->cpus_mask, &snap_service_cpumask)) {
-		set_cpus_allowed_ptr(p, &snap_service_cpumask);
-	}
-}
-
 #ifdef CONFIG_SCHED_DEBUG
 /*
  * Debugging: various feature bits
@@ -4332,8 +4311,6 @@ void scheduler_tick(void)
 	struct task_struct *curr = rq->curr;
 	struct rq_flags rf;
 	unsigned long thermal_pressure;
-
-	check_and_limit_snap_service(curr);
 
 	arch_scale_freq_tick();
 	sched_clock_tick();
