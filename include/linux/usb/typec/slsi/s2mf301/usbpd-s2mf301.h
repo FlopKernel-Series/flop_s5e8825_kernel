@@ -46,7 +46,7 @@
 #define TA_WATER_CHK_DURATION_MS    5000
 
 /* define timer */
-#define S2MF301_ROLE_SWAP_TIME_MS		(300)
+#define S2MF301_ROLE_SWAP_TIME_MS		(1350)
 #define S2MF301_HARD_RESET_DELAY_MS		(300)
 #define S2MF301_WAIT_RD_DETACH_DELAY_MS		(200)
 #define S2MF301_WAIT_ATTACH_DELAY_MS		(30)
@@ -140,15 +140,6 @@
 /* reg 0x0A */
 #define S2MF301_REG_PCP_CLK_SEL_SHIFT        (7)
 #define S2MF301_REG_PCP_CLK_SEL            (0x1 << S2MF301_REG_PCP_CLK_SEL_SHIFT)
-
-/* reg 0x0A */
-#define S2MF301_REG_CC1_VCONN_SHIFT        (3)
-#define S2MF301_REG_CC2_VCONN_SHIFT        (2)
-
-#define S2MF301_REG_CC1_VCONN_MASK        (0x01 << S2MF301_REG_CC1_VCONN_SHIFT)
-#define S2MF301_REG_CC2_VCONN_MASK        (0x01 << S2MF301_REG_CC2_VCONN_SHIFT)
-#define S2MF301_REG_CC12_VCONN_MASK      \
-		(S2MF301_REG_CC1_VCONN_MASK | S2MF301_REG_CC2_VCONN_MASK)
 
 /* reg 0x0F */
 #define S2MF301_REG_CC12_OVP_MASK	(0x3)
@@ -478,7 +469,6 @@ enum s2mf301_usbpd_reg {
 	S2MF301_REG_ANALOG_OTP_08      = 0x08,
 	S2MF301_REG_ANALOG_OTP_09      = 0x09,
 	S2MF301_REG_ANALOG_OTP_0A      = 0x0A,
-	S2MF301_REG_ANALOG_OTP_0D      = 0x0D,
     S2MF301_REG_MAN_CTRL           = 0x0F,
 	S2MF301_REG_PHY_CTRL_00        = 0x10,
 	S2MF301_REG_PHY_CTRL_IFG       = 0x13,
@@ -770,9 +760,7 @@ struct s2mf301_usbpd_data {
 	bool vbus_short;
 	bool first_attach;
 	bool is_shutdown;
-#if IS_ENABLED(CONFIG_S2MF301_TYPEC_VBUS_DISCONNECT)
-	bool is_rid_attached;
-#endif
+
 	struct timespec64 time_tx;
 	int clk_offset;
 	int clk_offset2;
@@ -838,12 +826,10 @@ struct s2mf301_usbpd_data {
 
 	struct s2mf301_water_data water;
 #endif
-	bool suspended;
-	wait_queue_head_t suspend_wait;
-	struct wakeup_source	*irq_ws;
 
 #if IS_ENABLED(CONFIG_ARCH_QCOM)
 	struct wakeup_source	*water_wake;
+	struct wakeup_source	*water_irq_wake;
 	struct delayed_work	water_wake_work;
 #endif
 

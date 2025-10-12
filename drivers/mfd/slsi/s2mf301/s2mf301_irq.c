@@ -382,29 +382,16 @@ static irqreturn_t s2mf301_irq_thread(int irq, void *data)
 #endif
 	int ret;
 
-	__pm_stay_awake(s2mf301->irq_ws);
-	s2mf301_info("%s, suspended(%d)\n", __func__, s2mf301->suspended);
-	ret = wait_event_timeout(s2mf301->suspend_wait,
-						!s2mf301->suspended,
-						msecs_to_jiffies(200));
-	if (!ret) {
-		s2mf301_info("%s suspend_wait timeout\n", __func__);
-
-		goto exit;
-	}
-
 	ret = s2mf301_read_reg(s2mf301->i2c, S2MF301_REG_IPINT, &irq_src);
 	if (ret) {
 		s2mf301_err("%s:%s Failed to read interrupt source: %d\n", MFD_DEV_NAME_, __func__, ret);
-
-		goto exit;
+		return IRQ_NONE;
 	}
 	s2mf301_info("%s: Top interrupt(0x%02x)\n", __func__, irq_src);
 	ret = s2mf301_read_reg(s2mf301->i2c, S2MF301_REG_IPINT2, &irq_src2);
 	if (ret) {
 		s2mf301_err("%s:%s Failed to read interrupt source: %d\n", MFD_DEV_NAME_, __func__, ret);
-
-		goto exit;
+		return IRQ_NONE;
 	}
 	s2mf301_info("%s: Top interrupt RID(0x%02x)\n", __func__, irq_src2);
 
@@ -412,6 +399,7 @@ static irqreturn_t s2mf301_irq_thread(int irq, void *data)
 	if (irq_src & S2MF301_IRQSRC_DC) {
 		s2mf301_read_reg(s2mf301->i2c, S2MF301_TOP_REG_DC_AUTO_PPS_INT, &irq_reg[DC_INT]);
 		s2mf301_info("%s: DC interrupt(0x%02x)\n", __func__, irq_reg[DC_INT]);
+
 	}
 
 	if (s2mf301->evt0) {
@@ -443,7 +431,7 @@ static irqreturn_t s2mf301_irq_thread(int irq, void *data)
 				&irq_reg[CHG_INT0]);
 		if (ret) {
 			s2mf301_err("%s:%s Failed to read charger interrupt: %d\n", MFD_DEV_NAME_, __func__, ret);
-			goto exit;
+			return IRQ_NONE;
 		}
 		s2mf301_info("%s() CHARGER interrupt(0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x)\n",
 				__func__, irq_reg[CHG_INT0], irq_reg[CHG_INT1], irq_reg[CHG_INT2],
@@ -512,12 +500,7 @@ static irqreturn_t s2mf301_irq_thread(int irq, void *data)
 			handle_nested_irq(s2mf301->irq_base + i);
 	}
 #endif
-	__pm_relax(s2mf301->irq_ws);
 	return IRQ_HANDLED;
-
-exit:
-	__pm_relax(s2mf301->irq_ws);
-	return IRQ_NONE;
 }
 static int irq_is_enable = true;
 int s2mf301_irq_init(struct s2mf301_dev *s2mf301)

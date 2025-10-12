@@ -105,7 +105,7 @@ static int s2mf301_muic_rid_isr(void *_data);
 	(s2mf301_info("%s, %s in NULL\n", __func__, #func), -1))
 #endif
 
-static int muic_psy_get_property(struct power_supply *psy,
+static int psy_get_property(struct power_supply *psy,
 			    enum power_supply_property psp,
 			    union power_supply_propval *val)
 {
@@ -387,23 +387,6 @@ static int _s2mf301_i2c_update_bit(struct i2c_client *i2c,
 }
 
 #if defined(CONFIG_MUIC_SUPPORT_PRSWAP)
-static void _s2mf301_muic_gatesw_control(struct s2mf301_muic_data *muic_data, int en)
-{
-	struct i2c_client *i2c = muic_data->i2c;
-	u8 reg;
-
-	reg = s2mf301_i2c_read_byte(i2c, S2MF301_REG_MANUAL_SW_CTRL);
-	if (en) {
-		reg |= S2MF301_MUIC_MUIC_SW_CTRL_GATESW_ON_MASK;
-	} else {
-		reg &= ~S2MF301_MUIC_MUIC_SW_CTRL_GATESW_ON_MASK;
-	}
-	s2mf301_i2c_write_byte(i2c, S2MF301_REG_MANUAL_SW_CTRL, reg);
-
-	reg = s2mf301_i2c_read_byte(i2c, S2MF301_REG_MANUAL_SW_CTRL);
-	s2mf301_info("%s, reg=0x%x\n", __func__, reg);
-}
-
 static void _s2mf301_muic_set_chg_det(struct s2mf301_muic_data *muic_data,
 		bool enable)
 {
@@ -425,7 +408,6 @@ static void _s2mf301_muic_set_chg_det(struct s2mf301_muic_data *muic_data,
 	if (w_val != r_val) {
 		s2mf301_info("%s en(%d)\n", __func__, enable);
 		s2mf301_i2c_write_byte(i2c, S2MF301_REG_MUIC_ETC, w_val);
-		_s2mf301_muic_gatesw_control(muic_data, enable);
 	}
 }
 #endif
@@ -1331,7 +1313,6 @@ static int s2mf301_muic_detect_dev_bc1p2(struct s2mf301_muic_data *muic_data)
 #if defined(CONFIG_MUIC_HV_SUPPORT_POGO_DOCK)
 	struct muic_ic_data *ic_data = (struct muic_ic_data *)sdata->ic_data;
 	int vbus_value = 0;
-	int pogo_dock_int_active;
 #endif
 
 #if defined(CONFIG_USB_HW_PARAM)
@@ -1341,9 +1322,8 @@ static int s2mf301_muic_detect_dev_bc1p2(struct s2mf301_muic_data *muic_data)
 	muic_data->new_dev = ATTACHED_DEV_UNKNOWN_MUIC;
 
 #if defined(CONFIG_MUIC_HV_SUPPORT_POGO_DOCK)
-	pogo_dock_int_active = !!(muic_data->pogo_dock_int_active_value);
 	if (gpio_is_valid(muic_data->gpio_dock)) {
-		if (gpio_get_value(muic_data->gpio_dock) == pogo_dock_int_active) {
+		if (gpio_get_value(muic_data->gpio_dock) == 0) {
 			usleep_range(35000, 36000);
 			MUIC_PDATA_FUNC(ic_data->m_ops.get_vbus_value, ic_data->drv_data, &vbus_value);
 			if (vbus_value == 5) {
@@ -1920,7 +1900,7 @@ static void s2mf301_muic_get_pm_ops(struct s2mf301_muic_data *muic_data, struct 
 
 	muic_data->rid_isr = s2mf301_muic_rid_isr;
 	value.strval = (const char *)muic_data;
-	ret = muic_psy_get_property(psy,
+	ret = psy_get_property(psy,
 			(enum power_supply_property)POWER_SUPPLY_LSI_PROP_RID_OPS,
 			&value);
 	if (ret) {
@@ -1949,7 +1929,7 @@ static void s2mf301_muic_get_top_ops(struct s2mf301_muic_data *muic_data, struct
 
 	muic_data->rid_isr = s2mf301_muic_rid_isr;
 	value.strval = (const char *)muic_data;
-	ret = muic_psy_get_property(psy,
+	ret = psy_get_property(psy,
 			(enum power_supply_property)POWER_SUPPLY_LSI_PROP_RID_OPS,
 			&value);
 	if (ret) {
@@ -2052,9 +2032,9 @@ static int s2mf301_muic_rid_isr(void *_data)
 	}
 
 	mutex_lock(&muic_data->muic_mutex);
-	pm_wakeup_ws_event(muic_data->muic_ws, 1000, false);
+	__pm_stay_awake(muic_data->muic_ws);
 	
-	s2mf301_info("%s, wait adc check time 300ms after wakelock 1s\n", __func__);
+	s2mf301_info("%s, wait adc check time 300ms\n", __func__);
 	msleep(300);
 
 	muic_data->adc = _s2mf301_muic_get_rid_adc(muic_data);
@@ -2070,7 +2050,7 @@ static int s2mf301_muic_rid_isr(void *_data)
 		s2mf301_muic_detect_dev_rid_array(muic_data);
 		s2mf301_muic_handle_attached_dev(muic_data);
 	}
-
+	__pm_relax(muic_data->muic_ws);
 	mutex_unlock(&muic_data->muic_mutex);
 
 	return IRQ_HANDLED;
@@ -2149,7 +2129,6 @@ static int of_s2mf301_muic_dt(struct device *dev,
 #if defined(CONFIG_MUIC_HV_SUPPORT_POGO_DOCK)
 	struct device_node *np_pdic;
 	int pogo_gpio;
-	bool pogo_dock_int_active_value;
 #endif
 
 	np = dev->parent->of_node;
@@ -2181,15 +2160,6 @@ static int of_s2mf301_muic_dt(struct device *dev,
 		s2mf301_err("%s : could not find pdic sub-node np_pdic\n", __func__);
 		return -EINVAL;
 	} else {
-		pogo_dock_int_active_value = of_property_read_bool(np_pdic, "pogo_dock_int_active_high");
-		if (pogo_dock_int_active_value) {
-			s2mf301_info("%s, pogo dock interrupt active high\n", __func__);
-			muic_data->pogo_dock_int_active_value = POGO_DOCK_INT_ACTIVE_HIGH;
-		} else {
-			s2mf301_info("%s, pogo dock interrupt active low\n", __func__);
-			muic_data->pogo_dock_int_active_value = POGO_DOCK_INT_ACTIVE_LOW;
-		}
-
 		pogo_gpio = of_get_named_gpio(np_pdic, "pogo_dock_int", 0);
 		muic_data->gpio_dock = pogo_gpio;
 		if (gpio_is_valid(muic_data->gpio_dock))

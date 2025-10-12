@@ -320,9 +320,6 @@ struct s2mf301_dev {
 	int irq;
 	int irq_base;
 	int irq_gpio;
-	bool suspended;
-	wait_queue_head_t suspend_wait;
-	struct wakeup_source	*irq_ws;
 	bool wakeup;
 	bool change_irq_mask;
 	struct mutex irqlock;
