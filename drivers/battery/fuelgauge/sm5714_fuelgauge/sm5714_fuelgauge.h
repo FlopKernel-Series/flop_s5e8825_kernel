@@ -290,8 +290,6 @@ struct sm5714_fuelgauge_platform_data {
 	int age_data_length;
 	unsigned int *age_data_soc;
 	unsigned int full_condition_soc;
-	
-	int scaling_factor;
 };
 
 struct sm5714_fuelgauge_data {
@@ -364,6 +362,5 @@ struct sm5714_fuelgauge_data {
 	u32 fg_resistor;
 	bool isjigmoderealvbat;
 	char d_buf[FG_BATT_DUMP_SIZE];
-	bool jigvbatmode;
 };
 #endif /* __SM5714_FUELGAUGE_H */

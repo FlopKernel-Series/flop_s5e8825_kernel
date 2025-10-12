@@ -55,7 +55,6 @@
 #endif /* CONFIG_VBUS_NOTIFIER */
 
 #include <linux/muic/common/muic.h>
-#include <linux/mfd/sm/sm5714/sm5714_log.h>
 #include <linux/mfd/sm/sm5714/sm5714.h>
 #include <linux/mfd/sm/sm5714/sm5714-private.h>
 #include <linux/muic/sm/sm5714/sm5714-muic.h>
@@ -133,7 +132,7 @@ static void sm5714_print_reg_log(void)
 			sm5714_log_cnt = 0;
 		sprintf(mesg+strlen(mesg), "%x(%x)%x ", reg, value, rw);
 	}
-	sm5714_info("[%s:%s] %s\n", MUIC_DEV_NAME, __func__, mesg);
+	pr_info("[%s:%s] %s\n", MUIC_DEV_NAME, __func__, mesg);
 }
 
 void sm5714_read_reg_dump(struct sm5714_muic_data *muic, char *mesg)
@@ -176,7 +175,7 @@ void sm5714_print_reg_dump(struct sm5714_muic_data *muic_data)
 
 	sm5714_read_reg_dump(muic_data, mesg);
 
-	sm5714_info("[%s:%s] %s\n", MUIC_DEV_NAME, __func__, mesg);
+	pr_info("[%s:%s] %s\n", MUIC_DEV_NAME, __func__, mesg);
 }
 #else
 void sm5714_print_reg_dump(struct sm5714_muic_data *muic_data)
@@ -202,7 +201,7 @@ int sm5714_i2c_write_byte(struct i2c_client *client,
 	ret = sm5714_write_reg(client, command, value);
 
 	while (ret < 0) {
-		sm5714_info("[%s:%s] reg(0x%x), retrying...\n",
+		pr_info("[%s:%s] reg(0x%x), retrying...\n",
 			MUIC_DEV_NAME, __func__, command);
 		if (retry > 10) {
 			pr_err("[%s:%s] retry failed!!\n", MUIC_DEV_NAME,
@@ -211,7 +210,7 @@ int sm5714_i2c_write_byte(struct i2c_client *client,
 		}
 		sm5714_read_reg(client, command, &written);
 		if (written != value)
-			sm5714_err("[%s:%s] reg(0x%x)\n",
+			pr_err("[%s:%s] reg(0x%x)\n",
 				MUIC_DEV_NAME, __func__, command);
 		msleep(100);
 		ret = sm5714_write_reg(client, command, value);
@@ -233,10 +232,10 @@ static int sm5714_i2c_guaranteed_wbyte(struct i2c_client *client,
 	written = sm5714_i2c_read_byte(client, command);
 
 	while (written != value) {
-		sm5714_info("[%s:%s] reg(0x%x): written(0x%x) != value(0x%x)\n",
+		pr_info("[%s:%s] reg(0x%x): written(0x%x) != value(0x%x)\n",
 			MUIC_DEV_NAME, __func__, command, written, value);
 		if (retry > 10) {
-			sm5714_err("[%s:%s] retry failed!!\n", MUIC_DEV_NAME,
+			pr_err("[%s:%s] retry failed!!\n", MUIC_DEV_NAME,
 					__func__);
 			break;
 		}
@@ -255,10 +254,10 @@ static ssize_t sm5714_muic_show_uart_en(struct device *dev,
 	int ret = 0;
 
 	if (!muic_data->is_rustproof) {
-		sm5714_info("[%s:%s] UART ENABLE\n",  MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] UART ENABLE\n",  MUIC_DEV_NAME, __func__);
 		ret = sprintf(buf, "1\n");
 	} else {
-		sm5714_info("[%s:%s] UART DISABLE\n",  MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] UART DISABLE\n",  MUIC_DEV_NAME, __func__);
 		ret = sprintf(buf, "0\n");
 	}
 
@@ -276,9 +275,9 @@ static ssize_t sm5714_muic_set_uart_en(struct device *dev,
 	else if (!strncmp(buf, "0", 1))
 		muic_data->is_rustproof = true;
 	else
-		sm5714_info("[%s:%s] invalid value\n",  MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] invalid value\n",  MUIC_DEV_NAME, __func__);
 
-	sm5714_info("[%s:%s] uart_en(%d)\n",
+	pr_info("[%s:%s] uart_en(%d)\n",
 		MUIC_DEV_NAME, __func__, !muic_data->is_rustproof);
 
 	return count;
@@ -303,7 +302,7 @@ static ssize_t sm5714_muic_show_uart_sel(struct device *dev,
 		break;
 	}
 
-	sm5714_info("[%s:%s] uart_sel(%s)\n", MUIC_DEV_NAME, __func__, mode);
+	pr_info("[%s:%s] uart_sel(%s)\n", MUIC_DEV_NAME, __func__, mode);
 
 	return sprintf(buf, "%s", mode);
 }
@@ -322,10 +321,10 @@ static ssize_t sm5714_muic_set_uart_sel(struct device *dev,
 		pdata->uart_path = MUIC_PATH_UART_CP;
 		switch_to_cp_uart(muic_data, muic_data->attached_dev);
 	} else {
-		sm5714_info("[%s:%s] invalid value\n",  MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] invalid value\n",  MUIC_DEV_NAME, __func__);
 	}
 
-	sm5714_info("[%s:%s] uart_path(%d)\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] uart_path(%d)\n", MUIC_DEV_NAME, __func__,
 			pdata->uart_path);
 
 	return count;
@@ -349,7 +348,7 @@ static ssize_t sm5714_muic_show_usb_sel(struct device *dev,
 		break;
 	}
 
-	sm5714_info("[%s:%s] usb_sel(%s)\n", MUIC_DEV_NAME, __func__, mode);
+	pr_info("[%s:%s] usb_sel(%s)\n", MUIC_DEV_NAME, __func__, mode);
 
 	return sprintf(buf, "%s", mode);
 }
@@ -366,9 +365,9 @@ static ssize_t sm5714_muic_set_usb_sel(struct device *dev,
 	else if (!strncasecmp(buf, "MODEM", 5))
 		pdata->usb_path = MUIC_PATH_USB_CP;
 	else
-		sm5714_info("[%s:%s] invalid value\n",  MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] invalid value\n",  MUIC_DEV_NAME, __func__);
 
-	sm5714_info("[%s:%s] usb_path(%d)\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] usb_path(%d)\n", MUIC_DEV_NAME, __func__,
 			pdata->usb_path);
 
 	return count;
@@ -392,13 +391,13 @@ static ssize_t sm5714_muic_show_adc(struct device *dev,
 	else
 		ret = sm5714_muic_get_adc(muic_data);
 
-	sm5714_info("[%s:%s] attached_dev: %d, adc = %d, is_factory_start = %d\n",
+	pr_info("[%s:%s] attached_dev: %d, adc = %d, is_factory_start = %d\n",
 			MUIC_DEV_NAME, __func__, muic_data->attached_dev,
 			ret, muic_data->is_factory_start);
 
 	mutex_unlock(&muic_data->muic_mutex);
 	if (ret < 0) {
-		sm5714_err("[%s:%s] err read adc reg(%d)\n",
+		pr_err("[%s:%s] err read adc reg(%d)\n",
 			MUIC_DEV_NAME, __func__, ret);
 		return sprintf(buf, "UNKNOWN\n");
 	}
@@ -437,11 +436,11 @@ static ssize_t sm5714_muic_show_mansw(struct device *dev,
 	ret = sm5714_i2c_read_byte(muic_data->i2c, SM5714_MUIC_REG_MANUAL_SW);
 	mutex_unlock(&muic_data->muic_mutex);
 
-	sm5714_info("[%s:%s] manual sw:%d buf%s\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] manual sw:%d buf%s\n", MUIC_DEV_NAME, __func__,
 			ret, buf);
 
 	if (ret < 0) {
-		sm5714_err("[%s:%s] fail to read muic reg\n", MUIC_DEV_NAME,
+		pr_err("[%s:%s] fail to read muic reg\n", MUIC_DEV_NAME,
 				__func__);
 		return sprintf(buf, "UNKNOWN\n");
 	}
@@ -458,7 +457,7 @@ static ssize_t sm5714_muic_show_registers(struct device *dev,
 	mutex_lock(&muic_data->muic_mutex);
 	sm5714_read_reg_dump(muic_data, mesg);
 	mutex_unlock(&muic_data->muic_mutex);
-	sm5714_info("[%s:%s] %s\n", MUIC_DEV_NAME, __func__, mesg);
+	pr_info("[%s:%s] %s\n", MUIC_DEV_NAME, __func__, mesg);
 
 	return sprintf(buf, "%s\n", mesg);
 }
@@ -469,7 +468,7 @@ static ssize_t sm5714_muic_show_otg_test(struct device *dev,
 					   struct device_attribute *attr,
 					   char *buf)
 {
-	sm5714_info("[%s:%s] buf%s\n", MUIC_DEV_NAME, __func__, buf);
+	pr_info("[%s:%s] buf%s\n", MUIC_DEV_NAME, __func__, buf);
 
 	return sprintf(buf, "\n");
 }
@@ -480,7 +479,7 @@ static ssize_t sm5714_muic_set_otg_test(struct device *dev,
 {
 	struct sm5714_muic_data *muic_data = dev_get_drvdata(dev);
 
-	sm5714_info("[%s:%s] buf:%s\n", MUIC_DEV_NAME, __func__, buf);
+	pr_info("[%s:%s] buf:%s\n", MUIC_DEV_NAME, __func__, buf);
 
 	/* The otg_test is set 0 durring the otg test. Not 1!!! */
 	if (!strncmp(buf, "0", 1)) {
@@ -488,7 +487,7 @@ static ssize_t sm5714_muic_set_otg_test(struct device *dev,
 	} else if (!strncmp(buf, "1", 1)) {
 		muic_data->is_otg_test = 0;
 	} else {
-		sm5714_info("[%s:%s] Wrong command\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] Wrong command\n", MUIC_DEV_NAME, __func__);
 		return count;
 	}
 
@@ -503,7 +502,7 @@ static ssize_t sm5714_muic_show_attached_dev(struct device *dev,
 	struct sm5714_muic_data *muic_data = dev_get_drvdata(dev);
 	int mdev = muic_data->attached_dev;
 
-	sm5714_info("[%s:%s] attached_dev:%d\n", MUIC_DEV_NAME, __func__,	mdev);
+	pr_info("[%s:%s] attached_dev:%d\n", MUIC_DEV_NAME, __func__,	mdev);
 
 	switch (mdev) {
 	case ATTACHED_DEV_NONE_MUIC:
@@ -577,7 +576,7 @@ static ssize_t sm5714_muic_show_apo_factory(struct device *dev,
 	else
 		mode = "NOT_FACTORY_MODE";
 
-	sm5714_info("[%s:%s] %s\n",
+	pr_info("[%s:%s] %s\n",
 		MUIC_DEV_NAME, __func__, mode);
 
 	return sprintf(buf, "%s\n", mode);
@@ -590,7 +589,7 @@ static ssize_t sm5714_muic_set_apo_factory(struct device *dev,
 	struct sm5714_muic_data *muic_data = dev_get_drvdata(dev);
 	const char *mode;
 
-	sm5714_info("[%s:%s] buf:%s\n",
+	pr_info("[%s:%s] buf:%s\n",
 		MUIC_DEV_NAME, __func__, buf);
 
 	/* "FACTORY_START": factory mode */
@@ -598,7 +597,7 @@ static ssize_t sm5714_muic_set_apo_factory(struct device *dev,
 		muic_data->is_factory_start = true;
 		mode = "FACTORY_MODE";
 	} else {
-		sm5714_info("[%s:%s] Wrong command\n",  MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] Wrong command\n",  MUIC_DEV_NAME, __func__);
 		return count;
 	}
 
@@ -626,11 +625,11 @@ static ssize_t sm5714_muic_show_afc_disable(struct device *dev,
 	struct muic_platform_data *pdata = muic_data->pdata;
 
 	if (pdata->afc_disable) {
-		sm5714_info("[%s:%s] AFC DISABLE\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] AFC DISABLE\n", MUIC_DEV_NAME, __func__);
 		return sprintf(buf, "1\n");
 	}
 
-	sm5714_info("[%s:%s] AFC ENABLE", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] AFC ENABLE", MUIC_DEV_NAME, __func__);
 	return sprintf(buf, "0\n");
 }
 
@@ -662,16 +661,16 @@ static ssize_t sm5714_muic_set_afc_disable(struct device *dev,
 #if IS_ENABLED(CONFIG_ARCH_QCOM) && !defined(CONFIG_USB_ARCH_EXYNOS) && !defined(CONFIG_ARCH_EXYNOS)
 	ret = sec_set_param(param_index_afc_disable, &param_val);
 	if (ret == false)
-		sm5714_err("[%s:%s] set_param failed(%d)\n", MUIC_DEV_NAME,
+		pr_err("[%s:%s] set_param failed(%d)\n", MUIC_DEV_NAME,
 				__func__, ret);
 #else
 	ret = sec_set_param(CM_OFFSET + 1, param_val);
 	if (ret < 0)
-		sm5714_err("[%s:%s] set_param failed(%d)\n", MUIC_DEV_NAME,
+		pr_err("[%s:%s] set_param failed(%d)\n", MUIC_DEV_NAME,
 				__func__, ret);
 #endif
 #else /* CONFIG_SEC_PARAM */
-	sm5714_err("%s:set_param is NOT supported!\n", __func__);
+	pr_err("%s:set_param is NOT supported!\n", __func__);
 #endif
 #endif
 
@@ -680,7 +679,7 @@ static ssize_t sm5714_muic_set_afc_disable(struct device *dev,
 	psy_do_property("battery", set, POWER_SUPPLY_EXT_PROP_HV_DISABLE, psy_val);
 #endif
 
-	sm5714_info("[%s:%s] attached_dev(%d), afc_disable(%d)\n",
+	pr_info("[%s:%s] attached_dev(%d), afc_disable(%d)\n",
 		MUIC_DEV_NAME, __func__, muic_data->attached_dev, pdata->afc_disable);
 
 	if (pdata->afc_disable) {
@@ -709,7 +708,7 @@ static ssize_t sm5714_muic_set_afc_disable(struct device *dev,
 static ssize_t sm5714_afc_set_voltage(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t count)
 {
-	sm5714_info("%s+\n", __func__);
+	pr_info("%s+\n", __func__);
 	if (!strncasecmp(buf, "5V", 2))
 		muic_afc_set_voltage(0x5);
 	else if (!strncasecmp(buf, "9V", 2))
@@ -717,7 +716,7 @@ static ssize_t sm5714_afc_set_voltage(struct device *dev,
 	else
 		pr_warn("%s invalid value : %s\n", __func__, buf);
 
-	sm5714_info("%s-\n", __func__);
+	pr_info("%s-\n", __func__);
 	return count;
 }
 
@@ -734,7 +733,7 @@ static ssize_t hiccup_store(struct device *dev,
 	struct sm5714_muic_data *muic_data = dev_get_drvdata(dev);
 
 	if (!strncasecmp(buf, "DISABLE", 7)) {
-		sm5714_info("%s\n", __func__);
+		pr_info("%s\n", __func__);
 #if IS_ENABLED(CONFIG_IF_CB_MANAGER) && IS_ENABLED(CONFIG_HICCUP_CC_DISABLE)
 		usbpd_cc_control_command(muic_data->man, 0);
 #endif
@@ -742,10 +741,6 @@ static ssize_t hiccup_store(struct device *dev,
 		com_to_open(muic_data);
 	} else
 		pr_warn("%s invalid com : %s\n", __func__, buf);
-
-	if (muic_data->is_water_detect &&
-			muic_data->vbus_state == STATUS_VBUS_LOW)
-		usbpd_water_pd_ta_notify(muic_data->man);
 
 	return count;
 }
@@ -831,10 +826,10 @@ static int set_manual_sw(struct sm5714_muic_data *muic_data, bool on)
 
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_MANUAL_SW);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err read MANUAL_SW(%d)\n",
+		pr_err("[%s:%s] err read MANUAL_SW(%d)\n",
 			MUIC_DEV_NAME, __func__, ret);
 
-	sm5714_info("[%s:%s] on:0x%x, cfg1=0x%x\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] on:0x%x, cfg1=0x%x\n", MUIC_DEV_NAME, __func__,
 			on, ret);
 
 	if (on) /* MANSW_AUTOMATIC:0  MANSW_MANUAL:1 */
@@ -842,21 +837,21 @@ static int set_manual_sw(struct sm5714_muic_data *muic_data, bool on)
 	else
 		reg_val = ret & 0x7F;
 
-	sm5714_info("[%s:%s] reg_val(0x%x) != ret(0x%x) update\n",
+	pr_info("[%s:%s] reg_val(0x%x) != ret(0x%x) update\n",
 		MUIC_DEV_NAME, __func__, reg_val, ret);
 
 	ret = sm5714_i2c_guaranteed_wbyte(i2c, SM5714_MUIC_REG_MANUAL_SW,
 			reg_val);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err write(%d)\n",
+		pr_err("[%s:%s] err write(%d)\n",
 			MUIC_DEV_NAME, __func__, ret);
 
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_MANUAL_SW);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err read MANUAL_SW(%d)\n",
+		pr_err("[%s:%s] err read MANUAL_SW(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 	else
-		sm5714_info("[%s:%s] after change(0x%x)\n",
+		pr_info("[%s:%s] after change(0x%x)\n",
 			MUIC_DEV_NAME, __func__, ret);
 
 	return ret;
@@ -869,7 +864,7 @@ static int get_com_sw(struct sm5714_muic_data *muic_data)
 
 	temp = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_MANUAL_SW);
 
-	sm5714_info("[%s:%s] 0x%x\n", MUIC_DEV_NAME, __func__, temp);
+	pr_info("[%s:%s] 0x%x\n", MUIC_DEV_NAME, __func__, temp);
 
 	return (temp&0x3F);
 }
@@ -884,10 +879,10 @@ static int set_com_sw(struct sm5714_muic_data *muic_data,
 	/*  --- MANSW [5:3][2:0] : DM DP  --- */
 	temp = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_MANUAL_SW);
 	if (temp < 0)
-		sm5714_err("[%s:%s] err read MANSW(0x%x)\n",
+		pr_err("[%s:%s] err read MANSW(0x%x)\n",
 			MUIC_DEV_NAME, __func__, temp);
 
-	sm5714_info("[%s:%s]rev_val(0x%x) != temp(0x%x), update\n",
+	pr_info("[%s:%s]rev_val(0x%x) != temp(0x%x), update\n",
 		MUIC_DEV_NAME, __func__, reg_val, temp);
 
 	temp = (temp&0xC0)|reg_val;
@@ -895,7 +890,7 @@ static int set_com_sw(struct sm5714_muic_data *muic_data,
 	ret = sm5714_i2c_guaranteed_wbyte(i2c,
 		SM5714_MUIC_REG_MANUAL_SW, temp);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err write MANSW(0x%x)\n",
+		pr_err("[%s:%s] err write MANSW(0x%x)\n",
 			MUIC_DEV_NAME, __func__, reg_val);
 
 	return ret;
@@ -906,11 +901,11 @@ static int com_to_open(struct sm5714_muic_data *muic_data)
 	enum sm5714_reg_manual_sw_value reg_val;
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 	reg_val = MANSW_OPEN;
 	ret = set_com_sw(muic_data, reg_val);
 	if (ret)
-		sm5714_err("[%s:%s] set_com_sw err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] set_com_sw err\n", MUIC_DEV_NAME, __func__);
 
 	set_manual_sw(muic_data, MANSW_MANUAL); /* auto:0  manual:1 */
 
@@ -922,11 +917,11 @@ static int com_to_usb(struct sm5714_muic_data *muic_data)
 	enum sm5714_reg_manual_sw_value reg_val;
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 	reg_val = MANSW_USB;
 	ret = set_com_sw(muic_data, reg_val);
 	if (ret)
-		sm5714_err("[%s:%s]set_com_usb err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s]set_com_usb err\n", MUIC_DEV_NAME, __func__);
 
 	set_manual_sw(muic_data, MANSW_MANUAL); /* auto:0  manual:1 */
 
@@ -939,13 +934,13 @@ static int com_to_uart(struct sm5714_muic_data *muic_data)
 	int ret = 0;
 
 	if (muic_data->is_rustproof) {
-		sm5714_info("[%s:%s] rustproof mode\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] rustproof mode\n", MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 	reg_val = MANSW_UART;
 	ret = set_com_sw(muic_data, reg_val);
 	if (ret)
-		sm5714_err("[%s:%s] set_com_uart err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] set_com_uart err\n", MUIC_DEV_NAME, __func__);
 
 	set_manual_sw(muic_data, MANSW_MANUAL); /* auto:0  manual:1 */
 
@@ -958,13 +953,13 @@ static int com_to_JTAG(struct sm5714_muic_data *muic_data)
 	int ret = 0;
 
 	if (muic_data->is_rustproof) {
-		sm5714_info("[%s:%s] rustproof mode\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] rustproof mode\n", MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 	reg_val = MANSW_JTAG;
 	ret = set_com_sw(muic_data, reg_val);
 	if (ret)
-		sm5714_err("[%s:%s] com_to_Jtag err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] com_to_Jtag err\n", MUIC_DEV_NAME, __func__);
 
 	set_manual_sw(muic_data, MANSW_MANUAL); /* auto:0  manual:1 */
 
@@ -980,7 +975,7 @@ static int com_to_GND(struct sm5714_muic_data *muic_data)
 	reg_val = MANSW_HICCUP;
 	ret = set_com_sw(muic_data, reg_val);
 	if (ret)
-		sm5714_err("[%s:%s] set_com_audio err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] set_com_audio err\n", MUIC_DEV_NAME, __func__);
 
 	set_manual_sw(muic_data, MANSW_MANUAL); /* auto:0  manual:1 */
 
@@ -991,11 +986,11 @@ static int switch_to_gnd(struct sm5714_muic_data *muic_data)
 {
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	ret = com_to_GND(muic_data);
 	if (ret) {
-		sm5714_err("[%s:%s] com->audio set err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] com->audio set err\n", MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 
@@ -1007,7 +1002,7 @@ static int switch_to_ap_uart(struct sm5714_muic_data *muic_data, int new_dev)
 {
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	switch (new_dev) {
 	case ATTACHED_DEV_JIG_UART_OFF_MUIC:
@@ -1025,7 +1020,7 @@ static int switch_to_ap_uart(struct sm5714_muic_data *muic_data, int new_dev)
 	}
 
 	if (ret) {
-		sm5714_err("[%s:%s] com->uart set err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] com->uart set err\n", MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 
@@ -1036,7 +1031,7 @@ static int switch_to_cp_uart(struct sm5714_muic_data *muic_data, int new_dev)
 {
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	switch (new_dev) {
 	case ATTACHED_DEV_JIG_UART_OFF_MUIC:
@@ -1054,7 +1049,7 @@ static int switch_to_cp_uart(struct sm5714_muic_data *muic_data, int new_dev)
 	}
 
 	if (ret) {
-		sm5714_err("[%s:%s] com->uart set err\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] com->uart set err\n", MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 
@@ -1079,7 +1074,7 @@ void sm5714_muic_set_bc12_control(int state)
 	struct i2c_client *i2c = static_data->i2c;
 	int reg_value1 = 0, reg_value2 = 0;
 
-	sm5714_info("[%s:%s] state=%d\n", MUIC_DEV_NAME, __func__, state);
+	pr_info("[%s:%s] state=%d\n", MUIC_DEV_NAME, __func__, state);
 	if (static_data == NULL)
 		return;
 
@@ -1096,7 +1091,7 @@ void sm5714_muic_set_bc12_control(int state)
 	reg_value1 = reg_value1 & 0xEF;
 	sm5714_i2c_write_byte(i2c, 0x32, reg_value1);
 
-	sm5714_info("[%s:%s] reg_value1=0x%x, reg_value2=0x%x\n", MUIC_DEV_NAME,
+	pr_info("[%s:%s] reg_value1=0x%x, reg_value2=0x%x\n", MUIC_DEV_NAME,
 			__func__, reg_value1, reg_value2);
 }
 EXPORT_SYMBOL(sm5714_muic_set_bc12_control);
@@ -1110,7 +1105,7 @@ static void sm5714_muic_set_bc12(void *data, int enable)
 
 	reg_value = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_CNTL);
 	if (reg_value < 0) {
-		sm5714_err("[%s:%s] failed, return\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] failed, return\n", MUIC_DEV_NAME, __func__);
 		return;
 	}
 	if (enable == 1) /* 1:bc12 enable , 0:bc12 disable*/
@@ -1118,13 +1113,13 @@ static void sm5714_muic_set_bc12(void *data, int enable)
 	else
 		reg_value = reg_value | 0x02;
 	sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_CNTL, reg_value);
-	sm5714_info("[%s:%s] enable = %d, reg_value = 0x%x\n", MUIC_DEV_NAME,
+	pr_info("[%s:%s] enable = %d, reg_value = 0x%x\n", MUIC_DEV_NAME,
 			__func__, enable, reg_value);
 }
 #else
 static void sm5714_muic_set_bc12(void *data, int enable)
 {
-	sm5714_info("[%s:%s] Do nothing\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] Do nothing\n", MUIC_DEV_NAME, __func__);
 
 	return;
 }
@@ -1136,7 +1131,7 @@ static void sm5714_muic_BCD_rescan(struct sm5714_muic_data *muic_data)
 	struct i2c_client *i2c = muic_data->i2c;
 	int reg_ctrl1 = 0, reg_ctrl2 = 0;
 
-	sm5714_info("[%s:%s] BCD_RESCAN\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] BCD_RESCAN\n", MUIC_DEV_NAME, __func__);
 
 	reg_ctrl1 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_CNTL);
 	reg_ctrl2 = reg_ctrl1 | 0x01;
@@ -1145,7 +1140,7 @@ static void sm5714_muic_BCD_rescan(struct sm5714_muic_data *muic_data)
 	reg_ctrl2 = reg_ctrl2 & 0xFE;
 	sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_CNTL, reg_ctrl2);
 
-	sm5714_info("[%s:%s] CONTROL: reg_ctrl1=0x%x, reg_ctrl2=0x%x\n", MUIC_DEV_NAME,
+	pr_info("[%s:%s] CONTROL: reg_ctrl1=0x%x, reg_ctrl2=0x%x\n", MUIC_DEV_NAME,
 			__func__, reg_ctrl1, reg_ctrl2);
 }
 #endif
@@ -1155,12 +1150,12 @@ int sm5714_muic_get_jig_status(void)
 	struct i2c_client *i2c = static_data->i2c;
 	int dev2 = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 	if (static_data == NULL)
 		return 0;
 
 	dev2 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_DEVICETYPE2);
-	sm5714_info("[%s:%s]dev2 = 0x%x\n", MUIC_DEV_NAME, __func__, dev2);
+	pr_info("[%s:%s]dev2 = 0x%x\n", MUIC_DEV_NAME, __func__, dev2);
 	if ((dev2 & DEV_TYPE2_JIG_UART_OFF) || (dev2 & DEV_TYPE2_JIG_UART_ON))
 		return 1;
 
@@ -1171,7 +1166,7 @@ EXPORT_SYMBOL(sm5714_muic_get_jig_status);
 #if IS_ENABLED(CONFIG_IF_CB_MANAGER)
 static int sm5714_muic_if_check_usb_killer(void *data)
 {
-	sm5714_info("[%s:%s] Do nothing\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] Do nothing\n", MUIC_DEV_NAME, __func__);
 
 	return 0;
 }
@@ -1180,7 +1175,7 @@ static void sm5714_muic_set_bypass(void *data, int enable)
 {
 	struct sm5714_muic_data *muic_data = data;
 
-	sm5714_info("[%s:%s] enable : %d\n", MUIC_DEV_NAME, __func__, enable);
+	pr_info("[%s:%s] enable : %d\n", MUIC_DEV_NAME, __func__, enable);
 
 	/* handle detach event when bypass mode is enabled */
 	if (enable && muic_data->attached_dev)
@@ -1218,7 +1213,7 @@ static int sm5714_muic_get_adc(struct sm5714_muic_data *muic_data)
 	} else {
 		adc = 0x1f;
 	}
-	sm5714_info("[%s:%s] dev2:0x%X, adc:0x%X\n",
+	pr_info("[%s:%s] dev2:0x%X, adc:0x%X\n",
 		MUIC_DEV_NAME, __func__, dev2, adc);
 	return adc;
 }
@@ -1251,7 +1246,7 @@ static void sm5714_muic_set_factory_mode(struct sm5714_muic_data *muic_data,
 {
 	int rid = sm5714_muic_get_factory_mode_rid(new_dev);
 
-	sm5714_info("[%s:%s] rid:%d , intr:%d\n",
+	pr_info("[%s:%s] rid:%d , intr:%d\n",
 		MUIC_DEV_NAME, __func__, rid, intr);
 
 	if (rid == RID_OPEN)
@@ -1311,7 +1306,7 @@ static void sm5714_muic_handle_logically_detach(
 	}
 
 	if (ret)
-		sm5714_err("[%s:%s] something wrong %d (ERR=%d)\n",
+		pr_err("[%s:%s] something wrong %d (ERR=%d)\n",
 			MUIC_DEV_NAME, __func__, new_dev, ret);
 
 	sm5714_muic_set_factory_mode(muic_data, muic_data->attached_dev,
@@ -1335,12 +1330,12 @@ static void sm5714_muic_handle_attach(struct sm5714_muic_data *muic_data,
 #endif /* CONFIG_USB_HW_PARAM */
 
 	if (muic_data->is_water_detect) {
-		sm5714_info("[%s:%s] skipped by water detected condition\n",
+		pr_info("[%s:%s] skipped by water detected condition\n",
 				MUIC_DEV_NAME, __func__);
 		return;
 	}
 
-	sm5714_info("[%s:%s] attached_dev:%d, new_dev:%d, suspended:%d\n",
+	pr_info("[%s:%s] attached_dev:%d, new_dev:%d, suspended:%d\n",
 		MUIC_DEV_NAME, __func__, muic_data->attached_dev, new_dev,
 		muic_data->suspended);
 
@@ -1352,9 +1347,6 @@ static void sm5714_muic_handle_attach(struct sm5714_muic_data *muic_data,
 #ifndef CONFIG_SEC_FACTORY
 		sm5714_muic_set_bc12((void *)muic_data, 0);
 #endif
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
-		fallthrough;
-#endif
 	case ATTACHED_DEV_USB_MUIC:
 	case ATTACHED_DEV_CDP_MUIC:
 		ret = com_to_usb(muic_data);
@@ -1364,7 +1356,7 @@ static void sm5714_muic_handle_attach(struct sm5714_muic_data *muic_data,
 		break;
 	case ATTACHED_DEV_TIMEOUT_OPEN_MUIC:
 		if (get_com_sw(muic_data) == MANSW_UART)
-			sm5714_info("[%s:%s] skip path setting\n", MUIC_DEV_NAME,
+			pr_info("[%s:%s] skip path setting\n", MUIC_DEV_NAME,
 					__func__);
 		else
 			ret = com_to_usb(muic_data);
@@ -1396,18 +1388,18 @@ static void sm5714_muic_handle_attach(struct sm5714_muic_data *muic_data,
 		break;
 	default:
 		noti = false;
-		sm5714_info("[%s:%s] unsupported dev=%d, vbus=%c\n",
+		pr_info("[%s:%s] unsupported dev=%d, vbus=%c\n",
 			MUIC_DEV_NAME, __func__, new_dev, (vbvolt ? 'O' : 'X'));
 		break;
 	}
 
 	if (ret)
-		sm5714_err("[%s:%s] something wrong %d (ERR=%d)\n",
+		pr_err("[%s:%s] something wrong %d (ERR=%d)\n",
 			MUIC_DEV_NAME, __func__, new_dev, ret);
 
 	sm5714_muic_set_factory_mode(muic_data, new_dev, MUIC_INTR_ATTACH);
 
-	sm5714_info("[%s:%s] done\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] done\n", MUIC_DEV_NAME, __func__);
 
 	muic_data->attached_dev = new_dev;
 	muic_data->afc_dp_reset_count = 0;
@@ -1420,11 +1412,11 @@ static void sm5714_muic_handle_attach(struct sm5714_muic_data *muic_data,
 			muic_notifier_attach_attached_dev(new_dev);
 		} else {
 			muic_data->need_to_noti = true;
-			sm5714_info("[%s:%s] muic_data->need_to_noti = true\n",
+			pr_info("[%s:%s] muic_data->need_to_noti = true\n",
 					MUIC_DEV_NAME, __func__);
 		}
 	} else {
-		sm5714_info("[%s:%s] attach Noti. for (%d) discarded.\n",
+		pr_info("[%s:%s] attach Noti. for (%d) discarded.\n",
 				MUIC_DEV_NAME, __func__, new_dev);
 	}
 #endif /* CONFIG_MUIC_NOTIFIER */
@@ -1446,7 +1438,7 @@ static void sm5714_muic_handle_detach(struct sm5714_muic_data *muic_data,
 	muic_attached_dev_t attached_dev = muic_data->attached_dev;
 #endif
 
-	sm5714_info("[%s:%s] attached_dev:%d\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] attached_dev:%d\n", MUIC_DEV_NAME, __func__,
 			muic_data->attached_dev);
 
 #ifndef CONFIG_SEC_FACTORY
@@ -1513,12 +1505,12 @@ static void sm5714_muic_handle_detach(struct sm5714_muic_data *muic_data,
 		break;
 	default:
 		noti = false;
-		sm5714_info("[%s:%s] invalid type(%d)\n",
+		pr_info("[%s:%s] invalid type(%d)\n",
 			MUIC_DEV_NAME, __func__, muic_data->attached_dev);
 		break;
 	}
 	if (ret)
-		sm5714_err("[%s:%s] something wrong %d (ERR=%d)\n",
+		pr_err("[%s:%s] something wrong %d (ERR=%d)\n",
 			MUIC_DEV_NAME, __func__, muic_data->attached_dev, ret);
 
 	if ((muic_data->attached_dev == ATTACHED_DEV_JIG_USB_OFF_MUIC) ||
@@ -1542,11 +1534,11 @@ static void sm5714_muic_handle_detach(struct sm5714_muic_data *muic_data,
 			muic_notifier_detach_attached_dev(attached_dev);
 		} else {
 			muic_data->need_to_noti = true;
-			sm5714_info("[%s:%s] muic_data->need_to_noti = true\n",
+			pr_info("[%s:%s] muic_data->need_to_noti = true\n",
 				MUIC_DEV_NAME, __func__);
 		}
 	} else {
-		sm5714_info("[%s:%s] detach Noti. for (%d) discarded.\n",
+		pr_info("[%s:%s] detach Noti. for (%d) discarded.\n",
 			MUIC_DEV_NAME, __func__, attached_dev);
 	}
 #endif /* CONFIG_MUIC_NOTIFIER */
@@ -1574,7 +1566,7 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 	vbvolt = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_VBUS);
 	vbvolt = (vbvolt&0x04)>>2;
 
-	sm5714_info("[%s:%s] dev1:0x%02x, dev2:0x%02x, ctrl:0x%02x, ma:0x%02x, afcctrl:0x%02x, vbvolt:0x%02x\n",
+	pr_info("[%s:%s] dev1:0x%02x, dev2:0x%02x, ctrl:0x%02x, ma:0x%02x, afcctrl:0x%02x, vbvolt:0x%02x\n",
 			MUIC_DEV_NAME, __func__, dev1, dev2, ctrl,
 			manualsw, afcctrl, vbvolt);
 
@@ -1584,13 +1576,13 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 		case RID_000K:
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_OTG_MUIC;
-			sm5714_info("[%s:%s] USB_OTG\n", MUIC_DEV_NAME, __func__);
+			pr_info("[%s:%s] USB_OTG\n", MUIC_DEV_NAME, __func__);
 			break;
 		case RID_255K:
 #if defined(CONFIG_SEC_FACTORY)
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_USB_OFF_MUIC;
-			sm5714_info("[%s:%s] JIG_USB_OFF(255K)\n", MUIC_DEV_NAME,
+			pr_info("[%s:%s] JIG_USB_OFF(255K)\n", MUIC_DEV_NAME,
 					__func__);
 #else
 			/*
@@ -1598,30 +1590,30 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 			 * because 255K is used as Bypass mode
 			 */
 			dev1 = dev2 = 0;
-			sm5714_info("[%s:%s] Bypass mode(255K)\n", MUIC_DEV_NAME,
+			pr_info("[%s:%s] Bypass mode(255K)\n", MUIC_DEV_NAME,
 					__func__);
 #endif
 			break;
 		case RID_301K:
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_USB_ON_MUIC;
-			sm5714_info("[%s:%s] JIG_USB_ON(301K)\n", MUIC_DEV_NAME,
+			pr_info("[%s:%s] JIG_USB_ON(301K)\n", MUIC_DEV_NAME,
 					__func__);
 			break;
 		case RID_523K:
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_UART_OFF_MUIC;
-			sm5714_info("[%s:%s] JIG_UART_OFF(523K)\n", MUIC_DEV_NAME,
+			pr_info("[%s:%s] JIG_UART_OFF(523K)\n", MUIC_DEV_NAME,
 					__func__);
 			break;
 		case RID_619K:
 			intr = MUIC_INTR_ATTACH;
 			if (vbvolt) {
 				new_dev = ATTACHED_DEV_JIG_UART_ON_VB_MUIC;
-				sm5714_info("[%s:%s] JIG_UART_ON(619K) + VBUS\n",
+				pr_info("[%s:%s] JIG_UART_ON(619K) + VBUS\n",
 						MUIC_DEV_NAME, __func__);
 
-				sm5714_info("[%s:%s] delayed_523Kto619K_state(%d), attached_dev(%d), new_dev(%d)\n",
+				pr_info("[%s:%s] delayed_523Kto619K_state(%d), attached_dev(%d), new_dev(%d)\n",
 					MUIC_DEV_NAME, __func__, muic_data->delayed_523Kto619K_state,
 					muic_data->attached_dev, new_dev);
 
@@ -1631,7 +1623,7 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 					cancel_delayed_work(&muic_data->delayed_523Kto619K_work);
 					schedule_delayed_work(&muic_data->delayed_523Kto619K_work,
 							msecs_to_jiffies(1500));
-					sm5714_info("[%s:%s] sm5714_muic_delayed_523Kto619K_work return\n",
+					pr_info("[%s:%s] sm5714_muic_delayed_523Kto619K_work return\n",
 							MUIC_DEV_NAME, __func__);
 					muic_data->delayed_523Kto619K_state = 1;
 
@@ -1639,7 +1631,7 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 				}
 			} else {
 				new_dev = ATTACHED_DEV_JIG_UART_ON_MUIC;
-				sm5714_info("[%s:%s] JIG_UART_ON(619K)\n",
+				pr_info("[%s:%s] JIG_UART_ON(619K)\n",
 						MUIC_DEV_NAME, __func__);
 			}
 			break;
@@ -1650,11 +1642,11 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 		if (muic_data->pdic_info_data.pdic_evt_rprd) {
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_OTG_MUIC;
-			sm5714_info("[%s:%s] USB_OTG\n", MUIC_DEV_NAME, __func__);
+			pr_info("[%s:%s] USB_OTG\n", MUIC_DEV_NAME, __func__);
 		} else if (muic_data->pdic_info_data.pdic_evt_dcdcnt) {
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_TIMEOUT_OPEN_MUIC;
-			sm5714_info("[%s:%s] CC INCOMPLETE INSERTION\n",
+			pr_info("[%s:%s] CC INCOMPLETE INSERTION\n",
 					MUIC_DEV_NAME, __func__);
 		}
 
@@ -1670,7 +1662,7 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 
 	if (dev1 & DEV_TYPE1_LO_TA) {
 		if (!vbvolt) {
-			sm5714_info("[%s:%s] DEV_TYPE1_LO_TA + NO VBUS\n",
+			pr_info("[%s:%s] DEV_TYPE1_LO_TA + NO VBUS\n",
 					MUIC_DEV_NAME, __func__);
 			return;
 		}
@@ -1680,57 +1672,57 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 #else
 		new_dev = ATTACHED_DEV_UNOFFICIAL_TA_MUIC;
 #endif
-		sm5714_info("[%s:%s] LO_TA\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] LO_TA\n", MUIC_DEV_NAME, __func__);
 	} else if (dev1 & DEV_TYPE1_U200) {
 		if ((irq == SM5714_MUIC_IRQ_WORK) || (irq == SM5714_MUIC_IRQ_PROBE)) {
 			if (!vbvolt) {
-				sm5714_info("[%s:%s] DEV_TYPE1_U200 + NO VBUS\n",
+				pr_info("[%s:%s] DEV_TYPE1_U200 + NO VBUS\n",
 						MUIC_DEV_NAME, __func__);
 				return;
 			}
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_UNOFFICIAL_TA_MUIC;
-			sm5714_info("[%s:%s] U200\n", MUIC_DEV_NAME, __func__);
+			pr_info("[%s:%s] U200\n", MUIC_DEV_NAME, __func__);
 
 		} else {
 			schedule_delayed_work(&muic_data->muic_U200_work,
 				msecs_to_jiffies(100)); /* 100ms */
-			sm5714_info("[%s:%s] muic_U200_work start\n",
+			pr_info("[%s:%s] muic_U200_work start\n",
 				MUIC_DEV_NAME, __func__);
 			return;
 		}
 	} else if (dev1 & DEV_TYPE1_CDP) {
 		if (!vbvolt) {
-			sm5714_info("[%s:%s] DEV_TYPE1_CDP + NO VBUS\n",
+			pr_info("[%s:%s] DEV_TYPE1_CDP + NO VBUS\n",
 					MUIC_DEV_NAME, __func__);
 			return;
 		}
 		intr = MUIC_INTR_ATTACH;
 		new_dev = ATTACHED_DEV_CDP_MUIC;
-		sm5714_info("[%s:%s] CDP\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] CDP\n", MUIC_DEV_NAME, __func__);
 	} else if ((dev1 & DEV_TYPE1_DCP) ||
 				(dev1 & DEV_TYPE1_AFC_DCP) ||
 				(dev1 & DEV_TYPE1_QC20_DCP)) {
 		if (!vbvolt) {
-			sm5714_info("[%s:%s] DEV_TYPE1_DCP + NO VBUS\n",
+			pr_info("[%s:%s] DEV_TYPE1_DCP + NO VBUS\n",
 					MUIC_DEV_NAME, __func__);
 			return;
 		}
 		intr = MUIC_INTR_ATTACH;
 		new_dev = ATTACHED_DEV_TA_MUIC;
-		sm5714_info("[%s:%s] DCP\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] DCP\n", MUIC_DEV_NAME, __func__);
 	} else if (dev1 & DEV_TYPE1_SDP) {
 		if (!vbvolt) {
-			sm5714_info("[%s:%s] DEV_TYPE1_SDP(USB) + NO VBUS\n",
+			pr_info("[%s:%s] DEV_TYPE1_SDP(USB) + NO VBUS\n",
 					MUIC_DEV_NAME, __func__);
 			return;
 		}
 		intr = MUIC_INTR_ATTACH;
 		new_dev = ATTACHED_DEV_USB_MUIC;
-		sm5714_info("[%s:%s] USB(SDP)\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] USB(SDP)\n", MUIC_DEV_NAME, __func__);
 	} else if (dev1 & DEV_TYPE1_DCD_OUT_SDP) {
 		if (!vbvolt) {
-			sm5714_info("[%s:%s] DEV_TYPE1_DCD_OUT_SDP + NO VBUS\n",
+			pr_info("[%s:%s] DEV_TYPE1_DCD_OUT_SDP + NO VBUS\n",
 					MUIC_DEV_NAME, __func__);
 			return;
 		}
@@ -1738,7 +1730,7 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 #if defined(CONFIG_MUIC_BCD_RESCAN)
 		if (muic_data->pdic_afc_state == SM5714_MUIC_AFC_NORMAL && muic_data->bc12_retry_count < muic_data->bc1p2_retry_count_max) {
 			muic_data->bc12_retry_count++;
-			sm5714_info("[%s:%s] DCD_OUT_SDP (bc12_retry_count=%d)\n",
+			pr_info("[%s:%s] DCD_OUT_SDP (bc12_retry_count=%d)\n",
 					MUIC_DEV_NAME, __func__, muic_data->bc12_retry_count);
 			msleep(50);
 			sm5714_muic_BCD_rescan(muic_data);
@@ -1748,7 +1740,7 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 
 		intr = MUIC_INTR_ATTACH;
 		new_dev = ATTACHED_DEV_TIMEOUT_OPEN_MUIC;
-		sm5714_info("[%s:%s] DCD_OUT_SDP\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] DCD_OUT_SDP\n", MUIC_DEV_NAME, __func__);
 	}
 
 	if (dev2 & DEV_TYPE2_JIG_UART_OFF) {
@@ -1756,32 +1748,32 @@ static void sm5714_muic_detect_dev(struct sm5714_muic_data *muic_data, int irq)
 
 		if (vbvolt) {
 			new_dev = ATTACHED_DEV_JIG_UART_OFF_VB_MUIC;
-			sm5714_info("[%s:%s] JIG_UART_OFF(523K) + VBUS\n",
+			pr_info("[%s:%s] JIG_UART_OFF(523K) + VBUS\n",
 					MUIC_DEV_NAME, __func__);
 		} else {
 			new_dev = ATTACHED_DEV_JIG_UART_OFF_MUIC;
-			sm5714_info("[%s:%s] JIG_UART_OFF(523K)\n",
+			pr_info("[%s:%s] JIG_UART_OFF(523K)\n",
 					MUIC_DEV_NAME, __func__);
 		}
 	} else if (dev2 & DEV_TYPE2_JIG_UART_ON) {
 		intr = MUIC_INTR_ATTACH;
 		new_dev = ATTACHED_DEV_JIG_UART_ON_MUIC;
-		sm5714_info("[%s:%s] JIG_UART_ON(619K)\n",
+		pr_info("[%s:%s] JIG_UART_ON(619K)\n",
 				MUIC_DEV_NAME, __func__);
 	} else if (dev2 & DEV_TYPE2_JIG_USB_OFF) {
 		if (vbvolt) {
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_USB_OFF_MUIC;
-			sm5714_info("[%s:%s] JIG_USB_OFF(255K)\n",
+			pr_info("[%s:%s] JIG_USB_OFF(255K)\n",
 				MUIC_DEV_NAME, __func__);
 		}
 	} else if (dev2 & DEV_TYPE2_JIG_USB_ON) {
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_JIG_USB_ON_MUIC;
-			sm5714_info("[%s:%s] JIG_USB_ON(301K)\n",
+			pr_info("[%s:%s] JIG_USB_ON(301K)\n",
 				MUIC_DEV_NAME, __func__);
 	} else if (dev2 & DEV_TYPE2_DEBUG_JTAG) {
-		sm5714_info("[%s:%s] DEBUG_JTAG\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] DEBUG_JTAG\n", MUIC_DEV_NAME, __func__);
 		intr = MUIC_INTR_ATTACH;
 		new_dev = ATTACHED_DEV_NONE_MUIC;
 		com_to_JTAG(muic_data);
@@ -1802,7 +1794,7 @@ static int sm5714_muic_reg_init(struct sm5714_muic_data *muic_data)
 	int afcstatus = 0, vbus_voltage = 0;
 	int cfg1 = 0, cfg2 = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_CNTL, 0x24);
 	sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCCNTL, 0x00);
@@ -1828,14 +1820,14 @@ static int sm5714_muic_reg_init(struct sm5714_muic_data *muic_data)
 	cntl |= (CTRL_DCDTIMER_MASK & 0x08);
 	sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_CNTL, cntl);
 
-	sm5714_info("[%s:%s] intmask1:0x%x, intmask2:0x%x, cntl:0x%x, mansw:0x%x\n",
+	pr_info("[%s:%s] intmask1:0x%x, intmask2:0x%x, cntl:0x%x, mansw:0x%x\n",
 		MUIC_DEV_NAME, __func__, intmask1, intmask2, cntl, manualsw);
-	sm5714_info("[%s:%s] dev1:0x%x, dev2:0x%x, afccntl:0x%x, afctxd:0x%x\n",
+	pr_info("[%s:%s] dev1:0x%x, dev2:0x%x, afccntl:0x%x, afctxd:0x%x\n",
 		MUIC_DEV_NAME, __func__, dev1, dev2, afccntl, afctxd);
-	sm5714_info("[%s:%s] afcstatus:0x%x, vbus_voltage:0x%x\n",
+	pr_info("[%s:%s] afcstatus:0x%x, vbus_voltage:0x%x\n",
 		MUIC_DEV_NAME, __func__, afcstatus, vbus_voltage);
 
-	sm5714_info("[%s:%s] cfg1:0x%x, cfg2=0x%x\n",
+	pr_info("[%s:%s] cfg1:0x%x, cfg2=0x%x\n",
 		MUIC_DEV_NAME, __func__, cfg1, cfg2);
 
 	return ret;
@@ -1850,18 +1842,18 @@ static irqreturn_t sm5714_muic_irq_thread(int irq, void *data)
 	__pm_stay_awake(muic_data->wake_lock);
 
 	if (irq != (SM5714_MUIC_IRQ_PROBE)) {
-		sm5714_info("[%s:%s] irq_gpio(%d), irq (%d), irq_num(%d:%s)\n",
+		pr_info("[%s:%s] irq_gpio(%d), irq (%d), irq_num(%d:%s)\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->mfd_pdata->irq_base, irq, irq_num,
 				SM5714_MUIC_INT_NAME[irq_num]);
 	} else {
-		sm5714_info("[%s:%s] irq_gpio(%d), irq (%d), irq_num(%d)\n",
+		pr_info("[%s:%s] irq_gpio(%d), irq (%d), irq_num(%d)\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->mfd_pdata->irq_base, irq, irq_num);
 	}
 
 	if (irq_num == SM5714_MUIC_IRQ_INT1_VBUS_RID_DETACH) {
-		sm5714_info("%s: afc_retry_work(INT1_DETACH) cancel\n", __func__);
+		pr_info("%s: afc_retry_work(INT1_DETACH) cancel\n", __func__);
 		cancel_delayed_work(&muic_data->afc_retry_work);
 		cancel_delayed_work(&muic_data->afc_torch_work);
 #if IS_ENABLED(CONFIG_MUIC_SUPPORT_PDIC)
@@ -1911,7 +1903,7 @@ EOH:
 	__pm_relax(muic_data->wake_lock);
 	mutex_unlock(&muic_data->muic_mutex);
 
-	sm5714_info("[%s:%s] done\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] done\n", MUIC_DEV_NAME, __func__);
 	return IRQ_HANDLED;
 }
 
@@ -1920,7 +1912,7 @@ static void sm5714_muic_handle_event(struct work_struct *work)
 	struct sm5714_muic_data *muic_data = container_of(work,
 			struct sm5714_muic_data, muic_event_work);
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	mutex_lock(&muic_data->muic_mutex);
 	__pm_stay_awake(muic_data->wake_lock);
@@ -1933,7 +1925,7 @@ static void sm5714_muic_U200_delayed_noti(struct work_struct *work)
 {
 	struct sm5714_muic_data *muic_data = static_data;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	mutex_lock(&muic_data->muic_mutex);
 	__pm_stay_awake(muic_data->wake_lock);
@@ -1946,7 +1938,7 @@ static void sm5714_muic_delayed_523Kto619K_work(struct work_struct *work)
 {
 	struct sm5714_muic_data *muic_data = static_data;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	mutex_lock(&muic_data->muic_mutex);
 	__pm_stay_awake(muic_data->wake_lock);
@@ -1967,7 +1959,7 @@ static int sm5714_muic_handle_vbus_notification(struct notifier_block *nb,
 	muic_data->vbus_state = vbus_type;
 
 	if (muic_data->is_water_detect) {
-		sm5714_info("[%s:%s] vbus(%d) water(%d)\n", MUIC_DEV_NAME, __func__,
+		pr_info("[%s:%s] vbus(%d) water(%d)\n", MUIC_DEV_NAME, __func__,
 				vbus_type, muic_data->is_water_detect);
 
 		switch (vbus_type) {
@@ -1998,11 +1990,11 @@ static int sm5714_muic_pdic_set_hiccup_mode(int val)
 		return 0;
 #if IS_ENABLED(CONFIG_HICCUP_CC_DISABLE)
 	if (muic_data->shut_down) {
-		sm5714_info("[%s:%s] do not set after shutdown.\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] do not set after shutdown.\n", MUIC_DEV_NAME, __func__);
 		return 0;
 	}
 #endif
-	sm5714_info("[%s:%s] val = %d\n", MUIC_DEV_NAME, __func__, val);
+	pr_info("[%s:%s] val = %d\n", MUIC_DEV_NAME, __func__, val);
 
 	if (val == 1) { /* Hiccup mode on */
 		muic_notifier_attach_attached_dev(ATTACHED_DEV_HICCUP_MUIC);
@@ -2022,7 +2014,7 @@ static int sm5714_muic_hv_charger_init(void)
 
 	if (!muic_data || !muic_data->pdata ||
 		!test_bit(MUIC_PROBE_DONE, &muic_data->pdata->driver_probe_flag)) {
-		sm5714_info("[%s:%s] skip\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] skip\n", MUIC_DEV_NAME, __func__);
 		return 0;
 	}	
 	
@@ -2063,15 +2055,15 @@ static void sm5714_muic_debug_reg_log(struct work_struct *work)
 	data[16] = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFC_STATE);
 	data[17] = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_OTP_IF_STS);
 
-	sm5714_info("[%s:%s]IM[0x%02x 0x%02x] CNTL:0x%02x MAN_SW:0x%02x DEV_TYPE[0x%02x 0x%02x] attached_dev:%d\n",
+	pr_info("[%s:%s]IM[0x%02x 0x%02x] CNTL:0x%02x MAN_SW:0x%02x DEV_TYPE[0x%02x 0x%02x] attached_dev:%d\n",
 			MUIC_DEV_NAME, __func__, data[0], data[1], data[2],
 			data[3], data[4], data[5], muic_data->attached_dev);
 
-	sm5714_info("[%s:%s]AFC_CNTL:0x%02x AFC_TXD:0x%02x AFC_STATUS:0x%02x VBUS_VOL:%d AFC_STA:0x%02x",
+	pr_info("[%s:%s]AFC_CNTL:0x%02x AFC_TXD:0x%02x AFC_STATUS:0x%02x VBUS_VOL:%d AFC_STA:0x%02x",
 			MUIC_DEV_NAME, __func__, data[6], data[7],
 			data[8], data[9], data[10]);
 
-	sm5714_info("[%s:%s]CFG1:0x%02x CFG2:0x%02x USBKS:0x%02x VBUS:0x%02x BCD_STATE:0x%02x AFC_STATE:0x%02x OTP_IF_STS:0x%02x\n",
+	pr_info("[%s:%s]CFG1:0x%02x CFG2:0x%02x USBKS:0x%02x VBUS:0x%02x BCD_STATE:0x%02x AFC_STATE:0x%02x OTP_IF_STS:0x%02x\n",
 			MUIC_DEV_NAME, __func__, data[11], data[12], data[13],
 			data[14], data[15], data[16], data[17]);
 
@@ -2085,16 +2077,16 @@ static int sm5714_init_rev_info(struct sm5714_muic_data *muic_data)
 	int dev_id = 0;
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	dev_id = sm5714_i2c_read_byte(muic_data->i2c, SM5714_MUIC_REG_DeviceID);
 	if (dev_id < 0) {
-		sm5714_err("[%s:%s] dev_id(%d)\n", MUIC_DEV_NAME, __func__, dev_id);
+		pr_err("[%s:%s] dev_id(%d)\n", MUIC_DEV_NAME, __func__, dev_id);
 		ret = -ENODEV;
 	} else {
 		muic_data->muic_vendor = (dev_id & 0x07);
 		muic_data->muic_version = 0x00;
-		sm5714_info("[%s:%s] vendor=0x%x, ver=0x%x, dev_id=0x%x\n",
+		pr_info("[%s:%s] vendor=0x%x, ver=0x%x, dev_id=0x%x\n",
 			MUIC_DEV_NAME, __func__, muic_data->muic_vendor,
 			muic_data->muic_version, dev_id);
 	}
@@ -2106,7 +2098,7 @@ do {									\
 	ret = request_threaded_irq(_irq, NULL, sm5714_muic_irq_thread,	\
 				0, _name, _dev_id);	\
 	if (ret < 0) {							\
-		sm5714_err("[%s:%s] Failed to request IRQ #%d: %d\n",	\
+		pr_err("[%s:%s] Failed to request IRQ #%d: %d\n",	\
 				MUIC_DEV_NAME, __func__, _irq, ret);	\
 		_irq = 0;						\
 	}								\
@@ -2172,17 +2164,17 @@ static int sm5714_muic_irq_init(struct sm5714_muic_data *muic_data)
 
 	}
 
-	sm5714_info("[%s:%s] muic-dpdm_ovp(%d), muic-vbus_rid_detach(%d), muic-rid_detect(%d)",
+	pr_info("[%s:%s] muic-dpdm_ovp(%d), muic-vbus_rid_detach(%d), muic-rid_detect(%d)",
 		MUIC_DEV_NAME, __func__, muic_data->irqs.irq_dpdm_ovp,
 		muic_data->irqs.irq_vbus_rid_detach,
 		muic_data->irqs.irq_rid_detect);
 
-	sm5714_info("[%s:%s] muic-chgtype_attach(%d), muic-dectimeout(%d), muic-afc_error(%d), muic-afc_sta_chg(%d)\n",
+	pr_info("[%s:%s] muic-chgtype_attach(%d), muic-dectimeout(%d), muic-afc_error(%d), muic-afc_sta_chg(%d)\n",
 		MUIC_DEV_NAME, __func__, muic_data->irqs.irq_chgtype_attach,
 		muic_data->irqs.irq_dectimeout, muic_data->irqs.irq_afc_error,
 		muic_data->irqs.irq_afc_sta_chg);
 
-	sm5714_info("[%s:%s] muic-multi_byte(%d), muic-afc_accepted(%d), muic-afc_ta_attached(%d)\n",
+	pr_info("[%s:%s] muic-multi_byte(%d), muic-afc_accepted(%d), muic-afc_ta_attached(%d)\n",
 		MUIC_DEV_NAME, __func__, muic_data->irqs.irq_multi_byte,
 		muic_data->irqs.irq_afc_accepted,
 		muic_data->irqs.irq_afc_ta_attached);
@@ -2194,14 +2186,14 @@ static int sm5714_muic_irq_init(struct sm5714_muic_data *muic_data)
 do {									\
 	if (_irq) {							\
 		free_irq(_irq, _dev_id);				\
-		sm5714_info("[%s:%s] IRQ(%d):%s free done\n", MUIC_DEV_NAME,\
+		pr_info("[%s:%s] IRQ(%d):%s free done\n", MUIC_DEV_NAME,\
 				__func__, _irq, _name);			\
 	}								\
 } while (0)
 
 static void sm5714_muic_free_irqs(struct sm5714_muic_data *muic_data)
 {
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	/* free MUIC IRQ */
 	FREE_IRQ(muic_data->irqs.irq_dpdm_ovp, muic_data, "muic-dpdm_ovp");
@@ -2236,7 +2228,7 @@ static void sm5714_set_bc1p2_retry_count(struct sm5714_muic_data *muic_data)
 	else
 		muic_data->bc1p2_retry_count_max = 1; /* default retry count */
 
-	sm5714_info("%s:%s BC1p2 Retry count: %d\n", MUIC_DEV_NAME,
+	pr_info("%s:%s BC1p2 Retry count: %d\n", MUIC_DEV_NAME,
 				__func__, muic_data->bc1p2_retry_count_max);
 }
 #endif
@@ -2248,17 +2240,17 @@ static int of_sm5714_muic_dt(struct device *dev,
 	struct device_node *np, *np_muic;
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	np = dev->parent->of_node;
 	if (!np) {
-		sm5714_err("[%s:%s] could not find np\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] could not find np\n", MUIC_DEV_NAME, __func__);
 		return -ENODEV;
 	}
 
 	np_muic = of_find_node_by_name(np, "muic");
 	if (!np_muic) {
-		sm5714_err("[%s:%s] could not find muic sub-node np_muic\n",
+		pr_err("[%s:%s] could not find muic sub-node np_muic\n",
 				MUIC_DEV_NAME, __func__);
 		return -EINVAL;
 	}
@@ -2283,7 +2275,7 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 	struct sm5714_muic_data *muic_data;
 	int ret = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	muic_data = kzalloc(sizeof(struct sm5714_muic_data), GFP_KERNEL);
 	if (!muic_data) {
@@ -2292,7 +2284,7 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 	}
 
 	if (!mfd_pdata) {
-		sm5714_err("[%s:%s] failed to get sm5714 mfd platform data\n",
+		pr_err("[%s:%s] failed to get sm5714 mfd platform data\n",
 				MUIC_DEV_NAME, __func__);
 		ret = -ENOMEM;
 		goto err_kfree1;
@@ -2347,7 +2339,7 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 #if defined(CONFIG_OF)
 	ret = of_sm5714_muic_dt(&pdev->dev, muic_data);
 	if (ret < 0)
-		sm5714_err("[%s:%s] no muic dt! ret[%d]\n",
+		pr_err("[%s:%s] no muic dt! ret[%d]\n",
 				MUIC_DEV_NAME, __func__, ret);
 #endif /* CONFIG_OF */
 
@@ -2375,7 +2367,7 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 		ret = muic_data->pdata->init_gpio_cb();
 #endif
 	if (ret) {
-		sm5714_err("[%s:%s] failed to init gpio(%d)\n",
+		pr_err("[%s:%s] failed to init gpio(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 		goto fail_init_gpio;
 	}
@@ -2384,24 +2376,23 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 	if (switch_device) {
 		ret = sysfs_create_group(&switch_device->kobj, &sm5714_muic_group);
 		if (ret) {
-			sm5714_err("[%s:%s] failed to create sysfs\n",
+			pr_err("[%s:%s] failed to create sysfs\n",
 					MUIC_DEV_NAME, __func__);
 			goto fail;
 		}
-		kobject_uevent(&switch_device->kobj, KOBJ_CHANGE);
 		dev_set_drvdata(switch_device, muic_data);
 	}
 
 	ret = sm5714_init_rev_info(muic_data);
 	if (ret) {
-		sm5714_err("[%s:%s] failed to init muic(%d)\n",
+		pr_err("[%s:%s] failed to init muic(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 		goto fail;
 	}
 
 	ret = sm5714_muic_reg_init(muic_data);
 	if (ret) {
-		sm5714_err("[%s:%s] failed to init muic(%d)\n",
+		pr_err("[%s:%s] failed to init muic(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 		goto fail;
 	}
@@ -2411,17 +2402,17 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 
 	muic_data->is_rustproof = muic_data->pdata->rustproof_on;
 	if (muic_data->is_rustproof) {
-		sm5714_err("[%s:%s] rustproof is enabled\n",
+		pr_err("[%s:%s] rustproof is enabled\n",
 				MUIC_DEV_NAME, __func__);
 		com_to_open(muic_data);
 	}
 
 
 	if (get_afc_mode() == CH_MODE_AFC_DISABLE_VAL) {
-		sm5714_info("[%s:%s] AFC mode disabled\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] AFC mode disabled\n", MUIC_DEV_NAME, __func__);
 		muic_data->pdata->afc_disable = true;
 	} else {
-		sm5714_info("[%s:%s] AFC mode enabled\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] AFC mode enabled\n", MUIC_DEV_NAME, __func__);
 		muic_data->pdata->afc_disable = false;
 	}
 
@@ -2449,7 +2440,7 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 
 	ret = sm5714_muic_irq_init(muic_data);
 	if (ret) {
-		sm5714_err("[%s:%s] failed to init irq(%d)\n",
+		pr_err("[%s:%s] failed to init irq(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 		goto fail_init_irq;
 	}
@@ -2464,7 +2455,7 @@ static int sm5714_muic_probe(struct platform_device *pdev)
 	if (muic_data->pdata->opmode & OPMODE_PDIC)
 		sm5714_muic_register_pdic_notifier(muic_data);
 	else
-		sm5714_info("[%s:%s] OPMODE_MUIC, PDIC NOTIFIER is not used.\n",
+		pr_info("[%s:%s] OPMODE_MUIC, PDIC NOTIFIER is not used.\n",
 				MUIC_DEV_NAME, __func__);
 #endif
 
@@ -2501,7 +2492,7 @@ static int sm5714_muic_remove(struct platform_device *pdev)
 		sysfs_remove_group(&switch_device->kobj, &sm5714_muic_group);
 
 	if (muic_data) {
-		sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 		cancel_delayed_work_sync(&muic_data->muic_debug_work);
 		cancel_delayed_work_sync(&muic_data->muic_U200_work);
@@ -2534,25 +2525,25 @@ static void sm5714_muic_shutdown(struct platform_device *pdev)
 
 	sm5714_muic_free_irqs (muic_data);
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 	if (!muic_data->i2c) {
-		sm5714_err("[%s:%s] no muic i2c client\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] no muic i2c client\n", MUIC_DEV_NAME, __func__);
 		return;
 	}
 
-	sm5714_info("[%s:%s] open D+,D-,V_bus line\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] open D+,D-,V_bus line\n", MUIC_DEV_NAME, __func__);
 	ret = com_to_open(muic_data);
 	if (ret < 0)
-		sm5714_err("[%s:%s] fail to open mansw\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] fail to open mansw\n", MUIC_DEV_NAME, __func__);
 
 	/* set auto sw mode before shutdown to make sure device goes into */
 	/* LPM charging when TA or USB is connected during off state */
-	sm5714_info("[%s:%s] muic auto detection enable\n",
+	pr_info("[%s:%s] muic auto detection enable\n",
 			MUIC_DEV_NAME, __func__);
 
 	ret = set_manual_sw(muic_data, MANSW_AUTOMATIC); /* auto:0  manual:1 */
 	if (ret < 0) {
-		sm5714_err("[%s:%s] fail to update reg\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] fail to update reg\n", MUIC_DEV_NAME, __func__);
 		return;
 	}
 

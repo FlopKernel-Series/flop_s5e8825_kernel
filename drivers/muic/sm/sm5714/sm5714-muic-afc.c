@@ -30,7 +30,6 @@
 #include "../../../battery/common/sec_battery.h"
 #endif
 
-#include <linux/mfd/sm/sm5714/sm5714_log.h>
 #include <linux/mfd/sm/sm5714/sm5714.h>
 #include <linux/mfd/sm/sm5714/sm5714-private.h>
 
@@ -59,15 +58,15 @@ static int sm5714_muic_get_vbus(void)
 
 	reg_vbus = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_VBUS);
 	vbus_valid = (reg_vbus&0x04)>>2;
-	sm5714_info("[%s:%s] REG_VBUS:0x%x, vbus_valid(%d)", MUIC_DEV_NAME,
+	pr_info("[%s:%s] REG_VBUS:0x%x, vbus_valid(%d)", MUIC_DEV_NAME,
 		__func__, reg_vbus, vbus_valid);
 	if (!vbus_valid) {
-		sm5714_info("[%s:%s] skip : NO VBUS\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] skip : NO VBUS\n", MUIC_DEV_NAME, __func__);
 		return 0;
 	}
 
 	intmask2 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_INTMASK2);
-	sm5714_info("[%s:%s] REG_INTMASK2:0x%x\n", MUIC_DEV_NAME,
+	pr_info("[%s:%s] REG_INTMASK2:0x%x\n", MUIC_DEV_NAME,
 		__func__, intmask2);
 	if (!(intmask2&INT2_VBUS_UPDATE_MASK)) {
 		intmask2 = intmask2 | INT2_VBUS_UPDATE_MASK;
@@ -80,30 +79,30 @@ static int sm5714_muic_get_vbus(void)
 		usleep_range(5000, 5100);
 		irqvbus = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_INT2);
 		if (irqvbus & INT2_VBUS_UPDATE_MASK) {
-			sm5714_info("[%s:%s] VBUS update Success(%d), retry: (%d)\n",
+			pr_info("[%s:%s] VBUS update Success(%d), retry: (%d)\n",
 				MUIC_DEV_NAME, __func__, irqvbus, retry);
 			break;
 		}
-		sm5714_info("[%s:%s] VBUS update Fail(%d), retry: (%d)\n",
+		pr_info("[%s:%s] VBUS update Fail(%d), retry: (%d)\n",
 				MUIC_DEV_NAME, __func__, irqvbus, retry);
 	}
 
 	sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_VBUS_READ, 0);
 
 	if (retry >= 5) {
-		sm5714_info("[%s:%s] VBUS update Failed(%d)\n", MUIC_DEV_NAME,
+		pr_info("[%s:%s] VBUS update Failed(%d)\n", MUIC_DEV_NAME,
 				__func__, retry);
 		return 0;
 	}
 
 	voltage = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_VBUS_VOLTAGE);
 	if (voltage < 0)
-		sm5714_err("[%s:%s] err read VBUS VOLTAGE(0x%2x)\n", MUIC_DEV_NAME,
+		pr_err("[%s:%s] err read VBUS VOLTAGE(0x%2x)\n", MUIC_DEV_NAME,
 				__func__, voltage);
 
 	vbus_voltage = voltage*100;
 
-	sm5714_info("[%s:%s] voltage=[0x%02x] vbus_voltage=%d mV, attached_dev(%d)\n",
+	pr_info("[%s:%s] voltage=[0x%02x] vbus_voltage=%d mV, attached_dev(%d)\n",
 		MUIC_DEV_NAME, __func__, voltage, vbus_voltage,
 		muic_data->attached_dev);
 
@@ -119,7 +118,7 @@ int sm5714_muic_get_vbus_voltage(void)
 	vbus_voltage = sm5714_muic_get_vbus();
 	mutex_unlock(&muic_data->afc_mutex);
 
-	sm5714_info("[%s:%s] vbus_voltage=%d mV\n",
+	pr_info("[%s:%s] vbus_voltage=%d mV\n",
 		MUIC_DEV_NAME, __func__, vbus_voltage);
 
 	return vbus_voltage;
@@ -128,7 +127,7 @@ EXPORT_SYMBOL(sm5714_muic_get_vbus_voltage);
 
 int muic_request_disable_afc_state(void)
 {
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	muic_afc_request_voltage(FLED, 5); /* 9V(12V) -> 5V */
 
@@ -140,12 +139,12 @@ int muic_check_fled_state(int enable, int mode)
 {
 	struct sm5714_muic_data *muic_data = afc_init_data;
 
-	sm5714_info("[%s:%s] enable(%d), mode(%d)\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] enable(%d), mode(%d)\n", MUIC_DEV_NAME, __func__,
 			enable, mode);
 
 	if (mode == FLED_MODE_TORCH) { /* torch */
 		cancel_delayed_work(&muic_data->afc_torch_work);
-		sm5714_info("[%s:%s] afc_torch_work cancel\n",
+		pr_info("[%s:%s] afc_torch_work cancel\n",
 				MUIC_DEV_NAME, __func__);
 
 		muic_data->fled_torch_enable = enable;
@@ -153,26 +152,26 @@ int muic_check_fled_state(int enable, int mode)
 		muic_data->fled_flash_enable = enable;
 		if (enable) {
 			cancel_delayed_work(&muic_data->afc_torch_work);
-			sm5714_info("[%s:%s] afc_torch_work cancel\n",
+			pr_info("[%s:%s] afc_torch_work cancel\n",
 				MUIC_DEV_NAME, __func__);
 		}
 	}
 
-	sm5714_info("[%s:%s] fled_torch_enable(%d), fled_flash_enable(%d)\n",
+	pr_info("[%s:%s] fled_torch_enable(%d), fled_flash_enable(%d)\n",
 			MUIC_DEV_NAME, __func__, muic_data->fled_torch_enable,
 			muic_data->fled_flash_enable);
 
 	if ((muic_data->fled_torch_enable == false) &&
 			(muic_data->fled_flash_enable == false)) {
 		if ((mode == FLED_MODE_TORCH) && (enable == false)) {
-			muic_afc_request_cause_clear_bit(FLED);
 			cancel_delayed_work(&muic_data->afc_torch_work);
 			schedule_delayed_work(&muic_data->afc_torch_work,
 					msecs_to_jiffies(5000));
-			sm5714_info("[%s:%s] afc_torch_work start(5sec)\n",
+			pr_info("[%s:%s] afc_torch_work start(5sec)\n",
 					MUIC_DEV_NAME, __func__);
 		} else {
 			muic_afc_request_voltage(FLED, 9);  /* 5V -> 9V(12V) */
+
 		}
 	}
 
@@ -187,7 +186,7 @@ bool sm5714_is_afc_disabled(struct sm5714_muic_data *muic_data)
 				(muic_data->is_water_detect);
 
 	if (ret) {
-		sm5714_info("[%s:%s] Torch(%d), Flash(%d), Water(%d), AFC DISABLED\n",
+		pr_info("[%s:%s] Torch(%d), Flash(%d), Water(%d), AFC DISABLED\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->fled_torch_enable,
 				muic_data->fled_flash_enable,
@@ -201,13 +200,13 @@ int muic_disable_afc(int disable)
 	struct sm5714_muic_data *muic_data = afc_init_data;
 	int ret = 0;
 
-	sm5714_info("[%s:%s] disable: %d\n", MUIC_DEV_NAME, __func__, disable);
+	pr_info("[%s:%s] disable: %d\n", MUIC_DEV_NAME, __func__, disable);
 
 	if (disable) { /* AFC disable : 9V(12V) -> 5V */
 		switch (muic_data->attached_dev) {
 		case ATTACHED_DEV_AFC_CHARGER_9V_MUIC:
 		case ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC:
-			sm5714_info("[%s:%s] AFC TA attached_dev(%d)\n",
+			pr_info("[%s:%s] AFC TA attached_dev(%d)\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->attached_dev);
 
@@ -217,7 +216,7 @@ int muic_disable_afc(int disable)
 			break;
 		case ATTACHED_DEV_QC_CHARGER_9V_MUIC:
 		case ATTACHED_DEV_QC_CHARGER_PREPARE_MUIC:
-			sm5714_info("[%s:%s] QC20 TA attached_dev(%d)\n",
+			pr_info("[%s:%s] QC20 TA attached_dev(%d)\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->attached_dev);
 
@@ -225,7 +224,7 @@ int muic_disable_afc(int disable)
 					SM5714_MUIC_QC20);
 			break;
 		default:
-			sm5714_info("[%s:%s] skip: attached_dev(%d)\n",
+			pr_info("[%s:%s] skip: attached_dev(%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 			break;
@@ -233,7 +232,7 @@ int muic_disable_afc(int disable)
 	} else { /* AFC enable : 5V -> 9V(12V) */
 #if IS_ENABLED(CONFIG_MUIC_SUPPORT_PDIC)
 		if (muic_data->pdic_afc_state == SM5714_MUIC_AFC_ABNORMAL) {
-			sm5714_info("[%s:%s] pdic abnormal: AFC(QC20) skip\n",
+			pr_info("[%s:%s] pdic abnormal: AFC(QC20) skip\n",
 					MUIC_DEV_NAME, __func__);
 			return 0;
 		}
@@ -242,7 +241,7 @@ int muic_disable_afc(int disable)
 		switch (muic_data->attached_dev) {
 		case ATTACHED_DEV_AFC_CHARGER_5V_MUIC:
 		case ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC:
-			sm5714_info("[%s:%s] attached_dev(%d)\n",
+			pr_info("[%s:%s] attached_dev(%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 			sm5714_muic_voltage_control(muic_data,
@@ -252,14 +251,14 @@ int muic_disable_afc(int disable)
 			break;
 		case ATTACHED_DEV_QC_CHARGER_5V_MUIC:
 		case ATTACHED_DEV_QC_CHARGER_PREPARE_MUIC:
-			sm5714_info("[%s:%s] attached_dev(%d)\n",
+			pr_info("[%s:%s] attached_dev(%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 			sm5714_muic_voltage_control(muic_data, SM5714_ENQC20_9V,
 					SM5714_MUIC_QC20);
 			break;
 		default:
-			sm5714_info("[%s:%s] skip: attached_dev(%d)\n",
+			pr_info("[%s:%s] skip: attached_dev(%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 			break;
@@ -290,19 +289,19 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 	int i = 0, vbus_check = 0;
 	union power_supply_propval value;
 
-	sm5714_info("[%s:%s] afctxd(0x%x), qc20(0x%x)\n",
+	pr_info("[%s:%s] afctxd(0x%x), qc20(0x%x)\n",
 			MUIC_DEV_NAME, __func__, afctxd, qc20);
 
 	mutex_lock(&muic_data->afc_mutex);
 	/* QC20 */
 	if (qc20 == SM5714_MUIC_QC20) {
-		sm5714_info("[%s:%s]QC20: afctxd(0x%x)\n",
+		pr_info("[%s:%s]QC20: afctxd(0x%x)\n",
 			MUIC_DEV_NAME, __func__, afctxd);
 
 		ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCCNTL);
 		reg_val = (ret & 0x3F) | (afctxd<<6);
 		sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCCNTL, reg_val);
-		sm5714_info("[%s:%s] read REG_AFCCNTL=0x%x ,  write REG_AFCCNTL=0x%x , qc20_vbus=%d\n",
+		pr_info("[%s:%s] read REG_AFCCNTL=0x%x ,  write REG_AFCCNTL=0x%x , qc20_vbus=%d\n",
 				MUIC_DEV_NAME, __func__, ret, reg_val, afctxd);
 
 		/* VBUS check */
@@ -317,7 +316,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 		vbus_check = 0;
 		for (i = 0 ; i < 5 ; i++) {
 			vbus_voltage = sm5714_muic_get_vbus_value(muic_data);
-			sm5714_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
+			pr_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
 					MUIC_DEV_NAME, __func__,
 					i, vbus_txd_voltage,
 					voltage_min, voltage_max,
@@ -329,7 +328,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 				i = 10; /* break */
 			} else {
 				msleep(100);
-				sm5714_info("[%s:%s] retry:%d\n",
+				pr_info("[%s:%s] retry:%d\n",
 					MUIC_DEV_NAME, __func__, i);
 			}
 		}
@@ -340,7 +339,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 			sm5714_afc_notifier_attach(muic_data,
 				SM5714_MUIC_QC20, 5);
 	} else { /* AFC TA */
-		sm5714_info("[%s:%s] AFC: afctxd(0x%x)\n",
+		pr_info("[%s:%s] AFC: afctxd(0x%x)\n",
 				MUIC_DEV_NAME, __func__, afctxd);
 
 		muic_data->attached_dev = ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC;
@@ -354,11 +353,11 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 					POWER_SUPPLY_PROP_CURRENT_MAX, value);
 #endif
 			if (value.intval <= 500) {
-				sm5714_info("[%s:%s]PREPARE Success(%d mA), retry(%d)\n",
+				pr_info("[%s:%s]PREPARE Success(%d mA), retry(%d)\n",
 						MUIC_DEV_NAME, __func__, value.intval, retry);
 				break;
 			}
-			sm5714_info("[%s:%s]PREPARE fail(%d mA), retry(%d)\n", MUIC_DEV_NAME, __func__,
+			pr_info("[%s:%s]PREPARE fail(%d mA), retry(%d)\n", MUIC_DEV_NAME, __func__,
 					value.intval, retry);
 		}
 
@@ -380,7 +379,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 			irqafc = sm5714_i2c_read_byte(i2c,
 					SM5714_MUIC_REG_INT2);
 			if (irqafc & INT2_AFC_ACCEPTED_MASK) {
-				sm5714_info("[%s:%s] AFC_ACCEPTED Success(0x%x), retry(%d)\n",
+				pr_info("[%s:%s] AFC_ACCEPTED Success(0x%x), retry(%d)\n",
 						MUIC_DEV_NAME, __func__,
 						irqafc, retry);
 				break;
@@ -392,7 +391,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 						SM5714_MUIC_REG_AFCSTATUS);
 				dev1 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_DEVICETYPE1);
 				
-				sm5714_info("[%s:%s] AFC_ERROR, afcstatus(0x%x), DEVICE_TYPE1(0x%x), irqafc(0x%x), retry(%d)\n",
+				pr_info("[%s:%s] AFC_ERROR, afcstatus(0x%x), DEVICE_TYPE1(0x%x), irqafc(0x%x), retry(%d)\n",
 						MUIC_DEV_NAME, __func__,
 						afcstatus, dev1, irqafc, retry);
 #if defined(CONFIG_MUIC_QC_DISABLE)
@@ -403,7 +402,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 					/* ENAFC set '0' */
 					sm5714_set_afc_ctrl_reg(muic_data,
 							AFCCTRL_ENAFC, 0);
-					sm5714_info("[%s:%s] QC20_TA, retry(%d)\n",
+					pr_info("[%s:%s] QC20_TA, retry(%d)\n",
 							MUIC_DEV_NAME, __func__, retry);
 
 					attached_dev = SM5714_MUIC_QC20;
@@ -417,7 +416,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 					ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCCNTL);
 					reg_val = (ret & 0x3F) | (qc20_temp<<6);
 					sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCCNTL, reg_val);
-					sm5714_info("[%s:%s] read REG_AFCCNTL=0x%x ,  write REG_AFCCNTL=0x%x , qc20_vbus=%d\n",
+					pr_info("[%s:%s] read REG_AFCCNTL=0x%x ,  write REG_AFCCNTL=0x%x , qc20_vbus=%d\n",
 							MUIC_DEV_NAME, __func__, ret, reg_val, qc20_temp);
 					break;
 #endif
@@ -426,11 +425,11 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 					/* ENAFC set '1' */
 					sm5714_set_afc_ctrl_reg(muic_data,
 						AFCCTRL_ENAFC, 1);
-					sm5714_info("[%s:%s] AFC_ERROR, afc_error_count(%d)\n",
+					pr_info("[%s:%s] AFC_ERROR, afc_error_count(%d)\n",
 						MUIC_DEV_NAME, __func__, afc_error_count);
 				}
 			} else {
-				sm5714_info("[%s:%s] AFC_ACCEPTED Fail(0x%x), retry(%d)\n",
+				pr_info("[%s:%s] AFC_ACCEPTED Fail(0x%x), retry(%d)\n",
 						MUIC_DEV_NAME, __func__,
 						irqafc, retry);
 			}
@@ -451,7 +450,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 		vbus_check = 0;
 		for (i = 0 ; i < 5 ; i++) {
 			vbus_voltage = sm5714_muic_get_vbus_value(muic_data);
-			sm5714_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
+			pr_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
 					MUIC_DEV_NAME, __func__,
 					i, vbus_txd_voltage,
 					voltage_min, voltage_max, vbus_voltage);
@@ -461,7 +460,7 @@ int sm5714_muic_voltage_control(struct sm5714_muic_data *muic_data,
 				i = 10; /* break */
 			} else {
 				msleep(100);
-				sm5714_info("[%s:%s] retry:%d\n",
+				pr_info("[%s:%s] retry:%d\n",
 					MUIC_DEV_NAME, __func__, i);
 			}
 		}
@@ -492,10 +491,10 @@ static void muic_afc_torch_work(struct work_struct *work)
 {
 	struct sm5714_muic_data *muic_data = afc_init_data;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	if ((muic_data->fled_torch_enable == 1) || (muic_data->fled_flash_enable == 1)) {
-		sm5714_info("[%s:%s] FLASH or Torch On, Skip 5V -> 9V\n",
+		pr_info("[%s:%s] FLASH or Torch On, Skip 5V -> 9V\n",
 			MUIC_DEV_NAME, __func__);
 		return;
 	}
@@ -510,11 +509,11 @@ int sm5714_set_afc_ctrl_reg(struct sm5714_muic_data *muic_data, int shift,
 	u8 reg_val = 0;
 	int ret = 0;
 
-	sm5714_info("[%s:%s] Register[%d], set [%d]\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] Register[%d], set [%d]\n", MUIC_DEV_NAME, __func__,
 			shift, on);
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCCNTL);
 	if (ret < 0)
-		sm5714_err("[%s:%s](%d)\n", MUIC_DEV_NAME, __func__, ret);
+		pr_err("[%s:%s](%d)\n", MUIC_DEV_NAME, __func__, ret);
 	if (on)
 		reg_val = ret | (0x1 << shift);
 	else
@@ -527,7 +526,7 @@ int sm5714_set_afc_ctrl_reg(struct sm5714_muic_data *muic_data, int shift,
 		ret = sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCCNTL,
 				reg_val);
 		if (ret < 0)
-			sm5714_err("[%s:%s] err write AFC_CTRL(%d)\n",
+			pr_err("[%s:%s] err write AFC_CTRL(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 	} else {
 		pr_debug("[%s:%s] (0x%x), just return\n",
@@ -537,7 +536,7 @@ int sm5714_set_afc_ctrl_reg(struct sm5714_muic_data *muic_data, int shift,
 
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCCNTL);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err read AFC_CTRL(%d)\n",
+		pr_err("[%s:%s] err read AFC_CTRL(%d)\n",
 			MUIC_DEV_NAME, __func__, ret);
 	else
 		pr_debug("[%s:%s] AFC_CTRL reg after change(0x%x)\n",
@@ -555,16 +554,16 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 	int retry = 0;
 	int dev1 = 0, dev2 = 0;
 
-	sm5714_info("[%s:%s] AFC_TA_ATTACHED\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] AFC_TA_ATTACHED\n", MUIC_DEV_NAME, __func__);
 
 	if (!afc_init_data->is_charger_ready) {
-		sm5714_info("[%s:%s] charger is not ready, return\n",
+		pr_info("[%s:%s] charger is not ready, return\n",
 				MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 
 	if (!afc_init_data->is_pdic_ready) {
-		sm5714_info("[%s:%s] pdic is not ready, return\n",
+		pr_info("[%s:%s] pdic is not ready, return\n",
 				MUIC_DEV_NAME, __func__);
 		return ret;
 	}
@@ -572,27 +571,27 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 	/* read VBUS VALID */
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_VBUS);
 	if (ret < 0) {
-		sm5714_err("[%s:%s] err read VBUS\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] err read VBUS\n", MUIC_DEV_NAME, __func__);
 		return 0;
 	}
-	sm5714_info("[%s:%s] VBUS[0x%02x]\n", MUIC_DEV_NAME, __func__, ret);
+	pr_info("[%s:%s] VBUS[0x%02x]\n", MUIC_DEV_NAME, __func__, ret);
 
 	vbvolt = (ret & 0x04) >> 2;
 	if (!vbvolt) {
-		sm5714_info("[%s:%s] VBUS NOT VALID [0x%02x] just return\n",
+		pr_info("[%s:%s] VBUS NOT VALID [0x%02x] just return\n",
 				MUIC_DEV_NAME, __func__, ret);
 		return 0;
 	}
 
 #if IS_ENABLED(CONFIG_MUIC_LO_TA_LOW_CURRENT)
 	if (muic_data->attached_dev == ATTACHED_DEV_LO_TA_MUIC) {
-		sm5714_info("[%s:%s] Cable is LO_TA, return\n",
+		pr_info("[%s:%s] Cable is LO_TA, return\n",
 				MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 #endif
 	if (muic_data->pdata->afc_disable) {
-		sm5714_info("[%s:%s] AFC is disabled by USER, return\n",
+		pr_info("[%s:%s] AFC is disabled by USER, return\n",
 				MUIC_DEV_NAME, __func__);
 		muic_data->attached_dev = ATTACHED_DEV_AFC_CHARGER_DISABLED_MUIC;
 		muic_notifier_attach_attached_dev(muic_data->attached_dev);
@@ -611,22 +610,22 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_DEVICETYPE1);
 	if (ret < 0) {
-		sm5714_err("[%s:%s] err read DEVICE TYPE1\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] err read DEVICE TYPE1\n", MUIC_DEV_NAME, __func__);
 		return 0;
 	}
 	dev1 = ret;
 
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_DEVICETYPE2);
 	if (ret < 0) {
-		sm5714_err("[%s:%s] err read DEVICE TYPE2\n", MUIC_DEV_NAME, __func__);
+		pr_err("[%s:%s] err read DEVICE TYPE2\n", MUIC_DEV_NAME, __func__);
 		return 0;
 	}
 	dev2 = ret;
 
-	sm5714_info("[%s:%s] DEVICE_TYPE1 [0x%02x], DEVICE_TYPE2 [0x%02x]\n",
+	pr_info("[%s:%s] DEVICE_TYPE1 [0x%02x], DEVICE_TYPE2 [0x%02x]\n",
 			MUIC_DEV_NAME, __func__, dev1, dev2);
 	if ((dev1 == 0x00) && (dev2 == 0x00)) {
-		sm5714_info("[%s:%s] No Device Type just return\n",
+		pr_info("[%s:%s] No Device Type just return\n",
 				MUIC_DEV_NAME, __func__);
 		return 0;
 	}
@@ -634,18 +633,18 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 	/* read clear : AFC_STATUS */
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCSTATUS);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err read AFC_STATUS\n",
+		pr_err("[%s:%s] err read AFC_STATUS\n",
 				MUIC_DEV_NAME, __func__);
-	sm5714_info("[%s:%s] AFC_STATUS [0x%02x]\n", MUIC_DEV_NAME, __func__, ret);
+	pr_info("[%s:%s] AFC_STATUS [0x%02x]\n", MUIC_DEV_NAME, __func__, ret);
 
 	if (sm5714_is_afc_disabled(muic_data)) {
-		sm5714_info("[%s:%s] Skip AFC\n",
+		pr_info("[%s:%s] Skip AFC\n",
 			MUIC_DEV_NAME, __func__);
 
 		afctxd = SM5714_MUIC_HV_5V;
 		ret = sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCTXD, afctxd);
 		if (ret < 0)
-			sm5714_err("[%s:%s] err write AFC_TXD(%d)\n",
+			pr_err("[%s:%s] err write AFC_TXD(%d)\n",
 					MUIC_DEV_NAME, __func__, ret);
 
 		muic_data->attached_dev = ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC;
@@ -660,7 +659,7 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 		cancel_delayed_work(&muic_data->afc_retry_work);
 		schedule_delayed_work(&muic_data->pdic_afc_work,
 				msecs_to_jiffies(200));
-		sm5714_info("[%s:%s] PDIC Abnormal State, pdic_afc_work(%d) start\n",
+		pr_info("[%s:%s] PDIC Abnormal State, pdic_afc_work(%d) start\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->pdic_afc_state_count);
 
@@ -679,18 +678,18 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 				POWER_SUPPLY_PROP_CURRENT_MAX, value);
 #endif
 		if (value.intval <= 500) {
-			sm5714_info("[%s:%s]PREPARE Success(%d mA), retry(%d)\n",
+			pr_info("[%s:%s]PREPARE Success(%d mA), retry(%d)\n",
 					MUIC_DEV_NAME, __func__, value.intval, retry);
 			break;
 		}
-		sm5714_info("[%s:%s]PREPARE fail(%d mA), retry(%d)\n", MUIC_DEV_NAME, __func__,
+		pr_info("[%s:%s]PREPARE fail(%d mA), retry(%d)\n", MUIC_DEV_NAME, __func__,
 				value.intval, retry);
 	}
 
 	cancel_delayed_work(&muic_data->afc_retry_work);
 	schedule_delayed_work(&muic_data->afc_retry_work,
 			msecs_to_jiffies(5000)); /* 5sec */
-	sm5714_info("[%s:%s] afc_retry_work(ATTACH) start\n",
+	pr_info("[%s:%s] afc_retry_work(ATTACH) start\n",
 			MUIC_DEV_NAME, __func__);
 
 	/* voltage(9.0V)  + current(1.65A) setting : 0x46 */
@@ -698,13 +697,13 @@ int sm5714_afc_ta_attach(struct sm5714_muic_data *muic_data)
 	afctxd = AFC_TXBYTE_9V_1_65A;
 	ret = sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCTXD, afctxd);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err write AFC_TXD(%d)\n",
+		pr_err("[%s:%s] err write AFC_TXD(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
-	sm5714_info("[%s:%s] AFC_TXD [0x%02x]\n", MUIC_DEV_NAME, __func__, afctxd);
+	pr_info("[%s:%s] AFC_TXD [0x%02x]\n", MUIC_DEV_NAME, __func__, afctxd);
 
 	/* ENAFC set '1' */
 	sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 1);
-	sm5714_info("[%s:%s] AFCCTRL_ENAFC 1\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] AFCCTRL_ENAFC 1\n", MUIC_DEV_NAME, __func__);
 	muic_data->afc_retry_count = 0;
 	return 0;
 }
@@ -718,7 +717,7 @@ int sm5714_afc_ta_accept(struct sm5714_muic_data *muic_data)
 	int i = 0, vbus_check = 0;
 	bool afc_disabled = false;
 
-	sm5714_info("[%s:%s] AFC_ACCEPTED\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] AFC_ACCEPTED\n", MUIC_DEV_NAME, __func__);
 
 	mutex_lock(&muic_data->afc_mutex);
 
@@ -726,7 +725,7 @@ int sm5714_afc_ta_accept(struct sm5714_muic_data *muic_data)
 	sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 0);
 
 	cancel_delayed_work(&muic_data->afc_retry_work);
-	sm5714_info("[%s:%s] afc_retry_work(ACCEPTED) cancel\n",
+	pr_info("[%s:%s] afc_retry_work(ACCEPTED) cancel\n",
 			MUIC_DEV_NAME, __func__);
 
 	muic_data->vbus_changed_9to5 = 0;
@@ -735,7 +734,7 @@ int sm5714_afc_ta_accept(struct sm5714_muic_data *muic_data)
 
 	if (!afc_disabled) {
 		dev1 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_DEVICETYPE1);
-		sm5714_info("[%s:%s] dev1 [0x%02x]\n", MUIC_DEV_NAME, __func__, dev1);
+		pr_info("[%s:%s] dev1 [0x%02x]\n", MUIC_DEV_NAME, __func__, dev1);
 		if (dev1 & DEV_TYPE1_AFC_TA) {
 			txd_voltage = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCTXD);
 			txd_voltage = 5 + ((txd_voltage&0xF0)>>4);
@@ -745,7 +744,7 @@ int sm5714_afc_ta_accept(struct sm5714_muic_data *muic_data)
 			vbus_check = 0;
 			for (i = 0 ; i < 5 ; i++) {
 				vbus_voltage = sm5714_muic_get_vbus_value(muic_data);
-				sm5714_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
+				pr_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
 						MUIC_DEV_NAME, __func__, i, txd_voltage,
 						voltage_min, voltage_max, vbus_voltage);
 				if ((voltage_min <= vbus_voltage) &&
@@ -754,7 +753,7 @@ int sm5714_afc_ta_accept(struct sm5714_muic_data *muic_data)
 					i = 10; /* break */
 				} else {
 					msleep(100);
-					sm5714_info("[%s:%s] retry:%d\n",
+					pr_info("[%s:%s] retry:%d\n",
 						MUIC_DEV_NAME, __func__, i);
 				}
 			}
@@ -786,13 +785,13 @@ int sm5714_afc_multi_byte(struct sm5714_muic_data *muic_data)
 	int voltage_find = 0;
 	int afc_rx_num = 0;
 
-	sm5714_info("[%s:%s] AFC_MULTI_BYTE\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] AFC_MULTI_BYTE\n", MUIC_DEV_NAME, __func__);
 
 	/* ENAFC set '0' */
 	sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 0);
 
 	afc_rx_num = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFC_RX_NUM);
-	sm5714_info("[%s:%s] afc_rx_num=%d\n", MUIC_DEV_NAME, __func__, afc_rx_num);
+	pr_info("[%s:%s] afc_rx_num=%d\n", MUIC_DEV_NAME, __func__, afc_rx_num);
 
 	/* read AFC_RXD1 ~ RXD15 */
 	voltage_find = 0;
@@ -800,10 +799,10 @@ int sm5714_afc_multi_byte(struct sm5714_muic_data *muic_data)
 		multi_byte[i] = sm5714_i2c_read_byte(i2c,
 				SM5714_MUIC_REG_AFC_RXD1 + i);
 		if (multi_byte[i] < 0) {
-			sm5714_err("[%s:%s] err read AFC_RXD%d %d\n",
+			pr_err("[%s:%s] err read AFC_RXD%d %d\n",
 				MUIC_DEV_NAME, __func__, i+1, multi_byte[i]);
 		}
-		sm5714_info("[%s:%s] AFC_RXD%d [0x%02x]\n", MUIC_DEV_NAME, __func__,
+		pr_info("[%s:%s] AFC_RXD%d [0x%02x]\n", MUIC_DEV_NAME, __func__,
 				i+1, multi_byte[i]);
 		if (multi_byte[i] == 0x00)
 			break;
@@ -813,19 +812,19 @@ int sm5714_afc_multi_byte(struct sm5714_muic_data *muic_data)
 				voltage_find = i;
 	}
 
-	sm5714_info("[%s:%s] AFC_RXD%d multi_byte[%d]=0x%02x\n",
+	pr_info("[%s:%s] AFC_RXD%d multi_byte[%d]=0x%02x\n",
 			MUIC_DEV_NAME, __func__,
 			voltage_find+1, voltage_find, multi_byte[voltage_find]);
 
 	ret = sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCTXD,
 			multi_byte[voltage_find]);
 	if (ret < 0)
-		sm5714_err("[%s:%s] err write AFC_TXD(%d)\n",
+		pr_err("[%s:%s] err write AFC_TXD(%d)\n",
 				MUIC_DEV_NAME, __func__, ret);
 
 	/* ENAFC set '1' */
 	sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 1);
-	sm5714_info("[%s:%s] AFCCTRL_ENAFC 1\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s] AFCCTRL_ENAFC 1\n", MUIC_DEV_NAME, __func__);
 
 	return 0;
 }
@@ -843,7 +842,7 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 	int i = 0, vbus_check = 0;
 #endif
 
-	sm5714_info("[%s:%s] AFC_ERROR (%d)\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] AFC_ERROR (%d)\n", MUIC_DEV_NAME, __func__,
 			muic_data->afc_retry_count);
 
 	/* ENAFC set '0' */
@@ -852,23 +851,23 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 	/* read AFC_STATUS */
 	value = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCSTATUS);
 	if (value < 0)
-		sm5714_err("[%s:%s] err read AFC_STATUS %d\n",
+		pr_err("[%s:%s] err read AFC_STATUS %d\n",
 				MUIC_DEV_NAME, __func__, value);
-	sm5714_info("[%s:%s] REG_AFCSTATUS [0x%02x]\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] REG_AFCSTATUS [0x%02x]\n", MUIC_DEV_NAME, __func__,
 			value);
 
 	val1 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFC_RX_P0);
 	val2 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFC_RX_P1);
 	val3 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFC_STATE);
-	sm5714_info("[%s:%s] AFC_RX_PARITY0[0x%02x], AFC_RX_PARITY1[0x%02x], AFC_STATE[0x%02x]\n",
+	pr_info("[%s:%s] AFC_RX_PARITY0[0x%02x], AFC_RX_PARITY1[0x%02x], AFC_STATE[0x%02x]\n",
 		MUIC_DEV_NAME, __func__, val1, val2, val3);
 
 	dev1 = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_DEVICETYPE1);
-	sm5714_info("[%s:%s] DEVICE_TYPE1 [0x%02x]\n",
+	pr_info("[%s:%s] DEVICE_TYPE1 [0x%02x]\n",
 		MUIC_DEV_NAME, __func__, dev1);
 
 	if (muic_data->vbus_changed_9to5 == 1) {
-		sm5714_info("[%s:%s] VBUS error(9 -> 5) DP_RESET\n",
+		pr_info("[%s:%s] VBUS error(9 -> 5) DP_RESET\n",
 			MUIC_DEV_NAME, __func__);
 		/* DP_RESET '1' */
 		sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_DP_RESET, 1);
@@ -881,11 +880,11 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 		/* ENAFC set '1' */
 		sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 1);
 		muic_data->afc_retry_count++;
-		sm5714_info("[%s:%s] re-start AFC (afc_retry_count=%d)\n",
+		pr_info("[%s:%s] re-start AFC (afc_retry_count=%d)\n",
 				MUIC_DEV_NAME, __func__,
 				muic_data->afc_retry_count);
 	} else {
-		sm5714_info("[%s:%s] ENAFC end = %d\n", MUIC_DEV_NAME, __func__,
+		pr_info("[%s:%s] ENAFC end = %d\n", MUIC_DEV_NAME, __func__,
 				muic_data->afc_retry_count);
 		muic_data->attached_dev = ATTACHED_DEV_TA_MUIC;
 		muic_notifier_attach_attached_dev(muic_data->attached_dev);
@@ -910,7 +909,7 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 			}
 			sm5714_i2c_write_byte(i2c,
 				SM5714_MUIC_REG_AFCCNTL, reg_val);
-			sm5714_info("[%s:%s] read REG_AFCCNTL=0x%x, write REG_AFCCNTL=0x%x\n",
+			pr_info("[%s:%s] read REG_AFCCNTL=0x%x, write REG_AFCCNTL=0x%x\n",
 				MUIC_DEV_NAME, __func__, ret, reg_val);
 
 			msleep(100);
@@ -922,7 +921,7 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 			for (i = 0 ; i < 5 ; i++) {
 				vbus_voltage =
 					sm5714_muic_get_vbus_value(muic_data);
-				sm5714_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
+				pr_info("[%s:%s]i:%d TXD:%dV voltage_min:%dV voltage_max:%dV vbus_voltage:%dV\n",
 						MUIC_DEV_NAME, __func__,
 						i, txd_voltage,
 						voltage_min, voltage_max,
@@ -934,7 +933,7 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 					i = 10; /* break */
 				} else {
 					msleep(100);
-					sm5714_info("[%s:%s] retry:%d\n",
+					pr_info("[%s:%s] retry:%d\n",
 						MUIC_DEV_NAME, __func__, i);
 				}
 			}
@@ -957,12 +956,12 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 			/* ENAFC set '1' */
 			sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 1);
 			muic_data->afc_retry_count++;
-			sm5714_info("[%s:%s] re-start AFC (afc_retry_count=%d)\n",
+			pr_info("[%s:%s] re-start AFC (afc_retry_count=%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->afc_retry_count);
 		}
 	} else {
-		sm5714_info("[%s:%s] ENAFC end = %d\n", MUIC_DEV_NAME, __func__,
+		pr_info("[%s:%s] ENAFC end = %d\n", MUIC_DEV_NAME, __func__,
 				muic_data->afc_retry_count);
 		if (dev1 & DEV_TYPE1_QC20_TA)
 			muic_data->attached_dev =
@@ -978,7 +977,7 @@ int sm5714_afc_error(struct sm5714_muic_data *muic_data)
 
 int sm5714_afc_sta_chg(struct sm5714_muic_data *muic_data)
 {
-	sm5714_info("[%s:%s] AFC_STA_CHG (attached_dev: %d)\n",
+	pr_info("[%s:%s] AFC_STA_CHG (attached_dev: %d)\n",
 			MUIC_DEV_NAME, __func__, muic_data->attached_dev);
 
 	return 0;
@@ -1014,7 +1013,7 @@ int sm5714_muic_get_vbus_value(struct sm5714_muic_data *muic_data)
 	else
 		vol = vbus_voltage/1000;
 
-	sm5714_info("[%s:%s] VBUS:%dV\n", MUIC_DEV_NAME, __func__, vol);
+	pr_info("[%s:%s] VBUS:%dV\n", MUIC_DEV_NAME, __func__, vol);
 
 	return vol;
 }
@@ -1022,9 +1021,9 @@ int sm5714_muic_get_vbus_value(struct sm5714_muic_data *muic_data)
 static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 	int afcta, int txt_voltage)
 {
-	sm5714_info("[%s:%s] afcta:%d txt_voltage:%d\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] afcta:%d txt_voltage:%d\n", MUIC_DEV_NAME, __func__,
 		afcta, txt_voltage);
-	sm5714_info("[%s:%s] AFC_PPRPARE(%d), AFC_5V(%d), AFC_9V(%d), QC_5V(%d), QC_9V(%d)\n",
+	pr_info("[%s:%s] AFC_PPRPARE(%d), AFC_5V(%d), AFC_9V(%d), QC_5V(%d), QC_9V(%d)\n",
 		MUIC_DEV_NAME, __func__,
 		ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC,
 		ATTACHED_DEV_AFC_CHARGER_5V_MUIC,
@@ -1038,7 +1037,7 @@ static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 				ATTACHED_DEV_AFC_CHARGER_12V_MUIC;
 			muic_notifier_attach_attached_dev(
 					muic_data->attached_dev);
-			sm5714_info("[%s:%s] AFC 12V (%d)\n",
+			pr_info("[%s:%s] AFC 12V (%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 		} else if (txt_voltage == 9) { /* 9V */
@@ -1046,7 +1045,7 @@ static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 				ATTACHED_DEV_AFC_CHARGER_9V_MUIC;
 			muic_notifier_attach_attached_dev(
 					muic_data->attached_dev);
-			sm5714_info("[%s:%s] AFC 9V (%d)\n",
+			pr_info("[%s:%s] AFC 9V (%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 		} else if (txt_voltage == 5) { /* 5V */
@@ -1054,7 +1053,7 @@ static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 				ATTACHED_DEV_AFC_CHARGER_5V_MUIC;
 			muic_notifier_attach_attached_dev(
 					muic_data->attached_dev);
-			sm5714_info("[%s:%s] AFC 5V (%d)\n",
+			pr_info("[%s:%s] AFC 5V (%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 		}
@@ -1064,7 +1063,7 @@ static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 				ATTACHED_DEV_QC_CHARGER_9V_MUIC;
 			muic_notifier_attach_attached_dev(
 					muic_data->attached_dev);
-			sm5714_info("[%s:%s] QC20 12V (%d)\n",
+			pr_info("[%s:%s] QC20 12V (%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 		} else if (txt_voltage == 9) { /* 9V */
@@ -1072,7 +1071,7 @@ static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 				ATTACHED_DEV_QC_CHARGER_9V_MUIC;
 			muic_notifier_attach_attached_dev(
 					muic_data->attached_dev);
-			sm5714_info("[%s:%s] QC20 9V (%d)\n",
+			pr_info("[%s:%s] QC20 9V (%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 		} else if (txt_voltage == 5) {
@@ -1080,7 +1079,7 @@ static void sm5714_afc_notifier_attach(struct sm5714_muic_data *muic_data,
 				ATTACHED_DEV_QC_CHARGER_5V_MUIC;
 			muic_notifier_attach_attached_dev(
 					muic_data->attached_dev);
-			sm5714_info("[%s:%s] QC20 5V (%d)\n",
+			pr_info("[%s:%s] QC20 5V (%d)\n",
 					MUIC_DEV_NAME, __func__,
 					muic_data->attached_dev);
 		}
@@ -1095,7 +1094,7 @@ static void hv_muic_change_afc_voltage(int tx_data)
 	union power_supply_propval value;
 	int retry = 0;	
 
-	sm5714_info("[%s:%s] change afc voltage(%x)\n",
+	pr_info("[%s:%s] change afc voltage(%x)\n",
 			MUIC_DEV_NAME, __func__, tx_data);
 
 	mutex_lock(&muic_data->afc_mutex);
@@ -1126,7 +1125,7 @@ static void hv_muic_change_afc_voltage(int tx_data)
 	} else {	/* AFC */
 		val = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCTXD);
 		if (val == tx_data) {
-			sm5714_info("[%s:%s] same to current voltage 0x%x\n",
+			pr_info("[%s:%s] same to current voltage 0x%x\n",
 					MUIC_DEV_NAME, __func__, val);
 			goto EOH;
 		}
@@ -1142,18 +1141,18 @@ static void hv_muic_change_afc_voltage(int tx_data)
 					POWER_SUPPLY_PROP_CURRENT_MAX, value);
 #endif
 			if (value.intval <= 500) {
-				sm5714_info("[%s:%s]PREPARE Success(%d mA), retry(%d)\n",
+				pr_info("[%s:%s]PREPARE Success(%d mA), retry(%d)\n",
 						MUIC_DEV_NAME, __func__, value.intval, retry);
 				break;
 			}
-			sm5714_info("[%s:%s]PREPARE fail(%d mA), retry(%d)\n", MUIC_DEV_NAME, __func__,
+			pr_info("[%s:%s]PREPARE fail(%d mA), retry(%d)\n", MUIC_DEV_NAME, __func__,
 					value.intval, retry);
 		}
 
 		cancel_delayed_work(&muic_data->afc_retry_work);
 		schedule_delayed_work(&muic_data->afc_retry_work,
 				msecs_to_jiffies(5000)); /* 5sec */
-		sm5714_info("[%s:%s] afc_retry_work(afc voltage) start\n",
+		pr_info("[%s:%s] afc_retry_work(afc voltage) start\n",
 				MUIC_DEV_NAME, __func__);
 
 		sm5714_i2c_write_byte(i2c, SM5714_MUIC_REG_AFCTXD, tx_data);
@@ -1182,7 +1181,7 @@ int sm5714_muic_afc_set_voltage(int vol)
 	case ATTACHED_DEV_QC_CHARGER_9V_MUIC:
 		break;
 	default:
-		sm5714_info("[%s:%s] not HV charger, returnV\n",
+		pr_info("[%s:%s] not HV charger, returnV\n",
 				MUIC_DEV_NAME, __func__);
 		return -EINVAL;
 	}
@@ -1202,7 +1201,7 @@ int sm5714_muic_afc_set_voltage(int vol)
 	}
 
 	if (now_vol == vol) {
-		sm5714_info("[%s:%s] same voltage(%d), return\n",
+		pr_info("[%s:%s] same voltage(%d), return\n",
 				MUIC_DEV_NAME, __func__, vol);
 		return 0;
 	}
@@ -1211,21 +1210,20 @@ int sm5714_muic_afc_set_voltage(int vol)
 	/* do not set high voltage at below conditions */
 	if (vol > 5) {
 		if (sm5714_is_afc_disabled(muic_data)) {
-			sm5714_info("[%s:%s] Skip AFC\n",
+			pr_info("[%s:%s] Skip AFC\n",
 					MUIC_DEV_NAME, __func__);
 			return 0;
 		}
 
 		if (muic_data->pdic_afc_state == SM5714_MUIC_AFC_ABNORMAL) {
-			sm5714_info("[%s:%s] pdic abnormal: AFC(QC20) skip\n",
+			pr_info("[%s:%s] pdic abnormal: AFC(QC20) skip\n",
 					MUIC_DEV_NAME, __func__);
 			return 0;
 		}
 	}
 #endif
 
-	sm5714_info("[%s:%s] vol = %dV\n", MUIC_DEV_NAME, __func__, vol);
-	muic_data->afc_dp_reset_count = 0;
+	pr_info("[%s:%s] vol = %dV\n", MUIC_DEV_NAME, __func__, vol);
 
 	if (vol == 5) {
 		if ((muic_data->attached_dev ==
@@ -1256,17 +1254,17 @@ static void muic_afc_retry_work(struct work_struct *work)
 	mutex_lock(&muic_data->afc_mutex);
 
 	ret = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_AFCSTATUS);
-	sm5714_info("[%s:%s]: Read REG_AFCSTATUS = [0x%02x]\n",
+	pr_info("[%s:%s]: Read REG_AFCSTATUS = [0x%02x]\n",
 			MUIC_DEV_NAME, __func__, ret);
 
-	sm5714_info("[%s:%s] attached_dev = %d\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] attached_dev = %d\n", MUIC_DEV_NAME, __func__,
 			muic_data->attached_dev);
 
 	if (muic_data->attached_dev == ATTACHED_DEV_AFC_CHARGER_PREPARE_MUIC) {
 		vbvolt = sm5714_i2c_read_byte(i2c, SM5714_MUIC_REG_VBUS);
 		vbvolt = (vbvolt&0x04)>>2;
 		if (!vbvolt) {
-			sm5714_info("[%s:%s] VBUS is nothing\n",
+			pr_info("[%s:%s] VBUS is nothing\n",
 					MUIC_DEV_NAME, __func__);
 			muic_notifier_detach_attached_dev(
 					muic_data->attached_dev);
@@ -1277,16 +1275,13 @@ static void muic_afc_retry_work(struct work_struct *work)
 		if (muic_data->afc_dp_reset_count >= SM5714_AFC_DP_RESET_LIMIT){
 			muic_data->attached_dev = ATTACHED_DEV_TA_MUIC;
 			muic_notifier_attach_attached_dev(muic_data->attached_dev);
-			sm5714_info("[%s:%s] DP RESET skip\n",
+			pr_info("[%s:%s] DP RESET skip\n",
 				MUIC_DEV_NAME, __func__);
-#if IS_ENABLED(CONFIG_USB_USING_ADVANCED_USBLOG)
-			printk_usb(NOTIFY_PRINTK_USB_SNAPSHOT, "AFC fail with DP RESET\n");
-#endif
 			goto EOR;
 		}
 		muic_data->afc_dp_reset_count++;
 
-		sm5714_info("[%s:%s] [MUIC] device type is afc prepare, DP_RESET\n",
+		pr_info("[%s:%s] [MUIC] device type is afc prepare, DP_RESET\n",
 				MUIC_DEV_NAME, __func__);
 
 		/* DP_RESET '1' */
@@ -1302,7 +1297,7 @@ static void sm5714_muic_pdic_afc_handler(struct work_struct *work)
 	struct sm5714_muic_data *muic_data =
 		container_of(work, struct sm5714_muic_data, pdic_afc_work.work);
 
-	sm5714_info("[%s:%s] pdic_afc_state:%d, pdic_afc_state_count:%d\n",
+	pr_info("[%s:%s] pdic_afc_state:%d, pdic_afc_state_count:%d\n",
 			MUIC_DEV_NAME, __func__, muic_data->pdic_afc_state,
 			muic_data->pdic_afc_state_count);
 
@@ -1314,18 +1309,18 @@ static void sm5714_muic_pdic_afc_handler(struct work_struct *work)
 	}
 
 	if (muic_data->pdic_afc_state == SM5714_MUIC_AFC_NORMAL) {
-		sm5714_info("[%s:%s] SM5714_MUIC_AFC_NORMAL\n",
+		pr_info("[%s:%s] SM5714_MUIC_AFC_NORMAL\n",
 				MUIC_DEV_NAME, __func__);
 		/* ENAFC set '1' */
 		sm5714_set_afc_ctrl_reg(muic_data, AFCCTRL_ENAFC, 1);
-		sm5714_info("[%s:%s] AFCCTRL_ENAFC 1\n", MUIC_DEV_NAME, __func__);
+		pr_info("[%s:%s] AFCCTRL_ENAFC 1\n", MUIC_DEV_NAME, __func__);
 		muic_data->afc_retry_count = 0;
 	} else {
 		muic_data->pdic_afc_state_count++;
 		cancel_delayed_work(&muic_data->pdic_afc_work);
 		schedule_delayed_work(&muic_data->pdic_afc_work,
 				msecs_to_jiffies(200));
-		sm5714_info("[%s:%s] pdic_afc_work(%d) start\n", MUIC_DEV_NAME,
+		pr_info("[%s:%s] pdic_afc_work(%d) start\n", MUIC_DEV_NAME,
 				__func__, muic_data->pdic_afc_state_count);
 	}
 }
@@ -1336,11 +1331,11 @@ static void sm5714_hv_muic_init_detect(struct work_struct *work)
 	struct sm5714_muic_data *muic_data = afc_init_data;
 	int afc_ta_attached = 0;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	afc_ta_attached = sm5714_i2c_read_byte(muic_data->i2c,
 			SM5714_MUIC_REG_DEVICETYPE2);
-	sm5714_info("[%s:%s] HVDCP:[0x%02x]\n", MUIC_DEV_NAME, __func__,
+	pr_info("[%s:%s] HVDCP:[0x%02x]\n", MUIC_DEV_NAME, __func__,
 			afc_ta_attached);
 
 	/* AFC_TA_ATTACHED */
@@ -1352,16 +1347,16 @@ int sm5714_muic_charger_init(void)
 {
 	int ret = -EINVAL;
 
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	if (!afc_init_data) {
-		sm5714_info("[%s:%s] MUIC AFC is not ready.\n",
+		pr_info("[%s:%s] MUIC AFC is not ready.\n",
 				MUIC_DEV_NAME, __func__);
 		return ret;
 	}
 
 	if (afc_init_data->is_charger_ready) {
-		sm5714_info("[%s:%s] charger is already ready.\n",
+		pr_info("[%s:%s] charger is already ready.\n",
 				MUIC_DEV_NAME, __func__);
 		return ret;
 	}
@@ -1369,7 +1364,7 @@ int sm5714_muic_charger_init(void)
 	afc_init_data->is_charger_ready = true;
 
 	if (!afc_init_data->is_pdic_ready) {
-		sm5714_info("[%s:%s] pdic is not ready.\n",
+		pr_info("[%s:%s] pdic is not ready.\n",
 				MUIC_DEV_NAME, __func__);
 		return ret;
 	}
@@ -1383,7 +1378,7 @@ int sm5714_muic_charger_init(void)
 
 void sm5714_hv_muic_initialize(struct sm5714_muic_data *muic_data)
 {
-	sm5714_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
+	pr_info("[%s:%s]\n", MUIC_DEV_NAME, __func__);
 
 	afc_init_data = muic_data;
 

@@ -140,6 +140,7 @@ struct sm5714_charger_data {
 	int unhealth_cnt;
 	bool is_charging;
 	bool otg_on;
+	bool is_sm5714a;
 	int ari_cnt;
 	bool spcom;
 

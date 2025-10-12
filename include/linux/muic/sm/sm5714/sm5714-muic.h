@@ -122,7 +122,7 @@
 							| 0x4 << MANUAL_SW_DP_SHIFT)
 
 /* Additional W/A setting */
-#define SM5714_AFC_DP_RESET_LIMIT 3
+#define SM5714_AFC_DP_RESET_LIMIT 1
 
 enum sm5714_reg_manual_sw_value {
 	MANSW_OPEN = (MANUAL_SW_OPEN),

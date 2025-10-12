@@ -24,8 +24,6 @@
 #include <linux/usb/class-dual-role.h>
 #elif defined(CONFIG_TYPEC)
 #include <linux/usb/typec.h>
-#include <linux/usb/typec_mux.h>
-#include <linux/usb/typec_dp.h>
 #endif
 #if IS_ENABLED(CONFIG_IF_CB_MANAGER)
 #include <linux/usb/typec/manager/if_cb_manager.h>
@@ -332,7 +330,6 @@ struct sm5714_phydrv_data {
 	int rid;
 	int is_attached;
 	int reset_done;
-	int	sw_reset_cnt;
 	int pd_support;
 	int abnormal_dev_cnt;
 	int rp_currentlvl;
@@ -358,7 +355,6 @@ struct sm5714_phydrv_data {
 	struct usb_pd_identity partner_identity;
 	struct typec_capability typec_cap;
 	struct completion typec_reverse_completion;
-	struct typec_mux *mux;
 	int typec_power_role;
 	int typec_data_role;
 	int typec_try_state_change;
@@ -373,8 +369,6 @@ struct sm5714_phydrv_data {
 	struct delayed_work vbus_dischg_work;
 	struct delayed_work otg_det_work;
 	struct delayed_work debug_work;
-	struct delayed_work wat_pd_ta_work;
-	struct delayed_work hiccup_ta_work;
 #if IS_ENABLED(CONFIG_IF_CB_MANAGER)
 	struct usbpd_dev	*usbpd_d;
 	struct if_cb_manager	*man;
