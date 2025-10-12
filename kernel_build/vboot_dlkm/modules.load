@@ -268,7 +268,7 @@ snvm.ko
 dc_vibrator.ko
 a96t396.ko
 sec-direct-charger.ko
-sec-pd.ko
+sec_pd.ko
 sb_wireless.ko
 sec-battery.ko
 mfd_s2mf301.ko
