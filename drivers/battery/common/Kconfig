@@ -385,13 +385,4 @@ config BATTERY_HOTSWAP
 	  Some models would have detachable battery and need to detect
 	  removal or insertion of battery.
 
-config DPM_FULL_SOC
-    bool "support show Full SOC in DPM mode"
-    default n
-    help
-	  Say Y here to enable
-	  support show Full SOC in DPM mode.
-	  Some models that have detachable battery can work without battery
-	  and there is need to show Full SOC in DPM mode.
-
 endmenu
