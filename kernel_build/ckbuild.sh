@@ -86,7 +86,6 @@ DO_TAR=1
 DO_ZIP=1
 
 ## Info message
-LINKER="ld.lld"
 DEVICE="Exynos 1280 Family"
 CODENAME="exynos1280"
 
