@@ -18,6 +18,10 @@ obj-y				+= pwm/
 
 obj-y				+= pci/
 
+# Kernel SU variants
+obj-$(CONFIG_KSU_NEXT)		+= kernelsu/kernel/
+obj-$(CONFIG_KSU_SUKI)		+= sukisu/kernel/
+
 obj-$(CONFIG_PARISC)		+= parisc/
 obj-$(CONFIG_RAPIDIO)		+= rapidio/
 obj-y				+= video/
@@ -279,5 +283,3 @@ obj-y += input/touchscreen/himax/hx831xx/ # ADDED BY LEGO AUTOMATICALLY: DO NOT 
 
 # a26xs
 obj-y += battery/charger/nu2111a_charger/ # ADDED BY LEGO AUTOMATICALLY: DO NOT SUBMIT
-
-obj-$(CONFIG_KSU) += kernelsu/kernel/

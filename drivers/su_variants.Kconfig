@@ -1,0 +1,117 @@
+choice
+	prompt "Select SU variant"
+	help
+	  Select which Kernel SU variant to build.
+
+config KSU_NEXT
+	bool "KernelSU Next"
+	select OVERLAY_FS
+	help
+	  Enable KernelSU Next with SUSFS support.
+	  This is the standard KernelSU Next variant.
+
+config KSU_SUKI
+	bool "SukiSU Ultra"
+	select OVERLAY_FS
+	help
+	  Enable SukiSU Ultra with SUSFS support.
+	  This is a KernelSU fork with additional features.
+
+endchoice
+
+choice
+	prompt "Hook method"
+	help
+	  Select which hook method to use.
+
+config KSU_KPROBES_HOOK
+	bool "Use kprobes"
+	depends on KPROBES
+	help
+	  Use kprobes for function hooking.
+
+config KSU_TRACEPOINT_HOOK
+	bool "Use tracepoints"
+	depends on TRACEPOINTS
+	help
+	  Use tracepoints for function hooking.
+	  Only supported by SukiSU.
+
+config KSU_MANUAL_HOOK
+	bool "Use manual hooks"
+	help
+	  Use manual hooks instead of kprobes/tracepoints.
+
+endchoice
+
+# SukiSU Ultra specific options
+config KSU_MULTI_MANAGER_SUPPORT
+    bool "Multi KernelSU manager support"
+    depends on KSU_SUKI
+    default n
+    help
+	    Enable multi KernelSU manager support.
+
+config KSU_THRONE_TRACKER_LEGACY
+	bool "Use legacy throne tracker (packages.list scanning)"
+	depends on KSU_SUKI
+	default n
+	help
+	  Use legacy throne tracker that scans packages.list for app UIDs.
+	  This is kept for Ultra-Legacy Linux 4.4-3.X kernels which are prone to deadlocks.
+	  Enable this if default scanning deadlocks/crashes on you.
+
+config KSU_MANUAL_SU
+	bool "Use manual su"
+	depends on KSU_SUKI
+	default y
+	help
+	  Use manual su and authorize the corresponding command line and application via prctl.
+
+config KSU_CMDLINE
+	bool "Enable KernelSU cmdline"
+	depends on KSU_SUKI && KSU != m
+	default n
+	help
+	  Enable a cmdline called kernelsu.enabled
+	  Value 1 means enabled, value 0 means disabled.
+
+config KPM
+	bool "Enable SukiSU KPM"
+	depends on KSU_SUKI && 64BIT
+	select KALLSYMS
+	select KALLSYMS_ALL
+	default n
+	help
+	  Enabling this option will activate the KPM feature of SukiSU.
+	  This option is suitable for scenarios where you need to force KPM to be enabled,
+	  but it may affect system stability.
+
+# KernelSU Next specific options
+config KSU_LSM_SECURITY_HOOKS
+	bool "Use LSM security hooks"
+	depends on KSU_NEXT
+	default y
+	help
+	  Disabling this is mostly only useful for kernel 4.1 and older.
+	  Make sure to implement manual hooks on security/security.c.
+
+# Common options
+config KSU_DEBUG
+	bool "KernelSU debug mode"
+	depends on KSU
+	default n
+	help
+	  Enable KernelSU debug mode.
+
+config KSU_ALLOWLIST_WORKAROUND
+	bool "Session Keyring Init workaround"
+	depends on KSU
+	default n
+	help
+	  Enable session keyring init workaround for problematic devices.
+	  Useful for situations where the SU allowlist is not kept after a reboot.
+
+# Load variant-specific configs
+source "drivers/kernelsu/kernel/Kconfig"
+source "drivers/sukisu/kernel/Kconfig"
