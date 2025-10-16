@@ -109,6 +109,7 @@ fi
 
 ## Parse arguments
 DO_KSU=0
+DO_SUKI=0
 DO_CLEAN=0
 DO_MENUCONFIG=0
 IS_RELEASE=0
@@ -128,6 +129,10 @@ for arg in "$@"; do
     if [[ "$arg" == *k* ]]; then
         echo "INFO: KernelSU argument passed, a KernelSU build will be made"
         DO_KSU=1
+    fi
+    if [[ "$arg" == *s* ]]; then
+        echo "INFO: SukiSU argument passed, a SukiSU build will be made"
+        DO_SUKI=1
     fi
     if [[ "$arg" == *c* ]]; then
         echo "INFO: clean argument passed, output directory will be wiped"
@@ -173,6 +178,11 @@ for arg in "$@"; do
     fi
 done
 
+if [ "$DO_KSU" == "1" ] && [ "$DO_SUKI" == "1" ]; then
+    echo "ERROR: KernelSU and SukiSU are mutually exclusive."
+    exit 1
+fi
+
 if [ "$IS_RELEASE" == "1" ]; then
     BUILD_TYPE="Release"
 else
@@ -185,6 +195,9 @@ LINUX_VER=$(make kernelversion 2>/dev/null)
 if [ "$DO_KSU" == "1" ]; then
     FK_TYPE="KSUNext"
     FK_TYPE_SHORT="KN"
+elif [ "$DO_SUKI" == "1" ]; then
+    FK_TYPE="SukiSU-Ultra"
+    FK_TYPE_SHORT="SSU"
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"
