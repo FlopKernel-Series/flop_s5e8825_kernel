@@ -27,4 +27,5 @@ jobs:
       - name: Build
         run: |
           ./do_build.sh tkudcbq
+          ./do_build.sh tsudcbq
           ./do_build.sh tudbq
