@@ -3,12 +3,8 @@ CAPTION_BUILD="Build info:
 *Kernel Version*: \`${LINUX_VER}\`
 *Compiler*: \`${KBUILD_COMPILER_STRING}\`
 *Build host*: \`${BUILD_HOST}\`
-*Branch*: \`$(git rev-parse --abbrev-ref HEAD)\`
-*Commit*: [($(git rev-parse HEAD | cut -c -7))]($(echo $KERNEL_URL)/commit/$(git rev-parse HEAD))
-*Build type*: \`${BUILD_TYPE}\`
-*Build variant*: \`${FK_TYPE}\`
-*Clean build*: \`$( [ "$DO_CLEAN" -eq 1 ] && echo Yes || echo No )\`
-*Permissive*: \`$( [ "$DO_PERM" -eq 1 ] && echo Yes || echo No )\`
+*Commit / Branch*: [($(git rev-parse HEAD | cut -c -7))]($(echo $KERNEL_URL)/commit/$(git rev-parse HEAD)) / \`$(git rev-parse --abbrev-ref HEAD)\`
+*Build variant*: \`${FK_TYPE}\` / \`${BUILD_TYPE}$( [ "$DO_CLEAN" -eq 1 ] && echo " (clean)" || echo " (dirty)")\`
 "
 
 tgs() {
