@@ -5,6 +5,7 @@ CAPTION_BUILD="Build info:
 *Build host*: \`${BUILD_HOST}\`
 *Commit / Branch*: [($(git rev-parse HEAD | cut -c -7))]($(echo $KERNEL_URL)/commit/$(git rev-parse HEAD)) / \`$(git rev-parse --abbrev-ref HEAD)\`
 *Build variant*: \`${FK_TYPE}\` / \`${BUILD_TYPE}$( [ "$DO_CLEAN" -eq 1 ] && echo " (clean)" || echo " (dirty)")\`
+*Timestamp*: \`${DATE}\`
 "
 
 tgs() {
