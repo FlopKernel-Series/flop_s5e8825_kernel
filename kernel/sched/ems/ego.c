@@ -181,7 +181,7 @@ static struct notifier_block ego_sysbusy_notifier = {
 /*********************************************************************/
 /*		      EGO mode change notifier		     */
 /*********************************************************************/
-#define DEFAULT_PELT_MARGIN	(25)	/* 25% in default */
+#define DEFAULT_PELT_MARGIN	(20)	/* 20% in default */
 static int ego_mode_update_callback(struct notifier_block *nb,
 				unsigned long val, void *v)
 {
