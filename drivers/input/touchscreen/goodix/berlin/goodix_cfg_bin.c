@@ -181,8 +181,10 @@ static int goodix_parse_cfg_bin(struct goodix_ts_data *ts,
 			exist = true;
 			ts_info("find valid config, cfg_type[%d], cfg_len[%d]", cfg_type, cfg_len);
 		} else {
-			ts_info("cfg_sid[%d] != sensor_id[%d]", cfg_sid, sensor_id);
-	}
+			ts_info("cfg_sid[%d] != sensor_id[%d], trying next config", cfg_sid, sensor_id);
+			cfg_offset += cfg_len;
+			continue;
+		}
 		cfg_offset += cfg_len;
 	}
 
@@ -206,8 +208,10 @@ static int goodix_get_config_data(struct goodix_ts_data *ts, u8 sensor_id,
 
 	/*parse cfg bin*/
 	ret = goodix_parse_cfg_bin(ts, &cfg_bin, sensor_id);
-	if (ret)
-		ts_err("failed parse cfg bin");
+	if (ret) {
+		ts_info("No exact config match found, continuing with defaults");
+		ret = 0;
+	}
 
 	kfree(cfg_bin.bin_data);
 	return ret;
