@@ -5,8 +5,6 @@ clk_exynos.ko
 i2c-exynos5.ko
 ems.ko
 ssg.ko
-blk-sec-common.ko
-blk-sec-stats.ko
 phy-exynos-mipi-dsim.ko
 phy-exynos-mipi.ko
 phy-exynos-usbdrd-super.ko

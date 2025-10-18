@@ -26,9 +26,8 @@ mq-deadline-$(CONFIG_MQ_IOSCHED_DEADLINE_CGROUP)+= mq-deadline-cgroup.o
 obj-$(CONFIG_MQ_IOSCHED_KYBER)	+= kyber-iosched.o
 bfq-y				:= bfq-iosched.o bfq-wf2q.o bfq-cgroup.o
 obj-$(CONFIG_IOSCHED_BFQ)	+= bfq.o
-ssg-$(CONFIG_MQ_IOSCHED_SSG)	:= ssg-iosched.o ssg-stat.o
+ssg-$(CONFIG_MQ_IOSCHED_SSG)	:= ssg-iosched.o
 ssg-$(CONFIG_MQ_IOSCHED_SSG_CGROUP)	+= ssg-cgroup.o
-ssg-$(CONFIG_MQ_IOSCHED_SSG_WB) += ssg-wb.o
 obj-$(CONFIG_MQ_IOSCHED_SSG)	+= ssg.o
 
 obj-$(CONFIG_BLK_CMDLINE_PARSER)	+= cmdline-parser.o
@@ -45,7 +44,8 @@ obj-$(CONFIG_BLK_SED_OPAL)	+= sed-opal.o
 obj-$(CONFIG_BLK_PM)		+= blk-pm.o
 obj-$(CONFIG_BLK_INLINE_ENCRYPTION)	+= keyslot-manager.o blk-crypto.o
 obj-$(CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK)	+= blk-crypto-fallback.o
-obj-$(CONFIG_BLK_SEC_COMMON)   += blk-sec-common.o
-blk-sec-stats-$(CONFIG_BLK_SEC_STATS)	:= blk-sec-stat.o blk-sec-stat-pio.o blk-sec-stat-traffic.o
 obj-$(CONFIG_BLK_SEC_STATS)	+= blk-sec-stats.o
-obj-$(CONFIG_BLK_SEC_WB)   += blk-sec-wb.o
+
+ifdef CONFIG_SEC_KUNIT
+GCOV_PROFILE_blk-sec-stats.o	:=y
+endif

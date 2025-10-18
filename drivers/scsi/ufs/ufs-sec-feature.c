@@ -222,7 +222,7 @@ static void ufs_sec_wb_update_state(struct ufs_hba *hba)
 	}
 }
 
-int ufs_sec_wb_ctrl(struct ufs_hba *hba, bool enable, bool force)
+static int ufs_sec_wb_ctrl(struct ufs_hba *hba, bool enable, bool force)
 {
 	int ret = 0;
 	u8 index;
@@ -1706,20 +1706,3 @@ void ufs_sec_register_vendor_hooks(void)
 	register_trace_android_vh_ufs_update_sdev(sec_android_vh_ufs_update_sdev, NULL);
 	register_trace_android_vh_ufs_update_sysfs(sec_android_vh_ufs_update_sysfs, NULL);
 }
-
-bool ufs_sec_is_wb_supported(void)
-{
-    return ufs_sec_is_wb_allowed();
-}
-EXPORT_SYMBOL_GPL(ufs_sec_is_wb_supported);
-
-int ufs_sec_wb_ctrl_for_block(bool enable)
-{
-    if (!ufs_vdi.hba) {
-        pr_err("%s: ufs_vdi.hba is NULL!\n", __func__);
-        return -ENODEV;
-    }
-
-    return ufs_sec_wb_ctrl(ufs_vdi.hba, enable, false);
-}
-EXPORT_SYMBOL_GPL(ufs_sec_wb_ctrl_for_block);

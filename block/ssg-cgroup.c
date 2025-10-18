@@ -10,7 +10,7 @@
 
 #include "blk-mq.h"
 #include "blk-mq-tag.h"
-#include "ssg.h"
+#include "ssg-cgroup.h"
 
 
 
@@ -50,7 +50,7 @@ static void ssg_blkcg_cpd_init(struct blkcg_policy_data *cpd)
 	if (IS_ERR_OR_NULL(ssg_blkcg))
 		return;
 
-	ssg_blkcg->max_available_ratio = 100;
+	ssg_blkcg->max_available_ratio = 25;
 }
 
 static void ssg_blkcg_cpd_free(struct blkcg_policy_data *cpd)
