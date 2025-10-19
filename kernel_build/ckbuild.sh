@@ -241,6 +241,7 @@ source "$SCRIPTS_DIR/tc.sh"
 # Setup other things
 source "$SCRIPTS_DIR/build.sh"
 source "$SCRIPTS_DIR/post.sh"
+source "$SCRIPTS_DIR/kpm.sh"
 source "$SCRIPTS_DIR/images.sh"
 source "$SCRIPTS_DIR/pack.sh"
 source "$SCRIPTS_DIR/upload.sh"
@@ -280,6 +281,13 @@ if [ ! -f "$OUT_KERNEL" ]; then
     echo -e "\nERROR: Kernel files not found! Compilation failed?"
     exit 1
 fi
+
+# Apply KPM patch for SukiSU builds
+# DISABLE for now because it's not compatible with Exynos 5.10 kernels!
+# if ! apply_kpm_patch; then
+#     echo "ERROR: KPM patching failed"
+#     exit 1
+# fi
 
 kernel_modules
 build_images
