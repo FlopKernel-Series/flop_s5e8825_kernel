@@ -2123,7 +2123,8 @@ static void itmon_set_irq_affinity(struct itmon_dev *itmon,
 	} else {
 		cpumask_copy(&affinity_mask, cpu_online_mask);
 	}
-	irq_set_affinity_hint(irq, &affinity_mask);
+	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
+		irq_set_affinity_hint(irq, &affinity_mask);
 
 	cpumap_print_to_pagebuf(true, buf, &affinity_mask);
 	dev_dbg(itmon->dev, "affinity of irq%d is %s", irq, buf);

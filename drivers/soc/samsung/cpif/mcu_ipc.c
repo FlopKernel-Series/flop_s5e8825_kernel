@@ -417,6 +417,9 @@ int cp_mbox_set_affinity(u32 idx, int affinity)
 		return -EACCES;
 	}
 
+	if (IS_ENABLED(CONFIG_IRQ_SBALANCE))
+		return 0;
+
 #if defined(CONFIG_VENDOR_NR_CPUS)
 	num_cpu = CONFIG_VENDOR_NR_CPUS;
 #else
@@ -430,6 +433,9 @@ int cp_mbox_set_affinity(u32 idx, int affinity)
 
 	mif_debug("idx:%d affinity:0x%x\n", idx, affinity);
 	irq_data->affinity = affinity;
+
+	if (IS_ENABLED(CONFIG_IRQ_SBALANCE))
+		return 0;
 
 	return irq_set_affinity_hint(irq_data->irq, cpumask_of(affinity));
 }

@@ -460,7 +460,10 @@ int argos_irq_affinity_apply(int dev_num, bool enable)
 			mask = this->default_cpu_mask;
 		}
 
-		result = irq_set_affinity_hint(this->irq, mask);
+		if (IS_ENABLED(CONFIG_IRQ_SBALANCE))
+			result = 0;
+		else
+			result = irq_set_affinity_hint(this->irq, mask);
 
 		pr_info("%s: irq%d affinity %s to cpu_mask:0x%X\n",
 			__func__, this->irq, (enable ? "enable" : "disable"),
