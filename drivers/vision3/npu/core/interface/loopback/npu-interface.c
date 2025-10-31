@@ -274,12 +274,14 @@ int npu_interface_open(struct npu_system *system)
 	if (ret)
 		isr_cpu_affinity = 0;
 	npu_info("set the CPU affinity of ISR to %u\n", isr_cpu_affinity);
-	ret = irq_set_affinity_hint(system->irq0, cpumask_of(isr_cpu_affinity));
-	if (ret)
-		npu_warn("fail(%d) in irq_set_affinity_hint(irq0)\n", ret);
-	ret = irq_set_affinity_hint(system->irq1, cpumask_of(isr_cpu_affinity));
-	if (ret)
-		npu_warn("fail(%d) in irq_set_affinity_hint(irq1)\n", ret);
+	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE)) {
+		ret = irq_set_affinity_hint(system->irq0, cpumask_of(isr_cpu_affinity));
+		if (ret)
+			npu_warn("fail(%d) in irq_set_affinity_hint(irq0)\n", ret);
+		ret = irq_set_affinity_hint(system->irq1, cpumask_of(isr_cpu_affinity));
+		if (ret)
+			npu_warn("fail(%d) in irq_set_affinity_hint(irq1)\n", ret);
+	}
 	BUG_ON(!system);
 	device = container_of(system, struct npu_device, system);
 	interface.addr = (void *)((system->fw_npu_memory_buffer->vaddr) + configs[NPU_MAILBOX_BASE]);//[BAE] : need chk
