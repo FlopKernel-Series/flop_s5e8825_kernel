@@ -2813,7 +2813,8 @@ int usb_add_hcd(struct usb_hcd *hcd,
 		retval = usb_hcd_request_irqs(hcd, irqnum, irqflags);
 		if (retval)
 			goto err_request_irq;
-		irq_set_affinity_hint(hcd->irq, cpumask_of(0x1));
+		if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
+			irq_set_affinity_hint(hcd->irq, cpumask_of(0x1));
 	}
 
 	hcd->state = HC_STATE_RUNNING;
@@ -2938,7 +2939,8 @@ void usb_remove_hcd(struct usb_hcd *hcd)
 
 	if (usb_hcd_is_primary_hcd(hcd)) {
 		if (hcd->irq > 0) {
-			irq_set_affinity_hint(hcd->irq, NULL);
+			if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
+				irq_set_affinity_hint(hcd->irq, NULL);
 			free_irq(hcd->irq, hcd);
 		}
 	}

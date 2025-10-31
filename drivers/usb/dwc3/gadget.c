@@ -2867,7 +2867,8 @@ static int __dwc3_gadget_start(struct dwc3 *dwc)
 
 	dwc3_gadget_enable_irq(dwc);
 	dwc3_enable_susphy(dwc, true);
-	irq_set_affinity_hint(dwc->irq_gadget, cpumask_of(0x1));
+	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
+		irq_set_affinity_hint(dwc->irq_gadget, cpumask_of(0x1));
 
 	pr_info("%s ---\n", __func__);
 
@@ -2941,7 +2942,8 @@ static int dwc3_gadget_stop(struct usb_gadget *g)
 	spin_unlock_irqrestore(&dwc->lock, flags);
 	mutex_unlock(&dwc->mutex);
 
-	irq_set_affinity_hint(dwc->irq_gadget, NULL);
+	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
+		irq_set_affinity_hint(dwc->irq_gadget, NULL);
 	free_irq(dwc->irq_gadget, dwc->ev_buf);
 
 	return 0;
