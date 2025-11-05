@@ -1151,22 +1151,6 @@ config VENDOR_NR_CPUS
 	range 2 4096
 	default "8"
 
-config LITTLE_CPU_MASK
-	int "Bitmask of available LITTLE CPUs"
-	default "0"
-	help
-	  This is a bitmask specifying which of the CPUs are LITTLE in a
-	  heterogeneous system. Use 0 if you are unsure, which just results in
-	  this storing the bitmask of all available CPUs.
-
-config BIG_CPU_MASK
-	int "Bitmask of available big CPUs"
-	default "0"
-	help
-	  This is a bitmask specifying which of the CPUs are big in a
-	  heterogeneous system. Use 0 if you are unsure, which just results in
-	  this storing the bitmask of all available CPUs.
-
 config HOTPLUG_CPU
 	bool "Support for hot-pluggable CPUs"
 	select GENERIC_IRQ_MIGRATION

@@ -217,7 +217,6 @@ struct irq_data {
  *				  required
  * IRQD_HANDLE_ENFORCE_IRQCTX	- Enforce that handle_irq_*() is only invoked
  *				  from actual interrupt context.
- * IRQD_PERF_CRITICAL		- IRQ is performance-critical
  * IRQD_AFFINITY_ON_ACTIVATE	- Affinity is set on activation. Don't call
  *				  irq_chip::irq_set_affinity() when deactivated.
  * IRQD_IRQ_ENABLED_ON_SUSPEND	- Interrupt is enabled on suspend by irq pm if
@@ -249,7 +248,6 @@ enum {
 	IRQD_AFFINITY_ON_ACTIVATE	= (1 << 29),
 	IRQD_IRQ_ENABLED_ON_SUSPEND	= (1 << 30),
 	IRQD_GIC_MULTI_TARGET		= (1 << 31),
-	IRQD_PERF_CRITICAL		= IRQD_MSI_NOMASK_QUIRK, /* Repurpose MSI quirk flag */
 };
 
 #define __irqd_to_state(d) ACCESS_PRIVATE((d)->common, state_use_accessors)
