@@ -2720,7 +2720,6 @@ void sec_bat_aging_check(struct sec_battery_info *battery)
 	int prev_step = battery->pdata->age_step;
 	int calc_step;
 	bool ret = 0;
-	static bool init; /* false */
 
 	if ((battery->pdata->num_age_step <= 0) || (battery->batt_cycle < 0))
 		return;
@@ -2735,11 +2734,11 @@ void sec_bat_aging_check(struct sec_battery_info *battery)
 			break;
 	}
 
-	if ((calc_step == prev_step) && init)
+	if ((calc_step == prev_step) && battery->aging_check_done)
 		return;
 
-	init = true;
 	ret = sec_bat_set_aging_step(battery, calc_step);
+	battery->aging_check_done = true;
 	dev_info(battery->dev,
 		"%s: %s change step (%d->%d), Cycle(%d)\n",
 		__func__, ret ? "Succeed in" : "Fail to",
@@ -3305,9 +3304,11 @@ __visible_for_testing void sec_bat_do_fullcharged(struct sec_battery_info *batte
 			pr_info("%s: vbus is set 5V by 2nd full\n", __func__);
 		}
 
-		value.intval = POWER_SUPPLY_STATUS_FULL;
-		psy_do_property(battery->pdata->fuelgauge_name, set,
-			POWER_SUPPLY_PROP_STATUS, value);
+		if (battery->aging_check_done) {
+			value.intval = POWER_SUPPLY_STATUS_FULL;
+			psy_do_property(battery->pdata->fuelgauge_name, set,
+				POWER_SUPPLY_PROP_STATUS, value);
+		}
 	}
 
 	/*
@@ -10647,6 +10648,7 @@ static int sec_battery_probe(struct platform_device *pdev)
 	battery->smart_sw_src = false;
 	battery->dc_ta_op_max_mode = DC_MODE_NONE;
 	battery->dc_ta_forced_op_max_mode = DC_MODE_NONE;
+	battery->aging_check_done = false;
 
 	ttf_init(battery);
 	sec_battery_cisd_init(battery);

@@ -2053,28 +2053,28 @@ static int s2mf301_fg_set_property(struct power_supply *psy,
 		case POWER_SUPPLY_EXT_PROP_FGSRC_SWITCHING:
 			if ((val->intval == SEC_BAT_INBAT_FGSRC_SWITCHING_VBAT) ||
 					(val->intval == SEC_BAT_FGSRC_SWITCHING_VBAT)) {
+				s2mf301_fg_reset_capacity_by_jig_connection(fuelgauge);
 				s2mf301_fg_set_sys_voltage(fuelgauge, 0);
 				if (val->intval == SEC_BAT_INBAT_FGSRC_SWITCHING_VBAT)
 					s2mf301_restart_gauging(fuelgauge);
 				else
 					msleep(1000);
-				s2mf301_fg_reset_capacity_by_jig_connection(fuelgauge);
 				s2mf301_fg_test_read(fuelgauge->i2c);
 			} else if ((val->intval == SEC_BAT_INBAT_FGSRC_SWITCHING_VSYS) ||
 					(val->intval == SEC_BAT_FGSRC_SWITCHING_VSYS)) {
+				s2mf301_fg_reset_capacity_by_jig_connection(fuelgauge);
 				s2mf301_fg_set_sys_voltage(fuelgauge, 1);
 				if (val->intval == SEC_BAT_INBAT_FGSRC_SWITCHING_VSYS)
 					s2mf301_restart_gauging(fuelgauge);
 				else
 					msleep(1000);
-				s2mf301_fg_reset_capacity_by_jig_connection(fuelgauge);
 				s2mf301_fg_test_read(fuelgauge->i2c);
 			}
 			break;
 		case POWER_SUPPLY_EXT_PROP_FUELGAUGE_FACTORY:
 			pr_info("%s:[DEBUG_FAC] fuelgauge\n", __func__);
-			s2mf301_fg_set_sys_voltage(fuelgauge, 1);
 			s2mf301_fg_reset_capacity_by_jig_connection(fuelgauge);
+			s2mf301_fg_set_sys_voltage(fuelgauge, 1);
 			break;
 		case POWER_SUPPLY_EXT_PROP_UPDATE_BATTERY_DATA:
 			fuelgauge->change_step = val->intval;

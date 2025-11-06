@@ -1423,6 +1423,7 @@ struct sec_battery_info {
 	int dc_op_mode;
 	int dc_ta_op_max_mode;
 	int dc_ta_forced_op_max_mode;
+	bool aging_check_done;	/* default false, maintain true once sec_bat_aging_check done */
 };
 
 enum {
