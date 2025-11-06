@@ -3,25 +3,20 @@ kernelsu-objs += allowlist.o
 kernelsu-objs += dynamic_manager.o
 kernelsu-objs += apk_sign.o
 kernelsu-objs += sucompat.o
+kernelsu-objs += pkg_observer.o
 kernelsu-objs += core_hook.o
+kernelsu-objs += supercalls.o
+kernelsu-objs += feature.o
 kernelsu-objs += ksud.o
 kernelsu-objs += embed_ksud.o
 kernelsu-objs += kernel_compat.o
-kernelsu-objs += throne_comm.o
-ifeq ($(CONFIG_KSU_MANUAL_SU), y)
-kernelsu-objs += manual_su.o
-endif
-
-ifeq ($(CONFIG_KSU_TRACEPOINT_HOOK), y)
-kernelsu-objs += ksu_trace.o
-endif
-
-ifeq ($(CONFIG_KSU_THRONE_TRACKER_LEGACY),y)
-$(info -- KernelSU/compat: using legacy throne tracker)
-kernelsu-objs += throne_tracker_legacy.o
-else
-$(info -- KernelSU/compat: using new throne tracker)
 kernelsu-objs += throne_tracker.o
+kernelsu-objs += throne_comm.o
+kernelsu-objs += sulog.o
+
+ifeq ($(CONFIG_KSU_MANUAL_SU), y)
+ccflags-y += -DCONFIG_KSU_MANUAL_SU
+kernelsu-objs += manual_su.o
 endif
 
 kernelsu-objs += selinux/selinux.o
@@ -32,14 +27,13 @@ ccflags-y += -I$(srctree)/security/selinux -I$(srctree)/security/selinux/include
 ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-generic/errno.h
 
 obj-$(CONFIG_KSU) += kernelsu.o
-obj-$(CONFIG_KSU_TRACEPOINT_HOOK) += ksu_trace_export.o
 
 obj-$(CONFIG_KPM) += kpm/
 
 REPO_OWNER := SukiSU-Ultra
 REPO_NAME := SukiSU-Ultra
 REPO_BRANCH := main
-KSU_VERSION_API := 3.2.0
+KSU_VERSION_API := 4.0.0
 
 GIT_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin git
 CURL_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin curl
@@ -47,30 +41,36 @@ CURL_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin curl
 KSU_GITHUB_VERSION := $(shell $(CURL_BIN) -s "https://api.github.com/repos/$(REPO_OWNER)/$(REPO_NAME)/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 KSU_GITHUB_VERSION_COMMIT := $(shell $(CURL_BIN) -sI "https://api.github.com/repos/$(REPO_OWNER)/$(REPO_NAME)/commits?sha=$(REPO_BRANCH)&per_page=1" | grep -i "link:" | sed -n 's/.*page=\([0-9]*\)>; rel="last".*/\1/p')
 
-LOCAL_GIT_EXISTS := $(shell test -e $(srctree)/$(src)/../.git && echo 1 || echo 0)
+ifeq ($(findstring $(srctree),$(src)),$(srctree))
+  KSU_SRC := $(src)
+else
+  KSU_SRC := $(srctree)/$(src)
+endif
+
+LOCAL_GIT_EXISTS := $(shell test -e $(KSU_SRC)/../.git && echo 1 || echo 0)
 
 define get_ksu_version_full
-v$1-$(shell cd $(srctree)/$(src); $(GIT_BIN) rev-parse --short=8 HEAD)@$(shell cd $(srctree)/$(src); $(GIT_BIN) rev-parse --abbrev-ref HEAD)
+v$1-$(shell cd $(KSU_SRC); $(GIT_BIN) rev-parse --short=8 HEAD)@$(shell cd $(KSU_SRC); $(GIT_BIN) rev-parse --abbrev-ref HEAD)
 endef
 
 ifeq ($(KSU_GITHUB_VERSION_COMMIT),)
   ifeq ($(LOCAL_GIT_EXISTS),1)
-    $(shell cd $(srctree)/$(src); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
-    KSU_LOCAL_VERSION := $(shell cd $(srctree)/$(src); $(GIT_BIN) rev-list --count $(REPO_BRANCH))
-    KSU_VERSION := $(shell expr 10000 + $(KSU_LOCAL_VERSION) + 700)
+    $(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
+    KSU_LOCAL_VERSION := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-list --count $(REPO_BRANCH))
+    KSU_VERSION := $(shell expr 40000 + $(KSU_LOCAL_VERSION) - 2815)
     $(info -- $(REPO_NAME) version (local .git): $(KSU_VERSION))
   else
     KSU_VERSION := 13000
     $(warning -- Could not fetch version online or via local .git! Using fallback version: $(KSU_VERSION))
   endif
 else
-  KSU_VERSION := $(shell expr 10000 + $(KSU_GITHUB_VERSION_COMMIT) + 700)
+  KSU_VERSION := $(shell expr 40000 + $(KSU_GITHUB_VERSION_COMMIT) - 2815)
   $(info -- $(REPO_NAME) version (GitHub): $(KSU_VERSION))
 endif
 
 ifeq ($(KSU_GITHUB_VERSION),)
   ifeq ($(LOCAL_GIT_EXISTS),1)
-    $(shell cd $(srctree)/$(src); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
+    $(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
     KSU_VERSION_FULL := $(call get_ksu_version_full,$(KSU_VERSION_API))
     $(info -- $(REPO_NAME) version (local .git): $(KSU_VERSION_FULL))
     $(info -- $(REPO_NAME) Formatted version (local .git): $(KSU_VERSION))
@@ -79,7 +79,7 @@ ifeq ($(KSU_GITHUB_VERSION),)
     $(warning -- $(REPO_NAME) version: $(KSU_VERSION_FULL))
   endif
 else
-  $(shell cd $(srctree)/$(src); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
+  $(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
   KSU_VERSION_FULL := $(call get_ksu_version_full,$(KSU_GITHUB_VERSION))
   $(info -- $(REPO_NAME) version (Github): $(KSU_VERSION_FULL))
 endif
@@ -87,12 +87,13 @@ endif
 ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
 ccflags-y += -DKSU_VERSION_FULL=\"$(KSU_VERSION_FULL)\"
 
-ifeq ($(CONFIG_KSU_KPROBES_HOOK), y)
-$(info -- SukiSU: CONFIG_KSU_KPROBES_HOOK)
-else ifeq ($(CONFIG_KSU_TRACEPOINT_HOOK), y)
-$(info -- SukiSU: CONFIG_KSU_TRACEPOINT_HOOK)
-else ifeq ($(CONFIG_KSU_MANUAL_HOOK), y)
-$(info -- SukiSU: CONFIG_KSU_MANUAL_HOOK)
+ifeq ($(CONFIG_KSU_MANUAL_HOOK), y)
+ccflags-y += -DKSU_MANUAL_HOOK
+$(info -- SukiSU: KSU_MANUAL_HOOK)
+else
+ccflags-y += -DKSU_HAVE_SYSCALL_TRACEPOINTS_HOOK
+ccflags-y += -DKSU_KPROBES_HOOK
+$(info -- SukiSU: KSU_TRACEPOINT_HOOK)
 endif
 
 KERNEL_VERSION := $(VERSION).$(PATCHLEVEL)
@@ -114,17 +115,6 @@ ifeq ($(CONFIG_KPM), y)
 $(info -- KPM is enabled)
 else
 $(info -- KPM is disabled)
-endif
-
-ifeq ($(CONFIG_KSU_MANUAL_SU), y)
-KSU_PW_POOL := abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
-KSU_PW_LEN  := $(shell awk 'BEGIN{srand(); print int(rand()*9)+8}')
-KSU_SU_PASSWORD := $(shell \
-    tr -dc '$(KSU_PW_POOL)' </dev/urandom | head -c $(KSU_PW_LEN))
-
-ccflags-y += -DKSU_SU_PASSWORD=\"$(KSU_SU_PASSWORD)\"
-
-$(info -- KSU manual-su password : $(KSU_SU_PASSWORD))
 endif
 
 # SELinux drivers check
@@ -165,12 +155,6 @@ ifeq ($(shell grep -q "SEC_SELINUX_PORTING_COMMON" $(srctree)/security/selinux/a
 ccflags-y += -DSAMSUNG_SELINUX_PORTING
 endif
 
-# Check new vfs_getattr()
-ifeq ($(shell grep -A1 "^int vfs_getattr" $(srctree)/fs/stat.c | grep -q "query_flags" ; echo $$?),0)
-$(info -- KernelSU/compat: new vfs_getattr() found)
-ccflags-y += -DKSU_HAS_NEW_VFS_GETATTR
-endif
-
 # Function proc_ops check
 ifeq ($(shell grep -q "struct proc_ops " $(srctree)/include/linux/proc_fs.h; echo $$?),0)
 ccflags-y += -DKSU_COMPAT_HAS_PROC_OPS
@@ -195,7 +179,7 @@ endif
 $(info -- Supported Unofficial Manager: 5ec1cff (GKI) rsuntk (Non-GKI) ShirkNeko udochina (GKI and non-GKI and KPM))
 
 ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat
-ccflags-y += -Wno-declaration-after-statement -Wno-unused-function
+ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-variable
 
 ## For susfs stuff ##
 ifeq ($(shell test -e $(srctree)/fs/susfs.c; echo $$?),0)

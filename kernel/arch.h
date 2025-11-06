@@ -20,6 +20,7 @@
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 16, 0)
 #define PRCTL_SYMBOL "__arm64_sys_prctl"
+#define REBOOT_SYMBOL "__arm64_sys_reboot"
 #define SYS_READ_SYMBOL "__arm64_sys_read"
 #define SYS_NEWFSTATAT_SYMBOL "__arm64_sys_newfstatat"
 #define SYS_FSTATAT64_SYMBOL "__arm64_sys_fstatat64"
@@ -28,6 +29,7 @@
 #define SYS_EXECVE_COMPAT_SYMBOL "__arm64_compat_sys_execve"
 #else
 #define PRCTL_SYMBOL "sys_prctl"
+#define REBOOT_SYMBOL "sys_reboot"
 #define SYS_READ_SYMBOL "sys_read"
 #define SYS_NEWFSTATAT_SYMBOL "sys_newfstatat"
 #define SYS_FSTATAT64_SYMBOL "sys_fstatat64"
@@ -35,6 +37,11 @@
 #define SYS_EXECVE_SYMBOL "sys_execve"
 #define SYS_EXECVE_COMPAT_SYMBOL "compat_sys_execve"
 #endif
+/*LSM HOOK*/
+#define SECURITY_TASK_FIX_SETUID_SYMBOL "security_task_fix_setuid"
+#define INODE_PERMISSION_SYMBOL "security_inode_permission"
+#define BPRM_CHECK_SECURITY_SYMBOL "security_bprm_check"
+#define TASK_ALLOC_SYMBOL "security_task_alloc"
 
 #elif defined(__x86_64__)
 
@@ -53,6 +60,7 @@
 #define __PT_IP_REG ip
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 16, 0)
 #define PRCTL_SYMBOL "__x64_sys_prctl"
+#define REBOOT_SYMBOL "__x64_sys_reboot"
 #define SYS_READ_SYMBOL "__x64_sys_read"
 #define SYS_NEWFSTATAT_SYMBOL "__x64_sys_newfstatat"
 #define SYS_FSTATAT64_SYMBOL "__x64_sys_fstatat64"
@@ -61,6 +69,7 @@
 #define SYS_EXECVE_COMPAT_SYMBOL "__x64_compat_sys_execve"
 #else
 #define PRCTL_SYMBOL "sys_prctl"
+#define REBOOT_SYMBOL "sys_reboot"
 #define SYS_READ_SYMBOL "sys_read"
 #define SYS_NEWFSTATAT_SYMBOL "sys_newfstatat"
 #define SYS_FSTATAT64_SYMBOL "sys_fstatat64"
@@ -68,9 +77,15 @@
 #define SYS_EXECVE_SYMBOL "sys_execve"
 #define SYS_EXECVE_COMPAT_SYMBOL "compat_sys_execve"
 #endif
+/*LSM HOOK*/
+#define SECURITY_TASK_FIX_SETUID_SYMBOL "security_task_fix_setuid"
+#define PRCTL_SYMBOL "__arm64_sys_prctl"
+#define INODE_PERMISSION_SYMBOL "security_inode_permission"
+#define BPRM_CHECK_SECURITY_SYMBOL "security_bprm_check"
+#define TASK_ALLOC_SYMBOL "security_task_alloc"
 
 #else
-#ifdef CONFIG_KSU_KPROBES_HOOK
+#ifdef KSU_KPROBES_HOOK
 #error "Unsupported arch"
 #endif
 #endif

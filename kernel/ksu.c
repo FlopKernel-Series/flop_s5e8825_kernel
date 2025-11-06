@@ -8,31 +8,17 @@
 #include "allowlist.h"
 #include "arch.h"
 #include "core_hook.h"
+#include "feature.h"
 #include "klog.h" // IWYU pragma: keep
 #include "ksu.h"
 #include "throne_tracker.h"
+#include "sucompat.h"
+#include "ksud.h"
+#include "supercalls.h"
 
 #ifdef CONFIG_KSU_SUSFS
 #include <linux/susfs.h>
 #endif
-
-#ifdef CONFIG_KSU_CMDLINE
-#include <linux/init.h>
-
-// use get_ksu_state()!
-unsigned int enable_kernelsu = 1; // enabled by default
-static int __init read_kernelsu_state(char *s)
-{
-	if (s)
-		enable_kernelsu = simple_strtoul(s, NULL, 0);
-	return 1;
-}
-__setup("kernelsu.enabled=", read_kernelsu_state);
-
-bool get_ksu_state(void) { return enable_kernelsu >= 1; }
-#else
-bool get_ksu_state(void) { return true; }
-#endif /* CONFIG_KSU_CMDLINE */
 
 static struct workqueue_struct *ksu_workqueue;
 
@@ -41,41 +27,8 @@ bool ksu_queue_work(struct work_struct *work)
 	return queue_work(ksu_workqueue, work);
 }
 
-extern int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
-					void *argv, void *envp, int *flags);
-
-extern int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
-				    void *argv, void *envp, int *flags);
-
-int ksu_handle_execveat(int *fd, struct filename **filename_ptr, void *argv,
-			void *envp, int *flags)
-{
-	ksu_handle_execveat_ksud(fd, filename_ptr, argv, envp, flags);
-	return ksu_handle_execveat_sucompat(fd, filename_ptr, argv, envp,
-					    flags);
-}
-
-extern void ksu_sucompat_init(void);
-extern void ksu_sucompat_exit(void);
-extern void ksu_ksud_init(void);
-extern void ksu_ksud_exit(void);
-#ifdef CONFIG_KSU_TRACEPOINT_HOOK
-extern void ksu_trace_register();
-extern void ksu_trace_unregister();
-#endif
-
 int __init kernelsu_init(void)
 {
-	pr_info("kernelsu.enabled=%d\n",
-		(int)get_ksu_state());
-
-#ifdef CONFIG_KSU_CMDLINE
-	if (!get_ksu_state()) {
-		pr_info_once("drivers is disabled.");
-		return 0;
-	}
-#endif
-
 #ifdef CONFIG_KSU_DEBUG
 	pr_alert("*************************************************************");
 	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
@@ -87,8 +40,12 @@ int __init kernelsu_init(void)
 #endif
 
 #ifdef CONFIG_KSU_SUSFS
-	susfs_init();
+    susfs_init();
 #endif
+
+	ksu_feature_init();
+
+	ksu_supercalls_init();
 
 	ksu_core_init();
 
@@ -98,16 +55,11 @@ int __init kernelsu_init(void)
 
 	ksu_throne_tracker_init();
 
-	ksu_sucompat_init();
-
-#ifdef CONFIG_KSU_KPROBES_HOOK
-	ksu_ksud_init();
+#ifdef KSU_KPROBES_HOOK
+    ksu_sucompat_init();
+    ksu_ksud_init();
 #else
-	pr_debug("init ksu driver\n");
-#endif
-
-#ifdef CONFIG_KSU_TRACEPOINT_HOOK
-    ksu_trace_register();
+    pr_debug("init ksu driver\n");
 #endif
 
 #ifdef MODULE
@@ -120,28 +72,21 @@ int __init kernelsu_init(void)
 
 void kernelsu_exit(void)
 {
-#ifdef CONFIG_KSU_CMDLINE
-	if (!get_ksu_state()) {
-		return;
-	}
-#endif
 	ksu_allowlist_exit();
 
 	ksu_throne_tracker_exit();
+
+	ksu_observer_exit();
 
 	destroy_workqueue(ksu_workqueue);
 
 #ifdef CONFIG_KSU_KPROBES_HOOK
 	ksu_ksud_exit();
+    ksu_sucompat_exit();
 #endif
-
-#ifdef CONFIG_KSU_TRACEPOINT_HOOK
-    ksu_trace_unregister();
-#endif
-
-	ksu_sucompat_exit();
 
 	ksu_core_exit();
+	ksu_feature_exit();
 }
 
 module_init(kernelsu_init);
@@ -151,10 +96,10 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("weishu");
 MODULE_DESCRIPTION("Android KernelSU");
 
-#define VFS_NS_NAME  VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)
-MODULE_IMPORT_NS("VFS_NS_NAME");
-#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
-MODULE_IMPORT_NS(VFS_NS_NAME);
+MODULE_IMPORT_NS("VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver");
+#else
+MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
+#endif
 #endif
