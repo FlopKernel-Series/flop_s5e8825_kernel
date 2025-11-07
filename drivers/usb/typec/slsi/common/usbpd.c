@@ -12,6 +12,7 @@
 #include <linux/completion.h>
 #include <linux/pm_wakeup.h>
 #include <linux/version.h>
+#include <linux/sec_detect.h>
 
 #if IS_ENABLED(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
 #if IS_ENABLED(CONFIG_BATTERY_NOTIFIER)
@@ -1115,10 +1116,13 @@ int usbpd_init(struct device *dev, void *phy_driver_data)
 	pd_data->policy_wake = wakeup_source_register(NULL, "policy_wake"); // 5.4 R
 #endif
 
+/* Avoid on a33x which uses s2mu106 and sets it outside of this driver */
 #if IS_ENABLED(CONFIG_PDIC_PD30)
-	pd_data->specification_revision = USBPD_PD3_0;
+	if (sec_get_current_device() != SEC_A33)
+		pd_data->specification_revision = USBPD_PD3_0;
 #else
-	pd_data->specification_revision = USBPD_PD2_0;
+	if (sec_get_current_device() != SEC_A33)
+		pd_data->specification_revision = USBPD_PD2_0;
 #endif
 
 	pd_data->policy_wqueue =
