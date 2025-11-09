@@ -6,7 +6,7 @@ config CHARGER_SM5714
 	  SM5714 is charger systems for lithium-ion (Li+) batteries
 	  in handheld and portable equipment.
 
-config SHIPMODE_BY_VBAT
+config SHIPMODE_BY_VBAT_SM
 	bool "enable for check shipmode by vbat"
 	default n
 	depends on CHARGER_SM5714

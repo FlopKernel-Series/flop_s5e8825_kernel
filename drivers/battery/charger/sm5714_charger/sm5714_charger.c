@@ -99,7 +99,7 @@ static void chg_set_auto_shipmode_time(struct sm5714_charger_data *charger, u8 d
 		(deglitch_time << 3), (0x3 << 3));	/*	SHIP_AUTO_TIME	*/
 }
 
-#if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
+#if defined(CONFIG_SHIPMODE_BY_VBAT_SM) && !defined(CONFIG_SEC_FACTORY)
 static bool chg_check_current_level(void)
 {
 	union power_supply_propval val_avg_curr = {0, }, val_now_curr = {0, };
@@ -1957,7 +1957,7 @@ static void sm5714_charger_shutdown(struct platform_device *pdev)
 	sm5714_charger_free_irqs(charger);
 
 	if (charger->i2c) {
-#if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
+#if defined(CONFIG_SHIPMODE_BY_VBAT_SM) && !defined(CONFIG_SEC_FACTORY)
 		if (charger->is_sm5714a) {
 			chg_set_auto_shipmode_level(charger);
 			chg_set_auto_shipmode_time(charger, AUTO_SHIP_MODE_TIME_S_4_0);

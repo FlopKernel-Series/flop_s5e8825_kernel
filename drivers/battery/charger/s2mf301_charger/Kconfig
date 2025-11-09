@@ -24,7 +24,7 @@ config LSI_IFPMIC
 	  are processed according to specific cable types
 	  used in factory process.
 
-config SHIPMODE_BY_VBAT
+config SHIPMODE_BY_VBAT_SLSI
 	bool "enable for check shipmode by vbat"
 	default n
 	depends on CHARGER_S2MF301

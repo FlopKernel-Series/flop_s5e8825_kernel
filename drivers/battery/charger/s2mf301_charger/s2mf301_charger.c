@@ -151,7 +151,7 @@ static void s2mf301_set_auto_shipmode_level(struct s2mf301_charger_data *charger
 	pr_info("%s: set shipmode 0x%x, 0x%x\n", __func__, reg_data, read_data);
 }
 
-#if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
+#if defined(CONFIG_SHIPMODE_BY_VBAT_SLSI) && !defined(CONFIG_SEC_FACTORY)
 static bool s2mf301_check_current_level(char *fuelgauge_name)
 {
 	union power_supply_propval val_avg_curr = {0, }, val_now_curr = {0, };
@@ -2098,7 +2098,7 @@ static void s2mf301_charger_shutdown(struct platform_device *dev)
 
 	s2mf301_set_regulation_voltage(charger, charger->pdata->chg_float_voltage);
 
-#if defined(CONFIG_SHIPMODE_BY_VBAT) && !defined(CONFIG_SEC_FACTORY)
+#if defined(CONFIG_SHIPMODE_BY_VBAT_SLSI) && !defined(CONFIG_SEC_FACTORY)
 	{
 		u8 auto_shipmode_level;
 
