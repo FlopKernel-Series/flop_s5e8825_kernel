@@ -616,6 +616,10 @@ int ems_select_task_rq_rt(struct task_struct *p, int prev_cpu,
 	if (!(sd_flag & SD_BALANCE_FORK))
 		mlt_update_task(p, MLT_STATE_NOCHANGE, sched_clock());
 
+#ifdef CONFIG_SCHED_EMS_CASS_INTEGRATION
+	return -1;
+#endif
+
 	return frt_select_task_rq_rt(p, prev_cpu, sd_flag, wake_flags);
 }
 

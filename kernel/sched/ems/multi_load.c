@@ -12,6 +12,8 @@
 #include <trace/events/ems.h>
 #include <trace/events/ems_debug.h>
 
+unsigned int sysctl_sched_util_est_clamp = 100;
+
 /******************************************************************************
  *                           MULTI LOAD for TASK                              *
  ******************************************************************************/
@@ -69,6 +71,7 @@ unsigned long ml_cpu_util_est(int cpu)
 
 	cfs_rq = &cpu_rq(cpu)->cfs;
 	util_est = READ_ONCE(cfs_rq->avg.util_est.enqueued);
+	util_est = util_est * sysctl_sched_util_est_clamp / 100;
 
 	return min_t(unsigned long, util_est, capacity_cpu_orig(cpu));
 }

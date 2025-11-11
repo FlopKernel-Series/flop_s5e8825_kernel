@@ -29,6 +29,7 @@ enum { sysctl_hung_task_timeout_secs = 0 };
 extern unsigned int sysctl_sched_latency;
 extern unsigned int sysctl_sched_min_granularity;
 extern unsigned int sysctl_sched_wakeup_granularity;
+extern unsigned int sysctl_sched_util_est_clamp;
 extern unsigned int sysctl_sched_child_runs_first;
 
 enum sched_tunable_scaling {

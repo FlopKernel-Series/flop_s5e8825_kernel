@@ -1304,6 +1304,27 @@ int __ems_select_task_rq_fair(struct task_struct *p, int prev_cpu,
 		goto out;
 	}
 
+#ifdef CONFIG_SCHED_EMS_CASS_INTEGRATION
+	if (env.cl_sync) {
+		int this_cpu = smp_processor_id();
+		struct cpumask cl_sync_mask;
+
+		cpumask_and(&cl_sync_mask, &env.cpus_allowed,
+			    &pcpu_csd(this_cpu)->cpus);
+		if (!cpumask_empty(&cl_sync_mask)) {
+			target_cpu = cpumask_any(&cl_sync_mask);
+			env.reason_of_selection = FAIR_SYNC;
+			goto out;
+		}
+	}
+
+	/*
+	 * EMS still owns policy constraints and sysbusy overrides. Leave the
+	 * general runqueue placement decision to CASS.
+	 */
+	goto out;
+#endif
+
 	/* Find cpu candidates suitable for task operation */
 	num_of_cpus = find_fit_cpus(&env);
 	if (num_of_cpus == 0) {

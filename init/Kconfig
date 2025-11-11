@@ -1322,6 +1322,7 @@ config CHECKPOINT_RESTORE
 config SCHED_CASS
 	bool "Capacity Aware Superset Scheduler"
 	depends on SMP
+	select SCHED_EMS_CASS_INTEGRATION if SCHED_EMS
 	help
 	  This enables the Capacity Aware Superset Scheduler (CASS), which
 	  optimizes runqueue selection of CFS tasks. By using CPU capacity as a
@@ -1343,6 +1344,13 @@ config SCHED_CASS
 	  balancing load based on relative utilization, all CPUs are kept at
 	  their lowest P-state necessary to satisfy the overall load at any
 	  given moment.
+
+config SCHED_EMS_CASS_INTEGRATION
+	def_bool SCHED_CASS && SCHED_EMS
+	help
+	  Automatically selected when both SCHED_CASS and SCHED_EMS are
+	  enabled. CASS handles CPU selection for fair and RT tasks while EMS
+	  provides Exynos policy constraints.
 
 config SCHED_AUTOGROUP
 	bool "Automatic process group scheduling"

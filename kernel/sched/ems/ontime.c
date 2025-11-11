@@ -237,6 +237,10 @@ static struct rq *ontime_find_mulligan_rq(struct task_struct *target_p,
 
 	/* Find next cpu for this task */
 	dst_cpu = ems_select_task_rq_fair(target_p, cpu_of(src_rq), 0, 0);
+#ifdef CONFIG_SCHED_CASS
+	if (dst_cpu < 0 && target_p->sched_class == &fair_sched_class)
+		dst_cpu = cass_select_task_rq_fair(target_p, cpu_of(src_rq), 0, 0);
+#endif
 
 	/* Clear flag */
 	EMS_PF_CLEAR(target_p, env->flags);
@@ -376,6 +380,10 @@ static void ontime_heavy_migration(void)
 
 	/* Select destination cpu which the heavy task will be moved */
 	dst_cpu = ems_select_task_rq_fair(p, rq->cpu, 0, 0);
+#ifdef CONFIG_SCHED_CASS
+	if (dst_cpu < 0 && p->sched_class == &fair_sched_class)
+		dst_cpu = cass_select_task_rq_fair(p, rq->cpu, 0, 0);
+#endif
 	if (dst_cpu < 0 || rq->cpu == dst_cpu) {
 		raw_spin_rq_unlock_irqrestore(rq, flags);
 		return;
