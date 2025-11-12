@@ -15,7 +15,7 @@
 #include "../usdm_panel.h"
 
 enum {
-	NT36672C_M33_01_DISPLAY_MODE_1080x2408_90HS,
+	NT36672C_M33_01_DISPLAY_MODE_1080x2408_120HS,
 	NT36672C_M33_01_DISPLAY_MODE_1080x2408_60HS,
 	MAX_NT36672C_M33_01_DISPLAY_MODE,
 };
@@ -26,14 +26,14 @@ enum {
 };
 
 enum {
-	NT36672C_M33_01_VRR_90HS,
+	NT36672C_M33_01_VRR_120HS,
 	NT36672C_M33_01_VRR_60HS,
 	MAX_NT36672C_M33_01_VRR,
 };
 
 struct panel_vrr nt36672c_m33_01_default_panel_vrr[] = {
-	[NT36672C_M33_01_VRR_90HS] = {
-		.fps = 90,
+	[NT36672C_M33_01_VRR_120HS] = {
+		.fps = 120,
 		.te_sw_skip_count = 0,
 		.te_hw_skip_count = 0,
 		.mode = VRR_HS_MODE,
@@ -47,7 +47,7 @@ struct panel_vrr nt36672c_m33_01_default_panel_vrr[] = {
 };
 
 static struct panel_vrr *nt36672c_m33_01_default_vrrtbl[] = {
-	&nt36672c_m33_01_default_panel_vrr[NT36672C_M33_01_VRR_90HS],
+	&nt36672c_m33_01_default_panel_vrr[NT36672C_M33_01_VRR_120HS],
 	&nt36672c_m33_01_default_panel_vrr[NT36672C_M33_01_VRR_60HS],
 };
 
@@ -70,10 +70,10 @@ static struct panel_resol nt36672c_m33_01_default_resol[] = {
 #if defined(CONFIG_USDM_PANEL_DISPLAY_MODE)
 static struct common_panel_display_mode nt36672c_m33_01_display_mode[] = {
 	/* FHD */
-	[NT36672C_M33_01_DISPLAY_MODE_1080x2408_90HS] = {
-		.name = PANEL_DISPLAY_MODE_1080x2408_90HS,
+	[NT36672C_M33_01_DISPLAY_MODE_1080x2408_120HS] = {
+		.name = PANEL_DISPLAY_MODE_1080x2408_120HS,
 		.resol = &nt36672c_m33_01_default_resol[NT36672C_M33_01_RESOL_1080x2408],
-		.vrr = &nt36672c_m33_01_default_panel_vrr[NT36672C_M33_01_VRR_90HS],
+		.vrr = &nt36672c_m33_01_default_panel_vrr[NT36672C_M33_01_VRR_120HS],
 	},
 	[NT36672C_M33_01_DISPLAY_MODE_1080x2408_60HS] = {
 		.name = PANEL_DISPLAY_MODE_1080x2408_60HS,
@@ -83,7 +83,7 @@ static struct common_panel_display_mode nt36672c_m33_01_display_mode[] = {
 };
 
 static struct common_panel_display_mode *nt36672c_m33_01_display_mode_array[] = {
-	&nt36672c_m33_01_display_mode[NT36672C_M33_01_DISPLAY_MODE_1080x2408_90HS],
+	&nt36672c_m33_01_display_mode[NT36672C_M33_01_DISPLAY_MODE_1080x2408_120HS],
 	&nt36672c_m33_01_display_mode[NT36672C_M33_01_DISPLAY_MODE_1080x2408_60HS],
 };
 
