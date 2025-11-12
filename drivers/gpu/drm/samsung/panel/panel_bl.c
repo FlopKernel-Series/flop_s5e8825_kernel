@@ -613,10 +613,12 @@ void panel_bl_update_acl_state(struct panel_bl_device *panel_bl)
 	}
 #endif
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-	if (panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON) {
-		panel_bl->props.acl_opr = 0;
-		panel_bl_set_property(panel_bl, &panel_bl->props.acl_pwrsave, ACL_PWRSAVE_OFF);
-		return;
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+		if (panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON) {
+			panel_bl->props.acl_opr = 0;
+			panel_bl_set_property(panel_bl, &panel_bl->props.acl_pwrsave, ACL_PWRSAVE_OFF);
+			return;
+		}
 	}
 #endif
 	if (panel_data->props.adaptive_control > 100) {
@@ -683,8 +685,10 @@ int panel_bl_get_smooth_dim_request(struct panel_bl_device *panel_bl)
 	if (!panel_bl)
 		return SMOOTH_TRANS_ON;
 
-	if (!panel_bl->props.smooth_transition_mask_layer_req)
-		return SMOOTH_TRANS_OFF;
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+		if (!panel_bl->props.smooth_transition_mask_layer_req)
+			return SMOOTH_TRANS_OFF;
+	}
 
 	if (!panel_bl->props.smooth_transition_sysfs_req)
 		return SMOOTH_TRANS_OFF;
@@ -1125,11 +1129,13 @@ int _panel_update_brightness_nolock(struct panel_device *panel, u32 send_cmd)
 	}
 
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-	if (panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON) {
-		brightness = panel_bl->props.mask_layer_br_target;
-		panel_info("mask_layer_br_hook (%d)->(%d), skip brighntess\n",
-			bd->props.brightness, panel_bl->props.mask_layer_br_target);
-		send_cmd = SKIP_CMD;
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+		if (panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON) {
+			brightness = panel_bl->props.mask_layer_br_target;
+			panel_info("mask_layer_br_hook (%d)->(%d), skip brighntess\n",
+				bd->props.brightness, panel_bl->props.mask_layer_br_target);
+			send_cmd = SKIP_CMD;
+		}
 	}
 #endif
 
@@ -1223,14 +1229,15 @@ static int panel_bl_thread(void *data)
 		brightness = panel_bl->props.brightness;
 		acl_state = panel_bl->props.acl_pwrsave;
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-		mask_layer_br_hook = panel_bl->props.mask_layer_br_hook;
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+			mask_layer_br_hook = panel_bl->props.mask_layer_br_hook;
 #endif
 		ret = wait_event_interruptible(panel_bl->wq.wait,
 				(should_stop = panel_bl->wq.should_stop || kthread_should_stop()) ||
 				(brightness != panel_bl->props.brightness) ||
 				(acl_state != panel_bl->props.acl_pwrsave)
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-				|| (mask_layer_br_hook != panel_bl->props.mask_layer_br_hook)
+				|| (!sec_get_feat(SEC_FEAT_LCD_DEVICE) && (mask_layer_br_hook != panel_bl->props.mask_layer_br_hook))
 #endif
 				);
 		if (should_stop)
@@ -1246,8 +1253,10 @@ static int panel_bl_thread(void *data)
 			(panel_bl->props.acl_pwrsave == ACL_PWRSAVE_OFF) ? 0 : 1;
 		evt_data.d.bl.gradual_acl_val = panel_bl->props.acl_opr;
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-		evt_data.d.bl.finger_mask_hbm_on =
-			(panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON);
+		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+			evt_data.d.bl.finger_mask_hbm_on =
+				(panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON);
+		}
 #endif
 		usdm_panel_notifier_call_chain(PANEL_EVENT_BL_STATE_CHANGED, &evt_data);
 #endif

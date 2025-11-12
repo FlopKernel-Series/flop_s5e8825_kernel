@@ -6242,6 +6242,11 @@ static int panel_set_mask_layer(struct panel_device *panel, void *arg)
 	struct mask_layer_data *req_data = (struct mask_layer_data *)arg;
 	bool tx_cmd = true;
 
+	if (sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+		panel_warn("mask_layer not supported on LCD devices\n");
+		return -ENOTSUPP;
+	}
+
 	if (!panel->lcd_dev) {
 		panel_err("lcd device not exist\n");
 		return -EINVAL;
