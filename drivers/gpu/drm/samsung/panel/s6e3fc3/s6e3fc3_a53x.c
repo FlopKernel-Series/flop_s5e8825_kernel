@@ -15,7 +15,7 @@
 #include "../usdm_maptbl.h"
 #include "../usdm_panel.h"
 #include "../usdm_panel_function.h"
-#include "s6e3fc3_a25x_panel.h"
+#include "s6e3fc3_a53x_panel.h"
 
 #ifdef CONFIG_USDM_FACTORY_DSC_CRC_TEST
 /*
@@ -28,7 +28,7 @@
  * [0](15h 1st): 0x96 (OK) other (NG)
  * [1](15h 2nd): 0xAF (OK) other (NG)
  */
-int s6e3fc3_a25x_decoder_test(struct panel_device *panel, void *data, u32 len)
+int s6e3fc3_a53x_decoder_test(struct panel_device *panel, void *data, u32 len)
 {
 	int ret = 0;
 	u8 read_buf1[S6E3FC3_DECODER_TEST1_LEN] = { -1, -1 };
@@ -92,7 +92,7 @@ int s6e3fc3_a25x_decoder_test(struct panel_device *panel, void *data, u32 len)
 }
 #endif
 
-int s6e3fc3_a25x_maptbl_getidx_ffc(struct maptbl *tbl)
+int s6e3fc3_a53x_maptbl_getidx_ffc(struct maptbl *tbl)
 {
 	int idx;
 	u32 dsi_clk;
@@ -103,13 +103,13 @@ int s6e3fc3_a25x_maptbl_getidx_ffc(struct maptbl *tbl)
 
 	switch (dsi_clk) {
 	case 1108000:
-		idx = S6E3FC3_A25X_HS_CLK_1108;
+		idx = S6E3FC3_A53X_HS_CLK_1108;
 		break;
 	case 1124000:
-		idx = S6E3FC3_A25X_HS_CLK_1124;
+		idx = S6E3FC3_A53X_HS_CLK_1124;
 		break;
 	case 1125000:
-		idx = S6E3FC3_A25X_HS_CLK_1125;
+		idx = S6E3FC3_A53X_HS_CLK_1125;
 		break;
 	default:
 		pr_info("%s: invalid dsi clock: %d\n", __func__, dsi_clk);
@@ -118,30 +118,30 @@ int s6e3fc3_a25x_maptbl_getidx_ffc(struct maptbl *tbl)
 	return usdm_maptbl_index(tbl, 0, idx, 0);
 }
 
-struct pnobj_func s6e3fc3_a25x_function_table[MAX_S6E3FC3_A25X_FUNCTION] = {
-	[S6E3FC3_A25X_MAPTBL_GETIDX_FFC] = __PNOBJ_FUNC_INITIALIZER(S6E3FC3_A25X_MAPTBL_GETIDX_FFC, s6e3fc3_a25x_maptbl_getidx_ffc),
+struct pnobj_func s6e3fc3_a53x_function_table[MAX_S6E3FC3_A53X_FUNCTION] = {
+	[S6E3FC3_A53X_MAPTBL_GETIDX_FFC] = __PNOBJ_FUNC_INITIALIZER(S6E3FC3_A53X_MAPTBL_GETIDX_FFC, s6e3fc3_a53x_maptbl_getidx_ffc),
 };
 
-static int __init s6e3fc3_a25x_panel_init(void)
+static int __init s6e3fc3_a53x_panel_init(void)
 {
-	if (sec_get_current_device() != SEC_A25) {
-		SEC_DETECT_LOG("Skipped s6e3fc3_a25x panel driver\n");
+	if (sec_get_current_device() != SEC_A53) {
+		SEC_DETECT_LOG("Skipped s6e3fc3_a53x panel driver\n");
 		return 0;
 	}
-	s6e3fc3_init(&s6e3fc3_a25x_panel_info);
-	usdm_panel_function_insert_array(s6e3fc3_a25x_function_table, ARRAY_SIZE(s6e3fc3_a25x_function_table));
-	usdm_register_common_panel(&s6e3fc3_a25x_panel_info);
+	s6e3fc3_init(&s6e3fc3_a53x_panel_info);
+	usdm_panel_function_insert_array(s6e3fc3_a53x_function_table, ARRAY_SIZE(s6e3fc3_a53x_function_table));
+	usdm_register_common_panel(&s6e3fc3_a53x_panel_info);
 
-	SEC_DETECT_LOG("Initialized s6e3fc3_a25x panel driver\n");
+	SEC_DETECT_LOG("Initialized s6e3fc3_a53x panel driver\n");
 	return 0;
 }
 
-static void __exit s6e3fc3_a25x_panel_exit(void)
+static void __exit s6e3fc3_a53x_panel_exit(void)
 {
-	usdm_deregister_common_panel(&s6e3fc3_a25x_panel_info);
+	usdm_deregister_common_panel(&s6e3fc3_a53x_panel_info);
 }
 
-module_init(s6e3fc3_a25x_panel_init);
-module_exit(s6e3fc3_a25x_panel_exit);
+module_init(s6e3fc3_a53x_panel_init);
+module_exit(s6e3fc3_a53x_panel_exit);
 MODULE_DESCRIPTION("Samsung Mobile Panel Driver");
 MODULE_LICENSE("GPL");
