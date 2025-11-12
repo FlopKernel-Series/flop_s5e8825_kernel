@@ -249,6 +249,7 @@ static int __init sec_detect_init(void) {
 		strscpy(g_sec_current_device_name, "gta4xls", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
+		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
 	}
 
 	// Print machine name and sec_ variables
