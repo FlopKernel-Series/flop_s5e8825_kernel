@@ -1,5 +1,5 @@
 /*
- * linux/drivers/video/fbdev/exynos/panel/s6e8fc3/s6e8fc3_a26x_aod_panel.h
+ * linux/drivers/video/fbdev/exynos/panel/s6e8fc3/s6e8fc3_a33x_aod_panel.h
  *
  * Header file for AOD Driver
  *
@@ -10,19 +10,19 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __S6E8FC3_A26X_AOD_PANEL_H__
-#define __S6E8FC3_A26X_AOD_PANEL_H__
+#ifndef __S6E8FC3_A33X_AOD_PANEL_H__
+#define __S6E8FC3_A33X_AOD_PANEL_H__
 
 #include "oled_common_aod.h"
-#include "s6e8fc3_a26x_self_mask_img.h"
+#include "s6e8fc3_a33x_self_mask_img.h"
 #include "s6e8fc3_aod.h"
 
-#define S6E8FC3_A26XSELF_MASK_VALID_CRC_1 (0x35)
-#define S6E8FC3_A26XSELF_MASK_VALID_CRC_2 (0xF6)
+#define S6E8FC3_A33XSELF_MASK_VALID_CRC_1 (0x35)
+#define S6E8FC3_A33XSELF_MASK_VALID_CRC_2 (0xF6)
 
-static u8 s6e8fc3_a26x_self_mask_crc[] = {
-	S6E8FC3_A26XSELF_MASK_VALID_CRC_1,
-	S6E8FC3_A26XSELF_MASK_VALID_CRC_2,
+static u8 s6e8fc3_a33x_self_mask_crc[] = {
+	S6E8FC3_A33XSELF_MASK_VALID_CRC_1,
+	S6E8FC3_A33XSELF_MASK_VALID_CRC_2,
 };
 
 static u8 S6E8FC3_AOD_KEY1_ENABLE[] = { 0x9F, 0xA5, 0xA5 };
@@ -124,16 +124,16 @@ static char S6E8FC3_AOD_SELF_MASK_ENA[] = {
 static DEFINE_STATIC_PACKET(s6e8fc3_aod_self_mask_ctrl_ena,
 		DSI_PKT_TYPE_WR, S6E8FC3_AOD_SELF_MASK_ENA, 0);
 
-static DEFINE_RULE_BASED_COND(a26x_cond_is_factory_selfmask,
+static DEFINE_RULE_BASED_COND(a33x_cond_is_factory_selfmask,
 		PANEL_PROPERTY_IS_FACTORY_MODE, EQ, 1);
 
-static void *s6e8fc3_a26x_aod_self_mask_ena_cmdtbl[] = {
+static void *s6e8fc3_a33x_aod_self_mask_ena_cmdtbl[] = {
 	&KEYINFO(s6e8fc3_aod_l2_key_enable),
-	&CONDINFO_IF(a26x_cond_is_factory_selfmask),
+	&CONDINFO_IF(a33x_cond_is_factory_selfmask),
 		&PKTINFO(s6e8fc3_aod_factory_self_mask_ctrl_ena),
-	&CONDINFO_EL(a26x_cond_is_factory_selfmask),
+	&CONDINFO_EL(a33x_cond_is_factory_selfmask),
 		&PKTINFO(s6e8fc3_aod_self_mask_ctrl_ena),
-	&CONDINFO_FI(a26x_cond_is_factory_selfmask),
+	&CONDINFO_FI(a33x_cond_is_factory_selfmask),
 	&KEYINFO(s6e8fc3_aod_l2_key_disable),
 };
 
@@ -143,7 +143,7 @@ static char S6E8FC3_AOD_SELF_MASK_DISABLE[] = {
 };
 static DEFINE_STATIC_PACKET(s6e8fc3_aod_self_mask_disable, DSI_PKT_TYPE_WR, S6E8FC3_AOD_SELF_MASK_DISABLE, 0);
 
-static void *s6e8fc3_a26x_aod_self_mask_dis_cmdtbl[] = {
+static void *s6e8fc3_a33x_aod_self_mask_dis_cmdtbl[] = {
 	&KEYINFO(s6e8fc3_aod_l2_key_enable),
 	&PKTINFO(s6e8fc3_aod_self_mask_disable),
 	&KEYINFO(s6e8fc3_aod_l2_key_disable),
@@ -151,8 +151,8 @@ static void *s6e8fc3_a26x_aod_self_mask_dis_cmdtbl[] = {
 // --------------------- End of self mask control ---------------------
 
 // --------------------- check sum control ----------------------------
-static DEFINE_STATIC_PACKET_WITH_OPTION(s6e8fc3_a26x_aod_self_mask_img_pkt,
-		DSI_PKT_TYPE_WR_SR, S6E8FC3_A26X_SELF_MASK_IMG, 0, PKT_OPTION_SR_ALIGN_16);
+static DEFINE_STATIC_PACKET_WITH_OPTION(s6e8fc3_a33x_aod_self_mask_img_pkt,
+		DSI_PKT_TYPE_WR_SR, S6E8FC3_A33X_SELF_MASK_IMG, 0, PKT_OPTION_SR_ALIGN_16);
 
 static char S6E8FC3_AOD_SELF_MASK_CRC_ON1[] = {
 	0xD8,
@@ -190,7 +190,7 @@ static char S6E8FC3_AOD_SELF_MASK_RESTORE[] = {
 };
 static DEFINE_STATIC_PACKET(s6e8fc3_aod_self_mask_restore, DSI_PKT_TYPE_WR, S6E8FC3_AOD_SELF_MASK_RESTORE, 0);
 
-static void *s6e8fc3_a26x_aod_self_mask_crc_cmdtbl[] = {
+static void *s6e8fc3_a33x_aod_self_mask_crc_cmdtbl[] = {
 	&KEYINFO(s6e8fc3_aod_l1_key_enable),
 	&KEYINFO(s6e8fc3_aod_l2_key_enable),
 	&KEYINFO(s6e8fc3_aod_l3_key_enable),
@@ -201,7 +201,7 @@ static void *s6e8fc3_a26x_aod_self_mask_crc_cmdtbl[] = {
 	&PKTINFO(s6e8fc3_aod_self_mask_sd_path_1),
 	&PKTINFO(s6e8fc3_aod_self_mask_sd_path_2),
 	&DLYINFO(s6e8fc3_aod_self_spsram_sel_delay),
-	&PKTINFO(s6e8fc3_a26x_aod_self_mask_img_pkt),
+	&PKTINFO(s6e8fc3_a33x_aod_self_mask_img_pkt),
 	&DLYINFO(s6e8fc3_aod_self_spsram_write_delay),
 	&PKTINFO(s6e8fc3_aod_reset_sd_path_1),
 	&PKTINFO(s6e8fc3_aod_reset_sd_path_2),
@@ -218,13 +218,13 @@ static void *s6e8fc3_a26x_aod_self_mask_crc_cmdtbl[] = {
 
 // --------------------- end of check sum control ----------------------------
 
-static void *s6e8fc3_a26x_aod_self_mask_img_cmdtbl[] = {
+static void *s6e8fc3_a33x_aod_self_mask_img_cmdtbl[] = {
 	&KEYINFO(s6e8fc3_aod_l2_key_enable),
 	&PKTINFO(s6e8fc3_aod_self_mask_sd_path_1),
 	&PKTINFO(s6e8fc3_aod_self_mask_sd_path_2),
 
 	&DLYINFO(s6e8fc3_aod_self_spsram_sel_delay),
-	&PKTINFO(s6e8fc3_a26x_aod_self_mask_img_pkt),
+	&PKTINFO(s6e8fc3_a33x_aod_self_mask_img_pkt),
 	&DLYINFO(s6e8fc3_aod_self_spsram_write_delay),
 
 	&PKTINFO(s6e8fc3_aod_reset_sd_path_1),
@@ -232,21 +232,21 @@ static void *s6e8fc3_a26x_aod_self_mask_img_cmdtbl[] = {
 	&KEYINFO(s6e8fc3_aod_l2_key_disable),
 };
 
-static struct seqinfo s6e8fc3_a26x_aod_seqtbl[] = {
-	SEQINFO_INIT(SELF_MASK_IMG_SEQ, s6e8fc3_a26x_aod_self_mask_img_cmdtbl),
-	SEQINFO_INIT(SELF_MASK_ENA_SEQ, s6e8fc3_a26x_aod_self_mask_ena_cmdtbl),
-	SEQINFO_INIT(SELF_MASK_DIS_SEQ, s6e8fc3_a26x_aod_self_mask_dis_cmdtbl),
-	SEQINFO_INIT(SELF_MASK_CRC_SEQ, s6e8fc3_a26x_aod_self_mask_crc_cmdtbl),
+static struct seqinfo s6e8fc3_a33x_aod_seqtbl[] = {
+	SEQINFO_INIT(SELF_MASK_IMG_SEQ, s6e8fc3_a33x_aod_self_mask_img_cmdtbl),
+	SEQINFO_INIT(SELF_MASK_ENA_SEQ, s6e8fc3_a33x_aod_self_mask_ena_cmdtbl),
+	SEQINFO_INIT(SELF_MASK_DIS_SEQ, s6e8fc3_a33x_aod_self_mask_dis_cmdtbl),
+	SEQINFO_INIT(SELF_MASK_CRC_SEQ, s6e8fc3_a33x_aod_self_mask_crc_cmdtbl),
 };
 
-static struct aod_tune s6e8fc3_a26x_aod = {
-	.name = "s6e8fc3_a26x_aod",
-	.nr_seqtbl = ARRAY_SIZE(s6e8fc3_a26x_aod_seqtbl),
-	.seqtbl = s6e8fc3_a26x_aod_seqtbl,
+static struct aod_tune s6e8fc3_a33x_aod = {
+	.name = "s6e8fc3_a33x_aod",
+	.nr_seqtbl = ARRAY_SIZE(s6e8fc3_a33x_aod_seqtbl),
+	.seqtbl = s6e8fc3_a33x_aod_seqtbl,
 	.nr_maptbl = ARRAY_SIZE(s6e8fc3_aod_maptbl),
 	.maptbl = s6e8fc3_aod_maptbl,
 	.self_mask_en = true,
-	.self_mask_crc = s6e8fc3_a26x_self_mask_crc,
-	.self_mask_crc_len = ARRAY_SIZE(s6e8fc3_a26x_self_mask_crc),
+	.self_mask_crc = s6e8fc3_a33x_self_mask_crc,
+	.self_mask_crc_len = ARRAY_SIZE(s6e8fc3_a33x_self_mask_crc),
 };
 #endif
