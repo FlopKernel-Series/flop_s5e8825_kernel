@@ -374,13 +374,13 @@ static DEFINE_PANEL_KEY(a26x_level2_key_disable, CMD_LEVEL_2, KEY_DISABLE, &PKTI
 static DEFINE_PANEL_KEY(a26x_level3_key_disable, CMD_LEVEL_3, KEY_DISABLE, &PKTINFO(a26x_level3_key_disable));
 
 static DEFINE_PANEL_VSYNC_DELAY(a26x_wait_1_vsync, 1);
-#ifdef CONFIG_USDM_PANEL_MASK_LAYER
-static DEFINE_PANEL_VSYNC_DELAY(a26x_wait_2_vsync, 2);
-static DEFINE_RULE_BASED_COND(a26x_cond_is_60hz,
-		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 60);
-static DEFINE_RULE_BASED_COND(a26x_cond_is_120hz,
-		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 120);
-#endif
+// #ifdef CONFIG_USDM_PANEL_MASK_LAYER
+// static DEFINE_PANEL_VSYNC_DELAY(a26x_wait_2_vsync, 2);
+// static DEFINE_RULE_BASED_COND(a26x_cond_is_60hz,
+// 		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 60);
+// static DEFINE_RULE_BASED_COND(a26x_cond_is_120hz,
+// 		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 120);
+// #endif
 
 static u8 A26X_HBM_TRANSITION[] = {
 	0x53, 0x20
@@ -799,70 +799,70 @@ static void *a26x_check_condition_cmdtbl[] = {
 	&KEYINFO(a26x_level1_key_disable),
 };
 
-#ifdef CONFIG_USDM_PANEL_MASK_LAYER
-static void *a26x_mask_layer_workaround_cmdtbl[] = {
-	&KEYINFO(a26x_level1_key_enable),
-	&KEYINFO(a26x_level2_key_enable),
-	&KEYINFO(a26x_level3_key_enable),
-	&PKTINFO(a26x_wrdisbv),
-	&PKTINFO(a26x_hbm_transition),
-	&KEYINFO(a26x_level3_key_disable),
-	&KEYINFO(a26x_level2_key_disable),
-	&KEYINFO(a26x_level1_key_disable),
-	&DLYINFO(a26x_wait_2_vsync),
-};
+// #ifdef CONFIG_USDM_PANEL_MASK_LAYER
+// static void *a26x_mask_layer_workaround_cmdtbl[] = {
+// 	&KEYINFO(a26x_level1_key_enable),
+// 	&KEYINFO(a26x_level2_key_enable),
+// 	&KEYINFO(a26x_level3_key_enable),
+// 	&PKTINFO(a26x_wrdisbv),
+// 	&PKTINFO(a26x_hbm_transition),
+// 	&KEYINFO(a26x_level3_key_disable),
+// 	&KEYINFO(a26x_level2_key_disable),
+// 	&KEYINFO(a26x_level1_key_disable),
+// 	&DLYINFO(a26x_wait_2_vsync),
+// };
 
-static void *a26x_mask_layer_enter_br_cmdtbl[] = {
-	&DLYINFO(a26x_wait_1_vsync),
-	/* VFP start */
-	&DLYINFO(a26x_wait_1msec),
-	/* VFP CMD TX ALLOW END */
+// static void *a26x_mask_layer_enter_br_cmdtbl[] = {
+// 	&DLYINFO(a26x_wait_1_vsync),
+// 	/* VFP start */
+// 	&DLYINFO(a26x_wait_1msec),
+// 	/* VFP CMD TX ALLOW END */
 
-	&KEYINFO(a26x_level1_key_enable),
-	&KEYINFO(a26x_level2_key_enable),
-	&KEYINFO(a26x_level3_key_enable),
-	/* BL CMD */
-	&SEQINFO(a26x_set_bl_param_seq),
-	&KEYINFO(a26x_level3_key_disable),
-	&KEYINFO(a26x_level2_key_disable),
-	&KEYINFO(a26x_level1_key_disable),
+// 	&KEYINFO(a26x_level1_key_enable),
+// 	&KEYINFO(a26x_level2_key_enable),
+// 	&KEYINFO(a26x_level3_key_enable),
+// 	/* BL CMD */
+// 	&SEQINFO(a26x_set_bl_param_seq),
+// 	&KEYINFO(a26x_level3_key_disable),
+// 	&KEYINFO(a26x_level2_key_disable),
+// 	&KEYINFO(a26x_level1_key_disable),
 
-	/* VFP start */
-	/* CMD will be flushed here */
-	&CONDINFO_IF(a26x_cond_is_90hz),
-		&DLYINFO(a26x_wait_1msec),
-	&CONDINFO_FI(a26x_cond_is_90hz),
+// 	/* VFP start */
+// 	/* CMD will be flushed here */
+// 	&CONDINFO_IF(a26x_cond_is_90hz),
+// 		&DLYINFO(a26x_wait_1msec),
+// 	&CONDINFO_FI(a26x_cond_is_90hz),
 
-	&CONDINFO_IF(a26x_cond_is_60hz),
-		&DLYINFO(a26x_wait_6msec),
-	&CONDINFO_FI(a26x_cond_is_60hz),
-	/* VSYNC start */
-	/* DECON update for next frame */
-};
+// 	&CONDINFO_IF(a26x_cond_is_60hz),
+// 		&DLYINFO(a26x_wait_6msec),
+// 	&CONDINFO_FI(a26x_cond_is_60hz),
+// 	/* VSYNC start */
+// 	/* DECON update for next frame */
+// };
 
-static void *a26x_mask_layer_exit_br_cmdtbl[] = {
-	&KEYINFO(a26x_level1_key_enable),
-	&KEYINFO(a26x_level2_key_enable),
-	&KEYINFO(a26x_level3_key_enable),
-	/* BL CMD */
-	&SEQINFO(a26x_set_bl_param_seq),
-	&KEYINFO(a26x_level3_key_disable),
-	&KEYINFO(a26x_level2_key_disable),
-	&KEYINFO(a26x_level1_key_disable),
+// static void *a26x_mask_layer_exit_br_cmdtbl[] = {
+// 	&KEYINFO(a26x_level1_key_enable),
+// 	&KEYINFO(a26x_level2_key_enable),
+// 	&KEYINFO(a26x_level3_key_enable),
+// 	/* BL CMD */
+// 	&SEQINFO(a26x_set_bl_param_seq),
+// 	&KEYINFO(a26x_level3_key_disable),
+// 	&KEYINFO(a26x_level2_key_disable),
+// 	&KEYINFO(a26x_level1_key_disable),
 
-	/* VFP start */
-	/* CMD will be flushed here */
-	&CONDINFO_IF(a26x_cond_is_90hz),
-		&DLYINFO(a26x_wait_1msec),
-	&CONDINFO_FI(a26x_cond_is_90hz),
+// 	/* VFP start */
+// 	/* CMD will be flushed here */
+// 	&CONDINFO_IF(a26x_cond_is_90hz),
+// 		&DLYINFO(a26x_wait_1msec),
+// 	&CONDINFO_FI(a26x_cond_is_90hz),
 
-	&CONDINFO_IF(a26x_cond_is_60hz),
-		&DLYINFO(a26x_wait_6msec),
-	&CONDINFO_FI(a26x_cond_is_60hz),
-	/* VSYNC start */
-	/* DECON update for next frame */
-};
-#endif
+// 	&CONDINFO_IF(a26x_cond_is_60hz),
+// 		&DLYINFO(a26x_wait_6msec),
+// 	&CONDINFO_FI(a26x_cond_is_60hz),
+// 	/* VSYNC start */
+// 	/* DECON update for next frame */
+// };
+// #endif
 
 #ifdef CONFIG_USDM_FACTORY_CCD_TEST
 static void *a26x_ccd_test_cmdtbl[] = {
@@ -889,11 +889,11 @@ static struct seqinfo a26x_seqtbl[] = {
 	SEQINFO_INIT(PANEL_DISPLAY_OFF_SEQ, a26x_display_off_cmdtbl),
 	SEQINFO_INIT(PANEL_EXIT_SEQ, a26x_exit_cmdtbl),
 	SEQINFO_INIT(PANEL_DISPLAY_MODE_SEQ, a26x_set_fps_cmdtbl),
-#ifdef CONFIG_USDM_PANEL_MASK_LAYER
-	SEQINFO_INIT(PANEL_MASK_LAYER_STOP_DIMMING_SEQ, a26x_mask_layer_workaround_cmdtbl),
-	SEQINFO_INIT(PANEL_MASK_LAYER_ENTER_BR_SEQ, a26x_mask_layer_enter_br_cmdtbl),
-	SEQINFO_INIT(PANEL_MASK_LAYER_EXIT_BR_SEQ, a26x_mask_layer_exit_br_cmdtbl),
-#endif
+// #ifdef CONFIG_USDM_PANEL_MASK_LAYER
+// 	SEQINFO_INIT(PANEL_MASK_LAYER_STOP_DIMMING_SEQ, a26x_mask_layer_workaround_cmdtbl),
+// 	SEQINFO_INIT(PANEL_MASK_LAYER_ENTER_BR_SEQ, a26x_mask_layer_enter_br_cmdtbl),
+// 	SEQINFO_INIT(PANEL_MASK_LAYER_EXIT_BR_SEQ, a26x_mask_layer_exit_br_cmdtbl),
+// #endif
 #ifdef CONFIG_USDM_FACTORY_CCD_TEST
 	SEQINFO_INIT(PANEL_CCD_TEST_SEQ, a26x_ccd_test_cmdtbl),
 #endif
