@@ -10,8 +10,8 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __NT36672C_M14X_00_H__
-#define __NT36672C_M14X_00_H__
+#ifndef __NT36672C_M33_00_H__
+#define __NT36672C_M33_00_H__
 
 
 #endif /* __TFT_COMMON_H__ */
