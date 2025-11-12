@@ -193,8 +193,6 @@ static u8 a53x_acl_dim_speed_table[MAX_S6E3FC3_ACL_DIM][1] = {
 static u8 a53x_acl_opr_table[MAX_S6E3FC3_ACL_OPR][1] = {
 	[S6E3FC3_ACL_OPR_0] = { 0x00 }, /* ACL OFF, OPR 0% */
 	[S6E3FC3_ACL_OPR_1] = { 0x01 }, /* ACL ON, OPR 8% */
-	[S6E3FC3_ACL_OPR_2] = { 0x03 }, /* ACL ON, OPR 15% */
-	[S6E3FC3_ACL_OPR_3] = { 0x03 }, /* ACL ON, OPR 15% */
 };
 
 static u8 a53x_lpm_nit_table[4][1] = {
@@ -230,9 +228,9 @@ static u8 a53x_ffc_table[MAX_S6E3FC3_A53X_HS_CLK][2] = {
 	[S6E3FC3_A53X_HS_CLK_1125] = {0x52, 0x83}, // FFC for HS: 1125
 };
 
-static u8 a53x_fps_table_1[][2] = {
-	[S6E3FC3_VRR_FPS_120] = { 0x08 , 0x00 },
-	[S6E3FC3_VRR_FPS_60] = { 0x00, 0x00 },
+static u8 a53x_fps_table_1[][1] = {
+	[S6E3FC3_VRR_FPS_120] = { 0x08 },
+	[S6E3FC3_VRR_FPS_60] = { 0x00 },
 };
 
 static u8 a53x_fps_table_2[][1] = {
@@ -363,7 +361,7 @@ static DEFINE_STATIC_PACKET(a53x_lpm_aor, DSI_PKT_TYPE_WR, A53X_LPM_AOR, 0x76);
 static u8 A53X_DECODER_TEST_CASET[] = { 0x2A, 0x00, 0x00, 0x04, 0x37 };
 static DEFINE_STATIC_PACKET(a53x_decoder_test_caset, DSI_PKT_TYPE_WR, A53X_DECODER_TEST_CASET, 0x00);
 
-static u8 A53X_DECODER_TEST_PASET[] = { 0x2B, 0x00, 0x00, 0x09, 0x23 };
+static u8 A53X_DECODER_TEST_PASET[] = { 0x2B, 0x00, 0x00, 0x09, 0x5F };
 static DEFINE_STATIC_PACKET(a53x_decoder_test_paset, DSI_PKT_TYPE_WR, A53X_DECODER_TEST_PASET, 0x00);
 
 static u8 A53X_DECODER_TEST_2C[] = { 0x2C, 0x00 };
@@ -401,8 +399,11 @@ static DEFINE_STATIC_PACKET(a53x_decoder_vddm_return_set_2, DSI_PKT_TYPE_WR, A53
 #endif
 
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
+static DEFINE_PANEL_MDELAY(a53x_wait_2msec, 2);
+static DEFINE_PANEL_MDELAY(a53x_wait_3msec, 3);
 static DEFINE_PANEL_MDELAY(a53x_wait_9msec, 9);
 static DEFINE_PANEL_MDELAY(a53x_wait_7msec, 7);
+static DEFINE_PANEL_VSYNC_DELAY(a53x_wait_1_vsync, 1);
 #endif
 
 static DEFINE_PANEL_MDELAY(a53x_wait_1msec, 1);
@@ -423,6 +424,7 @@ static DEFINE_PANEL_MDELAY(a53x_wait_sleep_in, 120);
 static DEFINE_PANEL_UDELAY(a53x_wait_1usec, 1);
 
 static DEFINE_PANEL_FRAME_DELAY(a53x_wait_1_frame, 1);
+static DEFINE_PANEL_FRAME_DELAY(a53x_wait_2_frame, 2);
 
 static DEFINE_PANEL_KEY(a53x_level1_key_enable, CMD_LEVEL_1, KEY_ENABLE, &PKTINFO(a53x_level1_key_enable));
 static DEFINE_PANEL_KEY(a53x_level2_key_enable, CMD_LEVEL_2, KEY_ENABLE, &PKTINFO(a53x_level2_key_enable));
@@ -457,6 +459,12 @@ static u8 A53X_ACL[] = {
 static DEFINE_PKTUI(a53x_acl_control, &a53x_maptbl[ACL_OPR_MAPTBL], 1);
 static DEFINE_VARIABLE_PACKET(a53x_acl_control, DSI_PKT_TYPE_WR, A53X_ACL, 0);
 
+static u8 A53X_ACL_DIM_OFF[] = {
+	0x55,
+	0x00
+};
+static DEFINE_STATIC_PACKET(a53x_acl_dim_off, DSI_PKT_TYPE_WR, A53X_ACL_DIM_OFF, 0);
+
 static u8 A53X_WRDISBV[] = {
 	0x51, 0x03, 0xFF
 };
@@ -471,7 +479,7 @@ static DEFINE_PKTUI(a53x_irc_mode, &a53x_maptbl[IRC_MODE_MAPTBL], 1);
 static DEFINE_VARIABLE_PACKET(a53x_irc_mode, DSI_PKT_TYPE_WR, A53X_IRC_MDOE, 0x02);
 
 static u8 A53X_CASET[] = { 0x2A, 0x00, 0x00, 0x04, 0x37 };
-static u8 A53X_PASET[] = { 0x2B, 0x00, 0x00, 0x09, 0x23 };
+static u8 A53X_PASET[] = { 0x2B, 0x00, 0x00, 0x09, 0x5F };
 static DEFINE_STATIC_PACKET(a53x_caset, DSI_PKT_TYPE_WR, A53X_CASET, 0);
 static DEFINE_STATIC_PACKET(a53x_paset, DSI_PKT_TYPE_WR, A53X_PASET, 0);
 
@@ -537,9 +545,9 @@ static DEFINE_STATIC_PACKET(a53x_panel_update, DSI_PKT_TYPE_WR, A53X_PANEL_UPDAT
 
 static u8 A53X_GLOBAL_PARAM_SETTING[] = {
 	0xF2,
-	0x60, 0x05, 0x0E, 0x49, 0x54, 0x01, 0x10, 0x00,
-	0x0C, 0x27, 0xE0, 0x27, 0xE0, 0x10, 0x09, 0x4C,
-	0x27, 0xE0, 0x10, 0x00, 0x0C, 0x10, 0x00, 0x10,
+	0x00, 0x05, 0x0E, 0x58, 0x54, 0x01, 0x0C, 0x00,
+	0x04, 0x27, 0x16, 0x27, 0x16, 0x0C, 0x09, 0x74,
+	0x27, 0x16, 0x0C, 0x00, 0x04, 0x10, 0x00, 0x10,
 	0x26, 0xA8, 0x10, 0x00, 0x10, 0x10, 0x34, 0x10,
 	0x00, 0x40, 0x30, 0xC8, 0x00, 0xC8, 0x00, 0x00,
 	0xCE
@@ -599,7 +607,7 @@ static DEFINE_VARIABLE_PACKET(a53x_normal_mode, DSI_PKT_TYPE_WR, A53X_NORMAL_MOD
 
 static u8 A53X_FFC_SETTING_1[] = {
 	0xC5,
-	0x0D, 0x10, 0x80, 0x05
+	0x0D, 0x10, 0x80, 0x45, 0x53, 0xC7
 };
 static DEFINE_PKTUI(a53x_ffc_setting_1, &a53x_maptbl[SET_FFC_MAPTBL], 1);
 static DEFINE_STATIC_PACKET(a53x_ffc_setting_1, DSI_PKT_TYPE_WR, A53X_FFC_SETTING_1, 0x2A);
@@ -833,6 +841,10 @@ static DEFINE_RULE_BASED_COND(a53x_cond_is_panel_state_not_lpm,
 		PANEL_PROPERTY_PANEL_STATE, NE, PANEL_STATE_ALPM);
 static DEFINE_RULE_BASED_COND(a53x_cond_is_panel_state_lpm,
 		PANEL_PROPERTY_PANEL_STATE, EQ, PANEL_STATE_ALPM);
+static DEFINE_RULE_BASED_COND(a53x_cond_is_120hz,
+		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 120);
+static DEFINE_RULE_BASED_COND(a53x_cond_is_60hz,
+		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 60);
 
 static void *a53x_set_fps_cmdtbl[] = {
 	&CONDINFO_IF(a53x_cond_is_panel_state_not_lpm),
@@ -994,6 +1006,58 @@ static void *a53x_check_condition_cmdtbl[] = {
 	&KEYINFO(a53x_level1_key_disable),
 };
 
+#ifdef CONFIG_USDM_PANEL_MASK_LAYER
+static void *a53x_mask_layer_workaround_cmdtbl[] = {
+	&PKTINFO(a53x_wrdisbv),
+	&PKTINFO(a53x_hbm_transition),
+	&DLYINFO(a53x_wait_2_frame),
+};
+
+static void *a53x_mask_layer_enter_br_cmdtbl[] = {
+	&DLYINFO(a53x_wait_1_vsync),
+	&DLYINFO(a53x_wait_2msec),
+	&KEYINFO(a53x_level1_key_enable),
+	&KEYINFO(a53x_level2_key_enable),
+	&KEYINFO(a53x_level3_key_enable),
+
+	&PKTINFO(a53x_acl_dim_off),
+	&PKTINFO(a53x_lpm_off_sync_ctrl),
+	&PKTINFO(a53x_hbm_transition),
+	&PKTINFO(a53x_wrdisbv),
+
+	&KEYINFO(a53x_level3_key_disable),
+	&KEYINFO(a53x_level2_key_disable),
+	&KEYINFO(a53x_level1_key_disable),
+
+	&CONDINFO_IF(a53x_cond_is_120hz),
+		&DLYINFO(a53x_wait_9msec),
+	&CONDINFO_FI(a53x_cond_is_120hz),
+};
+
+static void *a53x_mask_layer_exit_br_cmdtbl[] = {
+	&DLYINFO(a53x_wait_1_vsync),
+	&KEYINFO(a53x_level1_key_enable),
+	&KEYINFO(a53x_level2_key_enable),
+	&KEYINFO(a53x_level3_key_enable),
+
+	&PKTINFO(a53x_acl_control),
+	&CONDINFO_IF(a53x_cond_is_120hz),
+		&DLYINFO(a53x_wait_3msec),
+	&CONDINFO_FI(a53x_cond_is_120hz),
+
+	&PKTINFO(a53x_lpm_off_sync_ctrl),
+	&PKTINFO(a53x_hbm_transition),
+	&PKTINFO(a53x_wrdisbv),
+
+	&KEYINFO(a53x_level3_key_disable),
+	&KEYINFO(a53x_level2_key_disable),
+	&KEYINFO(a53x_level1_key_disable),
+
+	&CONDINFO_IF(a53x_cond_is_120hz),
+		&DLYINFO(a53x_wait_9msec),
+	&CONDINFO_FI(a53x_cond_is_120hz),
+};
+#endif
 
 #ifdef CONFIG_USDM_FACTORY_DSC_CRC_TEST
 static void *a53x_decoder_test_cmdtbl[] = {
@@ -1063,6 +1127,11 @@ static struct seqinfo a53x_seqtbl[] = {
 	SEQINFO_INIT(PANEL_FFC_SEQ, a53x_ffc_cmdtbl),
 	SEQINFO_INIT(PANEL_DUMP_SEQ, a53x_dump_cmdtbl),
 	SEQINFO_INIT(PANEL_CHECK_CONDITION_SEQ, a53x_check_condition_cmdtbl),
+#ifdef CONFIG_USDM_PANEL_MASK_LAYER
+	SEQINFO_INIT(PANEL_MASK_LAYER_STOP_DIMMING_SEQ, a53x_mask_layer_workaround_cmdtbl),
+	SEQINFO_INIT(PANEL_MASK_LAYER_ENTER_BR_SEQ, a53x_mask_layer_enter_br_cmdtbl),
+	SEQINFO_INIT(PANEL_MASK_LAYER_EXIT_BR_SEQ, a53x_mask_layer_exit_br_cmdtbl),
+#endif
 #ifdef CONFIG_USDM_FACTORY_DSC_CRC_TEST
 	SEQINFO_INIT(PANEL_DECODER_TEST_SEQ, a53x_decoder_test_cmdtbl),
 #endif
