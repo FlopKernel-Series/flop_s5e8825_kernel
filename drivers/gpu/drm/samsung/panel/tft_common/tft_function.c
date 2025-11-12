@@ -26,7 +26,7 @@ static int __init tft_function_init(void)
 {
 	int ret;
 
-	if (sec_get_current_device() != SEC_GTA4XLS) {
+	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
 		SEC_DETECT_LOG("Skipped usdm tft common panel driver\n");
 		return 0;
 	}
