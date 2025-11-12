@@ -176,1190 +176,1865 @@ static u8 SEQ_NT36672C_M33_00_BRIGHTNESS[] = {
 
 static u8 SEQ_NT36672C_M33_00_BRIGHTNESS_ON[] = {
 	0x53,
+	0x2C,
+};
+
+static u8 SEQ_NT36672C_M33_00_001[] = {
+	0xFF,
+	0x10,
+};
+
+static u8 SEQ_NT36672C_M33_00_002[] = {
+	0xFB,
+	0x01,
+};
+
+static u8 SEQ_NT36672C_M33_00_003[] = {
+	0xB0,
+	0x00,
+};
+
+static u8 SEQ_NT36672C_M33_00_004[] = {
+	0xC1,
+	0x89, 0x28, 0x00, 0x08, 0x00, 0xAA, 0x02, 0x0E, 0x00, 0x2B,
+	0x00, 0x07, 0x0D, 0xB7, 0x0C, 0xB7,
+};
+
+static u8 SEQ_NT36672C_M33_00_005[] = {
+	0xC2,
+	0x1B, 0xA0,
+};
+
+static u8 SEQ_NT36672C_M33_00_006[] = {
+	0xFF,
+	0x20,
+};
+
+static u8 SEQ_NT36672C_M33_00_007[] = {
+	0xFB,
+	0x01,
+};
+
+static u8 SEQ_NT36672C_M33_00_008[] = {
+	0x01,
+	0x66,
+};
+
+static u8 SEQ_NT36672C_M33_00_009[] = {
+	0x06,
+	0x64,
+};
+
+static u8 SEQ_NT36672C_M33_00_010[] = {
+	0x07,
+	0x28,
+};
+
+static u8 SEQ_NT36672C_M33_00_011[] = {
+	0x17,
+	0x66,
+};
+
+static u8 SEQ_NT36672C_M33_00_012[] = {
+	0x1B,
+	0x01,
+};
+
+static u8 SEQ_NT36672C_M33_00_013[] = {
+	0x1F,
+	0x02,
+};
+
+static u8 SEQ_NT36672C_M33_00_014[] = {
+	0x20,
+	0x03,
+};
+
+static u8 SEQ_NT36672C_M33_00_015[] = {
+	0x5C,
+	0x90,
+};
+
+static u8 SEQ_NT36672C_M33_00_016[] = {
+	0x5E,
+	0xB0,
+};
+
+static u8 SEQ_NT36672C_M33_00_017[] = {
+	0x69,
+	0xD0,
+};
+
+static u8 SEQ_NT36672C_M33_00_018[] = {
+	0x95,
+	0xD1,
+};
+
+static u8 SEQ_NT36672C_M33_00_019[] = {
+	0x96,
+	0xD1,
+};
+
+static u8 SEQ_NT36672C_M33_00_020[] = {
+	0xF2,
+	0x66,
+};
+
+static u8 SEQ_NT36672C_M33_00_021[] = {
+	0xF3,
+	0x54,
+};
+
+static u8 SEQ_NT36672C_M33_00_022[] = {
+	0xF4,
+	0x66,
+};
+
+static u8 SEQ_NT36672C_M33_00_023[] = {
+	0xF5,
+	0x54,
+};
+
+static u8 SEQ_NT36672C_M33_00_024[] = {
+	0xF6,
+	0x66,
+};
+
+static u8 SEQ_NT36672C_M33_00_025[] = {
+	0xF7,
+	0x54,
+};
+
+static u8 SEQ_NT36672C_M33_00_026[] = {
+	0xF8,
+	0x66,
+};
+
+static u8 SEQ_NT36672C_M33_00_027[] = {
+	0xF9,
+	0x54,
+};
+
+static u8 SEQ_NT36672C_M33_00_028[] = {
+	0xFF,
+	0x21,
+};
+
+static u8 SEQ_NT36672C_M33_00_029[] = {
+	0xFB,
+	0x01,
+};
+
+static u8 SEQ_NT36672C_M33_00_030[] = {
+	0xFF,
 	0x24,
 };
 
-/* Display config (1) */
-static u8 SEQ_NT36672C_M33_00_001[] = {
-	0xFF, 0x10
-};
-static u8 SEQ_NT36672C_M33_00_002[] = {
-	0xFB, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_003[] = {
-	0xB0, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_004[] = {
-	0xC1,
-	0x89, 0x28, 0x00, 0x08, 0x00, 0xAA, 0x02, 0x0E,
-	0x00, 0x2B, 0x00, 0x07, 0x0D, 0xB7, 0x0C, 0xB7,
-};
-static u8 SEQ_NT36672C_M33_00_005[] = {
-	0xC2, 0x1B, 0xA0
-};
-static u8 SEQ_NT36672C_M33_00_006[] = {
-	0xFF, 0x20
-};
-static u8 SEQ_NT36672C_M33_00_007[] = {
-	0xFB, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_008[] = {
-	0x01, 0x66
-};
-static u8 SEQ_NT36672C_M33_00_009[] = {
-	0x06, 0x64
-};
-static u8 SEQ_NT36672C_M33_00_010[] = {
-	0x07, 0x28
-};
-static u8 SEQ_NT36672C_M33_00_011[] = {
-	0x17, 0x66
-};
-static u8 SEQ_NT36672C_M33_00_012[] = {
-	0x1B, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_013[] = {
-	0x1F, 0x02
-};
-static u8 SEQ_NT36672C_M33_00_014[] = {
-	0x20, 0x03
-};
-static u8 SEQ_NT36672C_M33_00_015[] = {
-	0x5C, 0x90
-};
-static u8 SEQ_NT36672C_M33_00_016[] = {
-	0x5E, 0xB0
-};
-static u8 SEQ_NT36672C_M33_00_017[] = {
-	0x69, 0xD0
-};
-static u8 SEQ_NT36672C_M33_00_018[] = {
-	0x95, 0xD1
-};
-static u8 SEQ_NT36672C_M33_00_019[] = {
-	0x96, 0xD1
-};
-static u8 SEQ_NT36672C_M33_00_020[] = {
-	0xF2, 0x66
-};
-static u8 SEQ_NT36672C_M33_00_021[] = {
-	0xF3, 0x54
-};
-static u8 SEQ_NT36672C_M33_00_022[] = {
-	0xF4, 0x66
-};
-static u8 SEQ_NT36672C_M33_00_023[] = {
-	0xF5, 0x54
-};
-static u8 SEQ_NT36672C_M33_00_024[] = {
-	0xF6, 0x66
-};
-static u8 SEQ_NT36672C_M33_00_025[] = {
-	0xF7, 0x54
-};
-static u8 SEQ_NT36672C_M33_00_026[] = {
-	0xF8, 0x66
-};
-static u8 SEQ_NT36672C_M33_00_027[] = {
-	0xF9, 0x54
-};
-static u8 SEQ_NT36672C_M33_00_028[] = {
-	0xFF, 0x21
-};
-static u8 SEQ_NT36672C_M33_00_029[] = {
-	0xFB, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_030[] = {
-	0xFF, 0x24
-};
 static u8 SEQ_NT36672C_M33_00_031[] = {
-	0xFB, 0x01
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_032[] = {
-	0x00, 0x26
+	0x00,
+	0x26,
 };
+
 static u8 SEQ_NT36672C_M33_00_033[] = {
-	0x01, 0x13
+	0x01,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_034[] = {
-	0x02, 0x27
+	0x02,
+	0x27,
 };
+
 static u8 SEQ_NT36672C_M33_00_035[] = {
-	0x03, 0x15
+	0x03,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_036[] = {
-	0x04, 0x28
+	0x04,
+	0x28,
 };
+
 static u8 SEQ_NT36672C_M33_00_037[] = {
-	0x05, 0x17
+	0x05,
+	0x17,
 };
+
 static u8 SEQ_NT36672C_M33_00_038[] = {
-	0x07, 0x24
+	0x07,
+	0x24,
 };
+
 static u8 SEQ_NT36672C_M33_00_039[] = {
-	0x08, 0x24
+	0x08,
+	0x24,
 };
+
 static u8 SEQ_NT36672C_M33_00_040[] = {
-	0x0A, 0x22
+	0x0A,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_041[] = {
-	0x0C, 0x10
+	0x0C,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_042[] = {
-	0x0D, 0x0F
+	0x0D,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_043[] = {
-	0x0E, 0x01
+	0x0E,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_044[] = {
-	0x10, 0x2D
+	0x10,
+	0x2D,
 };
+
 static u8 SEQ_NT36672C_M33_00_045[] = {
-	0x11, 0x2F
+	0x11,
+	0x2F,
 };
+
 static u8 SEQ_NT36672C_M33_00_046[] = {
-	0x12, 0x31
+	0x12,
+	0x31,
 };
+
 static u8 SEQ_NT36672C_M33_00_047[] = {
-	0x13, 0x33
+	0x13,
+	0x33,
 };
+
 static u8 SEQ_NT36672C_M33_00_048[] = {
-	0x15, 0x0B
+	0x15,
+	0x0B,
 };
+
 static u8 SEQ_NT36672C_M33_00_049[] = {
-	0x17, 0x0C
+	0x17,
+	0x0C,
 };
+
 static u8 SEQ_NT36672C_M33_00_050[] = {
-	0x18, 0x26
+	0x18,
+	0x26,
 };
+
 static u8 SEQ_NT36672C_M33_00_051[] = {
-	0x19, 0x13
+	0x19,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_052[] = {
-	0x1A, 0x27
+	0x1A,
+	0x27,
 };
+
 static u8 SEQ_NT36672C_M33_00_053[] = {
-	0x1B, 0x15
+	0x1B,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_054[] = {
-	0x1C, 0x28
+	0x1C,
+	0x28,
 };
+
 static u8 SEQ_NT36672C_M33_00_055[] = {
-	0x1D, 0x17
+	0x1D,
+	0x17,
 };
+
 static u8 SEQ_NT36672C_M33_00_056[] = {
-	0x1F, 0x24
+	0x1F,
+	0x24,
 };
+
 static u8 SEQ_NT36672C_M33_00_057[] = {
-	0x20, 0x24
+	0x20,
+	0x24,
 };
+
 static u8 SEQ_NT36672C_M33_00_058[] = {
-	0x22, 0x22
+	0x22,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_059[] = {
-	0x24, 0x10
+	0x24,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_060[] = {
-	0x25, 0x0F
+	0x25,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_061[] = {
-	0x26, 0x01
+	0x26,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_062[] = {
-	0x28, 0x2C
+	0x28,
+	0x2C,
 };
+
 static u8 SEQ_NT36672C_M33_00_063[] = {
-	0x29, 0x2E
+	0x29,
+	0x2E,
 };
+
 static u8 SEQ_NT36672C_M33_00_064[] = {
-	0x2A, 0x30
+	0x2A,
+	0x30,
 };
+
 static u8 SEQ_NT36672C_M33_00_065[] = {
-	0x2B, 0x32
+	0x2B,
+	0x32,
 };
+
 static u8 SEQ_NT36672C_M33_00_066[] = {
-	0x2F, 0x0B
+	0x2F,
+	0x0B,
 };
+
 static u8 SEQ_NT36672C_M33_00_067[] = {
-	0x31, 0x0C
+	0x31,
+	0x0C,
 };
+
 static u8 SEQ_NT36672C_M33_00_068[] = {
-	0x32, 0x09
+	0x32,
+	0x09,
 };
+
 static u8 SEQ_NT36672C_M33_00_069[] = {
-	0x33, 0x03
+	0x33,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_070[] = {
-	0x34, 0x03
+	0x34,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_071[] = {
-	0x35, 0x07
+	0x35,
+	0x07,
 };
+
 static u8 SEQ_NT36672C_M33_00_072[] = {
-	0x36, 0x3C
+	0x36,
+	0x3C,
 };
+
 static u8 SEQ_NT36672C_M33_00_073[] = {
-	0x4E, 0x37
+	0x4E,
+	0x37,
 };
+
 static u8 SEQ_NT36672C_M33_00_074[] = {
-	0x4F, 0x37
+	0x4F,
+	0x37,
 };
+
 static u8 SEQ_NT36672C_M33_00_075[] = {
-	0x53, 0x37
+	0x53,
+	0x37,
 };
+
 static u8 SEQ_NT36672C_M33_00_076[] = {
-	0x77, 0x80
+	0x77,
+	0x80,
 };
+
 static u8 SEQ_NT36672C_M33_00_077[] = {
-	0x79, 0x22
+	0x79,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_078[] = {
-	0x7A, 0x03
+	0x7A,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_079[] = {
-	0x7B, 0x8E
+	0x7B,
+	0x8E,
 };
+
 static u8 SEQ_NT36672C_M33_00_080[] = {
-	0x7D, 0x04
+	0x7D,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_081[] = {
-	0x80, 0x04
+	0x80,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_082[] = {
-	0x81, 0x04
+	0x81,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_083[] = {
-	0x82, 0x13
+	0x82,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_084[] = {
-	0x84, 0x31
+	0x84,
+	0x31,
 };
+
 static u8 SEQ_NT36672C_M33_00_085[] = {
-	0x85, 0x13
+	0x85,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_086[] = {
-	0x86, 0x22
+	0x86,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_087[] = {
-	0x87, 0x31
+	0x87,
+	0x31,
 };
+
 static u8 SEQ_NT36672C_M33_00_088[] = {
-	0x90, 0x13
+	0x90,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_089[] = {
-	0x92, 0x31
+	0x92,
+	0x31,
 };
+
 static u8 SEQ_NT36672C_M33_00_090[] = {
-	0x93, 0x13
+	0x93,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_091[] = {
-	0x94, 0x22
+	0x94,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_092[] = {
-	0x95, 0x31
+	0x95,
+	0x31,
 };
+
 static u8 SEQ_NT36672C_M33_00_093[] = {
-	0x9C, 0xF4
+	0x9C,
+	0xF4,
 };
+
 static u8 SEQ_NT36672C_M33_00_094[] = {
-	0x9D, 0x01
+	0x9D,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_095[] = {
-	0xA0, 0x0E
+	0xA0,
+	0x0E,
 };
+
 static u8 SEQ_NT36672C_M33_00_096[] = {
-	0xA2, 0x0E
+	0xA2,
+	0x0E,
 };
+
 static u8 SEQ_NT36672C_M33_00_097[] = {
-	0xA3, 0x03
+	0xA3,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_098[] = {
-	0xA4, 0x04
+	0xA4,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_099[] = {
-	0xA5, 0x04
+	0xA5,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_100[] = {
-	0xC4, 0x80
+	0xC4,
+	0x80,
 };
+
 static u8 SEQ_NT36672C_M33_00_101[] = {
-	0xC6, 0xC0
+	0xC6,
+	0xC0,
 };
+
 static u8 SEQ_NT36672C_M33_00_102[] = {
-	0xC9, 0x00
+	0xC9,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_103[] = {
-	0xD9, 0x80
+	0xD9,
+	0x80,
 };
+
 static u8 SEQ_NT36672C_M33_00_104[] = {
-	0xE9, 0x03
+	0xE9,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_105[] = {
-	0xFF, 0x25
+	0xFF,
+	0x25,
 };
+
 static u8 SEQ_NT36672C_M33_00_106[] = {
-	0xFB, 0x01
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_107[] = {
-	0x0F, 0x1B
+	0x0F,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_108[] = {
-	0x18, 0x21
+	0x19,
+	0xE4,
 };
+
 static u8 SEQ_NT36672C_M33_00_109[] = {
-	0x19, 0xE4
+	0x21,
+	0x40,
 };
+
 static u8 SEQ_NT36672C_M33_00_110[] = {
-	0x21, 0x40
+	0x63,
+	0x8F,
 };
+
 static u8 SEQ_NT36672C_M33_00_111[] = {
-	0x63, 0x8F
+	0x66,
+	0x5D,
 };
+
 static u8 SEQ_NT36672C_M33_00_112[] = {
-	0x66, 0x5D
+	0x67,
+	0x16,
 };
+
 static u8 SEQ_NT36672C_M33_00_113[] = {
-	0x67, 0x16
+	0x68,
+	0x58,
 };
+
 static u8 SEQ_NT36672C_M33_00_114[] = {
-	0x68, 0x58
+	0x69,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_115[] = {
-	0x69, 0x10
+	0x6B,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_116[] = {
-	0x6B, 0x00
+	0x70,
+	0xE5,
 };
+
 static u8 SEQ_NT36672C_M33_00_117[] = {
-	0x70, 0xE5
+	0x71,
+	0x6D,
 };
+
 static u8 SEQ_NT36672C_M33_00_118[] = {
-	0x71, 0x6D
+	0x77,
+	0x62,
 };
+
 static u8 SEQ_NT36672C_M33_00_119[] = {
-	0x77, 0x62
+	0x7E,
+	0x2D,
 };
+
 static u8 SEQ_NT36672C_M33_00_120[] = {
-	0x7E, 0x2D
+	0x84,
+	0x78,
 };
+
 static u8 SEQ_NT36672C_M33_00_121[] = {
-	0x84, 0x78
+	0x85,
+	0x75,
 };
+
 static u8 SEQ_NT36672C_M33_00_122[] = {
-	0x85, 0x75
+	0x8D,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_123[] = {
-	0x8D, 0x04
+	0xC1,
+	0xA9,
 };
+
 static u8 SEQ_NT36672C_M33_00_124[] = {
-	0xC1, 0xA9
+	0xC2,
+	0x5A,
 };
+
 static u8 SEQ_NT36672C_M33_00_125[] = {
-	0xC2, 0x5A
+	0xC3,
+	0x07,
 };
+
 static u8 SEQ_NT36672C_M33_00_126[] = {
-	0xC3, 0x07
+	0xC4,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_127[] = {
-	0xC4, 0x11
+	0xC6,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_128[] = {
-	0xC6, 0x11
+	0xF0,
+	0x05,
 };
+
 static u8 SEQ_NT36672C_M33_00_129[] = {
-	0xF0, 0x05
+	0xEF,
+	0x28,
 };
+
 static u8 SEQ_NT36672C_M33_00_130[] = {
-	0xEF, 0x28
+	0xF1,
+	0x14,
 };
+
 static u8 SEQ_NT36672C_M33_00_131[] = {
-	0xF1, 0x14
+	0xFF,
+	0x26,
 };
+
 static u8 SEQ_NT36672C_M33_00_132[] = {
-	0xFF, 0x26
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_133[] = {
-	0xFB, 0x01
+	0x00,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_134[] = {
-	0x00, 0x10
+	0x01,
+	0xFB,
 };
+
 static u8 SEQ_NT36672C_M33_00_135[] = {
-	0x01, 0xFB
+	0x03,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_136[] = {
-	0x03, 0x00
+	0x04,
+	0xFB,
 };
+
 static u8 SEQ_NT36672C_M33_00_137[] = {
-	0x04, 0xFB
+	0x05,
+	0x08,
 };
+
 static u8 SEQ_NT36672C_M33_00_138[] = {
-	0x05, 0x08
+	0x06,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_139[] = {
-	0x06, 0x13
+	0x08,
+	0x13,
 };
+
 static u8 SEQ_NT36672C_M33_00_140[] = {
-	0x08, 0x13
+	0x14,
+	0x06,
 };
+
 static u8 SEQ_NT36672C_M33_00_141[] = {
-	0x14, 0x06
+	0x15,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_142[] = {
-	0x15, 0x01
+	0x74,
+	0xAF,
 };
+
 static u8 SEQ_NT36672C_M33_00_143[] = {
-	0x74, 0xAF
+	0x81,
+	0x0E,
 };
+
 static u8 SEQ_NT36672C_M33_00_144[] = {
-	0x81, 0x0E
+	0x83,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_145[] = {
-	0x83, 0x03
+	0x84,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_146[] = {
-	0x84, 0x03
+	0x85,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_147[] = {
-	0x85, 0x01
+	0x86,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_148[] = {
-	0x86, 0x03
+	0x87,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_149[] = {
-	0x87, 0x01
+	0x88,
+	0x07,
 };
+
 static u8 SEQ_NT36672C_M33_00_150[] = {
-	0x88, 0x07
+	0x8A,
+	0x1A,
 };
+
 static u8 SEQ_NT36672C_M33_00_151[] = {
-	0x8A, 0x1A
+	0x8B,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_152[] = {
-	0x8B, 0x11
+	0x8C,
+	0x24,
 };
+
 static u8 SEQ_NT36672C_M33_00_153[] = {
-	0x8C, 0x24
+	0x8E,
+	0x42,
 };
+
 static u8 SEQ_NT36672C_M33_00_154[] = {
-	0x8E, 0x42
+	0x8F,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_155[] = {
-	0x8F, 0x11
+	0x90,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_156[] = {
-	0x90, 0x11
+	0x91,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_157[] = {
-	0x91, 0x11
+	0x9A,
+	0x80,
 };
+
 static u8 SEQ_NT36672C_M33_00_158[] = {
-	0x9A, 0x80
+	0x9B,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_159[] = {
-	0x9B, 0x04
+	0x9C,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_160[] = {
-	0x9C, 0x00
+	0x9D,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_161[] = {
-	0x9D, 0x00
+	0x9E,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_162[] = {
-	0x9E, 0x00
+	0xFF,
+	0x27,
 };
+
 static u8 SEQ_NT36672C_M33_00_163[] = {
-	0xFF, 0x27
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_164[] = {
-	0xFB, 0x01
+	0x01,
+	0x68,
 };
+
 static u8 SEQ_NT36672C_M33_00_165[] = {
-	0x01, 0x68
+	0x20,
+	0x81,
 };
+
 static u8 SEQ_NT36672C_M33_00_166[] = {
-	0x20, 0x81
+	0x21,
+	0x6F,
 };
+
 static u8 SEQ_NT36672C_M33_00_167[] = {
-	0x21, 0x6F
+	0x25,
+	0x81,
 };
+
 static u8 SEQ_NT36672C_M33_00_168[] = {
-	0x25, 0x81
+	0x26,
+	0x97,
 };
+
 static u8 SEQ_NT36672C_M33_00_169[] = {
-	0x26, 0x97
+	0x6E,
+	0x12,
 };
+
 static u8 SEQ_NT36672C_M33_00_170[] = {
-	0x3F, 0x10
+	0x6F,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_171[] = {
-	0x40, 0x55
+	0x70,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_172[] = {
-	0x43, 0x10
+	0x71,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_173[] = {
-	0x4E, 0x05
+	0x72,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_174[] = {
-	0x6E, 0x12
+	0x73,
+	0x76,
 };
+
 static u8 SEQ_NT36672C_M33_00_175[] = {
-	0x6F, 0x00
+	0x74,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_176[] = {
-	0x70, 0x00
+	0x75,
+	0x32,
 };
+
 static u8 SEQ_NT36672C_M33_00_177[] = {
-	0x71, 0x00
+	0x76,
+	0x54,
 };
+
 static u8 SEQ_NT36672C_M33_00_178[] = {
-	0x72, 0x00
+	0x77,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_179[] = {
-	0x73, 0x76
+	0x7D,
+	0x09,
 };
+
 static u8 SEQ_NT36672C_M33_00_180[] = {
-	0x74, 0x10
+	0x7E,
+	0x6B,
 };
+
 static u8 SEQ_NT36672C_M33_00_181[] = {
-	0x75, 0x32
+	0x80,
+	0x27,
 };
+
 static u8 SEQ_NT36672C_M33_00_182[] = {
-	0x76, 0x54
+	0x82,
+	0x09,
 };
+
 static u8 SEQ_NT36672C_M33_00_183[] = {
-	0x77, 0x00
+	0x83,
+	0x6B,
 };
+
 static u8 SEQ_NT36672C_M33_00_184[] = {
-	0x7D, 0x09
+	0x88,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_185[] = {
-	0x7E, 0x6B
+	0x89,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_186[] = {
-	0x80, 0x27
+	0xE3,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_187[] = {
-	0x82, 0x09
+	0xE4,
+	0xE9,
 };
+
 static u8 SEQ_NT36672C_M33_00_188[] = {
-	0x83, 0x6B
+	0xE5,
+	0x02,
 };
+
 static u8 SEQ_NT36672C_M33_00_189[] = {
-	0x88, 0x03
+	0xE6,
+	0xDE,
 };
+
 static u8 SEQ_NT36672C_M33_00_190[] = {
-	0x89, 0x03
+	0xE9,
+	0x02,
 };
+
 static u8 SEQ_NT36672C_M33_00_191[] = {
-	0xE3, 0x01
+	0xEA,
+	0x1E,
 };
+
 static u8 SEQ_NT36672C_M33_00_192[] = {
-	0xE4, 0xE9
+	0xEB,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_193[] = {
-	0xE5, 0x02
+	0xEC,
+	0x2D,
 };
+
 static u8 SEQ_NT36672C_M33_00_194[] = {
-	0xE6, 0xDE
+	0xFF,
+	0x2A,
 };
+
 static u8 SEQ_NT36672C_M33_00_195[] = {
-	0xE9, 0x02
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_196[] = {
-	0xEA, 0x1E
+	0x00,
+	0x91,
 };
+
 static u8 SEQ_NT36672C_M33_00_197[] = {
-	0xEB, 0x03
+	0x03,
+	0x20,
 };
+
 static u8 SEQ_NT36672C_M33_00_198[] = {
-	0xEC, 0x2D
+	0x06,
+	0x06,
 };
+
 static u8 SEQ_NT36672C_M33_00_199[] = {
-	0xFF, 0x2A
+	0x07,
+	0x50,
 };
+
 static u8 SEQ_NT36672C_M33_00_200[] = {
-	0xFB, 0x01
+	0x0A,
+	0x60,
 };
+
 static u8 SEQ_NT36672C_M33_00_201[] = {
-	0x00, 0x91
+	0x0C,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_202[] = {
-	0x03, 0x20
+	0x0D,
+	0x40,
 };
+
 static u8 SEQ_NT36672C_M33_00_203[] = {
-	0x06, 0x06
+	0x0F,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_204[] = {
-	0x07, 0x50
+	0x11,
+	0xE1,
 };
+
 static u8 SEQ_NT36672C_M33_00_205[] = {
-	0x0A, 0x60
+	0x15,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_206[] = {
-	0x0C, 0x04
+	0x16,
+	0xBE,
 };
+
 static u8 SEQ_NT36672C_M33_00_207[] = {
-	0x0D, 0x40
+	0x19,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_208[] = {
-	0x0F, 0x01
+	0x1A,
+	0x92,
 };
+
 static u8 SEQ_NT36672C_M33_00_209[] = {
-	0x11, 0xE1
+	0x1B,
+	0x12,
 };
+
 static u8 SEQ_NT36672C_M33_00_210[] = {
-	0x15, 0x0F
+	0x1D,
+	0x36,
 };
+
 static u8 SEQ_NT36672C_M33_00_211[] = {
-	0x16, 0xBE
+	0x1E,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_212[] = {
-	0x19, 0x0F
+	0x1F,
+	0x48,
 };
+
 static u8 SEQ_NT36672C_M33_00_213[] = {
-	0x1A, 0x92
+	0x20,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_214[] = {
-	0x1B, 0x12
+	0x27,
+	0x80,
 };
+
 static u8 SEQ_NT36672C_M33_00_215[] = {
-	0x1D, 0x36
+	0x28,
+	0xFD,
 };
+
 static u8 SEQ_NT36672C_M33_00_216[] = {
-	0x1E, 0x3F
+	0x29,
+	0x0B,
 };
+
 static u8 SEQ_NT36672C_M33_00_217[] = {
-	0x1F, 0x48
+	0x2A,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_218[] = {
-	0x20, 0x3F
+	0x2D,
+	0x0B,
 };
+
 static u8 SEQ_NT36672C_M33_00_219[] = {
-	0x27, 0x00
+	0x2F,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_220[] = {
-	0x28, 0xFD
+	0x30,
+	0x85,
 };
+
 static u8 SEQ_NT36672C_M33_00_221[] = {
-	0x29, 0x0B
+	0x31,
+	0xB4,
 };
+
 static u8 SEQ_NT36672C_M33_00_222[] = {
-	0x2A, 0x1B
+	0x33,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_223[] = {
-	0x2D, 0x0B
+	0x34,
+	0xFF,
 };
+
 static u8 SEQ_NT36672C_M33_00_224[] = {
-	0x2F, 0x01
+	0x35,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_225[] = {
-	0x30, 0x85
+	0x36,
+	0x05,
 };
+
 static u8 SEQ_NT36672C_M33_00_226[] = {
-	0x31, 0xB4
+	0x37,
+	0xF9,
 };
+
 static u8 SEQ_NT36672C_M33_00_227[] = {
-	0x33, 0x22
+	0x38,
+	0x44,
 };
+
 static u8 SEQ_NT36672C_M33_00_228[] = {
-	0x34, 0xFF
+	0x39,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_229[] = {
-	0x35, 0x3F
+	0x3A,
+	0x85,
 };
+
 static u8 SEQ_NT36672C_M33_00_230[] = {
-	0x36, 0x05
+	0x45,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_231[] = {
-	0x37, 0xF9
+	0x46,
+	0x40,
 };
+
 static u8 SEQ_NT36672C_M33_00_232[] = {
-	0x38, 0x44
+	0x48,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_233[] = {
-	0x39, 0x00
+	0x4A,
+	0xE1,
 };
+
 static u8 SEQ_NT36672C_M33_00_234[] = {
-	0x3A, 0x85
+	0x4E,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_235[] = {
-	0x45, 0x04
+	0x4F,
+	0xBE,
 };
+
 static u8 SEQ_NT36672C_M33_00_236[] = {
-	0x46, 0x40
+	0x52,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_237[] = {
-	0x48, 0x01
+	0x53,
+	0x92,
 };
+
 static u8 SEQ_NT36672C_M33_00_238[] = {
-	0x4A, 0xE1
+	0x54,
+	0x12,
 };
+
 static u8 SEQ_NT36672C_M33_00_239[] = {
-	0x4E, 0x0F
+	0x56,
+	0x36,
 };
+
 static u8 SEQ_NT36672C_M33_00_240[] = {
-	0x4F, 0xBE
+	0x57,
+	0x57,
 };
+
 static u8 SEQ_NT36672C_M33_00_241[] = {
-	0x52, 0x0F
+	0x58,
+	0x61,
 };
+
 static u8 SEQ_NT36672C_M33_00_242[] = {
-	0x53, 0x92
+	0x59,
+	0x57,
 };
+
 static u8 SEQ_NT36672C_M33_00_243[] = {
-	0x54, 0x12
+	0x7A,
+	0x09,
 };
+
 static u8 SEQ_NT36672C_M33_00_244[] = {
-	0x56, 0x36
+	0x7B,
+	0x40,
 };
+
 static u8 SEQ_NT36672C_M33_00_245[] = {
-	0x57, 0x57
+	0x7F,
+	0xF0,
 };
+
 static u8 SEQ_NT36672C_M33_00_246[] = {
-	0x58, 0x61
+	0x83,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_247[] = {
-	0x59, 0x57
+	0x84,
+	0xBE,
 };
+
 static u8 SEQ_NT36672C_M33_00_248[] = {
-	0x60, 0x00
+	0x87,
+	0x0F,
 };
+
 static u8 SEQ_NT36672C_M33_00_249[] = {
-	0x61, 0xFD
+	0x88,
+	0x92,
 };
+
 static u8 SEQ_NT36672C_M33_00_250[] = {
-	0x62, 0x05
+	0x89,
+	0x12,
 };
+
 static u8 SEQ_NT36672C_M33_00_251[] = {
-	0x63, 0x79
+	0x8B,
+	0x36,
 };
+
 static u8 SEQ_NT36672C_M33_00_252[] = {
-	0x65, 0x08
+	0x8C,
+	0x7E,
 };
+
 static u8 SEQ_NT36672C_M33_00_253[] = {
-	0x66, 0x01
+	0x8D,
+	0x7E,
 };
+
 static u8 SEQ_NT36672C_M33_00_254[] = {
-	0x67, 0x43
+	0x8E,
+	0x7E,
 };
+
 static u8 SEQ_NT36672C_M33_00_255[] = {
-	0x68, 0xC9
+	0xFF,
+	0x2C,
 };
+
 static u8 SEQ_NT36672C_M33_00_256[] = {
-	0x69, 0x32
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_257[] = {
-	0x6A, 0xE3
+	0x03,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_258[] = {
-	0x6B, 0xFF
+	0x04,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_259[] = {
-	0x6C, 0x2E
+	0x05,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_260[] = {
-	0x6D, 0xA3
+	0x0D,
+	0x06,
 };
+
 static u8 SEQ_NT36672C_M33_00_261[] = {
-	0x6E, 0xFB
+	0x0E,
+	0x56,
 };
+
 static u8 SEQ_NT36672C_M33_00_262[] = {
-	0x6F, 0x31
+	0x17,
+	0x4E,
 };
+
 static u8 SEQ_NT36672C_M33_00_263[] = {
-	0x70, 0xA0
+	0x18,
+	0x4E,
 };
+
 static u8 SEQ_NT36672C_M33_00_264[] = {
-	0x71, 0x43
+	0x19,
+	0x4E,
 };
+
 static u8 SEQ_NT36672C_M33_00_265[] = {
-	0x7A, 0x09
+	0x2D,
+	0xAF,
 };
+
 static u8 SEQ_NT36672C_M33_00_266[] = {
-	0x7B, 0x40
+	0x2F,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_267[] = {
-	0x7F, 0xF0
+	0x30,
+	0xFC,
 };
+
 static u8 SEQ_NT36672C_M33_00_268[] = {
-	0x83, 0x0F
+	0x32,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_269[] = {
-	0x84, 0xBE
+	0x33,
+	0xFC,
 };
+
 static u8 SEQ_NT36672C_M33_00_270[] = {
-	0x87, 0x0F
+	0x35,
+	0x19,
 };
+
 static u8 SEQ_NT36672C_M33_00_271[] = {
-	0x88, 0x92
+	0x37,
+	0x19,
 };
+
 static u8 SEQ_NT36672C_M33_00_272[] = {
-	0x89, 0x12
+	0x4D,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_273[] = {
-	0x8B, 0x36
+	0x4E,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_274[] = {
-	0x8C, 0x7E
+	0x4F,
+	0x09,
 };
+
 static u8 SEQ_NT36672C_M33_00_275[] = {
-	0x8D, 0x7E
+	0x56,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_276[] = {
-	0x8E, 0x7E
+	0x58,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_277[] = {
-	0xFF, 0x2C
+	0x59,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_278[] = {
-	0xFB, 0x01
+	0x62,
+	0x6D,
 };
+
 static u8 SEQ_NT36672C_M33_00_279[] = {
-	0x03, 0x15
+	0x6B,
+	0x6A,
 };
+
 static u8 SEQ_NT36672C_M33_00_280[] = {
-	0x04, 0x15
+	0x6C,
+	0x6A,
 };
+
 static u8 SEQ_NT36672C_M33_00_281[] = {
-	0x05, 0x15
+	0x6D,
+	0x6A,
 };
+
 static u8 SEQ_NT36672C_M33_00_282[] = {
-	0x0D, 0x06
+	0x80,
+	0xAF,
 };
+
 static u8 SEQ_NT36672C_M33_00_283[] = {
-	0x0E, 0x56
+	0x81,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_284[] = {
-	0x17, 0x4E
+	0x82,
+	0xFC,
 };
+
 static u8 SEQ_NT36672C_M33_00_285[] = {
-	0x18, 0x4E
+	0x84,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_286[] = {
-	0x19, 0x4E
+	0x85,
+	0xFC,
 };
+
 static u8 SEQ_NT36672C_M33_00_287[] = {
-	0x2D, 0xAF
+	0x87,
+	0x20,
 };
+
 static u8 SEQ_NT36672C_M33_00_288[] = {
-	0x2F, 0x10
+	0x89,
+	0x20,
 };
+
 static u8 SEQ_NT36672C_M33_00_289[] = {
-	0x30, 0xFC
+	0x9E,
+	0x04,
 };
+
 static u8 SEQ_NT36672C_M33_00_290[] = {
-	0x32, 0x00
+	0x9F,
+	0x1E,
 };
+
 static u8 SEQ_NT36672C_M33_00_291[] = {
-	0x33, 0xFC
+	0xFF,
+	0xE0,
 };
+
 static u8 SEQ_NT36672C_M33_00_292[] = {
-	0x35, 0x19
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_293[] = {
-	0x37, 0x19
+	0x35,
+	0x82,
 };
+
 static u8 SEQ_NT36672C_M33_00_294[] = {
-	0x4D, 0x15
+	0xFF,
+	0xF0,
 };
+
 static u8 SEQ_NT36672C_M33_00_295[] = {
-	0x4E, 0x04
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_296[] = {
-	0x4F, 0x09
+	0x1C,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_297[] = {
-	0x56, 0x1B
+	0x33,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_298[] = {
-	0x58, 0x1B
+	0x5A,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_299[] = {
-	0x59, 0x1B
+	0xFF,
+	0xD0,
 };
+
 static u8 SEQ_NT36672C_M33_00_300[] = {
-	0x62, 0x6D
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_301[] = {
-	0x6B, 0x6A
+	0x53,
+	0x22,
 };
+
 static u8 SEQ_NT36672C_M33_00_302[] = {
-	0x6C, 0x6A
+	0x54,
+	0x02,
 };
+
 static u8 SEQ_NT36672C_M33_00_303[] = {
-	0x6D, 0x6A
+	0xFF,
+	0xC0,
 };
+
 static u8 SEQ_NT36672C_M33_00_304[] = {
-	0x80, 0xAF
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_305[] = {
-	0x81, 0x10
+	0x9C,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_306[] = {
-	0x82, 0xFC
+	0x9D,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_307[] = {
-	0x84, 0x00
+	0xFF,
+	0x2B,
 };
+
 static u8 SEQ_NT36672C_M33_00_308[] = {
-	0x85, 0xFC
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_309[] = {
-	0x87, 0x20
+	0xB7,
+	0x1A,
 };
+
 static u8 SEQ_NT36672C_M33_00_310[] = {
-	0x89, 0x20
+	0xB8,
+	0x15,
 };
+
 static u8 SEQ_NT36672C_M33_00_311[] = {
-	0x9E, 0x04
+	0xC0,
+	0x03,
 };
+
 static u8 SEQ_NT36672C_M33_00_312[] = {
-	0x9F, 0x1E
+	0xFF,
+	0xF0,
 };
+
 static u8 SEQ_NT36672C_M33_00_313[] = {
-	0xFF, 0xE0
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_314[] = {
-	0xFB, 0x01
+	0xD2,
+	0x50,
 };
+
 static u8 SEQ_NT36672C_M33_00_315[] = {
-	0x35, 0x82
+	0xFF,
+	0x23,
 };
+
 static u8 SEQ_NT36672C_M33_00_316[] = {
-	0xFF, 0xF0
+	0xFB,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_317[] = {
-	0xFB, 0x01
+	0x00,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_318[] = {
-	0x1C, 0x01
+	0x07,
+	0x60,
 };
+
 static u8 SEQ_NT36672C_M33_00_319[] = {
-	0x33, 0x01
+	0x08,
+	0x06,
 };
+
 static u8 SEQ_NT36672C_M33_00_320[] = {
-	0x5A, 0x00
+	0x09,
+	0x1C,
 };
+
 static u8 SEQ_NT36672C_M33_00_321[] = {
-	0xFF, 0xD0
+	0x0A,
+	0x3C,
 };
+
 static u8 SEQ_NT36672C_M33_00_322[] = {
-	0xFB, 0x01
+	0x0B,
+	0x3C,
 };
+
 static u8 SEQ_NT36672C_M33_00_323[] = {
-	0x53, 0x22
+	0x0C,
+	0x3C,
 };
+
 static u8 SEQ_NT36672C_M33_00_324[] = {
-	0x54, 0x02
+	0x0D,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_325[] = {
-	0xFF, 0xC0
+	0x10,
+	0x50,
 };
+
 static u8 SEQ_NT36672C_M33_00_326[] = {
-	0xFB, 0x01
+	0x11,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_327[] = {
-	0x9C, 0x11
+	0x12,
+	0x95,
 };
+
 static u8 SEQ_NT36672C_M33_00_328[] = {
-	0x9D, 0x11
+	0x15,
+	0x68,
 };
+
 static u8 SEQ_NT36672C_M33_00_329[] = {
-	0xFF, 0x2B
+	0x16,
+	0x0B,
 };
+
 static u8 SEQ_NT36672C_M33_00_330[] = {
-	0xFB, 0x01
+	0x19,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_331[] = {
-	0xB7, 0x1A
+	0x1A,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_332[] = {
-	0xB8, 0x19
+	0x1B,
+	0x1B,
 };
+
 static u8 SEQ_NT36672C_M33_00_333[] = {
-	0xC0, 0x03
+	0x1C,
+	0x1C,
 };
+
 static u8 SEQ_NT36672C_M33_00_334[] = {
-	0xFF, 0xF0
+	0x1D,
+	0x1C,
 };
+
 static u8 SEQ_NT36672C_M33_00_335[] = {
-	0xFB, 0x01
+	0x1E,
+	0x1C,
 };
+
 static u8 SEQ_NT36672C_M33_00_336[] = {
-	0xD2, 0x50
+	0x1F,
+	0x1D,
 };
+
 static u8 SEQ_NT36672C_M33_00_337[] = {
-	0xFF, 0x23
+	0x20,
+	0x28,
 };
+
 static u8 SEQ_NT36672C_M33_00_338[] = {
-	0xFB, 0x01
+	0x21,
+	0x2A,
 };
+
 static u8 SEQ_NT36672C_M33_00_339[] = {
-	0x00, 0x00
+	0x22,
+	0x2B,
 };
+
 static u8 SEQ_NT36672C_M33_00_340[] = {
-	0x07, 0x60
+	0x23,
+	0x30,
 };
+
 static u8 SEQ_NT36672C_M33_00_341[] = {
-	0x08, 0x06
+	0x24,
+	0x33,
 };
+
 static u8 SEQ_NT36672C_M33_00_342[] = {
-	0x09, 0x1C
+	0x25,
+	0x38,
 };
+
 static u8 SEQ_NT36672C_M33_00_343[] = {
-	0x0A, 0x2B
+	0x26,
+	0x3C,
 };
+
 static u8 SEQ_NT36672C_M33_00_344[] = {
-	0x0B, 0x2B
+	0x27,
+	0x3E,
 };
+
 static u8 SEQ_NT36672C_M33_00_345[] = {
-	0x0C, 0x2B
+	0x28,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_346[] = {
-	0x0D, 0x00
+	0x29,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_347[] = {
-	0x10, 0x50
+	0x2A,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_348[] = {
-	0x11, 0x01
+	0x2B,
+	0x3F,
 };
+
 static u8 SEQ_NT36672C_M33_00_349[] = {
-	0x12, 0x95
+	0x30,
+	0xFF,
 };
+
 static u8 SEQ_NT36672C_M33_00_350[] = {
-	0x15, 0x68
+	0x31,
+	0xFE,
 };
+
 static u8 SEQ_NT36672C_M33_00_351[] = {
-	0x16, 0x0B
+	0x32,
+	0xFD,
 };
+
 static u8 SEQ_NT36672C_M33_00_352[] = {
-	0x19, 0x00
+	0x33,
+	0xFC,
 };
+
 static u8 SEQ_NT36672C_M33_00_353[] = {
-	0x1A, 0x00
+	0x34,
+	0xFB,
 };
+
 static u8 SEQ_NT36672C_M33_00_354[] = {
-	0x1B, 0x00
+	0x35,
+	0xFA,
 };
+
 static u8 SEQ_NT36672C_M33_00_355[] = {
-	0x1C, 0x00
+	0x36,
+	0xF9,
 };
+
 static u8 SEQ_NT36672C_M33_00_356[] = {
-	0x1D, 0x01
+	0x37,
+	0xF7,
 };
+
 static u8 SEQ_NT36672C_M33_00_357[] = {
-	0x1E, 0x03
+	0x38,
+	0xF5,
 };
+
 static u8 SEQ_NT36672C_M33_00_358[] = {
-	0x1F, 0x05
+	0x39,
+	0xF3,
 };
+
 static u8 SEQ_NT36672C_M33_00_359[] = {
-	0x20, 0x0C
+	0x3A,
+	0xF1,
 };
+
 static u8 SEQ_NT36672C_M33_00_360[] = {
-	0x21, 0x13
+	0x3B,
+	0xEE,
 };
+
 static u8 SEQ_NT36672C_M33_00_361[] = {
-	0x22, 0x17
+	0x3D,
+	0xEC,
 };
+
 static u8 SEQ_NT36672C_M33_00_362[] = {
-	0x23, 0x1D
+	0x3F,
+	0xEA,
 };
+
 static u8 SEQ_NT36672C_M33_00_363[] = {
-	0x24, 0x23
+	0x40,
+	0xE8,
 };
+
 static u8 SEQ_NT36672C_M33_00_364[] = {
-	0x25, 0x2C
+	0x41,
+	0xE6,
 };
+
 static u8 SEQ_NT36672C_M33_00_365[] = {
-	0x26, 0x33
+	0x04,
+	0x00,
 };
+
 static u8 SEQ_NT36672C_M33_00_366[] = {
-	0x27, 0x39
+	0xA0,
+	0x11,
 };
+
 static u8 SEQ_NT36672C_M33_00_367[] = {
-	0x28, 0x3F
+	0xFF,
+	0x10,
 };
+
 static u8 SEQ_NT36672C_M33_00_368[] = {
-	0x29, 0x3F
+	0xFB,
+	0x01,
 };
+
+/*
 static u8 SEQ_NT36672C_M33_00_369[] = {
-	0x2A, 0x3F
+	0x53,
+	0x2C,
 };
+*/
+
 static u8 SEQ_NT36672C_M33_00_370[] = {
-	0x2B, 0x3F
+	0x55,
+	0x01,
 };
+
 static u8 SEQ_NT36672C_M33_00_371[] = {
-	0x30, 0xFF
-};
-static u8 SEQ_NT36672C_M33_00_372[] = {
-	0x31, 0xFE
-};
-static u8 SEQ_NT36672C_M33_00_373[] = {
-	0x32, 0xFD
-};
-static u8 SEQ_NT36672C_M33_00_374[] = {
-	0x33, 0xFC
-};
-static u8 SEQ_NT36672C_M33_00_375[] = {
-	0x34, 0xFB
-};
-static u8 SEQ_NT36672C_M33_00_376[] = {
-	0x35, 0xFA
-};
-static u8 SEQ_NT36672C_M33_00_377[] = {
-	0x36, 0xF9
-};
-static u8 SEQ_NT36672C_M33_00_378[] = {
-	0x37, 0xF7
-};
-static u8 SEQ_NT36672C_M33_00_379[] = {
-	0x38, 0xF5
-};
-static u8 SEQ_NT36672C_M33_00_380[] = {
-	0x39, 0xF3
-};
-static u8 SEQ_NT36672C_M33_00_381[] = {
-	0x3A, 0xF1
-};
-static u8 SEQ_NT36672C_M33_00_382[] = {
-	0x3B, 0xEE
-};
-static u8 SEQ_NT36672C_M33_00_383[] = {
-	0x3D, 0xEC
-};
-static u8 SEQ_NT36672C_M33_00_384[] = {
-	0x3F, 0xEA
-};
-static u8 SEQ_NT36672C_M33_00_385[] = {
-	0x40, 0xE8
-};
-static u8 SEQ_NT36672C_M33_00_386[] = {
-	0x41, 0xE6
-};
-static u8 SEQ_NT36672C_M33_00_387[] = {
-	0x04, 0x00
-};
-static u8 SEQ_NT36672C_M33_00_388[] = {
-	0xA0, 0x11
-};
-static u8 SEQ_NT36672C_M33_00_389[] = {
-	0xFF, 0x10
-};
-static u8 SEQ_NT36672C_M33_00_390[] = {
-	0xFB, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_391[] = {
-	0x53, 0x2C
-};
-static u8 SEQ_NT36672C_M33_00_392[] = {
-	0x55, 0x01
-};
-static u8 SEQ_NT36672C_M33_00_393[] = {
-	0x68, 0x00, 0x01
+	0x68,
+	0x00, 0x01,
 };
 
 
@@ -1740,31 +2415,11 @@ static DEFINE_STATIC_PACKET(nt36672c_m33_00_365, DSI_PKT_TYPE_WR, SEQ_NT36672C_M
 static DEFINE_STATIC_PACKET(nt36672c_m33_00_366, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_366, 0);
 static DEFINE_STATIC_PACKET(nt36672c_m33_00_367, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_367, 0);
 static DEFINE_STATIC_PACKET(nt36672c_m33_00_368, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_368, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_369, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_369, 0);
+//static DEFINE_STATIC_PACKET(nt36672c_m33_00_369, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_369, 0);
 static DEFINE_STATIC_PACKET(nt36672c_m33_00_370, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_370, 0);
 static DEFINE_STATIC_PACKET(nt36672c_m33_00_371, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_371, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_372, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_372, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_373, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_373, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_374, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_374, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_375, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_375, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_376, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_376, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_377, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_377, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_378, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_378, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_379, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_379, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_380, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_380, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_381, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_381, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_382, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_382, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_383, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_383, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_384, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_384, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_385, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_385, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_386, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_386, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_387, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_387, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_388, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_388, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_389, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_389, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_390, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_390, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_391, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_391, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_392, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_392, 0);
-static DEFINE_STATIC_PACKET(nt36672c_m33_00_393, DSI_PKT_TYPE_WR, SEQ_NT36672C_M33_00_393, 0);
+
+
 
 
 static DEFINE_PANEL_MDELAY(nt36672c_m33_00_wait_20msec, 20); /* 1 frame */
@@ -2154,31 +2809,9 @@ static void *nt36672c_m33_00_init_cmdtbl[] = {
 	&PKTINFO(nt36672c_m33_00_366),
 	&PKTINFO(nt36672c_m33_00_367),
 	&PKTINFO(nt36672c_m33_00_368),
-	&PKTINFO(nt36672c_m33_00_369),
+//	&PKTINFO(nt36672c_m33_00_369),
 	&PKTINFO(nt36672c_m33_00_370),
 	&PKTINFO(nt36672c_m33_00_371),
-	&PKTINFO(nt36672c_m33_00_372),
-	&PKTINFO(nt36672c_m33_00_373),
-	&PKTINFO(nt36672c_m33_00_374),
-	&PKTINFO(nt36672c_m33_00_375),
-	&PKTINFO(nt36672c_m33_00_376),
-	&PKTINFO(nt36672c_m33_00_377),
-	&PKTINFO(nt36672c_m33_00_378),
-	&PKTINFO(nt36672c_m33_00_379),
-	&PKTINFO(nt36672c_m33_00_380),
-	&PKTINFO(nt36672c_m33_00_381),
-	&PKTINFO(nt36672c_m33_00_382),
-	&PKTINFO(nt36672c_m33_00_383),
-	&PKTINFO(nt36672c_m33_00_384),
-	&PKTINFO(nt36672c_m33_00_385),
-	&PKTINFO(nt36672c_m33_00_386),
-	&PKTINFO(nt36672c_m33_00_387),
-	&PKTINFO(nt36672c_m33_00_388),
-	&PKTINFO(nt36672c_m33_00_389),
-	&PKTINFO(nt36672c_m33_00_390),
-	&PKTINFO(nt36672c_m33_00_391),
-	&PKTINFO(nt36672c_m33_00_392),
-	&PKTINFO(nt36672c_m33_00_393),
 
 	&PKTINFO(nt36672c_m33_00_sleep_out),
 	&DLYINFO(nt36672c_m33_00_wait_100msec),
