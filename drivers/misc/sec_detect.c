@@ -230,7 +230,7 @@ static int __init sec_detect_init(void) {
 	} else if (strstr(machine_name, "M33") != NULL) {
 		g_sec_current_device = SEC_M33;
 		strscpy(g_sec_current_device_name, "m33x", sizeof(g_sec_current_device_name));
-		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
 		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
 		sec_feat_flags[SEC_FEAT_LEGACY_SINPUT] = true;
