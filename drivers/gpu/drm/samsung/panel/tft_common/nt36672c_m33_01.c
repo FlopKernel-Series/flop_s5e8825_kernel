@@ -11,21 +11,27 @@
  */
 #include <linux/of_gpio.h>
 #include <video/mipi_display.h>
-#include "nt36672c_a14x_01_panel.h"
+#include <linux/sec_detect.h>
+#include "nt36672c_m33_01_panel.h"
 
-static int __init nt36672c_a14x_01_panel_init(void)
+static int __init nt36672c_m33_01_panel_init(void)
 {
-	register_common_panel(&nt36672c_a14x_01_panel_info);
+	if (sec_get_current_device() != SEC_M33) {
+		SEC_DETECT_LOG("Skipped nt36672c_m33_01 panel driver\n");
+		return 0;
+	}
+
+	usdm_register_common_panel(&nt36672c_m33_01_panel_info);
 	return 0;
 }
 
-static void __exit nt36672c_a14x_01_panel_exit(void)
+static void __exit nt36672c_m33_01_panel_exit(void)
 {
-	deregister_common_panel(&nt36672c_a14x_01_panel_info);
+	usdm_deregister_common_panel(&nt36672c_m33_01_panel_info);
 }
 
-module_init(nt36672c_a14x_01_panel_init)
-module_exit(nt36672c_a14x_01_panel_exit)
+module_init(nt36672c_m33_01_panel_init)
+module_exit(nt36672c_m33_01_panel_exit)
 
 MODULE_DESCRIPTION("Samsung Mobile Panel Driver");
 MODULE_LICENSE("GPL");
