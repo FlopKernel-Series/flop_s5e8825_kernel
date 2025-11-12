@@ -812,6 +812,7 @@ struct panel_id_mask {
 
 struct panel_dt_lut {
 	const char *name;
+	struct device_node *ddi_node;
 	struct device_node *ap_vendor_setting_node;
 	struct device_node *panel_modes_node;
 	struct device_node *power_ctrl_node;

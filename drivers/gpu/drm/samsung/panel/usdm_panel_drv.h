@@ -626,6 +626,7 @@ struct panel_device {
 	struct panel_adapter adapter;
 
 	const char *of_node_name;
+	struct device_node *ddi_node;
 	struct device_node *ap_vendor_setting_node;
 	struct device_node *power_ctrl_node;
 	struct device_node *options_node;

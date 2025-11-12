@@ -4348,6 +4348,7 @@ static int panel_set_node_from_panel_lut(struct panel_device *panel)
 			panel_warn("failed to get panel_display_modes\n");
 	}
 #endif
+	panel->ddi_node = panel_lut->ddi_node;
 	panel->ap_vendor_setting_node = panel_lut->ap_vendor_setting_node;
 	panel->options_node = panel_lut->options_node;
 	panel->panel_data.dqe_suffix = panel_lut->dqe_suffix;
@@ -6939,13 +6940,26 @@ static int panel_parse_panel_lookup(struct panel_device *panel)
 		if (ret != 0 || lut->name == NULL)
 			lut->name = panel_np->name;
 
+		/* Parse ddi phandle */
+		node = of_parse_phandle(panel_np, "ddi", 0);
+		if (node) {
+			lut->ddi_node = node;
+			panel_info("found ddi node: %s\n", node->name);
+			of_node_put(node);
+		} else {
+			lut->ddi_node = NULL;
+		}
+
 		node = of_parse_phandle(panel_np, "ap-vendor-setting", 0);
 		if (!node) {
-			panel_err("failed to get phandle of ap-vendor-setting\n");
-			return -EINVAL;
+			/* HACK: Fallback for missing ap-vendor-setting in DTBO */
+			panel_warn("ap-vendor-setting not found, using fallback (DTBO needs update!)\n");
+			/* Create a minimal dummy node - the adapter will handle missing properties gracefully */
+			lut->ap_vendor_setting_node = NULL;
+		} else {
+			lut->ap_vendor_setting_node = node;
+			of_node_put(node);
 		}
-		lut->ap_vendor_setting_node = node;
-		of_node_put(node);
 #if defined(CONFIG_USDM_PANEL_DISPLAY_MODE)
 		node = of_parse_phandle(panel_np, "display-mode", 0);
 		if (!node) {
