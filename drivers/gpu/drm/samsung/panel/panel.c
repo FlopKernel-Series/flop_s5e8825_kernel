@@ -969,8 +969,23 @@ int panel_trigger_recovery(struct panel_device *panel)
 
 int panel_parse_ap_vendor_node(struct panel_device *panel, struct device_node *node)
 {
-	if (!node)
-		return -EINVAL;
+	if (!node) {
+		/* HACK: Fallback for missing ap-vendor-setting in DTBO
+		 * Set default values matching A25 panel (no HDR, standard size)
+		 * This allows the driver to work without DTBO update, but HDR won't be available.
+		 */
+		panel_warn("ap-vendor-setting node is NULL, using defaults (DTBO needs update!)\n");
+
+		/* Initialize HDR info to defaults (no HDR support) */
+		if (panel) {
+			panel->hdr.formats = 0;
+			panel->hdr.max_luma = 0;
+			panel->hdr.max_avg_luma = 0;
+			panel->hdr.min_luma = 0;
+		}
+
+		return 0;
+	}
 
 	return call_panel_adapter_func(panel, parse_dt, node);
 }
