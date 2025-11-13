@@ -4625,8 +4625,8 @@ int panel_probe(struct panel_device *panel)
 	if (panel_dt_lut_get_option_value(panel, "probe-mdnie") != 0) {
 		ret = mdnie_probe(&panel->mdnie, info->mdnie_tune);
 		if (unlikely(ret)) {
-			panel_err("failed to probe mdnie driver\n");
-			return -ENODEV;
+			panel_warn("failed to probe mdnie driver (may not be supported on this panel)\n");
+			/* mdnie is optional, continue without it */
 		}
 	} else
 		panel_info("probe-mdnie was set to 0 in dt\n");
