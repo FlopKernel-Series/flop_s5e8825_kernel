@@ -934,7 +934,7 @@ static struct blic_data *nt36672c_m33_01_blic_tbl[] = {
 
 struct common_panel_info nt36672c_m33_01_panel_info = {
 	.ldi_name = "nt36672c",
-	.name = "nt36672c_m33_01",
+	.name = "nt36672c_m33x_01",
 	.model = "tianma_6_58_inch",
 	.vendor = "TMC",
 	.id = 0x4BF240,
