@@ -125,7 +125,7 @@ int tft_maptbl_init_brt(struct maptbl *tbl)
 	return 0;
 }
 
-int tft_usdm_maptbl_getidx_brt(struct maptbl *tbl)
+int tft_maptbl_getidx_brt(struct maptbl *tbl)
 {
 	int row = 0;
 	struct panel_info *panel_data;
