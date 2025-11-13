@@ -1,5 +1,5 @@
 /*
- * linux/drivers/video/fbdev/exynos/panel/s6e3fc3/s6e3fc3_a53x_panel_dimming.h
+ * linux/drivers/video/fbdev/exynos/panel/s6e3fc3/s6e3fc3_a33x_panel_dimming.h
  *
  * Header file for S6E3FC3 Dimming Driver
  *
@@ -10,8 +10,8 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __S6E3FC3_A53X_PANEL_DIMMING_H___
-#define __S6E3FC3_A53X_PANEL_DIMMING_H___
+#ifndef __S6E3FC3_A33X_PANEL_DIMMING_H___
+#define __S6E3FC3_A33X_PANEL_DIMMING_H___
 #include "../usdm_dimming.h"
 #include "../usdm_panel_dimming.h"
 
@@ -24,7 +24,7 @@
 #define S6E3FC3_HBM_STEP (231)
 #define S6E3FC3_TOTAL_STEP (S6E3FC3_NR_STEP + S6E3FC3_HBM_STEP)
 
-static unsigned int a53x_brt_tbl[S6E3FC3_TOTAL_STEP] = {
+static unsigned int a33x_brt_tbl[S6E3FC3_TOTAL_STEP] = {
 	BRT(0), BRT(1), BRT(2), BRT(3), BRT(4), BRT(5), BRT(6), BRT(7), BRT(8), BRT(9), BRT(10),
 	BRT(11), BRT(12), BRT(13), BRT(14), BRT(15), BRT(16), BRT(17), BRT(18), BRT(19), BRT(20),
 	BRT(21), BRT(22), BRT(23), BRT(24), BRT(25), BRT(26), BRT(27), BRT(28), BRT(29), BRT(30),
@@ -77,7 +77,7 @@ static unsigned int a53x_brt_tbl[S6E3FC3_TOTAL_STEP] = {
 	BRT(486),
 };
 
-static unsigned int a53x_lum_tbl[S6E3FC3_A53X_TOTAL_NR_LUMINANCE] = {
+static unsigned int a33x_lum_tbl[S6E3FC3_A33X_TOTAL_NR_LUMINANCE] = {
 	/* normal 8x32 */
 	2, 2, 3, 3, 4, 4, 6, 6,
 	7, 7, 8, 9, 11, 11, 12, 13,
@@ -143,30 +143,30 @@ static unsigned int a53x_lum_tbl[S6E3FC3_A53X_TOTAL_NR_LUMINANCE] = {
 	790, 792, 793, 795, 797, 798, 800,
 };
 
-static unsigned int a53x_step_cnt_tbl[S6E3FC3_TOTAL_STEP] = {
+static unsigned int a33x_step_cnt_tbl[S6E3FC3_TOTAL_STEP] = {
 	[0 ... S6E3FC3_TOTAL_STEP - 1] = 1,
 };
 
-static struct brightness_table s6e3fc3_a53x_panel_brightness_table = {
+static struct brightness_table s6e3fc3_a33x_panel_brightness_table = {
 	.control_type = BRIGHTNESS_CONTROL_TYPE_GAMMA_MODE2,
-	.brt = a53x_brt_tbl,
-	.sz_brt = ARRAY_SIZE(a53x_brt_tbl),
+	.brt = a33x_brt_tbl,
+	.sz_brt = ARRAY_SIZE(a33x_brt_tbl),
 	.sz_ui_brt = S6E3FC3_NR_STEP,
 	.sz_hbm_brt = S6E3FC3_HBM_STEP,
-	.lum = a53x_lum_tbl,
-	.sz_lum = S6E3FC3_A53X_TOTAL_NR_LUMINANCE,
-	.sz_ui_lum = S6E3FC3_A53X_NR_LUMINANCE,
-	.sz_hbm_lum = S6E3FC3_A53X_NR_HBM_LUMINANCE,
+	.lum = a33x_lum_tbl,
+	.sz_lum = S6E3FC3_A33X_TOTAL_NR_LUMINANCE,
+	.sz_ui_lum = S6E3FC3_A33X_NR_LUMINANCE,
+	.sz_hbm_lum = S6E3FC3_A33X_NR_HBM_LUMINANCE,
 	.sz_ext_hbm_lum = 0,
 	.brt_to_step = NULL,
 	.sz_brt_to_step = 0,
-	.step_cnt = a53x_step_cnt_tbl,
-	.sz_step_cnt = ARRAY_SIZE(a53x_step_cnt_tbl),
+	.step_cnt = a33x_step_cnt_tbl,
+	.sz_step_cnt = ARRAY_SIZE(a33x_step_cnt_tbl),
 	.vtotal = 0,
 };
 
-static struct panel_dimming_info s6e3fc3_a53x_panel_dimming_info = {
-	.name = "s6e3fc3_a53x",
+static struct panel_dimming_info s6e3fc3_a33x_panel_dimming_info = {
+	.name = "s6e3fc3_a33x",
 	.dim_init_info = {
 		NULL,
 	},
@@ -176,7 +176,7 @@ static struct panel_dimming_info s6e3fc3_a53x_panel_dimming_info = {
 	.nr_hbm_luminance = 0,
 	.extend_hbm_target_luminance = -1,
 	.nr_extend_hbm_luminance = 0,
-	.brt_tbl = &s6e3fc3_a53x_panel_brightness_table,
+	.brt_tbl = &s6e3fc3_a33x_panel_brightness_table,
 	/* dimming parameters */
 	.dimming_maptbl = NULL,
 	.dim_flash_on = false,
