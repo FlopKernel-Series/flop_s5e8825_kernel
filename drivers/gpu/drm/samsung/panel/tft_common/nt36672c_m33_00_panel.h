@@ -2936,7 +2936,7 @@ static struct blic_data *nt36672c_m33_00_blic_tbl[] = {
 
 struct common_panel_info nt36672c_m33_00_panel_info = {
 	.ldi_name = "nt36672c",
-	.name = "nt36672c_m33_00",
+	.name = "nt36672c_m33x_00",
 	.model = "csot_6_58_inch",
 	.vendor = "CSO",
 	.id = 0x4BF240,
