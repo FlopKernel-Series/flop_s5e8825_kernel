@@ -17,6 +17,7 @@
 enum {
 	NT36672C_M33_00_DISPLAY_MODE_1080x2408_120HS,
 	NT36672C_M33_00_DISPLAY_MODE_1080x2408_60HS,
+	NT36672C_M33_00_DISPLAY_MODE_1080x2408_60PHS,
 	MAX_NT36672C_M33_00_DISPLAY_MODE,
 };
 
@@ -28,6 +29,7 @@ enum {
 enum {
 	NT36672C_M33_00_VRR_120HS,
 	NT36672C_M33_00_VRR_60HS,
+	NT36672C_M33_00_VRR_60PHS,
 	MAX_NT36672C_M33_00_VRR,
 };
 
@@ -44,11 +46,18 @@ struct panel_vrr nt36672c_m33_00_default_panel_vrr[] = {
 		.te_hw_skip_count = 0,
 		.mode = VRR_HS_MODE,
 	},
+	[NT36672C_M33_00_VRR_60PHS] = {
+		.fps = 60,
+		.te_sw_skip_count = 0,
+		.te_hw_skip_count = 1,
+		.mode = VRR_HS_MODE,
+	},
 };
 
 static struct panel_vrr *nt36672c_m33_00_default_vrrtbl[] = {
 	&nt36672c_m33_00_default_panel_vrr[NT36672C_M33_00_VRR_120HS],
 	&nt36672c_m33_00_default_panel_vrr[NT36672C_M33_00_VRR_60HS],
+	&nt36672c_m33_00_default_panel_vrr[NT36672C_M33_00_VRR_60PHS],
 };
 
 static struct panel_resol nt36672c_m33_00_default_resol[] = {
@@ -80,11 +89,17 @@ static struct common_panel_display_mode nt36672c_m33_00_display_mode[] = {
 		.resol = &nt36672c_m33_00_default_resol[NT36672C_M33_00_RESOL_1080x2408],
 		.vrr = &nt36672c_m33_00_default_panel_vrr[NT36672C_M33_00_VRR_60HS],
 	},
+	[NT36672C_M33_00_DISPLAY_MODE_1080x2408_60PHS] = {
+		.name = PANEL_DISPLAY_MODE_1080x2408_60HS_120HS_TE_HW_SKIP_1,
+		.resol = &nt36672c_m33_00_default_resol[NT36672C_M33_00_RESOL_1080x2408],
+		.vrr = &nt36672c_m33_00_default_panel_vrr[NT36672C_M33_00_VRR_60PHS],
+	},
 };
 
 static struct common_panel_display_mode *nt36672c_m33_00_display_mode_array[] = {
 	&nt36672c_m33_00_display_mode[NT36672C_M33_00_DISPLAY_MODE_1080x2408_120HS],
 	&nt36672c_m33_00_display_mode[NT36672C_M33_00_DISPLAY_MODE_1080x2408_60HS],
+	&nt36672c_m33_00_display_mode[NT36672C_M33_00_DISPLAY_MODE_1080x2408_60PHS],
 };
 
 static struct common_panel_display_modes nt36672c_m33_00_display_modes = {
