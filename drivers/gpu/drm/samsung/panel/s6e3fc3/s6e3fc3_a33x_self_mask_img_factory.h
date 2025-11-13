@@ -1,5 +1,5 @@
 /*
- * linux/drivers/video/fbdev/exynos/panel/s6e3fc3/s6e3fc3_a53x_self_mask_img.h
+ * linux/drivers/video/fbdev/exynos/panel/s6e3fc3/s6e3fc3_a33x_self_mask_img.h
  *
  * Header file for AOD Driver
  *
@@ -10,10 +10,10 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __S6E3FC3_A53X_SELF_MASK_CRC_IMG_H__
-#define __S6E3FC3_A53X_SELF_MASK_CRC_IMG_H__
+#ifndef __S6E3FC3_A33X_SELF_MASK_CRC_IMG_H__
+#define __S6E3FC3_A33X_SELF_MASK_CRC_IMG_H__
 
-static char S6E3FC3_A53X_SELF_MASK_CRC_IMG[] = {
+static char S6E3FC3_A33X_SELF_MASK_CRC_IMG[] = {
 	0x80, 0x28, 0x5c, 0x80, 0x4c, 0x80, 0xc0, 0x28,
 	0x80, 0x28, 0x5c, 0x80, 0x4c, 0x80, 0xc0, 0x28,
 	0x80, 0x28, 0x56, 0x80, 0x41, 0xff, 0x41, 0x00,

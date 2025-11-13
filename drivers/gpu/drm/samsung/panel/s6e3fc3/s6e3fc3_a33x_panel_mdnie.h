@@ -1,5 +1,5 @@
 /*
- * linux/drivers/video/fbdev/exynos/panel/s6e3fc3/s6e3fc3_a53x_panel_mdnie.h
+ * linux/drivers/video/fbdev/exynos/panel/s6e3fc3/s6e3fc3_a33x_panel_mdnie.h
  *
  * Header file for mDNIe Driver
  *
@@ -10,65 +10,65 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __S6E3FC3_A53X_PANEL_MDNIE_H__
-#define __S6E3FC3_A53X_PANEL_MDNIE_H__
+#ifndef __S6E3FC3_A33X_PANEL_MDNIE_H__
+#define __S6E3FC3_A33X_PANEL_MDNIE_H__
 
 #include "../usdm_panel.h"
 #include "../usdm_mdnie.h"
 #include "oled_function.h"
-#include "s6e3fc3_a53x_panel.h"
+#include "s6e3fc3_a33x_panel.h"
 #include "s6e3fc3_mdnie.h"
 
-#define S6E3FC3_A53X_LINE_0_NUM	(-56)
-#define S6E3FC3_A53X_LINE_0_DEN	(55)
-#define S6E3FC3_A53X_LINE_0_CON	(-102)
+#define S6E3FC3_A33X_LINE_0_NUM	(-56)
+#define S6E3FC3_A33X_LINE_0_DEN	(55)
+#define S6E3FC3_A33X_LINE_0_CON	(-102)
 
-#define S6E3FC3_A53X_LINE_1_NUM	(5)
-#define S6E3FC3_A53X_LINE_1_DEN	(1)
-#define S6E3FC3_A53X_LINE_1_CON	(-18483)
+#define S6E3FC3_A33X_LINE_1_NUM	(5)
+#define S6E3FC3_A33X_LINE_1_DEN	(1)
+#define S6E3FC3_A33X_LINE_1_CON	(-18483)
 
-#define S6E3FC3_A53X_COEFF_Q1_A	(-52615)
-#define S6E3FC3_A53X_COEFF_Q1_B	(-61905)
-#define S6E3FC3_A53X_COEFF_Q1_C	(21249)
-#define S6E3FC3_A53X_COEFF_Q1_D	(15603)
-#define S6E3FC3_A53X_COEFF_Q1_E	(40775)
-#define S6E3FC3_A53X_COEFF_Q1_F	(80902)
-#define S6E3FC3_A53X_COEFF_Q1_G	(-19651)
-#define S6E3FC3_A53X_COEFF_Q1_H	(-19618)
+#define S6E3FC3_A33X_COEFF_Q1_A	(-52615)
+#define S6E3FC3_A33X_COEFF_Q1_B	(-61905)
+#define S6E3FC3_A33X_COEFF_Q1_C	(21249)
+#define S6E3FC3_A33X_COEFF_Q1_D	(15603)
+#define S6E3FC3_A33X_COEFF_Q1_E	(40775)
+#define S6E3FC3_A33X_COEFF_Q1_F	(80902)
+#define S6E3FC3_A33X_COEFF_Q1_G	(-19651)
+#define S6E3FC3_A33X_COEFF_Q1_H	(-19618)
 
-#define S6E3FC3_A53X_COEFF_Q2_A	(-212096)
-#define S6E3FC3_A53X_COEFF_Q2_B	(-186041)
-#define S6E3FC3_A53X_COEFF_Q2_C	(61987)
-#define S6E3FC3_A53X_COEFF_Q2_D	(65143)
-#define S6E3FC3_A53X_COEFF_Q2_E	(-75083)
-#define S6E3FC3_A53X_COEFF_Q2_F	(-27237)
-#define S6E3FC3_A53X_COEFF_Q2_G	(16637)
-#define S6E3FC3_A53X_COEFF_Q2_H	(15737)
+#define S6E3FC3_A33X_COEFF_Q2_A	(-212096)
+#define S6E3FC3_A33X_COEFF_Q2_B	(-186041)
+#define S6E3FC3_A33X_COEFF_Q2_C	(61987)
+#define S6E3FC3_A33X_COEFF_Q2_D	(65143)
+#define S6E3FC3_A33X_COEFF_Q2_E	(-75083)
+#define S6E3FC3_A33X_COEFF_Q2_F	(-27237)
+#define S6E3FC3_A33X_COEFF_Q2_G	(16637)
+#define S6E3FC3_A33X_COEFF_Q2_H	(15737)
 
-#define S6E3FC3_A53X_COEFF_Q3_A	(69454)
-#define S6E3FC3_A53X_COEFF_Q3_B	(77493)
-#define S6E3FC3_A53X_COEFF_Q3_C	(-27852)
-#define S6E3FC3_A53X_COEFF_Q3_D	(-19429)
-#define S6E3FC3_A53X_COEFF_Q3_E	(-93856)
-#define S6E3FC3_A53X_COEFF_Q3_F	(-133061)
-#define S6E3FC3_A53X_COEFF_Q3_G	(37638)
-#define S6E3FC3_A53X_COEFF_Q3_H	(35353)
+#define S6E3FC3_A33X_COEFF_Q3_A	(69454)
+#define S6E3FC3_A33X_COEFF_Q3_B	(77493)
+#define S6E3FC3_A33X_COEFF_Q3_C	(-27852)
+#define S6E3FC3_A33X_COEFF_Q3_D	(-19429)
+#define S6E3FC3_A33X_COEFF_Q3_E	(-93856)
+#define S6E3FC3_A33X_COEFF_Q3_F	(-133061)
+#define S6E3FC3_A33X_COEFF_Q3_G	(37638)
+#define S6E3FC3_A33X_COEFF_Q3_H	(35353)
 
-#define S6E3FC3_A53X_COEFF_Q4_A	(192949)
-#define S6E3FC3_A53X_COEFF_Q4_B	(174780)
-#define S6E3FC3_A53X_COEFF_Q4_C	(-56853)
-#define S6E3FC3_A53X_COEFF_Q4_D	(-60597)
-#define S6E3FC3_A53X_COEFF_Q4_E	(57592)
-#define S6E3FC3_A53X_COEFF_Q4_F	(13018)
-#define S6E3FC3_A53X_COEFF_Q4_G	(-11491)
-#define S6E3FC3_A53X_COEFF_Q4_H	(-10757)
+#define S6E3FC3_A33X_COEFF_Q4_A	(192949)
+#define S6E3FC3_A33X_COEFF_Q4_B	(174780)
+#define S6E3FC3_A33X_COEFF_Q4_C	(-56853)
+#define S6E3FC3_A33X_COEFF_Q4_D	(-60597)
+#define S6E3FC3_A33X_COEFF_Q4_E	(57592)
+#define S6E3FC3_A33X_COEFF_Q4_F	(13018)
+#define S6E3FC3_A33X_COEFF_Q4_G	(-11491)
+#define S6E3FC3_A33X_COEFF_Q4_H	(-10757)
 
-#define S6E3FC3_A53X_MAX_NIGHT_MODE	(2)
-#define S6E3FC3_A53X_MAX_NIGHT_LEVEL	(102)
+#define S6E3FC3_A33X_MAX_NIGHT_MODE	(2)
+#define S6E3FC3_A33X_MAX_NIGHT_LEVEL	(102)
 
 /* ############################################# XXX_MODE ############################################# */
 /*
-static unsigned char a53x_mdnie_xxx_table[MODE_MAX][S6E3FC3_MDNIE_LEN] = {
+static unsigned char a33x_mdnie_xxx_table[MODE_MAX][S6E3FC3_MDNIE_LEN] = {
 	[DYNAMIC] = {
 	},
 	[STANDARD] = {
@@ -84,14 +84,14 @@ static unsigned char a53x_mdnie_xxx_table[MODE_MAX][S6E3FC3_MDNIE_LEN] = {
 
 /* ############################################# XXX_MODE ############################################# */
 /*
-static unsigned char a53x_mdnie_xxx_table[S6E3FC3_MDNIE_LEN] = {
+static unsigned char a33x_mdnie_xxx_table[S6E3FC3_MDNIE_LEN] = {
 };
  */
 
 /* #################################################################################################### */
 /* ############################################ SCENARIO ############################################## */
 /* #################################################################################################### */
-static unsigned char a53x_mdnie_scenario_0_table[SCENARIO_MAX][MODE_MAX][S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_scenario_0_table[SCENARIO_MAX][MODE_MAX][S6E3FC3_MDNIE_0_LEN] = {
 	[UI_MODE] = {
 		[DYNAMIC] = {
 			0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -173,7 +173,7 @@ static unsigned char a53x_mdnie_scenario_0_table[SCENARIO_MAX][MODE_MAX][S6E3FC3
 	[HMD_16_MODE] = {},
 };
 
-static unsigned char a53x_mdnie_scenario_1_table[SCENARIO_MAX][MODE_MAX][S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_scenario_1_table[SCENARIO_MAX][MODE_MAX][S6E3FC3_MDNIE_1_LEN] = {
 	[UI_MODE] = {
 		[DYNAMIC] = {
 			0x00, 0xe7, 0x00, 0x00, 0x0f, 0xf5, 0x02, 0x0a, 0x03, 0xe8, 0x19, 0xf7, 0xe7, 0xf3, 0x04, 0xe4,
@@ -268,7 +268,7 @@ static unsigned char a53x_mdnie_scenario_1_table[SCENARIO_MAX][MODE_MAX][S6E3FC3
 	[HMD_16_MODE] = {},
 };
 
-static unsigned char a53x_mdnie_scenario_2_table[SCENARIO_MAX][MODE_MAX][S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_scenario_2_table[SCENARIO_MAX][MODE_MAX][S6E3FC3_MDNIE_2_LEN] = {
 	[UI_MODE] = {
 		[DYNAMIC] = {
 			0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
@@ -480,11 +480,11 @@ static unsigned char a53x_mdnie_scenario_2_table[SCENARIO_MAX][MODE_MAX][S6E3FC3
 	[HMD_16_MODE] = {},
 };
 
-static struct maptbl a53x_mdnie_scenario_0_maptbl = DEFINE_3D_MAPTBL(a53x_mdnie_scenario_0_table,
+static struct maptbl a33x_mdnie_scenario_0_maptbl = DEFINE_3D_MAPTBL(a33x_mdnie_scenario_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_SCENARIO_MODE), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_scenario_1_maptbl = DEFINE_3D_MAPTBL(a53x_mdnie_scenario_1_table,
+static struct maptbl a33x_mdnie_scenario_1_maptbl = DEFINE_3D_MAPTBL(a33x_mdnie_scenario_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_SCENARIO_MODE), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_scenario_2_maptbl = DEFINE_3D_MAPTBL(a53x_mdnie_scenario_2_table,
+static struct maptbl a33x_mdnie_scenario_2_maptbl = DEFINE_3D_MAPTBL(a33x_mdnie_scenario_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_SCENARIO_MODE), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
@@ -492,28 +492,28 @@ static struct maptbl a53x_mdnie_scenario_2_maptbl = DEFINE_3D_MAPTBL(a53x_mdnie_
 /* #################################################################################################### */
 
 /* ############################################# NEGATIVE ############################################# */
-static unsigned char a53x_mdnie_negative_0_table[S6E3FC3_MDNIE_0_LEN] = {};
-static unsigned char a53x_mdnie_negative_1_table[S6E3FC3_MDNIE_1_LEN] = {};
-static unsigned char a53x_mdnie_negative_2_table[S6E3FC3_MDNIE_2_LEN] = {};
+static unsigned char a33x_mdnie_negative_0_table[S6E3FC3_MDNIE_0_LEN] = {};
+static unsigned char a33x_mdnie_negative_1_table[S6E3FC3_MDNIE_1_LEN] = {};
+static unsigned char a33x_mdnie_negative_2_table[S6E3FC3_MDNIE_2_LEN] = {};
 
-static struct maptbl a53x_mdnie_negative_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_negative_0_table,
+static struct maptbl a33x_mdnie_negative_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_negative_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_negative_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_negative_1_table,
+static struct maptbl a33x_mdnie_negative_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_negative_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_negative_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_negative_2_table,
+static struct maptbl a33x_mdnie_negative_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_negative_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* ############################################# COLOR_BLIND ############################################# */
-static unsigned char a53x_mdnie_color_blind_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_color_blind_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_color_blind_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_color_blind_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff,
 	0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_color_blind_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_color_blind_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -527,60 +527,60 @@ static unsigned char a53x_mdnie_color_blind_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x66, 0x18, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_color_blind_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_blind_0_table,
+static struct maptbl a33x_mdnie_color_blind_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_blind_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_blind_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_blind_1_table,
+static struct maptbl a33x_mdnie_color_blind_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_blind_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_blind_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_blind_2_table,
+static struct maptbl a33x_mdnie_color_blind_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_blind_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* ############################################# SCREEN_CURTAIN ############################################# */
-static unsigned char a53x_mdnie_screen_curtain_0_table[S6E3FC3_MDNIE_0_LEN] = {};
-static unsigned char a53x_mdnie_screen_curtain_1_table[S6E3FC3_MDNIE_1_LEN] = {};
-static unsigned char a53x_mdnie_screen_curtain_2_table[S6E3FC3_MDNIE_2_LEN] = {};
+static unsigned char a33x_mdnie_screen_curtain_0_table[S6E3FC3_MDNIE_0_LEN] = {};
+static unsigned char a33x_mdnie_screen_curtain_1_table[S6E3FC3_MDNIE_1_LEN] = {};
+static unsigned char a33x_mdnie_screen_curtain_2_table[S6E3FC3_MDNIE_2_LEN] = {};
 
-static struct maptbl a53x_mdnie_screen_curtain_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_screen_curtain_0_table,
+static struct maptbl a33x_mdnie_screen_curtain_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_screen_curtain_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_screen_curtain_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_screen_curtain_1_table,
+static struct maptbl a33x_mdnie_screen_curtain_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_screen_curtain_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_screen_curtain_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_screen_curtain_2_table,
+static struct maptbl a33x_mdnie_screen_curtain_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_screen_curtain_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* ############################################# GRAYSCALE ############################################# */
-static unsigned char a53x_mdnie_grayscale_0_table[S6E3FC3_MDNIE_0_LEN] = {};
-static unsigned char a53x_mdnie_grayscale_1_table[S6E3FC3_MDNIE_1_LEN] = {};
-static unsigned char a53x_mdnie_grayscale_2_table[S6E3FC3_MDNIE_2_LEN] = {};
+static unsigned char a33x_mdnie_grayscale_0_table[S6E3FC3_MDNIE_0_LEN] = {};
+static unsigned char a33x_mdnie_grayscale_1_table[S6E3FC3_MDNIE_1_LEN] = {};
+static unsigned char a33x_mdnie_grayscale_2_table[S6E3FC3_MDNIE_2_LEN] = {};
 
-static struct maptbl a53x_mdnie_grayscale_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_grayscale_0_table,
+static struct maptbl a33x_mdnie_grayscale_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_grayscale_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_grayscale_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_grayscale_1_table,
+static struct maptbl a33x_mdnie_grayscale_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_grayscale_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_grayscale_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_grayscale_2_table,
+static struct maptbl a33x_mdnie_grayscale_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_grayscale_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* ############################################# GRAYSCALE_NEGATIVE ############################################# */
-static unsigned char a53x_mdnie_grayscale_negative_0_table[S6E3FC3_MDNIE_0_LEN] = {};
-static unsigned char a53x_mdnie_grayscale_negative_1_table[S6E3FC3_MDNIE_1_LEN] = {};
-static unsigned char a53x_mdnie_grayscale_negative_2_table[S6E3FC3_MDNIE_2_LEN] = {};
+static unsigned char a33x_mdnie_grayscale_negative_0_table[S6E3FC3_MDNIE_0_LEN] = {};
+static unsigned char a33x_mdnie_grayscale_negative_1_table[S6E3FC3_MDNIE_1_LEN] = {};
+static unsigned char a33x_mdnie_grayscale_negative_2_table[S6E3FC3_MDNIE_2_LEN] = {};
 
-static struct maptbl a53x_mdnie_grayscale_negative_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_grayscale_negative_0_table,
+static struct maptbl a33x_mdnie_grayscale_negative_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_grayscale_negative_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_grayscale_negative_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_grayscale_negative_1_table,
+static struct maptbl a33x_mdnie_grayscale_negative_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_grayscale_negative_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_grayscale_negative_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_grayscale_negative_2_table,
+static struct maptbl a33x_mdnie_grayscale_negative_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_grayscale_negative_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* ############################################# COLOR_BLIND_HBM ############################################# */
-static unsigned char a53x_mdnie_color_blind_hbm_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_color_blind_hbm_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_color_blind_hbm_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_color_blind_hbm_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff,
 	0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_color_blind_hbm_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_color_blind_hbm_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -594,11 +594,11 @@ static unsigned char a53x_mdnie_color_blind_hbm_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x66, 0x18, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_color_blind_hbm_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_blind_hbm_0_table,
+static struct maptbl a33x_mdnie_color_blind_hbm_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_blind_hbm_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_blind_hbm_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_blind_hbm_1_table,
+static struct maptbl a33x_mdnie_color_blind_hbm_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_blind_hbm_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_blind_hbm_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_blind_hbm_2_table,
+static struct maptbl a33x_mdnie_color_blind_hbm_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_blind_hbm_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
@@ -606,16 +606,16 @@ static struct maptbl a53x_mdnie_color_blind_hbm_2_maptbl = DEFINE_1D_MAPTBL(a53x
 /* #################################################################################################### */
 
 /* ############################################## BYPASS ############################################## */
-static unsigned char a53x_mdnie_bypass_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_bypass_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_bypass_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_bypass_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff,
 	0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_bypass_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_bypass_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -629,26 +629,26 @@ static unsigned char a53x_mdnie_bypass_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x66, 0x18, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_bypass_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_bypass_0_table,
+static struct maptbl a33x_mdnie_bypass_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_bypass_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_bypass_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_bypass_1_table,
+static struct maptbl a33x_mdnie_bypass_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_bypass_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_bypass_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_bypass_2_table,
+static struct maptbl a33x_mdnie_bypass_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_bypass_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
 /* ############################################### HBM ################################################ */
 /* #################################################################################################### */
-static unsigned char a53x_mdnie_hbm_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_hbm_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x06, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_hbm_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_hbm_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xd0, 0x00, 0x00, 0x0f, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xde, 0xff, 0xff, 0x00, 0xff,
 	0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_hbm_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_hbm_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x11, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -662,17 +662,17 @@ static unsigned char a53x_mdnie_hbm_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x5F, 0x16, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_hbm_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_hbm_0_table,
+static struct maptbl a33x_mdnie_hbm_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_hbm_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_hbm_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_hbm_1_table,
+static struct maptbl a33x_mdnie_hbm_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_hbm_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_hbm_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_hbm_2_table,
+static struct maptbl a33x_mdnie_hbm_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_hbm_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
 /* ############################################### HDR ################################################ */
 /* #################################################################################################### */
-static unsigned char a53x_mdnie_hdr_0_table[HDR_MAX][S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_hdr_0_table[HDR_MAX][S6E3FC3_MDNIE_0_LEN] = {
 	[HDR_1] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	},
@@ -684,7 +684,7 @@ static unsigned char a53x_mdnie_hdr_0_table[HDR_MAX][S6E3FC3_MDNIE_0_LEN] = {
 	},
 };
 
-static unsigned char a53x_mdnie_hdr_1_table[HDR_MAX][S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_hdr_1_table[HDR_MAX][S6E3FC3_MDNIE_1_LEN] = {
 	[HDR_1] = {
 		0x00, 0xc6, 0x00, 0x00, 0x10, 0xff, 0x00, 0x07, 0x07, 0xcd, 0x19, 0xf1, 0xe2, 0xe1, 0x00, 0xd8,
 		0xe4, 0xd8, 0x02, 0xff, 0xf8, 0xec, 0xff, 0x00, 0x00,
@@ -699,7 +699,7 @@ static unsigned char a53x_mdnie_hdr_1_table[HDR_MAX][S6E3FC3_MDNIE_1_LEN] = {
 	},
 };
 
-static unsigned char a53x_mdnie_hdr_2_table[HDR_MAX][S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_hdr_2_table[HDR_MAX][S6E3FC3_MDNIE_2_LEN] = {
 	[HDR_1] = {
 		0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 		0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
@@ -741,26 +741,26 @@ static unsigned char a53x_mdnie_hdr_2_table[HDR_MAX][S6E3FC3_MDNIE_2_LEN] = {
 	},
 };
 
-static struct maptbl a53x_mdnie_hdr_0_maptbl = DEFINE_2D_MAPTBL(a53x_mdnie_hdr_0_table,
+static struct maptbl a33x_mdnie_hdr_0_maptbl = DEFINE_2D_MAPTBL(a33x_mdnie_hdr_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_HDR), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_hdr_1_maptbl = DEFINE_2D_MAPTBL(a53x_mdnie_hdr_1_table,
+static struct maptbl a33x_mdnie_hdr_1_maptbl = DEFINE_2D_MAPTBL(a33x_mdnie_hdr_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_HDR), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_hdr_2_maptbl = DEFINE_2D_MAPTBL(a53x_mdnie_hdr_2_table,
+static struct maptbl a33x_mdnie_hdr_2_maptbl = DEFINE_2D_MAPTBL(a33x_mdnie_hdr_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_HDR), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
 /* ############################################## NIGHT ############################################### */
 /* #################################################################################################### */
-static unsigned char a53x_mdnie_night_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_night_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_night_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_night_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff,
 	0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_night_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_night_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -774,26 +774,26 @@ static unsigned char a53x_mdnie_night_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x66, 0x18, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_night_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_night_0_table,
+static struct maptbl a33x_mdnie_night_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_night_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_night_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_night_1_table,
+static struct maptbl a33x_mdnie_night_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_night_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_night_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_night_2_table,
+static struct maptbl a33x_mdnie_night_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_night_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
 /* ############################################ COLOR_LENS ############################################ */
 /* #################################################################################################### */
-static unsigned char a53x_mdnie_color_lens_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_color_lens_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_color_lens_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_color_lens_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0xff,
 	0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_color_lens_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_color_lens_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -807,26 +807,26 @@ static unsigned char a53x_mdnie_color_lens_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x66, 0x18, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_color_lens_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_lens_0_table,
+static struct maptbl a33x_mdnie_color_lens_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_lens_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_lens_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_lens_1_table,
+static struct maptbl a33x_mdnie_color_lens_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_lens_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_lens_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_color_lens_2_table,
+static struct maptbl a33x_mdnie_color_lens_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_color_lens_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
 /* ####################################### LIGHT_NOTIFICATION ######################################### */
 /* #################################################################################################### */
-static unsigned char a53x_mdnie_light_notification_0_table[S6E3FC3_MDNIE_0_LEN] = {
+static unsigned char a33x_mdnie_light_notification_0_table[S6E3FC3_MDNIE_0_LEN] = {
 	0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_light_notification_1_table[S6E3FC3_MDNIE_1_LEN] = {
+static unsigned char a33x_mdnie_light_notification_1_table[S6E3FC3_MDNIE_1_LEN] = {
 	0x00, 0xff, 0x60, 0x13, 0x66, 0xf9, 0x13, 0x66, 0x60, 0xac, 0x66, 0xf9, 0xac, 0xff, 0x60, 0xac,
 	0xff, 0xf9, 0x13, 0xff, 0xf9, 0xac, 0xff, 0x00, 0x00,
 };
 
-static unsigned char a53x_mdnie_light_notification_2_table[S6E3FC3_MDNIE_2_LEN] = {
+static unsigned char a33x_mdnie_light_notification_2_table[S6E3FC3_MDNIE_2_LEN] = {
 	0x20, 0x01, 0x02, 0x9A, 0x01, 0x00, 0x5C, 0x01, 0x02, 0x89, 0x01, 0x00, 0x62, 0x01, 0x00, 0xF0,
 	0x00, 0x00, 0x59, 0x01, 0x00, 0xF0, 0x00, 0x00, 0x59, 0x01, 0x02, 0x49, 0x01, 0x00, 0x60, 0x01,
 	0x02, 0x5A, 0x01, 0x00, 0x63, 0x00, 0x01, 0x84, 0x00, 0x00, 0xAF, 0x00, 0x01, 0xD2, 0x00, 0x00,
@@ -840,17 +840,17 @@ static unsigned char a53x_mdnie_light_notification_2_table[S6E3FC3_MDNIE_2_LEN] 
 	0x66, 0x18, 0x80, 0x00, 0x80, 0x00,
 };
 
-static struct maptbl a53x_mdnie_light_notification_0_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_light_notification_0_table,
+static struct maptbl a33x_mdnie_light_notification_0_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_light_notification_0_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_light_notification_1_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_light_notification_1_table,
+static struct maptbl a33x_mdnie_light_notification_1_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_light_notification_1_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_light_notification_2_maptbl = DEFINE_1D_MAPTBL(a53x_mdnie_light_notification_2_table,
+static struct maptbl a33x_mdnie_light_notification_2_maptbl = DEFINE_1D_MAPTBL(a33x_mdnie_light_notification_2_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
 /* #################################################################################################### */
 /* ############################################ ETC TABLES ############################################ */
 /* #################################################################################################### */
-static unsigned char a53x_night_mode_table[S6E3FC3_A53X_MAX_NIGHT_MODE][S6E3FC3_A53X_MAX_NIGHT_LEVEL][S6E3FC3_NIGHT_MODE_LEN] = {
+static unsigned char a33x_night_mode_table[S6E3FC3_A33X_MAX_NIGHT_MODE][S6E3FC3_A33X_MAX_NIGHT_LEVEL][S6E3FC3_NIGHT_MODE_LEN] = {
 	{
 		{ 0xf4, 0x00, 0x00, 0x0C, 0xF9, 0x02, 0x00, 0x00, 0xEC, 0x00, 0xF9, 0xEC, 0xff, 0x00, 0xEC, 0xff, 0xF9, 0x00, 0xFF, 0xF9, 0xEC }, /* 6500K */
 		{ 0xf4, 0x00, 0x00, 0x0C, 0xF5, 0x02, 0x00, 0x00, 0xE6, 0x00, 0xF5, 0xE6, 0xff, 0x00, 0xE6, 0xff, 0xF5, 0x00, 0xFF, 0xF5, 0xE6 }, /* 6300K */
@@ -1061,7 +1061,7 @@ static unsigned char a53x_night_mode_table[S6E3FC3_A53X_MAX_NIGHT_MODE][S6E3FC3_
 	}
 };
 
-static unsigned char a53x_color_lens_table[COLOR_LENS_COLOR_MAX][COLOR_LENS_LEVEL_MAX][S6E3FC3_COLOR_LENS_LEN] = {
+static unsigned char a33x_color_lens_table[COLOR_LENS_COLOR_MAX][COLOR_LENS_LEVEL_MAX][S6E3FC3_COLOR_LENS_LEN] = {
 	//Blue
 	[COLOR_LENS_COLOR_BLUE] = {
 		{ 0xcc, 0x00, 0x33, 0x00, 0xcc, 0x33, 0x00, 0x00, 0xff, 0x00, 0xcc, 0xff, 0xcc, 0x00, 0xff, 0xcc, 0xcc, 0x33, 0xcc, 0xcc, 0xff }, /* 20% */
@@ -1209,373 +1209,373 @@ static unsigned char a53x_color_lens_table[COLOR_LENS_COLOR_MAX][COLOR_LENS_LEVE
 };
 
 /* extra maptbl for add-on */
-static struct maptbl a53x_mdnie_scr_white_maptbl = DEFINE_0D_MAPTBL(a53x_scr_white_table,
+static struct maptbl a33x_mdnie_scr_white_maptbl = DEFINE_0D_MAPTBL(a33x_scr_white_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_SCR_WHITE));
-static struct maptbl a53x_mdnie_scr_cr_maptbl = DEFINE_0D_MAPTBL(a53x_scr_cr_table,
+static struct maptbl a33x_mdnie_scr_cr_maptbl = DEFINE_0D_MAPTBL(a33x_scr_cr_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_DEFAULT), &OLED_FUNC(OLED_MAPTBL_COPY_SCR_CR));
-static struct maptbl a53x_mdnie_night_mode_maptbl = DEFINE_3D_MAPTBL(a53x_night_mode_table,
+static struct maptbl a33x_mdnie_night_mode_maptbl = DEFINE_3D_MAPTBL(a33x_night_mode_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_MDNIE_NIGHT_MODE), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
-static struct maptbl a53x_mdnie_color_lens_maptbl = DEFINE_3D_MAPTBL(a53x_color_lens_table,
+static struct maptbl a33x_mdnie_color_lens_maptbl = DEFINE_3D_MAPTBL(a33x_color_lens_table,
 		&OLED_FUNC(OLED_MAPTBL_INIT_DEFAULT), &OLED_FUNC(OLED_MAPTBL_GETIDX_COLOR_LENS), &OLED_FUNC(OLED_MAPTBL_COPY_DEFAULT));
 
-static u8 A53X_MDNIE_0[S6E3FC3_MDNIE_0_LEN + 1] = { S6E3FC3_MDNIE_0_REG, 0x00, };
-static u8 A53X_MDNIE_1[S6E3FC3_MDNIE_1_LEN + 1] = { S6E3FC3_MDNIE_1_REG, 0x00, };
-static u8 A53X_MDNIE_2[S6E3FC3_MDNIE_2_LEN + 1] = { S6E3FC3_MDNIE_2_REG, 0x00, };
+static u8 A33X_MDNIE_0[S6E3FC3_MDNIE_0_LEN + 1] = { S6E3FC3_MDNIE_0_REG, 0x00, };
+static u8 A33X_MDNIE_1[S6E3FC3_MDNIE_1_LEN + 1] = { S6E3FC3_MDNIE_1_REG, 0x00, };
+static u8 A33X_MDNIE_2[S6E3FC3_MDNIE_2_LEN + 1] = { S6E3FC3_MDNIE_2_REG, 0x00, };
 
-static struct delayinfo DLYINFO(a53x_wait_20msec);
+static struct delayinfo DLYINFO(a33x_wait_20msec);
 
-static struct keyinfo KEYINFO(a53x_level1_key_enable);
-static struct keyinfo KEYINFO(a53x_level1_key_disable);
-static struct keyinfo KEYINFO(a53x_level2_key_enable);
-static struct keyinfo KEYINFO(a53x_level2_key_disable);
-static struct pktinfo PKTINFO(a53x_multi_cmd_enable);
-static struct pktinfo PKTINFO(a53x_multi_cmd_disable);
-static struct pktinfo PKTINFO(a53x_multi_cmd_dummy);
-static struct delayinfo DLYINFO(a53x_wait_1msec);
+static struct keyinfo KEYINFO(a33x_level1_key_enable);
+static struct keyinfo KEYINFO(a33x_level1_key_disable);
+static struct keyinfo KEYINFO(a33x_level2_key_enable);
+static struct keyinfo KEYINFO(a33x_level2_key_disable);
+static struct pktinfo PKTINFO(a33x_multi_cmd_enable);
+static struct pktinfo PKTINFO(a33x_multi_cmd_disable);
+static struct pktinfo PKTINFO(a33x_multi_cmd_dummy);
+static struct delayinfo DLYINFO(a33x_wait_1msec);
 
-static DEFINE_PKTUI(a53x_mdnie_scenario_0, &a53x_mdnie_scenario_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_scenario_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DECLARE_PKTUI(a53x_mdnie_scenario_1) = {
-	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a53x_mdnie_scenario_1_maptbl },
-	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_WR_OFS, .maptbl = &a53x_mdnie_scr_white_maptbl },
+static DEFINE_PKTUI(a33x_mdnie_scenario_0, &a33x_mdnie_scenario_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_scenario_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DECLARE_PKTUI(a33x_mdnie_scenario_1) = {
+	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a33x_mdnie_scenario_1_maptbl },
+	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_WR_OFS, .maptbl = &a33x_mdnie_scr_white_maptbl },
 };
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_scenario_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_scenario_2, &a53x_mdnie_scenario_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_scenario_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_scenario_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_scenario_0),
-	&PKTINFO(a53x_mdnie_scenario_1),
-	&PKTINFO(a53x_mdnie_scenario_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
-};
-
-static DEFINE_PKTUI(a53x_mdnie_negative_0, &a53x_mdnie_negative_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_negative_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_negative_1, &a53x_mdnie_negative_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_negative_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_negative_2, &a53x_mdnie_negative_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_negative_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_negative_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_negative_0),
-	&PKTINFO(a53x_mdnie_negative_1),
-	&PKTINFO(a53x_mdnie_negative_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_scenario_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_scenario_2, &a33x_mdnie_scenario_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_scenario_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_scenario_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_scenario_0),
+	&PKTINFO(a33x_mdnie_scenario_1),
+	&PKTINFO(a33x_mdnie_scenario_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_color_blind_0, &a53x_mdnie_color_blind_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_blind_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DECLARE_PKTUI(a53x_mdnie_color_blind_1) = {
-	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a53x_mdnie_color_blind_1_maptbl },
-	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_CR_OFS, .maptbl = &a53x_mdnie_scr_cr_maptbl },
-};
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_blind_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_color_blind_2, &a53x_mdnie_color_blind_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_blind_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_color_blind_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_color_blind_0),
-	&PKTINFO(a53x_mdnie_color_blind_1),
-	&PKTINFO(a53x_mdnie_color_blind_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_negative_0, &a33x_mdnie_negative_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_negative_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_negative_1, &a33x_mdnie_negative_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_negative_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_negative_2, &a33x_mdnie_negative_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_negative_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_negative_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_negative_0),
+	&PKTINFO(a33x_mdnie_negative_1),
+	&PKTINFO(a33x_mdnie_negative_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_screen_curtain_0, &a53x_mdnie_screen_curtain_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_screen_curtain_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_screen_curtain_1, &a53x_mdnie_screen_curtain_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_screen_curtain_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_screen_curtain_2, &a53x_mdnie_screen_curtain_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_screen_curtain_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_screen_curtain_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_screen_curtain_0),
-	&PKTINFO(a53x_mdnie_screen_curtain_1),
-	&PKTINFO(a53x_mdnie_screen_curtain_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_color_blind_0, &a33x_mdnie_color_blind_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_blind_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DECLARE_PKTUI(a33x_mdnie_color_blind_1) = {
+	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a33x_mdnie_color_blind_1_maptbl },
+	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_CR_OFS, .maptbl = &a33x_mdnie_scr_cr_maptbl },
+};
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_blind_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_color_blind_2, &a33x_mdnie_color_blind_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_blind_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_color_blind_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_color_blind_0),
+	&PKTINFO(a33x_mdnie_color_blind_1),
+	&PKTINFO(a33x_mdnie_color_blind_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_grayscale_0, &a53x_mdnie_grayscale_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_grayscale_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_grayscale_1, &a53x_mdnie_grayscale_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_grayscale_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_grayscale_2, &a53x_mdnie_grayscale_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_grayscale_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_grayscale_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_grayscale_0),
-	&PKTINFO(a53x_mdnie_grayscale_1),
-	&PKTINFO(a53x_mdnie_grayscale_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_screen_curtain_0, &a33x_mdnie_screen_curtain_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_screen_curtain_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_screen_curtain_1, &a33x_mdnie_screen_curtain_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_screen_curtain_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_screen_curtain_2, &a33x_mdnie_screen_curtain_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_screen_curtain_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_screen_curtain_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_screen_curtain_0),
+	&PKTINFO(a33x_mdnie_screen_curtain_1),
+	&PKTINFO(a33x_mdnie_screen_curtain_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_grayscale_negative_0, &a53x_mdnie_grayscale_negative_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_grayscale_negative_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_grayscale_negative_1, &a53x_mdnie_grayscale_negative_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_grayscale_negative_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_grayscale_negative_2, &a53x_mdnie_grayscale_negative_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_grayscale_negative_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_grayscale_negative_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_grayscale_negative_0),
-	&PKTINFO(a53x_mdnie_grayscale_negative_1),
-	&PKTINFO(a53x_mdnie_grayscale_negative_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_grayscale_0, &a33x_mdnie_grayscale_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_grayscale_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_grayscale_1, &a33x_mdnie_grayscale_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_grayscale_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_grayscale_2, &a33x_mdnie_grayscale_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_grayscale_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_grayscale_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_grayscale_0),
+	&PKTINFO(a33x_mdnie_grayscale_1),
+	&PKTINFO(a33x_mdnie_grayscale_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_color_blind_hbm_0, &a53x_mdnie_color_blind_hbm_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_blind_hbm_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DECLARE_PKTUI(a53x_mdnie_color_blind_hbm_1) = {
-	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a53x_mdnie_color_blind_hbm_1_maptbl },
-	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_CR_OFS, .maptbl = &a53x_mdnie_scr_cr_maptbl },
-};
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_blind_hbm_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_color_blind_hbm_2, &a53x_mdnie_color_blind_hbm_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_blind_hbm_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_color_blind_hbm_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_color_blind_hbm_0),
-	&PKTINFO(a53x_mdnie_color_blind_hbm_1),
-	&PKTINFO(a53x_mdnie_color_blind_hbm_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_grayscale_negative_0, &a33x_mdnie_grayscale_negative_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_grayscale_negative_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_grayscale_negative_1, &a33x_mdnie_grayscale_negative_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_grayscale_negative_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_grayscale_negative_2, &a33x_mdnie_grayscale_negative_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_grayscale_negative_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_grayscale_negative_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_grayscale_negative_0),
+	&PKTINFO(a33x_mdnie_grayscale_negative_1),
+	&PKTINFO(a33x_mdnie_grayscale_negative_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_bypass_0, &a53x_mdnie_bypass_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_bypass_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_bypass_1, &a53x_mdnie_bypass_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_bypass_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_bypass_2, &a53x_mdnie_bypass_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_bypass_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_bypass_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_bypass_0),
-	&PKTINFO(a53x_mdnie_bypass_1),
-	&PKTINFO(a53x_mdnie_bypass_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_color_blind_hbm_0, &a33x_mdnie_color_blind_hbm_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_blind_hbm_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DECLARE_PKTUI(a33x_mdnie_color_blind_hbm_1) = {
+	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a33x_mdnie_color_blind_hbm_1_maptbl },
+	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_CR_OFS, .maptbl = &a33x_mdnie_scr_cr_maptbl },
+};
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_blind_hbm_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_color_blind_hbm_2, &a33x_mdnie_color_blind_hbm_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_blind_hbm_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_color_blind_hbm_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_color_blind_hbm_0),
+	&PKTINFO(a33x_mdnie_color_blind_hbm_1),
+	&PKTINFO(a33x_mdnie_color_blind_hbm_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_hbm_0, &a53x_mdnie_hbm_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_hbm_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DECLARE_PKTUI(a53x_mdnie_hbm_1) = {
-	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a53x_mdnie_hbm_1_maptbl },
-	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_WR_OFS, .maptbl = &a53x_mdnie_scr_white_maptbl },
-};
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_hbm_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_hbm_2, &a53x_mdnie_hbm_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_hbm_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_hbm_ce_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_hbm_0),
-	&PKTINFO(a53x_mdnie_hbm_1),
-	&PKTINFO(a53x_mdnie_hbm_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_bypass_0, &a33x_mdnie_bypass_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_bypass_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_bypass_1, &a33x_mdnie_bypass_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_bypass_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_bypass_2, &a33x_mdnie_bypass_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_bypass_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_bypass_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_bypass_0),
+	&PKTINFO(a33x_mdnie_bypass_1),
+	&PKTINFO(a33x_mdnie_bypass_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_hdr_0, &a53x_mdnie_hdr_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_hdr_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_hdr_1, &a53x_mdnie_hdr_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_hdr_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_hdr_2, &a53x_mdnie_hdr_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_hdr_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_hdr_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_hdr_0),
-	&PKTINFO(a53x_mdnie_hdr_1),
-	&PKTINFO(a53x_mdnie_hdr_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_hbm_0, &a33x_mdnie_hbm_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_hbm_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DECLARE_PKTUI(a33x_mdnie_hbm_1) = {
+	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a33x_mdnie_hbm_1_maptbl },
+	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_SCR_WR_OFS, .maptbl = &a33x_mdnie_scr_white_maptbl },
+};
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_hbm_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_hbm_2, &a33x_mdnie_hbm_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_hbm_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_hbm_ce_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_hbm_0),
+	&PKTINFO(a33x_mdnie_hbm_1),
+	&PKTINFO(a33x_mdnie_hbm_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_night_0, &a53x_mdnie_night_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_night_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DECLARE_PKTUI(a53x_mdnie_night_1) = {
-	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a53x_mdnie_night_1_maptbl },
-	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_NIGHT_MODE_OFS, .maptbl = &a53x_mdnie_night_mode_maptbl },
-};
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_night_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_night_2, &a53x_mdnie_night_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_night_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_night_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_night_0),
-	&PKTINFO(a53x_mdnie_night_1),
-	&PKTINFO(a53x_mdnie_night_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_hdr_0, &a33x_mdnie_hdr_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_hdr_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_hdr_1, &a33x_mdnie_hdr_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_hdr_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_hdr_2, &a33x_mdnie_hdr_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_hdr_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_hdr_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_hdr_0),
+	&PKTINFO(a33x_mdnie_hdr_1),
+	&PKTINFO(a33x_mdnie_hdr_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_light_notification_0, &a53x_mdnie_light_notification_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_light_notification_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DEFINE_PKTUI(a53x_mdnie_light_notification_1, &a53x_mdnie_light_notification_1_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_light_notification_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_light_notification_2, &a53x_mdnie_light_notification_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_light_notification_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_light_notification_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_light_notification_0),
-	&PKTINFO(a53x_mdnie_light_notification_1),
-	&PKTINFO(a53x_mdnie_light_notification_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_night_0, &a33x_mdnie_night_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_night_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DECLARE_PKTUI(a33x_mdnie_night_1) = {
+	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a33x_mdnie_night_1_maptbl },
+	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_NIGHT_MODE_OFS, .maptbl = &a33x_mdnie_night_mode_maptbl },
+};
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_night_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_night_2, &a33x_mdnie_night_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_night_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_night_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_night_0),
+	&PKTINFO(a33x_mdnie_night_1),
+	&PKTINFO(a33x_mdnie_night_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_PKTUI(a53x_mdnie_color_lens_0, &a53x_mdnie_color_lens_0_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_lens_0, DSI_PKT_TYPE_WR, A53X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
-static DECLARE_PKTUI(a53x_mdnie_color_lens_1) = {
-	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a53x_mdnie_color_lens_1_maptbl },
-	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_COLOR_LENS_OFS, .maptbl = &a53x_mdnie_color_lens_maptbl },
-};
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_lens_1, DSI_PKT_TYPE_WR, A53X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
-static DEFINE_PKTUI(a53x_mdnie_color_lens_2, &a53x_mdnie_color_lens_2_maptbl, S6E3FC3_DATA_OFS);
-static DEFINE_VARIABLE_PACKET(a53x_mdnie_color_lens_2, DSI_PKT_TYPE_WR, A53X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
-static void *a53x_mdnie_color_lens_cmdtbl[] = {
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&PKTINFO(a53x_multi_cmd_enable),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&PKTINFO(a53x_mdnie_color_lens_0),
-	&PKTINFO(a53x_mdnie_color_lens_1),
-	&PKTINFO(a53x_mdnie_color_lens_2),
-	&DLYINFO(a53x_wait_1msec),
-	&PKTINFO(a53x_multi_cmd_disable),
-	&DLYINFO(a53x_wait_20msec),
-	&PKTINFO(a53x_multi_cmd_dummy),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
+static DEFINE_PKTUI(a33x_mdnie_light_notification_0, &a33x_mdnie_light_notification_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_light_notification_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DEFINE_PKTUI(a33x_mdnie_light_notification_1, &a33x_mdnie_light_notification_1_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_light_notification_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_light_notification_2, &a33x_mdnie_light_notification_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_light_notification_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_light_notification_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_light_notification_0),
+	&PKTINFO(a33x_mdnie_light_notification_1),
+	&PKTINFO(a33x_mdnie_light_notification_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static struct seqinfo a53x_mdnie_seqtbl[] = {
-	SEQINFO_INIT(MDNIE_SCENARIO_SEQ, a53x_mdnie_scenario_cmdtbl),
-	SEQINFO_INIT(MDNIE_NEGATIVE_SEQ, a53x_mdnie_negative_cmdtbl),
-	SEQINFO_INIT(MDNIE_COLOR_BLIND_SEQ, a53x_mdnie_color_blind_cmdtbl),
-	SEQINFO_INIT(MDNIE_SCREEN_CURTAIN_SEQ, a53x_mdnie_screen_curtain_cmdtbl),
-	SEQINFO_INIT(MDNIE_GRAYSCALE_SEQ, a53x_mdnie_grayscale_cmdtbl),
-	SEQINFO_INIT(MDNIE_GRAYSCALE_NEGATIVE_SEQ, a53x_mdnie_grayscale_negative_cmdtbl),
-	SEQINFO_INIT(MDNIE_COLOR_BLIND_HBM_SEQ, a53x_mdnie_color_blind_hbm_cmdtbl),
-	SEQINFO_INIT(MDNIE_BYPASS_SEQ, a53x_mdnie_bypass_cmdtbl),
-	SEQINFO_INIT(MDNIE_HBM_CE_SEQ, a53x_mdnie_hbm_ce_cmdtbl),
-	SEQINFO_INIT(MDNIE_HDR_SEQ, a53x_mdnie_hdr_cmdtbl),
-	SEQINFO_INIT(MDNIE_NIGHT_SEQ, a53x_mdnie_night_cmdtbl),
-	SEQINFO_INIT(MDNIE_LIGHT_NOTIFICATION_SEQ, a53x_mdnie_light_notification_cmdtbl),
-	SEQINFO_INIT(MDNIE_COLOR_LENS_SEQ, a53x_mdnie_color_lens_cmdtbl),
+static DEFINE_PKTUI(a33x_mdnie_color_lens_0, &a33x_mdnie_color_lens_0_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_lens_0, DSI_PKT_TYPE_WR, A33X_MDNIE_0, S6E3FC3_MDNIE_0_OFS);
+static DECLARE_PKTUI(a33x_mdnie_color_lens_1) = {
+	{ .offset = S6E3FC3_DATA_OFS, .maptbl = &a33x_mdnie_color_lens_1_maptbl },
+	{ .offset = S6E3FC3_DATA_OFS + S6E3FC3_COLOR_LENS_OFS, .maptbl = &a33x_mdnie_color_lens_maptbl },
+};
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_lens_1, DSI_PKT_TYPE_WR, A33X_MDNIE_1, S6E3FC3_MDNIE_1_OFS);
+static DEFINE_PKTUI(a33x_mdnie_color_lens_2, &a33x_mdnie_color_lens_2_maptbl, S6E3FC3_DATA_OFS);
+static DEFINE_VARIABLE_PACKET(a33x_mdnie_color_lens_2, DSI_PKT_TYPE_WR, A33X_MDNIE_2, S6E3FC3_MDNIE_2_OFS);
+static void *a33x_mdnie_color_lens_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&PKTINFO(a33x_multi_cmd_enable),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&PKTINFO(a33x_mdnie_color_lens_0),
+	&PKTINFO(a33x_mdnie_color_lens_1),
+	&PKTINFO(a33x_mdnie_color_lens_2),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_multi_cmd_disable),
+	&DLYINFO(a33x_wait_20msec),
+	&PKTINFO(a33x_multi_cmd_dummy),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static struct mdnie_tune s6e3fc3_a53x_mdnie_tune = {
-	.seqtbl = a53x_mdnie_seqtbl,
-	.nr_seqtbl = ARRAY_SIZE(a53x_mdnie_seqtbl),
+static struct seqinfo a33x_mdnie_seqtbl[] = {
+	SEQINFO_INIT(MDNIE_SCENARIO_SEQ, a33x_mdnie_scenario_cmdtbl),
+	SEQINFO_INIT(MDNIE_NEGATIVE_SEQ, a33x_mdnie_negative_cmdtbl),
+	SEQINFO_INIT(MDNIE_COLOR_BLIND_SEQ, a33x_mdnie_color_blind_cmdtbl),
+	SEQINFO_INIT(MDNIE_SCREEN_CURTAIN_SEQ, a33x_mdnie_screen_curtain_cmdtbl),
+	SEQINFO_INIT(MDNIE_GRAYSCALE_SEQ, a33x_mdnie_grayscale_cmdtbl),
+	SEQINFO_INIT(MDNIE_GRAYSCALE_NEGATIVE_SEQ, a33x_mdnie_grayscale_negative_cmdtbl),
+	SEQINFO_INIT(MDNIE_COLOR_BLIND_HBM_SEQ, a33x_mdnie_color_blind_hbm_cmdtbl),
+	SEQINFO_INIT(MDNIE_BYPASS_SEQ, a33x_mdnie_bypass_cmdtbl),
+	SEQINFO_INIT(MDNIE_HBM_CE_SEQ, a33x_mdnie_hbm_ce_cmdtbl),
+	SEQINFO_INIT(MDNIE_HDR_SEQ, a33x_mdnie_hdr_cmdtbl),
+	SEQINFO_INIT(MDNIE_NIGHT_SEQ, a33x_mdnie_night_cmdtbl),
+	SEQINFO_INIT(MDNIE_LIGHT_NOTIFICATION_SEQ, a33x_mdnie_light_notification_cmdtbl),
+	SEQINFO_INIT(MDNIE_COLOR_LENS_SEQ, a33x_mdnie_color_lens_cmdtbl),
+};
+
+static struct mdnie_tune s6e3fc3_a33x_mdnie_tune = {
+	.seqtbl = a33x_mdnie_seqtbl,
+	.nr_seqtbl = ARRAY_SIZE(a33x_mdnie_seqtbl),
 	.line = {
-		{ .num = S6E3FC3_A53X_LINE_0_NUM, .den = S6E3FC3_A53X_LINE_0_DEN, .con = S6E3FC3_A53X_LINE_0_CON },
-		{ .num = S6E3FC3_A53X_LINE_1_NUM, .den = S6E3FC3_A53X_LINE_1_DEN, .con = S6E3FC3_A53X_LINE_1_CON },
+		{ .num = S6E3FC3_A33X_LINE_0_NUM, .den = S6E3FC3_A33X_LINE_0_DEN, .con = S6E3FC3_A33X_LINE_0_CON },
+		{ .num = S6E3FC3_A33X_LINE_1_NUM, .den = S6E3FC3_A33X_LINE_1_DEN, .con = S6E3FC3_A33X_LINE_1_CON },
 	},
 	.coef = {
 		{
-			.a = S6E3FC3_A53X_COEFF_Q1_A, .b = S6E3FC3_A53X_COEFF_Q1_B, .c = S6E3FC3_A53X_COEFF_Q1_C, .d = S6E3FC3_A53X_COEFF_Q1_D,
-			.e = S6E3FC3_A53X_COEFF_Q1_E, .f = S6E3FC3_A53X_COEFF_Q1_F, .g = S6E3FC3_A53X_COEFF_Q1_G, .h = S6E3FC3_A53X_COEFF_Q1_H,
+			.a = S6E3FC3_A33X_COEFF_Q1_A, .b = S6E3FC3_A33X_COEFF_Q1_B, .c = S6E3FC3_A33X_COEFF_Q1_C, .d = S6E3FC3_A33X_COEFF_Q1_D,
+			.e = S6E3FC3_A33X_COEFF_Q1_E, .f = S6E3FC3_A33X_COEFF_Q1_F, .g = S6E3FC3_A33X_COEFF_Q1_G, .h = S6E3FC3_A33X_COEFF_Q1_H,
 		},
 		{
-			.a = S6E3FC3_A53X_COEFF_Q2_A, .b = S6E3FC3_A53X_COEFF_Q2_B, .c = S6E3FC3_A53X_COEFF_Q2_C, .d = S6E3FC3_A53X_COEFF_Q2_D,
-			.e = S6E3FC3_A53X_COEFF_Q2_E, .f = S6E3FC3_A53X_COEFF_Q2_F, .g = S6E3FC3_A53X_COEFF_Q2_G, .h = S6E3FC3_A53X_COEFF_Q2_H,
+			.a = S6E3FC3_A33X_COEFF_Q2_A, .b = S6E3FC3_A33X_COEFF_Q2_B, .c = S6E3FC3_A33X_COEFF_Q2_C, .d = S6E3FC3_A33X_COEFF_Q2_D,
+			.e = S6E3FC3_A33X_COEFF_Q2_E, .f = S6E3FC3_A33X_COEFF_Q2_F, .g = S6E3FC3_A33X_COEFF_Q2_G, .h = S6E3FC3_A33X_COEFF_Q2_H,
 		},
 		{
-			.a = S6E3FC3_A53X_COEFF_Q3_A, .b = S6E3FC3_A53X_COEFF_Q3_B, .c = S6E3FC3_A53X_COEFF_Q3_C, .d = S6E3FC3_A53X_COEFF_Q3_D,
-			.e = S6E3FC3_A53X_COEFF_Q3_E, .f = S6E3FC3_A53X_COEFF_Q3_F, .g = S6E3FC3_A53X_COEFF_Q3_G, .h = S6E3FC3_A53X_COEFF_Q3_H,
+			.a = S6E3FC3_A33X_COEFF_Q3_A, .b = S6E3FC3_A33X_COEFF_Q3_B, .c = S6E3FC3_A33X_COEFF_Q3_C, .d = S6E3FC3_A33X_COEFF_Q3_D,
+			.e = S6E3FC3_A33X_COEFF_Q3_E, .f = S6E3FC3_A33X_COEFF_Q3_F, .g = S6E3FC3_A33X_COEFF_Q3_G, .h = S6E3FC3_A33X_COEFF_Q3_H,
 		},
 		{
-			.a = S6E3FC3_A53X_COEFF_Q4_A, .b = S6E3FC3_A53X_COEFF_Q4_B, .c = S6E3FC3_A53X_COEFF_Q4_C, .d = S6E3FC3_A53X_COEFF_Q4_D,
-			.e = S6E3FC3_A53X_COEFF_Q4_E, .f = S6E3FC3_A53X_COEFF_Q4_F, .g = S6E3FC3_A53X_COEFF_Q4_G, .h = S6E3FC3_A53X_COEFF_Q4_H,
+			.a = S6E3FC3_A33X_COEFF_Q4_A, .b = S6E3FC3_A33X_COEFF_Q4_B, .c = S6E3FC3_A33X_COEFF_Q4_C, .d = S6E3FC3_A33X_COEFF_Q4_D,
+			.e = S6E3FC3_A33X_COEFF_Q4_E, .f = S6E3FC3_A33X_COEFF_Q4_F, .g = S6E3FC3_A33X_COEFF_Q4_G, .h = S6E3FC3_A33X_COEFF_Q4_H,
 		},
 	},
 	.cal_x_center = 3050,
@@ -1628,7 +1628,7 @@ static struct mdnie_tune s6e3fc3_a53x_mdnie_tune = {
 		},
 	},
 	.num_ldu_mode = MAX_LDU_MODE,
-	.num_night_level = S6E3FC3_A53X_MAX_NIGHT_LEVEL,
+	.num_night_level = S6E3FC3_A33X_MAX_NIGHT_LEVEL,
 	.num_color_lens_color = COLOR_LENS_COLOR_MAX,
 	.num_color_lens_level = COLOR_LENS_LEVEL_MAX,
 	.hbm_ce_lux = { 40000 },
@@ -1637,4 +1637,4 @@ static struct mdnie_tune s6e3fc3_a53x_mdnie_tune = {
 	.night_mode_ofs = S6E3FC3_NIGHT_MODE_OFS,
 	.color_lens_ofs = S6E3FC3_COLOR_LENS_OFS,
 };
-#endif /* __S6E3FC3_A53X_PANEL_MDNIE_H__ */
+#endif /* __S6E3FC3_A33X_PANEL_MDNIE_H__ */

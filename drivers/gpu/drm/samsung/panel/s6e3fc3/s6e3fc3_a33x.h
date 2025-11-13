@@ -10,31 +10,31 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __S6E3FC3_A53X_H__
-#define __S6E3FC3_A53X_H__
+#ifndef __S6E3FC3_A33X_H__
+#define __S6E3FC3_A33X_H__
 #include "../usdm_panel.h"
 #include "../usdm_panel_drv.h"
 
-enum s6e3fc3_a53x_function {
-	S6E3FC3_A53X_MAPTBL_GETIDX_FFC,
-	MAX_S6E3FC3_A53X_FUNCTION,
+enum s6e3fc3_a33x_function {
+	S6E3FC3_A33X_MAPTBL_GETIDX_FFC,
+	MAX_S6E3FC3_A33X_FUNCTION,
 };
 
-extern struct pnobj_func s6e3fc3_a53x_function_table[MAX_S6E3FC3_A53X_FUNCTION];
+extern struct pnobj_func s6e3fc3_a33x_function_table[MAX_S6E3FC3_A33X_FUNCTION];
 
 #undef PANEL_FUNC
-#define PANEL_FUNC(_index) (s6e3fc3_a53x_function_table[_index])
+#define PANEL_FUNC(_index) (s6e3fc3_a33x_function_table[_index])
 
 enum {
-	S6E3FC3_A53X_HS_CLK_1108 = 0,
-	S6E3FC3_A53X_HS_CLK_1124,
-	S6E3FC3_A53X_HS_CLK_1125,
-	MAX_S6E3FC3_A53X_HS_CLK
+	S6E3FC3_A33X_HS_CLK_1108 = 0,
+	S6E3FC3_A33X_HS_CLK_1124,
+	S6E3FC3_A33X_HS_CLK_1125,
+	MAX_S6E3FC3_A33X_HS_CLK
 };
 
 #ifdef CONFIG_USDM_FACTORY_DSC_CRC_TEST
-int s6e3fc3_a53x_decoder_test(struct panel_device *panel, void *data, u32 len);
+int s6e3fc3_a33x_decoder_test(struct panel_device *panel, void *data, u32 len);
 #endif
-int s6e3fc3_a53x_getidx_ffc_table(struct maptbl *tbl);
+int s6e3fc3_a33x_getidx_ffc_table(struct maptbl *tbl);
 
-#endif /* __S6E3FC3_A53X_H__ */
+#endif /* __S6E3FC3_A33X_H__ */
