@@ -587,6 +587,12 @@ static void *a33x_common_setting_cmdtbl[] = {
 	&PKTINFO(a33x_wo_dsc),
 	&PKTINFO(a33x_black_insert_off),
 	&PKTINFO(a33x_panel_update),
+
+	&PKTINFO(a33x_etc_setting_1),
+	&PKTINFO(a33x_etc_setting_2),
+	&PKTINFO(a33x_etc_setting_3),
+	&PKTINFO(a33x_panel_update),
+
 	&PKTINFO(a33x_ffc_default),
 	&PKTINFO(a33x_tsp_vsync_on),
 	&PKTINFO(a33x_acl_set),
@@ -595,6 +601,9 @@ static void *a33x_common_setting_cmdtbl[] = {
 	&PKTINFO(a33x_err_fg_setting_2),
 	&PKTINFO(a33x_err_fg_on),
 	&PKTINFO(a33x_pcd_det_set),
+
+	&PKTINFO(a33x_seed_setting),
+	&PKTINFO(a33x_panel_update),
 
 	&PKTINFO(a33x_smooth_dimming_1f),
 	&PKTINFO(a33x_panel_update),
