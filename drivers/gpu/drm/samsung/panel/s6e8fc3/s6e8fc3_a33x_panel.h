@@ -129,7 +129,7 @@ static u8 a33x_acl_frame_avg_table[][1] = {
 
 static u8 a33x_acl_start_point_table[][2] = {
 	[OLED_BR_HBM_OFF] = { 0x00, 0xB0 }, /* 50 Percent */
-	[OLED_BR_HBM_ON] = { 0x00, 0xB0 }, /* 50 Percent */
+	[OLED_BR_HBM_ON] = { 0x40, 0x28 }, /* 60 Percent */
 };
 
 static u8 a33x_acl_dim_speed_table[MAX_S6E8FC3_ACL_DIM][1] = {
@@ -256,6 +256,7 @@ static DEFINE_VARIABLE_PACKET(a33x_tset_set, DSI_PKT_TYPE_WR, A33X_TSET_SET, 0x0
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
 static DEFINE_PANEL_MDELAY(a33x_wait_6msec, 6);
 #endif
+static DEFINE_PANEL_MDELAY(a33x_wait_10msec, 10);
 static DEFINE_PANEL_MDELAY(a33x_wait_1msec, 1);
 static DEFINE_PANEL_MDELAY(a33x_wait_100msec, 100);
 static DEFINE_PANEL_MDELAY(a33x_wait_30msec, 30);
@@ -455,7 +456,7 @@ static u8 A33X_PPS[] = {
 	0x2B, 0x34, 0x2B, 0x74, 0x3B, 0x74, 0x6B, 0xF4,
 	0x00
 };
-static DEFINE_STATIC_PACKET(a33x_pps, DSI_PKT_TYPE_WR, A33X_PPS, 0);
+static DEFINE_STATIC_PACKET(a33x_pps, DSI_PKT_TYPE_WR_PPS, A33X_PPS, 0);
 
 static u8 A33X_NORMAL_MODE[] = {
 	0x53, 0x20
@@ -581,7 +582,12 @@ static void *a33x_common_setting_cmdtbl[] = {
 
 	&PKTINFO(a33x_tsp_vsync_on),
 
-	/* Use rev04 FFC for now - TODO: add proper rev detection */
+	/* Hardcoded to rev04 FFC - both test devices use rev04 panel
+	 * TODO: Later add conditional FFC selection based on panel revision
+	 * DECON uses: CONDINFO_IF(a33x_cond_is_real_panel_rev04) -> rev04 FFC
+	 *            CONDINFO_IF(a33x_cond_is_real_panel) -> default FFC
+	 * Conditions are defined in s6e8fc3.c: S6E8FC3_COND_IS_REAL_PANEL_REV04, S6E8FC3_COND_IS_REAL_PANEL
+	 */
 	&PKTINFO(a33x_ffc_default_rev04),
 
 	&PKTINFO(a33x_black_insert_off),
@@ -612,7 +618,7 @@ static DEFINE_SEQINFO(a33x_common_setting_seq,
 
 static void *a33x_init_cmdtbl[] = {
 	&PNOBJ_CONFIG(a33x_set_separate_tx_on),
-	&DLYINFO(a33x_wait_1msec),
+	&DLYINFO(a33x_wait_10msec),
 	&PKTINFO(a33x_sleep_out),
 	&DLYINFO(a33x_wait_100msec),
 
