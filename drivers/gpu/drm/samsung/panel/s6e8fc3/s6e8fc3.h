@@ -135,6 +135,9 @@ enum s6e8fc3_function {
 #endif
 	S6E8FC3_MAPTBL_GETIDX_VRR_FPS,
 	S6E8FC3_MAPTBL_GETIDX_VRR,
+	S6E8FC3_COND_IS_BRINGUP_PANEL,
+	S6E8FC3_COND_IS_REAL_PANEL_REV04,
+	S6E8FC3_COND_IS_REAL_PANEL,
 	MAX_S6E8FC3_FUNCTION,
 };
 
@@ -550,5 +553,10 @@ int s6e8fc3_get_cell_id(struct panel_device *panel, void *buf);
 int s6e8fc3_get_manufacture_code(struct panel_device *panel, void *buf);
 int s6e8fc3_get_manufacture_date(struct panel_device *panel, void *buf);
 int s6e8fc3_init(struct common_panel_info *cpi);
+
+/* a33x panel revision detection */
+bool s6e8fc3_a33_is_bringup_panel(struct panel_device *panel);
+bool s6e8fc3_a33_is_real_panel_rev04(struct panel_device *panel);
+bool s6e8fc3_a33_is_real_panel(struct panel_device *panel);
 
 #endif /* __S6E8FC3_H__ */

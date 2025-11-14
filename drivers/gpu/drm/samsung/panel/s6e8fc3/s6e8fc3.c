@@ -681,7 +681,92 @@ struct pnobj_func s6e8fc3_function_table[MAX_S6E8FC3_FUNCTION] = {
 #endif
 	[S6E8FC3_MAPTBL_GETIDX_VRR_FPS] = __PNOBJ_FUNC_INITIALIZER(S6E8FC3_MAPTBL_GETIDX_VRR_FPS, s6e8fc3_maptbl_getidx_vrr_fps),
 	[S6E8FC3_MAPTBL_GETIDX_VRR] = __PNOBJ_FUNC_INITIALIZER(S6E8FC3_MAPTBL_GETIDX_VRR, s6e8fc3_maptbl_getidx_vrr),
+	[S6E8FC3_COND_IS_BRINGUP_PANEL] = __PNOBJ_FUNC_INITIALIZER(S6E8FC3_COND_IS_BRINGUP_PANEL, s6e8fc3_a33_is_bringup_panel),
+	[S6E8FC3_COND_IS_REAL_PANEL_REV04] = __PNOBJ_FUNC_INITIALIZER(S6E8FC3_COND_IS_REAL_PANEL_REV04, s6e8fc3_a33_is_real_panel_rev04),
+	[S6E8FC3_COND_IS_REAL_PANEL] = __PNOBJ_FUNC_INITIALIZER(S6E8FC3_COND_IS_REAL_PANEL, s6e8fc3_a33_is_real_panel),
 };
+
+/* a33x panel revision detection functions */
+bool s6e8fc3_a33_is_bringup_panel(struct panel_device *panel)
+{
+	struct panel_info *panel_data;
+	bool ret;
+
+	if (panel == NULL) {
+		panel_err("panel is null\n");
+		return false;
+	}
+
+	panel_data = &panel->panel_data;
+#ifdef CONFIG_USDM_FACTORY
+	resource_copy_by_name(panel_data, panel_data->id, "id");
+#endif
+	/* 0x800000 ~ 0x800003	: Bring up panel	*/
+	/* 0x80XXX4			: Real panel 04	*/
+	/* 0x80XXX5 ~			: Real panel	*/
+
+	panel_info("a33x: checking bringup panel, id[2]=0x%02x\n", panel_data->id[2]);
+	ret = ((panel_data->id[2] & 0xF) < 0x4) ? true : false;
+
+	if (ret)
+		panel_info("a33x: is bringup panel\n");
+
+	return ret;
+}
+
+bool s6e8fc3_a33_is_real_panel_rev04(struct panel_device *panel)
+{
+	struct panel_info *panel_data;
+	bool ret;
+
+	if (panel == NULL) {
+		panel_err("panel is null\n");
+		return false;
+	}
+
+	panel_data = &panel->panel_data;
+#ifdef CONFIG_USDM_FACTORY
+	resource_copy_by_name(panel_data, panel_data->id, "id");
+#endif
+	/* 0x800000 ~ 0x800003	: Bring up panel	*/
+	/* 0x80XXX4			: Real panel 04	*/
+	/* 0x80XXX5 ~			: Real panel	*/
+
+	panel_info("a33x: checking rev04, id[2]=0x%02x\n", panel_data->id[2]);
+	ret = ((panel_data->id[2] & 0xF) == 0x4) ? true : false;
+
+	if (ret)
+		panel_info("a33x: is rev04 panel\n");
+
+	return ret;
+}
+
+bool s6e8fc3_a33_is_real_panel(struct panel_device *panel)
+{
+	struct panel_info *panel_data;
+	bool ret;
+
+	if (panel == NULL) {
+		panel_err("panel is null\n");
+		return false;
+	}
+
+	panel_data = &panel->panel_data;
+#ifdef CONFIG_USDM_FACTORY
+	resource_copy_by_name(panel_data, panel_data->id, "id");
+#endif
+	/* 0x800000 ~ 0x800003	: Bring up panel	*/
+	/* 0x80XXX4			: Real panel 04	*/
+	/* 0x80XXX5 ~			: Real panel	*/
+
+	panel_info("a33x: checking real panel, id[2]=0x%02x\n", panel_data->id[2]);
+	ret = ((panel_data->id[2] & 0xF) >= 0x5) ? true : false;
+
+	if (ret)
+		panel_info("a33x: is real panel (rev05+)\n");
+
+	return ret;
+}
 
 int s6e8fc3_init(struct common_panel_info *cpi)
 {
