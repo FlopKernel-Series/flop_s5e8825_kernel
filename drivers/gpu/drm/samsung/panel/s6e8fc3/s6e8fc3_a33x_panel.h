@@ -1,5 +1,5 @@
 /*
- * linux/drivers/video/fbdev/exynos/panel/s6e8fc3/s6e8fc3_a16x_panel.h
+ * linux/drivers/video/fbdev/exynos/panel/s6e8fc3/s6e8fc3_a33x_panel.h
  *
  * Header file for S6E8FC3 Dimming Driver
  *
@@ -10,8 +10,8 @@
  * published by the Free Software Foundation.
  */
 
-#ifndef __S6E8FC3_A16X_PANEL_H__
-#define __S6E8FC3_A16X_PANEL_H__
+#ifndef __S6E8FC3_A33X_PANEL_H__
+#define __S6E8FC3_A33X_PANEL_H__
 
 #include "../panel.h"
 #include "../panel_drv.h"
@@ -19,22 +19,22 @@
 #include "oled_function.h"
 #include "oled_property.h"
 #include "s6e8fc3.h"
-#include "s6e8fc3_a16x.h"
+#include "s6e8fc3_a33x.h"
 #include "s6e8fc3_dimming.h"
 #ifdef CONFIG_USDM_MDNIE
-#include "s6e8fc3_a16x_panel_mdnie.h"
+#include "s6e8fc3_a33x_panel_mdnie.h"
 #endif
-#include "s6e8fc3_a16x_panel_dimming.h"
+#include "s6e8fc3_a33x_panel_dimming.h"
 
 #ifdef CONFIG_USDM_PANEL_SELF_DISPLAY
-#include "s6e8fc3_a16x_aod_panel.h"
+#include "s6e8fc3_a33x_aod_panel.h"
 #include "../aod/aod_drv.h"
 #endif
 
-#include "s6e8fc3_a16x_resol.h"
+#include "s6e8fc3_a33x_resol.h"
 
 #undef __pn_name__
-#define __pn_name__	a16x
+#define __pn_name__	a33x
 
 #undef __PN_NAME__
 #define __PN_NAME__
@@ -55,7 +55,7 @@
 /* ============================== [S6E8FC3 MAPPING TABLE] ============================== */
 /* ===================================================================================== */
 
-static u8 a16x_brt_table[S6E8FC3_A16X_TOTAL_STEP][2] = {
+static u8 a33x_brt_table[S6E8FC3_A33X_TOTAL_STEP][2] = {
 	{ 0x00, 0x04 }, { 0x00, 0x06 }, { 0x00, 0x08 }, { 0x00, 0x0A }, { 0x00, 0x0D },
 	{ 0x00, 0x10 }, { 0x00, 0x14 }, { 0x00, 0x17 }, { 0x00, 0x1B }, { 0x00, 0x1E },
 	{ 0x00, 0x22 }, { 0x00, 0x26 }, { 0x00, 0x2A }, { 0x00, 0x2F }, { 0x00, 0x33 },
@@ -151,7 +151,7 @@ static u8 a16x_brt_table[S6E8FC3_A16X_TOTAL_STEP][2] = {
 	{ 0x0F, 0xE0 }, { 0x0F, 0xE9 }, { 0x0F, 0xF3 }, { 0x0F, 0xFC }, { 0x0F, 0xFF },
 };
 
-static u8 a16x_hbm_transition_table[SMOOTH_TRANS_MAX][MAX_S6E8FC3_NORMAL_HBM_TRANSITION][1] = {
+static u8 a33x_hbm_transition_table[SMOOTH_TRANS_MAX][MAX_S6E8FC3_NORMAL_HBM_TRANSITION][1] = {
 	[SMOOTH_TRANS_OFF] = {
 		[S6E8FC3_NORMAL_HBM_TRANSITION_NORMAL_TO_NORMAL] = { 0x20 },
 		[S6E8FC3_NORMAL_HBM_TRANSITION_NORMAL_TO_HBM] = { 0x20 },
@@ -166,22 +166,22 @@ static u8 a16x_hbm_transition_table[SMOOTH_TRANS_MAX][MAX_S6E8FC3_NORMAL_HBM_TRA
 	},
 };
 
-static u8 a16x_acl_frame_avg_table[][1] = {
+static u8 a33x_acl_frame_avg_table[][1] = {
 	{ 0x44 }, /* 16 Frame Avg */
 	{ 0x55 }, /* 32 Frame Avg */
 };
 
-static u8 a16x_acl_start_point_table[][2] = {
+static u8 a33x_acl_start_point_table[][2] = {
 	[OLED_BR_HBM_OFF] = { 0x00, 0xB0 }, /* 50 Percent */
 	[OLED_BR_HBM_ON] = { 0x00, 0xB0 }, /* 50 Percent */
 };
 
-static u8 a16x_acl_dim_speed_table[MAX_S6E8FC3_ACL_DIM][1] = {
+static u8 a33x_acl_dim_speed_table[MAX_S6E8FC3_ACL_DIM][1] = {
 	[S6E8FC3_ACL_DIM_OFF] = { 0x00 }, /* 0x00 : ACL Dimming Off */
 	[S6E8FC3_ACL_DIM_ON] = { 0x20 }, /* 0x20 : ACL Dimming 32 Frames */
 };
 
-static u8 a16x_acl_opr_table[MAX_PANEL_HBM][MAX_S6E8FC3_ACL_OPR][1] = {
+static u8 a33x_acl_opr_table[MAX_PANEL_HBM][MAX_S6E8FC3_ACL_OPR][1] = {
 	[PANEL_HBM_OFF] = {
 		[S6E8FC3_ACL_OPR_0] = { 0x00 }, /* ACL OFF, OPR 0% */
 		[S6E8FC3_ACL_OPR_1] = { 0x01 }, /* ACL ON, OPR 8% */
@@ -196,7 +196,7 @@ static u8 a16x_acl_opr_table[MAX_PANEL_HBM][MAX_S6E8FC3_ACL_OPR][1] = {
 	},
 };
 
-static u8 a16x_tset_table[256][1] = {
+static u8 a33x_tset_table[256][1] = {
 	/* 0 ~ 127 */
 	{ 0x00 }, { 0x01 }, { 0x02 }, { 0x03 }, { 0x04 }, { 0x05 }, { 0x06 }, { 0x07 },
 	{ 0x08 }, { 0x09 }, { 0x0A }, { 0x0B }, { 0x0C }, { 0x0D }, { 0x0E }, { 0x0F },
@@ -233,12 +233,12 @@ static u8 a16x_tset_table[256][1] = {
 	{ 0xF8 }, { 0xF9 }, { 0xFA }, { 0xFB }, { 0xFC }, { 0xFD }, { 0xFE }, { 0xFF },
 };
 
-static u8 a16x_fps_table_1[][1] = {
+static u8 a33x_fps_table_1[][1] = {
 	[S6E8FC3_VRR_FPS_90] = { 0x01 },
 	[S6E8FC3_VRR_FPS_60] = { 0x21 },
 };
 
-static u8 a16x_dimming_speed_table_1[SMOOTH_TRANS_MAX][MAX_S6E8FC3_NORMAL_HBM_TRANSITION][1] = {
+static u8 a33x_dimming_speed_table_1[SMOOTH_TRANS_MAX][MAX_S6E8FC3_NORMAL_HBM_TRANSITION][1] = {
 	[SMOOTH_TRANS_OFF] = {
 		[S6E8FC3_NORMAL_HBM_TRANSITION_NORMAL_TO_NORMAL] = { 0x20 },
 		[S6E8FC3_NORMAL_HBM_TRANSITION_NORMAL_TO_HBM] = { 0x20 },
@@ -253,100 +253,100 @@ static u8 a16x_dimming_speed_table_1[SMOOTH_TRANS_MAX][MAX_S6E8FC3_NORMAL_HBM_TR
 	},
 };
 
-static u8 a16x_irc_mode_table[][1] = {
-	[0 ... S6E8FC3_A16X_TOTAL_STEP - 2] = { 0x01 },		/* flat gamma */
-	[S6E8FC3_A16X_TOTAL_STEP - 1] = { 0x82 },		/* moderato */
+static u8 a33x_irc_mode_table[][1] = {
+	[0 ... S6E8FC3_A33X_TOTAL_STEP - 2] = { 0x01 },		/* flat gamma */
+	[S6E8FC3_A33X_TOTAL_STEP - 1] = { 0x82 },		/* moderato */
 };
 
-static struct maptbl a16x_maptbl[MAX_MAPTBL] = {
-	[GAMMA_MODE2_MAPTBL] = __OLED_MAPTBL_OVERRIDE_INIT_INITIALIZER(a16x_brt_table, &DDI_FUNC(S6E8FC3_MAPTBL_INIT_GAMMA_MODE2_BRT), S6E8FC3_A16X_BR_INDEX_PROPERTY),
-	[HBM_ONOFF_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_hbm_transition_table, PANEL_BL_PROPERTY_SMOOTH_TRANSITION, S6E8FC3_NORMAL_HBM_TRANSITION_PROPERTY),
-	[ACL_FRAME_AVG_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_acl_frame_avg_table, PANEL_BL_PROPERTY_ACL_PWRSAVE),
-	[ACL_START_POINT_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_acl_start_point_table, OLED_BR_HBM_PROPERTY),
-	[ACL_DIM_SPEED_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_acl_dim_speed_table, S6E8FC3_ACL_DIM_PROPERTY),
-	[ACL_OPR_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_acl_opr_table, OLED_BR_HBM_PROPERTY, S6E8FC3_ACL_OPR_PROPERTY),
-	[TSET_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_tset_table, OLED_TSET_PROPERTY),
-	[FPS_MAPTBL_1] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_fps_table_1, S6E8FC3_VRR_PROPERTY),
-	[DIMMING_SPEED] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_dimming_speed_table_1, PANEL_BL_PROPERTY_SMOOTH_TRANSITION, S6E8FC3_NORMAL_HBM_TRANSITION_PROPERTY),
-	[IRC_MODE_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a16x_irc_mode_table, S6E8FC3_A16X_BR_INDEX_PROPERTY),
+static struct maptbl a33x_maptbl[MAX_MAPTBL] = {
+	[GAMMA_MODE2_MAPTBL] = __OLED_MAPTBL_OVERRIDE_INIT_INITIALIZER(a33x_brt_table, &DDI_FUNC(S6E8FC3_MAPTBL_INIT_GAMMA_MODE2_BRT), S6E8FC3_A33X_BR_INDEX_PROPERTY),
+	[HBM_ONOFF_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_hbm_transition_table, PANEL_BL_PROPERTY_SMOOTH_TRANSITION, S6E8FC3_NORMAL_HBM_TRANSITION_PROPERTY),
+	[ACL_FRAME_AVG_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_acl_frame_avg_table, PANEL_BL_PROPERTY_ACL_PWRSAVE),
+	[ACL_START_POINT_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_acl_start_point_table, OLED_BR_HBM_PROPERTY),
+	[ACL_DIM_SPEED_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_acl_dim_speed_table, S6E8FC3_ACL_DIM_PROPERTY),
+	[ACL_OPR_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_acl_opr_table, OLED_BR_HBM_PROPERTY, S6E8FC3_ACL_OPR_PROPERTY),
+	[TSET_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_tset_table, OLED_TSET_PROPERTY),
+	[FPS_MAPTBL_1] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_fps_table_1, S6E8FC3_VRR_PROPERTY),
+	[DIMMING_SPEED] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_dimming_speed_table_1, PANEL_BL_PROPERTY_SMOOTH_TRANSITION, S6E8FC3_NORMAL_HBM_TRANSITION_PROPERTY),
+	[IRC_MODE_MAPTBL] = __OLED_MAPTBL_DEFAULT_INITIALIZER(a33x_irc_mode_table, S6E8FC3_A33X_BR_INDEX_PROPERTY),
 };
 
 /* ===================================================================================== */
 /* ============================== [S6E8FC3 COMMAND TABLE] ============================== */
 /* ===================================================================================== */
-static u8 A16X_KEY1_ENABLE[] = { 0x9F, 0xA5, 0xA5 };
-static u8 A16X_KEY2_ENABLE[] = { 0xF0, 0x5A, 0x5A };
-static u8 A16X_KEY3_ENABLE[] = { 0xFC, 0x5A, 0x5A };
+static u8 A33X_KEY1_ENABLE[] = { 0x9F, 0xA5, 0xA5 };
+static u8 A33X_KEY2_ENABLE[] = { 0xF0, 0x5A, 0x5A };
+static u8 A33X_KEY3_ENABLE[] = { 0xFC, 0x5A, 0x5A };
 
-static u8 A16X_KEY1_DISABLE[] = { 0x9F, 0x5A, 0x5A };
-static u8 A16X_KEY2_DISABLE[] = { 0xF0, 0xA5, 0xA5 };
-static u8 A16X_KEY3_DISABLE[] = { 0xFC, 0xA5, 0xA5 };
-static u8 A16X_SLEEP_OUT[] = { 0x11 };
-static u8 A16X_SLEEP_IN[] = { 0x10 };
-static u8 A16X_DISPLAY_OFF[] = { 0x28 };
-static u8 A16X_DISPLAY_ON[] = { 0x29 };
+static u8 A33X_KEY1_DISABLE[] = { 0x9F, 0x5A, 0x5A };
+static u8 A33X_KEY2_DISABLE[] = { 0xF0, 0xA5, 0xA5 };
+static u8 A33X_KEY3_DISABLE[] = { 0xFC, 0xA5, 0xA5 };
+static u8 A33X_SLEEP_OUT[] = { 0x11 };
+static u8 A33X_SLEEP_IN[] = { 0x10 };
+static u8 A33X_DISPLAY_OFF[] = { 0x28 };
+static u8 A33X_DISPLAY_ON[] = { 0x29 };
 
 
-static DEFINE_STATIC_PACKET(a16x_level1_key_enable, DSI_PKT_TYPE_WR, A16X_KEY1_ENABLE, 0);
-static DEFINE_STATIC_PACKET(a16x_level2_key_enable, DSI_PKT_TYPE_WR, A16X_KEY2_ENABLE, 0);
-static DEFINE_STATIC_PACKET(a16x_level3_key_enable, DSI_PKT_TYPE_WR, A16X_KEY3_ENABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_level1_key_enable, DSI_PKT_TYPE_WR, A33X_KEY1_ENABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_level2_key_enable, DSI_PKT_TYPE_WR, A33X_KEY2_ENABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_level3_key_enable, DSI_PKT_TYPE_WR, A33X_KEY3_ENABLE, 0);
 
-static DEFINE_STATIC_PACKET(a16x_level1_key_disable, DSI_PKT_TYPE_WR, A16X_KEY1_DISABLE, 0);
-static DEFINE_STATIC_PACKET(a16x_level2_key_disable, DSI_PKT_TYPE_WR, A16X_KEY2_DISABLE, 0);
-static DEFINE_STATIC_PACKET(a16x_level3_key_disable, DSI_PKT_TYPE_WR, A16X_KEY3_DISABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_level1_key_disable, DSI_PKT_TYPE_WR, A33X_KEY1_DISABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_level2_key_disable, DSI_PKT_TYPE_WR, A33X_KEY2_DISABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_level3_key_disable, DSI_PKT_TYPE_WR, A33X_KEY3_DISABLE, 0);
 
-static DEFINE_STATIC_PACKET(a16x_sleep_out, DSI_PKT_TYPE_WR, A16X_SLEEP_OUT, 0);
-static DEFINE_STATIC_PACKET(a16x_sleep_in, DSI_PKT_TYPE_WR, A16X_SLEEP_IN, 0);
-static DEFINE_STATIC_PACKET(a16x_display_on, DSI_PKT_TYPE_WR, A16X_DISPLAY_ON, 0);
-static DEFINE_STATIC_PACKET(a16x_display_off, DSI_PKT_TYPE_WR, A16X_DISPLAY_OFF, 0);
+static DEFINE_STATIC_PACKET(a33x_sleep_out, DSI_PKT_TYPE_WR, A33X_SLEEP_OUT, 0);
+static DEFINE_STATIC_PACKET(a33x_sleep_in, DSI_PKT_TYPE_WR, A33X_SLEEP_IN, 0);
+static DEFINE_STATIC_PACKET(a33x_display_on, DSI_PKT_TYPE_WR, A33X_DISPLAY_ON, 0);
+static DEFINE_STATIC_PACKET(a33x_display_off, DSI_PKT_TYPE_WR, A33X_DISPLAY_OFF, 0);
 
-static u8 A16X_TSET_SET[] = {
+static u8 A33X_TSET_SET[] = {
 	0xCD,
 	0x00,
 };
-static DEFINE_PKTUI(a16x_tset_set, &a16x_maptbl[TSET_MAPTBL], 1);
-static DEFINE_VARIABLE_PACKET(a16x_tset_set, DSI_PKT_TYPE_WR, A16X_TSET_SET, 0x0F);
+static DEFINE_PKTUI(a33x_tset_set, &a33x_maptbl[TSET_MAPTBL], 1);
+static DEFINE_VARIABLE_PACKET(a33x_tset_set, DSI_PKT_TYPE_WR, A33X_TSET_SET, 0x0F);
 
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-static DEFINE_PANEL_MDELAY(a16x_wait_6msec, 6);
+static DEFINE_PANEL_MDELAY(a33x_wait_6msec, 6);
 #endif
-static DEFINE_PANEL_MDELAY(a16x_wait_1msec, 1);
-static DEFINE_PANEL_MDELAY(a16x_wait_100msec, 100);
-static DEFINE_PANEL_MDELAY(a16x_wait_30msec, 30);
-static DEFINE_PANEL_MDELAY(a16x_wait_17msec, 17);
+static DEFINE_PANEL_MDELAY(a33x_wait_1msec, 1);
+static DEFINE_PANEL_MDELAY(a33x_wait_100msec, 100);
+static DEFINE_PANEL_MDELAY(a33x_wait_30msec, 30);
+static DEFINE_PANEL_MDELAY(a33x_wait_17msec, 17);
 
-static DEFINE_PANEL_MDELAY(a16x_wait_34msec, 34);
+static DEFINE_PANEL_MDELAY(a33x_wait_34msec, 34);
 
-static DEFINE_PANEL_MDELAY(a16x_wait_sleep_out_20msec, 20);
-static DEFINE_PANEL_MDELAY(a16x_wait_display_off, 20);
+static DEFINE_PANEL_MDELAY(a33x_wait_sleep_out_20msec, 20);
+static DEFINE_PANEL_MDELAY(a33x_wait_display_off, 20);
 
-static DEFINE_PANEL_MDELAY(a16x_wait_sleep_in, 120);
-static DEFINE_PANEL_UDELAY(a16x_wait_1usec, 1);
+static DEFINE_PANEL_MDELAY(a33x_wait_sleep_in, 120);
+static DEFINE_PANEL_UDELAY(a33x_wait_1usec, 1);
 
-static DEFINE_PANEL_KEY(a16x_level1_key_enable, CMD_LEVEL_1, KEY_ENABLE, &PKTINFO(a16x_level1_key_enable));
-static DEFINE_PANEL_KEY(a16x_level2_key_enable, CMD_LEVEL_2, KEY_ENABLE, &PKTINFO(a16x_level2_key_enable));
-static DEFINE_PANEL_KEY(a16x_level3_key_enable, CMD_LEVEL_3, KEY_ENABLE, &PKTINFO(a16x_level3_key_enable));
+static DEFINE_PANEL_KEY(a33x_level1_key_enable, CMD_LEVEL_1, KEY_ENABLE, &PKTINFO(a33x_level1_key_enable));
+static DEFINE_PANEL_KEY(a33x_level2_key_enable, CMD_LEVEL_2, KEY_ENABLE, &PKTINFO(a33x_level2_key_enable));
+static DEFINE_PANEL_KEY(a33x_level3_key_enable, CMD_LEVEL_3, KEY_ENABLE, &PKTINFO(a33x_level3_key_enable));
 
-static DEFINE_PANEL_KEY(a16x_level1_key_disable, CMD_LEVEL_1, KEY_DISABLE, &PKTINFO(a16x_level1_key_disable));
-static DEFINE_PANEL_KEY(a16x_level2_key_disable, CMD_LEVEL_2, KEY_DISABLE, &PKTINFO(a16x_level2_key_disable));
-static DEFINE_PANEL_KEY(a16x_level3_key_disable, CMD_LEVEL_3, KEY_DISABLE, &PKTINFO(a16x_level3_key_disable));
+static DEFINE_PANEL_KEY(a33x_level1_key_disable, CMD_LEVEL_1, KEY_DISABLE, &PKTINFO(a33x_level1_key_disable));
+static DEFINE_PANEL_KEY(a33x_level2_key_disable, CMD_LEVEL_2, KEY_DISABLE, &PKTINFO(a33x_level2_key_disable));
+static DEFINE_PANEL_KEY(a33x_level3_key_disable, CMD_LEVEL_3, KEY_DISABLE, &PKTINFO(a33x_level3_key_disable));
 
-static DEFINE_PANEL_VSYNC_DELAY(a16x_wait_1_vsync, 1);
+static DEFINE_PANEL_VSYNC_DELAY(a33x_wait_1_vsync, 1);
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-static DEFINE_PANEL_VSYNC_DELAY(a16x_wait_2_vsync, 2);
-static DEFINE_RULE_BASED_COND(a16x_cond_is_60hz,
+static DEFINE_PANEL_VSYNC_DELAY(a33x_wait_2_vsync, 2);
+static DEFINE_RULE_BASED_COND(a33x_cond_is_60hz,
 		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 60);
-static DEFINE_RULE_BASED_COND(a16x_cond_is_90hz,
+static DEFINE_RULE_BASED_COND(a33x_cond_is_90hz,
 		PANEL_PROPERTY_PANEL_REFRESH_RATE, EQ, 90);
 #endif
 
-static u8 A16X_HBM_TRANSITION[] = {
+static u8 A33X_HBM_TRANSITION[] = {
 	0x53, 0x20
 };
-static DEFINE_PKTUI(a16x_hbm_transition, &a16x_maptbl[HBM_ONOFF_MAPTBL], 1);
-static DEFINE_VARIABLE_PACKET(a16x_hbm_transition, DSI_PKT_TYPE_WR, A16X_HBM_TRANSITION, 0);
+static DEFINE_PKTUI(a33x_hbm_transition, &a33x_maptbl[HBM_ONOFF_MAPTBL], 1);
+static DEFINE_VARIABLE_PACKET(a33x_hbm_transition, DSI_PKT_TYPE_WR, A33X_HBM_TRANSITION, 0);
 
-static u8 A16X_ACL_SET[] = {
+static u8 A33X_ACL_SET[] = {
 	0xB4,
 	0x44, 0x00, 0xB0, 0x57, 0x66, 0xA1, 0x15,
 	0x55, 0x55, 0x55, 0x08, 0xF1, 0xC6, 0x48,
@@ -366,112 +366,112 @@ static u8 A16X_ACL_SET[] = {
  * 0x20 : ACL 32 Frame Dimming
  */
 
-static DECLARE_PKTUI(a16x_acl_set) = {
-	{ .offset = 1, .maptbl = &a16x_maptbl[ACL_FRAME_AVG_MAPTBL] },
-	{ .offset = 2, .maptbl = &a16x_maptbl[ACL_START_POINT_MAPTBL] },
-	{ .offset = 17, .maptbl = &a16x_maptbl[ACL_DIM_SPEED_MAPTBL] },
+static DECLARE_PKTUI(a33x_acl_set) = {
+	{ .offset = 1, .maptbl = &a33x_maptbl[ACL_FRAME_AVG_MAPTBL] },
+	{ .offset = 2, .maptbl = &a33x_maptbl[ACL_START_POINT_MAPTBL] },
+	{ .offset = 17, .maptbl = &a33x_maptbl[ACL_DIM_SPEED_MAPTBL] },
 };
-static DEFINE_VARIABLE_PACKET(a16x_acl_set, DSI_PKT_TYPE_WR, A16X_ACL_SET, 0x0D);
+static DEFINE_VARIABLE_PACKET(a33x_acl_set, DSI_PKT_TYPE_WR, A33X_ACL_SET, 0x0D);
 
-static u8 A16X_ACL[] = {
+static u8 A33X_ACL[] = {
 	0x55, 0x03
 };
-static DEFINE_PKTUI(a16x_acl_control, &a16x_maptbl[ACL_OPR_MAPTBL], 1);
-static DEFINE_VARIABLE_PACKET(a16x_acl_control, DSI_PKT_TYPE_WR, A16X_ACL, 0);
+static DEFINE_PKTUI(a33x_acl_control, &a33x_maptbl[ACL_OPR_MAPTBL], 1);
+static DEFINE_VARIABLE_PACKET(a33x_acl_control, DSI_PKT_TYPE_WR, A33X_ACL, 0);
 
-static u8 A16X_WRDISBV[] = {
+static u8 A33X_WRDISBV[] = {
 	0x51, 0x03, 0xFF
 };
-static DEFINE_PKTUI(a16x_wrdisbv, &a16x_maptbl[GAMMA_MODE2_MAPTBL], 1);
-static DEFINE_VARIABLE_PACKET(a16x_wrdisbv, DSI_PKT_TYPE_WR, A16X_WRDISBV, 0);
+static DEFINE_PKTUI(a33x_wrdisbv, &a33x_maptbl[GAMMA_MODE2_MAPTBL], 1);
+static DEFINE_VARIABLE_PACKET(a33x_wrdisbv, DSI_PKT_TYPE_WR, A33X_WRDISBV, 0);
 
-static u8 A16X_CASET[] = { 0x2A, 0x00, 0x00, 0x04, 0x37 };
-static u8 A16X_PASET[] = { 0x2B, 0x00, 0x00, 0x09, 0x5F };
-static DEFINE_STATIC_PACKET(a16x_caset, DSI_PKT_TYPE_WR, A16X_CASET, 0);
-static DEFINE_STATIC_PACKET(a16x_paset, DSI_PKT_TYPE_WR, A16X_PASET, 0);
+static u8 A33X_CASET[] = { 0x2A, 0x00, 0x00, 0x04, 0x37 };
+static u8 A33X_PASET[] = { 0x2B, 0x00, 0x00, 0x09, 0x5F };
+static DEFINE_STATIC_PACKET(a33x_caset, DSI_PKT_TYPE_WR, A33X_CASET, 0);
+static DEFINE_STATIC_PACKET(a33x_paset, DSI_PKT_TYPE_WR, A33X_PASET, 0);
 
 #if defined(CONFIG_USDM_FACTORY) && defined(CONFIG_USDM_FACTORY_FAST_DISCHARGE)
-static u8 A16X_FAST_DISCHARGE[] = {
+static u8 A33X_FAST_DISCHARGE[] = {
 	0xB5,
 	0x40, 0x80	/* FD disable */
 };
 #else
-static u8 A16X_FAST_DISCHARGE[] = {
+static u8 A33X_FAST_DISCHARGE[] = {
 	0xB5,
 	0x40, 0x40	/* FD enable */
 };
 #endif
-static DEFINE_STATIC_PACKET(a16x_fast_discharge, DSI_PKT_TYPE_WR, A16X_FAST_DISCHARGE, 0x0A);
+static DEFINE_STATIC_PACKET(a33x_fast_discharge, DSI_PKT_TYPE_WR, A33X_FAST_DISCHARGE, 0x0A);
 
-static u8 A16X_SMOOTH_DIMMING_1F[] = {
+static u8 A33X_SMOOTH_DIMMING_1F[] = {
 	0xB2,
 	0x01,
 };
-static DEFINE_STATIC_PACKET(a16x_smooth_dimming_1f, DSI_PKT_TYPE_WR, A16X_SMOOTH_DIMMING_1F, 0x0D);
+static DEFINE_STATIC_PACKET(a33x_smooth_dimming_1f, DSI_PKT_TYPE_WR, A33X_SMOOTH_DIMMING_1F, 0x0D);
 
-static u8 A16X_SMOOTH_DIMMING_15F[] = {
+static u8 A33X_SMOOTH_DIMMING_15F[] = {
 	0xB2,
 	0x0F,
 };
-static DEFINE_STATIC_PACKET(a16x_smooth_dimming_15f, DSI_PKT_TYPE_WR, A16X_SMOOTH_DIMMING_15F, 0x0D);
-static u8 A16X_PCD_SET_DET_LOW[] = {
+static DEFINE_STATIC_PACKET(a33x_smooth_dimming_15f, DSI_PKT_TYPE_WR, A33X_SMOOTH_DIMMING_15F, 0x0D);
+static u8 A33X_PCD_SET_DET_LOW[] = {
 	0xEA,
 	0x5C, 0x51	/* 1st 0x5C: default HIGH, 2nd 0x51 : Enable SW RESET */
 };
-static DEFINE_STATIC_PACKET(a16x_pcd_det_set, DSI_PKT_TYPE_WR, A16X_PCD_SET_DET_LOW, 0);
+static DEFINE_STATIC_PACKET(a33x_pcd_det_set, DSI_PKT_TYPE_WR, A33X_PCD_SET_DET_LOW, 0);
 
-static u8 A16X_ERR_FG_ON[] = {
+static u8 A33X_ERR_FG_ON[] = {
 	0xE1, 0x83
 };
-static DEFINE_STATIC_PACKET(a16x_err_fg_on, DSI_PKT_TYPE_WR, A16X_ERR_FG_ON, 0);
+static DEFINE_STATIC_PACKET(a33x_err_fg_on, DSI_PKT_TYPE_WR, A33X_ERR_FG_ON, 0);
 
-static u8 A16X_ERR_FG_OFF[] = {
+static u8 A33X_ERR_FG_OFF[] = {
 	0xE1, 0x03
 };
-static DEFINE_STATIC_PACKET(a16x_err_fg_off, DSI_PKT_TYPE_WR, A16X_ERR_FG_OFF, 0);
+static DEFINE_STATIC_PACKET(a33x_err_fg_off, DSI_PKT_TYPE_WR, A33X_ERR_FG_OFF, 0);
 
-static u8 A16X_ERR_FG_SETTING_1[] = {
+static u8 A33X_ERR_FG_SETTING_1[] = {
 	0xED,
 	0x01, 0x26,
 	/* Vlin1, ELVDD, Vlin3 Monitor On */
 	/* Defalut LOW */
 };
-static DEFINE_STATIC_PACKET(a16x_err_fg_setting_1, DSI_PKT_TYPE_WR, A16X_ERR_FG_SETTING_1, 0);
+static DEFINE_STATIC_PACKET(a33x_err_fg_setting_1, DSI_PKT_TYPE_WR, A33X_ERR_FG_SETTING_1, 0);
 
-static u8 A16X_ERR_FG_SETTING_2[] = {
+static u8 A33X_ERR_FG_SETTING_2[] = {
 	0xF4, 0x1C
 };
-static DEFINE_STATIC_PACKET(a16x_err_fg_setting_2, DSI_PKT_TYPE_WR, A16X_ERR_FG_SETTING_2, 0x06);
+static DEFINE_STATIC_PACKET(a33x_err_fg_setting_2, DSI_PKT_TYPE_WR, A33X_ERR_FG_SETTING_2, 0x06);
 
-static u8 A16X_VSYNC_SET[] = {
+static u8 A33X_VSYNC_SET[] = {
 	0xF2,
 	0x54
 };
-static DEFINE_STATIC_PACKET(a16x_vsync_set, DSI_PKT_TYPE_WR, A16X_VSYNC_SET, 0x04);
+static DEFINE_STATIC_PACKET(a33x_vsync_set, DSI_PKT_TYPE_WR, A33X_VSYNC_SET, 0x04);
 
-static u8 A16X_FREQ_SET[] = {
+static u8 A33X_FREQ_SET[] = {
 	0xF2,
 	0x00
 };
-static DEFINE_STATIC_PACKET(a16x_freq_set, DSI_PKT_TYPE_WR, A16X_FREQ_SET, 0x27);
+static DEFINE_STATIC_PACKET(a33x_freq_set, DSI_PKT_TYPE_WR, A33X_FREQ_SET, 0x27);
 
-static u8 A16X_PORCH_SET[] = {
+static u8 A33X_PORCH_SET[] = {
 	0xF2,
 	0x55
 };
-static DEFINE_STATIC_PACKET(a16x_porch_set, DSI_PKT_TYPE_WR, A16X_PORCH_SET, 0x2E);
+static DEFINE_STATIC_PACKET(a33x_porch_set, DSI_PKT_TYPE_WR, A33X_PORCH_SET, 0x2E);
 
-static u8 A16X_FPS_1[] = { 0x60, 0x00, 0x00 };
-static DEFINE_PKTUI(a16x_fps_1, &a16x_maptbl[FPS_MAPTBL_1], 1);
-static DEFINE_VARIABLE_PACKET(a16x_fps_1, DSI_PKT_TYPE_WR, A16X_FPS_1, 0);
+static u8 A33X_FPS_1[] = { 0x60, 0x00, 0x00 };
+static DEFINE_PKTUI(a33x_fps_1, &a33x_maptbl[FPS_MAPTBL_1], 1);
+static DEFINE_VARIABLE_PACKET(a33x_fps_1, DSI_PKT_TYPE_WR, A33X_FPS_1, 0);
 
-static u8 A16X_PANEL_UPDATE[] = {
+static u8 A33X_PANEL_UPDATE[] = {
 	0xF7,
 	0x0B
 };
-static DEFINE_STATIC_PACKET(a16x_panel_update, DSI_PKT_TYPE_WR, A16X_PANEL_UPDATE, 0);
+static DEFINE_STATIC_PACKET(a33x_panel_update, DSI_PKT_TYPE_WR, A33X_PANEL_UPDATE, 0);
 
-static u8 A16X_GLOBAL_PARAM_SETTING[] = {
+static u8 A33X_GLOBAL_PARAM_SETTING[] = {
 	0xF2,
 	0x00, 0x05, 0x0E, 0x58, 0x50, 0x00, 0x0C, 0x00,
 	0x04, 0x30, 0xB1, 0x30, 0xB1, 0x0C, 0x04, 0xBC,
@@ -480,20 +480,20 @@ static u8 A16X_GLOBAL_PARAM_SETTING[] = {
 	0x00, 0x40, 0x30, 0xC8, 0x00, 0xC8, 0x00, 0x00,
 	0xCE
 };
-static DEFINE_STATIC_PACKET(a16x_global_param_setting, DSI_PKT_TYPE_WR, A16X_GLOBAL_PARAM_SETTING, 0);
+static DEFINE_STATIC_PACKET(a33x_global_param_setting, DSI_PKT_TYPE_WR, A33X_GLOBAL_PARAM_SETTING, 0);
 
-static u8 A16X_MIN_ROI_SETTING[] = {
+static u8 A33X_MIN_ROI_SETTING[] = {
 	0xC2,
 	0x1B, 0x41, 0xB0, 0x0E, 0x00, 0x3C, 0x5A, 0x00,
 	0x00
 };
-static DEFINE_STATIC_PACKET(a16x_min_roi_setting, DSI_PKT_TYPE_WR, A16X_MIN_ROI_SETTING, 0);
+static DEFINE_STATIC_PACKET(a33x_min_roi_setting, DSI_PKT_TYPE_WR, A33X_MIN_ROI_SETTING, 0);
 
 
 /* WARNING - S6E8FC3 using normal data type for DSC setting */
-static u8 A16X_DSC[] = { 0x9D, 0x01 };
-static DEFINE_STATIC_PACKET(a16x_dsc, DSI_PKT_TYPE_WR, A16X_DSC, 0);
-static u8 A16X_PPS[] = {
+static u8 A33X_DSC[] = { 0x9D, 0x01 };
+static DEFINE_STATIC_PACKET(a33x_dsc, DSI_PKT_TYPE_WR, A33X_DSC, 0);
+static u8 A33X_PPS[] = {
 	//1080x2340 Slice Info : 540x117 / 2 slice mode
 	0x9E,
 	0x11, 0x00, 0x00, 0x89, 0x30, 0x80, 0x09, 0x24,
@@ -509,168 +509,168 @@ static u8 A16X_PPS[] = {
 	0x2B, 0x34, 0x2B, 0x74, 0x3B, 0x74, 0x6B, 0xF4,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-static DEFINE_STATIC_PACKET(a16x_pps, DSI_PKT_TYPE_WR, A16X_PPS, 0);
+static DEFINE_STATIC_PACKET(a33x_pps, DSI_PKT_TYPE_WR, A33X_PPS, 0);
 
-static u8 A16X_NORMAL_MODE[] = {
+static u8 A33X_NORMAL_MODE[] = {
 	0x53, 0x20
 };
-static DEFINE_STATIC_PACKET(a16x_normal_mode, DSI_PKT_TYPE_WR, A16X_NORMAL_MODE, 0);
+static DEFINE_STATIC_PACKET(a33x_normal_mode, DSI_PKT_TYPE_WR, A33X_NORMAL_MODE, 0);
 
-static u8 A16X_SRC_SETTING[] = {
+static u8 A33X_SRC_SETTING[] = {
 	0xC3, 0x04
 };
-static DEFINE_STATIC_PACKET(a16x_src_setting, DSI_PKT_TYPE_WR, A16X_SRC_SETTING, 0x8A);
+static DEFINE_STATIC_PACKET(a33x_src_setting, DSI_PKT_TYPE_WR, A33X_SRC_SETTING, 0x8A);
 
-static u8 A16X_BLACK_INSERT_OFF[] = { 0xF2, 0x0C };
-static DEFINE_STATIC_PACKET(a16x_black_insert_off, DSI_PKT_TYPE_WR, A16X_BLACK_INSERT_OFF, 0);
+static u8 A33X_BLACK_INSERT_OFF[] = { 0xF2, 0x0C };
+static DEFINE_STATIC_PACKET(a33x_black_insert_off, DSI_PKT_TYPE_WR, A33X_BLACK_INSERT_OFF, 0);
 
-static u8 A16X_TSP_VSYNC_ON[] = {
+static u8 A33X_TSP_VSYNC_ON[] = {
 	0xE8,
 	0x00, 0x00, 0x14, 0x18, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01
 };
-static DEFINE_STATIC_PACKET(a16x_tsp_vsync_on, DSI_PKT_TYPE_WR, A16X_TSP_VSYNC_ON, 0);
+static DEFINE_STATIC_PACKET(a33x_tsp_vsync_on, DSI_PKT_TYPE_WR, A33X_TSP_VSYNC_ON, 0);
 
-static u8 A16X_WO_DSC[] = {
+static u8 A33X_WO_DSC[] = {
 	0xC3,
 	0x04, /* 0x02 : w/o DSC 0x04 : w/ DSC */
 };
-static DEFINE_STATIC_PACKET(a16x_wo_dsc, DSI_PKT_TYPE_WR, A16X_WO_DSC, 0x8A);
+static DEFINE_STATIC_PACKET(a33x_wo_dsc, DSI_PKT_TYPE_WR, A33X_WO_DSC, 0x8A);
 
-static u8 A16X_OSC_SETTING_1[] = {
+static u8 A33X_OSC_SETTING_1[] = {
 	0xD7,
 	0x90
 };
-static DEFINE_STATIC_PACKET(a16x_osc_setting_1, DSI_PKT_TYPE_WR, A16X_OSC_SETTING_1, 0x1B);
+static DEFINE_STATIC_PACKET(a33x_osc_setting_1, DSI_PKT_TYPE_WR, A33X_OSC_SETTING_1, 0x1B);
 
-static u8 A16X_OSC_SETTING_2[] = {
+static u8 A33X_OSC_SETTING_2[] = {
 	0xFE,
 	0xB0
 };
-static DEFINE_STATIC_PACKET(a16x_osc_setting_2, DSI_PKT_TYPE_WR, A16X_OSC_SETTING_2, 0);
+static DEFINE_STATIC_PACKET(a33x_osc_setting_2, DSI_PKT_TYPE_WR, A33X_OSC_SETTING_2, 0);
 
-static u8 A16X_OSC_SETTING_3[] = {
+static u8 A33X_OSC_SETTING_3[] = {
 	0xFE,
 	0x30
 };
-static DEFINE_STATIC_PACKET(a16x_osc_setting_3, DSI_PKT_TYPE_WR, A16X_OSC_SETTING_3, 0);
+static DEFINE_STATIC_PACKET(a33x_osc_setting_3, DSI_PKT_TYPE_WR, A33X_OSC_SETTING_3, 0);
 
 /* 1 ~ 3 has same value */
-static u8 A16X_ETC_SETTING_1[] = {
+static u8 A33X_ETC_SETTING_1[] = {
 	0xF6,
 	0xF0
 };
-static DEFINE_STATIC_PACKET(a16x_etc_setting_1, DSI_PKT_TYPE_WR, A16X_ETC_SETTING_1, 0x15);
+static DEFINE_STATIC_PACKET(a33x_etc_setting_1, DSI_PKT_TYPE_WR, A33X_ETC_SETTING_1, 0x15);
 
-static u8 A16X_ETC_SETTING_2[] = {
+static u8 A33X_ETC_SETTING_2[] = {
 	0xF6,
 	0xF0
 };
-static DEFINE_STATIC_PACKET(a16x_etc_setting_2, DSI_PKT_TYPE_WR, A16X_ETC_SETTING_2, 0x28);
+static DEFINE_STATIC_PACKET(a33x_etc_setting_2, DSI_PKT_TYPE_WR, A33X_ETC_SETTING_2, 0x28);
 
-static u8 A16X_ETC_SETTING_3[] = {
+static u8 A33X_ETC_SETTING_3[] = {
 	0xF6,
 	0xF0
 };
-static DEFINE_STATIC_PACKET(a16x_etc_setting_3, DSI_PKT_TYPE_WR, A16X_ETC_SETTING_3, 0x3B);
+static DEFINE_STATIC_PACKET(a33x_etc_setting_3, DSI_PKT_TYPE_WR, A33X_ETC_SETTING_3, 0x3B);
 
-static u8 A16X_SEED_SETTING[] = {
+static u8 A33X_SEED_SETTING[] = {
 	0xB8,
 	0x00, 0x00, 0x00, 0x5F, 0x8F, 0x00, 0x5F, 0x8F
 };
-static DEFINE_STATIC_PACKET(a16x_seed_setting, DSI_PKT_TYPE_WR, A16X_SEED_SETTING, 0);
+static DEFINE_STATIC_PACKET(a33x_seed_setting, DSI_PKT_TYPE_WR, A33X_SEED_SETTING, 0);
 
-static u8 A16X_FFC_DEFAULT[] = {
+static u8 A33X_FFC_DEFAULT[] = {
 	0xDF,
 	0x09, 0x30, 0x95, 0x57, 0x0B, 0x57, 0x0B /* 898 Mbps */
 };
-static DEFINE_STATIC_PACKET(a16x_ffc_default, DSI_PKT_TYPE_WR, A16X_FFC_DEFAULT, 0);
+static DEFINE_STATIC_PACKET(a33x_ffc_default, DSI_PKT_TYPE_WR, A33X_FFC_DEFAULT, 0);
 
-static u8 A16X_IRC_MODE[] = {
+static u8 A33X_IRC_MODE[] = {
 	0xB5,
 	0x01, 0x00, 0x00, 0x00, 0x86, 0xE2, 0x44, 0x80,
 	0x00, 0x00, 0xFF, 0xF4, 0xFF, 0x9C
 };
-static DEFINE_PKTUI(a16x_irc_mode, &a16x_maptbl[IRC_MODE_MAPTBL], 1);
-static DEFINE_VARIABLE_PACKET(a16x_irc_mode, DSI_PKT_TYPE_WR, A16X_IRC_MODE, 0xF8);
+static DEFINE_PKTUI(a33x_irc_mode, &a33x_maptbl[IRC_MODE_MAPTBL], 1);
+static DEFINE_VARIABLE_PACKET(a33x_irc_mode, DSI_PKT_TYPE_WR, A33X_IRC_MODE, 0xF8);
 
 #ifdef CONFIG_USDM_FACTORY_CCD_TEST
-static u8 A16X_KEY_F1_ENABLE[] = { 0xF1, 0x5A, 0x5A };
-static u8 A16X_KEY_F1_DISABLE[] = { 0xF1, 0xA5, 0xA5 };
-static DEFINE_STATIC_PACKET(a16x_key_f1_enable, DSI_PKT_TYPE_WR, A16X_KEY_F1_ENABLE, 0);
-static DEFINE_STATIC_PACKET(a16x_key_f1_disable, DSI_PKT_TYPE_WR, A16X_KEY_F1_DISABLE, 0);
+static u8 A33X_KEY_F1_ENABLE[] = { 0xF1, 0x5A, 0x5A };
+static u8 A33X_KEY_F1_DISABLE[] = { 0xF1, 0xA5, 0xA5 };
+static DEFINE_STATIC_PACKET(a33x_key_f1_enable, DSI_PKT_TYPE_WR, A33X_KEY_F1_ENABLE, 0);
+static DEFINE_STATIC_PACKET(a33x_key_f1_disable, DSI_PKT_TYPE_WR, A33X_KEY_F1_DISABLE, 0);
 
-static u8 A16X_CCD_ENABLE[] = { 0xEA, 0x5C, 0x51, 0x01, 0x00 };
-static u8 A16X_CCD_DISABLE[] = { 0xEA, 0x5C, 0x51, 0x00, 0x00 };
-static DEFINE_STATIC_PACKET(a16x_ccd_test_enable, DSI_PKT_TYPE_WR, A16X_CCD_ENABLE, 0x00);
-static DEFINE_STATIC_PACKET(a16x_ccd_test_disable, DSI_PKT_TYPE_WR, A16X_CCD_DISABLE, 0x00);
+static u8 A33X_CCD_ENABLE[] = { 0xEA, 0x5C, 0x51, 0x01, 0x00 };
+static u8 A33X_CCD_DISABLE[] = { 0xEA, 0x5C, 0x51, 0x00, 0x00 };
+static DEFINE_STATIC_PACKET(a33x_ccd_test_enable, DSI_PKT_TYPE_WR, A33X_CCD_ENABLE, 0x00);
+static DEFINE_STATIC_PACKET(a33x_ccd_test_disable, DSI_PKT_TYPE_WR, A33X_CCD_DISABLE, 0x00);
 #endif
 
-static DEFINE_PNOBJ_CONFIG(a16x_set_wait_tx_done_property_off, PANEL_PROPERTY_WAIT_TX_DONE, WAIT_TX_DONE_MANUAL_OFF);
-static DEFINE_PNOBJ_CONFIG(a16x_set_wait_tx_done_property_auto, PANEL_PROPERTY_WAIT_TX_DONE, WAIT_TX_DONE_AUTO);
+static DEFINE_PNOBJ_CONFIG(a33x_set_wait_tx_done_property_off, PANEL_PROPERTY_WAIT_TX_DONE, WAIT_TX_DONE_MANUAL_OFF);
+static DEFINE_PNOBJ_CONFIG(a33x_set_wait_tx_done_property_auto, PANEL_PROPERTY_WAIT_TX_DONE, WAIT_TX_DONE_AUTO);
 
-static struct seqinfo SEQINFO(a16x_set_bl_param_seq);
-static struct seqinfo SEQINFO(a16x_set_fps_param_seq);
+static struct seqinfo SEQINFO(a33x_set_bl_param_seq);
+static struct seqinfo SEQINFO(a33x_set_fps_param_seq);
 #if defined(CONFIG_USDM_FACTORY)
-static struct seqinfo SEQINFO(a16x_res_init_seq);
+static struct seqinfo SEQINFO(a33x_res_init_seq);
 #endif
 
-static DEFINE_PNOBJ_CONFIG(a16x_set_separate_tx_off, PANEL_PROPERTY_SEPARATE_TX, SEPARATE_TX_OFF);
-static DEFINE_PNOBJ_CONFIG(a16x_set_separate_tx_on, PANEL_PROPERTY_SEPARATE_TX, SEPARATE_TX_ON);
+static DEFINE_PNOBJ_CONFIG(a33x_set_separate_tx_off, PANEL_PROPERTY_SEPARATE_TX, SEPARATE_TX_OFF);
+static DEFINE_PNOBJ_CONFIG(a33x_set_separate_tx_on, PANEL_PROPERTY_SEPARATE_TX, SEPARATE_TX_ON);
 
-static void *a16x_common_setting_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+static void *a33x_common_setting_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 
 	&s6e8fc3_restbl[RES_ID],
 
-	&PKTINFO(a16x_dsc),
-	&PKTINFO(a16x_pps),
-	&PKTINFO(a16x_src_setting),
+	&PKTINFO(a33x_dsc),
+	&PKTINFO(a33x_pps),
+	&PKTINFO(a33x_src_setting),
 
-	&PKTINFO(a16x_wo_dsc),
-	&PKTINFO(a16x_black_insert_off),
-	&PKTINFO(a16x_panel_update),
-	&PKTINFO(a16x_ffc_default),
-	&PKTINFO(a16x_tsp_vsync_on),
-	&PKTINFO(a16x_acl_set),
+	&PKTINFO(a33x_wo_dsc),
+	&PKTINFO(a33x_black_insert_off),
+	&PKTINFO(a33x_panel_update),
+	&PKTINFO(a33x_ffc_default),
+	&PKTINFO(a33x_tsp_vsync_on),
+	&PKTINFO(a33x_acl_set),
 
-	&PKTINFO(a16x_err_fg_setting_1),
-	&PKTINFO(a16x_err_fg_setting_2),
-	&PKTINFO(a16x_err_fg_on),
-	&PKTINFO(a16x_pcd_det_set),
+	&PKTINFO(a33x_err_fg_setting_1),
+	&PKTINFO(a33x_err_fg_setting_2),
+	&PKTINFO(a33x_err_fg_on),
+	&PKTINFO(a33x_pcd_det_set),
 
-	&PKTINFO(a16x_smooth_dimming_1f),
-	&PKTINFO(a16x_panel_update),
+	&PKTINFO(a33x_smooth_dimming_1f),
+	&PKTINFO(a33x_panel_update),
 
-	&SEQINFO(a16x_set_bl_param_seq), /* includes FPS setting also */
+	&SEQINFO(a33x_set_bl_param_seq), /* includes FPS setting also */
 
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static DEFINE_SEQINFO(a16x_common_setting_seq,
-		a16x_common_setting_cmdtbl);
+static DEFINE_SEQINFO(a33x_common_setting_seq,
+		a33x_common_setting_cmdtbl);
 
-static void *a16x_init_cmdtbl[] = {
-	&PNOBJ_CONFIG(a16x_set_separate_tx_on),
-	&DLYINFO(a16x_wait_1msec),
-	&PKTINFO(a16x_sleep_out),
-	&DLYINFO(a16x_wait_100msec),
+static void *a33x_init_cmdtbl[] = {
+	&PNOBJ_CONFIG(a33x_set_separate_tx_on),
+	&DLYINFO(a33x_wait_1msec),
+	&PKTINFO(a33x_sleep_out),
+	&DLYINFO(a33x_wait_100msec),
 
-	&SEQINFO(a16x_common_setting_seq),
+	&SEQINFO(a33x_common_setting_seq),
 
 #if defined(CONFIG_USDM_FACTORY)
-	&SEQINFO(a16x_res_init_seq),
+	&SEQINFO(a33x_res_init_seq),
 #endif
-	&PNOBJ_CONFIG(a16x_set_separate_tx_off),
+	&PNOBJ_CONFIG(a33x_set_separate_tx_off),
 };
 
-static void *a16x_res_init_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+static void *a33x_res_init_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 	&s6e8fc3_restbl[RES_ID],
 	&s6e8fc3_restbl[RES_COORDINATE],
 	&s6e8fc3_restbl[RES_CODE],
@@ -681,226 +681,226 @@ static void *a16x_res_init_cmdtbl[] = {
 	&s6e8fc3_restbl[RES_ERR_FG],
 	&s6e8fc3_restbl[RES_DSI_ERR],
 #endif
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
 
 #if defined(CONFIG_USDM_FACTORY)
-static DEFINE_SEQINFO(a16x_res_init_seq, a16x_res_init_cmdtbl);
+static DEFINE_SEQINFO(a33x_res_init_seq, a33x_res_init_cmdtbl);
 #endif
 
 /* bl for normal */
-static void *a16x_set_bl_param_cmdtbl[] = {
-	&PKTINFO(a16x_fps_1),
-	&PKTINFO(a16x_tset_set),
-	&PKTINFO(a16x_acl_control),
-	&PKTINFO(a16x_hbm_transition),
-	&PKTINFO(a16x_wrdisbv),
-	&PKTINFO(a16x_irc_mode),
-	&PKTINFO(a16x_panel_update),
+static void *a33x_set_bl_param_cmdtbl[] = {
+	&PKTINFO(a33x_fps_1),
+	&PKTINFO(a33x_tset_set),
+	&PKTINFO(a33x_acl_control),
+	&PKTINFO(a33x_hbm_transition),
+	&PKTINFO(a33x_wrdisbv),
+	&PKTINFO(a33x_irc_mode),
+	&PKTINFO(a33x_panel_update),
 };
 
-static DEFINE_SEQINFO(a16x_set_bl_param_seq, a16x_set_bl_param_cmdtbl);
+static DEFINE_SEQINFO(a33x_set_bl_param_seq, a33x_set_bl_param_cmdtbl);
 
-static void *a16x_set_bl_cmdtbl[] = {
-	&KEYINFO(a16x_level2_key_enable),
-	&SEQINFO(a16x_set_bl_param_seq),
-	&KEYINFO(a16x_level2_key_disable),
+static void *a33x_set_bl_cmdtbl[] = {
+	&KEYINFO(a33x_level2_key_enable),
+	&SEQINFO(a33x_set_bl_param_seq),
+	&KEYINFO(a33x_level2_key_disable),
 };
 
-static DEFINE_RULE_BASED_COND(a16x_cond_is_panel_state_not_lpm,
+static DEFINE_RULE_BASED_COND(a33x_cond_is_panel_state_not_lpm,
 		PANEL_PROPERTY_PANEL_STATE, NE, PANEL_STATE_ALPM);
-static DEFINE_RULE_BASED_COND(a16x_cond_is_panel_state_lpm,
+static DEFINE_RULE_BASED_COND(a33x_cond_is_panel_state_lpm,
 		PANEL_PROPERTY_PANEL_STATE, EQ, PANEL_STATE_ALPM);
 
-static void *a16x_set_fps_cmdtbl[] = {
-	&PNOBJ_CONFIG(a16x_set_wait_tx_done_property_off),
-		&DLYINFO(a16x_wait_1_vsync),
-		&DLYINFO(a16x_wait_1msec),
-		&KEYINFO(a16x_level1_key_enable),
-		&KEYINFO(a16x_level2_key_enable),
-		&KEYINFO(a16x_level3_key_enable),
-		&SEQINFO(a16x_set_bl_param_seq),
-		&KEYINFO(a16x_level3_key_disable),
-		&KEYINFO(a16x_level2_key_disable),
-		&KEYINFO(a16x_level1_key_disable),
-	&PNOBJ_CONFIG(a16x_set_wait_tx_done_property_auto),
+static void *a33x_set_fps_cmdtbl[] = {
+	&PNOBJ_CONFIG(a33x_set_wait_tx_done_property_off),
+		&DLYINFO(a33x_wait_1_vsync),
+		&DLYINFO(a33x_wait_1msec),
+		&KEYINFO(a33x_level1_key_enable),
+		&KEYINFO(a33x_level2_key_enable),
+		&KEYINFO(a33x_level3_key_enable),
+		&SEQINFO(a33x_set_bl_param_seq),
+		&KEYINFO(a33x_level3_key_disable),
+		&KEYINFO(a33x_level2_key_disable),
+		&KEYINFO(a33x_level1_key_disable),
+	&PNOBJ_CONFIG(a33x_set_wait_tx_done_property_auto),
 };
 
-static void *a16x_display_on_cmdtbl[] = {
-	&DLYINFO(a16x_wait_sleep_out_20msec),
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
-	&PKTINFO(a16x_display_on),
-	&DLYINFO(a16x_wait_17msec),
-	&PKTINFO(a16x_smooth_dimming_15f),
-	&PKTINFO(a16x_panel_update),
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+static void *a33x_display_on_cmdtbl[] = {
+	&DLYINFO(a33x_wait_sleep_out_20msec),
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
+	&PKTINFO(a33x_display_on),
+	&DLYINFO(a33x_wait_17msec),
+	&PKTINFO(a33x_smooth_dimming_15f),
+	&PKTINFO(a33x_panel_update),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
-static void *a16x_display_off_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
-	&PKTINFO(a16x_err_fg_off),
-	&PKTINFO(a16x_display_off),
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
-	&DLYINFO(a16x_wait_display_off),
+static void *a33x_display_off_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
+	&PKTINFO(a33x_err_fg_off),
+	&PKTINFO(a33x_display_off),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
+	&DLYINFO(a33x_wait_display_off),
 };
 
-static void *a16x_exit_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+static void *a33x_exit_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 #ifdef CONFIG_USDM_PANEL_DPUI
 	&s6e8fc3_dmptbl[DUMP_DSI_ERR],
 	&s6e8fc3_dmptbl[DUMP_SELF_DIAG],
 #endif
-	&PKTINFO(a16x_sleep_in),
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
-	&DLYINFO(a16x_wait_sleep_in),
+	&PKTINFO(a33x_sleep_in),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
+	&DLYINFO(a33x_wait_sleep_in),
 };
 
-static void *a16x_dump_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+static void *a33x_dump_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 	&s6e8fc3_dmptbl[DUMP_RDDPM],
 	&s6e8fc3_dmptbl[DUMP_RDDSM],
 	&s6e8fc3_dmptbl[DUMP_DSI_ERR],
 	&s6e8fc3_dmptbl[DUMP_SELF_DIAG],
 	&s6e8fc3_dmptbl[DUMP_SELF_MASK_CHECKSUM],
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
 
-static void *a16x_check_condition_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+static void *a33x_check_condition_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 	&s6e8fc3_dmptbl[DUMP_RDDPM],
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 };
 
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-static void *a16x_mask_layer_workaround_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
-	&PKTINFO(a16x_wrdisbv),
-	&PKTINFO(a16x_hbm_transition),
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
-	&DLYINFO(a16x_wait_2_vsync),
+static void *a33x_mask_layer_workaround_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
+	&PKTINFO(a33x_wrdisbv),
+	&PKTINFO(a33x_hbm_transition),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
+	&DLYINFO(a33x_wait_2_vsync),
 };
 
-static void *a16x_mask_layer_enter_br_cmdtbl[] = {
-	&DLYINFO(a16x_wait_1_vsync),
+static void *a33x_mask_layer_enter_br_cmdtbl[] = {
+	&DLYINFO(a33x_wait_1_vsync),
 	/* VFP start */
-	&DLYINFO(a16x_wait_1msec),
+	&DLYINFO(a33x_wait_1msec),
 	/* VFP CMD TX ALLOW END */
 
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 	/* BL CMD */
-	&SEQINFO(a16x_set_bl_param_seq),
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+	&SEQINFO(a33x_set_bl_param_seq),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 
 	/* VFP start */
 	/* CMD will be flushed here */
-	&CONDINFO_IF(a16x_cond_is_90hz),
-		&DLYINFO(a16x_wait_1msec),
-	&CONDINFO_FI(a16x_cond_is_90hz),
+	&CONDINFO_IF(a33x_cond_is_90hz),
+		&DLYINFO(a33x_wait_1msec),
+	&CONDINFO_FI(a33x_cond_is_90hz),
 
-	&CONDINFO_IF(a16x_cond_is_60hz),
-		&DLYINFO(a16x_wait_6msec),
-	&CONDINFO_FI(a16x_cond_is_60hz),
+	&CONDINFO_IF(a33x_cond_is_60hz),
+		&DLYINFO(a33x_wait_6msec),
+	&CONDINFO_FI(a33x_cond_is_60hz),
 	/* VSYNC start */
 	/* DECON update for next frame */
 };
 
-static void *a16x_mask_layer_exit_br_cmdtbl[] = {
-	&KEYINFO(a16x_level1_key_enable),
-	&KEYINFO(a16x_level2_key_enable),
-	&KEYINFO(a16x_level3_key_enable),
+static void *a33x_mask_layer_exit_br_cmdtbl[] = {
+	&KEYINFO(a33x_level1_key_enable),
+	&KEYINFO(a33x_level2_key_enable),
+	&KEYINFO(a33x_level3_key_enable),
 	/* BL CMD */
-	&SEQINFO(a16x_set_bl_param_seq),
-	&KEYINFO(a16x_level3_key_disable),
-	&KEYINFO(a16x_level2_key_disable),
-	&KEYINFO(a16x_level1_key_disable),
+	&SEQINFO(a33x_set_bl_param_seq),
+	&KEYINFO(a33x_level3_key_disable),
+	&KEYINFO(a33x_level2_key_disable),
+	&KEYINFO(a33x_level1_key_disable),
 
 	/* VFP start */
 	/* CMD will be flushed here */
-	&CONDINFO_IF(a16x_cond_is_90hz),
-		&DLYINFO(a16x_wait_1msec),
-	&CONDINFO_FI(a16x_cond_is_90hz),
+	&CONDINFO_IF(a33x_cond_is_90hz),
+		&DLYINFO(a33x_wait_1msec),
+	&CONDINFO_FI(a33x_cond_is_90hz),
 
-	&CONDINFO_IF(a16x_cond_is_60hz),
-		&DLYINFO(a16x_wait_6msec),
-	&CONDINFO_FI(a16x_cond_is_60hz),
+	&CONDINFO_IF(a33x_cond_is_60hz),
+		&DLYINFO(a33x_wait_6msec),
+	&CONDINFO_FI(a33x_cond_is_60hz),
 	/* VSYNC start */
 	/* DECON update for next frame */
 };
 #endif
 
 #ifdef CONFIG_USDM_FACTORY_CCD_TEST
-static void *a16x_ccd_test_cmdtbl[] = {
-	&PKTINFO(a16x_key_f1_enable),
-	&KEYINFO(a16x_level3_key_enable),
-	&PKTINFO(a16x_ccd_test_enable),
-	&DLYINFO(a16x_wait_17msec),
+static void *a33x_ccd_test_cmdtbl[] = {
+	&PKTINFO(a33x_key_f1_enable),
+	&KEYINFO(a33x_level3_key_enable),
+	&PKTINFO(a33x_ccd_test_enable),
+	&DLYINFO(a33x_wait_17msec),
 	&s6e8fc3_restbl[RES_CCD_STATE],
-	&PKTINFO(a16x_ccd_test_disable),
-	&PKTINFO(a16x_key_f1_disable),
-	&KEYINFO(a16x_level3_key_disable),
+	&PKTINFO(a33x_ccd_test_disable),
+	&PKTINFO(a33x_key_f1_disable),
+	&KEYINFO(a33x_level3_key_disable),
 };
 #endif
 
-static void *a16x_dummy_cmdtbl[] = {
+static void *a33x_dummy_cmdtbl[] = {
 	NULL,
 };
 
-static struct seqinfo a16x_seqtbl[] = {
-	SEQINFO_INIT(PANEL_INIT_SEQ, a16x_init_cmdtbl),
-	SEQINFO_INIT(PANEL_RES_INIT_SEQ, a16x_res_init_cmdtbl),
-	SEQINFO_INIT(PANEL_SET_BL_SEQ, a16x_set_bl_cmdtbl),
-	SEQINFO_INIT(PANEL_DISPLAY_ON_SEQ, a16x_display_on_cmdtbl),
-	SEQINFO_INIT(PANEL_DISPLAY_OFF_SEQ, a16x_display_off_cmdtbl),
-	SEQINFO_INIT(PANEL_EXIT_SEQ, a16x_exit_cmdtbl),
-	SEQINFO_INIT(PANEL_DISPLAY_MODE_SEQ, a16x_set_fps_cmdtbl),
+static struct seqinfo a33x_seqtbl[] = {
+	SEQINFO_INIT(PANEL_INIT_SEQ, a33x_init_cmdtbl),
+	SEQINFO_INIT(PANEL_RES_INIT_SEQ, a33x_res_init_cmdtbl),
+	SEQINFO_INIT(PANEL_SET_BL_SEQ, a33x_set_bl_cmdtbl),
+	SEQINFO_INIT(PANEL_DISPLAY_ON_SEQ, a33x_display_on_cmdtbl),
+	SEQINFO_INIT(PANEL_DISPLAY_OFF_SEQ, a33x_display_off_cmdtbl),
+	SEQINFO_INIT(PANEL_EXIT_SEQ, a33x_exit_cmdtbl),
+	SEQINFO_INIT(PANEL_DISPLAY_MODE_SEQ, a33x_set_fps_cmdtbl),
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-	SEQINFO_INIT(PANEL_MASK_LAYER_STOP_DIMMING_SEQ, a16x_mask_layer_workaround_cmdtbl),
-	SEQINFO_INIT(PANEL_MASK_LAYER_ENTER_BR_SEQ, a16x_mask_layer_enter_br_cmdtbl),
-	SEQINFO_INIT(PANEL_MASK_LAYER_EXIT_BR_SEQ, a16x_mask_layer_exit_br_cmdtbl),
+	SEQINFO_INIT(PANEL_MASK_LAYER_STOP_DIMMING_SEQ, a33x_mask_layer_workaround_cmdtbl),
+	SEQINFO_INIT(PANEL_MASK_LAYER_ENTER_BR_SEQ, a33x_mask_layer_enter_br_cmdtbl),
+	SEQINFO_INIT(PANEL_MASK_LAYER_EXIT_BR_SEQ, a33x_mask_layer_exit_br_cmdtbl),
 #endif
 #ifdef CONFIG_USDM_FACTORY_CCD_TEST
-	SEQINFO_INIT(PANEL_CCD_TEST_SEQ, a16x_ccd_test_cmdtbl),
+	SEQINFO_INIT(PANEL_CCD_TEST_SEQ, a33x_ccd_test_cmdtbl),
 #endif
-	SEQINFO_INIT(PANEL_DUMP_SEQ, a16x_dump_cmdtbl),
-	SEQINFO_INIT(PANEL_CHECK_CONDITION_SEQ, a16x_check_condition_cmdtbl),
-	SEQINFO_INIT(PANEL_DUMMY_SEQ, a16x_dummy_cmdtbl),
+	SEQINFO_INIT(PANEL_DUMP_SEQ, a33x_dump_cmdtbl),
+	SEQINFO_INIT(PANEL_CHECK_CONDITION_SEQ, a33x_check_condition_cmdtbl),
+	SEQINFO_INIT(PANEL_DUMMY_SEQ, a33x_dummy_cmdtbl),
 };
 
-struct common_panel_info s6e8fc3_a16x_panel_info = {
+struct common_panel_info s6e8fc3_a33x_panel_info = {
 	.ldi_name = "s6e8fc3",
-	.name = "s6e8fc3_a16x",
+	.name = "s6e8fc3_a33x",
 	.model = "AMS638YQ01",
 	.vendor = "SDC",
 	.id = 0x800004,
@@ -918,18 +918,18 @@ struct common_panel_info s6e8fc3_a16x_panel_info = {
 	},
 
 #if defined(CONFIG_USDM_PANEL_DISPLAY_MODE)
-	.common_panel_modes = &s6e8fc3_a16x_display_modes,
+	.common_panel_modes = &s6e8fc3_a33x_display_modes,
 #endif
 	.mres = {
-		.nr_resol = ARRAY_SIZE(s6e8fc3_a16x_default_resol),
-		.resol = s6e8fc3_a16x_default_resol,
+		.nr_resol = ARRAY_SIZE(s6e8fc3_a33x_default_resol),
+		.resol = s6e8fc3_a33x_default_resol,
 	},
-	.vrrtbl = s6e8fc3_a16x_default_vrrtbl,
-	.nr_vrrtbl = ARRAY_SIZE(s6e8fc3_a16x_default_vrrtbl),
-	.maptbl = a16x_maptbl,
-	.nr_maptbl = ARRAY_SIZE(a16x_maptbl),
-	.seqtbl = a16x_seqtbl,
-	.nr_seqtbl = ARRAY_SIZE(a16x_seqtbl),
+	.vrrtbl = s6e8fc3_a33x_default_vrrtbl,
+	.nr_vrrtbl = ARRAY_SIZE(s6e8fc3_a33x_default_vrrtbl),
+	.maptbl = a33x_maptbl,
+	.nr_maptbl = ARRAY_SIZE(a33x_maptbl),
+	.seqtbl = a33x_seqtbl,
+	.nr_seqtbl = ARRAY_SIZE(a33x_seqtbl),
 	.rditbl = s6e8fc3_rditbl,
 	.nr_rditbl = ARRAY_SIZE(s6e8fc3_rditbl),
 	.restbl = s6e8fc3_restbl,
@@ -938,14 +938,14 @@ struct common_panel_info s6e8fc3_a16x_panel_info = {
 	.nr_dumpinfo = ARRAY_SIZE(s6e8fc3_dmptbl),
 
 #ifdef CONFIG_USDM_MDNIE
-	.mdnie_tune = &s6e8fc3_a16x_mdnie_tune,
+	.mdnie_tune = &s6e8fc3_a33x_mdnie_tune,
 #endif
 	.panel_dim_info = {
-		[PANEL_BL_SUBDEV_TYPE_DISP] = &s6e8fc3_a16x_panel_dimming_info,
+		[PANEL_BL_SUBDEV_TYPE_DISP] = &s6e8fc3_a33x_panel_dimming_info,
 	},
 #ifdef CONFIG_USDM_PANEL_SELF_DISPLAY
-	.aod_tune = &s6e8fc3_a16x_aod,
+	.aod_tune = &s6e8fc3_a33x_aod,
 #endif
 };
 
-#endif /* __S6E8FC3_A16X_PANEL_H__ */
+#endif /* __S6E8FC3_A33X_PANEL_H__ */
