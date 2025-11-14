@@ -19,8 +19,8 @@
 #include "s6e8fc3_dimming.h"
 
 enum {
-	S6E8FC3_A33X_DISPLAY_MODE_1080x2340_90HS,
-	S6E8FC3_A33X_DISPLAY_MODE_1080x2340_60HS,
+	S6E8FC3_A33X_DISPLAY_MODE_1080x2400_90HS,
+	S6E8FC3_A33X_DISPLAY_MODE_1080x2400_60HS,
 	MAX_S6E8FC3_A33X_DISPLAY_MODE,
 };
 
@@ -45,9 +45,9 @@ static struct panel_vrr *s6e8fc3_a33x_default_vrrtbl[] = {
 };
 
 static struct panel_resol s6e8fc3_a33x_default_resol[] = {
-	[S6E8FC3_RESOL_1080x2340] = {
+	[S6E8FC3_RESOL_1080x2400] = {
 		.w = 1080,
-		.h = 2340,
+		.h = 2400,
 		.comp_type = PN_COMP_TYPE_DSC,
 		.comp_param = {
 			.dsc = {
@@ -63,21 +63,21 @@ static struct panel_resol s6e8fc3_a33x_default_resol[] = {
 #if defined(CONFIG_USDM_PANEL_DISPLAY_MODE)
 static struct common_panel_display_mode s6e8fc3_a33x_display_mode[] = {
 	/* FHD */
-	[S6E8FC3_A33X_DISPLAY_MODE_1080x2340_90HS] = {
-		.name = PANEL_DISPLAY_MODE_1080x2340_90HS,
-		.resol = &s6e8fc3_a33x_default_resol[S6E8FC3_RESOL_1080x2340],
+	[S6E8FC3_A33X_DISPLAY_MODE_1080x2400_90HS] = {
+		.name = PANEL_DISPLAY_MODE_1080x2400_90HS,
+		.resol = &s6e8fc3_a33x_default_resol[S6E8FC3_RESOL_1080x2400],
 		.vrr = &s6e8fc3_a33x_default_panel_vrr[S6E8FC3_VRR_90HS],
 	},
-	[S6E8FC3_A33X_DISPLAY_MODE_1080x2340_60HS] = {
-		.name = PANEL_DISPLAY_MODE_1080x2340_60HS,
-		.resol = &s6e8fc3_a33x_default_resol[S6E8FC3_RESOL_1080x2340],
+	[S6E8FC3_A33X_DISPLAY_MODE_1080x2400_60HS] = {
+		.name = PANEL_DISPLAY_MODE_1080x2400_60HS,
+		.resol = &s6e8fc3_a33x_default_resol[S6E8FC3_RESOL_1080x2400],
 		.vrr = &s6e8fc3_a33x_default_panel_vrr[S6E8FC3_VRR_60HS],
 	},
 };
 
 static struct common_panel_display_mode *s6e8fc3_a33x_display_mode_array[] = {
-	[S6E8FC3_A33X_DISPLAY_MODE_1080x2340_90HS] = &s6e8fc3_a33x_display_mode[S6E8FC3_A33X_DISPLAY_MODE_1080x2340_90HS],
-	[S6E8FC3_A33X_DISPLAY_MODE_1080x2340_60HS] = &s6e8fc3_a33x_display_mode[S6E8FC3_A33X_DISPLAY_MODE_1080x2340_60HS],
+	[S6E8FC3_A33X_DISPLAY_MODE_1080x2400_90HS] = &s6e8fc3_a33x_display_mode[S6E8FC3_A33X_DISPLAY_MODE_1080x2400_90HS],
+	[S6E8FC3_A33X_DISPLAY_MODE_1080x2400_60HS] = &s6e8fc3_a33x_display_mode[S6E8FC3_A33X_DISPLAY_MODE_1080x2400_60HS],
 };
 
 static struct common_panel_display_modes s6e8fc3_a33x_display_modes = {
