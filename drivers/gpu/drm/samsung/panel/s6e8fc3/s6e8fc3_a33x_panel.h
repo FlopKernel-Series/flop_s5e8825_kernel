@@ -13,9 +13,9 @@
 #ifndef __S6E8FC3_A33X_PANEL_H__
 #define __S6E8FC3_A33X_PANEL_H__
 
-#include "../panel.h"
-#include "../panel_drv.h"
-#include "../panel_debug.h"
+#include "../usdm_panel.h"
+#include "../usdm_panel_drv.h"
+#include "../usdm_panel_debug.h"
 #include "oled_function.h"
 #include "oled_property.h"
 #include "s6e8fc3.h"
@@ -579,9 +579,15 @@ static u8 A33X_SEED_SETTING[] = {
 };
 static DEFINE_STATIC_PACKET(a33x_seed_setting, DSI_PKT_TYPE_WR, A33X_SEED_SETTING, 0);
 
+static u8 A33X_FFC_DEFAULT_REV04[] = {
+	0xDF,
+	0x09, 0x30, 0x95, 0x2F, 0xD6, 0x4B, 0x51
+};
+static DEFINE_STATIC_PACKET(a33x_ffc_default_rev04, DSI_PKT_TYPE_WR, A33X_FFC_DEFAULT_REV04, 0);
+
 static u8 A33X_FFC_DEFAULT[] = {
 	0xDF,
-	0x09, 0x30, 0x95, 0x57, 0x0B, 0x57, 0x0B /* 898 Mbps */
+	0x09, 0x30, 0x95, 0x56, 0xDD, 0x56, 0xDD
 };
 static DEFINE_STATIC_PACKET(a33x_ffc_default, DSI_PKT_TYPE_WR, A33X_FFC_DEFAULT, 0);
 
@@ -626,21 +632,26 @@ static void *a33x_common_setting_cmdtbl[] = {
 
 	&PKTINFO(a33x_dsc),
 	&PKTINFO(a33x_pps),
-	&PKTINFO(a33x_src_setting),
 
-	&PKTINFO(a33x_wo_dsc),
+	&PKTINFO(a33x_tsp_vsync_on),
+
+	/* Use rev04 FFC for now - TODO: add proper rev detection */
+	&PKTINFO(a33x_ffc_default_rev04),
+
 	&PKTINFO(a33x_black_insert_off),
 	&PKTINFO(a33x_panel_update),
-	&PKTINFO(a33x_ffc_default),
-	&PKTINFO(a33x_tsp_vsync_on),
-	&PKTINFO(a33x_acl_set),
+
+	&PKTINFO(a33x_etc_setting_1),
+	&PKTINFO(a33x_etc_setting_2),
+	&PKTINFO(a33x_etc_setting_3),
+	&PKTINFO(a33x_panel_update),
 
 	&PKTINFO(a33x_err_fg_setting_1),
 	&PKTINFO(a33x_err_fg_setting_2),
 	&PKTINFO(a33x_err_fg_on),
 	&PKTINFO(a33x_pcd_det_set),
 
-	&PKTINFO(a33x_smooth_dimming_1f),
+	&PKTINFO(a33x_seed_setting),
 	&PKTINFO(a33x_panel_update),
 
 	&SEQINFO(a33x_set_bl_param_seq), /* includes FPS setting also */
@@ -695,10 +706,10 @@ static DEFINE_SEQINFO(a33x_res_init_seq, a33x_res_init_cmdtbl);
 static void *a33x_set_bl_param_cmdtbl[] = {
 	&PKTINFO(a33x_fps_1),
 	&PKTINFO(a33x_tset_set),
+	&PKTINFO(a33x_acl_set),
 	&PKTINFO(a33x_acl_control),
 	&PKTINFO(a33x_hbm_transition),
 	&PKTINFO(a33x_wrdisbv),
-	&PKTINFO(a33x_irc_mode),
 	&PKTINFO(a33x_panel_update),
 };
 
