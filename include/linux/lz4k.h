@@ -1,12 +1,14 @@
 /*
- * Copyright (c) Huawei Technologies Co., Ltd. 2022. All rights reserved.
- * Description: LZ4K compression algorithm with delta compression
+ * Copyright (c) Huawei Technologies Co., Ltd. 2012-2020. All rights reserved.
+ * Description: LZ4K compression algorithm
+ * Author: Aleksei Romanovskii aleksei.romanovskii@huawei.com
+ * Created: 2020-03-25
  */
 
-#ifndef _LZ4KD_H
-#define _LZ4KD_H
+#ifndef _LZ4K_H
+#define _LZ4K_H
 
-/* file lz4kd.h
+/* file lz4k.h
   This file contains the platform-independent API of LZ-class
   lossless codecs (compressors/decompressors) with complete
   in-place documentation.  The documentation is formatted
@@ -15,45 +17,46 @@
 
   Currently, LZ-class codecs, documented here, implement following
   algorithms for lossless data compression/decompression:
-  \li "LZ" proprietary codec competing with LZ4 - lz4kd_encode(),
-  lz4kd_encode_delta(), lz4kd_decode(), lz4kd_decode_delta()
+  \li "LZ HUAWEI" proprietary codec competing with LZ4 - lz4k_encode(),
+  lz4k_encode_delta(), lz4k_decode(), lz4k_decode_delta()
 
-  The LZ compressors accept any data as input and compress it
+  The LZ HUAWEI compressors accept any data as input and compress it
   without loss to a smaller size if possible.
-  Compressed data produced by LZ compressor API lz4kd_encode*(),
-  can be decompressed only by lz4kd_decode() API documented below.\n
+  Compressed data produced by LZ HUAWEI compressor API lz4k_encode*(),
+  can be decompressed only by lz4k_decode() API documented below.\n
   */
 
 /*
-  lz4kd_status defines simple set of status values returned by APIs
+  lz4k_status defines simple set of status values returned by Huawei APIs
  */
 typedef enum {
 	LZ4K_STATUS_INCOMPRESSIBLE =  0, /* !< Return when data is incompressible */
 	LZ4K_STATUS_FAILED         = -1, /* !< Return on general failure */
 	LZ4K_STATUS_READ_ERROR =     -2, /* !< Return when data reading failed */
 	LZ4K_STATUS_WRITE_ERROR =    -3  /* !< Return when data writing failed */
-} lz4kd_status;
+} lz4k_status;
 
 /*
-  lz4kd_Version() returns static unmutable string with algorithm version
+  LZ4K_Version() returns static unmutable string with algorithm version
  */
-const char *lz4kd_version(void);
+const char *lz4k_version(void);
 
 /*
-  lz4kd_encode_state_bytes_min() returns number of bytes for state parameter,
-  supplied to lz4kd_encode(), lz4kd_encode_delta().
-  So, state should occupy at least lz4kd_encode_state_bytes_min() for mentioned
+  lz4k_encode_state_bytes_min() returns number of bytes for state parameter,
+  supplied to lz4k_encode(), lz4k_encode_delta(),
+  lz4k_update_delta_state().
+  So, state should occupy at least lz4k_encode_state_bytes_min() for mentioned
   functions to work correctly.
  */
-unsigned lz4kd_encode_state_bytes_min(void);
+unsigned lz4k_encode_state_bytes_min(void);
 
 /*
-  lz4kd_encode() encodes/compresses one input buffer at *in, places
+  lz4k_encode() encodes/compresses one input buffer at *in, places
   result of encoding into one output buffer at *out if encoded data
   size fits specified values of out_max and out_limit.
   It returs size of encoded data in case of success or value<=0 otherwise.
-  The result of successful encoding is in proprietary format, that
-  is the encoded data can be decoded only by lz4kd_decode().
+  The result of successful encoding is in HUAWEI proprietary format, that
+  is the encoded data can be decoded only by lz4k_decode().
 
   \return
     \li positive value\n
@@ -67,7 +70,7 @@ unsigned lz4kd_encode_state_bytes_min(void);
 
   \param[in] state
     !=0, pointer to state buffer used internally by the function.  Size of
-    state in bytes should be at least lz4kd_encode_state_bytes_min().  The content
+    state in bytes should be at least lz4k_encode_state_bytes_min().  The content
     of state buffer will be changed during encoding.
 
   \param[in] in
@@ -89,31 +92,15 @@ unsigned lz4kd_encode_state_bytes_min(void);
   \param[in] out_limit
     encoded data size soft limit in bytes. Due to performance reasons it is
     not guaranteed that
-    lz4kd_encode will always detect that resulting encoded data size is
+    lz4k_encode will always detect that resulting encoded data size is
     bigger than out_limit.
-    Hovewer, when reaching out_limit is detected, lz4kd_encode() returns
+    Hovewer, when reaching out_limit is detected, lz4k_encode() returns
     earlier and spares CPU cycles.  Caller code should recheck result
-    returned by lz4kd_encode() (value greater than 0) if it is really
+    returned by lz4k_encode() (value greater than 0) if it is really
     less or equal than out_limit.
     out_limit is ignored if it is equal to 0.
  */
-int lz4kd_encode(
-	void *const state,
-	const void *const in,
-	void *out,
-	unsigned in_max,
-	unsigned out_max,
-	unsigned out_limit);
-
-int lz4kd_encode2(
-	void *const state,
-	const void *const in,
-	void *out,
-	unsigned in_max,
-	unsigned out_max,
-	unsigned out_limit);
-
-int lz4kd_encode_pattern(
+int lz4k_encode(
 	void *const state,
 	const void *const in,
 	void *out,
@@ -122,12 +109,12 @@ int lz4kd_encode_pattern(
 	unsigned out_limit);
 
 /*
-  lz4kd_encode_max_cr() encodes/compresses one input buffer at *in, places
+  lz4k_encode_max_cr() encodes/compresses one input buffer at *in, places
   result of encoding into one output buffer at *out if encoded data
   size fits specified value of out_max.
   It returs size of encoded data in case of success or value<=0 otherwise.
-  The result of successful encoding is in proprietary format, that
-  is the encoded data can be decoded only by lz4kd_decode().
+  The result of successful encoding is in HUAWEI proprietary format, that
+  is the encoded data can be decoded only by lz4k_decode().
 
   \return
     \li positive value\n
@@ -139,7 +126,7 @@ int lz4kd_encode_pattern(
 
   \param[in] state
     !=0, pointer to state buffer used internally by the function.  Size of
-    state in bytes should be at least lz4kd_encode_state_bytes_min().  The content
+    state in bytes should be at least lz4k_encode_state_bytes_min().  The content
     of state buffer will be changed during encoding.
 
   \param[in] in
@@ -161,15 +148,15 @@ int lz4kd_encode_pattern(
   \param[in] out_limit
     encoded data size soft limit in bytes. Due to performance reasons it is
     not guaranteed that
-    lz4kd_encode will always detect that resulting encoded data size is
+    lz4k_encode will always detect that resulting encoded data size is
     bigger than out_limit.
-    Hovewer, when reaching out_limit is detected, lz4kd_encode() returns
+    Hovewer, when reaching out_limit is detected, lz4k_encode() returns
     earlier and spares CPU cycles.  Caller code should recheck result
-    returned by lz4kd_encode() (value greater than 0) if it is really
+    returned by lz4k_encode() (value greater than 0) if it is really
     less or equal than out_limit.
     out_limit is ignored if it is equal to 0.
  */
-int lz4kd_encode_max_cr(
+int lz4k_encode_max_cr(
 	void *const state,
 	const void *const in,
 	void *out,
@@ -178,13 +165,81 @@ int lz4kd_encode_max_cr(
 	unsigned out_limit);
 
 /*
-  lz4kd_encode_delta() encodes (compresses) data from one input buffer
+  lz4k_update_delta_state() fills/updates state (hash table) in the same way as
+  lz4k_encode does while encoding (compressing).
+  The state and its content can then be used by lz4k_encode_delta()
+  to encode (compress) data more efficiently.
+  By other words, effect of lz4k_update_delta_state() is the same as
+  lz4k_encode() with all encoded output discarded.
+
+  Example sequence of calls for lz4k_update_delta_state and
+  lz4k_encode_delta:
+    //dictionary (1st) block
+    int result0=lz4k_update_delta_state(state, in0, in0, in_max0);
+//delta (2nd) block
+    int result1=lz4k_encode_delta(state, in0, in, out, in_max,
+                                       out_max);
+
+  \param[in] state
+    !=0, pointer to state buffer used internally by lz4k_encode*.
+    Size of state in bytes should be at least lz4k_encode_state_bytes_min().
+    The content of state buffer is zeroed at the beginning of
+    lz4k_update_delta_state ONLY when in0==in.
+    The content of state buffer will be changed inside
+    lz4k_update_delta_state.
+
+  \param[in] in0
+    !=0, pointer to the reference/dictionary input buffer that was used
+    as input to preceding call of lz4k_encode() or lz4k_update_delta_state()
+    to fill/update the state buffer.
+    The content of the reference/dictionary input buffer does not change
+    during encoding.
+    The in0 is needed for use-cases when there are several dictionary and
+    input blocks interleaved, e.g.
+    <dictionaryA><inputA><dictionaryB><inputB>..., or
+    <dictionaryA><dictionaryB><inputAB>..., etc.
+
+  \param[in] in
+    !=0, pointer to the input buffer to fill/update state as if encoding
+    (compressing) this input.  This input buffer is also called dictionary
+    input buffer.
+    The content of the input buffer does not change during encoding.
+    The two buffers - at in0 and at in - should be contiguous in memory.
+    That is, the last byte of buffer at in0 is located exactly before byte
+    at in.
+
+  \param[in] in_max
+    !=0, size in bytes of the input buffer at in.
+ */
+int lz4k_update_delta_state(
+	void *const state,
+	const void *const in0,
+	const void *const in,
+	unsigned in_max);
+
+/*
+  lz4k_encode_delta() encodes (compresses) data from one input buffer
   using one reference buffer as dictionary and places the result of
   compression into one output buffer.
-  The result of successful compression is in proprietary format, so
-  that compressed data can be decompressed only by lz4kd_decode_delta().
+  The result of successful compression is in HUAWEI proprietary format, so
+  that compressed data can be decompressed only by lz4k_decode_delta().
   Reference/dictionary buffer and input buffer should be contiguous in
   memory.
+
+  Example sequence of calls for lz4k_update_delta_state and
+  lz4k_encode_delta:
+//dictionary (1st) block
+    int result0=lz4k_update_delta_state(state, in0, in0, in_max0);
+//delta (2nd) block
+    int result1=lz4k_encode_delta(state, in0, in, out, in_max,
+                                       out_max);
+
+  Example sequence of calls for lz4k_encode and lz4k_encode_delta:
+//dictionary (1st) block
+    int result0=lz4k_encode(state, in0, out0, in_max0, out_max0);
+//delta (2nd) block
+    int result1=lz4k_encode_delta(state, in0, in, out, in_max,
+                                       out_max);
 
   \return
     \li positive value\n
@@ -196,14 +251,17 @@ int lz4kd_encode_max_cr(
 
   \param[in] state
     !=0, pointer to state buffer used internally by the function.  Size of
-    state in bytes should be at least lz4kd_encode_state_bytes_min().
+    state in bytes should be at least lz4k_encode_state_bytes_min().  For more
+    efficient encoding the state buffer may be filled/updated by calling
+    lz4k_update_delta_state() or lz4k_encode() before lz4k_encode_delta().
     The content of state buffer is zeroed at the beginning of
-    lz4kd_encode_delta().
+    lz4k_encode_delta() ONLY when in0==in.
     The content of state will be changed during encoding.
 
   \param[in] in0
     !=0, pointer to the reference/dictionary input buffer that was used as
-    input to preceding call of lz4kd_encode().
+    input to preceding call of lz4k_encode() or lz4k_update_delta_state() to
+    fill/update the state buffer.
     The content of the reference/dictionary input buffer does not change
     during encoding.
 
@@ -226,20 +284,19 @@ int lz4kd_encode_max_cr(
   \param[in] out_max
     !=0, size in bytes of the output buffer at *out.
  */
-int lz4kd_encode_delta(
+int lz4k_encode_delta(
 	void *const state,
 	const void *const in0,
 	const void *const in,
 	void *out,
 	unsigned in_max,
-	unsigned out_max,
-	unsigned out_limit);
+	unsigned out_max);
 
 /*
-  lz4kd_decode() decodes (decompresses) data from one input buffer and places
+  lz4k_decode() decodes (decompresses) data from one input buffer and places
   the result of decompression into one output buffer.  The encoded data in input
-  buffer should be in proprietary format, produced by lz4kd_encode()
-  or by lz4kd_encode_delta().
+  buffer should be in HUAWEI proprietary format, produced by lz4k_encode()
+  or by lz4k_encode_delta().
 
   \return
     \li positive value\n
@@ -265,23 +322,23 @@ int lz4kd_encode_delta(
   \param[in] out_max
     !=0, size in bytes of the output buffer at out
  */
-int lz4kd_decode(
+int lz4k_decode(
 	const void *const in,
 	void *const out,
 	unsigned in_max,
 	unsigned out_max);
 
 /*
-  lz4kd_decode_delta() decodes (decompresses) data from one input buffer
+  lz4k_decode_delta() decodes (decompresses) data from one input buffer
   and places the result of decompression into one output buffer.  The
   compressed data in input buffer should be in format, produced by
-  lz4kd_encode_delta().
+  lz4k_encode_delta().
 
-  Example sequence of calls for lz4kd_decode and lz4kd_decode_delta:
+  Example sequence of calls for lz4k_decode and lz4k_decode_delta:
 //dictionary (1st) block
-    int result0=lz4kd_decode(in0, out0, in_max0, out_max0);
+    int result0=lz4k_decode(in0, out0, in_max0, out_max0);
 //delta (2nd) block
-    int result1=lz4kd_decode_delta(in, out0, out, in_max, out_max);
+    int result1=lz4k_decode_delta(in, out0, out, in_max, out_max);
 
   \return
     \li positive value\n
@@ -297,8 +354,8 @@ int lz4kd_decode(
     the input buffer does not change during decoding.
 
   \param[in] out0
-    !=0, pointer to the dictionary input buffer that was used as in0 input to
-    lz4kd_encode_delta().  The content
+    !=0, pointer to the dictionary input buffer that was used as input to
+    lz4k_update_delta_state() to fill/update the state buffer.  The content
     of the dictionary input buffer does not change during decoding.
 
   \param[in] out
@@ -315,7 +372,7 @@ int lz4kd_decode(
   \param[in] out_max
     !=0, size in bytes of the output buffer at *out
  */
-int lz4kd_decode_delta(
+int lz4k_decode_delta(
 	const void *in,
 	const void *const out0,
 	void *const out,
@@ -323,4 +380,4 @@ int lz4kd_decode_delta(
 	unsigned out_max);
 
 
-#endif /* _LZ4KD_H */
+#endif /* _LZ4K_H */

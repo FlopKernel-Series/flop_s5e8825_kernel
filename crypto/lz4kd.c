@@ -10,6 +10,8 @@
 #include <linux/crypto.h>
 #include <linux/vmalloc.h>
 #include <linux/lz4kd.h>
+#include <crypto/algapi.h>
+#include <crypto/internal/scompress.h>
 
 
 struct lz4kd_ctx {
@@ -61,10 +63,44 @@ static int lz4kd_decompress_crypto(struct crypto_tfm *tfm, const u8 *src, unsign
 	return 0;
 }
 
+#ifdef CONFIG_CRYPTO_DELTA
+static int lz4kd_compress_delta_crypto(struct crypto_tfm *tfm, const u8 *src0, const u8 *src,
+				unsigned int slen, u8 *dst, unsigned int *dlen, unsigned int out_max)
+{
+	struct lz4kd_ctx *ctx = crypto_tfm_ctx(tfm);
+	int ret = 0;
+
+	ret = lz4kd_encode_delta(ctx->lz4kd_comp_mem, src0, src, dst, slen, *dlen, out_max);
+	if (ret < 0)
+		return -EINVAL;
+
+	if (ret)
+		*dlen = ret;
+
+	return 0;
+}
+
+static int lz4kd_decompress_delta_crypto(struct crypto_tfm *tfm, const u8 *src, unsigned int slen,
+				const u8 *dst0,	u8 *dst, unsigned int *dlen)
+{
+	int ret = 0;
+
+	ret = lz4kd_decode_delta(src, dst0, dst, slen, *dlen);
+	if (ret <= 0)
+		return -EINVAL;
+	*dlen = ret;
+	return 0;
+}
+#endif
+
 static struct crypto_alg alg_lz4kd = {
 	.cra_name		= "lz4kd",
 	.cra_driver_name	= "lz4kd-generic",
+#ifdef CONFIG_CRYPTO_DELTA
+	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS | CRYPTO_ALG_EXT_PROP_DELTA,
+#else
 	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
+#endif
 	.cra_ctxsize		= sizeof(struct lz4kd_ctx),
 	.cra_module		= THIS_MODULE,
 	.cra_init		= lz4kd_init,
@@ -73,6 +109,11 @@ static struct crypto_alg alg_lz4kd = {
 	.compress = {
 			.coa_compress    = lz4kd_compress_crypto,
 			.coa_decompress  = lz4kd_decompress_crypto
+#ifdef CONFIG_CRYPTO_DELTA
+,
+			.coa_compress_delta = lz4kd_compress_delta_crypto,
+			.coa_decompress_delta = lz4kd_decompress_delta_crypto
+#endif
 		}
 	}
 };
