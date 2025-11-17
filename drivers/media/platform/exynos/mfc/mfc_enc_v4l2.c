@@ -1188,6 +1188,10 @@ static int __mfc_enc_get_ctrl_val(struct mfc_ctx *ctx, struct v4l2_control *ctrl
 	case V4L2_CID_MPEG_MFC51_VIDEO_FRAME_RATE:
 		ctrl->value = mfc_qos_get_framerate(ctx);
 		break;
+	case V4L2_CID_MPEG_VIDEO_PRIORITY:
+		ctrl->value = ctx->prio;
+		mfc_debug(2, "[PRIO] user get priority: %d\n", ctrl->value);
+		break;
 	default:
 		mfc_ctx_err("Invalid control: 0x%08x\n", ctrl->id);
 		ret = -EINVAL;
