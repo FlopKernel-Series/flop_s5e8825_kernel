@@ -18,12 +18,16 @@ build() {
 
     rm -rf "$MOD_OUTDIR" 2>/dev/null
 
+    # Build config fragments list
+    FRAGMENTS=""
+    [ "$DO_KSU" = "1" ] && FRAGMENTS="$FRAGMENTS ksu.config"
+    [ "$DO_SUKI" = "1" ] && FRAGMENTS="$FRAGMENTS sukisu.config"
+    [ "$DO_MKSU" = "1" ] && FRAGMENTS="$FRAGMENTS mksu.config"
+
     if [ "$DO_QUIET" = "1" ]; then
-        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" \
-            $([ "$DO_KSU" = "1" ] && echo "ksu.config") $([ "$DO_SUKI" = "1" ] && echo "sukisu.config") $([ "$DO_MKSU" = "1" ] && echo "mksu.config") > /dev/null | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS > /dev/null | tee log.txt
     else
-        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" \
-            $([ "$DO_KSU" = "1" ] && echo "ksu.config") $([ "$DO_SUKI" = "1" ] && echo "sukisu.config") $([ "$DO_MKSU" = "1" ] && echo "mksu.config") 2>&1 | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS 2>&1 | tee log.txt
     fi
 
     if [ "$IS_RELEASE" = "1" ]; then
@@ -36,12 +40,8 @@ build() {
     rm -f "$OUT_KERNEL"
 
     if [ "$DO_REGEN" = "1" ]; then
-        if [ "$DO_KSU" = "1" ]; then
-            echo "ERROR: Can't regenerate with KSU argument"
-            exit 1
-        fi
-        if [ "$DO_MKSU" = "1" ]; then
-            echo "ERROR: Can't regenerate with MKSU argument"
+        if [ "$DO_KSU" = "1" ] || [ "$DO_SUKI" = "1" ] || [ "$DO_MKSU" = "1" ]; then
+            echo "ERROR: Can't regenerate with KSU variant argument"
             exit 1
         fi
         if [ "$DO_PERM" = "1" ]; then
