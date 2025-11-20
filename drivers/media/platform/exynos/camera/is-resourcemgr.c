@@ -71,10 +71,6 @@
 #include "is-interface-library.h"
 #include "votf/camerapp-votf.h"
 #include "is-device-camif-dma.h"
-#ifdef CONFIG_RKP
-#include <linux/uh.h>
-#include <linux/rkp.h>
-#endif
 
 #define CLUSTER_MIN_MASK			0x0000FFFF
 #define CLUSTER_MIN_SHIFT			0
@@ -347,9 +343,6 @@ static int pablo_rscmgr_init_bin_rmem(struct is_resourcemgr *rscmgr, struct rese
 		return -ENOMEM;
 	}
 
-#ifdef CONFIG_RKP
-	uh_call2(UH_APP_RKP, RKP_DYNAMIC_LOAD, RKP_DYN_COMMAND_PREPARE, 0, (u64)vm->addr, (u64)get_vm_area_size(&pablo_bin_vm));
-#endif
 	probe_info("[RSC]bin rmem(V/P/S): 0x%pK/%pap/%pap\n",
 					pablo_bin_vm.addr,
 					&rmem->base, &rmem->size);
@@ -1512,9 +1505,6 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 			probe_err("failed to alloc and map for binary(%d)", ret);
 			goto p_err;
 		}
-#ifdef CONFIG_RKP
-		uh_call2(UH_APP_RKP, RKP_DYNAMIC_LOAD, RKP_DYN_COMMAND_PREPARE, 0, (u64)LIB_START, (u64)get_vm_area_size(&pablo_bin_vm));
-#endif
 	}
 
 	if (!IS_ENABLED(DYNAMIC_HEAP_FOR_DDK_RTA)) {

@@ -206,8 +206,6 @@ obj-${CONFIG_VISION_SUPPORT3}	+= vision3/
 obj-$(CONFIG_SPU_VERIFY)        += spu_verify/
 
 # uH
-obj-$(CONFIG_UH)		+= uh/
-
 obj-y				+= knox/
 
 include $(srctree)/drivers/Makefile.variant1

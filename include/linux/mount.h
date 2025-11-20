@@ -84,12 +84,6 @@ struct vfsmount {
 #endif
 } __randomize_layout;
 
-#ifdef CONFIG_KDP_NS
-struct kdp_vfsmount {
-	struct vfsmount mnt;
-	struct mount *bp_mount;	/* pointer to mount*/
-};
-#endif
 
 struct file; /* forward dec */
 struct path;

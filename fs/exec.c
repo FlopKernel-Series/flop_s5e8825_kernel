@@ -1033,10 +1033,6 @@ static int exec_mmap(struct mm_struct *mm)
 		local_irq_enable();
 	tsk->mm->vmacache_seqnum = 0;
 	vmacache_flush(tsk);
-#ifdef CONFIG_KDP_CRED
-	if (kdp_enable)
-		uh_call(UH_APP_KDP, SET_CRED_PGD, (u64)current_cred(), (u64)mm->pgd, 0, 0);
-#endif
 	task_unlock(tsk);
 	if (old_mm) {
 		mmap_read_unlock(old_mm);
@@ -2150,29 +2146,6 @@ SYSCALL_DEFINE3(execve,
 		const char __user *const __user *, argv,
 		const char __user *const __user *, envp)
 {
-#ifdef CONFIG_KDP_CRED
-	struct filename *path = getname(filename);
-	int error = PTR_ERR(path);
-
-	if (IS_ERR(path))
-		return error;
-
-	if (kdp_enable) {
-		uh_call(UH_APP_KDP, MARK_PPT, (u64)path->name, (u64)current, 0, 0);
-		if (current->cred->uid.val == 0 || current->cred->gid.val == 0 ||
-			current->cred->euid.val == 0 || current->cred->egid.val == 0 ||
-			current->cred->suid.val == 0 || current->cred->sgid.val == 0) {
-			if (kdp_restrict_fork(path)) {
-				pr_warn("RKP_KDP Restricted making process. PID = %d(%s) PPID = %d(%s)\n",
-						current->pid, current->comm,
-						current->parent->pid, current->parent->comm);
-				putname(path);
-				return -EACCES;
-			}
-		}
-	}
-	putname(path);
-#endif
 	return do_execve(getname(filename), argv, envp);
 }
 
