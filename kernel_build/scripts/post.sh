@@ -20,10 +20,29 @@ kernel_modules() {
         exit 1
     fi
 
-    for module in $(cat "$IN_DLKM/modules.load"); do
-        i=$(find "$MOD_OUTDIR/lib/modules" -name "$module")
-        if [ -f "$i" ]; then
-            cp -f "$i" "$MODULES_DIR/0.0/$module"
+    # Find the installed modules directory
+    local kmod_dir
+    kmod_dir=$(find "$MOD_OUTDIR/lib/modules" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+    
+    echo "INFO: Generating modules.load..."
+    "$SCRIPTS_DIR/gen_modules_load.sh" "$kmod_dir" "$TMPDIR/modules.load" "$KDIR"
+
+    if [ ! -f "$TMPDIR/modules.load" ]; then
+         echo "ERROR: Failed to generate modules.load"
+         exit 1
+    fi
+
+    # Build module lookup table
+    declare -A MODULE_MAP
+    while IFS= read -r path; do
+        name=$(basename "$path")
+        MODULE_MAP["$name"]="$path"
+    done < <(find "$MOD_OUTDIR/lib/modules" -name "*.ko" -type f)
+
+    for module in $(cat "$TMPDIR/modules.load"); do
+        local src="${MODULE_MAP[$module]}"
+        if [ -n "$src" ] && [ -f "$src" ]; then
+            cp -f "$src" "$MODULES_DIR/0.0/$module"
         else
             missing_modules="$missing_modules $module"
         fi
@@ -35,8 +54,8 @@ kernel_modules() {
     fi
 
 	# Check for duplicate modules in modules.load
-	if [ -f "$IN_DLKM/modules.load" ]; then
-		dupes=$(sort "$IN_DLKM/modules.load" | uniq -d | xargs)
+	if [ -f "$TMPDIR/modules.load" ]; then
+		dupes=$(sort "$TMPDIR/modules.load" | uniq -d | xargs)
 		if [ -n "$dupes" ]; then
 			echo -e "\nERROR: Duplicate module entries found in modules.load: $dupes\n"
 			exit 1
@@ -44,9 +63,9 @@ kernel_modules() {
 	fi
 
 	# Warn for modules present but not in modules.load
-	if [ -d "$MOD_OUTDIR/lib/modules" ] && [ -f "$IN_DLKM/modules.load" ]; then
+	if [ -d "$MOD_OUTDIR/lib/modules" ] && [ -f "$TMPDIR/modules.load" ]; then
 		all_built=$(find "$MOD_OUTDIR/lib/modules" -type f -name "*.ko" -exec basename {} \; | sort)
-		all_load=$(sort "$IN_DLKM/modules.load")
+		all_load=$(sort "$TMPDIR/modules.load")
 		not_in_load=$(comm -23 <(echo "$all_built") <(echo "$all_load") | xargs)
 		if [ -n "$not_in_load" ]; then
 			echo -e "\nWARNING: The following modules exist but are NOT in modules.load: $not_in_load\n"
@@ -64,7 +83,7 @@ kernel_modules() {
   
     cd "$KDIR"
 
-    cp -f "$IN_DLKM/modules.load" "$MODULES_DIR/0.0/modules.load"
+    cp -f "$TMPDIR/modules.load" "$MODULES_DIR/0.0/modules.load"
     mv "$MODULES_DIR/0.0"/* "$MODULES_DIR/"
     rm -rf "$MODULES_DIR/0.0"
 }
