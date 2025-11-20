@@ -250,8 +250,6 @@ source "drivers/spu_verify/Kconfig"
 
 source "drivers/Kconfig.variant1"
 
-source "drivers/knox/Kconfig"
-
 source "drivers/sec_panel_notifier_v2/Kconfig" # ADDED BY LEGO AUTOMATICALLY: DO NOT SUBMIT
 source "drivers/regulator/pmic_class/Kconfig" # ADDED BY LEGO AUTOMATICALLY: DO NOT SUBMIT
 source "drivers/usb/typec/manager/Kconfig" # ADDED BY LEGO AUTOMATICALLY: DO NOT SUBMIT

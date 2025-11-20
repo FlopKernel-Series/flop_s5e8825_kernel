@@ -1,3 +1,0 @@
-source "drivers/knox/ngksm/Kconfig"
-source "drivers/knox/hdm/Kconfig"
-
