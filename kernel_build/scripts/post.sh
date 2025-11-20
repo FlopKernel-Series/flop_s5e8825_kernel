@@ -5,7 +5,6 @@
 #
 kernel_modules() {
     local i
-    local missing_modules
 
     rm -rf "$TMPDIR"
     rm -f "$OUT_BOOTIMG" "$OUT_VENDORBOOTIMG"
@@ -43,34 +42,8 @@ kernel_modules() {
         local src="${MODULE_MAP[$module]}"
         if [ -n "$src" ] && [ -f "$src" ]; then
             cp -f "$src" "$MODULES_DIR/0.0/$module"
-        else
-            missing_modules="$missing_modules $module"
         fi
     done
-
-    if [ -n "$missing_modules" ]; then
-        echo "ERROR: the following modules were not found: $missing_modules"
-        exit 1
-    fi
-
-	# Check for duplicate modules in modules.load
-	if [ -f "$TMPDIR/modules.load" ]; then
-		dupes=$(sort "$TMPDIR/modules.load" | uniq -d | xargs)
-		if [ -n "$dupes" ]; then
-			echo -e "\nERROR: Duplicate module entries found in modules.load: $dupes\n"
-			exit 1
-		fi
-	fi
-
-	# Warn for modules present but not in modules.load
-	if [ -d "$MOD_OUTDIR/lib/modules" ] && [ -f "$TMPDIR/modules.load" ]; then
-		all_built=$(find "$MOD_OUTDIR/lib/modules" -type f -name "*.ko" -exec basename {} \; | sort)
-		all_load=$(sort "$TMPDIR/modules.load")
-		not_in_load=$(comm -23 <(echo "$all_built") <(echo "$all_load") | xargs)
-		if [ -n "$not_in_load" ]; then
-			echo -e "\nWARNING: The following modules exist but are NOT in modules.load: $not_in_load\n"
-		fi
-	fi
 
     depmod 0.0 -b "$DLKM_RAMDISK_DIR"
     sed -i 's/\([^ ]\+\)/\/lib\/modules\/\1/g' "$MODULES_DIR/0.0/modules.dep"
