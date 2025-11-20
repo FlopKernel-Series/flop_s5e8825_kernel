@@ -17,6 +17,13 @@ config KSU_SUKI
 	  Enable SukiSU Ultra with SUSFS support.
 	  This is a KernelSU fork with additional features.
 
+config KSU_MKSU
+	bool "Magic KernelSU"
+	select OVERLAY_FS
+	help
+	  Enable Magic KernelSU.
+	  This is a KernelSU fork with additional features.
+
 endchoice
 
 choice
@@ -115,3 +122,4 @@ config KSU_ALLOWLIST_WORKAROUND
 # Load variant-specific configs
 source "drivers/kernelsu/kernel/Kconfig"
 source "drivers/sukisu/kernel/Kconfig"
+source "drivers/mksu/kernel/Kconfig"
