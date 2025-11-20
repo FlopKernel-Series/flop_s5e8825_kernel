@@ -3,22 +3,28 @@
 #include <linux/kobject.h>
 #include <linux/module.h>
 #include <linux/workqueue.h>
-#include <linux/version.h>
-
-#include "allowlist.h"
-#include "arch.h"
-#include "core_hook.h"
-#include "feature.h"
-#include "klog.h" // IWYU pragma: keep
-#include "ksu.h"
-#include "throne_tracker.h"
-#include "sucompat.h"
-#include "ksud.h"
-#include "supercalls.h"
+#include <generated/utsrelease.h>
+#include <generated/compile.h>
+#include <linux/version.h> /* LINUX_VERSION_CODE, KERNEL_VERSION macros */
 
 #ifdef CONFIG_KSU_SUSFS
 #include <linux/susfs.h>
 #endif
+
+#include "allowlist.h"
+#include "ksu.h"
+#include "feature.h"
+#include "klog.h" // IWYU pragma: keep
+#include "throne_tracker.h"
+#ifndef CONFIG_KSU_SUSFS
+#include "syscall_hook_manager.h"
+#endif
+#include "ksud.h"
+#include "supercalls.h"
+
+#include "sulog.h"
+#include "throne_comm.h"
+#include "dynamic_manager.h"
 
 static struct workqueue_struct *ksu_workqueue;
 
@@ -27,27 +33,44 @@ bool ksu_queue_work(struct work_struct *work)
 	return queue_work(ksu_workqueue, work);
 }
 
+void sukisu_custom_config_init(void)
+{
+}
+
+void sukisu_custom_config_exit(void)
+{
+	ksu_uid_exit();
+	ksu_throne_comm_exit();
+	ksu_dynamic_manager_exit();
+#if __SULOG_GATE
+	ksu_sulog_exit();
+#endif
+}
+
 int __init kernelsu_init(void)
 {
+	pr_info("Initialized on: %s (%s) with driver version: %u\n",
+		UTS_RELEASE, UTS_MACHINE, KSU_VERSION);
+		
 #ifdef CONFIG_KSU_DEBUG
 	pr_alert("*************************************************************");
-	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
-	pr_alert("**                                                         **");
-	pr_alert("**         You are running KernelSU in DEBUG mode          **");
-	pr_alert("**                                                         **");
-	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
+	pr_alert("**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
+	pr_alert("**														 **");
+	pr_alert("**		 You are running KernelSU in DEBUG mode		  **");
+	pr_alert("**														 **");
+	pr_alert("**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
 	pr_alert("*************************************************************");
-#endif
-
-#ifdef CONFIG_KSU_SUSFS
-    susfs_init();
 #endif
 
 	ksu_feature_init();
 
+	ksu_lsm_hook_init();
+
 	ksu_supercalls_init();
 
-	ksu_core_init();
+	sukisu_custom_config_init();
+
+	ksu_syscall_hook_manager_init();
 
 	ksu_workqueue = alloc_ordered_workqueue("kernelsu_work_queue", 0);
 
@@ -55,11 +78,12 @@ int __init kernelsu_init(void)
 
 	ksu_throne_tracker_init();
 
-#ifdef KSU_KPROBES_HOOK
-    ksu_sucompat_init();
-    ksu_ksud_init();
-#else
-    pr_debug("init ksu driver\n");
+#ifdef CONFIG_KSU_SUSFS
+	susfs_init();
+#endif
+
+#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+	ksu_ksud_init();
 #endif
 
 #ifdef MODULE
@@ -70,22 +94,27 @@ int __init kernelsu_init(void)
 	return 0;
 }
 
+extern void ksu_observer_exit(void);
 void kernelsu_exit(void)
 {
 	ksu_allowlist_exit();
 
-	ksu_throne_tracker_exit();
-
 	ksu_observer_exit();
+
+	ksu_throne_tracker_exit();
 
 	destroy_workqueue(ksu_workqueue);
 
-#ifdef CONFIG_KSU_KPROBES_HOOK
+#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
 	ksu_ksud_exit();
-    ksu_sucompat_exit();
 #endif
 
-	ksu_core_exit();
+	ksu_syscall_hook_manager_exit();
+
+	sukisu_custom_config_exit();
+
+	ksu_supercalls_exit();
+	
 	ksu_feature_exit();
 }
 

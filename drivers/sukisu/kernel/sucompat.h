@@ -1,34 +1,22 @@
 #ifndef __KSU_H_SUCOMPAT
 #define __KSU_H_SUCOMPAT
-#include <linux/sched.h>
-#include <linux/thread_info.h>
-#include <linux/version.h>
+#include <linux/types.h>
 
 extern bool ksu_su_compat_enabled;
 
 void ksu_sucompat_init(void);
 void ksu_sucompat_exit(void);
 
-void ksu_sucompat_enable(void);
-void ksu_sucompat_disable(void);
-
-void ksu_mark_running_process(void);
-
-static inline void ksu_set_task_tracepoint_flag(struct task_struct *t)
-{
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-    set_task_syscall_work(t, SYSCALL_TRACEPOINT);
+// Handler functions exported for hook_manager
+int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
+			 int *mode, int *__unused_flags);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0) && defined(CONFIG_KSU_SUSFS)
+int ksu_handle_stat(int *dfd, struct filename **filename, int *flags);
 #else
-    set_tsk_thread_flag(t, TIF_SYSCALL_TRACEPOINT);
-#endif
-}
+int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
+#endif // #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0) && defined(CONFIG_KSU_SUSFS)
+int ksu_handle_execve_sucompat(const char __user **filename_user,
+				   void *__never_use_argv, void *__never_use_envp,
+				   int *__never_use_flags);
 
-static inline void ksu_clear_task_tracepoint_flag(struct task_struct *t)
-{
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-    clear_task_syscall_work(t, SYSCALL_TRACEPOINT);
-#else
-    clear_tsk_thread_flag(t, TIF_SYSCALL_TRACEPOINT);
-#endif
-}
 #endif
