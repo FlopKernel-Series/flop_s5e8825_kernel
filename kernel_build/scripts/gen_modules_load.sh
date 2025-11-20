@@ -30,6 +30,11 @@ PRIORITY_MODULES=(
     "i2c-exynos5.ko"
 )
 
+# Module load order exceptions (module -> load_after_module)
+declare -A LOAD_AFTER=(
+    ["goodix_ts_berlin.ko"]="focaltech_ts_ft3519.ko"
+)
+
 # Modules to exclude
 EXCLUDE_MODULES=(
 )
@@ -110,6 +115,27 @@ if [ -f "$MODULES_DEP" ]; then
 
     cat "$SORTED_MODULES" >> "$OUTPUT_FILE"
     rm -f "$SORTED_MODULES"
+
+    # Apply ordering exceptions
+    for module in "${!LOAD_AFTER[@]}"; do
+        after_module="${LOAD_AFTER[$module]}"
+
+        # Check if both modules exist in the output file
+        if grep -q "^$module$" "$OUTPUT_FILE" && grep -q "^$after_module$" "$OUTPUT_FILE"; then
+            # If 'module' appears BEFORE 'after_module', move it
+            mod_line=$(grep -n "^$module$" "$OUTPUT_FILE" | cut -d: -f1)
+            after_line=$(grep -n "^$after_module$" "$OUTPUT_FILE" | cut -d: -f1)
+
+            if [ "$mod_line" -lt "$after_line" ]; then
+                # Remove the module from its current position
+                sed -i "/^$module$/d" "$OUTPUT_FILE"
+
+                # Insert 'module' immediately AFTER 'after_module'
+                # We use sed's 'a' command (append after match)
+                sed -i "/^$after_module$/a $module" "$OUTPUT_FILE"
+            fi
+        fi
+    done
 else
     # Fallback: use modules.order with priority modules first
     : > "$OUTPUT_FILE"
