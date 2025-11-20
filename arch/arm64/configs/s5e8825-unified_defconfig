@@ -6836,8 +6836,6 @@ CONFIG_SEC_PM=y
 CONFIG_SEC_PM_THERMISTOR=m
 CONFIG_SEC_WAKEUP_CPU_ALLOCATOR=m
 # CONFIG_RTC_AUTO_PWRON is not set
-# CONFIG_NGKSM is not set
-# CONFIG_HDM is not set
 CONFIG_SEC_PANEL_NOTIFIER_V2=m
 CONFIG_DRV_SAMSUNG_PMIC=m
 
@@ -7659,11 +7657,8 @@ CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y
 # end of Memory initialization
 # end of Kernel hardening options
 
-# CONFIG_SECURITY_DEFEX is not set
-# CONFIG_GAF is not set
 # CONFIG_MEMORY_ZEROISATION is not set
 # CONFIG_MZ_PAGE_V2 is not set
-# CONFIG_FIVE is not set
 # end of Security options
 
 CONFIG_CRYPTO=y
