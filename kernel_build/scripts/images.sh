@@ -2,11 +2,7 @@ build_images() {
     local MONTH="$(date +%Y-%m)"
 
     echo -e "\nINFO: Building dtb image..."
-    if [ "$DO_OC" == "1" ]; then
-        python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB_OC" || exit 1
-    else
-        python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
-    fi
+    python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
 
     # Build OneUI boot image (original kernel with aosp_mode=0)
     "$MKBOOTIMG" --header_version 4 \

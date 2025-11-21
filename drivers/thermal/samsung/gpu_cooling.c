@@ -34,6 +34,7 @@
 #include "exynos_tmu.h"
 #include "../thermal_core.h"
 #include <linux/exynos/s5e8825_clk_gpu.h>
+#include <linux/workarounds.h>
 
 /**
  * struct power_table - frequency to power conversion
@@ -734,11 +735,9 @@ static struct thermal_zone_device* parse_ect_cooling_level(struct thermal_coolin
 		unsigned long max_level = 0;
 		int level;
 
-#ifdef CONFIG_SOC_S5E8825_GPU_OC
-		if (function->range_list[i].max_frequency == GPU_FREQ_STOCK_KHZ_MAX) {
+		if (is_superfloppy_mode() && function->range_list[i].max_frequency == GPU_FREQ_STOCK_KHZ_MAX) {
 			function->range_list[i].max_frequency = GPU_FREQ_KHZ_MAX;
 		}
-#endif
 
 		temperature = function->range_list[i].lower_bound_temperature;
 		freq = function->range_list[i].max_frequency;

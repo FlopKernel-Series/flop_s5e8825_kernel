@@ -30,6 +30,7 @@
 #include <soc/samsung/freq-qos-tracer.h>
 #include <soc/samsung/exynos-acme.h>
 #include <soc/samsung/exynos-dm.h>
+#include <linux/workarounds.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/acme.h>
@@ -1121,7 +1122,14 @@ init_constraint_table_dt(struct exynos_dm_freq *dm_table, int table_length,
 	 * value, the size of a row is 64bytes. Divide size in half when
 	 * table is allocated.
 	 */
-	size = of_property_count_u32_elems(dn, "table");
+	if (is_superfloppy_mode()) {
+		size = of_property_count_u32_elems(dn, "table_alt");
+		if (size < 0) {
+			size = of_property_count_u32_elems(dn, "table");
+		}
+	} else {
+		size = of_property_count_u32_elems(dn, "table");
+	}
 	if (size < 0)
 		return size;
 
@@ -1130,7 +1138,11 @@ init_constraint_table_dt(struct exynos_dm_freq *dm_table, int table_length,
 	if (!table)
 		return -ENOMEM;
 
-	of_property_read_u32_array(dn, "table", (unsigned int *)table, size);
+	if (is_superfloppy_mode() && of_property_count_u32_elems(dn, "table_alt") > 0) {
+		of_property_read_u32_array(dn, "table_alt", (unsigned int *)table, size);
+	} else {
+		of_property_read_u32_array(dn, "table", (unsigned int *)table, size);
+	}
 
 	for (index = 0; index < table_length; index++) {
 		unsigned int freq = dm_table[index].master_freq;
@@ -1733,9 +1745,18 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 	}
 
 	/* Set min/max frequency from the device tree */
-	if (of_property_read_u32(dn, "max-freq", &domain->max_freq)) {
-		pr_err("%s: max-freq does not exist\n", __func__);
-		return -ENODATA;
+	if (is_superfloppy_mode()) {
+		if (of_property_read_u32(dn, "max-freq_alt", &domain->max_freq)) {
+			if (of_property_read_u32(dn, "max-freq", &domain->max_freq)) {
+				pr_err("%s: max-freq does not exist\n", __func__);
+				return -ENODATA;
+			}
+		}
+	} else {
+		if (of_property_read_u32(dn, "max-freq", &domain->max_freq)) {
+			pr_err("%s: max-freq does not exist\n", __func__);
+			return -ENODATA;
+		}
 	}
 
 	if (of_property_read_u32(dn, "min-freq", &domain->min_freq)) {
@@ -1753,11 +1774,32 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 
 	/*
 	 * Directly read the frequency table from the device tree.
+	 * Use freq-table_alt if superfloppy mode is enabled.
 	 */
-	raw_table_size = of_property_count_u32_elems(dn, "freq-table");
-	if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
-		pr_err("%s: freq-table does not exist\n", __func__);
-		return -ENODATA;
+	if (is_superfloppy_mode()) {
+		raw_table_size = of_property_count_u32_elems(dn, "freq-table_alt");
+		if (raw_table_size > 0) {
+			if (of_property_read_u32_array(dn, "freq-table_alt", freq_table, raw_table_size)) {
+				pr_warn("%s: freq-table_alt read failed, falling back to freq-table\n", __func__);
+				raw_table_size = of_property_count_u32_elems(dn, "freq-table");
+				if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
+					pr_err("%s: freq-table does not exist\n", __func__);
+					return -ENODATA;
+				}
+			}
+		} else {
+			raw_table_size = of_property_count_u32_elems(dn, "freq-table");
+			if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
+				pr_err("%s: freq-table does not exist\n", __func__);
+				return -ENODATA;
+			}
+		}
+	} else {
+		raw_table_size = of_property_count_u32_elems(dn, "freq-table");
+		if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
+			pr_err("%s: freq-table does not exist\n", __func__);
+			return -ENODATA;
+		}
 	}
 
 	domain->table_size = raw_table_size;

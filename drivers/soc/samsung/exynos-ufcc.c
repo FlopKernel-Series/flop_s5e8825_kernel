@@ -21,6 +21,7 @@
 #include <linux/cpufreq.h>
 #include <linux/pm_opp.h>
 #include <linux/ems.h>
+#include <linux/workarounds.h>
 
 #include <soc/samsung/exynos-cpupm.h>
 #include <soc/samsung/exynos-ufcc.h>
@@ -1565,7 +1566,14 @@ static int init_ufc_table(struct device_node *dn)
 	if (of_property_read_u32(dn, "ctrl-type", &table_info->ctrl_type))
 		return -EINVAL;
 
-	size = of_property_count_u32_elems(dn, "table");
+	if (is_superfloppy_mode()) {
+		size = of_property_count_u32_elems(dn, "table_alt");
+		if (size < 0) {
+			size = of_property_count_u32_elems(dn, "table");
+		}
+	} else {
+		size = of_property_count_u32_elems(dn, "table");
+	}
 	if (size < 0)
 		return size;
 
@@ -1573,9 +1581,16 @@ static int init_ufc_table(struct device_node *dn)
 	if (!table_wo_validation)
 		return -ENOMEM;
 
-	if (of_property_read_u32_array(dn, "table", table_wo_validation, size)) {
-		ret = -EINVAL;
-		goto out_table;
+	if (is_superfloppy_mode() && of_property_count_u32_elems(dn, "table_alt") > 0) {
+		if (of_property_read_u32_array(dn, "table_alt", table_wo_validation, size)) {
+			ret = -EINVAL;
+			goto out_table;
+		}
+	} else {
+		if (of_property_read_u32_array(dn, "table", table_wo_validation, size)) {
+			ret = -EINVAL;
+			goto out_table;
+		}
 	}
 
 	check_valid_row = kzalloc(sizeof(u32) * (size / ufc.table_col), GFP_KERNEL);

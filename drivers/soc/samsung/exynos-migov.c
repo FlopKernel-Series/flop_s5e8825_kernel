@@ -19,6 +19,7 @@
 #include <soc/samsung/exynos-sci.h>
 #include <soc/samsung/bts.h>
 #include <soc/samsung/exynos-gpu-profiler.h>
+#include <linux/workarounds.h>
 
 #include "../../../kernel/sched/sched.h"
 #include "../../../kernel/sched/ems/ems.h"
@@ -1394,10 +1395,21 @@ static s32 init_domain_data(struct device_node *root,
 
 		if (of_property_read_s32(dn, "pm-qos-min-freq", &private->pm_qos_min_freq))
 			private->pm_qos_min_freq = PM_QOS_DEFAULT_VALUE;
-		if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
-			private->pm_qos_max_freq = PM_QOS_DEFAULT_VALUE;
-		if (of_property_read_s32(dn, "hp-minlock-low-limit", &private->hp_minlock_low_limit))
-			private->hp_minlock_low_limit = PM_QOS_DEFAULT_VALUE;
+		if (is_superfloppy_mode()) {
+			if (of_property_read_s32(dn, "pm-qos-max-freq_alt", &private->pm_qos_max_freq)) {
+				if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
+					private->pm_qos_max_freq = PM_QOS_DEFAULT_VALUE;
+			}
+			if (of_property_read_s32(dn, "hp-minlock-low-limit_alt", &private->hp_minlock_low_limit)) {
+				if (of_property_read_s32(dn, "hp-minlock-low-limit", &private->hp_minlock_low_limit))
+					private->hp_minlock_low_limit = PM_QOS_DEFAULT_VALUE;
+			}
+		} else {
+			if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
+				private->pm_qos_max_freq = PM_QOS_DEFAULT_VALUE;
+			if (of_property_read_s32(dn, "hp-minlock-low-limit", &private->hp_minlock_low_limit))
+				private->hp_minlock_low_limit = PM_QOS_DEFAULT_VALUE;
+		}
 		if (of_property_read_s32(dn, "lp-minlock-low-limit", &private->lp_minlock_low_limit))
 			private->lp_minlock_low_limit = PM_QOS_DEFAULT_VALUE;
 
@@ -1423,8 +1435,15 @@ static s32 init_domain_data(struct device_node *root,
 
 		ret |= of_property_read_s32(dn, "pm-qos-max-class",
 				&private->pm_qos_max_class);
-		if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
-			private->pm_qos_max_freq = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
+		if (is_superfloppy_mode()) {
+			if (of_property_read_s32(dn, "pm-qos-max-freq_alt", &private->pm_qos_max_freq)) {
+				if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
+					private->pm_qos_max_freq = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
+			}
+		} else {
+			if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
+				private->pm_qos_max_freq = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
+		}
 
 		ret |= of_property_read_s32(dn, "pm-qos-min-class",
 				&private->pm_qos_min_class);
@@ -1467,10 +1486,20 @@ static s32 init_domain_data(struct device_node *root,
 		private->stats0_sum_thr = val;
 		ret |= of_property_read_s32(dn, "freq-stats0-updown-delta-pct-thr", &val);
 		private->stats0_updown_delta_pct_thr = val;
-		ret |= of_property_read_s32(dn, "hp-minlock-low-limit", &private->hp_minlock_low_limit);
-
-		if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
-			private->pm_qos_max_freq = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
+		if (is_superfloppy_mode()) {
+			if (of_property_read_s32(dn, "hp-minlock-low-limit_alt", &private->hp_minlock_low_limit)) {
+				if (of_property_read_s32(dn, "hp-minlock-low-limit", &private->hp_minlock_low_limit))
+					private->hp_minlock_low_limit = PM_QOS_DEFAULT_VALUE;
+			}
+			if (of_property_read_s32(dn, "pm-qos-max-freq_alt", &private->pm_qos_max_freq)) {
+				if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
+					private->pm_qos_max_freq = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
+			}
+		} else {
+			ret |= of_property_read_s32(dn, "hp-minlock-low-limit", &private->hp_minlock_low_limit);
+			if (of_property_read_s32(dn, "pm-qos-max-freq", &private->pm_qos_max_freq))
+				private->pm_qos_max_freq = PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE;
+		}
 		if (of_property_read_s32(dn, "pm-qos-min-freq", &private->pm_qos_min_freq))
 			private->pm_qos_min_freq = PM_QOS_MIN_FREQUENCY_DEFAULT_VALUE;
 

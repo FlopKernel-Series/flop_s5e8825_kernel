@@ -16,6 +16,7 @@
 #include <linux/of_address.h>
 #include <linux/proc_fs.h>
 #include <linux/of.h>
+#include <linux/workarounds.h>
 #include <soc/samsung/exynos-smc.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
@@ -256,9 +257,19 @@ static int __mfc_core_parse_dt(struct device_node *np, struct mfc_core *core)
 			&pdata->qos_boost_table->freq_int);
 	of_property_read_u32(np_qos, "freq_mif",
 			&pdata->qos_boost_table->freq_mif);
-	of_property_read_u32_array(np_qos, "freq_cluster",
-			&pdata->qos_boost_table->freq_cluster[0],
-			pdata->qos_boost_table->num_cluster);
+	if (is_superfloppy_mode()) {
+		if (of_property_read_u32_array(np_qos, "freq_cluster_alt",
+				&pdata->qos_boost_table->freq_cluster[0],
+				pdata->qos_boost_table->num_cluster)) {
+			of_property_read_u32_array(np_qos, "freq_cluster",
+					&pdata->qos_boost_table->freq_cluster[0],
+					pdata->qos_boost_table->num_cluster);
+		}
+	} else {
+		of_property_read_u32_array(np_qos, "freq_cluster",
+				&pdata->qos_boost_table->freq_cluster[0],
+				pdata->qos_boost_table->num_cluster);
+	}
 
 	of_property_read_string(np_qos, "bts_scen",
 			&pdata->qos_boost_table->name);

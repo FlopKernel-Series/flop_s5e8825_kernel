@@ -61,7 +61,6 @@ TMPDIR="$KDIR/kernel_build/tmp"
 IN_PLATFORM="$KDIR/kernel_build/vboot_platform"
 IN_DLKM="$KDIR/kernel_build/vboot_dlkm"
 IN_DTB="$OUTDIR/arch/arm64/boot/dts/exynos/s5e8825.dtb"
-IN_DTB_OC="$OUTDIR/arch/arm64/boot/dts/exynos/s5e8825_oc.dtb"
 PLATFORM_RAMDISK_DIR="$TMPDIR/ramdisk_platform"
 DLKM_RAMDISK_DIR="$TMPDIR/ramdisk_dlkm"
 PREBUILT_RAMDISK="$KDIR/kernel_build/boot/ramdisk"
@@ -117,7 +116,6 @@ DO_MENUCONFIG=0
 IS_RELEASE=0
 DO_TG=0
 DO_REGEN=0
-DO_OC=0
 DO_FLTO=0
 DO_QUIET=0
 DO_PERM=0
@@ -163,10 +161,6 @@ for arg in "$@"; do
     if [[ "$arg" == *r* ]]; then
         echo "INFO: config regeneration mode"
         DO_REGEN=1
-    fi
-    if [[ "$arg" == *u* ]]; then
-        echo "INFO: Unlocked variant argument passed, unlocked build will be made"
-        DO_OC=1
     fi
     if [[ "$arg" == *l* ]]; then
         echo "INFO: Full-LTO argument passed"
@@ -216,11 +210,6 @@ elif [ "$DO_MKSU" == "1" ]; then
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"
-fi
-
-if [ "$DO_OC" == "1" ]; then
-    FK_TYPE="$FK_TYPE+Unlocked"
-    FK_TYPE_SHORT="$FK_TYPE_SHORT+U"
 fi
 
 if [ "$DO_PERM" == "1" ]; then

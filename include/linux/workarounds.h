@@ -11,4 +11,6 @@ static inline bool is_aosp_mode(void)
 bool is_aosp_mode(void);
 #endif
 
+bool is_superfloppy_mode(void);
+
 #endif /* _WORKAROUNDS_H */

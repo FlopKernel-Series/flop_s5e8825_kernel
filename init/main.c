@@ -191,6 +191,29 @@ bool is_aosp_mode(void)
 EXPORT_SYMBOL(is_aosp_mode);
 #endif
 
+static bool superfloppy_mode = false;
+
+static int __init set_superfloppy_mode(char *val)
+{
+	int tmp = superfloppy_mode;
+
+	if (get_option(&val, &tmp)) {
+		superfloppy_mode = tmp != 0;
+	}
+
+	pr_info("Workaround: superfloppy=%s\n",
+			superfloppy_mode ? "enabled" : "disabled");
+
+	return 0;
+}
+__setup("superfloppy=", set_superfloppy_mode);
+
+bool is_superfloppy_mode(void)
+{
+	return superfloppy_mode;
+}
+EXPORT_SYMBOL(is_superfloppy_mode);
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.

@@ -28,13 +28,8 @@
 #include <linux/exynos/s5e8825_clk_gpu.h>
 
 static struct _clock_info *clk_info;
-#ifdef CONFIG_SOC_S5E8825_GPU_OC
-#ifdef CONFIG_SOC_S5E8825_OVERCLOCK
-static int gpu_unlock = 1;
-#else
+#include <linux/workarounds.h>
 static int gpu_unlock = 0;
-#endif
-#endif
 static int gpu_clklck = 1;
 
 /*************************************
@@ -209,8 +204,6 @@ GPEX_STATIC ssize_t get_gpu_clklck(char *buf)
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(get_gpu_clklck)
 
-#ifdef CONFIG_SOC_S5E8825_GPU_OC
-
 void handle_lock_dvfs(int clock) {
 	int ret;
 	clk_info->user_max_lock_input = clock;
@@ -229,6 +222,9 @@ void handle_lock_dvfs(int clock) {
 
 GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 {
+	if (!is_superfloppy_mode()) {
+		return -EINVAL;
+	}
 	if (sysfs_streq("0", buf) || sysfs_streq("1", buf)) {
 		gpu_unlock = sysfs_streq("1", buf);
 		handle_lock_dvfs(gpu_unlock ? GPU_FREQ_KHZ_MAX : GPU_FREQ_STOCK_KHZ_MAX);
@@ -241,10 +237,9 @@ CREATE_SYSFS_KOBJECT_WRITE_FUNCTION(set_gpu_unlock)
 
 GPEX_STATIC ssize_t get_gpu_unlock(char *buf)
 {
-	return snprintf(buf, PAGE_SIZE, "%d\n", gpu_unlock);
+	return snprintf(buf, PAGE_SIZE, "%d\n", is_superfloppy_mode() ? gpu_unlock : 0);
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(get_gpu_unlock)
-#endif
 
 GPEX_STATIC ssize_t show_max_lock_dvfs(char *buf)
 {
@@ -571,9 +566,7 @@ int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 					  set_mm_min_lock_dvfs);
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD_RO(gpu_clock, show_clock);
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD_RO(gpu_freq_table, show_gpu_freq_table);
-#ifdef CONFIG_SOC_S5E8825_GPU_OC
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD(gpu_unlock, get_gpu_unlock, set_gpu_unlock);
-#endif
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD(gpu_clklck, get_gpu_clklck, set_gpu_clklck);
 
 	return 0;
