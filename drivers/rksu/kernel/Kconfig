@@ -2,6 +2,7 @@ menu "KernelSU"
 
 config KSU
 	tristate "KernelSU function support"
+	depends on KSU_RKSU
 	default y
 	help
 	  Enable kernel-level root privileges on Android System.
@@ -27,13 +28,13 @@ config KSU_ALLOWLIST_WORKAROUND
 	help
 	  Enable workaround for broken allowlist save
 
-config KSU_MANUAL_HOOK
-	bool "KernelSU manual hook mode."
-	depends on KSU && KSU != m
-	default y if !KPROBES
-	default n
-	help
-	  Enable manual hook support.
+# config KSU_MANUAL_HOOK
+# 	bool "KernelSU manual hook mode."
+# 	depends on KSU && KSU != m
+# 	default y if !KPROBES
+# 	default n
+# 	help
+# 	  Enable manual hook support.
 
 config KSU_SHOULD_USE_NEW_TP
 	bool "KernelSU tracepoint+kretprobe hook"
