@@ -15,6 +15,8 @@ uid_t get_manager_uid();
 
 const char* get_hook_mode();
 
+const char* get_version_tag();
+
 bool get_allow_list(int *uids, int *size);
 
 bool uid_should_umount(int uid);

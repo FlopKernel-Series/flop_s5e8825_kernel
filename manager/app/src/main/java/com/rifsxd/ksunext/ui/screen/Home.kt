@@ -30,23 +30,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.verticalScroll
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.text.TextRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ModuleScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SettingScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SuperUserScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.rifsxd.ksunext.*
 import com.rifsxd.ksunext.R
 import com.rifsxd.ksunext.ui.component.rememberConfirmDialog
+import com.rifsxd.ksunext.ui.theme.ORANGE
 import com.rifsxd.ksunext.ui.util.*
 import com.rifsxd.ksunext.ui.util.module.LatestVersionInfo
+import com.rifsxd.ksunext.ui.viewmodel.ModuleViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.*
 
@@ -58,17 +72,23 @@ fun HomeScreen(navigator: DestinationsNavigator) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val isManager = Natives.becomeManager(ksuApp.packageName)
+    val fullFeatured = isManager && !Natives.requireNewKernel() && rootAvailable()
     val ksuVersion = if (isManager) Natives.version else null
+    val ksuVersionTag = if (isManager) Natives.getVersionTag() else null
 
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     val developerOptionsEnabled = prefs.getBoolean("enable_developer_options", false)
+
 
     Scaffold(
         topBar = {
             TopBar(
                 kernelVersion,
                 ksuVersion,
+                onSettingsClick = {
+                    navigator.navigate(SettingScreenDestination)
+                },
                 onInstallClick = {
                     navigator.navigate(InstallScreenDestination)
                 },
@@ -89,19 +109,23 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                 if (it >= Natives.MINIMAL_SUPPORTED_KERNEL_LKM && kernelVersion.isGKI()) Natives.isLkmMode else null
             }
 
-            StatusCard(kernelVersion, ksuVersion, lkmMode) {
+            StatusCard(kernelVersion, ksuVersion, lkmMode, ksuVersionTag = ksuVersionTag) {
                 navigator.navigate(InstallScreenDestination)
             }
 
-            if (ksuVersion != null && rootAvailable()) {
+            if (fullFeatured) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(IntrinsicSize.Min),
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    Box(modifier = Modifier.weight(1f)) { SuperuserCard() }
-                    Box(modifier = Modifier.weight(1f)) { ModuleCard() }
+                    Box(modifier = Modifier.weight(1f)) {
+                        SuperuserCard(onClick = { navigator.navigate(SuperUserScreenDestination) })
+                    }
+                    Box(modifier = Modifier.weight(1f)) {
+                        ModuleCard(onClick = { navigator.navigate(ModuleScreenDestination) })
+                    }
                 }
             }
 
@@ -112,7 +136,7 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                     )
                 )
             }
-            
+
             if (ksuVersion != null && !rootAvailable()) {
                 WarningCard(
                     stringResource(id = R.string.grant_root_failed),
@@ -125,38 +149,41 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                     }
                 )
             }
+
             val checkUpdate =
                 LocalContext.current.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                    .getBoolean("check_update", false)
+                    .getBoolean("check_update", true)
             if (checkUpdate) {
                 UpdateCard()
             }
-            //NextCard()
+
             InfoCard(autoExpand = developerOptionsEnabled)
             IssueReportCard()
-            //EXperimentalCard()
             Spacer(Modifier)
         }
     }
 }
 
 @Composable
-private fun SuperuserCard() {
+private fun SuperuserCard(onClick: (() -> Unit)? = null) {
     val count = getSuperuserCount()
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+        ),
+        modifier = Modifier
+            .height(IntrinsicSize.Min)
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = if (count <= 1) {
@@ -177,22 +204,44 @@ private fun SuperuserCard() {
 }
 
 @Composable
-private fun ModuleCard() {
+private fun ModuleCard(onClick: (() -> Unit)? = null) {
     val count = getModuleCount()
+    val moduleViewModel: ModuleViewModel = viewModel()
+
+    val moduleUpdateCount = moduleViewModel.moduleList.count {
+        moduleViewModel.checkUpdate(it).first.isNotEmpty()
+    }
+
+    // State machine: 0 = nothing, 1 = show "+ Update!", 2 = show "+ X"
+    var step by remember { mutableStateOf(0) }
+
+    LaunchedEffect(moduleUpdateCount) {
+        if (moduleUpdateCount > 0) {
+            step = 1
+            delay(1200) // show "+ Update!" for a moment
+            step = 2
+        } else {
+            step = 0
+        }
+    }
+
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+        ),
+        modifier = Modifier
+            .height(IntrinsicSize.Min)
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = if (count <= 1) {
@@ -202,11 +251,58 @@ private fun ModuleCard() {
                     },
                     style = MaterialTheme.typography.bodySmall
                 )
-                Text(
-                    text = count.toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = count.toString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    if (moduleUpdateCount > 0) {
+                        Spacer(Modifier.width(6.dp))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Keep the "|" static
+                            Text(
+                                text = "|",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            Spacer(Modifier.width(4.dp))
+
+                            // Animate only the right-side text
+                            AnimatedContent(
+                                targetState = step,
+                                transitionSpec = {
+                                    slideInHorizontally { -it } + fadeIn() togetherWith
+                                            slideOutHorizontally { it } + fadeOut()
+                                },
+                                label = "UpdateAnimation"
+                            ) { target ->
+                                when (target) {
+                                    1 -> Text(
+                                        text = "Update!",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = ORANGE
+                                    )
+                                    2 -> Text(
+                                        text = buildAnnotatedString {
+                                            append(moduleUpdateCount.toString())
+                                            withStyle(SpanStyle(color = ORANGE)) {
+                                                append("*")
+                                            }
+                                        },
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -226,6 +322,7 @@ fun UpdateCard() {
     val newVersionCode = newVersion.versionCode
     val newVersionUrl = newVersion.downloadUrl
     val changelog = newVersion.changelog
+    val newVersionTag = newVersion.versionTag
 
     val uriHandler = LocalUriHandler.current
     val title = stringResource(id = R.string.module_changelog)
@@ -237,18 +334,41 @@ fun UpdateCard() {
         exit = shrinkVertically() + fadeOut()
     ) {
         val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
-        WarningCard(
-            message = stringResource(id = R.string.new_version_available).format(newVersionCode),
-            MaterialTheme.colorScheme.outlineVariant
+        ElevatedCard(
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
         ) {
-            if (changelog.isEmpty()) {
-                uriHandler.openUri(newVersionUrl)
-            } else {
-                updateDialog.showConfirm(
-                    title = title,
-                    content = changelog,
-                    markdown = true,
-                    confirm = updateText
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        if (changelog.isEmpty()) {
+                            uriHandler.openUri(newVersionUrl)
+                        } else {
+                            updateDialog.showConfirm(
+                                title = title,
+                                content = changelog,
+                                markdown = true,
+                                confirm = updateText
+                            )
+                        }
+                    }
+                    .padding(24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Update,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 20.dp)
+                )
+                Text(
+                    text = if (!newVersionTag.isNullOrEmpty()) {
+                        stringResource(id = R.string.new_version_available, newVersionTag, newVersionCode)
+                    } else {
+                        stringResource(id = R.string.new_version_available, "", newVersionCode)
+                    },
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -264,17 +384,17 @@ fun RebootDropdownItem(@StringRes id: Int, reason: String = "") {
     })
 }
 
-@Composable
-fun getSeasonalIcon(): ImageVector {
-    val month = Calendar.getInstance().get(Calendar.MONTH) // 0-11 for January-December
-    return when (month) {
-        Calendar.DECEMBER, Calendar.JANUARY, Calendar.FEBRUARY -> Icons.Filled.AcUnit // Winter
-        Calendar.MARCH, Calendar.APRIL, Calendar.MAY -> Icons.Filled.Spa // Spring
-        Calendar.JUNE, Calendar.JULY, Calendar.AUGUST -> Icons.Filled.WbSunny // Summer
-        Calendar.SEPTEMBER, Calendar.OCTOBER, Calendar.NOVEMBER -> Icons.Filled.Forest // Fall
-        else -> Icons.Filled.Whatshot // Fallback icon
-    }
-}
+// @Composable
+// fun getSeasonalIcon(): ImageVector {
+//     val month = Calendar.getInstance().get(Calendar.MONTH) // 0-11 for January-December
+//     return when (month) {
+//         Calendar.DECEMBER, Calendar.JANUARY, Calendar.FEBRUARY -> Icons.Filled.AcUnit // Winter
+//         Calendar.MARCH, Calendar.APRIL, Calendar.MAY -> Icons.Filled.Spa // Spring
+//         Calendar.JUNE, Calendar.JULY, Calendar.AUGUST -> Icons.Filled.WbSunny // Summer
+//         Calendar.SEPTEMBER, Calendar.OCTOBER, Calendar.NOVEMBER -> Icons.Filled.Forest // Fall
+//         else -> Icons.Filled.Whatshot // Fallback icon
+//     }
+// }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -283,12 +403,17 @@ private fun TopBar(
     kernelVersion: KernelVersion,
     ksuVersion: Int?,
     onInstallClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     var isSpinning by remember { mutableStateOf(false) }
+    var rotationTarget by remember { mutableStateOf(0f) }
     val rotation by animateFloatAsState(
-        targetValue = if (isSpinning) 360f else 0f,
-        animationSpec = tween(durationMillis = 800),
+        targetValue = rotationTarget,
+        animationSpec = tween(
+            durationMillis = 1400,
+            easing = androidx.compose.animation.core.FastOutSlowInEasing
+        ),
         finishedListener = {
             isSpinning = false
         }
@@ -296,6 +421,7 @@ private fun TopBar(
 
     LaunchedEffect(Unit) {
         isSpinning = true
+        rotationTarget += 360f * 6
     }
 
     TopAppBar(
@@ -306,11 +432,14 @@ private fun TopBar(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ) {
-                    if (!isSpinning) isSpinning = true
+                    if (!isSpinning) {
+                        isSpinning = true
+                        rotationTarget += 360f * 6
+                    }
                 }
             ) {
                 Icon(
-                    imageVector = getSeasonalIcon(),
+                    painter = painterResource(R.drawable.ic_ksu_next),
                     contentDescription = null,
                     modifier = Modifier
                         .padding(end = 8.dp)
@@ -365,6 +494,12 @@ private fun TopBar(
                     }
                 }
             }
+            IconButton(onClick = onSettingsClick) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = stringResource(id = R.string.settings)
+                )
+            }
         },
         windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
         scrollBehavior = scrollBehavior
@@ -378,6 +513,7 @@ private fun StatusCard(
     ksuVersion: Int?,
     lkmMode: Boolean?,
     moduleUpdateCount: Int = 0,
+    ksuVersionTag: String? = null,
     onClickInstall: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -487,8 +623,13 @@ private fun StatusCard(
                             )
                         }
 
+                        val versionText = if (!ksuVersionTag.isNullOrEmpty()) {
+                            stringResource(id = R.string.home_working_version, ksuVersionTag, ksuVersion ?: 0)
+                        } else {
+                            stringResource(id = R.string.home_working_version, "v0.0.0", ksuVersion ?: 0)
+                        }
                         Text(
-                            text = stringResource(R.string.home_working_version, ksuVersion),
+                            text = versionText,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -625,7 +766,7 @@ private fun InfoCard(autoExpand: Boolean = false) {
                     } else {
                         "${managerVersion.first} (${managerVersion.second})"
                     },
-                    icon = painterResource(R.drawable.ic_ksu_next),
+                    icon = Icons.Filled.AutoAwesomeMotion,
                 )
 
                 if (ksuVersion != null &&
@@ -652,7 +793,6 @@ private fun InfoCard(autoExpand: Boolean = false) {
                         content = currentMountSystem().ifEmpty { stringResource(R.string.unavailable) },
                         icon = Icons.Filled.SettingsSuggest,
                     )
-                    
 
                     val suSFS = getSuSFS()
                     if (suSFS == "Supported") {
@@ -675,7 +815,7 @@ private fun InfoCard(autoExpand: Boolean = false) {
                         Spacer(Modifier.height(16.dp))
                         InfoCardItem(
                             label = stringResource(R.string.zygisk_status),
-                            content = stringResource(R.string.enabled),
+                            content = "${stringResource(R.string.enabled)} | ${getZygiskImplementation()} | ${getZygiskVersion()}",
                             icon = Icons.Filled.Vaccines
                         )
                     }

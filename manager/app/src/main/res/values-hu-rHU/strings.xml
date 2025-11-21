@@ -15,7 +15,7 @@
   <string name="lkm_mode_deprecated">LKM mode is now deprecated!</string>
   <string name="lkm_alternative_suggestion">Install GKI kernel or integrate KernelSU Next to your device.</string>
   <string name="home_working">Working</string>
-  <string name="home_working_version">Version: %d</string>
+  <string name="home_working_version">Version: %s (%d)</string>
   <string name="home_module_update_count">Updates: %d</string>
   <string name="home_failure">KernelSU Next v2 signature not found in kernel! [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">Ask your kernel developer to integrate KernelSU Next!</string>
@@ -141,7 +141,7 @@
   <string name="module_updated">Updated</string>
   <string name="module_downloading">Downloading module: %s</string>
   <string name="module_start_downloading">Start downloading: %s</string>
-  <string name="new_version_available">New version %s is available, click to upgrade.</string>
+  <string name="new_version_available">New version %1$s (%2$d) is available, click to upgrade.</string>
   <string name="launch_app">Launch</string>
   <string name="close">Close</string>
   <string name="force_stop_app">Force stop</string>

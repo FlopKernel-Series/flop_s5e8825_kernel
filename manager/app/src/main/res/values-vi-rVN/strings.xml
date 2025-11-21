@@ -15,7 +15,7 @@
   <string name="lkm_mode_deprecated">Chế độ LKM không còn được hỗ trợ!</string>
   <string name="lkm_alternative_suggestion">Cài đặt Kernel GKI hoặc tự nhúng KernelSU Next vào thiết bị của bạn</string>
   <string name="home_working">Đang hoạt động</string>
-  <string name="home_working_version">Phiên bản: %d</string>
+  <string name="home_working_version">Phiên bản: %s (%d)</string>
   <string name="home_module_update_count">Cập nhật: %d</string>
   <string name="home_failure">Không tìm thấy chữ ký KernelSU Next v2 trong Kernel! [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">Yêu cầu nhà phát triển Kernel của bạn tích hợp KernelSU Next!</string>
@@ -30,7 +30,7 @@
   <string name="home_susfs_version">Phiên bản SuSFS</string>
   <string name="home_susfs_sus_su">SuS SU</string>
   <string name="home_android">Phiên bản Android</string>
-  <string name="home_manager_version">Phiên bản trình quản lý</string>
+  <string name="home_manager_version">Phiên bản Trình quản lý</string>
   <string name="home_abi">ABI</string>
   <string name="home_selinux_status">Trạng thái SELinux</string>
   <string name="selinux_status_disabled">Vô hiệu hoá</string>
@@ -141,7 +141,7 @@
   <string name="module_updated">Đã cập nhật</string>
   <string name="module_downloading">Đang tải xuống module: %s</string>
   <string name="module_start_downloading">Bắt đầu tải xuống: %s</string>
-  <string name="new_version_available">Phiên bản mới %s đã có sẵn, nhấn để cập nhật</string>
+  <string name="new_version_available">Phiên bản mới %1$s (%2$d) đã có sẵn, nhấn để cập nhật</string>
   <string name="launch_app">Khởi chạy</string>
   <string name="close">Đóng</string>
   <string name="force_stop_app">Buộc dừng</string>
@@ -154,7 +154,7 @@
   <string name="su_not_allowed">Không thể cấp quyền Superuser cho %s</string>
   <string name="module_changelog">Nhật ký thay đổi</string>
   <string name="settings_profile_template">Mẫu Hồ sơ ứng dụng</string>
-  <string name="settings_profile_template_summary">Quản lý mẫu cục bộ và trực tuyến của Hồ sơ ứng dụng</string>
+  <string name="settings_profile_template_summary">Quản lý mẫu cục bộ và trực tuyến của Hồ sơ ứng dụng.</string>
   <string name="app_profile_template_create">Tạo mẫu</string>
   <string name="app_profile_template_edit">Chỉnh sửa mẫu</string>
   <string name="app_profile_template_id">ID</string>
@@ -176,8 +176,8 @@
   <string name="app_profile_template_import_empty">Bộ nhớ tạm đang trống!</string>
   <string name="module_changelog_failed">Lấy nhật ký thay đổi thất bại: %s</string>
   <string name="settings_check_update">Kiểm tra cập nhật</string>
-  <string name="settings_check_update_summary">Tự động kiểm tra cập nhật khi mở ứng dụng</string>
-  <string name="grant_root_failed">Cấp quyền root thất bại!</string>
+  <string name="settings_check_update_summary">Tự động kiểm tra cập nhật khi mở ứng dụng.</string>
+  <string name="grant_root_failed">Cấp quyền root thất bại! Nhấn để khởi động lại Trình quản lý.</string>
   <string name="action">Khởi chạy</string>
   <string name="webui">WebUI</string>
   <string name="open">Mở</string>
@@ -205,7 +205,7 @@
   <string name="send_log">Chia sẻ nhật ký</string>
   <string name="settings_disable_su">Vô hiệu hoá lệnh SU</string>
   <string name="settings_language">Ngôn ngữ</string>
-  <string name="system_default">Mặc định theo hệ thống</string>
+  <string name="system_default">Mặc định theo hệ thống.</string>
   <string name="settings_legacyui">Sử dụng giao diện cũ</string>
   <string name="settings_legacyui_summary">Chuyển về kiểu giao diện cũ</string>
   <string name="settings_banner">Hiển thị banner</string>
