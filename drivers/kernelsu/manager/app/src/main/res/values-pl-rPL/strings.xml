@@ -15,7 +15,7 @@
   <string name="lkm_mode_deprecated">Tryb LKM jest teraz przestarzały!</string>
   <string name="lkm_alternative_suggestion">Zainstaluj jądro GKI lub zintegruj KernelSU Next ze swoim urządzeniem.</string>
   <string name="home_working">Uruchomiony</string>
-  <string name="home_working_version">Wersja: %d</string>
+  <string name="home_working_version">Wersja: %s (%d)</string>
   <string name="home_module_update_count">Aktualizacje: %d</string>
   <string name="home_failure">Nie znaleziono sygnatury v2 KernelSU Next w jądrze! [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">Poproś swojego programistę jądra o integrację KernelSU Next!</string>
@@ -141,7 +141,7 @@
   <string name="module_updated">Zaktualizowany</string>
   <string name="module_downloading">Pobieranie modułu: %s</string>
   <string name="module_start_downloading">Rozpocznij pobieranie: %s</string>
-  <string name="new_version_available">Nowa wersja %s jest dostępna, kliknij, aby zaktualizować.</string>
+  <string name="new_version_available">Nowa wersja %1$s (%2$d) jest dostępna, kliknij, aby zaktualizować.</string>
   <string name="launch_app">Uruchom</string>
   <string name="close">Zamknij</string>
   <string name="force_stop_app">Wymuś zatrzymanie</string>

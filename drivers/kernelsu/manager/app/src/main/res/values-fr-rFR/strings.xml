@@ -15,7 +15,7 @@
   <string name="lkm_mode_deprecated">Le mode LKM est désormais obsolète !</string>
   <string name="lkm_alternative_suggestion">Installez un noyau GKI ou intégrez KernelSU Next a votre appareil.</string>
   <string name="home_working">En fonctionnement</string>
-  <string name="home_working_version">Version : %d</string>
+  <string name="home_working_version">Version : %s (%d)</string>
   <string name="home_module_update_count">Mises à jour : %d</string>
   <string name="home_failure">La signature suivante de la v2 KernelSU Next est introuvable dans le noyau! [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">Demandez à votre développeur de noyau d\'intégrer KernelSU Next !</string>
@@ -141,7 +141,7 @@
   <string name="module_updated">Mise à jour</string>
   <string name="module_downloading">Téléchargement du module : %s</string>
   <string name="module_start_downloading">Démarrage du téléchargement de %s</string>
-  <string name="new_version_available">La nouvelle version %s est disponible, appuyez ici pour mettre à jour.</string>
+  <string name="new_version_available">La nouvelle version %1$s (%2$d) est disponible, appuyez ici pour mettre à jour.</string>
   <string name="launch_app">Lancer</string>
   <string name="close">Fermer</string>
   <string name="force_stop_app">Forcer l\'arrêt</string>

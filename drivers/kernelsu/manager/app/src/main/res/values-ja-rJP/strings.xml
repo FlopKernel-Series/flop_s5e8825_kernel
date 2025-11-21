@@ -15,7 +15,7 @@
   <string name="lkm_mode_deprecated">LKMモードは現在非推奨です！</string>
   <string name="lkm_alternative_suggestion">GKI カーネルをインストールするか、お使いのデバイスに KernelSU Next を統合してください。</string>
   <string name="home_working">動作中</string>
-  <string name="home_working_version">バージョン: %d</string>
+  <string name="home_working_version">バージョン: %s (%d)</string>
   <string name="home_module_update_count">アップデート: %d</string>
   <string name="home_failure">カーネル内に KernelSU Next v2 の署名がありません！ [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">カーネルの開発者に KernelSU Next を統合するように依頼してください！</string>
@@ -141,7 +141,7 @@
   <string name="module_updated">更新されました</string>
   <string name="module_downloading">モジュールをダウンロード中: %s</string>
   <string name="module_start_downloading">ダウンロードを開始: %s</string>
-  <string name="new_version_available">新しいバージョン %s が利用可能です。タップで更新します。</string>
+  <string name="new_version_available">新しいバージョン %1$s (%2$d) が利用可能です。タップで更新します。</string>
   <string name="launch_app">起動</string>
   <string name="close">閉じる</string>
   <string name="force_stop_app">強制停止</string>

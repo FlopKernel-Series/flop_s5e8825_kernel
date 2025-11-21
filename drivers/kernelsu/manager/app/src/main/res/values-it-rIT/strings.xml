@@ -15,7 +15,7 @@
   <string name="lkm_mode_deprecated">La modalità LKM è ora obsoleta!</string>
   <string name="lkm_alternative_suggestion">Installa il kernel GKI o integra KernelSU Next sul tuo dispositivo.</string>
   <string name="home_working">In esecuzione</string>
-  <string name="home_working_version">Versione: %d</string>
+  <string name="home_working_version">Versione: %s (%d)</string>
   <string name="home_module_update_count">Aggiornamenti: %d</string>
   <string name="home_failure">Firma v2 di KernelSU Next non trovata nel kernel! [ !KSU_NEXT || != size/hash ]</string>
   <string name="home_failure_tip">Chiedi allo sviluppatore del kernel d\'integrare KernelSU Next!</string>
@@ -31,7 +31,7 @@
   <string name="home_susfs_sus_su">SuS SU</string>
   <string name="home_android">Versione Android</string>
   <string name="home_manager_version">Versione manager</string>
-  <string name="home_abi">ABI</string>
+  <string name="home_abi">Lista ABI</string>
   <string name="home_selinux_status">Stato SELinux</string>
   <string name="selinux_status_disabled">Disabilitato</string>
   <string name="selinux_status_enforcing">Enforcing</string>
@@ -92,7 +92,7 @@
   <string name="reboot_message">Le modifiche verranno applicate dopo il riavvio del sistema. Vuoi riavviare ora?</string>
   <string name="module_restore">Ripristina moduli</string>
   <string name="module_restore_message">Ripristina i moduli da un backup.</string>
-  <string name="backup_restore">Backup &amp; Ripristina</string>
+  <string name="backup_restore">Backup &amp; Ripristino</string>
   <string name="module_backup">Backup moduli</string>
   <string name="allowlist_restore">Ripristina la lista consentita</string>
   <string name="allowlist_restore_message">Ripristina la lista consentita da un backup.</string>
@@ -141,7 +141,7 @@
   <string name="module_updated">Aggiornato</string>
   <string name="module_downloading">Download modulo: %s</string>
   <string name="module_start_downloading">Inizio download: %s</string>
-  <string name="new_version_available">Nuova versione %s disponibile, tocca per aggiornare.</string>
+  <string name="new_version_available">Nuova versione %1$s (%2$d) disponibile, tocca per aggiornare.</string>
   <string name="launch_app">Avvia</string>
   <string name="close">Chiudi</string>
   <string name="force_stop_app">Arresto forzato</string>
@@ -177,7 +177,7 @@
   <string name="module_changelog_failed">Recupero del changelog non riuscito: %s</string>
   <string name="settings_check_update">Controlla aggiornamenti</string>
   <string name="settings_check_update_summary">Cerca automaticamente gli aggiornamenti all\'apertura dell\'applicazione</string>
-  <string name="grant_root_failed">Impossibile concedere i permessi root!</string>
+  <string name="grant_root_failed">Impossibile concedere il root! Tocca per riavviare il processo del manager.</string>
   <string name="action">Azione</string>
   <string name="webui">WebUI</string>
   <string name="open">Apri</string>
@@ -232,5 +232,5 @@
   <string name="settings_uninstall_permanent_message">Disinstallazione completa e permanente di KernelSU Next (root e tutti i moduli).</string>
   <string name="settings_restore_stock_image_message">Ripristinare l\'immagine di fabbrica (se esiste un backup), solitamente utilizzata prima dell\'OTA; se è necessario disinstallare KernelSU Next, utilizzare \"Disinstalla definitivamente\".</string>
   <string name="settings_disable_su_summary">Disattiva temporaneamente la possibilità per qualsiasi app di ottenere privilegi di root tramite il comando ⁠su (i processi di root esistenti non saranno interessati).</string>
-  <string name="settings_global_namespace_mode">Modalità Namespace globale</string>
+  <string name="settings_global_namespace_mode">Modalità namespace globale</string>
 </resources>

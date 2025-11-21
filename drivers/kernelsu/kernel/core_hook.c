@@ -63,7 +63,7 @@ static inline bool is_allow_su()
 	return ksu_is_allow_uid(current_uid().val);
 }
 
-static inline bool is_unsupported_app_uid(uid_t uid)
+static inline bool is_unsupported_uid(uid_t uid)
 {
 #define LAST_APPLICATION_UID 19999
 	uid_t appid = uid % 100000;
@@ -122,9 +122,9 @@ static void disable_seccomp(void)
 	// disable seccomp
 #if defined(CONFIG_GENERIC_ENTRY) &&                                           \
 	LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-	current_thread_info()->syscall_work &= ~SYSCALL_WORK_SECCOMP;
+	clear_syscall_work(SECCOMP);
 #else
-	current_thread_info()->flags &= ~(TIF_SECCOMP | _TIF_SECCOMP);
+	clear_thread_flag(TIF_SECCOMP);
 #endif
 
 #ifdef CONFIG_SECCOMP
@@ -360,6 +360,15 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		return 0;
 	}
 
+    if (arg2 == CMD_GET_VERSION_TAG) {
+        const char *tag = KERNEL_SU_VERSION_TAG;
+        size_t tag_len = strlen(tag) + 1;
+        if (copy_to_user((void __user *)arg3, tag, tag_len)) {
+            pr_err("prctl reply error, cmd: %lu\n", arg2);
+        }
+        return 0;
+    }
+
 	if (arg2 == CMD_GET_MANAGER_UID) {
 		uid_t manager_uid = ksu_get_manager_uid();
 		if (copy_to_user(arg3, &manager_uid, sizeof(manager_uid))) {
@@ -591,13 +600,14 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 	return 0;
 }
 
-static bool is_non_appuid(kuid_t uid)
+static bool is_appuid(kuid_t uid)
 {
 #define PER_USER_RANGE 100000
 #define FIRST_APPLICATION_UID 10000
+#define LAST_APPLICATION_UID 19999
 
 	uid_t appid = uid.val % PER_USER_RANGE;
-	return appid < FIRST_APPLICATION_UID;
+	return appid >= FIRST_APPLICATION_UID && appid <= LAST_APPLICATION_UID;
 }
 
 static bool should_umount(struct path *path)
@@ -674,25 +684,13 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
 		return 0;
 	}
 
-	if (is_non_appuid(new_uid)) {
-#ifdef CONFIG_KSU_DEBUG
-		pr_info("handle setuid ignore non application uid: %d\n", new_uid.val);
-#endif
+	if (!is_appuid(new_uid) || is_unsupported_uid(new_uid.val)) {
+		// pr_info("handle setuid ignore non application or isolated uid: %d\n", new_uid.val);
 		return 0;
 	}
 
-	// isolated process may be directly forked from zygote, always unmount
-	if (is_unsupported_app_uid(new_uid.val)) {
-#ifdef CONFIG_KSU_DEBUG
-		pr_info("handle umount for unsupported application uid: %d\n", new_uid.val);
-#endif
-		goto do_umount;
-	}
-
 	if (ksu_is_allow_uid(new_uid.val)) {
-#ifdef CONFIG_KSU_DEBUG
-		pr_info("handle setuid ignore allowed application: %d\n", new_uid.val);
-#endif
+		// pr_info("handle setuid ignore allowed application: %d\n", new_uid.val);
 		return 0;
 	}
 
@@ -704,11 +702,11 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
 #endif
 	}
 
-do_umount:
 	// check old process's selinux context, if it is not zygote, ignore it!
 	// because some su apps may setuid to untrusted_app but they are in global mount namespace
 	// when we umount for such process, that is a disaster!
-	if (!is_zygote(old->security)) {
+	bool is_zygote_child = is_zygote(old->security);
+	if (!is_zygote_child) {
 		pr_info("handle umount ignore non zygote child: %d\n",
 			current->pid);
 		return 0;

@@ -44,6 +44,13 @@ Java_com_rifsxd_ksunext_Natives_getHookMode(JNIEnv *env, jobject) {
 }
 
 extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_rifsxd_ksunext_Natives_getVersionTag(JNIEnv *env, jobject) {
+    const char* tag = get_version_tag();
+    return env->NewStringUTF(tag);
+}
+
+extern "C"
 JNIEXPORT jintArray JNICALL
 Java_com_rifsxd_ksunext_Natives_getAllowList(JNIEnv *env, jobject) {
     int uids[1024];

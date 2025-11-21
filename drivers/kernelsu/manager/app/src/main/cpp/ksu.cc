@@ -33,6 +33,7 @@
 #define CMD_GET_MANAGER_UID 16
 
 #define CMD_HOOK_MODE 0xC0DEAD1A
+#define CMD_GET_VERSION_TAG 0xC0DEAD1B
 
 static bool ksuctl(int cmd, void* arg1, void* arg2) {
     int32_t result = 0;
@@ -78,6 +79,11 @@ const char* get_hook_mode() {
     return mode;
 }
 
+const char* get_version_tag() {
+    static char tag[32];
+    ksuctl(CMD_GET_VERSION_TAG, tag, nullptr);
+    return tag;
+}
 
 bool get_allow_list(int *uids, int *size) {
     return ksuctl(CMD_GET_SU_LIST, uids, size);
