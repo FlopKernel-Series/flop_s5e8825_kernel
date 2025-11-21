@@ -24,6 +24,13 @@ config KSU_MKSU
 	  Enable Magic KernelSU.
 	  This is a KernelSU fork with additional features.
 
+config KSU_RKSU
+	bool "RKSU"
+	select OVERLAY_FS
+	help
+	  Enable RKSU.
+	  This is a KernelSU fork with additional features.
+
 endchoice
 
 choice
@@ -123,3 +130,4 @@ config KSU_ALLOWLIST_WORKAROUND
 source "drivers/kernelsu/kernel/Kconfig"
 source "drivers/sukisu/kernel/Kconfig"
 source "drivers/mksu/kernel/Kconfig"
+source "drivers/rksu/kernel/Kconfig"

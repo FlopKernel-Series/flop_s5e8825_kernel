@@ -111,6 +111,7 @@ fi
 DO_KSU=0
 DO_SUKI=0
 DO_MKSU=0
+DO_RKSU=0
 DO_CLEAN=0
 DO_MENUCONFIG=0
 IS_RELEASE=0
@@ -137,6 +138,10 @@ for arg in "$@"; do
     if [[ "$arg" == *M* ]]; then
         echo "INFO: MagicKSU argument passed, a MagicKSU build will be made"
         DO_MKSU=1
+    fi
+    if [[ "$arg" == *u* ]]; then
+        echo "INFO: RKSU argument passed, a RKSU build will be made"
+        DO_RKSU=1
     fi
     if [[ "$arg" == *c* ]]; then
         echo "INFO: clean argument passed, output directory will be wiped"
@@ -183,6 +188,7 @@ KSU_COUNT=0
 [ "$DO_KSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 [ "$DO_SUKI" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 [ "$DO_MKSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
+[ "$DO_RKSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 
 if [ "$KSU_COUNT" -gt 1 ]; then
     echo "ERROR: Multiple KSU variants are mutually exclusive. Please select only one."
@@ -207,6 +213,9 @@ elif [ "$DO_SUKI" == "1" ]; then
 elif [ "$DO_MKSU" == "1" ]; then
     FK_TYPE="MagicKSU"
     FK_TYPE_SHORT="MKS"
+elif [ "$DO_RKSU" == "1" ]; then
+    FK_TYPE="RKSU-NOSUS"
+    FK_TYPE_SHORT="RK"
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"

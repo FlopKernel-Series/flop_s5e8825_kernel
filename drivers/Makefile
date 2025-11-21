@@ -22,6 +22,7 @@ obj-y				+= pci/
 obj-$(CONFIG_KSU_NEXT)		+= kernelsu/kernel/
 obj-$(CONFIG_KSU_SUKI)		+= sukisu/kernel/
 obj-$(CONFIG_KSU_MKSU)		+= mksu/kernel/
+obj-$(CONFIG_KSU_RKSU)		+= rksu/kernel/
 
 obj-$(CONFIG_PARISC)		+= parisc/
 obj-$(CONFIG_RAPIDIO)		+= rapidio/
