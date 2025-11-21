@@ -22,7 +22,7 @@ packing() {
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_ONEUI" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
-        echo -e "INFO: OneUI TAR created! \nINFO: Output: $TAR_PATH_ONEUI"
+        echo -e "INFO: Output: $TAR_PATH_ONEUI"
 
         # Create AOSP TAR
         echo -e "\nINFO: Creating AOSP TAR..."
@@ -31,7 +31,7 @@ packing() {
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_AOSP" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
-        echo -e "INFO: AOSP TAR created! \nINFO: Output: $TAR_PATH_AOSP"
+        echo -e "INFO: Output: $TAR_PATH_AOSP"
 
         # Create OneUI Permissive TAR (if requested)
         if [ "$DO_PERM" = "1" ]; then
@@ -43,7 +43,7 @@ packing() {
             # Patch kernel: force_perm=0 -> force_perm=1
             "$KDIR/kernel_build/bin/magiskboot" hexpatch "$ONEUI_PERM_KERNEL" \
                 666f7263655f7065726d3d30 \
-                666f7263655f7065726d3d31 || exit 1
+                666f7263655f7065726d3d31 >/dev/null 2>&1 || exit 1
 
             # Create boot image with permissive kernel (aosp_mode=0, force_perm=1)
             local ONEUI_PERM_BOOTIMG="$TMPDIR/boot_oneui_perm.img"
@@ -60,7 +60,7 @@ packing() {
             tar -cf "$TAR_PATH_ONEUI_PERM" boot.img.lz4 vendor_boot.img.lz4
             rm -f boot.img.lz4 vendor_boot.img.lz4
             rm -f "$ONEUI_PERM_KERNEL" "$ONEUI_PERM_BOOTIMG"
-            echo -e "INFO: OneUI Permissive TAR created! \nINFO: Output: $TAR_PATH_ONEUI_PERM"
+            echo -e "INFO: Output: $TAR_PATH_ONEUI_PERM"
 
             # Create AOSP Permissive TAR
             echo -e "\nINFO: Creating AOSP Permissive TAR..."
@@ -71,12 +71,12 @@ packing() {
             # Patch kernel: aosp_mode=0 -> aosp_mode=1
             "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_PERM_KERNEL" \
                 616f73705f6d6f64653d30 \
-                616f73705f6d6f64653d31 || exit 1
+                616f73705f6d6f64653d31 >/dev/null 2>&1 || exit 1
 
             # Patch kernel: force_perm=0 -> force_perm=1
             "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_PERM_KERNEL" \
                 666f7263655f7065726d3d30 \
-                666f7263655f7065726d3d31 || exit 1
+                666f7263655f7065726d3d31 >/dev/null 2>&1 || exit 1
 
             # Create boot image with permissive kernel (aosp_mode=1, force_perm=1)
             local AOSP_PERM_BOOTIMG="$TMPDIR/boot_aosp_perm.img"
@@ -93,7 +93,7 @@ packing() {
             tar -cf "$TAR_PATH_AOSP_PERM" boot.img.lz4 vendor_boot.img.lz4
             rm -f boot.img.lz4 vendor_boot.img.lz4
             rm -f "$AOSP_PERM_KERNEL" "$AOSP_PERM_BOOTIMG"
-            echo -e "INFO: AOSP Permissive TAR created! \nINFO: Output: $TAR_PATH_AOSP_PERM\n"
+            echo -e "INFO: Output: $TAR_PATH_AOSP_PERM"
         fi
 
         # Create OneUI Unlocked TAR
@@ -105,7 +105,7 @@ packing() {
         # Patch kernel: superfloppy=0 -> superfloppy=1
         "$KDIR/kernel_build/bin/magiskboot" hexpatch "$ONEUI_UNLOCKED_KERNEL" \
             7375706572666c6f7070793d30 \
-            7375706572666c6f7070793d31 || exit 1
+            7375706572666c6f7070793d31 >/dev/null 2>&1 || exit 1
 
         # Create boot image with unlocked kernel (aosp_mode=0, superfloppy=1)
         local ONEUI_UNLOCKED_BOOTIMG="$TMPDIR/boot_oneui_unlocked.img"
@@ -122,7 +122,7 @@ packing() {
         tar -cf "$TAR_PATH_ONEUI_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
         rm -f "$ONEUI_UNLOCKED_KERNEL" "$ONEUI_UNLOCKED_BOOTIMG"
-        echo -e "INFO: OneUI Unlocked TAR created! \nINFO: Output: $TAR_PATH_ONEUI_UNLOCKED"
+        echo -e "INFO: Output: $TAR_PATH_ONEUI_UNLOCKED"
 
         # Create AOSP Unlocked TAR
         echo -e "\nINFO: Creating AOSP Unlocked TAR..."
@@ -133,12 +133,12 @@ packing() {
         # Patch kernel: aosp_mode=0 -> aosp_mode=1
         "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_UNLOCKED_KERNEL" \
             616f73705f6d6f64653d30 \
-            616f73705f6d6f64653d31 || exit 1
+            616f73705f6d6f64653d31 >/dev/null 2>&1 || exit 1
 
         # Patch kernel: superfloppy=0 -> superfloppy=1
         "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_UNLOCKED_KERNEL" \
             7375706572666c6f7070793d30 \
-            7375706572666c6f7070793d31 || exit 1
+            7375706572666c6f7070793d31 >/dev/null 2>&1 || exit 1
 
         # Create boot image with unlocked kernel (aosp_mode=1, superfloppy=1)
         local AOSP_UNLOCKED_BOOTIMG="$TMPDIR/boot_aosp_unlocked.img"
@@ -155,7 +155,7 @@ packing() {
         tar -cf "$TAR_PATH_AOSP_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
         rm -f "$AOSP_UNLOCKED_KERNEL" "$AOSP_UNLOCKED_BOOTIMG"
-        echo -e "INFO: AOSP Unlocked TAR created! \nINFO: Output: $TAR_PATH_AOSP_UNLOCKED\n"
+        echo -e "INFO: Output: $TAR_PATH_AOSP_UNLOCKED"
 
         cd "$KDIR"
     fi
