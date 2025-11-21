@@ -221,14 +221,18 @@ else
     FK_TYPE_SHORT="V"
 fi
 
+# FK_TYPE for TARs (includes permissive if requested)
+# ZIPs don't have permissive variants anymore
+FK_TYPE_TAR="$FK_TYPE"
+FK_TYPE_SHORT_TAR="$FK_TYPE_SHORT"
 if [ "$DO_PERM" == "1" ]; then
-    FK_TYPE="$FK_TYPE+Permissive"
-    FK_TYPE_SHORT="$FK_TYPE_SHORT+P"
+    FK_TYPE_TAR="$FK_TYPE_TAR+Permissive"
+    FK_TYPE_SHORT_TAR="$FK_TYPE_SHORT_TAR+P"
 fi
 
 ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
-TAR_PATH_ONEUI="$KDIR/kernel_build/FloppyOneUI_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
-TAR_PATH_AOSP="$KDIR/kernel_build/FloppyAOSP_$FK_VER-$FK_TYPE-$CODENAME-$DATE.tar"
+TAR_PATH_ONEUI="$KDIR/kernel_build/FloppyOneUI_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
+TAR_PATH_AOSP="$KDIR/kernel_build/FloppyAOSP_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
 
 echo -e "\nINFO: Build info:
 - Device: $DEVICE ($CODENAME)

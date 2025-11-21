@@ -73,9 +73,6 @@ build() {
         scripts/config --file "$KDIR/out/.config" --disable CONFIG_LTO_CLANG_THIN
     fi
 
-    if [ "$DO_PERM" = "1" ]; then
-        scripts/config --file "$KDIR/out/.config" --enable CONFIG_SECURITY_SELINUX_ALWAYS_PERMISSIVE
-    fi
 
     echo -e "\nINFO: Starting compilation...\n"
 

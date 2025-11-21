@@ -31,6 +31,7 @@
 #include <linux/uaccess.h>
 #include <linux/kobject.h>
 #include <linux/ctype.h>
+#include <linux/workarounds.h>
 
 /* selinuxfs pseudo filesystem for exporting the security policy API.
    Based on the proc code and the fs/nfsd/nfsctl.c code. */
@@ -169,6 +170,10 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	// If always permissive option is set, selinux is always permissive
 	new_value = 0;
 #endif
+	// Runtime permissive mode via cmdline flag
+	if (is_force_perm_mode()) {
+		new_value = 0;
+	}
 	if (new_value != old_value) {
 		length = avc_has_perm(&selinux_state,
 				      current_sid(), SECINITSID_SECURITY,

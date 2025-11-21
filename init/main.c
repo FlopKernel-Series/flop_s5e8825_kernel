@@ -214,6 +214,29 @@ bool is_superfloppy_mode(void)
 }
 EXPORT_SYMBOL(is_superfloppy_mode);
 
+static bool force_perm_mode = false;
+
+static int __init set_force_perm_mode(char *val)
+{
+	int tmp = force_perm_mode;
+
+	if (get_option(&val, &tmp)) {
+		force_perm_mode = tmp != 0;
+	}
+
+	pr_info("Workaround: force_perm=%s\n",
+			force_perm_mode ? "enabled" : "disabled");
+
+	return 0;
+}
+__setup("force_perm=", set_force_perm_mode);
+
+bool is_force_perm_mode(void)
+{
+	return force_perm_mode;
+}
+EXPORT_SYMBOL(is_force_perm_mode);
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.
