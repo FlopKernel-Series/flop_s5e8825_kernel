@@ -875,7 +875,7 @@ static int ufc_update_min_limit(void)
 	return (prev_status != ufc.strict_enabled);
 }
 
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
+// #define MAX(A, B) ((A) > (B) ? (A) : (B))
 static int ufc_determine_max_limit(void)
 {
 	int user, freq;
@@ -916,7 +916,6 @@ static int ufc_determine_max_limit(void)
 	return MAX(max_limit, over_limit);
 }
 
-#define MIN(A, B) ((A) < (B) ? (A) : (B))
 static int ufc_update_little_max_limit(void) {
 	struct ufc_domain *ufc_dom;
 	int user, target_freq = RELEASE, user_lit_max_freq;

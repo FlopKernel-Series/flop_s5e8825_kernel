@@ -33,7 +33,7 @@
 #endif
 
 #define BITS(_end, _start)		((BIT(_end) - BIT(_start)) + BIT(_end))
-#define MIN(a, b)				((a < b) ? (a):(b))
+// #define MIN(a, b)				((a < b) ? (a):(b))
 
 #if !IS_ENABLED(CONFIG_BATTERY_SAMSUNG)
 #define HALO_DBG

@@ -365,6 +365,6 @@ int __mcsc_dma_out_cfg(struct is_device_ischain *device,
 #define GET_SUBDEV_QUEUE(subdev) \
 	(((subdev) && (subdev)->vctx) ? (&(subdev)->vctx->queue) : NULL)
 #define CALL_SOPS(s, op, args...)	(((s) && (s)->ops && (s)->ops->op) ? ((s)->ops->op(s, args)) : 0)
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+// #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 #endif

@@ -118,7 +118,7 @@ struct is_kernel_fpsimd_state {
 #define CONVRES(src, src_max, tar_max) \
 	((src <= 0) ? (0) : ((src * tar_max + (src_max >> 1)) / src_max))
 
-#define MIN(a, b)	(((a) < (b)) ? (a) : (b))
-#define MAX(a, b)	(((a) > (b)) ? (a) : (b))
+// #define MIN(a, b)	(((a) < (b)) ? (a) : (b))
+// #define MAX(a, b)	(((a) > (b)) ? (a) : (b))
 
 #endif

@@ -2,7 +2,7 @@
 #define _HL7132_CHARGER_H_
 
 #define BITS(_end, _start)          ((BIT(_end) - BIT(_start)) + BIT(_end))
-#define MIN(a, b)                   ((a < b) ? (a):(b))
+// #define MIN(a, b)                   ((a < b) ? (a):(b))
 #define MASK2SHIFT(_mask)           __ffs(_mask)
 
 #define REG_DEVICE_ID					    0x00

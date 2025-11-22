@@ -23,8 +23,8 @@
 			fmt, __func__, __LINE__, ##args);		\
 	} while (0)
 
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
-#define MAX(a,b) (((a) > (b)) ? (a) : (b))
+// #define MIN(a,b) (((a) < (b)) ? (a) : (b))
+// #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
 enum  regdata_type {
 	/* read write */
