@@ -118,7 +118,7 @@
 #define MAX_SSID_LEN 100
 #define SLSI_MAX_NUM_RING 10
 
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+// #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 #ifdef CONFIG_SCSC_WLAN_ENHANCED_LOGGING
 static int mem_dump_buffer_size;
