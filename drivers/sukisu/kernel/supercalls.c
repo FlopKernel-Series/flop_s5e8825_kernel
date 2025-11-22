@@ -12,6 +12,11 @@
 #include <linux/uaccess.h>
 #include <linux/version.h>
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/namei.h>
+#include <linux/susfs.h>
+#endif // #ifdef CONFIG_KSU_SUSFS
+
 #include "supercalls.h"
 #include "arch.h"
 #include "allowlist.h"
@@ -36,33 +41,7 @@
 #endif
 
 #ifdef CONFIG_KSU_SUSFS
-#include <linux/namei.h>
-#include <linux/susfs.h>
-
 bool susfs_is_boot_completed_triggered = false;
-
-extern bool susfs_is_umount_for_zygote_system_process_enabled;
-#ifdef CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT
-extern bool susfs_is_auto_add_try_umount_for_bind_mount_enabled;
-#endif // #ifdef CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT
-
-static void susfs_on_post_fs_data(void) {
-	struct path path;
-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-	if (!kern_path(DATA_ADB_UMOUNT_FOR_ZYGOTE_SYSTEM_PROCESS, 0, &path)) {
-		susfs_is_umount_for_zygote_system_process_enabled = true;
-		path_put(&path);
-	}
-	pr_info("susfs_is_umount_for_zygote_system_process_enabled: %d\n", susfs_is_umount_for_zygote_system_process_enabled);
-#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-#ifdef CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT
-	if (!kern_path(DATA_ADB_NO_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT, 0, &path)) {
-		susfs_is_auto_add_try_umount_for_bind_mount_enabled = false;
-		path_put(&path);
-	}
-	pr_info("susfs_is_auto_add_try_umount_for_bind_mount_enabled: %d\n", susfs_is_auto_add_try_umount_for_bind_mount_enabled);
-#endif // #ifdef CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT
-}
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 bool ksu_uid_scanner_enabled = false;
@@ -154,10 +133,6 @@ static int do_report_event(void __user *arg)
 		if (!post_fs_data_lock) {
 			post_fs_data_lock = true;
 			pr_info("post-fs-data triggered\n");
-#ifdef CONFIG_KSU_SUSFS
-			susfs_on_post_fs_data();
-			pr_info("susfs_on_post_fs_data triggered\n");
-#endif
 			on_post_fs_data();
 			init_uid_scanner();
 #if __SULOG_GATE	

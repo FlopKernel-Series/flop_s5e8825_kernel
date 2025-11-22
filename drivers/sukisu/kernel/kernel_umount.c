@@ -55,12 +55,7 @@ static const struct ksu_feature_handler kernel_umount_handler = {
 };
 
 #ifdef CONFIG_KSU_SUSFS
-#if defined(CONFIG_KSU_SUSFS_TRY_UMOUNT) && defined(CONFIG_KSU_SUSFS_ENABLE_LOG)
 extern bool susfs_is_log_enabled;
-#endif // #if defined(CONFIG_KSU_SUSFS_TRY_UMOUNT) && defined(CONFIG_KSU_SUSFS_ENABLE_LOG)
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-extern void susfs_try_umount(void);
-#endif // #ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) ||                           \
@@ -116,20 +111,9 @@ void try_umount(const char *mnt, int flags)
 		return;
 	}
 
-#if defined(CONFIG_KSU_SUSFS_TRY_UMOUNT) && defined(CONFIG_KSU_SUSFS_ENABLE_LOG)
-	if (susfs_is_log_enabled) {
-		pr_info("susfs: umounting '%s'\n", mnt);
-	}
-#endif // #if defined(CONFIG_KSU_SUSFS_TRY_UMOUNT) && defined(CONFIG_KSU_SUSFS_ENABLE_LOG)
-
 	ksu_umount_mnt(mnt, &path, flags);
 }
 
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-void susfs_try_umount_all(void) {
-	susfs_try_umount();
-}
-#endif // #ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
 
 #if !defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
 struct umount_tw {
