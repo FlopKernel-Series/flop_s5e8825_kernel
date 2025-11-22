@@ -728,7 +728,7 @@ static s32 mtp_vregout_to_offset(struct dimming_info *dim_info,
 	num -= den * ((s64)tp[v].numerator + (s64)tp[v].offset[c]);
 	res = decon_disp_div64(num, den);
 #endif
-	//if (in_range(v, dim_lut_info->rgb_color_offset_range))
+	//if (dim_in_range(v, dim_lut_info->rgb_color_offset_range))
 	res += rgb_offset[v][c];
 
 #ifdef DEBUG_DIMMING
