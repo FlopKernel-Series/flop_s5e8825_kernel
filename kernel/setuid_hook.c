@@ -48,12 +48,6 @@
 #include "sulog.h"
 
 #ifdef CONFIG_KSU_SUSFS
-static inline bool is_some_system_uid(uid_t uid)
-{
-	uid %= 100000;
-	return (uid >= 1000 && uid < 10000);
-}
-
 static inline bool is_zygote_isolated_service_uid(uid_t uid)
 {
 	uid %= 100000;
@@ -66,8 +60,6 @@ static inline bool is_zygote_normal_app_uid(uid_t uid)
 	return (uid >= 10000 && uid < 19999);
 }
 
-bool susfs_is_umount_for_zygote_system_process_enabled = false;
-
 extern u32 susfs_zygote_sid;
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 extern void susfs_run_sus_path_loop(uid_t uid);
@@ -77,7 +69,7 @@ extern bool susfs_is_umount_for_zygote_iso_service_enabled;
 extern void susfs_reorder_mnt_id(void);
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 #ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-extern void susfs_try_umount_all(void);
+extern void susfs_try_umount(uid_t uid);
 #endif
 #endif // #ifdef CONFIG_KSU_SUSFS
 
@@ -210,8 +202,6 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 	return 0;
 }
 #else
-extern bool ksu_kernel_umount_enabled;
-extern bool ksu_module_mounted;
 int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid){
 	// we rely on the fact that zygote always call setresuid(3) with same uids
 	uid_t new_uid = ruid;
@@ -302,27 +292,21 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid){
 		goto do_umount;
 	}
 
-	// Lastly, Check if spawned process is some system process and needs to be umounted
-	if (unlikely(is_some_system_uid(new_uid) && susfs_is_umount_for_zygote_system_process_enabled)) {
-		goto do_umount;
-	}
-
 	return 0;
 
 do_umount:
+#ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 	if (!ksu_kernel_umount_enabled || !ksu_module_mounted) {
-		goto skip_try_umount;
+		goto skip_ksu_handle_umount;
 		
 	}
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-	pr_info("susfs: running susfs_try_umount_all() for uid: %u\n", new_uid);
-	susfs_try_umount_all();
-#else
 	// Handle kernel umount
 	ksu_handle_umount(old_uid, new_uid);
-#endif // #ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
 
-skip_try_umount:
+skip_ksu_handle_umount:
+#else
+    susfs_try_umount(new_uid);
+#endif // #ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 
 	get_task_struct(current);
 
