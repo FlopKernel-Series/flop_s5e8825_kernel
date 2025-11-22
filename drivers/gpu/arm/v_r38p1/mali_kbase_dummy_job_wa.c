@@ -53,7 +53,7 @@ struct wa_blob {
 	u32 blob_offset;
 } __packed;
 
-static bool in_range(const u8 *base, const u8 *end, off_t off, size_t sz)
+static bool internal_in_range(const u8 *base, const u8 *end, off_t off, size_t sz)
 {
 	return !(end - base - off < sz);
 }
@@ -315,7 +315,7 @@ int kbase_dummy_job_wa_load(struct kbase_device *kbdev)
 	dev_dbg(kbdev->dev, "Loaded firmware of size %zu bytes\n",
 		firmware->size);
 
-	if (!in_range(fw, fw_end, 0, sizeof(*header))) {
+	if (!internal_in_range(fw, fw_end, 0, sizeof(*header))) {
 		dev_err(kbdev->dev, "WA too small\n");
 		goto bad_fw;
 	}
@@ -334,7 +334,7 @@ int kbase_dummy_job_wa_load(struct kbase_device *kbdev)
 		goto bad_fw;
 	}
 
-	if (!in_range(fw, fw_end, header->info_offset, sizeof(*v2_info))) {
+	if (!internal_in_range(fw, fw_end, header->info_offset, sizeof(*v2_info))) {
 		dev_err(kbdev->dev, "WA info offset out of bounds\n");
 		goto bad_fw;
 	}
@@ -360,14 +360,14 @@ int kbase_dummy_job_wa_load(struct kbase_device *kbdev)
 		u64 gpu_va;
 		struct kbase_va_region *va_region;
 
-		if (!in_range(fw, fw_end, blob_offset, sizeof(*blob))) {
+		if (!internal_in_range(fw, fw_end, blob_offset, sizeof(*blob))) {
 			dev_err(kbdev->dev, "Blob offset out-of-range: 0x%lx\n",
 				(unsigned long)blob_offset);
 			goto bad_fw;
 		}
 
 		blob = (const struct wa_blob *)(fw + blob_offset);
-		if (!in_range(fw, fw_end, blob->payload_offset, blob->size)) {
+		if (!internal_in_range(fw, fw_end, blob->payload_offset, blob->size)) {
 			dev_err(kbdev->dev, "Payload out-of-bounds\n");
 			goto bad_fw;
 		}
