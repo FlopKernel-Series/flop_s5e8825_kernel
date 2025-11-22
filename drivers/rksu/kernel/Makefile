@@ -40,7 +40,7 @@ IS_GKI2 := "true"
 CONFIG_KSU_SHOULD_USE_NEW_TP := y
 else
 IS_GKI2 := $(shell test $(VERSION) -ge 5 -a $(SUBLEVEL) -ge 10 && echo "true")
-IS_MODULE := $(shell test $(CONFIG_KSU) = "m" && echo "true")
+IS_MODULE := $(shell test "$(CONFIG_KSU)" = "m" && echo "true")
 endif
 
 # Check if this is a git repository
@@ -74,7 +74,8 @@ endif
 HAVE_KSU_HOOK ?= 1
 KSU_DRY_RUN ?= 0
 
-# Checks hooks state
+# Checks hooks state (only when building, not during clean when CONFIG_KSU is undefined)
+ifdef CONFIG_KSU
 ifeq ($(CONFIG_KSU_SHOULD_USE_NEW_TP), y)
 ifneq ($(strip $(IS_GKI2) $(IS_MODULE)),)
 $(info -- KernelSU: SHOULD_USE_NEW_TP)
@@ -97,6 +98,7 @@ $(error -- KernelSU: No hooks were defined, bail!)
 endif
 else
 $(info -- KernelSU in dry run mode, skip hook checks)
+endif
 endif
 
 # SELinux drivers check
