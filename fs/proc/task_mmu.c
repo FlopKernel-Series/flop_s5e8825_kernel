@@ -529,28 +529,28 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 bypass_orig_flow:
 #endif
-			pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
-			dentry = file->f_path.dentry;
-			if (dentry) {
-				const char *path = (const char *)dentry->d_name.name;
-				if (strstr(path, "lineage")) { 
-					start = vma->vm_start;
-					end = vma->vm_end;
-					show_vma_header_prefix_fake(m, start, end, flags, pgoff, dev, ino);
-							name = "/system/framework/framework-res.apk";
-					goto done;
-				}
-				if (file && strstr(dentry->d_name.name, "libGLES_mali.so")) {
-					start = vma->vm_start;
-					end   = vma->vm_end;
-					show_vma_header_prefix_fake(m, start, end, flags,
-												((loff_t)vma->vm_pgoff)<<PAGE_SHIFT,
-													0, 0);
-					seq_puts(m, "/system/lib/libEGL_mali.so\n");
-					return;
-				}
+		pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
+		dentry = file->f_path.dentry;
+		if (dentry) {
+			const char *path = (const char *)dentry->d_name.name;
+			if (strstr(path, "lineage")) { 
+				start = vma->vm_start;
+				end = vma->vm_end;
+				show_vma_header_prefix_fake(m, start, end, flags, pgoff, dev, ino);
+						name = "/system/framework/framework-res.apk";
+				goto done;
+			}
+			if (file && strstr(dentry->d_name.name, "libGLES_mali.so")) {
+				start = vma->vm_start;
+				end   = vma->vm_end;
+				show_vma_header_prefix_fake(m, start, end, flags,
+											((loff_t)vma->vm_pgoff)<<PAGE_SHIFT,
+												0, 0);
+				seq_puts(m, "/system/lib/libEGL_mali.so\n");
+				return;
 			}
 		}
+	}
 
 	start = vma->vm_start;
 	end = VMA_PAD_START(vma);
