@@ -1348,6 +1348,13 @@ static int mcd_drm_panel_set_fingermask_layer(struct exynos_panel *ctx, u32 afte
 	data.trigger_time = after;
 	data.req_mask_layer = exynos_state->fingerprint_mask;
 
+	/* Convert req_mask_layer and trigger_time to req */
+	if (data.req_mask_layer) {
+		data.req = after ? MASK_LAYER_ON_AFTER : MASK_LAYER_ON_BEFORE;
+	} else {
+		data.req = after ? MASK_LAYER_OFF_AFTER : MASK_LAYER_OFF_BEFORE;
+	}
+
 	ret = call_mcd_panel_func(ctx->mcd_panel_dev, set_mask_layer, &data);
 
 	if (after)
