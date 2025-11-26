@@ -1014,48 +1014,70 @@ static void *a53x_mask_layer_workaround_cmdtbl[] = {
 };
 
 static void *a53x_mask_layer_enter_br_cmdtbl[] = {
+	/* BEFORE sequence logic - timing delays before entering mask layer */
 	&DLYINFO(a53x_wait_1_vsync),
-	&DLYINFO(a53x_wait_2msec),
-	&KEYINFO(a53x_level1_key_enable),
-	&KEYINFO(a53x_level2_key_enable),
-	&KEYINFO(a53x_level3_key_enable),
-
-	&PKTINFO(a53x_acl_dim_off),
-	&PKTINFO(a53x_lpm_off_sync_ctrl),
-	&PKTINFO(a53x_hbm_transition),
-	&PKTINFO(a53x_wrdisbv),
-
-	&KEYINFO(a53x_level3_key_disable),
-	&KEYINFO(a53x_level2_key_disable),
-	&KEYINFO(a53x_level1_key_disable),
 
 	&CONDINFO_IF(a53x_cond_is_120hz),
-		&DLYINFO(a53x_wait_9msec),
+		&DLYINFO(a53x_wait_1msec),
 	&CONDINFO_FI(a53x_cond_is_120hz),
-};
 
-static void *a53x_mask_layer_exit_br_cmdtbl[] = {
-	&DLYINFO(a53x_wait_1_vsync),
+	&CONDINFO_IF(a53x_cond_is_60hz),
+		&DLYINFO(a53x_wait_9msec),
+	&CONDINFO_FI(a53x_cond_is_60hz),
+
+	/* ENTER_BR sequence logic */
 	&KEYINFO(a53x_level1_key_enable),
 	&KEYINFO(a53x_level2_key_enable),
 	&KEYINFO(a53x_level3_key_enable),
 
 	&PKTINFO(a53x_acl_control),
-	&CONDINFO_IF(a53x_cond_is_120hz),
-		&DLYINFO(a53x_wait_3msec),
-	&CONDINFO_FI(a53x_cond_is_120hz),
-
-	&PKTINFO(a53x_lpm_off_sync_ctrl),
+	&PKTINFO(a53x_dimming_speed),
 	&PKTINFO(a53x_hbm_transition),
 	&PKTINFO(a53x_wrdisbv),
+	&PKTINFO(a53x_fod_enter),
+
+	&CONDINFO_IF(a53x_cond_is_120hz),
+		&DLYINFO(a53x_wait_9msec),
+	&CONDINFO_FI(a53x_cond_is_120hz),
+
+	&CONDINFO_IF(a53x_cond_is_60hz),
+		&DLYINFO(a53x_wait_17msec),
+	&CONDINFO_FI(a53x_cond_is_60hz),
+
+	&KEYINFO(a53x_level3_key_disable),
+	&KEYINFO(a53x_level2_key_disable),
+	&KEYINFO(a53x_level1_key_disable),
+};
+
+static void *a53x_mask_layer_exit_br_cmdtbl[] = {
+	/* EXIT_BR sequence logic */
+	&KEYINFO(a53x_level1_key_enable),
+	&KEYINFO(a53x_level2_key_enable),
+	&KEYINFO(a53x_level3_key_enable),
+
+	&PKTINFO(a53x_acl_control),
+
+	&PKTINFO(a53x_dimming_speed),
+	&PKTINFO(a53x_hbm_transition),
+	&PKTINFO(a53x_wrdisbv),
+	&PKTINFO(a53x_fod_exit),
+
+	&CONDINFO_IF(a53x_cond_is_120hz),
+		&DLYINFO(a53x_wait_9msec),
+	&CONDINFO_FI(a53x_cond_is_120hz),
+
+	&CONDINFO_IF(a53x_cond_is_60hz),
+		&DLYINFO(a53x_wait_17msec),
+	&CONDINFO_FI(a53x_cond_is_60hz),
 
 	&KEYINFO(a53x_level3_key_disable),
 	&KEYINFO(a53x_level2_key_disable),
 	&KEYINFO(a53x_level1_key_disable),
 
-	&CONDINFO_IF(a53x_cond_is_120hz),
+	/* EXIT_AFTER sequence logic - timing delays after exiting mask layer */
+	&CONDINFO_IF(a53x_cond_is_60hz),
 		&DLYINFO(a53x_wait_9msec),
-	&CONDINFO_FI(a53x_cond_is_120hz),
+	&CONDINFO_FI(a53x_cond_is_60hz),
 };
 #endif
 
