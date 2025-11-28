@@ -15,4 +15,6 @@ bool is_superfloppy_mode(void);
 
 bool is_force_perm_mode(void);
 
+bool is_ems_efficient(void);
+
 #endif /* _WORKAROUNDS_H */

@@ -12,6 +12,7 @@
 #include <linux/cpu_pm.h>
 #include <linux/cpufreq.h>
 #include <trace/hooks/cpuidle.h>
+#include <linux/workarounds.h>
 
 #include "../sched.h"
 #include "ems.h"
@@ -619,13 +620,14 @@ static unsigned int get_next_freq(struct ego_policy *egp,
 	}
 
 	/* compute lowest energy freq */
-	if (use_energy_freq(policy)) {
+	if (!is_ems_efficient() && use_energy_freq(policy)) {
 		ego_compute_idle_ratio(egp);
 		egp->eng_freq = eng_freq = ego_find_energy_freq(egp, org_freq);
 	} else {
 		egp->eng_freq = 0;
+		eng_freq = 0;
 	}
-	freq = max(org_freq, eng_freq);
+	freq = is_ems_efficient() ? org_freq : max(org_freq, eng_freq);
 
 skip_find_next_freq:
 
@@ -1261,7 +1263,10 @@ static void ego_limits(struct cpufreq_policy *policy)
 	unsigned int target_freq;
 	unsigned long flags;
 
-	target_freq = max(egp->org_freq, egp->eng_freq);
+	if (is_ems_efficient())
+		target_freq = egp->org_freq;
+	else
+		target_freq = max(egp->org_freq, egp->eng_freq);
 	target_freq = clamp_val(target_freq, policy->min, policy->max);
 
 	raw_spin_lock_irqsave(&egp->update_lock, flags);

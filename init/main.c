@@ -237,6 +237,28 @@ bool is_force_perm_mode(void)
 }
 EXPORT_SYMBOL(is_force_perm_mode);
 
+static bool ems_efficient_mode;
+
+static int __init set_ems_efficient_mode(char *val)
+{
+	int tmp = ems_efficient_mode;
+
+	if (get_option(&val, &tmp))
+		ems_efficient_mode = tmp != 0;
+
+	pr_info("Workaround: ems_efficient=%s\n",
+		ems_efficient_mode ? "enabled" : "disabled");
+
+	return 0;
+}
+__setup("ems_efficient=", set_ems_efficient_mode);
+
+bool is_ems_efficient(void)
+{
+	return ems_efficient_mode;
+}
+EXPORT_SYMBOL(is_ems_efficient);
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.
