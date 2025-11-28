@@ -83,7 +83,7 @@ static struct dsu_energy_table {
 	struct cpumask pd_cpus;
 } *dsu_table;
 
-static const int default_temp = 30;
+static const int default_temp = 85;
 
 #define per_cpu_et(cpu)		(*per_cpu_ptr(energy_table, cpu))
 
@@ -362,7 +362,10 @@ static void update_energy_state(const struct cpumask *cpus,
 		if (cpu != cpumask_first(&table->cpus))
 			continue;
 
-		temp = default_temp;
+		if (table->spt && table->spt->tz_dev)
+			temp = table->spt->tz_dev->temperature / 1000;
+		else
+			temp = default_temp;
 
 		for_each_cpu_and(rep_cpu, cpus, &table->cpus)
 			states[rep_cpu].temperature = temp;
@@ -529,7 +532,7 @@ void et_fill_energy_state(struct tp_env *env, struct cpumask *cpus,
 	struct energy_table *table = per_cpu_et(cpu);
 
 	index = get_cap_index(table->states, table->nr_states, capacity);
-	if (index < 0 || (index >= table->nr_states))
+	if (index < 0)
 		return;
 
 	for_each_cpu(cpu, cpus) {

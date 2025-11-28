@@ -201,7 +201,7 @@ EXPORT_SYMBOL_GPL(emstune_unregister_notifier);
 /******************************************************************************
  * initializing and parsing parameter                                         *
  ******************************************************************************/
-static char *task_cgroup_name[] = {
+char *task_cgroup_name[] = {
 	"root",
 	"foreground",
 	"background",
@@ -1735,7 +1735,7 @@ static ssize_t task_boost_store(struct device *dev,
 
 	mutex_lock(&task_boost_mutex);
 
-	if (sscanf(buf, "%99s", &arg) != 1) {
+	if (sscanf(buf, "%s", &arg) != 1) {
 		mutex_unlock(&task_boost_mutex);
 		return -EINVAL;
 	}
@@ -1785,8 +1785,6 @@ static ssize_t task_boost_del_store(struct device *dev,
 	if (task) {
 		ems_boosted_tex(task) = 0;
 		put_task_struct(task);
-
-		trace_emstune_task_boost(task, 0);
 	}
 
 	/* clear task_boost at last task_boost_del */
@@ -1944,7 +1942,7 @@ static void emstune_boot(void)
 	spin_unlock_irqrestore(&emstune_lock, flags);
 
 	INIT_DELAYED_WORK(&emstune.boot.work, emstune_boot_done);
-	queue_delayed_work(system_power_efficient_wq, &emstune.boot.work, msecs_to_jiffies(40000));
+	schedule_delayed_work(&emstune.boot.work, msecs_to_jiffies(40000));
 }
 
 static int emstune_mode_init(struct device_node *dn)

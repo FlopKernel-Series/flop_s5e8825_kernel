@@ -245,6 +245,9 @@ static int tex_boosted_fit_cpus(struct tp_env *env)
 			if (is_boosted_tex_task(cpu_rq(cpu)->curr))
 				continue;
 
+			if (get_tex_level(cpu_rq(cpu)->curr) == BOOSTED_TEX)
+				continue;
+
 			if (available_idle_cpu(cpu)) {
 				exit_latency = get_idle_exit_latency(cpu_rq(cpu));
 
@@ -591,7 +594,7 @@ static void take_util_snapshot(struct tp_env *env)
 	 * Because we do better apply active power of task
 	 * when get the energy
 	 */
-	env->task_util = max(ml_task_util_est(env->p), (unsigned long)1);
+	env->task_util = ml_task_util_est(env->p);
 	env->task_util_clamped = ml_uclamp_task_util(env->p);
 	env->task_load_avg = ml_task_load_avg(env->p);
 
@@ -606,9 +609,10 @@ static void take_util_snapshot(struct tp_env *env)
 		env->cpu_stat[cpu].dl_util = cpu_util_dl(rq);
 		extra_util = env->cpu_stat[cpu].rt_util + env->cpu_stat[cpu].dl_util;
 
-		env->cpu_stat[cpu].util_wo = min(ml_cpu_util_without(cpu, env->p) + extra_util,
+		env->cpu_stat[cpu].util_wo = min(ml_cpu_util_est_without(cpu, env->p) + extra_util,
 			    capacity);
-		env->cpu_stat[cpu].util_with = env->cpu_stat[cpu].util_wo + env->task_util;
+		env->cpu_stat[cpu].util_with = min(ml_cpu_util_est_with(env->p, cpu) + extra_util,
+			    capacity);
 
 		env->cpu_stat[cpu].runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
 		env->cpu_stat[cpu].load_avg = ml_cpu_load_avg(cpu);
@@ -836,6 +840,10 @@ static int find_best_perf_cpu(struct tp_env *env)
 			util = min(util + extra_util, capacity);
 			spare = capacity - util;
 
+			if (get_tex_level(env->p) == NOT_TEX &&
+					get_tex_level(rq->curr) != NOT_TEX)
+				continue;
+
 			if (available_idle_cpu(cpu)) {
 				unsigned int exit_latency = get_idle_exit_latency(cpu_rq(cpu));
 
@@ -951,11 +959,6 @@ static void find_overcap_cpus(struct tp_env *env)
 		cpu_util_with = ml_cpu_util_with(env->p, cpu) + extra_util;
 		if (cpu_util_with > capacity)
 			cpumask_set_cpu(cpu, &env->overcap_cpus);
-		else {
-			if (rq->nr_running > 3 && mlt_avg_nr_run(rq) > 350)
-				cpumask_set_cpu(cpu, &env->overcap_cpus);
-		}
-
 	}
 
 	if (cpu_selected(max_spare_cap_cpu) &&
@@ -989,6 +992,10 @@ static bool is_boosted_task(struct task_struct *p)
 {
 	if (emstune_sched_boost() && is_perf_task(p))
 		return true;
+
+	/* if prio > DEFAULT_PRIO and should_spread, skip boost task in level 2 */
+	if (emstune_get_cur_level() == 2 && p->prio > DEFAULT_PRIO && emstune_should_spread())
+		return false;
 
 	if (is_gsc_task(p))
 		return true;
@@ -1241,12 +1248,6 @@ int find_cpus_allowed(struct tp_env *env)
 	if (env->per_cpu_kthread)
 		goto out;
 
-	if (is_compat_thread(task_thread_info(env->p))) {
-		cpumask_and(&env->cpus_allowed, &env->cpus_allowed, system_32bit_el0_cpumask());
-		if (cpumask_empty(&env->cpus_allowed))
-			cpumask_copy(&env->cpus_allowed, system_32bit_el0_cpumask());
-	}
-
 	if (!cpumask_intersects(&env->cpus_allowed, &mask[1]))
 		goto out;
 	cpumask_and(&env->cpus_allowed, &env->cpus_allowed, &mask[1]);
@@ -1256,8 +1257,8 @@ int find_cpus_allowed(struct tp_env *env)
 
 	if (cpumask_intersects(&env->cpus_allowed, &mask[3]))
 		cpumask_and(&env->cpus_allowed, &env->cpus_allowed, &mask[3]);
-
 out:
+
 	trace_ems_find_cpus_allowed(env, mask);
 
 	return cpumask_weight(&env->cpus_allowed);

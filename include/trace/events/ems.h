@@ -148,31 +148,6 @@ TRACE_EVENT(ems_select_task_rq,
 		 __entry->target_cpu, __entry->nr_running, __entry->state)
 );
 
-TRACE_EVENT(profiler_fps,
-
-	TP_PROTO(s32 idx, u64 last_fps_cnt, u64 cur_fps, u64 fps),
-
-	TP_ARGS(idx, last_fps_cnt, cur_fps, fps),
-
-	TP_STRUCT__entry(
-		__field( s32,	idx		)
-		__field( u64,	last_fps_cnt	)
-		__field( u64,	cur_fps		)
-		__field( u64,	fps		)
-	),
-
-	TP_fast_assign(
-		__entry->idx			= idx;
-		__entry->last_fps_cnt		= last_fps_cnt;
-		__entry->cur_fps		= cur_fps;
-		__entry->fps			= fps;
-	),
-
-	TP_printk("idx=%2d, fps_cnt=%10llu cur_fps=%3llu, avg_fps=%3llu",
-		__entry->idx, __entry->last_fps_cnt, __entry->cur_fps, __entry->fps)
-);
-
-
 /*
  * Tracepoint for the EGO
  */

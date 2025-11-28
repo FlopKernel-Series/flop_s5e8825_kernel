@@ -19,10 +19,6 @@ struct lb_env {
 static struct lb_env __percpu *lb_env;
 static struct cpu_stop_work __percpu *lb_work;
 
-#define BUSIEST_EQUAL	0
-#define BUSIEST_SLOWER	1
-#define BUSIEST_FASTER	2
-
 static bool slowest_has_misfit(int dst_cpu)
 {
 	int cpu;
@@ -158,20 +154,16 @@ bool lb_queue_need_active_mgt(struct rq *src, struct rq *dst)
 
 
 bool lb_group_is_busy(struct cpumask *cpus,
-			int nr_task, unsigned long util, int avg_nr_sum)
+			int nr_task, unsigned long util)
 {
 	unsigned long capacity = capacity_orig_of(cpumask_first(cpus));
 	int nr_cpus = cpumask_weight(cpus);
-
 	/*
 	 * if there is a available cpu in the group,
 	 * this group is not busy
 	 */
 	if (nr_task <= nr_cpus)
 		return false;
-
-	if (avg_nr_sum > nr_cpus * 250)
-		return true;
 
 	if ((util + (util >> BUSY_GROUP_RATIO_SHIFT)) < (capacity * nr_cpus))
 		return false;
@@ -187,7 +179,6 @@ static void lb_find_busiest_faster_queue(int dst_cpu,
 	unsigned long util, busiest_util = 0;
 	unsigned long util_sum = 0, nr_task_sum = 0;
 	unsigned long tiny_task_util;
-	int max_avg_nr = 0, max_avg_nr_cpu = -1, avg_nr_sum = 0;
 
 	tiny_task_util = capacity_orig_of(cpumask_first(src_cpus)) >> TINY_TASK_RATIO_SHIFT;
 	cpumask_and(&candidate_mask, src_cpus, cpu_active_mask);
@@ -197,7 +188,6 @@ static void lb_find_busiest_faster_queue(int dst_cpu,
 
 	for_each_cpu(src_cpu, &candidate_mask) {
 		struct rq *src_rq = cpu_rq(src_cpu);
-		int avg_nr;
 
 		trace_lb_cpu_util(src_cpu, "faster");
 
@@ -215,32 +205,19 @@ static void lb_find_busiest_faster_queue(int dst_cpu,
 			ml_task_util(src_rq->curr) < tiny_task_util)
 			continue;
 
-		/* find avg nr run */
-		avg_nr = mlt_avg_nr_run(src_rq);
-		avg_nr_sum += avg_nr;
-		if (avg_nr > 350 && avg_nr > max_avg_nr) {
-			max_avg_nr = avg_nr;
-			max_avg_nr_cpu = src_cpu;
-		}
+		if (util < busiest_util)
+			continue;
 
-		/* find busiest util */
-		if (util > busiest_util) {
-			busiest_util = util;
-			busiest_cpu = src_cpu;
-		}
+		busiest_util = util;
+		busiest_cpu = src_cpu;
 	}
 
 	/*
 	 * Don't allow migrating to lower cluster unless
 	 * this faster cluster is sufficiently loaded.
 	 */
-	if (!lb_group_is_busy(&candidate_mask, nr_task_sum, util_sum, avg_nr_sum))
+	if (!lb_group_is_busy(&candidate_mask, nr_task_sum, util_sum))
 		return;
-
-	if (max_avg_nr_cpu != -1) {
-		*busiest = cpu_rq(max_avg_nr_cpu);
-		return;
-	}
 
 	if (busiest_cpu != -1)
 		*busiest = cpu_rq(busiest_cpu);
@@ -308,28 +285,24 @@ static void lb_find_busiest_equivalent_queue(int dst_cpu,
 }
 
 static void __lb_find_busiest_queue(int dst_cpu,
-		struct cpumask *src_cpus, struct rq **busiest, int *type)
+		struct cpumask *src_cpus, struct rq **busiest)
 {
 	unsigned long dst_capacity, src_capacity;
 
 	src_capacity = capacity_orig_of(cpumask_first(src_cpus));
 	dst_capacity = capacity_orig_of(dst_cpu);
-	if (dst_capacity == src_capacity) {
+	if (dst_capacity == src_capacity)
 		lb_find_busiest_equivalent_queue(dst_cpu, src_cpus, busiest);
-		*type = BUSIEST_EQUAL;
-	} else if (dst_capacity > src_capacity) {
+	else if (dst_capacity > src_capacity)
 		lb_find_busiest_slower_queue(dst_cpu, src_cpus, busiest);
-		*type = BUSIEST_SLOWER;
-	} else {
+	else
 		lb_find_busiest_faster_queue(dst_cpu, src_cpus, busiest);
-		*type = BUSIEST_FASTER;
-	}
 }
 
 void lb_find_busiest_queue(int dst_cpu, struct sched_group *group,
 		struct cpumask *env_cpus, struct rq **busiest, int *done)
 {
-	int type, cpu = -1;
+	int cpu = -1;
 	struct cpumask src_cpus;
 
 	*done = true;
@@ -340,7 +313,7 @@ void lb_find_busiest_queue(int dst_cpu, struct sched_group *group,
 	if (cpumask_weight(&src_cpus) == 1)
 		*busiest = cpu_rq(cpumask_first(&src_cpus));
 	else
-		__lb_find_busiest_queue(dst_cpu, &src_cpus, busiest, &type);
+		__lb_find_busiest_queue(dst_cpu, &src_cpus, busiest);
 
 	if (*busiest)
 		cpu = cpu_of(*busiest);
@@ -390,7 +363,7 @@ static bool lb_task_need_active_mgt(struct task_struct *p, int dst_cpu, int src_
 	return true;
 }
 
-static int lb_idle_pull_tasks(int dst_cpu, int src_cpu, int type)
+static int lb_idle_pull_tasks(int dst_cpu, int src_cpu)
 {
 	struct lb_env *env = per_cpu_ptr(lb_env, src_cpu);
 	struct rq *dst_rq = cpu_rq(dst_cpu);
@@ -398,46 +371,32 @@ static int lb_idle_pull_tasks(int dst_cpu, int src_cpu, int type)
 	struct task_struct *pulled_task = NULL, *p;
 	bool active_balance = false;
 	unsigned long flags;
-	int util, min_util = INT_MAX, count = 0;
 
 	raw_spin_rq_lock_irqsave(src_rq, flags);
 	list_for_each_entry_reverse(p, &src_rq->cfs_tasks, se.group_node) {
 		if (!_lb_can_migrate_task(p, src_cpu, dst_cpu))
 			continue;
 
-		if (task_running(src_rq, p))
-			if (!lb_task_need_active_mgt(p, dst_cpu, src_cpu))
-				continue;
-
-		if (!can_migrate(p, dst_cpu))
+		if (task_running(src_rq, p)) {
+			if (lb_task_need_active_mgt(p, dst_cpu, src_cpu)) {
+				pulled_task = p;
+				active_balance = true;
+				break;
+			}
 			continue;
+		}
 
-		if (type != BUSIEST_FASTER) {
+		if (can_migrate(p, dst_cpu)) {
+			update_rq_clock(src_rq);
+			detach_task(src_rq, dst_rq, p);
 			pulled_task = p;
 			break;
 		}
-
-		/* find min util cpu */
-		util = ml_task_util(p);
-		if (util > min_util)
-			continue;
-
-		min_util = util;
-		pulled_task = p;
-		if (++count > 3)
-			break;
 	}
 
 	if (!pulled_task) {
 		raw_spin_rq_unlock_irqrestore(src_rq, flags);
 		return 0;
-	}
-
-	if (task_running(src_rq, pulled_task)) {
-		active_balance = true;
-	} else {
-		update_rq_clock(src_rq);
-		detach_task(src_rq, dst_rq, pulled_task);
 	}
 
 	if (active_balance) {
@@ -446,7 +405,7 @@ static int lb_idle_pull_tasks(int dst_cpu, int src_cpu, int type)
 			return 0;
 		}
 
-		src_rq->active_balance = true;
+		src_rq->active_balance = 1;
 		ems_rq_migrated(dst_rq) = true;
 		env->src_rq = src_rq;
 		env->dst_rq = dst_rq;
@@ -472,49 +431,12 @@ static int lb_idle_pull_tasks(int dst_cpu, int src_cpu, int type)
 	return 1;
 }
 
-static bool compute_imbalance(int cl_idx)
-{
-	int range = get_pe_list(cl_idx)->num_of_cpus;
-	struct pe_list *pl = get_pe_list(cl_idx);
-	int cpu, i;
-
-	if (unlikely(!pl))
-		return false;
-
-	for (i = 0; i < range; i++) {
-		int nr_cpus = 0, avg_nr_sum = 0;
-		bool overload;
-
-		for_each_cpu_and(cpu, &pl->cpus[i], cpu_active_mask) {
-			struct rq *rq = cpu_rq(cpu);
-			avg_nr_sum += mlt_avg_nr_run(rq);
-			nr_cpus++;
-		}
-
-		overload = avg_nr_sum > nr_cpus * 250;
-		if (i == 0) {
-			if (overload)
-				return false;
-			else
-				continue;
-		}
-
-		if (overload)
-			return true;
-	}
-
-	return false;
-}
-
 static int compute_range(int cpu, int cl_idx, bool short_idle)
 {
 	int range = get_pe_list(cl_idx)->num_of_cpus;
 	bool slowest_misfit = slowest_has_misfit(cpu);
 	bool fastest = cpumask_test_cpu(cpu, cpu_fastest_mask());
 	bool slowest = cpumask_test_cpu(cpu, cpu_slowest_mask());
-
-	if (compute_imbalance(cl_idx))
-		return range;
 
 	if (short_idle && !slowest_misfit)
 		return 1;
@@ -542,6 +464,31 @@ static int lb_has_pushable_tasks(struct rq *rq)
 	return !plist_head_empty(&rq->rt.pushable_tasks);
 }
 
+static int lb_pick_rt_task(struct rq *rq, struct task_struct *p, int cpu)
+{
+	if (!task_running(rq, p) &&
+	    cpumask_test_cpu(cpu, p->cpus_ptr))
+		return 1;
+
+	return 0;
+}
+
+static struct task_struct *lb_pick_highest_pushable_task(struct rq *rq, int cpu)
+{
+	struct plist_head *head = &rq->rt.pushable_tasks;
+	struct task_struct *p;
+
+	if (!lb_has_pushable_tasks(rq))
+		return NULL;
+
+	plist_for_each_entry(p, head, pushable_tasks) {
+		if (lb_pick_rt_task(rq, p, cpu))
+			return p;
+	}
+
+	return NULL;
+}
+
 #define MIN_RUNNABLE_THRESHOLD	(500000)
 static bool lb_short_runnable(struct task_struct *p)
 {
@@ -551,7 +498,7 @@ static bool lb_short_runnable(struct task_struct *p)
 static int lb_idle_pull_tasks_rt(struct rq *dst_rq)
 {
 	struct rq *src_rq;
-	struct task_struct *pulled_task;
+	struct task_struct *pulled_task = NULL;
 	int cpu, src_cpu = -1, dst_cpu = dst_rq->cpu, ret = 0;
 
 	if (sched_rt_runnable(dst_rq))
@@ -576,7 +523,7 @@ static int lb_idle_pull_tasks_rt(struct rq *dst_rq)
 	if (sched_rt_runnable(dst_rq))
 		goto out;
 
-	pulled_task = pick_highest_pushable_task(src_rq, dst_cpu);
+	pulled_task = lb_pick_highest_pushable_task(src_rq, dst_cpu);
 	if (!pulled_task)
 		goto out;
 
@@ -591,6 +538,8 @@ static int lb_idle_pull_tasks_rt(struct rq *dst_rq)
 out:
 	double_unlock_balance(dst_rq, src_rq);
 
+	trace_lb_idle_pull_tasks_rt(src_cpu, pulled_task, ret);
+
 	return ret;
 }
 
@@ -601,7 +550,7 @@ void lb_newidle_balance(struct rq *dst_rq, struct rq_flags *rf,
 	int cl_idx = ems_rq_cluster_idx(dst_rq);
 	bool short_idle;
 	struct rq *busiest = NULL;
-	int type, i, range = 0, src_cpu = -1;
+	int i, range = 0, src_cpu = -1;
 
 	dst_rq->misfit_task_load = 0;
 	*done = true;
@@ -631,7 +580,7 @@ void lb_newidle_balance(struct rq *dst_rq, struct rq_flags *rf,
 	if (lb_idle_pull_tasks_rt(dst_rq))
 		goto out;
 
-	/* sanity check again after drop rq lock during RT balance */
+	/* final check again after drop rq lock during RT balance */
 	if (dst_rq->nr_running)
 		goto out;
 
@@ -657,11 +606,11 @@ void lb_newidle_balance(struct rq *dst_rq, struct rq_flags *rf,
 		if (dst_rq->nr_running > 0)
 			break;
 
-		__lb_find_busiest_queue(dst_cpu, &(pl->cpus[i]), &busiest, &type);
+		__lb_find_busiest_queue(dst_cpu, &(pl->cpus[i]), &busiest);
 		if (busiest) {
 			src_cpu = cpu_of(busiest);
 			if (dst_cpu != src_cpu)
-				*pulled_task = lb_idle_pull_tasks(dst_cpu, src_cpu, type);
+				*pulled_task = lb_idle_pull_tasks(dst_cpu, src_cpu);
 			if (*pulled_task)
 				break;
 		}

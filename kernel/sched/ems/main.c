@@ -8,6 +8,7 @@
 #include <linux/pm_qos.h>
 #include <linux/platform_device.h>
 #include <linux/miscdevice.h>
+//#include <linux/panic_notifier.h>
 
 #include "../sched.h"
 #include "ems.h"
@@ -17,6 +18,10 @@
 #include <trace/events/ems_debug.h>
 
 #include <dt-bindings/soc/samsung/ems.h>
+
+#define MAX_CGROUP_MAP 32
+
+static int cgroup_map[MAX_CGROUP_MAP] = { CGROUP_ROOT };
 
 /******************************************************************************
  * panic handler for scheduler debugging                                      *
@@ -29,24 +34,6 @@ static inline void print_task_info(struct task_struct *p)
 		? "32bit" : "64bit",
 		cpumask_pr_args(p->cpus_ptr));
 }
-
-//copied straight from fair.c
-#ifdef CONFIG_FAIR_GROUP_SCHED
-/* runqueue on which this entity is (to be) queued */
-static inline struct cfs_rq *cfs_rq_of(struct sched_entity *se)
-{
-	return se->cfs_rq;
-}
-#else
-static inline struct cfs_rq *cfs_rq_of(struct sched_entity *se)
-{
-	struct task_struct *p = task_of(se);
-	struct rq *rq = task_rq(p);
-
-	return &rq->cfs;
-}
-#endif
-//copied straight from fair.c
 
 static int ems_panic_notifier_call(struct notifier_block *nb,
 				   unsigned long l, void *buf)
@@ -438,6 +425,23 @@ int get_sched_class(struct task_struct *p)
 	return 1 << class_idx;
 }
 
+void ems_init_cgroup_map(struct cgroup_subsys_state *css)
+{
+	const char *name = css->cgroup->kn->name;
+	int i = 0;
+	int idx = 0;
+
+	/* update cgroup index by name */
+	for (i = 0; i < CGROUP_COUNT; i++) {
+		if (!strcmp(name, task_cgroup_name[i])) {
+			idx = css->id - 1;
+			cgroup_map[idx] = i;
+			pr_info("%s: '%s' cgroup idx=%d -> ems_idx=%d\n", __func__, name, idx, i);
+			break;
+		}
+	}
+}
+
 int cpuctl_task_group_idx(struct task_struct *p)
 {
 	int idx;
@@ -446,6 +450,8 @@ int cpuctl_task_group_idx(struct task_struct *p)
 	rcu_read_lock();
 	css = task_css(p, cpu_cgrp_id);
 	idx = css->id - 1;
+	if (idx >= 0 && idx < MAX_CGROUP_MAP)
+		idx = cgroup_map[idx];
 	rcu_read_unlock();
 
 	/* if customer add new group, use the last group */
@@ -700,19 +706,11 @@ void ems_dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 		lb_dequeue_misfit_task(p, rq);
 }
 
-#define ems_for_each_sched_entity(se) \
-	for (; (se); (se) = (se)->parent)
-
 void ems_replace_next_task_fair(struct rq *rq, struct task_struct **p_ptr,
 				struct sched_entity **se_ptr, bool *repick,
 				bool simple, struct task_struct *prev)
 {
 	tex_replace_next_task_fair(rq, p_ptr, se_ptr, repick, simple, prev);
-
-	if (*repick && simple) {
-		ems_for_each_sched_entity(*se_ptr)
-			set_next_entity(cfs_rq_of(*se_ptr), *se_ptr);
-	}
 }
 
 void ems_check_preempt_wakeup(struct rq *rq, struct task_struct *p,
@@ -792,18 +790,6 @@ void ems_sched_fork_init(struct task_struct *p)
 void ems_schedule(struct task_struct *prev,
 		struct task_struct *next, struct rq *rq)
 {
-	/* check nr running */
-	if (unlikely(((get_sched_class(next) != EMS_SCHED_IDLE)
-				&& !rq->nr_running)))
-		BUG_ON(1);
-
-	/* check rt on_rq */
-	if (get_sched_class(next) == EMS_SCHED_RT) {
-		struct sched_rt_entity *rt_se = &next->rt;
-		if (unlikely(!rt_se->on_rq))
-			BUG_ON(1);
-	}
-
 	if (prev == next)
 		return;
 
@@ -843,6 +829,11 @@ void ems_set_binder_priority(struct binder_transaction *t, struct task_struct *p
 {
 	if (t && t->need_reply && ems_boosted_tex(current))
 		ems_boosted_tex(p) = 1;
+
+	if (t && t->need_reply
+			&& emstune_get_cur_level() == 2
+			&& get_tex_level(current) < NOT_TEX)
+		ems_binder_task(p) = 1;
 }
 
 void ems_restore_binder_priority(struct binder_transaction *t, struct task_struct *p)
@@ -963,9 +954,7 @@ static int ems_probe(struct platform_device *pdev)
 	profile_sched_init(ems_kobj);
 	ontime_init(ems_kobj);
 	cpufreq_init();
-#if IS_ENABLED(CONFIG_CPU_FREQ_GOV_ENERGYAWARE)
 	ego_pre_init(ems_kobj);
-#endif
 	freqboost_init();
 	frt_init(ems_kobj);
 	ecs_init(ems_kobj);

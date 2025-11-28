@@ -200,6 +200,8 @@ enum {
 	IDLE_C2,
 };
 
+extern char *task_cgroup_name[];
+
 extern int ems_select_task_rq_fair(struct task_struct *p,
 		int prev_cpu, int sd_flag, int wake_flag);
 extern int __ems_select_task_rq_fair(struct task_struct *p, int prev_cpu,
@@ -290,7 +292,7 @@ extern struct mlt __percpu *pcpu_mlt;		/* active ratio tracking */
 
 #define NR_RUN_UNIT		100
 #define NR_RUN_ROUNDS_UNIT	50
-#define NR_RUN_UP_UNIT	99
+#define NR_RUN_UP_UNIT 99
 extern int mlt_avg_nr_run(struct rq *rq);
 extern void mlt_enqueue_task(struct rq *rq);
 extern void mlt_dequeue_task(struct rq *rq);
@@ -324,6 +326,9 @@ extern unsigned long ml_cpu_util(int cpu);
 extern unsigned long ml_cpu_util_with(struct task_struct *p, int dst_cpu);
 extern unsigned long ml_cpu_util_without(int cpu, struct task_struct *p);
 extern unsigned long ml_cpu_load_avg(int cpu);
+extern unsigned long ml_cpu_util_est(int cpu);
+extern unsigned long ml_cpu_util_est_with(struct task_struct *p, int cpu);
+extern unsigned long ml_cpu_util_est_without(int cpu, struct task_struct *p);
 
 #define MLT_PERIOD_SIZE		(4 * NSEC_PER_MSEC)
 #define MLT_PERIOD_COUNT	8
@@ -536,7 +541,6 @@ enum {
 #define TEX_WINDOW_COUNT	(3)
 #define TEX_FULL_WINDOWS	(TEX_WINDOW * TEX_WINDOW_COUNT)
 
-extern void set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se);
 extern bool is_boosted_tex_task(struct task_struct *p);
 extern bool is_important_task(struct task_struct *p);
 extern void tex_enqueue_task(struct task_struct *p, int cpu);
@@ -773,7 +777,6 @@ static inline int is_misfit_task_util(unsigned long util)
 extern int profile_sched_init(struct kobject *);
 extern int profile_sched_data(void);
 extern int profile_get_htask_ratio(int cpu);
-extern int profile_get_fps(void);
 extern u64 profile_get_cpu_wratio_busy(int cpu);
 extern void profile_enqueue_task(struct rq *rq, struct task_struct *p);
 extern void get_system_sched_data(struct system_profile_data *);
@@ -934,6 +937,15 @@ static inline struct sched_entity *get_task_entity(struct sched_entity *se)
 	return se;
 }
 
+static inline struct cfs_rq *cfs_rq_of(struct sched_entity *se)
+{
+#ifdef CONFIG_FAIR_GROUP_SCHED
+	return se->cfs_rq;
+#else
+	return &task_rq(task_of(se))->cfs;
+#endif
+}
+
 static inline bool can_migrate(struct task_struct *p, int dst_cpu)
 {
 	if (p->exit_state)
@@ -1001,6 +1013,7 @@ static inline bool is_busy_cpu(int cpu)
 }
 
 extern int get_sched_class(struct task_struct *p);
+extern void ems_init_cgroup_map(struct cgroup_subsys_state *css);
 extern int cpuctl_task_group_idx(struct task_struct *p);
 extern const struct cpumask *cpu_coregroup_mask(int cpu);
 extern const struct cpumask *cpu_slowest_mask(void);

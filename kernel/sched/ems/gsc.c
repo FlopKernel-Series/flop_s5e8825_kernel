@@ -22,8 +22,7 @@
 #define DEFAULT_UP_THRESHOLD		(GSC_DISABLED)
 #define DEFAULT_DOWN_THRESHOLD		(GSC_DISABLED)
 #define DEFAULT_MIN_INTERVAL_NS		(16 * NSEC_PER_MSEC)
-#define DEFAULT_MIN_RETAIN_NS		(48 * NSEC_PER_MSEC)
-#define DEFAULT_MIN_FPS_THR		25
+#define DEFAULT_MIN_RETAIN_NS		(16 * NSEC_PER_MSEC)
 
 struct gsc_group {
 	int			id;
@@ -31,6 +30,7 @@ struct gsc_group {
 	int			status;
 	u64			last_update_time;
 	u64			deactivated_t;
+	u64			activated_t;
 	raw_spinlock_t		lock;
 } *gsc_groups[CGROUP_COUNT];
 
@@ -39,8 +39,6 @@ struct gsc_stat {
 	unsigned int down_threshold;
 	unsigned int min_interval_ns;
 	unsigned int min_retain_ns;
-	unsigned int avg_nr_run_threshold;
-	unsigned int fps_threshold;
 } gsc;
 
 static DEFINE_SPINLOCK(gsc_update_lock);
@@ -68,27 +66,12 @@ bool is_gsc_task(struct task_struct *p)
 	return grp->status == GSC_ACTIVATED;
 }
 
-bool need_to_activated_gsc(u64 load, int fps, int avg_nr_run)
-{
-	if (load <= gsc.up_threshold)
-		return false;
-
-	/* check the frame drop */
-	if (fps > gsc.fps_threshold)
-		return false;
-
-	if (avg_nr_run < gsc.avg_nr_run_threshold)
-		return false;
-
-	return true;
-}
-
-void gsc_update_status(struct gsc_group *grp, u64 group_load, int fps, int avg_nr_run, u64 now)
+void gsc_update_status(struct gsc_group *grp, u64 group_load, u64 now)
 {
 	s64 delta;
 
 	if (grp->status == GSC_DEACTIVATED) {
-		if (need_to_activated_gsc(group_load, fps, avg_nr_run))
+		if (group_load > gsc.up_threshold)
 			grp->status = GSC_ACTIVATED;
 		goto out;
 	}
@@ -102,7 +85,7 @@ void gsc_update_status(struct gsc_group *grp, u64 group_load, int fps, int avg_n
 
 		delta = grp->last_update_time - grp->deactivated_t;
 
-		if (delta > gsc.min_retain_ns) {
+		if (delta >	gsc.min_retain_ns) {
 			grp->deactivated_t = 0;
 			grp->status = GSC_DEACTIVATED;
 		}
@@ -139,9 +122,8 @@ static int _gsc_get_cpu_group_load(struct gsc_group *grp, int cpu)
 
 static void _gsc_decision_activate(struct gsc_group *grp, u64 now)
 {
-	int cpu;
-	int fps = 0, avg_nr_run = 0;
-	u64 group_load = 0, nr_cpus = 0;
+	int cpu, prev_status = grp->status;
+	u64 group_load = 0, nr_cpus = 0, load;
 
 	if (now < grp->last_update_time + gsc.min_interval_ns)
 		return;
@@ -149,39 +131,36 @@ static void _gsc_decision_activate(struct gsc_group *grp, u64 now)
 	if (gsc.up_threshold == GSC_BOOSTED) {
 		grp->status = GSC_ACTIVATED;
 		grp->deactivated_t = 0;
+		grp->activated_t = now;
 		grp->last_update_time = now;
 
-		trace_gsc_decision_activate(grp->id, group_load, fps, avg_nr_run,
-						now, grp->last_update_time, "boosted");
+		trace_gsc_decision_activate(grp->id, group_load, now, grp->last_update_time, "boosted");
 		return;
 	}
 
 	/* calc cpu's group load */
 	for_each_cpu_and(cpu, cpu_active_mask, ecs_cpus_allowed(NULL)) {
-		struct rq *rq = cpu_rq(cpu);
-		u64 load = mult_frac(_gsc_get_cpu_group_load(grp, cpu), capacity_cpu_orig(cpu),
-					SCHED_CAPACITY_SCALE);
+		load = mult_frac(_gsc_get_cpu_group_load(grp, cpu), capacity_cpu_orig(cpu),
+				SCHED_CAPACITY_SCALE);
 
 		group_load += load;
 		nr_cpus++;
-		if (cpumask_test_cpu(cpu, cpu_slowest_mask()))
-			avg_nr_run += mlt_avg_nr_run(rq);
 
 		trace_gsc_cpu_group_load(cpu, grp->id, load);
 	}
-
-	/* calc frame drop */
-	fps = profile_get_fps();
 
 	if (unlikely(!nr_cpus))
 		return;
 
 	group_load = div64_u64(group_load, nr_cpus);
 
-	gsc_update_status(grp, group_load, fps, avg_nr_run, now);
+	gsc_update_status(grp, group_load, now);
 
-	trace_gsc_decision_activate(grp->id, group_load, fps, avg_nr_run, now,
-			grp->last_update_time, grp->status ? "activated" : "deactivated");
+	if (grp->status != prev_status)
+		grp->activated_t = (grp->status == GSC_ACTIVATED) ? now : 0;
+
+	trace_gsc_decision_activate(grp->id, group_load, now, grp->last_update_time,
+					  grp->status ? "activated" : "deactivated");
 }
 
 static void gsc_decision_activate(struct gsc_group *grp, u64 now)
@@ -212,6 +191,7 @@ void gsc_update_tick(void)
 
 		if (now < grp->last_update_time + gsc.min_interval_ns)
 			continue;
+
 
 		gsc_decision_activate(grp, now);
 	}
@@ -317,52 +297,6 @@ static ssize_t store_min_retain_us(struct kobject *kobj,
 static struct kobj_attribute min_retain_us_attr =
 __ATTR(min_retain_ns, 0644, show_min_retain_us, store_min_retain_us);
 
-/* fps */
-static ssize_t show_fps_threshold(struct kobject *kobj,
-		struct kobj_attribute *attr, char *buf)
-{
-	return snprintf(buf, 20, "%d\n", gsc.fps_threshold);
-}
-
-static ssize_t store_fps_threshold(struct kobject *kobj,
-	struct kobj_attribute *attr, const char *buf, size_t count)
-{
-	int input;
-
-	if (sscanf(buf, "%d", &input) != 1)
-		return -EINVAL;
-
-	gsc.fps_threshold = input;
-
-	return count;
-}
-
-static struct kobj_attribute fps_threshold_attr =
-__ATTR(fps_threshold, 0644, show_fps_threshold, store_fps_threshold);
-
-/* fps */
-static ssize_t show_avg_nr_run_threshold(struct kobject *kobj,
-		struct kobj_attribute *attr, char *buf)
-{
-	return snprintf(buf, 20, "%d\n", gsc.avg_nr_run_threshold);
-}
-
-static ssize_t store_avg_nr_run_threshold(struct kobject *kobj,
-	struct kobj_attribute *attr, const char *buf, size_t count)
-{
-	int input;
-
-	if (sscanf(buf, "%d", &input) != 1)
-		return -EINVAL;
-
-	gsc.avg_nr_run_threshold = input;
-
-	return count;
-}
-
-static struct kobj_attribute avg_nr_run_threshold_attr =
-__ATTR(avg_nr_run_threshold, 0644, show_avg_nr_run_threshold, store_avg_nr_run_threshold);
-
 static int gsc_sysfs_init(struct kobject *ems_kobj)
 {
 	int ret;
@@ -389,13 +323,6 @@ static int gsc_sysfs_init(struct kobject *ems_kobj)
 	if (ret)
 		pr_warn("%s: failed to create gsc sysfs, line %u\n", __func__, __LINE__);
 
-	ret = sysfs_create_file(gsc_kobj, &fps_threshold_attr.attr);
-	if (ret)
-		pr_warn("%s: failed to create gsc sysfs, line %u\n", __func__, __LINE__);
-	ret = sysfs_create_file(gsc_kobj, &avg_nr_run_threshold_attr.attr);
-	if (ret)
-		pr_warn("%s: failed to create gsc sysfs, line %u\n", __func__, __LINE__);
-
 	return ret;
 }
 
@@ -405,8 +332,6 @@ static void init_gsc_stat(void)
 	gsc.down_threshold = DEFAULT_DOWN_THRESHOLD;
 	gsc.min_interval_ns = DEFAULT_MIN_INTERVAL_NS;
 	gsc.min_retain_ns = DEFAULT_MIN_RETAIN_NS;
-	gsc.avg_nr_run_threshold = cpumask_weight(cpu_slowest_mask()) * 90;
-	gsc.fps_threshold = DEFAULT_MIN_FPS_THR;
 }
 
 static void init_gsc_group(void)
@@ -427,6 +352,7 @@ static void init_gsc_group(void)
 		grp->status = GSC_DEACTIVATED;
 		grp->last_update_time = 0;
 		grp->deactivated_t = 0;
+		grp->activated_t = 0;
 		raw_spin_lock_init(&grp->lock);
 
 		gsc_groups[i] = grp;

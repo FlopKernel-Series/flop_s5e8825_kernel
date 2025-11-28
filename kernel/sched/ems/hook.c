@@ -29,6 +29,9 @@ static void ems_hook_select_task_rq_fair(void *data,
 {
 	int cpu;
 
+	if ((sd_flag == SD_BALANCE_WAKE) || (sd_flag == SD_BALANCE_FORK))
+		ems_last_waked(p) = ktime_get_ns();
+
 	cpu = ems_select_task_rq_fair(p, prev_cpu, sd_flag, wake_flags);
 
 	*new_cpu = cpu;
@@ -40,6 +43,9 @@ static void ems_hook_select_task_rq_rt(void *data,
 			int sd_flag, int wake_flags, int *new_cpu)
 {
 	int cpu;
+
+	if ((sd_flag == SD_BALANCE_WAKE) || (sd_flag == SD_BALANCE_FORK))
+		ems_last_waked(p) = ktime_get_ns();
 
 	cpu = ems_select_task_rq_rt(p, prev_cpu, sd_flag, wake_flags);
 
@@ -225,6 +231,11 @@ static void ems_hook_sched_overutilized_tp(void *data,
 	trace_sched_overutilized(overutilized);
 }
 
+static void ems_rvh_cpu_cgroup_online(void *unused, struct cgroup_subsys_state *css)
+{
+	ems_init_cgroup_map(css);
+}
+
 static void ems_hook_binder_wake_up_ilocked(void *data, struct task_struct *p,
 		bool sync, struct binder_proc *proc)
 {
@@ -271,16 +282,6 @@ static void ems_hook_syscall_prctl_finished(void *data, int option, struct task_
 		return;
 
 	ems_render(p) = 1;
-}
-
-static void ems_hook_new_task_stats(void *data, struct task_struct *p)
-{
-	ems_last_waked(p) = ktime_get_ns();
-}
-
-static void ems_hook_try_to_wake_up(void *data, struct task_struct *p)
-{
-	ems_last_waked(p) = ktime_get_ns();
 }
 
 int hook_init(void)
@@ -405,14 +406,6 @@ int hook_init(void)
 	if (ret)
 		return ret;
 
-	ret = register_trace_android_rvh_new_task_stats(ems_hook_new_task_stats, NULL);
-	if (ret)
-		return ret;
-
-	ret = register_trace_android_rvh_try_to_wake_up(ems_hook_try_to_wake_up, NULL);
-	if (ret)
-		return ret;
-
 	ret = register_trace_android_vh_syscall_prctl_finished(ems_hook_syscall_prctl_finished, NULL);
 	if (ret)
 		return ret;
@@ -424,6 +417,7 @@ int hook_init(void)
 	WARN_ON(register_trace_pelt_se_tp(ems_hook_pelt_se_tp, NULL));
 	WARN_ON(register_trace_sched_overutilized_tp(ems_hook_sched_overutilized_tp, NULL));
 
+	register_trace_android_rvh_cpu_cgroup_online(ems_rvh_cpu_cgroup_online, NULL);
 	register_trace_android_rvh_wake_up_new_task(ems_wake_up_new_task, NULL);
 
 	return 0;

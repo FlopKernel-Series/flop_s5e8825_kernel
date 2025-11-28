@@ -40,7 +40,7 @@ struct sysbusy_stat {
 	u64 time_in_state;
 } sysbusy_stats[NUM_OF_SYSBUSY_STATE];
 
-static int cpn_next_cpu[VENDOR_NR_CPUS] = { [0 ... VENDOR_NR_CPUS - 1] = -1 };
+static cpn_next_cpu[VENDOR_NR_CPUS] = { [0 ... VENDOR_NR_CPUS - 1] = -1 };
 /******************************************************************************
  * sysbusy notify                                                             *
  ******************************************************************************/
@@ -456,7 +456,7 @@ static enum sysbusy_state determine_sysbusy_state(void)
 		if (system_data.heavy_task_count > 10)
 			is_somac = false;
 
-		if (!is_somac || (num_active_cpus() != VENDOR_NR_CPUS))
+		if (!is_somac)
 			return SYSBUSY_STATE2;
 
 		return SYSBUSY_STATE3;

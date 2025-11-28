@@ -314,81 +314,6 @@ static void profile_update_cpu_util(int cpu, int *busy_cnt, unsigned long *util_
 }
 
 /****************************************************************
- *			FPS					*
- ****************************************************************/
-#define FPS_PROFILE_PERIOD_MS	99
-#define FPS_WINDOW_CNT		10
-struct ems_profiler {
-	s64	profile_ms;
-
-	int	idx;
-	int	fps;
-
-	u64	last_fence_cnt;
-	s64	last_fence_ms;
-	u64	cur_fps[FPS_WINDOW_CNT];
-
-	ktime_t		start_time;
-	ktime_t		end_time;
-
-	void	(*get_fence_cnt)(u64 *cnt, ktime_t *time);
-} profiler;
-
-int profile_get_fps(void)
-{
-	return profiler.fps;
-}
-
-u64 ems_avg_val(u64 *data)
-{
-	int idx;
-	u64 sum = 0;
-	for (idx = 0; idx < FPS_WINDOW_CNT; idx++)
-		sum += data[idx];
-	return sum / FPS_WINDOW_CNT;
-}
-
-void ems_register_fence_cnt(void (*fn)(u64 *cnt, ktime_t *time))
-{
-	profiler.get_fence_cnt = fn;
-}
-EXPORT_SYMBOL_GPL(ems_register_fence_cnt);
-
-#define MAX_VRR		120
-static void update_fps_profiler(u64 now)
-{
-	ktime_t cur_time = 0, delta_ms;
-	u64 cur_cnt;
-	s64 cnt;
-	int idx = profiler.idx;
-
-	now = jiffies_to_msecs(now);
-
-	if (ktime_sub(now, profiler.profile_ms) < FPS_PROFILE_PERIOD_MS)
-		return;
-
-	profiler.profile_ms = now;
-
-	if (profiler.get_fence_cnt) {
-		profiler.get_fence_cnt(&cur_cnt, &cur_time);
-		cur_time = ktime_to_ms(cur_time);
-		cnt = cur_cnt - profiler.last_fence_cnt;
-		delta_ms = ktime_sub(cur_time, profiler.last_fence_ms);
-		profiler.cur_fps[idx] = cnt * MSEC_PER_SEC / delta_ms;
-		profiler.last_fence_ms = cur_time;
-		profiler.last_fence_cnt = cur_cnt;
-		profiler.fps = ems_avg_val(profiler.cur_fps);
-	}
-
-	trace_profiler_fps(idx, profiler.last_fence_cnt,
-				profiler.cur_fps[idx], profiler.fps);
-
-	if (++idx >= FPS_WINDOW_CNT)
-		idx = 0;
-	profiler.idx = idx;
-}
-
-/****************************************************************
  *			External APIs				*
  ****************************************************************/
 static u64 last_profile_time;
@@ -419,8 +344,6 @@ int profile_sched_data(void)
 		goto unlock;
 
 	last_profile_time = now;
-
-	update_fps_profiler(now);
 
 	for_each_cpu(cpu, cpu_active_mask) {
 		struct rq *rq = cpu_rq(cpu);
