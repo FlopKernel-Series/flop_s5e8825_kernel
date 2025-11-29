@@ -15,6 +15,10 @@
 #else
 #include <linux/sched.h>
 #endif
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/namei.h>
+#include <linux/susfs.h>
+#endif // #ifdef CONFIG_KSU_SUSFS
 
 #include "supercalls.h"
 #include "arch.h"
@@ -23,13 +27,20 @@
 #include "klog.h" // IWYU pragma: keep
 #include "ksu.h"
 #include "ksud.h"
+#ifdef CONFIG_KSU_SYSCALL_HOOK
+#include "kp_hook.h"
+#include "syscall_handler.h"
+#endif
 #include "kernel_compat.h"
 #include "kernel_umount.h"
 #include "manager.h"
 #include "selinux/selinux.h"
 #include "objsec.h"
 #include "file_wrapper.h"
-#include "syscall_hook_manager.h"
+
+#ifdef CONFIG_KSU_SUSFS
+bool susfs_is_boot_completed_triggered = false;
+#endif // #ifdef CONFIG_KSU_SUSFS
 
 // Permission check functions
 bool only_manager(void)
@@ -115,6 +126,9 @@ static int do_report_event(void __user *arg)
 			boot_complete_lock = true;
 			pr_info("boot_complete triggered\n");
 			on_boot_completed();
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+			susfs_is_boot_completed_triggered = true;
+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 		}
 		break;
 	}
@@ -412,7 +426,7 @@ put_orig_file:
 
 static int do_manage_mark(void __user *arg)
 {
-#ifdef KSU_SHOULD_USE_NEW_TP
+#ifdef CONFIG_KSU_SYSCALL_HOOK
 	struct ksu_manage_mark_cmd cmd;
 	int ret = 0;
 
@@ -476,7 +490,7 @@ static int do_manage_mark(void __user *arg)
 	return 0;
 #else
 	// We don't care, just return -ENOTSUPP
-	pr_warn("%s: supercalls not implemented for non-tp usage\n", __func__);
+	pr_warn("manage_mark: this supercalls is not implemented for manual hook.\n");
 	return -ENOTSUPP;
 #endif
 }
@@ -591,100 +605,72 @@ static int add_try_umount(void __user *arg)
 	return 0;
 }
 
+static int do_nuke_ext4_sysfs(void __user *arg)
+{
+	struct ksu_nuke_ext4_sysfs_cmd cmd;
+	char mnt[256];
+	long ret;
+
+	if (copy_from_user(&cmd, arg, sizeof(cmd)))
+		return -EFAULT;
+
+	if (!cmd.arg)
+		return -EINVAL;
+
+	memset(mnt, 0, sizeof(mnt));
+
+	ret = strncpy_from_user(mnt, cmd.arg, sizeof(mnt));
+	if (ret < 0) {
+		pr_err("nuke ext4 copy mnt failed: %ld\\n", ret);
+		return -EFAULT; // 或者 return ret;
+	}
+
+	if (ret == sizeof(mnt)) {
+		pr_err("nuke ext4 mnt path too long\\n");
+		return -ENAMETOOLONG;
+	}
+
+	pr_info("do_nuke_ext4_sysfs: %s\n", mnt);
+
+	return nuke_ext4_sysfs(mnt);
+}
+
 // IOCTL handlers mapping table
 static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
-    KSU_CMD(KSU_IOCTL_GRANT_ROOT, "GRANT_ROOT", do_grant_root,
-		allowed_for_su),
-	KSU_CMD(KSU_IOCTL_GET_INFO, "GET_INFO", do_get_info, always_allow),
-	KSU_CMD(KSU_IOCTL_REPORT_EVENT, "REPORT_EVENT", do_report_event,
-		only_root),
-	KSU_CMD(KSU_IOCTL_SET_SEPOLICY, "SET_SEPOLICY", do_set_sepolicy,
-		only_root),
-	KSU_CMD(KSU_IOCTL_CHECK_SAFEMODE, "CHECK_SAFEMODE", do_check_safemode,
-		always_allow),
-	KSU_CMD(KSU_IOCTL_GET_ALLOW_LIST, "GET_ALLOW_LIST", do_get_allow_list,
-		manager_or_root),
-	KSU_CMD(KSU_IOCTL_GET_DENY_LIST, "GET_DENY_LIST", do_get_deny_list,
-		manager_or_root),
-	KSU_CMD(KSU_IOCTL_UID_GRANTED_ROOT, "UID_GRANTED_ROOT",
-		do_uid_granted_root, manager_or_root),
-	KSU_CMD(KSU_IOCTL_UID_SHOULD_UMOUNT, "UID_SHOULD_UMOUNT",
-		do_uid_should_umount, manager_or_root),
-	KSU_CMD(KSU_IOCTL_GET_MANAGER_UID, "GET_MANAGER_UID",
-		do_get_manager_uid, manager_or_root),
-	KSU_CMD(KSU_IOCTL_GET_APP_PROFILE, "GET_APP_PROFILE",
-		do_get_app_profile, only_manager),
-	KSU_CMD(KSU_IOCTL_SET_APP_PROFILE, "SET_APP_PROFILE",
-		do_set_app_profile, only_manager),
-	KSU_CMD(KSU_IOCTL_GET_FEATURE, "GET_FEATURE", do_get_feature,
-		manager_or_root),
-	KSU_CMD(KSU_IOCTL_SET_FEATURE, "SET_FEATURE", do_set_feature,
-		manager_or_root),
-	KSU_CMD(KSU_IOCTL_GET_WRAPPER_FD, "GET_WRAPPER_FD", do_get_wrapper_fd,
-		manager_or_root),
-	KSU_CMD(KSU_IOCTL_MANAGE_MARK, "MANAGE_MARK", do_manage_mark,
-		manager_or_root),
-	// KSU_CMD(KSU_IOCTL_NUKE_EXT4_SYSFS, "NUKE_EXT4_SYSFS", do_nuke_ext4_sysfs, manager_or_root),
-	KSU_CMD(KSU_IOCTL_ADD_TRY_UMOUNT, "ADD_TRY_UMOUNT", add_try_umount,
-		manager_or_root),
-	KSU_CMD(0, NULL, NULL, NULL) // Sentinel
+	KSU_IOCTL(GRANT_ROOT, "GRANT_ROOT", do_grant_root, allowed_for_su),
+	KSU_IOCTL(GET_INFO, "GET_INFO", do_get_info, always_allow),
+	KSU_IOCTL(REPORT_EVENT, "REPORT_EVENT", do_report_event, only_root),
+	KSU_IOCTL(SET_SEPOLICY, "SET_SEPOLICY", do_set_sepolicy, only_root),
+	KSU_IOCTL(CHECK_SAFEMODE, "CHECK_SAFEMODE", do_check_safemode,
+		  always_allow),
+	KSU_IOCTL(GET_ALLOW_LIST, "GET_ALLOW_LIST", do_get_allow_list,
+		  manager_or_root),
+	KSU_IOCTL(GET_DENY_LIST, "GET_DENY_LIST", do_get_deny_list,
+		  manager_or_root),
+	KSU_IOCTL(UID_GRANTED_ROOT, "UID_GRANTED_ROOT", do_uid_granted_root,
+		  manager_or_root),
+	KSU_IOCTL(UID_SHOULD_UMOUNT, "UID_SHOULD_UMOUNT", do_uid_should_umount,
+		  manager_or_root),
+	KSU_IOCTL(GET_MANAGER_UID, "GET_MANAGER_UID", do_get_manager_uid,
+		  manager_or_root),
+	KSU_IOCTL(GET_APP_PROFILE, "GET_APP_PROFILE", do_get_app_profile,
+		  only_manager),
+	KSU_IOCTL(SET_APP_PROFILE, "SET_APP_PROFILE", do_set_app_profile,
+		  only_manager),
+	KSU_IOCTL(GET_FEATURE, "GET_FEATURE", do_get_feature, manager_or_root),
+	KSU_IOCTL(SET_FEATURE, "SET_FEATURE", do_set_feature, manager_or_root),
+	KSU_IOCTL(GET_WRAPPER_FD, "GET_WRAPPER_FD", do_get_wrapper_fd,
+		  manager_or_root),
+	KSU_IOCTL(MANAGE_MARK, "MANAGE_MARK", do_manage_mark, manager_or_root),
+	KSU_IOCTL(NUKE_EXT4_SYSFS, "NUKE_EXT4_SYSFS", do_nuke_ext4_sysfs,
+		  manager_or_root),
+	KSU_IOCTL(ADD_TRY_UMOUNT, "ADD_TRY_UMOUNT", add_try_umount,
+		  manager_or_root),
+
+	// Sentinel
+	{ .cmd = 0, .name = NULL, .handler = NULL, .perm_check = NULL }
 };
 
-#ifdef KSU_SHOULD_USE_NEW_TP
-struct ksu_install_fd_tw {
-	struct callback_head cb;
-	int __user *outp;
-};
-
-static void ksu_install_fd_tw_func(struct callback_head *cb)
-{
-	struct ksu_install_fd_tw *tw =
-		container_of(cb, struct ksu_install_fd_tw, cb);
-	int fd = ksu_install_fd();
-	pr_info("[%d] install ksu fd: %d\n", current->pid, fd);
-
-	if (copy_to_user(tw->outp, &fd, sizeof(fd))) {
-		pr_err("install ksu fd reply err\n");
-		do_close_fd(fd);
-	}
-
-	kfree(tw);
-}
-
-static int reboot_handler_pre(struct kprobe *p, struct pt_regs *regs)
-{
-	struct pt_regs *real_regs = PT_REAL_REGS(regs);
-	int magic1 = (int)PT_REGS_PARM1(real_regs);
-	int magic2 = (int)PT_REGS_PARM2(real_regs);
-	unsigned long arg4;
-
-	// Check if this is a request to install KSU fd
-	if (magic1 == KSU_INSTALL_MAGIC1 && magic2 == KSU_INSTALL_MAGIC2) {
-		struct ksu_install_fd_tw *tw;
-
-		arg4 = (unsigned long)PT_REGS_SYSCALL_PARM4(real_regs);
-
-		tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
-		if (!tw)
-			return 0;
-
-		tw->outp = (int __user *)arg4;
-		tw->cb.func = ksu_install_fd_tw_func;
-
-		if (task_work_add(current, &tw->cb, TWA_RESUME)) {
-			kfree(tw);
-			pr_warn("install fd add task_work failed\n");
-		}
-	}
-
-	return 0;
-}
-
-static struct kprobe reboot_kp = {
-	.symbol_name = REBOOT_SYMBOL,
-	.pre_handler = reboot_handler_pre,
-};
-#else
 int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 			  void __user **arg)
 {
@@ -696,6 +682,96 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 		magic2);
 #endif
 
+#ifdef CONFIG_KSU_SUSFS
+	// If magic2 is susfs and current process is root
+	if (magic2 == SUSFS_MAGIC && only_root()) {
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+		if (cmd == CMD_SUSFS_ADD_SUS_PATH) {
+			susfs_add_sus_path(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_ADD_SUS_PATH_LOOP) {
+			susfs_add_sus_path_loop(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_SET_ANDROID_DATA_ROOT_PATH) {
+			susfs_set_i_state_on_external_dir(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_SET_SDCARD_ROOT_PATH) {
+			susfs_set_i_state_on_external_dir(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+		if (cmd == CMD_SUSFS_HIDE_SUS_MNTS_FOR_ALL_PROCS) {
+			susfs_set_hide_sus_mnts_for_all_procs(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+		if (cmd == CMD_SUSFS_ADD_SUS_KSTAT) {
+			susfs_add_sus_kstat(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_UPDATE_SUS_KSTAT) {
+			susfs_update_sus_kstat(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_ADD_SUS_KSTAT_STATICALLY) {
+			susfs_add_sus_kstat(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+		if (cmd == CMD_SUSFS_SET_UNAME) {
+			susfs_set_uname(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+#ifdef CONFIG_KSU_SUSFS_ENABLE_LOG
+		if (cmd == CMD_SUSFS_ENABLE_LOG) {
+			susfs_enable_log(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_ENABLE_LOG
+#ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
+		if (cmd == CMD_SUSFS_SET_CMDLINE_OR_BOOTCONFIG) {
+			susfs_set_cmdline_or_bootconfig(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
+#ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
+		if (cmd == CMD_SUSFS_ADD_OPEN_REDIRECT) {
+			susfs_add_open_redirect(arg);
+			return 0;
+		}
+#endif //#ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
+#ifdef CONFIG_KSU_SUSFS_SUS_MAP
+		if (cmd == CMD_SUSFS_ADD_SUS_MAP) {
+			susfs_add_sus_map(arg);
+			return 0;
+		}
+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MAP
+		if (cmd == CMD_SUSFS_ENABLE_AVC_LOG_SPOOFING) {
+			susfs_set_avc_log_spoofing(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_SHOW_ENABLED_FEATURES) {
+			susfs_get_enabled_features(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_SHOW_VARIANT) {
+			susfs_show_variant(arg);
+			return 0;
+		}
+		if (cmd == CMD_SUSFS_SHOW_VERSION) {
+			susfs_show_version(arg);
+			return 0;
+		}
+		return 0;
+	}
+#endif
 	// Check if this is a request to install KSU fd
 	if (magic2 == KSU_INSTALL_MAGIC2) {
 		int fd = ksu_install_fd();
@@ -709,7 +785,6 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 
 	return 0;
 }
-#endif
 
 void ksu_supercalls_init(void)
 {
@@ -720,20 +795,15 @@ void ksu_supercalls_init(void)
 		pr_info("  %-18s = 0x%08x\n", ksu_ioctl_handlers[i].name,
 			ksu_ioctl_handlers[i].cmd);
 	}
-#ifdef KSU_SHOULD_USE_NEW_TP
-	int rc = register_kprobe(&reboot_kp);
-	if (rc) {
-		pr_err("reboot kprobe failed: %d\n", rc);
-	} else {
-		pr_info("reboot kprobe registered successfully\n");
-	}
+#ifdef CONFIG_KSU_SYSCALL_HOOK
+	kp_handle_supercalls_init();
 #endif
 }
 
 void ksu_supercalls_exit(void)
 {
-#ifdef KSU_SHOULD_USE_NEW_TP
-	unregister_kprobe(&reboot_kp);
+#ifdef CONFIG_KSU_SYSCALL_HOOK
+	kp_handle_supercalls_exit();
 #endif
 }
 
