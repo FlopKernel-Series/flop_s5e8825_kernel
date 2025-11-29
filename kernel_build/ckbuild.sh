@@ -214,7 +214,7 @@ elif [ "$DO_MKSU" == "1" ]; then
     FK_TYPE="MagicKSU"
     FK_TYPE_SHORT="MKS"
 elif [ "$DO_RKSU" == "1" ]; then
-    FK_TYPE="RKSU-NOSUS"
+    FK_TYPE="RKSU"
     FK_TYPE_SHORT="RK"
 else
     FK_TYPE="Vanilla"
