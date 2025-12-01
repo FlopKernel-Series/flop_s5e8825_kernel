@@ -1592,6 +1592,7 @@ static int s2mu106_chg_set_property(struct power_supply *psy,
 				s2mu106_update_reg(charger->i2c, 0x72, 0x00, 0x80);
 
 				/* CC Detach Operation w/o VBUS */
+				value.intval = val->intval;
 				psy_do_property("usbpd-manager", set,
 						POWER_SUPPLY_PROP_AUTHENTIC, value);
 
@@ -1680,6 +1681,7 @@ static int s2mu106_chg_set_property(struct power_supply *psy,
 					}
 #endif
 					/* PM Disable */
+					value.intval = 0;
 					psy_do_property("s2mu106_pmeter", set,
 						POWER_SUPPLY_LSI_PROP_PM_FACTORY, value);
 

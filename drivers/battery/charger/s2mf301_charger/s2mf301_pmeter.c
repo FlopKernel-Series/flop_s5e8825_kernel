@@ -1067,6 +1067,7 @@ static irqreturn_t s2mf301_vchgin_isr(int irq, void *data)
 
 	pr_info("%s voltage : %d\n", __func__, voltage);
 
+	value.intval = voltage;
 	psy_do_property("muic-manager", set,
 		POWER_SUPPLY_LSI_PROP_PM_VCHGIN, value);
 
@@ -1075,9 +1076,13 @@ static irqreturn_t s2mf301_vchgin_isr(int irq, void *data)
 
 static irqreturn_t s2mf301_ichgin_th_isr(int irq, void *data)
 {
+	struct s2mf301_pmeter_data *pmeter = data;
+	int ichgin_current;
 	union power_supply_propval value;
 
 	pr_info("%s\n", __func__);
+	ichgin_current = s2mf301_pm_get_value(pmeter, S2MF301_PM_TYPE_ICHGIN);
+	value.intval = ichgin_current;
 	psy_do_property("s2mf301-charger", set,
 		POWER_SUPPLY_LSI_PROP_ICHGIN, value);
 

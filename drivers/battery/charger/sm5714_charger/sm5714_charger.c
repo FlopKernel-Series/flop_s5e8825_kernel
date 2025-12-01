@@ -1301,6 +1301,7 @@ static inline void _check_slow_rate_charging(struct sm5714_charger_data *charger
 			charger->input_current, charger->cable_type);
 
 		charger->slow_rate_chg_mode = true;
+		value.intval = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
 		psy_do_property("battery", set, POWER_SUPPLY_PROP_CHARGE_TYPE, value);
 	}
 
