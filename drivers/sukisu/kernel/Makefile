@@ -20,6 +20,7 @@ kernelsu-objs += seccomp_cache.o
 kernelsu-objs += file_wrapper.o
 kernelsu-objs += throne_comm.o
 kernelsu-objs += sulog.o
+kernelsu-objs += umount_manager.o
 
 ifeq ($(CONFIG_KSU_MANUAL_SU), y)
 ccflags-y += -DCONFIG_KSU_MANUAL_SU

@@ -40,6 +40,8 @@
 #include "manual_su.h"
 #endif
 
+#include "umount_manager.h"
+
 #ifdef CONFIG_KSU_SUSFS
 bool susfs_is_boot_completed_triggered = false;
 #endif // #ifdef CONFIG_KSU_SUSFS
@@ -470,7 +472,8 @@ static int do_manage_mark(void __user *arg)
 		cmd.result = (u32)ret;
 		break;
 #else
-		return -EINVAL;
+		cmd.result = 0;
+		break;
 #endif
 	}
 	case KSU_MARK_MARK: {
@@ -486,7 +489,9 @@ static int do_manage_mark(void __user *arg)
 			}
 		}
 #else
-		pr_info("susfs: cmd: KSU_MARK_MARK => do nothing\n");
+		if (cmd.pid != 0) {
+			return 0;
+		}
 #endif
 		break;
 	}
@@ -503,7 +508,9 @@ static int do_manage_mark(void __user *arg)
 			}
 		}
 #else
-		pr_info("susfs: cmd: KSU_MARK_UNMARK => do nothing\n");
+		if (cmd.pid != 0) {
+			return 0;
+		}
 #endif
 		break;
 	}
@@ -866,6 +873,36 @@ static int do_manual_su(void __user *arg)
 }
 #endif
 
+static int do_umount_manager(void __user *arg)
+{
+	struct ksu_umount_manager_cmd cmd;
+
+	if (copy_from_user(&cmd, arg, sizeof(cmd))) {
+		pr_err("umount_manager: copy_from_user failed\n");
+		return -EFAULT;
+	}
+
+	switch (cmd.operation) {
+	case UMOUNT_OP_ADD: {
+		return ksu_umount_manager_add(cmd.path, cmd.flags, false);
+	}
+	case UMOUNT_OP_REMOVE: {
+		return ksu_umount_manager_remove(cmd.path);
+	}
+	case UMOUNT_OP_LIST: {
+		struct ksu_umount_entry_info __user *entries = 
+			(struct ksu_umount_entry_info __user *)cmd.entries_ptr;
+		return ksu_umount_manager_get_entries(entries, &cmd.count);
+	}
+	case UMOUNT_OP_CLEAR_CUSTOM: {
+		return ksu_umount_manager_clear_custom();
+	}
+	default:
+		return -EINVAL;
+	}
+}
+
+
 // IOCTL handlers mapping table
 static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 	{ .cmd = KSU_IOCTL_GRANT_ROOT, .name = "GRANT_ROOT", .handler = do_grant_root, .perm_check = allowed_for_su },
@@ -898,6 +935,7 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 #ifdef CONFIG_KPM
 	{ .cmd = KSU_IOCTL_KPM, .name = "KPM_OPERATION", .handler = do_kpm, .perm_check = manager_or_root},
 #endif
+	{ .cmd = KSU_IOCTL_UMOUNT_MANAGER, .name = "UMOUNT_MANAGER", .handler = do_umount_manager, .perm_check = manager_or_root},
 	{ .cmd = 0, .name = NULL, .handler = NULL, .perm_check = NULL} // Sentine
 };
 
@@ -1005,10 +1043,6 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user 
 			susfs_set_hide_sus_mnts_for_all_procs(arg);
 			return 0;
 		}
-		if (cmd == CMD_SUSFS_UMOUNT_FOR_ZYGOTE_ISO_SERVICE) {
-			susfs_set_umount_for_zygote_iso_service(arg);
-			return 0;
-		}
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 		if (cmd == CMD_SUSFS_ADD_SUS_KSTAT) {
@@ -1024,12 +1058,6 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user 
 			return 0;
 		}
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-		if (cmd == CMD_SUSFS_ADD_TRY_UMOUNT) {
-			susfs_add_try_umount(arg);
-			return 0;
-		}
-#endif //#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
 #ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
 		if (cmd == CMD_SUSFS_SET_UNAME) {
 			susfs_set_uname(arg);

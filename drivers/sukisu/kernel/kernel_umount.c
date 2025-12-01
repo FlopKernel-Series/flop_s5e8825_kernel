@@ -26,12 +26,9 @@
 #include "ksud.h"
 
 #include "sulog.h"
+#include "umount_manager.h"
 
-#ifndef CONFIG_KSU_SUSFS
 static bool ksu_kernel_umount_enabled = true;
-#else
-bool ksu_kernel_umount_enabled = true;
-#endif
 
 static int kernel_umount_feature_get(u64 *value)
 {
@@ -58,7 +55,7 @@ static const struct ksu_feature_handler kernel_umount_handler = {
 extern bool susfs_is_log_enabled;
 #endif // #ifdef CONFIG_KSU_SUSFS
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) ||                           \
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) ||						   \
 	defined(KSU_HAS_PATH_UMOUNT)
 extern int path_umount(struct path *path, int flags);
 static void ksu_umount_mnt(const char *__never_use_mnt, struct path *path,
@@ -93,11 +90,7 @@ static void ksu_sys_umount(const char *mnt, int flags)
 
 #endif
 
-#ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
-static void try_umount(const char *mnt, int flags)
-#else
 void try_umount(const char *mnt, int flags)
-#endif // #ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 {
 	struct path path;
 	int err = kern_path(mnt, 0, &path);
@@ -115,7 +108,6 @@ void try_umount(const char *mnt, int flags)
 }
 
 
-#if !defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
 struct umount_tw {
 	struct callback_head cb;
 	const struct cred *old_cred;
@@ -137,6 +129,8 @@ static void umount_tw_func(struct callback_head *cb)
 	}
 	up_read(&mount_list_lock);
 
+	ksu_umount_manager_execute_all(tw->old_cred);
+
 	if (saved)
 		revert_creds(saved);
 
@@ -150,8 +144,7 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 {
 	struct umount_tw *tw;
 
-#if defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
-	// this hook is used for umounting overlayfs for some uid, if there isn't any module mounted, just ignore it!
+	// if there isn't any module mounted, just ignore it!
 	if (!ksu_module_mounted) {
 		return 0;
 	}
@@ -160,29 +153,38 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 		return 0;
 	}
 
-	// FIXME: isolated process which directly forks from zygote is not handled
-	if (!is_appuid(new_uid)) {
+#ifndef CONFIG_KSU_SUSFS
+	// There are 5 scenarios:
+	// 1. Normal app: zygote -> appuid
+	// 2. Isolated process forked from zygote: zygote -> isolated_process
+	// 3. App zygote forked from zygote: zygote -> appuid
+	// 4. Isolated process froked from app zygote: appuid -> isolated_process (already handled by 3)
+	// 5. Isolated process froked from webview zygote (no need to handle, app cannot run custom code)
+	if (!is_appuid(new_uid) && !is_isolated_process(new_uid)) {
 		return 0;
 	}
 
-	if (!ksu_uid_should_umount(new_uid)) {
+	if (!ksu_uid_should_umount(new_uid) && !is_isolated_process(new_uid)) {
 		return 0;
 	}
 
 	// check old process's selinux context, if it is not zygote, ignore it!
 	// because some su apps may setuid to untrusted_app but they are in global mount namespace
 	// when we umount for such process, that is a disaster!
+	// also handle case 4 and 5
 	bool is_zygote_child = is_zygote(get_current_cred());
 	if (!is_zygote_child) {
 		pr_info("handle umount ignore non zygote child: %d\n", current->pid);
 		return 0;
 	}
+#endif // #ifndef CONFIG_KSU_SUSFS
+
+	// umount the target mnt
+	pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
+
 #if __SULOG_GATE
 	ksu_sulog_report_syscall(new_uid, NULL, "setuid", NULL);
 #endif
-#endif // #if defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
-	// umount the target mnt
-	pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
 
 	tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
 	if (!tw)
@@ -202,10 +204,14 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 
 	return 0;
 }
-#endif // #if !defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
 
 void ksu_kernel_umount_init(void)
 {
+	int rc = 0;
+	rc = ksu_umount_manager_init();
+	if (rc) {
+		pr_err("Failed to initialize umount manager: %d\n", rc);
+	}
 	if (ksu_register_feature_handler(&kernel_umount_handler)) {
 		pr_err("Failed to register kernel_umount feature handler\n");
 	}
@@ -213,5 +219,6 @@ void ksu_kernel_umount_init(void)
 
 void ksu_kernel_umount_exit(void)
 {
+	ksu_umount_manager_exit();
 	ksu_unregister_feature_handler(KSU_FEATURE_KERNEL_UMOUNT);
 }
