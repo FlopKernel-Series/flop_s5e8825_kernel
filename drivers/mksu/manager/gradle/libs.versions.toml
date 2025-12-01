@@ -1,23 +1,23 @@
 [versions]
 agp = "8.13.1"
 kotlin = "2.2.21"
-ksp = "2.3.2"
-compose-bom = "2025.11.00"
-lifecycle = "2.9.4"
+ksp = "2.3.3"
+compose-bom = "2025.11.01"
+lifecycle = "2.10.0"
 navigation = "2.9.6"
-activity-compose = "1.11.0"
+activity-compose = "1.12.0"
 kotlinx-coroutines = "1.10.2"
 coil-compose = "2.7.0"
 compose-destination = "2.3.0"
 markdown = "4.6.2"
 webkit = "1.14.0"
 parcelablelist = "2.0.1"
-ndk = "29.0.13599879-beta2"
+ndk = "29.0.14206865"
 libsu = "6.0.0"
 apksign = "1.4"
 cmaker = "1.2"
-miuix = "0.6.1"
-haze = "1.7.0"
+miuix = "0.7.1"
+haze = "1.7.1"
 capsule = "2.1.1"
 
 [plugins]
@@ -64,6 +64,7 @@ compose-destinations-core = { group = "io.github.raamcosta.compose-destinations"
 compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "compose-destination" }
 
 markdown = { group = "io.noties.markwon", name = "core", version.ref = "markdown" }
+markdown-ext-tables = { group = "io.noties.markwon", name = "ext-tables", version.ref = "markdown" }
 
 lsposed-cxx = { module = "org.lsposed.libcxx:libcxx", version.ref = "ndk" }
 

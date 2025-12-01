@@ -1,4 +1,4 @@
-use anyhow::{Ok, Result};
+use anyhow::{Context, Ok, Result};
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -7,7 +7,8 @@ use android_logger::Config;
 #[cfg(target_os = "android")]
 use log::LevelFilter;
 
-use crate::{apk_sign, assets, debug, defs, init_event, ksucalls, module, utils};
+use crate::boot_patch::{BootPatchArgs, BootRestoreArgs};
+use crate::{apk_sign, assets, debug, defs, init_event, ksucalls, module, module_config, utils};
 
 /// KernelSU userspace cli
 #[derive(Parser, Debug)]
@@ -66,78 +67,10 @@ enum Commands {
     },
 
     /// Patch boot or init_boot images to apply KernelSU
-    BootPatch {
-        /// boot image path, if not specified, will try to find the boot image automatically
-        #[arg(short, long)]
-        boot: Option<PathBuf>,
-
-        /// kernel image path to replace
-        #[arg(short, long)]
-        kernel: Option<PathBuf>,
-
-        /// LKM module path to replace, if not specified, will use the builtin one
-        #[arg(short, long)]
-        module: Option<PathBuf>,
-
-        /// init to be replaced
-        #[arg(short, long, requires("module"))]
-        init: Option<PathBuf>,
-
-        /// will use another slot when boot image is not specified
-        #[arg(short = 'u', long, default_value = "false")]
-        ota: bool,
-
-        /// Flash it to boot partition after patch
-        #[arg(short, long, default_value = "false")]
-        flash: bool,
-
-        /// output path, if not specified, will use current directory
-        #[arg(short, long, default_value = None)]
-        out: Option<PathBuf>,
-
-        /// magiskboot path, if not specified, will search from $PATH
-        #[arg(long, default_value = None)]
-        magiskboot: Option<PathBuf>,
-
-        /// KMI version, if specified, will use the specified KMI
-        #[arg(long, default_value = None)]
-        kmi: Option<String>,
-
-        /// target partition override (init_boot | boot | vendor_boot)
-        #[arg(long, default_value = None)]
-        partition: Option<String>,
-
-        /// Always allow shell to get root permission
-        #[arg(long, default_value = "false")]
-        allow_shell: bool,
-
-        /// Force enable adbd and disable adbd auth
-        #[arg(long, default_value = "false")]
-        enable_adbd: bool,
-
-        /// Add more adb_debug prop
-        #[arg(long, required = false)]
-        adb_debug_prop: Option<String>,
-
-        /// Do not (re-)install kernelsu, only modify configs (allow_shell, etc.)
-        #[arg(long, default_value = "false")]
-        no_install: bool,
-    },
+    BootPatch(BootPatchArgs),
 
     /// Restore boot or init_boot images patched by KernelSU
-    BootRestore {
-        /// boot image path, if not specified, will try to find the boot image automatically
-        #[arg(short, long)]
-        boot: Option<PathBuf>,
-
-        /// Flash it to boot partition after patch
-        #[arg(short, long, default_value = "false")]
-        flash: bool,
-
-        /// magiskboot path, if not specified, will search from $PATH
-        #[arg(long, default_value = None)]
-        magiskboot: Option<PathBuf>,
-    },
+    BootRestore(BootRestoreArgs),
 
     /// Show boot information
     BootInfo {
@@ -304,6 +237,54 @@ enum Module {
 
     /// list all modules
     List,
+
+    /// manage module configuration
+    Config {
+        #[command(subcommand)]
+        command: ModuleConfigCmd,
+    },
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum ModuleConfigCmd {
+    /// Get a config value
+    Get {
+        /// config key
+        key: String,
+    },
+
+    /// Set a config value
+    Set {
+        /// config key
+        key: String,
+        /// config value (omit to read from stdin)
+        value: Option<String>,
+        /// read value from stdin (default if value not provided)
+        #[arg(long)]
+        stdin: bool,
+        /// use temporary config (cleared on reboot)
+        #[arg(short, long)]
+        temp: bool,
+    },
+
+    /// List all config entries
+    List,
+
+    /// Delete a config entry
+    Delete {
+        /// config key
+        key: String,
+        /// delete from temporary config
+        #[arg(short, long)]
+        temp: bool,
+    },
+
+    /// Clear all config entries
+    Clear {
+        /// clear temporary config
+        #[arg(short, long)]
+        temp: bool,
+    },
 }
 
 #[derive(clap::Subcommand, Debug)]
@@ -352,6 +333,9 @@ enum Feature {
     Get {
         /// Feature ID or name (su_compat, kernel_umount)
         id: String,
+        /// Read from config file
+        #[arg(long, default_value_t = false)]
+        config: bool,
     },
 
     /// Set feature value
@@ -436,7 +420,10 @@ pub fn run() -> Result<()> {
 
     let result = match cli.command {
         Commands::PostFsData => init_event::on_post_data_fs(),
-        Commands::BootCompleted => init_event::on_boot_completed(),
+        Commands::BootCompleted => {
+            init_event::on_boot_completed();
+            Ok(())
+        }
 
         Commands::Module { command } => {
             #[cfg(any(target_os = "linux", target_os = "android"))]
@@ -451,6 +438,91 @@ pub fn run() -> Result<()> {
                 Module::Disable { id } => module::disable_module(&id),
                 Module::Action { id } => module::run_action(&id),
                 Module::List => module::list_modules(),
+                Module::Config { command } => {
+                    // Get module ID from environment variable
+                    let module_id = std::env::var("KSU_MODULE").map_err(|_| {
+                        anyhow::anyhow!("This command must be run in the context of a module")
+                    })?;
+
+                    match command {
+                        ModuleConfigCmd::Get { key } => {
+                            // Use merge_configs to respect priority (temp overrides persist)
+                            let config = module_config::merge_configs(&module_id)?;
+                            match config.get(&key) {
+                                Some(value) => {
+                                    println!("{value}");
+                                    Ok(())
+                                }
+                                None => anyhow::bail!("Key '{key}' not found"),
+                            }
+                        }
+                        ModuleConfigCmd::Set {
+                            key,
+                            value,
+                            stdin,
+                            temp,
+                        } => {
+                            // Validate key at CLI layer for better user experience
+                            module_config::validate_config_key(&key)?;
+
+                            // Read value from stdin or argument
+                            let value_str = match value {
+                                Some(v) if !stdin => v,
+                                _ => {
+                                    // Read from stdin
+                                    use std::io::Read;
+                                    let mut buffer = String::new();
+                                    std::io::stdin()
+                                        .read_to_string(&mut buffer)
+                                        .context("Failed to read from stdin")?;
+                                    buffer
+                                }
+                            };
+
+                            // Validate value
+                            module_config::validate_config_value(&value_str)?;
+
+                            let config_type = if temp {
+                                module_config::ConfigType::Temp
+                            } else {
+                                module_config::ConfigType::Persist
+                            };
+                            module_config::set_config_value(
+                                &module_id,
+                                &key,
+                                &value_str,
+                                config_type,
+                            )
+                        }
+                        ModuleConfigCmd::List => {
+                            let config = module_config::merge_configs(&module_id)?;
+                            if config.is_empty() {
+                                println!("No config entries found");
+                            } else {
+                                for (key, value) in config {
+                                    println!("{key}={value}");
+                                }
+                            }
+                            Ok(())
+                        }
+                        ModuleConfigCmd::Delete { key, temp } => {
+                            let config_type = if temp {
+                                module_config::ConfigType::Temp
+                            } else {
+                                module_config::ConfigType::Persist
+                            };
+                            module_config::delete_config_value(&module_id, &key, config_type)
+                        }
+                        ModuleConfigCmd::Clear { temp } => {
+                            let config_type = if temp {
+                                module_config::ConfigType::Temp
+                            } else {
+                                module_config::ConfigType::Persist
+                            };
+                            module_config::clear_config(&module_id, config_type)
+                        }
+                    }
+                }
             }
         }
         Commands::Install { magiskboot } => utils::install(magiskboot),
@@ -460,7 +532,10 @@ pub fn run() -> Result<()> {
             Sepolicy::Apply { file } => crate::sepolicy::apply_file(file),
             Sepolicy::Check { sepolicy } => crate::sepolicy::check_rule(&sepolicy),
         },
-        Commands::Services => init_event::on_services(),
+        Commands::Services => {
+            init_event::on_services();
+            Ok(())
+        }
         Commands::Profile { command } => match command {
             Profile::GetSepolicy { package } => crate::profile::get_sepolicy(package),
             Profile::SetSepolicy { package, policy } => {
@@ -473,10 +548,19 @@ pub fn run() -> Result<()> {
         },
 
         Commands::Feature { command } => match command {
-            Feature::Get { id } => crate::feature::get_feature(id),
-            Feature::Set { id, value } => crate::feature::set_feature(id, value),
-            Feature::List => crate::feature::list_features(),
-            Feature::Check { id } => crate::feature::check_feature(id),
+            Feature::Get { id, config } => {
+                if config {
+                    crate::feature::get_feature_config(&id)
+                } else {
+                    crate::feature::get_feature(&id)
+                }
+            }
+            Feature::Set { id, value } => crate::feature::set_feature(&id, value),
+            Feature::List => {
+                crate::feature::list_features();
+                Ok(())
+            }
+            Feature::Check { id } => crate::feature::check_feature(&id),
             Feature::Load => crate::feature::load_config_and_apply(),
             Feature::Save => crate::feature::save_config(),
         },
@@ -502,37 +586,7 @@ pub fn run() -> Result<()> {
             },
         },
 
-        Commands::BootPatch {
-            boot,
-            init,
-            kernel,
-            module,
-            ota,
-            flash,
-            out,
-            magiskboot,
-            kmi,
-            partition,
-            allow_shell,
-            enable_adbd,
-            adb_debug_prop,
-            no_install,
-        } => crate::boot_patch::patch(
-            boot,
-            kernel,
-            module,
-            init,
-            ota,
-            flash,
-            out,
-            magiskboot,
-            kmi,
-            partition,
-            allow_shell,
-            enable_adbd,
-            adb_debug_prop,
-            no_install,
-        ),
+        Commands::BootPatch(boot_patch) => crate::boot_patch::patch(boot_patch),
 
         Commands::BootInfo { command } => match command {
             BootInfo::CurrentKmi => {
@@ -542,8 +596,10 @@ pub fn run() -> Result<()> {
                 return Ok(());
             }
             BootInfo::SupportedKmis => {
-                let kmi = crate::assets::list_supported_kmi()?;
-                kmi.iter().for_each(|kmi| println!("{kmi}"));
+                let kmi = crate::assets::list_supported_kmi();
+                for kmi in &kmi {
+                    println!("{kmi}");
+                }
                 return Ok(());
             }
             BootInfo::IsAbDevice => {
@@ -554,7 +610,7 @@ pub fn run() -> Result<()> {
                 return Ok(());
             }
             BootInfo::DefaultPartition => {
-                let kmi = crate::boot_patch::get_current_kmi().unwrap_or_else(|_| String::from(""));
+                let kmi = crate::boot_patch::get_current_kmi().unwrap_or_else(|_| String::new());
                 let name = crate::boot_patch::choose_boot_partition(&kmi, false, &None);
                 println!("{name}");
                 return Ok(());
@@ -566,15 +622,13 @@ pub fn run() -> Result<()> {
             }
             BootInfo::AvailablePartitions => {
                 let parts = crate::boot_patch::list_available_partitions();
-                parts.iter().for_each(|p| println!("{p}"));
+                for p in &parts {
+                    println!("{p}");
+                }
                 return Ok(());
             }
         },
-        Commands::BootRestore {
-            boot,
-            magiskboot,
-            flash,
-        } => crate::boot_patch::restore(boot, magiskboot, flash),
+        Commands::BootRestore(boot_restore) => crate::boot_patch::restore(boot_restore),
         Commands::Kernel { command } => match command {
             Kernel::NukeExt4Sysfs { mnt } => ksucalls::nuke_ext4_sysfs(&mnt),
             Kernel::Umount { command } => match command {

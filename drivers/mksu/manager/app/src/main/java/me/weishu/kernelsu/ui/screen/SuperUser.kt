@@ -10,7 +10,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,6 +76,7 @@ import me.weishu.kernelsu.ui.component.AppIconImage
 import me.weishu.kernelsu.ui.component.DropdownItem
 import me.weishu.kernelsu.ui.component.SearchBox
 import me.weishu.kernelsu.ui.component.SearchPager
+import me.weishu.kernelsu.ui.theme.isInDarkTheme
 import me.weishu.kernelsu.ui.util.ownerNameForUid
 import me.weishu.kernelsu.ui.util.pickPrimary
 import me.weishu.kernelsu.ui.viewmodel.SuperUserViewModel
@@ -115,10 +115,10 @@ fun SuperUserPager(
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-    LaunchedEffect(navigator) {
-        if (viewModel.appList.value.isEmpty() || viewModel.searchResults.value.isEmpty()) {
+    LaunchedEffect(Unit) {
+        if (viewModel.appList.value.isEmpty()) {
             viewModel.showSystemApps = prefs.getBoolean("show_system_apps", false)
-            viewModel.fetchAppList()
+            viewModel.loadAppList()
         }
     }
 
@@ -133,8 +133,8 @@ fun SuperUserPager(
     }
     val hazeState = remember { HazeState() }
     val hazeStyle = HazeStyle(
-        backgroundColor = colorScheme.background,
-        tint = HazeTint(colorScheme.background.copy(0.8f))
+        backgroundColor = colorScheme.surface,
+        tint = HazeTint(colorScheme.surface.copy(0.8f))
     )
 
     Scaffold(
@@ -212,6 +212,9 @@ fun SuperUserPager(
                 defaultResult = {},
                 searchBarTopPadding = dynamicTopPadding,
             ) {
+                item {
+                    Spacer(Modifier.height(6.dp))
+                }
                 items(searchGroups, key = { it.uid }) { group ->
                     val expanded = expandedSearchUids.value.contains(group.uid)
                     AnimatedVisibility(
@@ -219,9 +222,7 @@ fun SuperUserPager(
                         enter = fadeIn() + expandVertically(),
                         exit = fadeOut() + shrinkVertically()
                     ) {
-                        Column(
-                            Modifier.padding(top = 6.dp)
-                        ) {
+                        Column {
                             GroupItem(
                                 group = group,
                                 onToggleExpand = {
@@ -273,7 +274,7 @@ fun SuperUserPager(
             LaunchedEffect(isRefreshing) {
                 if (isRefreshing) {
                     delay(350)
-                    viewModel.fetchAppList()
+                    viewModel.loadAppList()
                     isRefreshing = false
                 }
             }
@@ -467,21 +468,27 @@ private fun GroupItem(
     onToggleExpand: () -> Unit,
     onClickPrimary: () -> Unit,
 ) {
-    val isDark = isSystemInDarkTheme()
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val isDark = isInDarkTheme(prefs.getInt("color_mode", 0))
     val colorScheme = colorScheme
-    val bg = remember { colorScheme.secondaryContainer.copy(alpha = 0.8f) }
-    val rootBg = remember { colorScheme.tertiaryContainer.copy(alpha = 0.6f) }
-    val unmountBg = remember(isDark) { if (isDark) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.3f) }
-    val fg = remember { colorScheme.onSecondaryContainer }
-    val rootFg = remember { colorScheme.onTertiaryContainer.copy(alpha = 0.8f) }
-    val unmountFg = remember(isDark) { if (isDark) Color.Black.copy(alpha = 0.4f) else Color.White.copy(alpha = 0.8f) }
+    val bg = remember(colorScheme) { colorScheme.secondaryContainer.copy(alpha = 0.8f) }
+    val rootBg = remember(colorScheme) { colorScheme.tertiaryContainer.copy(alpha = 0.6f) }
+    val unmountBg = remember(isDark, colorScheme) {
+        if (isDark) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.3f)
+    }
+    val fg = remember(colorScheme) { colorScheme.onSecondaryContainer }
+    val rootFg = remember(colorScheme) { colorScheme.onTertiaryContainer.copy(alpha = 0.8f) }
+    val unmountFg = remember(isDark, colorScheme) {
+        if (isDark) Color.Black.copy(alpha = 0.4f) else Color.White.copy(alpha = 0.8f)
+    }
     val userId = group.uid / 100000
     val packageInfo = group.primary.packageInfo
     val applicationInfo = packageInfo.applicationInfo
     val hasSharedUserId = !packageInfo.sharedUserId.isNullOrEmpty()
     val isSystemApp = applicationInfo?.flags?.and(ApplicationInfo.FLAG_SYSTEM) != 0
             || applicationInfo.flags.and(ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
-    val tags = remember(group.uid, group.anyAllowSu, group.anyCustom) {
+    val tags = remember(group.uid, group.anyAllowSu, group.anyCustom, colorScheme, isDark) {
         buildList {
             if (group.anyAllowSu) add(StatusMeta("ROOT", rootBg, rootFg))
             if (Natives.uidShouldUmount(group.uid)) add(StatusMeta("UMOUNT", unmountBg, unmountFg))

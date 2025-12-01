@@ -4,9 +4,17 @@ KernelSU 提供了一個模組機制，它可以在保持系統分割區完整�
 
 KernelSU 的模組運作機制與 Magisk 幾乎相同，如果您熟悉 Magisk 模組的開發，那麼開發 KernelSU 的模組大同小異，您可以跳過下列有關模組的介紹，只需要瞭解 [KernelSU 模組與 Magisk 模組的差異](difference-with-magisk.md)。
 
+::: warning METAMODULE 僅在修改系統檔案時需要
+KernelSU 使用 [metamodule](metamodule.md) 架構來掛載 `system` 目錄。**僅當您的模組需要修改 `/system` 檔案時**(透過 `system` 目錄)，您才需要安裝 metamodule(如 [meta-overlayfs](https://github.com/tiann/KernelSU/releases))。其他模組功能如腳本、sepolicy 規則和 system.prop 無需 metamodule 即可運作。
+:::
+
 ## WebUI
 
 KernelSU 的模組支援顯示互動介面，請參閱 [WebUI 文檔](module-webui.md).
+
+## 模組配置
+
+KernelSU 提供了一個內建的配置系統，允許模組儲存持久化或暫時的鍵值設定。詳情請參閱[模組配置文檔](module-config.md)。
 
 ## Busybox
 
@@ -106,6 +114,10 @@ description=<string>
 - versionCode 必須是一個整數，用於比較版本。
 - 其他未在上方提到的內容可以是任何單行字串。
 - 請確保使用 `UNIX (LF)` 分行符號類型，而非 `Windows (CR + LF)` 或 `Macintosh (CR)`。
+
+::: tip 動態描述
+`description` 欄位可以在執行階段使用模組配置系統動態覆蓋。詳情請參閱[覆蓋模組描述](module-config.md#overriding-module-description)。
+:::
 
 ### Shell 腳本 {#shell-scripts}
 

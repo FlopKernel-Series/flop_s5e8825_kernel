@@ -87,8 +87,8 @@ fun TemplateEditorScreen(
     val scrollBehavior = MiuixScrollBehavior()
     val hazeState = remember { HazeState() }
     val hazeStyle = HazeStyle(
-        backgroundColor = colorScheme.background,
-        tint = HazeTint(colorScheme.background.copy(0.8f))
+        backgroundColor = colorScheme.surface,
+        tint = HazeTint(colorScheme.surface.copy(0.8f))
     )
 
     BackHandler {
@@ -111,6 +111,7 @@ fun TemplateEditorScreen(
                     stringResource(R.string.app_profile_template_edit)
                 },
                 readOnly = readOnly,
+                isCreation = isCreation,
                 onBack = dropUnlessResumed { navigator.navigateBack(result = !readOnly) },
                 onDelete = {
                     if (deleteAppProfileTemplate(template.id)) {
@@ -165,9 +166,7 @@ fun TemplateEditorScreen(
                         .fillMaxWidth()
                         .padding(12.dp),
                 ) {
-                    var errorHint by remember {
-                        mutableStateOf(false)
-                    }
+                    var errorHint by rememberSaveable { mutableStateOf(false) }
 
                     TextEdit(
                         label = stringResource(id = R.string.app_profile_template_name),
@@ -189,15 +188,7 @@ fun TemplateEditorScreen(
                         text = template.id,
                         isError = errorHint
                     ) { value ->
-                        errorHint = if (value.isEmpty()) {
-                            false
-                        } else if (isTemplateExist(value)) {
-                            true
-                        } else if (!isValidTemplateId(value)) {
-                            true
-                        } else {
-                            false
-                        }
+                        errorHint = value.isNotEmpty() && (isTemplateExist(value) || !isValidTemplateId(value))
                         template = template.copy(id = value)
                     }
                     TextEdit(
@@ -311,6 +302,7 @@ fun saveTemplate(template: TemplateViewModel.TemplateInfo, isCreation: Boolean =
 private fun TopBar(
     title: String,
     readOnly: Boolean,
+    isCreation: Boolean,
     onBack: () -> Unit,
     onDelete: () -> Unit = {},
     onSave: () -> Unit = {},
@@ -334,33 +326,37 @@ private fun TopBar(
                 Icon(
                     imageVector = MiuixIcons.Useful.Back,
                     contentDescription = null,
-                    tint = colorScheme.onBackground
+                    tint = colorScheme.onSurface
                 )
             }
         },
         actions = {
-            if (readOnly) {
-                return@TopAppBar
-            }
-            IconButton(
-                modifier = Modifier.padding(end = 16.dp),
-                onClick = onDelete
-            ) {
-                Icon(
-                    imageVector = MiuixIcons.Useful.Delete,
-                    contentDescription = stringResource(id = R.string.app_profile_template_delete),
-                    tint = colorScheme.onBackground
-                )
-            }
-            IconButton(
-                modifier = Modifier.padding(end = 16.dp),
-                onClick = onSave
-            ) {
-                Icon(
-                    imageVector = MiuixIcons.Useful.Confirm,
-                    contentDescription = stringResource(id = R.string.app_profile_template_save),
-                    tint = colorScheme.onBackground
-                )
+            when {
+                !readOnly && !isCreation -> {
+                    IconButton(
+                        modifier = Modifier.padding(end = 16.dp),
+                        onClick = onDelete
+                    ) {
+                        Icon(
+                            imageVector = MiuixIcons.Useful.Delete,
+                            contentDescription = stringResource(id = R.string.app_profile_template_delete),
+                            tint = colorScheme.onBackground
+                        )
+                    }
+                }
+
+                isCreation -> {
+                    IconButton(
+                        modifier = Modifier.padding(end = 16.dp),
+                        onClick = onSave
+                    ) {
+                        Icon(
+                            imageVector = MiuixIcons.Useful.Confirm,
+                            contentDescription = stringResource(id = R.string.app_profile_template_save),
+                            tint = colorScheme.onBackground
+                        )
+                    }
+                }
             }
         },
         scrollBehavior = scrollBehavior

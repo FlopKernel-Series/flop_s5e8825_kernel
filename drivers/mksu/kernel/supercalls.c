@@ -587,7 +587,6 @@ static int add_try_umount(void __user *arg)
 static int do_set_init_pgrp(void __user *arg)
 {
     int err;
-    rcu_read_lock();
     write_lock_irq(&tasklist_lock);
     struct task_struct *p = current->group_leader;
     struct pid *init_group = task_pgrp(&init_task);
@@ -602,7 +601,6 @@ static int do_set_init_pgrp(void __user *arg)
 
 out:
     write_unlock_irq(&tasklist_lock);
-    rcu_read_unlock();
     return err;
 }
 

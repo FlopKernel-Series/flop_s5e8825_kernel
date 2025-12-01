@@ -4,13 +4,17 @@ KernelSU provides a module mechanism that achieves the effect of modifying the s
 
 The module mechanism of KernelSU is almost the same as that of Magisk. If you're familiar with Magisk module development, developing KernelSU modules is very similar. You can skip the introduction of modules below and just read [Difference with Magisk](difference-with-magisk.md).
 
-::: warning METAMODULE REQUIRED FOR MODULE MOUNTING
-KernelSU uses a [metamodule](metamodule.md) architecture where module mounting is delegated to pluggable metamodules rather than being built into the core. **Fresh KernelSU installations require installing a metamodule** (such as [meta-overlayfs](https://github.com/tiann/KernelSU/releases)) **for modules to be mounted**. Without a metamodule, your modules' `system` directories will not be mounted, though scripts will still execute.
+::: warning METAMODULE ONLY NEEDED FOR SYSTEM FILE MODIFICATION
+KernelSU uses a [metamodule](metamodule.md) architecture for mounting the `system` directory. **Only if your module needs to modify `/system` files** (via the `system` directory) do you need to install a metamodule (such as [meta-overlayfs](https://github.com/tiann/KernelSU/releases)). Other module features like scripts, sepolicy rules, and system.prop work without a metamodule.
 :::
 
 ## WebUI
 
 KernelSU's modules support displaying interfaces and interacting with users. For more details, refer to the [WebUI documentation](module-webui.md).
+
+## Module Configuration
+
+KernelSU provides a built-in configuration system that allows modules to store persistent or temporary key-value settings. For more details, refer to the [Module Configuration documentation](module-config.md).
 
 ## BusyBox
 
@@ -109,6 +113,10 @@ description=<string>
 - `versionCode` has to be an **integer**. This is used to compare versions.
 - Others that were not mentioned above can be any **single line** string.
 - Make sure to use the `UNIX (LF)` line break type and not the `Windows (CR+LF)` or `Macintosh (CR)`.
+
+::: tip DYNAMIC DESCRIPTION
+The `description` field can be dynamically overridden at runtime using the module configuration system. See [Overriding Module Description](module-config.md#overriding-module-description) for details.
+:::
 
 ### Shell scripts
 

@@ -9,7 +9,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,6 +70,7 @@ import me.weishu.kernelsu.getKernelVersion
 import me.weishu.kernelsu.ui.component.DropdownItem
 import me.weishu.kernelsu.ui.component.RebootListPopup
 import me.weishu.kernelsu.ui.component.rememberConfirmDialog
+import me.weishu.kernelsu.ui.theme.isInDarkTheme
 import me.weishu.kernelsu.ui.util.checkNewVersion
 import me.weishu.kernelsu.ui.util.getModuleCount
 import me.weishu.kernelsu.ui.util.getSELinuxStatus
@@ -82,16 +82,14 @@ import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.ScrollBehavior
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TopAppBar
-import top.yukonga.miuix.kmp.icon.MiuixIcons
-import top.yukonga.miuix.kmp.icon.icons.useful.Save
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
+import top.yukonga.miuix.kmp.theme.MiuixTheme.isDynamicColor
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import top.yukonga.miuix.kmp.utils.getWindowSize
 import top.yukonga.miuix.kmp.utils.overScrollVertical
@@ -107,13 +105,14 @@ fun HomePager(
     val scrollBehavior = MiuixScrollBehavior()
     val hazeState = remember { HazeState() }
     val hazeStyle = HazeStyle(
-        backgroundColor = colorScheme.background,
-        tint = HazeTint(colorScheme.background.copy(0.8f))
+        backgroundColor = colorScheme.surface,
+        tint = HazeTint(colorScheme.surface.copy(0.8f))
     )
 
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     val checkUpdate = prefs.getBoolean("check_update", true)
+    val themeMode = prefs.getInt("color_mode", 0)
 
     Scaffold(
         topBar = {
@@ -159,16 +158,23 @@ fun HomePager(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
+                    if (ksuVersion != null && !Natives.isLkmMode) {
+                        WarningCard(
+                            stringResource(id = R.string.home_gki_warning),
+                            themeMode
+                        )
+                    }
                     if (isManager && Natives.requireNewKernel()) {
                         WarningCard(
-                            stringResource(id = R.string.require_kernel_version).format(
-                                ksuVersion, Natives.MINIMAL_SUPPORTED_KERNEL
-                            )
+                            stringResource(id = R.string.require_kernel_version)
+                                .format(ksuVersion, Natives.MINIMAL_SUPPORTED_KERNEL),
+                            themeMode
                         )
                     }
                     if (ksuVersion != null && !rootAvailable()) {
                         WarningCard(
-                            stringResource(id = R.string.grant_root_failed)
+                            stringResource(id = R.string.grant_root_failed),
+                            themeMode
                         )
                     }
                     StatusCard(
@@ -187,11 +193,12 @@ fun HomePager(
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(2)
                             }
-                        }
+                        },
+                        themeMode = themeMode
                     )
 
                     if (checkUpdate) {
-                        UpdateCard()
+                        UpdateCard(themeMode)
                     }
                     InfoCard()
                     DonateCard()
@@ -204,7 +211,9 @@ fun HomePager(
 }
 
 @Composable
-fun UpdateCard() {
+fun UpdateCard(
+    themeMode: Int,
+) {
     val context = LocalContext.current
     val latestVersionInfo = LatestVersionInfo()
     val newVersion by produceState(initialValue = latestVersionInfo) {
@@ -230,7 +239,7 @@ fun UpdateCard() {
         val updateDialog = rememberConfirmDialog(onConfirm = { uriHandler.openUri(newVersionUrl) })
         WarningCard(
             message = stringResource(id = R.string.new_version_available).format(newVersionCode),
-            colorScheme.outline
+            themeMode, colorScheme.outline
         ) {
             if (changelog.isEmpty()) {
                 uriHandler.openUri(newVersionUrl)
@@ -281,18 +290,6 @@ private fun TopBar(
         color = Color.Transparent,
         title = stringResource(R.string.app_name),
         actions = {
-            if (kernelVersion.isGKI()) {
-                IconButton(
-                    modifier = Modifier.padding(end = 8.dp),
-                    onClick = onInstallClick,
-                ) {
-                    Icon(
-                        imageVector = MiuixIcons.Useful.Save,
-                        contentDescription = stringResource(id = R.string.install),
-                        tint = colorScheme.onBackground
-                    )
-                }
-            }
             RebootListPopup(
                 modifier = Modifier.padding(end = 16.dp),
             )
@@ -309,6 +306,7 @@ private fun StatusCard(
     onClickInstall: () -> Unit = {},
     onClickSuperuser: () -> Unit = {},
     onclickModule: () -> Unit = {},
+    themeMode: Int,
 ) {
     Column(
         modifier = Modifier
@@ -340,7 +338,11 @@ private fun StatusCard(
                             .weight(1f)
                             .fillMaxHeight(),
                         colors = CardDefaults.defaultColors(
-                            color = if (isSystemInDarkTheme()) Color(0xFF1A3825) else Color(0xFFDFFAE4)
+                            color = when {
+                                isDynamicColor -> colorScheme.secondaryContainer
+                                isInDarkTheme(themeMode) -> Color(0xFF1A3825)
+                                else -> Color(0xFFDFFAE4)
+                            }
                         ),
                         onClick = {
                             if (kernelVersion.isGKI()) onClickInstall()
@@ -360,7 +362,11 @@ private fun StatusCard(
                                 Icon(
                                     modifier = Modifier.size(170.dp),
                                     imageVector = Icons.Rounded.CheckCircleOutline,
-                                    tint = Color(0xFF36D167),
+                                    tint = if (isDynamicColor) {
+                                        colorScheme.primary.copy(alpha = 0.8f)
+                                    } else {
+                                        Color(0xFF36D167)
+                                    },
                                     contentDescription = null
                                 )
                             }
@@ -507,15 +513,20 @@ private fun StatusCard(
 @Composable
 fun WarningCard(
     message: String,
-    color: Color = if (isSystemInDarkTheme()) Color(0XFF310808) else Color(0xFFF8E2E2),
-    onClick: (() -> Unit)? = null
+    themeMode: Int,
+    color: Color? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     Card(
         onClick = {
             onClick?.invoke()
         },
         colors = CardDefaults.defaultColors(
-            color = color
+            color = color ?: when {
+                isDynamicColor -> colorScheme.errorContainer
+                isInDarkTheme(themeMode) -> Color(0XFF310808)
+                else -> Color(0xFFF8E2E2)
+            }
         ),
         showIndication = onClick != null,
         pressFeedbackType = PressFeedbackType.Tilt
@@ -527,7 +538,7 @@ fun WarningCard(
         ) {
             Text(
                 text = message,
-                color = Color(0xFFF72727),
+                color = if (isDynamicColor) colorScheme.onErrorContainer else Color(0xFFF72727),
                 fontSize = 14.sp
             )
         }

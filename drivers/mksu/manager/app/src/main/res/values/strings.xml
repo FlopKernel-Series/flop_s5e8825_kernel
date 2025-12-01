@@ -23,6 +23,7 @@
     <string name="module_failed_to_disable">Failed to disable module: %s</string>
     <string name="module_empty">No module installed</string>
     <string name="module">Module</string>
+    <string name="module_repo">Module repository</string>
     <string name="module_install_prompt_with_name">The following modules will be installed: %1$s</string>
     <string name="module_sort_action_first">Action first</string>
     <string name="module_sort_enabled_first">Enabled first</string>
@@ -39,12 +40,11 @@
     <string name="reboot_edl">Reboot to EDL</string>
     <string name="about">About</string>
     <string name="module_uninstall_confirm">Are you sure you want to uninstall module %s?</string>
-    <string name="metamodule_uninstall_confirm">"Are you sure you want to uninstall module %s? This action will affect all modules, and certain features provided by the metamodule (such as mounting) will no longer work.  "</string>
+    <string name="metamodule_uninstall_confirm">Are you sure you want to uninstall module %s? This action will affect all modules, and certain features provided by the metamodule (such as mounting) will no longer work.</string>
     <string name="module_uninstall_success">%s uninstalled</string>
     <string name="module_uninstall_failed">Failed to uninstall: %s</string>
     <string name="module_version">Version</string>
     <string name="module_author">Author</string>
-    <string name="module_overlay_fs_not_available">Modules are unavailable as OverlayFS is disabled by the kernel!</string>
     <string name="refresh">Refresh</string>
     <string name="show_system_apps">Show system apps</string>
     <string name="hide_system_apps">Hide system apps</string>
@@ -57,6 +57,7 @@
     <string name="home_click_to_learn_kernelsu">Learn how to install KernelSU and use modules.</string>
     <string name="home_support_title">Support Us</string>
     <string name="home_support_content">KernelSU is, and always will be, free, and open source. However, you can show us that you care by making a donation.</string>
+    <string name="home_gki_warning">Starting from v3.0.0, the GKI work mode will be used only in testing environments. We do not recommend it for daily use, and image files will no longer be provided.</string>
     <string name="about_source_code"><![CDATA[View source code at %1$s<br/>Join our %2$s channel]]></string>
     <string name="profile" translatable="false">App Profile</string>
     <string name="profile_default">Default</string>
@@ -79,6 +80,7 @@
     <string name="profile_selinux_domain">Domain</string>
     <string name="profile_selinux_rules">Rules</string>
     <string name="module_update">Update</string>
+    <string name="module_reinstall">Reinstall</string>
     <string name="module_downloading">Downloading module: %s</string>
     <string name="module_start_downloading">Start downloading: %s</string>
     <string name="new_version_available">New version %s is available, click to upgrade!</string>
@@ -148,6 +150,8 @@
     <string name="settings_disable_kernel_umount_summary">Disable kernel-level umount behavior controlled by KernelSU.</string>
     <string name="settings_enable_enhanced_security">Enable enhanced security</string>
     <string name="settings_enable_enhanced_security_summary">Enable stricter security policies.</string>
+    <string name="feature_status_unsupported_summary">Kernel does not support this feature.</string>
+    <string name="feature_status_managed_summary">This feature is managed by a module.</string>
     <string name="settings_mode_default">Default</string>
     <string name="settings_mode_temp_enable">Temporarily enable</string>
     <string name="settings_mode_always_enable">Permanently enable</string>
@@ -160,4 +164,25 @@
     <string name="module_undo_uninstall_success">Successfully canceled uninstall of %s</string>
     <string name="module_undo_uninstall_failed">Failed to undo uninstall: %s</string>
     <string name="group_contains_apps">Contains %d apps</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_summary">Choose the app theme mode.</string>
+    <string name="settings_theme_mode_system">Follow system</string>
+    <string name="settings_theme_mode_light">Light</string>
+    <string name="settings_theme_mode_dark">Dark</string>
+    <string name="settings_theme_mode_monet_system">Monet (Follow system)</string>
+    <string name="settings_theme_mode_monet_light">Monet (Light)</string>
+    <string name="settings_theme_mode_monet_dark">Monet (Dark)</string>
+    <string name="settings_key_color">Key color</string>
+    <string name="settings_key_color_summary">Customize accent when using Monet.</string>
+    <string name="settings_key_color_default">Default</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_red">Red</string>
+    <string name="color_green">Green</string>
+    <string name="color_purple">Purple</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_teal">Teal</string>
+    <string name="color_pink">Pink</string>
+    <string name="color_brown">Brown</string>
+    <string name="network_offline">Not connected to network</string>
+    <string name="network_retry">Retry</string>
 </resources>

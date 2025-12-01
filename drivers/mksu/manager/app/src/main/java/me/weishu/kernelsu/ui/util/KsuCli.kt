@@ -102,6 +102,21 @@ fun execKsud(args: String, newShell: Boolean = false): Boolean {
     }
 }
 
+suspend fun getFeatureStatus(feature: String): String = withContext(Dispatchers.IO) {
+    val shell = getRootShell()
+    val out = shell.newJob()
+        .add("${getKsuDaemonPath()} feature check $feature").to(ArrayList<String>(), null).exec().out
+    out.firstOrNull()?.trim().orEmpty()
+}
+
+suspend fun getFeaturePersistValue(feature: String): Long? = withContext(Dispatchers.IO) {
+    val shell = getRootShell()
+    val out = shell.newJob()
+        .add("${getKsuDaemonPath()} feature get --config $feature").to(ArrayList<String>(), null).exec().out
+    val valueLine = out.firstOrNull { it.trim().startsWith("Value:") } ?: return@withContext null
+    valueLine.substringAfter("Value:").trim().toLongOrNull()
+}
+
 fun install() {
     val start = SystemClock.elapsedRealtime()
     val magiskboot = File(ksuApp.applicationInfo.nativeLibraryDir, "libmagiskboot.so").absolutePath
@@ -112,8 +127,8 @@ fun install() {
 fun listModules(): String {
     val shell = getRootShell()
 
-    val out =
-        shell.newJob().add("${getKsuDaemonPath()} module list").to(ArrayList(), null).exec().out
+    val out = shell.newJob()
+        .add("${getKsuDaemonPath()} module list").to(ArrayList(), null).exec().out
     return out.joinToString("\n").ifBlank { "[]" }
 }
 
@@ -384,12 +399,6 @@ suspend fun getAvailablePartitions(): List<String> = withContext(Dispatchers.IO)
     val cmd = "boot-info available-partitions"
     val out = shell.newJob().add("${getKsuDaemonPath()} $cmd").to(ArrayList(), null).exec().out
     out.filter { it.isNotBlank() }.map { it.trim() }
-}
-
-fun overlayFsAvailable(): Boolean {
-    val shell = getRootShell()
-    // check /proc/filesystems
-    return ShellUtils.fastCmdResult(shell, "cat /proc/filesystems | grep overlay")
 }
 
 fun hasMagisk(): Boolean {
