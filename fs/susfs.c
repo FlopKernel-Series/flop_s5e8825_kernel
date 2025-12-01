@@ -389,26 +389,6 @@ out_copy_to_user:
 	}
 	SUSFS_LOGI("CMD_SUSFS_HIDE_SUS_MNTS_FOR_ALL_PROCS -> ret: %d\n", info.err);
 }
-
-bool susfs_is_umount_for_zygote_iso_service_enabled = false;
-void susfs_set_umount_for_zygote_iso_service(void __user **user_info) {
-	struct st_susfs_umount_for_zygote_iso_service info = {0};
-
-	if (copy_from_user(&info, (struct st_susfs_umount_for_zygote_iso_service __user*)*user_info, sizeof(info))) {
-		info.err = -EFAULT;
-		goto out_copy_to_user;
-	}
-	spin_lock(&susfs_spin_lock_sus_mount);
-	susfs_is_umount_for_zygote_iso_service_enabled = info.enabled;
-	spin_unlock(&susfs_spin_lock_sus_mount);
-	SUSFS_LOGI("susfs_is_umount_for_zygote_iso_service_enabled: %d\n", info.enabled);
-	info.err = 0;
-out_copy_to_user:
-	if (copy_to_user(&((struct st_susfs_umount_for_zygote_iso_service __user*)*user_info)->err, &info.err, sizeof(info.err))) {
-		info.err = -EFAULT;
-	}
-	SUSFS_LOGI("CMD_SUSFS_UMOUNT_FOR_ZYGOTE_ISO_SERVICE -> ret: %d\n", info.err);
-}
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 
 /* sus_kstat */
@@ -600,62 +580,6 @@ void susfs_sus_ino_for_show_map_vma(unsigned long ino, dev_t *out_dev, unsigned 
 	}
 }
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
-
-/* try_umount */
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-static DEFINE_SPINLOCK(susfs_spin_lock_try_umount);
-extern void try_umount(const char *mnt, int flags);
-static LIST_HEAD(LH_TRY_UMOUNT_PATH);
-void susfs_add_try_umount(void __user **user_info) {
-	struct st_susfs_try_umount info = {0};
-	struct st_susfs_try_umount_list *new_list = NULL;
-
-	if (copy_from_user(&info, (struct st_susfs_try_umount __user*)*user_info, sizeof(info))) {
-		info.err = -EFAULT;
-		goto out_copy_to_user;
-	}
-
-	if (info.mnt_mode == TRY_UMOUNT_DEFAULT) {
-		info.mnt_mode = 0;
-	} else if (info.mnt_mode == TRY_UMOUNT_DETACH) {
-		info.mnt_mode = MNT_DETACH;
-	} else {
-		SUSFS_LOGE("Unsupported mnt_mode: %d\n", info.mnt_mode);
-		info.err = -EINVAL;
-		goto out_copy_to_user;
-	}
-
-	new_list = kmalloc(sizeof(struct st_susfs_try_umount_list), GFP_KERNEL);
-	if (!new_list) {
-		info.err = -ENOMEM;
-		goto out_copy_to_user;
-	}
-
-	memcpy(&new_list->info, &info, sizeof(info));
-
-	INIT_LIST_HEAD(&new_list->list);
-	spin_lock(&susfs_spin_lock_try_umount);
-	list_add_tail(&new_list->list, &LH_TRY_UMOUNT_PATH);
-	spin_unlock(&susfs_spin_lock_try_umount);
-	SUSFS_LOGI("target_pathname: '%s', umount options: %d, is successfully added to LH_TRY_UMOUNT_PATH\n", new_list->info.target_pathname, new_list->info.mnt_mode);
-	info.err = 0;
-out_copy_to_user:
-	if (copy_to_user(&((struct st_susfs_try_umount __user*)*user_info)->err, &info.err, sizeof(info.err))) {
-		info.err = -EFAULT;
-	}
-	SUSFS_LOGI("CMD_SUSFS_ADD_TRY_UMOUNT -> ret: %d\n", info.err);
-}
-
-void susfs_try_umount(uid_t uid) {
-	struct st_susfs_try_umount_list *cursor = NULL;
-
-	// We should umount in reversed order
-	list_for_each_entry_reverse(cursor, &LH_TRY_UMOUNT_PATH, list) {
-		SUSFS_LOGI("umounting '%s' for uid: %u\n", cursor->info.target_pathname, uid);
-		try_umount(cursor->info.target_pathname, cursor->info.mnt_mode);
-	}
-}
-#endif // #ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
 
 /* spoof_uname */
 #ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
@@ -976,11 +900,6 @@ void susfs_get_enabled_features(void __user **user_info) {
 #endif
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 	info->err = copy_config_to_buf("CONFIG_KSU_SUSFS_SUS_KSTAT\n", buf_ptr, &copied_size, SUSFS_ENABLED_FEATURES_SIZE);
-	if (info->err) goto out_copy_to_user;
-	buf_ptr = info->enabled_features + copied_size;
-#endif
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-	info->err = copy_config_to_buf("CONFIG_KSU_SUSFS_TRY_UMOUNT\n", buf_ptr, &copied_size, SUSFS_ENABLED_FEATURES_SIZE);
 	if (info->err) goto out_copy_to_user;
 	buf_ptr = info->enabled_features + copied_size;
 #endif
