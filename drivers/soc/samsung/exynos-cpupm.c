@@ -1703,7 +1703,7 @@ static int extern_idle_ip_init(struct device_node *dn)
 
 	for (i = 0; i < count; i++) {
 		struct idle_ip *ip;
-		const char *name;
+		const char *name = NULL;
 
 		ip = kzalloc(sizeof(struct idle_ip), GFP_KERNEL);
 		if (!ip) {
