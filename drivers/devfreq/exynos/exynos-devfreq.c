@@ -1852,7 +1852,7 @@ static int exynos_devfreq_parse_dt(struct device_node *np, struct exynos_devfreq
 #if defined(CONFIG_ECT) || defined(CONFIG_ECT_MODULE)
 	const char *devfreq_domain_name;
 #endif
-	const char *buf;
+	const char *buf = NULL;
 	const char *use_delay_time;
 	const char *pd_name;
 	const char *update_fvp;
