@@ -17,11 +17,7 @@
 #include "feature.h"
 #include "ksud.h"
 
-#ifndef CONFIG_KSU_SUSFS
 static bool ksu_kernel_umount_enabled = true;
-#else
-bool ksu_kernel_umount_enabled = true;
-#endif // #ifndef CONFIG_KSU_SUSFS
 
 static int kernel_umount_feature_get(u64 *value)
 {
@@ -54,15 +50,7 @@ static void ksu_umount_mnt(struct path *path, int flags)
     }
 }
 
-#ifdef CONFIG_KSU_SUSFS
-extern bool susfs_is_log_enabled;
-#endif // #ifdef CONFIG_KSU_SUSFS
-
-#ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 static void try_umount(const char *mnt, int flags)
-#else
-void try_umount(const char *mnt, int flags)
-#endif // #ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 {
     struct path path;
     int err = kern_path(mnt, 0, &path);
@@ -79,7 +67,6 @@ void try_umount(const char *mnt, int flags)
     ksu_umount_mnt(&path, flags);
 }
 
-#if !defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
 struct umount_tw {
     struct callback_head cb;
     const struct cred *old_cred;
@@ -114,7 +101,6 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 {
     struct umount_tw *tw;
 
-#if defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
     // this hook is used for umounting overlayfs for some uid, if there isn't any module mounted, just ignore it!
     if (!ksu_module_mounted) {
         return 0;
@@ -141,7 +127,6 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
         pr_info("handle umount ignore non zygote child: %d\n", current->pid);
         return 0;
     }
-#endif // #if defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
     // umount the target mnt
     pr_info("handle umount for uid: %d, pid: %d\n", new_uid, current->pid);
 
@@ -163,7 +148,6 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 
     return 0;
 }
-#endif // #if !defined(CONFIG_KSU_SUSFS) || !defined(CONFIG_KSU_SUSFS_TRY_UMOUNT)
 
 void ksu_kernel_umount_init(void)
 {

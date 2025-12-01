@@ -55,7 +55,7 @@ static void stop_vfs_read_hook();
 static void stop_execve_hook();
 static void stop_input_hook();
 
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
 static struct work_struct stop_vfs_read_work;
 static struct work_struct stop_execve_hook_work;
 static struct work_struct stop_input_hook_work;
@@ -63,7 +63,7 @@ static struct work_struct stop_input_hook_work;
 bool ksu_vfs_read_hook __read_mostly = true;
 bool ksu_execveat_hook __read_mostly = true;
 bool ksu_input_hook __read_mostly = true;
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 
 u32 ksu_file_sid;
 void on_post_fs_data(void)
@@ -81,7 +81,7 @@ void on_post_fs_data(void)
     stop_input_hook();
 
     ksu_file_sid = ksu_get_ksu_file_sid();
-    pr_info("ksu_file sid: %d\n", ksu_file_sid);
+	pr_info("ksu_file sid: %d\n", ksu_file_sid);
 }
 
 extern void ext4_unregister_sysfs(struct super_block *sb);
@@ -118,7 +118,6 @@ void on_boot_completed(void){
     track_throne(true);
 }
 
-#ifndef CONFIG_KSU_SUSFS
 #define MAX_ARG_STRINGS 0x7FFFFFFF
 struct user_arg_ptr {
 #ifdef CONFIG_COMPAT
@@ -131,7 +130,6 @@ struct user_arg_ptr {
 #endif
     } ptr;
 };
-#endif // #ifndef CONFIG_KSU_SUSFS
 
 static const char __user *get_user_arg_ptr(struct user_arg_ptr argv, int nr)
 {
@@ -443,13 +441,8 @@ static int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr,
     return 0;
 }
 
-#ifndef CONFIG_KSU_SUSFS
 static int ksu_handle_sys_read(unsigned int fd, char __user **buf_ptr,
                                size_t *count_ptr)
-#else
-int ksu_handle_sys_read(unsigned int fd, char __user **buf_ptr,
-                               size_t *count_ptr)
-#endif // #ifndef CONFIG_KSU_SUSFS
 {
     struct file *file = fget(fd);
     if (!file) {
@@ -512,7 +505,7 @@ bool ksu_is_safe_mode()
     return false;
 }
 
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
 
 static int sys_execve_handler_pre(struct kprobe *p, struct pt_regs *regs)
 {
@@ -584,28 +577,28 @@ static void do_stop_input_hook(struct work_struct *work)
 {
     unregister_kprobe(&input_event_kp);
 }
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 
 static void stop_vfs_read_hook()
 {
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
     bool ret = schedule_work(&stop_vfs_read_work);
     pr_info("unregister vfs_read kprobe: %d!\n", ret);
 #else
     ksu_vfs_read_hook = false;
     pr_info("stop vfs_read_hook\n");
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 }
 
 static void stop_execve_hook()
 {
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
     bool ret = schedule_work(&stop_execve_hook_work);
     pr_info("unregister execve kprobe: %d!\n", ret);
 #else
     ksu_execveat_hook = false;
     pr_info("stop execve_hook\n");
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 }
 
 static void stop_input_hook()
@@ -615,19 +608,19 @@ static void stop_input_hook()
         return;
     }
     input_hook_stopped = true;
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
     bool ret = schedule_work(&stop_input_hook_work);
     pr_info("unregister input kprobe: %d!\n", ret);
 #else
     ksu_input_hook = false;
     pr_info("stop input_hook\n");
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 }
 
 // ksud: module support
 void ksu_ksud_init()
 {
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
     int ret;
 
     ret = register_kprobe(&execve_kp);
@@ -642,15 +635,15 @@ void ksu_ksud_init()
     INIT_WORK(&stop_vfs_read_work, do_stop_vfs_read_hook);
     INIT_WORK(&stop_execve_hook_work, do_stop_execve_hook);
     INIT_WORK(&stop_input_hook_work, do_stop_input_hook);
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 }
 
 void ksu_ksud_exit()
 {
-#if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#ifdef CONFIG_KPROBES
     unregister_kprobe(&execve_kp);
     // this should be done before unregister vfs_read_kp
     // unregister_kprobe(&vfs_read_kp);
     unregister_kprobe(&input_event_kp);
-#endif // #if defined(CONFIG_KPROBES) && !defined(CONFIG_KSU_SUSFS)
+#endif
 }
