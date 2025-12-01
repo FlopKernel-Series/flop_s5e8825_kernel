@@ -23,8 +23,11 @@ import kotlinx.coroutines.withContext
 import me.weishu.kernelsu.ksuApp
 import me.weishu.kernelsu.ui.component.SearchStatus
 import me.weishu.kernelsu.ui.util.HanziToPinyin
+import me.weishu.kernelsu.ui.util.isNetworkAvailable
 import me.weishu.kernelsu.ui.util.listModules
-import me.weishu.kernelsu.ui.util.overlayFsAvailable
+import me.weishu.kernelsu.ui.util.module.RepoSummary
+import me.weishu.kernelsu.ui.util.module.fetchRepoIndex
+import me.weishu.kernelsu.ui.util.module.sanitizeVersionString
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.Collator
@@ -79,9 +82,6 @@ class ModuleViewModel : ViewModel() {
     )
 
     var isRefreshing by mutableStateOf(false)
-        private set
-
-    var isOverlayAvailable by mutableStateOf(false)
         private set
 
     var sortEnabledFirst by mutableStateOf(false)
@@ -161,6 +161,7 @@ class ModuleViewModel : ViewModel() {
                         executable -> 3
                         else -> 4
                     }
+
                     sortEnabledFirst && !sortActionFirst -> if (it.enabled) 1 else 2
                     !sortEnabledFirst && sortActionFirst -> if (executable) 1 else 2
                     else -> 1
@@ -178,9 +179,6 @@ class ModuleViewModel : ViewModel() {
             val oldModuleList = modules
             val start = SystemClock.elapsedRealtime()
 
-            val overlayAvailable = withContext(Dispatchers.IO) {
-                kotlin.runCatching { overlayFsAvailable() }.getOrDefault(false)
-            }
 
             val parsedModules = withContext(Dispatchers.IO) {
                 kotlin.runCatching {
@@ -214,7 +212,6 @@ class ModuleViewModel : ViewModel() {
             }
 
             withContext(Dispatchers.Main) {
-                isOverlayAvailable = overlayAvailable
                 modules = parsedModules
                 isNeedRefresh = false
                 if (oldModuleList === modules) {
@@ -234,8 +231,20 @@ class ModuleViewModel : ViewModel() {
         }
     }
 
-    private fun sanitizeVersionString(version: String): String {
-        return version.replace(Regex("[^a-zA-Z0-9.\\-_]"), "_")
+    private val _repoIndex = mutableStateMapOf<String, RepoSummary>()
+
+    suspend fun refreshRepoIndex() {
+        val parsed = withContext(Dispatchers.IO) {
+            val map = fetchRepoIndex()
+            if (map.isEmpty()) null else map.entries.map { it.key to it.value }
+        }
+
+        withContext(Dispatchers.Main) {
+            if (parsed != null) {
+                _repoIndex.clear()
+                parsed.forEach { (id, summary) -> _repoIndex[id] = summary }
+            }
+        }
     }
 
     private fun ModuleInfo.toSignature(): ModuleUpdateSignature {
@@ -289,6 +298,21 @@ class ModuleViewModel : ViewModel() {
                 }
                 updateInfoInFlight.remove(id)
             }
+
+            modules.forEach { m ->
+                val cache = updateInfoCache[m.id]
+                val hasUpdateJson = cache?.info?.downloadUrl?.isNotEmpty() == true
+                if (!hasUpdateJson) {
+                    val repo = _repoIndex[m.id]
+                    if (repo != null) {
+                        if (repo.versionCode > m.versionCode && repo.downloadUrl.isNotBlank()) {
+                            val info = ModuleUpdateInfo(downloadUrl = repo.downloadUrl, version = repo.latestVersion, changelog = "")
+                            updateInfoCache[m.id] = ModuleUpdateCache(m.toSignature(), info)
+                            changedEntries += m.id to info
+                        }
+                    }
+                }
+            }
         }
 
         if (removedIds.isEmpty() && changedEntries.isEmpty()) {
@@ -304,6 +328,9 @@ class ModuleViewModel : ViewModel() {
     }
 
     fun checkUpdate(m: ModuleInfo): ModuleUpdateInfo {
+        if (!isNetworkAvailable(ksuApp)) {
+            return ModuleUpdateInfo.Empty
+        }
         if (m.updateJson.isEmpty() || m.remove || m.update || !m.enabled) {
             return ModuleUpdateInfo.Empty
         }

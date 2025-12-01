@@ -1,6 +1,7 @@
 package me.weishu.kernelsu.ui.screen
 
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -22,20 +23,24 @@ import androidx.compose.material.icons.rounded.DeveloperMode
 import androidx.compose.material.icons.rounded.EnhancedEncryption
 import androidx.compose.material.icons.rounded.Fence
 import androidx.compose.material.icons.rounded.FolderDelete
+import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.material.icons.rounded.RemoveModerator
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Update
 import androidx.compose.material.icons.rounded.UploadFile
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -57,16 +62,18 @@ import me.weishu.kernelsu.Natives
 import me.weishu.kernelsu.R
 import me.weishu.kernelsu.ui.component.KsuIsValid
 import me.weishu.kernelsu.ui.component.SendLogDialog
-import me.weishu.kernelsu.ui.component.SuperDropdown
 import me.weishu.kernelsu.ui.component.UninstallDialog
 import me.weishu.kernelsu.ui.component.rememberLoadingDialog
 import me.weishu.kernelsu.ui.util.execKsud
+import me.weishu.kernelsu.ui.util.getFeaturePersistValue
+import me.weishu.kernelsu.ui.util.getFeatureStatus
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
 import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.extra.SuperArrow
+import top.yukonga.miuix.kmp.extra.SuperDropdown
 import top.yukonga.miuix.kmp.extra.SuperSwitch
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
 import top.yukonga.miuix.kmp.utils.getWindowSize
@@ -86,8 +93,8 @@ fun SettingPager(
     val scrollBehavior = MiuixScrollBehavior()
     val hazeState = remember { HazeState() }
     val hazeStyle = HazeStyle(
-        backgroundColor = colorScheme.background,
-        tint = HazeTint(colorScheme.background.copy(0.8f))
+        backgroundColor = colorScheme.surface,
+        tint = HazeTint(colorScheme.surface.copy(0.8f))
     )
 
     Scaffold(
@@ -181,6 +188,92 @@ fun SettingPager(
                     }
                 }
 
+                Card(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth(),
+                ) {
+                    val themeItems = listOf(
+                        stringResource(id = R.string.settings_theme_mode_system),
+                        stringResource(id = R.string.settings_theme_mode_light),
+                        stringResource(id = R.string.settings_theme_mode_dark),
+                        stringResource(id = R.string.settings_theme_mode_monet_system),
+                        stringResource(id = R.string.settings_theme_mode_monet_light),
+                        stringResource(id = R.string.settings_theme_mode_monet_dark),
+                    )
+                    var themeMode by rememberSaveable {
+                        mutableIntStateOf(prefs.getInt("color_mode", 0))
+                    }
+                    SuperDropdown(
+                        title = stringResource(id = R.string.settings_theme),
+                        summary = stringResource(id = R.string.settings_theme_summary),
+                        items = themeItems,
+                        leftAction = {
+                            Icon(
+                                Icons.Rounded.Palette,
+                                modifier = Modifier.padding(end = 16.dp),
+                                contentDescription = stringResource(id = R.string.settings_theme),
+                                tint = colorScheme.onBackground
+                            )
+                        },
+                        selectedIndex = themeMode,
+                        onSelectedIndexChange = { index ->
+                            prefs.edit { putInt("color_mode", index) }
+                            themeMode = index
+                        }
+                    )
+
+                    AnimatedVisibility(
+                        visible = themeMode in 3..5
+                    ) {
+                        val colorItems = listOf(
+                            stringResource(id = R.string.settings_key_color_default),
+                            stringResource(id = R.string.color_blue),
+                            stringResource(id = R.string.color_red),
+                            stringResource(id = R.string.color_green),
+                            stringResource(id = R.string.color_purple),
+                            stringResource(id = R.string.color_orange),
+                            stringResource(id = R.string.color_teal),
+                            stringResource(id = R.string.color_pink),
+                            stringResource(id = R.string.color_brown),
+                        )
+                        val colorValues = listOf(
+                            0,
+                            Color(0xFF1A73E8).toArgb(),
+                            Color(0xFFEA4335).toArgb(),
+                            Color(0xFF34A853).toArgb(),
+                            Color(0xFF9333EA).toArgb(),
+                            Color(0xFFFB8C00).toArgb(),
+                            Color(0xFF009688).toArgb(),
+                            Color(0xFFE91E63).toArgb(),
+                            Color(0xFF795548).toArgb(),
+                        )
+                        var keyColorIndex by rememberSaveable {
+                            mutableIntStateOf(
+                                colorValues.indexOf(prefs.getInt("key_color", 0)).takeIf { it >= 0 } ?: 0
+                            )
+                        }
+                        SuperDropdown(
+                            title = stringResource(id = R.string.settings_key_color),
+                            summary = stringResource(id = R.string.settings_key_color_summary),
+                            items = colorItems,
+                            leftAction = {
+                                Icon(
+                                    Icons.Rounded.Palette,
+                                    modifier = Modifier.padding(end = 16.dp),
+                                    contentDescription = stringResource(id = R.string.settings_key_color),
+                                    tint = colorScheme.onBackground
+                                )
+                            },
+                            selectedIndex = keyColorIndex,
+                            onSelectedIndexChange = { index ->
+                                prefs.edit { putInt("key_color", colorValues[index]) }
+                                keyColorIndex = index
+                            }
+                        )
+                    }
+                }
+
                 KsuIsValid {
                     Card(
                         modifier = Modifier
@@ -209,7 +302,6 @@ fun SettingPager(
                 }
 
                 KsuIsValid {
-
                     Card(
                         modifier = Modifier
                             .padding(top = 12.dp)
@@ -220,18 +312,28 @@ fun SettingPager(
                             stringResource(id = R.string.settings_mode_temp_enable),
                             stringResource(id = R.string.settings_mode_always_enable),
                         )
-                        var enhancedSecurityMode by rememberSaveable {
-                            mutableIntStateOf(
-                                run {
-                                    val currentEnabled = Natives.isEnhancedSecurityEnabled()
-                                    val savedPersist = prefs.getInt("enhanced_security_mode", 0)
-                                    if (savedPersist == 2) 2 else if (currentEnabled) 1 else 0
-                                }
-                            )
+                        val currentEnhancedEnabled = Natives.isEnhancedSecurityEnabled()
+                        var enhancedSecurityMode by rememberSaveable { mutableIntStateOf(if (currentEnhancedEnabled) 1 else 0) }
+                        val enhancedPersistValue by produceState(initialValue = null as Long?) {
+                            value = getFeaturePersistValue("enhanced_security")
+                        }
+                        println("Enhanced persist value: $enhancedPersistValue")
+                        LaunchedEffect(enhancedPersistValue) {
+                            enhancedPersistValue?.let { v ->
+                                enhancedSecurityMode = if (v != 0L) 2 else if (currentEnhancedEnabled) 1 else 0
+                            }
+                        }
+                        val enhancedStatus by produceState(initialValue = "") {
+                            value = getFeatureStatus("enhanced_security")
+                        }
+                        val enhancedSummary = when (enhancedStatus) {
+                            "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
+                            "managed" -> stringResource(id = R.string.feature_status_managed_summary)
+                            else -> stringResource(id = R.string.settings_enable_enhanced_security_summary)
                         }
                         SuperDropdown(
                             title = stringResource(id = R.string.settings_enable_enhanced_security),
-                            summary = stringResource(id = R.string.settings_enable_enhanced_security_summary),
+                            summary = enhancedSummary,
                             items = modeItems,
                             leftAction = {
                                 Icon(
@@ -241,6 +343,7 @@ fun SettingPager(
                                     tint = colorScheme.onBackground
                                 )
                             },
+                            enabled = enhancedStatus == "supported",
                             selectedIndex = enhancedSecurityMode,
                             onSelectedIndexChange = { index ->
                                 when (index) {
@@ -270,18 +373,27 @@ fun SettingPager(
                             }
                         )
 
-                        var suCompatMode by rememberSaveable {
-                            mutableIntStateOf(
-                                run {
-                                    val currentEnabled = Natives.isSuEnabled()
-                                    val savedPersist = prefs.getInt("su_compat_mode", 0)
-                                    if (savedPersist == 2) 2 else if (!currentEnabled) 1 else 0
-                                }
-                            )
+                        val currentSuEnabled = Natives.isSuEnabled()
+                        var suCompatMode by rememberSaveable { mutableIntStateOf(if (!currentSuEnabled) 1 else 0) }
+                        val suPersistValue by produceState(initialValue = null as Long?) {
+                            value = getFeaturePersistValue("su_compat")
+                        }
+                        LaunchedEffect(suPersistValue) {
+                            suPersistValue?.let { v ->
+                                suCompatMode = if (v == 0L) 2 else if (!currentSuEnabled) 1 else 0
+                            }
+                        }
+                        val suStatus by produceState(initialValue = "") {
+                            value = getFeatureStatus("su_compat")
+                        }
+                        val suSummary = when (suStatus) {
+                            "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
+                            "managed" -> stringResource(id = R.string.feature_status_managed_summary)
+                            else -> stringResource(id = R.string.settings_disable_su_summary)
                         }
                         SuperDropdown(
                             title = stringResource(id = R.string.settings_disable_su),
-                            summary = stringResource(id = R.string.settings_disable_su_summary),
+                            summary = suSummary,
                             items = modeItems,
                             leftAction = {
                                 Icon(
@@ -291,6 +403,7 @@ fun SettingPager(
                                     tint = colorScheme.onBackground
                                 )
                             },
+                            enabled = suStatus == "supported",
                             selectedIndex = suCompatMode,
                             onSelectedIndexChange = { index ->
                                 when (index) {
@@ -320,18 +433,27 @@ fun SettingPager(
                             }
                         )
 
-                        var kernelUmountMode by rememberSaveable {
-                            mutableIntStateOf(
-                                run {
-                                    val currentEnabled = Natives.isKernelUmountEnabled()
-                                    val savedPersist = prefs.getInt("kernel_umount_mode", 0)
-                                    if (savedPersist == 2) 2 else if (!currentEnabled) 1 else 0
-                                }
-                            )
+                        val currentUmountEnabled = Natives.isKernelUmountEnabled()
+                        var kernelUmountMode by rememberSaveable { mutableIntStateOf(if (!currentUmountEnabled) 1 else 0) }
+                        val umountPersistValue by produceState(initialValue = null as Long?) {
+                            value = getFeaturePersistValue("kernel_umount")
+                        }
+                        LaunchedEffect(umountPersistValue) {
+                            umountPersistValue?.let { v ->
+                                kernelUmountMode = if (v == 0L) 2 else if (!currentUmountEnabled) 1 else 0
+                            }
+                        }
+                        val umountStatus by produceState(initialValue = "") {
+                            value = getFeatureStatus("kernel_umount")
+                        }
+                        val umountSummary = when (umountStatus) {
+                            "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
+                            "managed" -> stringResource(id = R.string.feature_status_managed_summary)
+                            else -> stringResource(id = R.string.settings_disable_kernel_umount_summary)
                         }
                         SuperDropdown(
                             title = stringResource(id = R.string.settings_disable_kernel_umount),
-                            summary = stringResource(id = R.string.settings_disable_kernel_umount_summary),
+                            summary = umountSummary,
                             items = modeItems,
                             leftAction = {
                                 Icon(
@@ -341,6 +463,7 @@ fun SettingPager(
                                     tint = colorScheme.onBackground
                                 )
                             },
+                            enabled = umountStatus == "supported",
                             selectedIndex = kernelUmountMode,
                             onSelectedIndexChange = { index ->
                                 when (index) {
@@ -509,4 +632,3 @@ enum class UninstallType(val icon: ImageVector, val title: Int, val message: Int
     ),
     NONE(Icons.Rounded.Adb, 0, 0)
 }
-

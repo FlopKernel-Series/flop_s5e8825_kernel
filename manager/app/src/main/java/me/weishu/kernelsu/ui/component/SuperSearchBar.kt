@@ -1,5 +1,6 @@
 package me.weishu.kernelsu.ui.component
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -73,7 +74,6 @@ import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.icons.basic.Search
 import top.yukonga.miuix.kmp.icon.icons.basic.SearchCleanup
 import top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
-import top.yukonga.miuix.kmp.utils.BackHandler
 import top.yukonga.miuix.kmp.utils.overScrollVertical
 
 // Search Status Class
@@ -128,7 +128,7 @@ class SearchStatus(val label: String) {
                                 noiseFactor = 0f
                             }
                         } else {
-                            Modifier.background(colorScheme.background)
+                            Modifier.background(colorScheme.surface)
                         }
                     )
             )
@@ -228,7 +228,7 @@ fun SearchStatus.SearchPager(
     ) {
         searchStatus.onAnimationComplete()
     }
-    val backgroundAlpha by animateFloatAsState(
+    val surfaceAlpha by animateFloatAsState(
         if (searchStatus.shouldExpand()) 1f else 0f,
         animationSpec = tween(200, easing = FastOutSlowInEasing)
     )
@@ -237,7 +237,7 @@ fun SearchStatus.SearchPager(
         modifier = Modifier
             .fillMaxSize()
             .zIndex(5f)
-            .background(colorScheme.background.copy(alpha = backgroundAlpha))
+            .background(colorScheme.surface.copy(alpha = surfaceAlpha))
             .semantics { onClick { false } }
             .then(
                 if (!searchStatus.isCollapsed()) Modifier.pointerInput(Unit) { } else Modifier
@@ -248,7 +248,7 @@ fun SearchStatus.SearchPager(
                 .fillMaxWidth()
                 .padding(top = topPadding)
                 .then(
-                    if (!searchStatus.isCollapsed()) Modifier.background(colorScheme.background)
+                    if (!searchStatus.isCollapsed()) Modifier.background(colorScheme.surface)
                     else Modifier
                 ),
             horizontalArrangement = Arrangement.Start,
@@ -258,7 +258,7 @@ fun SearchStatus.SearchPager(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .background(colorScheme.background)
+                        .background(colorScheme.surface)
                 ) {
                     expandBar(searchStatus, searchBarTopPadding)
                 }

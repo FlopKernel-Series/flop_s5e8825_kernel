@@ -1,5 +1,10 @@
 # Làm thế nào để tích hợp KernelSU vào thiết bị không sử dụng GKI ?
 
+::: warning
+Tài liệu này chỉ để tham khảo lưu trữ và không còn được duy trì.
+Kể từ KernelSU v1.0, chúng tôi đã ngừng hỗ trợ chính thức cho các thiết bị không phải GKI.
+:::
+
 KernelSU có thể được tích hợp vào kernel không phải GKI và hiện tại nó đã được backport xuống 4.14, thậm chí cũng có thể chạy trên kernel thấp hơn 4.14.
 
 Do các kernel không phải GKI bị phân mảnh nên chúng tôi không có cách build thống nhất, vì vậy chúng tôi không thể cung cấp các boot image không phải GKI. Nhưng bạn có thể tự build kernel với KernelSU được tích hợp vào.
@@ -174,3 +179,54 @@ Bạn sẽ tìm thấy bốn chức năng trong mã nguồn kernel:
 4. vfs_statx, thường có trong `fs/stat.c`
 
 Cuối cùng, chỉnh sửa `KernelSU/kernel/ksu.c` và bỏ `enable_sucompat()` sau đó xây dựng lại kernel của bạn, KernelSU sẽ hoạt động tốt.
+
+### How to backport path_umount
+
+You can make the "Umount modules" feature work on pre-GKI kernels by manually backporting `path_umount` from 5.9. You can use this patch as reference:
+
+```diff
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1739,6 +1739,39 @@ static inline bool may_mandlock(void)
+ }
+ #endif
+
++static int can_umount(const struct path *path, int flags)
++{
++	struct mount *mnt = real_mount(path->mnt);
++
++	if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
++		return -EINVAL;
++	if (!may_mount())
++		return -EPERM;
++	if (path->dentry != path->mnt->mnt_root)
++		return -EINVAL;
++	if (!check_mnt(mnt))
++		return -EINVAL;
++	if (mnt->mnt.mnt_flags & MNT_LOCKED) /* Check optimistically */
++		return -EINVAL;
++	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++	return 0;
++}
++
++int path_umount(struct path *path, int flags)
++{
++	struct mount *mnt = real_mount(path->mnt);
++	int ret;
++
++	ret = can_umount(path, flags);
++	if (!ret)
++		ret = do_umount(mnt, flags);
++
++	/* we mustn't call path_put() as that would clear mnt_expiry_mark */
++	dput(path->dentry);
++	mntput_no_expire(mnt);
++	return ret;
++}
+ /*
+  * Now umount can handle mount points as well as block devices.
+  * This is important for filesystems which use unnamed block devices.
+```
+
+Finally, build your kernel again, and KernelSU should work correctly.

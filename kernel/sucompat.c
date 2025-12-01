@@ -1,10 +1,13 @@
-#include "linux/compiler.h"
-#include "linux/printk.h"
+#include <linux/compiler_types.h>
+#include <linux/preempt.h>
+#include <linux/printk.h>
+#include <linux/mm.h>
+#include <linux/pgtable.h>
+#include <linux/uaccess.h>
 #include <asm/current.h>
 #include <linux/cred.h>
 #include <linux/fs.h>
 #include <linux/types.h>
-#include <linux/uaccess.h>
 #include <linux/version.h>
 #include <linux/sched/task_stack.h>
 #include <linux/ptrace.h>
@@ -15,7 +18,7 @@
 #include "ksud.h"
 #include "sucompat.h"
 #include "app_profile.h"
-#include "syscall_hook_manager.h"
+#include "util.h"
 
 #define SU_PATH "/system/bin/su"
 #define SH_PATH "/system/bin/sh"
@@ -66,8 +69,8 @@ static char __user *ksud_user_path(void)
     return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
 }
 
-int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
-			 int *mode, int *__unused_flags)
+int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
+                         int *__unused_flags)
 {
     const char su[] = SU_PATH;
 
@@ -102,27 +105,12 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
 
     char path[sizeof(su) + 1];
     memset(path, 0, sizeof(path));
-// Remove this later!! we use syscall hook, so this will never happen!!!!!
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0) && 0
-    // it becomes a `struct filename *` after 5.18
-    // https://elixir.bootlin.com/linux/v5.18/source/fs/stat.c#L216
-    const char sh[] = SH_PATH;
-    struct filename *filename = *((struct filename **)filename_user);
-    if (IS_ERR(filename)) {
-        return 0;
-    }
-    if (likely(memcmp(filename->name, su, sizeof(su))))
-        return 0;
-    pr_info("vfs_statx su->sh!\n");
-    memcpy((void *)filename->name, sh, sizeof(sh));
-#else
     strncpy_from_user_nofault(path, *filename_user, sizeof(path));
 
     if (unlikely(!memcmp(path, su, sizeof(su)))) {
         pr_info("newfstatat su->sh!\n");
         *filename_user = sh_user_path();
     }
-#endif
 
     return 0;
 }
@@ -132,18 +120,41 @@ int ksu_handle_execve_sucompat(const char __user **filename_user,
                                int *__never_use_flags)
 {
     const char su[] = SU_PATH;
+    const char __user *fn;
     char path[sizeof(su) + 1];
+    long ret;
+    unsigned long addr;
 
     if (unlikely(!filename_user))
         return 0;
 
-    memset(path, 0, sizeof(path));
-    strncpy_from_user_nofault(path, *filename_user, sizeof(path));
-
-    if (likely(memcmp(path, su, sizeof(su))))
+    if (!ksu_is_allow_uid_for_current(current_uid().val))
         return 0;
 
-    if (!ksu_is_allow_uid_for_current(current_uid().val))
+    addr = untagged_addr((unsigned long)*filename_user);
+    fn = (const char __user *)addr;
+    memset(path, 0, sizeof(path));
+    ret = strncpy_from_user_nofault(path, fn, sizeof(path));
+
+    if (ret < 0 && try_set_access_flag(addr)) {
+        ret = strncpy_from_user_nofault(path, fn, sizeof(path));
+    }
+
+    if (ret < 0 && preempt_count()) {
+        /* This is crazy, but we know what we are doing:
+         * Temporarily exit atomic context to handle page faults, then restore it */
+        pr_info("Access filename failed, try rescue..\n");
+        preempt_enable_no_resched_notrace();
+        ret = strncpy_from_user(path, fn, sizeof(path));
+        preempt_disable_notrace();
+    }
+
+    if (ret < 0) {
+        pr_warn("Access filename when execve failed: %ld", ret);
+        return 0;
+    }
+
+    if (likely(memcmp(path, su, sizeof(su))))
         return 0;
 
     pr_info("sys_execve su found\n");
@@ -153,7 +164,6 @@ int ksu_handle_execve_sucompat(const char __user **filename_user,
 
     return 0;
 }
-
 
 // sucompat: permitted process can execute 'su' to gain root access.
 void ksu_sucompat_init()

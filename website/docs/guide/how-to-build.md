@@ -1,12 +1,17 @@
 # How to build
 
-First, you should read the official Android documentation for kernel build:
+::: warning
+This document is for archival reference only and is no longer maintained.
+Since KernelSU v3.0, we have dropped official support for GKI image mode for faster iteration and build speed. It is recommended to use `Ylarod/ddk` to build LKM.
+:::
+
+First, you should read the official Android documentation for building kernels:
 
 1. [Build kernels](https://source.android.com/docs/setup/build/building-kernels)
 2. [GKI release builds](https://source.android.com/docs/core/architecture/kernel/gki-release-builds)
 
 ::: warning
-This page is for GKI devices, if you use an old kernel, please refer [Intergrate for non-GKI devices](how-to-integrate-for-non-gki).
+This page is for GKI devices; if you use an older kernel, please refer to [Integrate for non-GKI devices](how-to-integrate-for-non-gki).
 :::
 
 ## Build kernel
