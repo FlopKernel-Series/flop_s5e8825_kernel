@@ -51,7 +51,7 @@
 static inline bool is_zygote_isolated_service_uid(uid_t uid)
 {
 	uid %= 100000;
-	return (uid >= 90000 && uid < 100000);
+	return (uid >= 99000 && uid < 100000);
 }
 
 static inline bool is_zygote_normal_app_uid(uid_t uid)
@@ -65,12 +65,8 @@ extern u32 susfs_zygote_sid;
 extern void susfs_run_sus_path_loop(uid_t uid);
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-extern bool susfs_is_umount_for_zygote_iso_service_enabled;
 extern void susfs_reorder_mnt_id(void);
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-#ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
-extern void susfs_try_umount(uid_t uid);
-#endif
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 static bool ksu_enhanced_security_enabled = false;
@@ -242,7 +238,7 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid){
 
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 	// Check if spawned process is isolated service first, and force to do umount if so  
-	if (is_zygote_isolated_service_uid(new_uid) && susfs_is_umount_for_zygote_iso_service_enabled) {
+	if (is_zygote_isolated_service_uid(new_uid)) {
 		goto do_umount;
 	}
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
@@ -295,18 +291,8 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid){
 	return 0;
 
 do_umount:
-#ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
-	if (!ksu_kernel_umount_enabled || !ksu_module_mounted) {
-		goto skip_ksu_handle_umount;
-		
-	}
 	// Handle kernel umount
 	ksu_handle_umount(old_uid, new_uid);
-
-skip_ksu_handle_umount:
-#else
-    susfs_try_umount(new_uid);
-#endif // #ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
 
 	get_task_struct(current);
 
