@@ -62,6 +62,13 @@ static int margin_wlbt;
 
 static int volt_offset_percent;
 
+#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
+/* Runtime undervolting percentages */
+static int uv_cpucl0_percent = 0;
+static int uv_cpucl1_percent = 0;
+static int uv_gpu_percent = 0;
+#endif
+
 module_param(margin_mif, int, 0);
 module_param(margin_int, int, 0);
 module_param(margin_cpucl0, int, 0);
@@ -228,6 +235,112 @@ attr_percent(MARGIN_HSI0, hsi0_margin);
 attr_percent(MARGIN_INTG3D, intg3d_margin);
 attr_percent(MARGIN_WLBT, wlbt_margin);
 
+#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
+/* Runtime undervolting sysfs attributes */
+static ssize_t show_cpucl0_uv_percent(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%d\n", uv_cpucl0_percent);
+}
+
+static ssize_t store_cpucl0_uv_percent(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+{
+	int input, vclk_id;
+
+	if (!sscanf(buf, "%d", &input))
+		return -EINVAL;
+
+	if (input < 0 || input > 100)
+		return -EINVAL;
+
+	vclk_id = get_vclk_id_from_margin_id(MARGIN_CPUCL0);
+	if (vclk_id == -EINVAL)
+		return vclk_id;
+
+	uv_cpucl0_percent = input;
+	/* Apply negative margin for undervolting */
+	cal_dfs_set_volt_margin(vclk_id | ACPM_VCLK_TYPE, -input);
+
+	pr_info("CPU cluster 0 undervolting set to %d%% successfully\n", input);
+	return count;
+}
+
+static struct kobj_attribute cpucl0_uv_percent = __ATTR(cpucl0_uv_percent, 0600,
+	show_cpucl0_uv_percent, store_cpucl0_uv_percent);
+
+static ssize_t show_cpucl1_uv_percent(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%d\n", uv_cpucl1_percent);
+}
+
+static ssize_t store_cpucl1_uv_percent(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+{
+	int input, vclk_id;
+
+	if (!sscanf(buf, "%d", &input))
+		return -EINVAL;
+
+	if (input < 0 || input > 100)
+		return -EINVAL;
+
+	vclk_id = get_vclk_id_from_margin_id(MARGIN_CPUCL1);
+	if (vclk_id == -EINVAL)
+		return vclk_id;
+
+	uv_cpucl1_percent = input;
+	/* Apply negative margin for undervolting */
+	cal_dfs_set_volt_margin(vclk_id | ACPM_VCLK_TYPE, -input);
+
+	pr_info("CPU cluster 1 undervolting set to %d%% successfully\n", input);
+	return count;
+}
+
+static struct kobj_attribute cpucl1_uv_percent = __ATTR(cpucl1_uv_percent, 0600,
+	show_cpucl1_uv_percent, store_cpucl1_uv_percent);
+
+static ssize_t show_gpu_uv_percent(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, PAGE_SIZE, "%d\n", uv_gpu_percent);
+}
+
+static ssize_t store_gpu_uv_percent(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+{
+	int input, vclk_id;
+
+	if (!sscanf(buf, "%d", &input))
+		return -EINVAL;
+
+	if (input < 0 || input > 100)
+		return -EINVAL;
+
+	vclk_id = get_vclk_id_from_margin_id(MARGIN_G3D);
+	if (vclk_id == -EINVAL) {
+		pr_err("GPU undervolting: Could not find G3D vclk_id\n");
+		return -EINVAL;
+	}
+
+	uv_gpu_percent = input;
+	/* Apply negative margin for undervolting */
+	cal_dfs_set_volt_margin(vclk_id | ACPM_VCLK_TYPE, -input);
+
+	pr_info("GPU undervolting set to %d%% successfully\n", input);
+	return count;
+}
+
+static struct kobj_attribute gpu_uv_percent = __ATTR(gpu_uv_percent, 0600,
+	show_gpu_uv_percent, store_gpu_uv_percent);
+
+static struct attribute *uv_percent_attrs[] = {
+	&cpucl0_uv_percent.attr,
+	&cpucl1_uv_percent.attr,
+	&gpu_uv_percent.attr,
+	NULL,
+};
+
+static const struct attribute_group uv_percent_group = {
+	.attrs = uv_percent_attrs,
+};
+#endif
+
 static struct attribute *percent_margin_attrs[] = {
 	&mif_margin_percent.attr,
 	&int_margin_percent.attr,
@@ -386,11 +499,6 @@ int fvmap_get_raw_voltage_table(unsigned int id)
 	return 0;
 }
 
-#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
-#define S5E8825_DMID_CPUCL0 2 // Set domain_id for CPUCL0 here.
-#define S5E8825_DMID_CPUCL1 3 // Set domain_id for CPUCL1 here.
-#define S5E8825_DMID_INTG3D 15 // Set domain_id for GPU (INTG3D)
-#endif
 
 static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base)
 {
@@ -453,32 +561,26 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 		}
 
 #ifdef CONFIG_SOC_S5E8825_UNDERVOLT
-		/* Skip undervolting if superfloppy mode / "Unlocked" (OC) is enabled - OC can't be stable with UV */
+		// Apply undervolting via margins. Skip if superfloppy mode is enabled (defaults to 0% but users can still set via sysfs)
 		if (!is_superfloppy_mode()) {
 #if CONFIG_SOC_S5E8825_CL0_UV != 0
-			/* Apply undervolt if the domain is CPUCL0 */
-			if (fvmap_header[i].domain_id == S5E8825_DMID_CPUCL0) {
-				for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
-					old->table[j].volt = (old->table[j].volt * (100 - CONFIG_SOC_S5E8825_CL0_UV)) / 100;
-				}
+			/* Apply undervolt margin if the domain is CPUCL0 */
+			if (vclk->margin_id == MARGIN_CPUCL0) {
+				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_CL0_UV);
 			}
 #endif
 
 #if CONFIG_SOC_S5E8825_CL1_UV != 0
-			/* Apply undervolt if the domain is CPUCL1 */
-			if (fvmap_header[i].domain_id == S5E8825_DMID_CPUCL1) {
-				for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
-					old->table[j].volt = (old->table[j].volt * (100 - CONFIG_SOC_S5E8825_CL1_UV)) / 100;
-				}
+			/* Apply undervolt margin if the domain is CPUCL1 */
+			if (vclk->margin_id == MARGIN_CPUCL1) {
+				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_CL1_UV);
 			}
 #endif
 
 #if CONFIG_SOC_S5E8825_GPU_UV != 0
-			/* Apply undervolt if the domain is INTG3D */
-			if (fvmap_header[i].domain_id == S5E8825_DMID_INTG3D) {
-				for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
-					old->table[j].volt = (old->table[j].volt * (100 - CONFIG_SOC_S5E8825_GPU_UV)) / 100;
-				}
+			/* Apply undervolt margin if the domain is G3D */
+			if (vclk->margin_id == MARGIN_G3D) {
+				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_GPU_UV);
 			}
 #endif
 		}
@@ -491,7 +593,7 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
         }
 
 		/* Adjust voltage for 2496000 kHz in CPUCL1 after undervolt logic */
-		if (fvmap_header[i].domain_id == S5E8825_DMID_CPUCL1) {
+		if (vclk->margin_id == MARGIN_CPUCL1) {
 			for (j = 0; j < fvmap_header[i].num_of_lv; j++) {
 				/* Check if the frequency is 2496000 kHz */
 				if (old->table[j].rate == 2496000) {
@@ -657,6 +759,36 @@ int fvmap_init(void __iomem *sram_base)
 		if (sysfs_create_group(kobj, &percent_margin_group))
 			pr_err("Fail to create percent_margin group\n");
 	}
+
+#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
+	// Initialize runtime UV values from compile-time config for display purposes.
+	if (is_superfloppy_mode()) {
+		uv_cpucl0_percent = 0;
+		uv_cpucl1_percent = 0;
+		uv_gpu_percent = 0;
+	} else {
+#if CONFIG_SOC_S5E8825_CL0_UV != 0
+		uv_cpucl0_percent = CONFIG_SOC_S5E8825_CL0_UV;
+#endif
+#if CONFIG_SOC_S5E8825_CL1_UV != 0
+		uv_cpucl1_percent = CONFIG_SOC_S5E8825_CL1_UV;
+#endif
+#if CONFIG_SOC_S5E8825_GPU_UV != 0
+		uv_gpu_percent = CONFIG_SOC_S5E8825_GPU_UV;
+#endif
+	}
+
+	// Runtime undervolting controls
+	kobj = kobject_create_and_add("exynos_uv", kernel_kobj);
+	if (!kobj) {
+		pr_err("Fail to create exynos_uv kobject\n");
+	} else {
+		if (sysfs_create_group(kobj, &uv_percent_group))
+			pr_err("Fail to create exynos_uv sysfs group\n");
+		else
+			pr_info("Runtime undervolting sysfs interface created at /sys/kernel/exynos_uv/\n");
+	}
+#endif
 
 	kobj = kobject_create_and_add("asv-g", kernel_kobj);
 	if (!kobj) {
