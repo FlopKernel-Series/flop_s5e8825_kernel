@@ -1027,7 +1027,7 @@ CC_FLAGS_LTO	:= -flto=thin -fsplit-lto-unit -funified-lto
 
 # LLVM tunings
 KBUILD_LDFLAGS += -mllvm -inline-threshold=1500
-KBUILD_LDFLAGS += -mllvm -import-instr-limit=100
+KBUILD_LDFLAGS += -mllvm -import-instr-limit=15
 else
 CC_FLAGS_LTO	:= -flto
 endif
