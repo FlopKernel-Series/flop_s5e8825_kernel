@@ -657,6 +657,8 @@ static ssize_t show_fv_table(struct kobject *kobj, struct kobj_attribute *attr, 
 	ssize_t len = 0;
 	const char *name = attr->attr.name;
 	void __iomem *base_to_read = fvmap_base;
+	int uv_percent = 0;
+	unsigned int base_volt, effective_volt;
 
 	if (!base_to_read) {
 		pr_err("fvmap: base not initialized\n");
@@ -666,10 +668,19 @@ static ssize_t show_fv_table(struct kobject *kobj, struct kobj_attribute *attr, 
 	// Determine margin_id based on attribute name
 	if (strcmp(name, "cpucl0_fv_table") == 0) {
 		margin_id = MARGIN_CPUCL0;
+#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
+		uv_percent = uv_cpucl0_percent;
+#endif
 	} else if (strcmp(name, "cpucl1_fv_table") == 0) {
 		margin_id = MARGIN_CPUCL1;
-	} else if (strcmp(name, "intg3d_fv_table") == 0) {
-		margin_id = MARGIN_INTG3D;
+#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
+		uv_percent = uv_cpucl1_percent;
+#endif
+	} else if (strcmp(name, "g3d_fv_table") == 0) {
+		margin_id = MARGIN_G3D;
+#ifdef CONFIG_SOC_S5E8825_UNDERVOLT
+		uv_percent = uv_gpu_percent;
+#endif
 	} else {
 		pr_err("fvmap: Unknown attribute %s\n", name);
 		return -EINVAL;
@@ -699,17 +710,32 @@ static ssize_t show_fv_table(struct kobject *kobj, struct kobj_attribute *attr, 
 	}
 
 
-	len += scnprintf(buf + len, PAGE_SIZE - len, "Freq(kHz)\tVolt(uV)\n");
+	len += scnprintf(buf + len, PAGE_SIZE - len, "Freq(kHz)\tVolt(uV)");
+	if (uv_percent != 0) {
+		len += scnprintf(buf + len, PAGE_SIZE - len, "\t[UV: %d%%]", uv_percent);
+	}
+	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
 
 	for (i = 0; i < num_of_lv; i++) {
-		if (len >= PAGE_SIZE - 30) {
+		if (len >= PAGE_SIZE - 50) {
 			pr_warn_ratelimited("fvmap: Buffer full when printing FV table for %s\n", name);
 			break;
 		}
-		// Read rate and volt (in STEP_UV units) and convert volt to uV
-		len += scnprintf(buf + len, PAGE_SIZE - len, "%-10u\t%-10u\n",
+		// Read base voltage (in STEP_UV units) and convert to uV
+		base_volt = fv_table->table[i].volt * STEP_UV;
+
+		// Apply UV: uv_percent is always positive (applied as negative margin)
+		// Effective voltage = base * (100 - uv_percent) / 100
+		effective_volt = (base_volt * (100 - uv_percent)) / 100;
+
+		len += scnprintf(buf + len, PAGE_SIZE - len, "%-10u\t%-10u",
 						 fv_table->table[i].rate,
-						 fv_table->table[i].volt * STEP_UV);
+						 effective_volt);
+		if (uv_percent != 0) {
+			len += scnprintf(buf + len, PAGE_SIZE - len, "\t(base: %u)",
+				base_volt);
+		}
+		len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
 	}
 
 	return len;
@@ -719,13 +745,13 @@ static struct kobj_attribute cpucl0_fv_table_attr =
 	__ATTR(cpucl0_fv_table, 0444, show_fv_table, NULL);
 static struct kobj_attribute cpucl1_fv_table_attr =
 	__ATTR(cpucl1_fv_table, 0444, show_fv_table, NULL);
-static struct kobj_attribute intg3d_fv_table_attr =
-	__ATTR(intg3d_fv_table, 0444, show_fv_table, NULL);
+static struct kobj_attribute g3d_fv_table_attr =
+	__ATTR(g3d_fv_table, 0444, show_fv_table, NULL);
 
 static struct attribute *fvmap_attrs[] = {
 	&cpucl0_fv_table_attr.attr,
 	&cpucl1_fv_table_attr.attr,
-	&intg3d_fv_table_attr.attr,
+	&g3d_fv_table_attr.attr,
 	NULL,
 };
 
