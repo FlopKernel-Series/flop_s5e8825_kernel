@@ -1122,26 +1122,34 @@ init_constraint_table_dt(struct exynos_dm_freq *dm_table, int table_length,
 	 * value, the size of a row is 64bytes. Divide size in half when
 	 * table is allocated.
 	 */
-	if (is_superfloppy_mode()) {
-		size = of_property_count_u32_elems(dn, "table_alt");
-		if (size < 0) {
-			size = of_property_count_u32_elems(dn, "table");
-		}
+	signed char superfloppy_mode = get_superfloppy_mode();
+	const char *table_name;
+
+	if (superfloppy_mode == 3) {
+		table_name = "table_alt3";
+	} else if (superfloppy_mode == 2) {
+		table_name = "table_alt2";
+	} else if (superfloppy_mode >= 1) {
+		table_name = "table_alt";
 	} else {
-		size = of_property_count_u32_elems(dn, "table");
+		table_name = "table";
 	}
-	if (size < 0)
+
+	size = of_property_count_u32_elems(dn, table_name);
+	if (size < 0) {
+		pr_err("%s: %s does not exist\n", __func__, table_name);
 		return size;
+	}
 
 	table_size = size / 2;
 	table = kzalloc(sizeof(struct exynos_dm_freq) * table_size, GFP_KERNEL);
 	if (!table)
 		return -ENOMEM;
 
-	if (is_superfloppy_mode() && of_property_count_u32_elems(dn, "table_alt") > 0) {
-		of_property_read_u32_array(dn, "table_alt", (unsigned int *)table, size);
-	} else {
-		of_property_read_u32_array(dn, "table", (unsigned int *)table, size);
+	if (of_property_read_u32_array(dn, table_name, (unsigned int *)table, size)) {
+		pr_err("%s: failed to read %s\n", __func__, table_name);
+		kfree(table);
+		return -ENODATA;
 	}
 
 	for (index = 0; index < table_length; index++) {
@@ -1719,7 +1727,10 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 	unsigned int freq_table[100];
 	struct freq_volt *fv_table;
 	const char *buf;
+	const char *max_freq_name;
+	const char *table_name;
 	int ret;
+	signed char superfloppy_mode;
 
 	/*
 	 * Get cpumask which belongs to domain.
@@ -1745,18 +1756,31 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 	}
 
 	/* Set min/max frequency from the device tree */
-	if (is_superfloppy_mode()) {
-		if (of_property_read_u32(dn, "max-freq_alt", &domain->max_freq)) {
-			if (of_property_read_u32(dn, "max-freq", &domain->max_freq)) {
-				pr_err("%s: max-freq does not exist\n", __func__);
-				return -ENODATA;
-			}
+	superfloppy_mode = get_superfloppy_mode();
+
+	/* Domain 0 (little cluster) only has alt, not alt2/alt3 */
+	if (domain->id == 0) {
+		if (superfloppy_mode >= 1) {
+			max_freq_name = "max-freq_alt";
+		} else {
+			max_freq_name = "max-freq";
 		}
 	} else {
-		if (of_property_read_u32(dn, "max-freq", &domain->max_freq)) {
-			pr_err("%s: max-freq does not exist\n", __func__);
-			return -ENODATA;
+		/* Domain 1 (big cluster) has all alt tables */
+		if (superfloppy_mode == 3) {
+			max_freq_name = "max-freq_alt3";
+		} else if (superfloppy_mode == 2) {
+			max_freq_name = "max-freq_alt2";
+		} else if (superfloppy_mode >= 1) {
+			max_freq_name = "max-freq_alt";
+		} else {
+			max_freq_name = "max-freq";
 		}
+	}
+
+	if (of_property_read_u32(dn, max_freq_name, &domain->max_freq)) {
+		pr_err("%s: %s does not exist\n", __func__, max_freq_name);
+		return -ENODATA;
 	}
 
 	if (of_property_read_u32(dn, "min-freq", &domain->min_freq)) {
@@ -1774,32 +1798,37 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 
 	/*
 	 * Directly read the frequency table from the device tree.
-	 * Use freq-table_alt if superfloppy mode is enabled.
+	 * Domain 0 (little cluster) only has freq-table_alt.
+	 * Domain 1 (big cluster) has more alt tables.
 	 */
-	if (is_superfloppy_mode()) {
-		raw_table_size = of_property_count_u32_elems(dn, "freq-table_alt");
-		if (raw_table_size > 0) {
-			if (of_property_read_u32_array(dn, "freq-table_alt", freq_table, raw_table_size)) {
-				pr_warn("%s: freq-table_alt read failed, falling back to freq-table\n", __func__);
-				raw_table_size = of_property_count_u32_elems(dn, "freq-table");
-				if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
-					pr_err("%s: freq-table does not exist\n", __func__);
-					return -ENODATA;
-				}
-			}
+	if (domain->id == 0) {
+		/* Little cluster only supports mode 1 or default */
+		if (superfloppy_mode >= 1) {
+			table_name = "freq-table_alt";
 		} else {
-			raw_table_size = of_property_count_u32_elems(dn, "freq-table");
-			if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
-				pr_err("%s: freq-table does not exist\n", __func__);
-				return -ENODATA;
-			}
+			table_name = "freq-table";
 		}
 	} else {
-		raw_table_size = of_property_count_u32_elems(dn, "freq-table");
-		if (of_property_read_u32_array(dn, "freq-table", freq_table, raw_table_size)) {
-			pr_err("%s: freq-table does not exist\n", __func__);
-			return -ENODATA;
+		if (superfloppy_mode == 3) {
+			table_name = "freq-table_alt3";
+		} else if (superfloppy_mode == 2) {
+			table_name = "freq-table_alt2";
+		} else if (superfloppy_mode >= 1) {
+			table_name = "freq-table_alt";
+		} else {
+			table_name = "freq-table";
 		}
+	}
+
+	raw_table_size = of_property_count_u32_elems(dn, table_name);
+	if (raw_table_size <= 0) {
+		pr_err("%s: %s does not exist\n", __func__, table_name);
+		return -ENODATA;
+	}
+
+	if (of_property_read_u32_array(dn, table_name, freq_table, raw_table_size)) {
+		pr_err("%s: failed to read %s\n", __func__, table_name);
+		return -ENODATA;
 	}
 
 	domain->table_size = raw_table_size;

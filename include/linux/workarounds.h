@@ -12,6 +12,7 @@ bool is_aosp_mode(void);
 #endif
 
 bool is_superfloppy_mode(void);
+signed char get_superfloppy_mode(void);
 
 bool is_force_perm_mode(void);
 

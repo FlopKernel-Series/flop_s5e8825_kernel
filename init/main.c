@@ -219,6 +219,12 @@ bool is_superfloppy_mode(void)
 }
 EXPORT_SYMBOL(is_superfloppy_mode);
 
+signed char get_superfloppy_mode(void)
+{
+	return superfloppy_mode;
+}
+EXPORT_SYMBOL(get_superfloppy_mode);
+
 static bool force_perm_mode = false;
 
 static int __init set_force_perm_mode(char *val)
