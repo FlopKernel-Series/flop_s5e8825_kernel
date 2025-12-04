@@ -191,18 +191,23 @@ bool is_aosp_mode(void)
 EXPORT_SYMBOL(is_aosp_mode);
 #endif
 
-static bool superfloppy_mode = false;
+static signed char superfloppy_mode = -1;
 
 static int __init set_superfloppy_mode(char *val)
 {
-	int tmp = superfloppy_mode;
+	int tmp = -1;
 
 	if (get_option(&val, &tmp)) {
-		superfloppy_mode = tmp != 0;
+		/* Clamp to signed char range: -1 to 127 */
+		if (tmp < -1)
+			superfloppy_mode = -1;
+		else if (tmp > 127)
+			superfloppy_mode = 127;
+		else
+			superfloppy_mode = (signed char)tmp;
 	}
 
-	pr_info("Workaround: superfloppy=%s\n",
-			superfloppy_mode ? "enabled" : "disabled");
+	pr_info("Workaround: superfloppy=%d\n", superfloppy_mode);
 
 	return 0;
 }
@@ -210,7 +215,7 @@ __setup("superfloppy=", set_superfloppy_mode);
 
 bool is_superfloppy_mode(void)
 {
-	return superfloppy_mode;
+	return superfloppy_mode >= 1;
 }
 EXPORT_SYMBOL(is_superfloppy_mode);
 
