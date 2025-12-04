@@ -335,6 +335,11 @@ static struct notifier_block ego_sysbusy_notifier = {
 /*		      EGO mode change notifier		     */
 /*********************************************************************/
 #define DEFAULT_PELT_MARGIN	(25)	/* 25% in default */
+
+static inline int get_pelt_margin(void)
+{
+	return is_ems_efficient() ? 0 : DEFAULT_PELT_MARGIN;
+}
 static int ego_mode_update_callback(struct notifier_block *nb,
 				unsigned long val, void *v)
 {
@@ -350,10 +355,17 @@ static int ego_mode_update_callback(struct notifier_block *nb,
 		if (!egp)
 			continue;
 
-		egp->pelt_boost = cur_set->cpufreq_gov.pelt_boost[cpu];
-		egp->htask_boost = cur_set->cpufreq_gov.htask_boost[cpu];
-		egp->pelt_margin = DEFAULT_PELT_MARGIN;
-		egp->split_pelt_margin = cur_set->cpufreq_gov.split_pelt_margin[cpu];
+		if (is_ems_efficient()) {
+			egp->pelt_boost = 0;
+			egp->htask_boost = 0;
+			egp->pelt_margin = 0;
+			egp->split_pelt_margin = 0;
+		} else {
+			egp->pelt_boost = cur_set->cpufreq_gov.pelt_boost[cpu];
+			egp->htask_boost = cur_set->cpufreq_gov.htask_boost[cpu];
+			egp->pelt_margin = get_pelt_margin();
+			egp->split_pelt_margin = cur_set->cpufreq_gov.split_pelt_margin[cpu];
+		}
 		egp->split_pelt_margin_freq = cur_set->cpufreq_gov.split_pelt_margin_freq[cpu];
 		egp->up_rate_limit_ns = 4 * NSEC_PER_MSEC; /* 4 ms in default */
 		egp->split_up_rate_limit_ns =
@@ -481,7 +493,7 @@ static void ego_update_pelt_margin(struct ego_policy *egp, u64 time,
 				   unsigned int next_freq)
 {
 	if (next_freq < egp->split_pelt_margin_freq)
-		egp->pelt_margin = DEFAULT_PELT_MARGIN;
+		egp->pelt_margin = get_pelt_margin();
 	else
 		egp->pelt_margin = egp->split_pelt_margin;
 }
@@ -636,7 +648,8 @@ static unsigned int get_next_freq(struct ego_policy *egp,
 skip_find_next_freq:
 
 	/* Apply fclamp */
-	freq = fclamp_apply(policy, freq);
+	if (!is_ems_efficient())
+		freq = fclamp_apply(policy, freq);
 	freq = clamp_val(freq, policy->min, policy->max);
 
 	freq = egp->build_somac_wall ? min(freq, egp->somac_wall) : freq;
@@ -934,9 +947,14 @@ static unsigned int ego_next_freq_shared(struct ego_cpu *egc, u64 time)
 		unsigned long cpu_boosted_util;
 
 		egc->util = cpu_util = ego_get_util(egc);
-		cpu_boosted_util = freqboost_cpu_boost(cpu, cpu_util);
-		cpu_boosted_util = max(cpu_boosted_util,
-					heavytask_cpu_boost(cpu, cpu_util, egp->htask_boost));
+		if (is_ems_efficient()) {
+			/* Don't use freqboost/heavytask boost for old tuned behavior */
+			cpu_boosted_util = cpu_util;
+		} else {
+			cpu_boosted_util = freqboost_cpu_boost(cpu, cpu_util);
+			cpu_boosted_util = max(cpu_boosted_util,
+						heavytask_cpu_boost(cpu, cpu_util, egp->htask_boost));
+		}
 		cpu_boosted_util = get_boost_pelt_util(capacity_cpu(cpu),
 					cpu_boosted_util, egp->pelt_boost);
 		egc->boosted_util = cpu_boosted_util;
@@ -1212,7 +1230,7 @@ static int ego_start(struct cpufreq_policy *policy)
 	struct ego_policy *egp = policy->governor_data;
 	unsigned int cpu;
 
-	egp->pelt_margin		= DEFAULT_PELT_MARGIN;
+	egp->pelt_margin		= get_pelt_margin();
 	egp->freq_update_delay_ns	= 4 * NSEC_PER_MSEC;
 	egp->up_rate_limit_ns		= 4 * NSEC_PER_MSEC;
 	egp->down_rate_limit_ns		= 4 * NSEC_PER_MSEC;
