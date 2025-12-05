@@ -26,6 +26,12 @@ static char g_sec_current_device_name[32] = "Unknown";
 // Device feature flags
 static bool sec_feat_flags[SEC_FEAT_COUNT] = {0};
 
+#ifdef CONFIG_JUMP_LABEL
+#include <linux/jump_label.h>
+DEFINE_STATIC_KEY_FALSE(sec_feat_needs_decon_key);
+EXPORT_SYMBOL(sec_feat_needs_decon_key);
+#endif
+
 bool sec_get_feat(enum sec_feat feat) {
 	if (feat < 0 || feat >= SEC_FEAT_COUNT)
 		return false;
@@ -221,6 +227,9 @@ static int __init sec_detect_init(void) {
 		g_sec_current_device = SEC_A33;
 		strscpy(g_sec_current_device_name, "a33x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_needs_decon_key);
+#endif
 		sec_feat_flags[SEC_FEAT_SLSI_USBPD] = true;
 	} else if (strstr(machine_name, "A53") != NULL) {
 		g_sec_current_device = SEC_A53;

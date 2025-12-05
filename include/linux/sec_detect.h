@@ -14,6 +14,9 @@
 #define _LINUX_SEC_H
 
 #include <linux/types.h>
+#ifdef CONFIG_JUMP_LABEL
+#include <linux/jump_label.h>
+#endif
 
 #define SEC_DETECT_LOG(fmt, ...) printk(KERN_INFO "sec_detect: " fmt, ##__VA_ARGS__)
 static const char *sec_detect_label = "sec_detect: ";
@@ -53,6 +56,20 @@ enum sec_feat {
 enum SEC_devices sec_get_current_device(void);
 
 bool sec_get_feat(enum sec_feat feat);
+
+// Optimized hot path version for SEC_FEAT_NEEDS_DECON using static branch
+#ifdef CONFIG_JUMP_LABEL
+extern struct static_key_false sec_feat_needs_decon_key;
+static inline bool sec_get_feat_needs_decon_fast(void)
+{
+	return static_branch_unlikely(&sec_feat_needs_decon_key);
+}
+#else
+static inline bool sec_get_feat_needs_decon_fast(void)
+{
+	return sec_get_feat(SEC_FEAT_NEEDS_DECON);
+}
+#endif
 
 // Camera feature flags
 enum mcd_feat {
