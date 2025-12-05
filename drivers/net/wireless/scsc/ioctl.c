@@ -982,7 +982,7 @@ static int slsi_create_interface(struct net_device *dev, char *buffer, int buf_l
 	SLSI_VERIFY_IOCTL_ARGS(sdev, ioctl_args);
 
 	intf_name = ioctl_args->args[0];
-	if (is_aosp_mode()) {
+	if (is_aosp_mode_fast()) {
 		if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME_ALT, intf_name) != 0) {
 			SLSI_NET_ERR(dev, "Creation of %s not allowed!\n", intf_name);
 			kfree(ioctl_args);
@@ -1025,7 +1025,7 @@ static int slsi_delete_interface(struct net_device *dev, char *buffer, int buf_l
 	SLSI_VERIFY_IOCTL_ARGS(sdev, ioctl_args);
 
 	intf_name = ioctl_args->args[0];
-	if (is_aosp_mode()) {
+	if (is_aosp_mode_fast()) {
 		if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME_ALT, intf_name) != 0) {
 			SLSI_NET_ERR(dev, "Deletion of %s not allowed!\n", intf_name);
 			kfree(ioctl_args);

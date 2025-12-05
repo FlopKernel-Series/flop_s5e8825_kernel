@@ -1759,7 +1759,7 @@ int slsi_netif_add_locked(struct slsi_dev *sdev, const char *name, int ifnum)
 	netif_carrier_off(dev);
 
 #if defined(CONFIG_SCSC_WLAN_WIFI_SHARING) || defined(CONFIG_SCSC_WLAN_DUAL_STATION)
-	if (is_aosp_mode()) {
+	if (is_aosp_mode_fast()) {
 		if (strcmp(name, CONFIG_SCSC_AP_INTERFACE_NAME_ALT) == 0)
 			SLSI_ETHER_COPY(dev->dev_addr, sdev->netdev_addresses[SLSI_NET_INDEX_P2PX_SWLAN]);
 		else
@@ -1865,7 +1865,7 @@ int slsi_netif_init(struct slsi_dev *sdev)
 #if defined(CONFIG_SCSC_WLAN_WIFI_SHARING) || defined(CONFIG_SCSC_WLAN_DUAL_STATION)
 #if defined(CONFIG_SCSC_WLAN_MHS_STATIC_INTERFACE) || (defined(SCSC_SEP_VERSION) && SCSC_SEP_VERSION >= 9) || defined(CONFIG_SCSC_WLAN_DUAL_STATION)
 	SLSI_ETHER_COPY(sdev->netdev_addresses[SLSI_NET_INDEX_P2PX_SWLAN], SLSI_DEFAULT_HW_MAC_ADDR);
-	if (is_aosp_mode()) {
+	if (is_aosp_mode_fast()) {
 		if (slsi_netif_add_locked(sdev, CONFIG_SCSC_AP_INTERFACE_NAME_ALT, SLSI_NET_INDEX_P2PX_SWLAN) != 0) {
 			rtnl_lock();
 			slsi_netif_remove_locked(sdev, sdev->netdev[SLSI_NET_INDEX_WLAN]);
