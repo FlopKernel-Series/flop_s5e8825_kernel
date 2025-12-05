@@ -457,7 +457,7 @@ void old_fts_release_all_finger(void)
 		input_sync(input_dev);
 	}
 
-	if (is_aosp_mode())
+	if (is_aosp_mode_fast())
 		ts_data->hover_event = !ts_data->hover_event ? 5 : 0;
 
 	if (ts_data->pdata->input_dev_proximity) {
@@ -821,7 +821,7 @@ static int fts_read_pocket_result(struct fts_ts_data *ts_data)
 		ts_data->hover_event = IN_POCKET;
 	}
 
-	if (is_aosp_mode())
+	if (is_aosp_mode_fast())
 		ts_data->hover_event = !ts_data->hover_event ? 5 : 0;
 
 	if (!ts_data->legacy_mode)
@@ -851,7 +851,7 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 	else
 		ts_data->hover_event = (val >> 4);
 
-	if (is_aosp_mode())
+	if (is_aosp_mode_fast())
 		ts_data->hover_event = !ts_data->hover_event ? 5 : 0;
 
 	if (!ts_data->legacy_mode)

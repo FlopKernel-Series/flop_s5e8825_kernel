@@ -168,6 +168,8 @@ static char *ramdisk_execute_command = "/init";
 /* Workarounds */
 #if !defined(CONFIG_DEFAULT_SUPPORT_AOSP)
 static bool aosp_mode = false;
+DEFINE_STATIC_KEY_FALSE(aosp_mode_key);
+EXPORT_SYMBOL(aosp_mode_key);
 
 static int __init set_aosp_mode(char *val)
 {
@@ -176,6 +178,12 @@ static int __init set_aosp_mode(char *val)
 	if (get_option(&val, &tmp)) {
 		aosp_mode = tmp != 0;
 	}
+
+	// Update static branch for hot path optimization
+	if (aosp_mode)
+		static_branch_enable(&aosp_mode_key);
+	else
+		static_branch_disable(&aosp_mode_key);
 
 	pr_info("Workaround: aosp_mode=%s\n",
 			aosp_mode ? "enabled" : "disabled");

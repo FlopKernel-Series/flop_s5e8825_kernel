@@ -11,6 +11,13 @@ static inline bool is_aosp_mode(void)
 }
 #else
 bool is_aosp_mode(void);
+
+// Optimized hot path version using static branch
+extern struct static_key_false aosp_mode_key;
+static inline bool is_aosp_mode_fast(void)
+{
+	return static_branch_unlikely(&aosp_mode_key);
+}
 #endif
 
 bool is_superfloppy_mode(void);
