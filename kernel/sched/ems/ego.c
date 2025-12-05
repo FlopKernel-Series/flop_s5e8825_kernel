@@ -338,7 +338,7 @@ static struct notifier_block ego_sysbusy_notifier = {
 
 static inline int get_pelt_margin(void)
 {
-	return is_ems_efficient() ? 0 : DEFAULT_PELT_MARGIN;
+	return is_ems_efficient_fast() ? 0 : DEFAULT_PELT_MARGIN;
 }
 static int ego_mode_update_callback(struct notifier_block *nb,
 				unsigned long val, void *v)
@@ -355,7 +355,7 @@ static int ego_mode_update_callback(struct notifier_block *nb,
 		if (!egp)
 			continue;
 
-		if (is_ems_efficient()) {
+		if (is_ems_efficient_fast()) {
 			egp->pelt_boost = 0;
 			egp->htask_boost = 0;
 			egp->pelt_margin = 0;
@@ -636,19 +636,19 @@ static unsigned int get_next_freq(struct ego_policy *egp,
 	}
 
 	/* compute lowest energy freq */
-	if (!is_ems_efficient() && use_energy_freq(policy)) {
+	if (!is_ems_efficient_fast() && use_energy_freq(policy)) {
 		ego_compute_idle_ratio(egp);
 		egp->eng_freq = eng_freq = ego_find_energy_freq(egp, org_freq);
 	} else {
 		egp->eng_freq = 0;
 		eng_freq = 0;
 	}
-	freq = is_ems_efficient() ? org_freq : max(org_freq, eng_freq);
+	freq = is_ems_efficient_fast() ? org_freq : max(org_freq, eng_freq);
 
 skip_find_next_freq:
 
 	/* Apply fclamp */
-	if (!is_ems_efficient())
+	if (!is_ems_efficient_fast())
 		freq = fclamp_apply(policy, freq);
 	freq = clamp_val(freq, policy->min, policy->max);
 
@@ -947,7 +947,7 @@ static unsigned int ego_next_freq_shared(struct ego_cpu *egc, u64 time)
 		unsigned long cpu_boosted_util;
 
 		egc->util = cpu_util = ego_get_util(egc);
-		if (is_ems_efficient()) {
+		if (is_ems_efficient_fast()) {
 			/* Don't use freqboost/heavytask boost for old tuned behavior */
 			cpu_boosted_util = cpu_util;
 		} else {
@@ -1285,7 +1285,7 @@ static void ego_limits(struct cpufreq_policy *policy)
 	unsigned int target_freq;
 	unsigned long flags;
 
-	if (is_ems_efficient())
+	if (is_ems_efficient_fast())
 		target_freq = egp->org_freq;
 	else
 		target_freq = max(egp->org_freq, egp->eng_freq);

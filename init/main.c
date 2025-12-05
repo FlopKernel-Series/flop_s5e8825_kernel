@@ -192,6 +192,8 @@ EXPORT_SYMBOL(is_aosp_mode);
 #endif
 
 static signed char superfloppy_mode = -1;
+DEFINE_STATIC_KEY_FALSE(superfloppy_mode_key);
+EXPORT_SYMBOL(superfloppy_mode_key);
 
 static int __init set_superfloppy_mode(char *val)
 {
@@ -206,6 +208,12 @@ static int __init set_superfloppy_mode(char *val)
 		else
 			superfloppy_mode = (signed char)tmp;
 	}
+
+	// Update static branch for hot path optimization
+	if (superfloppy_mode >= 1)
+		static_branch_enable(&superfloppy_mode_key);
+	else
+		static_branch_disable(&superfloppy_mode_key);
 
 	pr_info("Workaround: superfloppy=%d\n", superfloppy_mode);
 
@@ -249,6 +257,8 @@ bool is_force_perm_mode(void)
 EXPORT_SYMBOL(is_force_perm_mode);
 
 static bool ems_efficient_mode;
+DEFINE_STATIC_KEY_FALSE(ems_efficient_mode_key);
+EXPORT_SYMBOL(ems_efficient_mode_key);
 
 static int __init set_ems_efficient_mode(char *val)
 {
@@ -256,6 +266,12 @@ static int __init set_ems_efficient_mode(char *val)
 
 	if (get_option(&val, &tmp))
 		ems_efficient_mode = tmp != 0;
+
+	// Update static branch for hot path optimization
+	if (ems_efficient_mode)
+		static_branch_enable(&ems_efficient_mode_key);
+	else
+		static_branch_disable(&ems_efficient_mode_key);
 
 	pr_info("Workaround: ems_efficient=%s\n",
 		ems_efficient_mode ? "enabled" : "disabled");
