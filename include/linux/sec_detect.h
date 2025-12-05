@@ -57,17 +57,39 @@ enum SEC_devices sec_get_current_device(void);
 
 bool sec_get_feat(enum sec_feat feat);
 
-// Optimized hot path version for SEC_FEAT_NEEDS_DECON using static branch
+// Optimized hot path versions using static branch
 #ifdef CONFIG_JUMP_LABEL
 extern struct static_key_false sec_feat_needs_decon_key;
 static inline bool sec_get_feat_needs_decon_fast(void)
 {
 	return static_branch_unlikely(&sec_feat_needs_decon_key);
 }
+
+extern struct static_key_false sec_feat_lcd_device_key;
+static inline bool sec_get_feat_lcd_device_fast(void)
+{
+	return static_branch_unlikely(&sec_feat_lcd_device_key);
+}
+
+extern struct static_key_false sec_feat_needs_blic_key;
+static inline bool sec_get_feat_needs_blic_fast(void)
+{
+	return static_branch_unlikely(&sec_feat_needs_blic_key);
+}
 #else
 static inline bool sec_get_feat_needs_decon_fast(void)
 {
 	return sec_get_feat(SEC_FEAT_NEEDS_DECON);
+}
+
+static inline bool sec_get_feat_lcd_device_fast(void)
+{
+	return sec_get_feat(SEC_FEAT_LCD_DEVICE);
+}
+
+static inline bool sec_get_feat_needs_blic_fast(void)
+{
+	return sec_get_feat(SEC_FEAT_NEEDS_BLIC);
 }
 #endif
 

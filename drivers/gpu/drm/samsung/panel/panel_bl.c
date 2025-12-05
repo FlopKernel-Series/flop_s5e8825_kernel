@@ -613,7 +613,7 @@ void panel_bl_update_acl_state(struct panel_bl_device *panel_bl)
 	}
 #endif
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		if (panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON) {
 			panel_bl->props.acl_opr = 0;
 			panel_bl_set_property(panel_bl, &panel_bl->props.acl_pwrsave, ACL_PWRSAVE_OFF);
@@ -1030,7 +1030,7 @@ int panel_bl_set_brightness(struct panel_bl_device *panel_bl, int id, u32 send_c
 			goto set_br_exit;
 		}
 #ifdef CONFIG_USDM_BLIC_I2C
-		if (sec_get_feat(SEC_FEAT_NEEDS_BLIC)) {
+		if (sec_get_feat_needs_blic_fast()) {
 			ret = panel_bl_set_brightness_blic(panel_bl);
 			if (unlikely(ret < 0)) {
 				panel_err("failed to write panel_bl_set_brightness_blic\n");
@@ -1129,7 +1129,7 @@ int _panel_update_brightness_nolock(struct panel_device *panel, u32 send_cmd)
 	}
 
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		if (panel_bl->props.mask_layer_br_hook == MASK_LAYER_HOOK_ON) {
 			brightness = panel_bl->props.mask_layer_br_target;
 			panel_info("mask_layer_br_hook (%d)->(%d), skip brighntess\n",
@@ -1229,7 +1229,7 @@ static int panel_bl_thread(void *data)
 		brightness = panel_bl->props.brightness;
 		acl_state = panel_bl->props.acl_pwrsave;
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+		if (!sec_get_feat_lcd_device_fast())
 			mask_layer_br_hook = panel_bl->props.mask_layer_br_hook;
 #endif
 		ret = wait_event_interruptible(panel_bl->wq.wait,
@@ -1237,7 +1237,7 @@ static int panel_bl_thread(void *data)
 				(brightness != panel_bl->props.brightness) ||
 				(acl_state != panel_bl->props.acl_pwrsave)
 #ifdef CONFIG_USDM_PANEL_MASK_LAYER
-				|| (!sec_get_feat(SEC_FEAT_LCD_DEVICE) && (mask_layer_br_hook != panel_bl->props.mask_layer_br_hook))
+				|| (!sec_get_feat_lcd_device_fast() && (mask_layer_br_hook != panel_bl->props.mask_layer_br_hook))
 #endif
 				);
 		if (should_stop)

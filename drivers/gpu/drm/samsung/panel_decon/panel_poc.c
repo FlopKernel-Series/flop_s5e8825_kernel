@@ -1144,14 +1144,14 @@ int decon_set_panel_poc(struct panel_poc_device *poc_dev, u32 cmd, void *arg)
 			return ret;
 		}
 #ifdef CONFIG_DISPLAY_USE_INFO
-		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+		if (!sec_get_feat_lcd_device_fast())
 			poc_info->erase_trycount++;
 #endif
 		ret = poc_erase(panel, addr, len);
 		if (unlikely(ret < 0)) {
 			panel_err("failed to write poc-erase-seq\n");
 #ifdef CONFIG_DISPLAY_USE_INFO
-			if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+			if (!sec_get_feat_lcd_device_fast())
 				poc_info->erase_failcount++;
 #endif
 			poc_info->erased = false;

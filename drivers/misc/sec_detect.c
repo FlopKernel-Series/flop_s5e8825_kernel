@@ -30,6 +30,10 @@ static bool sec_feat_flags[SEC_FEAT_COUNT] = {0};
 #include <linux/jump_label.h>
 DEFINE_STATIC_KEY_FALSE(sec_feat_needs_decon_key);
 EXPORT_SYMBOL(sec_feat_needs_decon_key);
+DEFINE_STATIC_KEY_FALSE(sec_feat_lcd_device_key);
+EXPORT_SYMBOL(sec_feat_lcd_device_key);
+DEFINE_STATIC_KEY_FALSE(sec_feat_needs_blic_key);
+EXPORT_SYMBOL(sec_feat_needs_blic_key);
 #endif
 
 bool sec_get_feat(enum sec_feat feat) {
@@ -241,7 +245,13 @@ static int __init sec_detect_init(void) {
 		strscpy(g_sec_current_device_name, "m33x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_needs_blic_key);
+#endif
 		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_lcd_device_key);
+#endif
 		sec_feat_flags[SEC_FEAT_LEGACY_SINPUT] = true;
 	} else if (strstr(machine_name, "M34") != NULL) {
 		g_sec_current_device = SEC_M34;
@@ -258,7 +268,13 @@ static int __init sec_detect_init(void) {
 		strscpy(g_sec_current_device_name, "gta4xls", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
 		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_needs_blic_key);
+#endif
 		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_lcd_device_key);
+#endif
 	}
 
 	// Print machine name and sec_ variables

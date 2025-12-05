@@ -469,7 +469,7 @@ static void prepare_mafpc_check_mode(struct panel_device *panel)
 		panel_err("failed init-seq\n");
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		ret = panel_aod_init_panel(panel, INIT_WITHOUT_LOCK);
 		if (ret)
 			panel_err("failed to aod init_panel\n");
@@ -531,7 +531,7 @@ static ssize_t mafpc_check_show(struct device *dev,
 	copr_disable(&panel->copr);
 #endif
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		mdnie_disable(&panel->mdnie);
 
 		mutex_lock(&panel->mdnie.lock);
@@ -563,7 +563,7 @@ out:
 	clear_mafpc_check_mode(panel);
 	mutex_unlock(&panel->op_lock);
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+	if (!sec_get_feat_lcd_device_fast())
 		mutex_unlock(&panel->mdnie.lock);
 #endif
 exit:
@@ -1465,7 +1465,7 @@ static void clear_gct_mode(struct panel_device *panel)
 		panel_err("failed init-seq\n");
 
 #ifdef CONFIG_EXTEND_LIVE_CLOCK
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		ret = panel_aod_init_panel(panel, INIT_WITHOUT_LOCK);
 		if (ret)
 			panel_err("failed to aod init_panel\n");
@@ -1575,7 +1575,7 @@ static ssize_t gct_store(struct device *dev,
 	copr_disable(&panel->copr);
 #endif
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		mdnie_disable(&panel->mdnie);
 
 		mutex_lock(&panel->mdnie.lock);
@@ -1586,7 +1586,7 @@ static ssize_t gct_store(struct device *dev,
 	panel_data->props.gct_on = value;
 
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 #ifdef CONFIG_SUPPORT_AFC
 		if (panel->mdnie.props.afc_on &&
 				panel->mdnie.nr_seqtbl > MDNIE_AFC_OFF_SEQ) {
@@ -1649,7 +1649,7 @@ out:
 	clear_gct_mode(panel);
 	mutex_unlock(&panel->op_lock);
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+	if (!sec_get_feat_lcd_device_fast())
 		mutex_unlock(&panel->mdnie.lock);
 #endif
 	mutex_unlock(&panel->io_lock);
@@ -1766,7 +1766,7 @@ static ssize_t dsc_crc_store(struct device *dev,
 	copr_disable(&panel->copr);
 #endif
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		mdnie_disable(&panel->mdnie);
 
 		mutex_lock(&panel->mdnie.lock);
@@ -1776,7 +1776,7 @@ static ssize_t dsc_crc_store(struct device *dev,
 	prepare_gct_mode(panel);
 
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 #ifdef CONFIG_SUPPORT_AFC
 		if (panel->mdnie.props.afc_on &&
 				panel->mdnie.nr_seqtbl > MDNIE_AFC_OFF_SEQ) {
@@ -1796,7 +1796,7 @@ static ssize_t dsc_crc_store(struct device *dev,
 	clear_gct_mode(panel);
 	mutex_unlock(&panel->op_lock);
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+	if (!sec_get_feat_lcd_device_fast())
 		mutex_unlock(&panel->mdnie.lock);
 #endif
 	mutex_unlock(&panel->io_lock);
@@ -2441,7 +2441,7 @@ static int set_alpm_mode(struct panel_device *panel, int mode)
 		backup_br = bd->props.brightness;
 #endif
 #ifdef CONFIG_SUPPORT_AOD_BL
-		if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+		if (!sec_get_feat_lcd_device_fast()) {
 			if (lpm_ver == 0) {
 				bd->props.brightness =
 					(lpm_mode <= HLPM_LOW_BR) ? BRT(0) : BRT(94);
@@ -2482,7 +2482,7 @@ static ssize_t alpm_store(struct device *dev,
 	}
 
 #ifdef CONFIG_MCD_PANEL_LPM
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		rc = set_alpm_mode(panel, value);
 		if (rc)
 			panel_err("failed to set alpm (value %d, ret %d)\n", value, rc);

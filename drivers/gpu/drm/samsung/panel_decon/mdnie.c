@@ -1867,7 +1867,7 @@ int mdnie_probe(struct mdnie_info *mdnie, struct mdnie_tune *mdnie_tune)
 		goto err;
 
 #ifdef CONFIG_DISPLAY_USE_INFO
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE)) {
+	if (!sec_get_feat_lcd_device_fast()) {
 		ret = mdnie_register_dpui(mdnie);
 		if (ret < 0)
 			goto err;
@@ -1900,7 +1900,7 @@ int mdnie_remove(struct mdnie_info *mdnie)
 	mdnie_disable(mdnie);
 	mutex_lock(&mdnie->lock);
 #ifdef CONFIG_DISPLAY_USE_INFO
-	if (!sec_get_feat(SEC_FEAT_LCD_DEVICE))
+	if (!sec_get_feat_lcd_device_fast())
 		mdnie_unregister_dpui(mdnie);
 #endif
 	mdnie_unregister_fb(mdnie);
