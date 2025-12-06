@@ -12,6 +12,9 @@
 #include "syscall_hook_manager.h"
 #include "ksud.h"
 #include "supercalls.h"
+#include "ksu.h"
+
+struct cred* ksu_cred;
 
 bool allow_shell = false;
 module_param(allow_shell, bool, 0);
@@ -29,6 +32,11 @@ int __init kernelsu_init(void)
 #endif
     if (allow_shell) {
         pr_alert("shell is allowed at init!");
+    }
+
+    ksu_cred = prepare_creds();
+    if (!ksu_cred) {
+        pr_err("prepare cred failed!\n");
     }
 
     ksu_feature_init();
@@ -67,6 +75,10 @@ void kernelsu_exit(void)
     ksu_supercalls_exit();
 
     ksu_feature_exit();
+
+    if (ksu_cred) {
+        put_cred(ksu_cred);
+    }
 }
 
 module_init(kernelsu_init);
