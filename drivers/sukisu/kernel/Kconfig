@@ -2,7 +2,8 @@ menu "KernelSU"
 
 config KSU
 	tristate "KernelSU function support"
-	default y
+	default y if KSU_SUKI
+	depends on KSU_SUKI
 	help
 	  Enable kernel-level root privileges on Android System.
 	  To compile as a module, choose M here: the
@@ -22,32 +23,32 @@ config KSU_ALLOWLIST_WORKAROUND
 	help
 	  Enable workaround for broken allowlist save
 
-choice
-	prompt "KernelSU hooks"
-	default KSU_NONE_HOOK
-	help
-	  KernelSU core hooks.
+# choice
+# 	prompt "KernelSU hooks"
+# 	default KSU_NONE_HOOK
+# 	help
+# 	  KernelSU core hooks.
 
-config KSU_MANUAL_HOOK
-	bool "KernelSU manual hook mode."
-	depends on KSU && KSU != m
-	help
-	  Enable manual hook support.
+# config KSU_MANUAL_HOOK
+# 	bool "KernelSU manual hook mode."
+# 	depends on KSU && KSU != m
+# 	help
+# 	  Enable manual hook support.
 
-config KSU_SYSCALL_HOOK
-	bool "KernelSU syscall hook mode."
-	depends on KSU
-	depends on KPROBES && KRETPROBES && HAVE_SYSCALL_TRACEPOINTS
-	help
-	  Enable KPROBES, KRETPROBES and TRACEPOINT hook for KernelSU core.
-	  This should not be used on kernel below 5.10.
-config KSU_NONE_HOOK
-	bool "KernelSU none hook mode."
-	depends on KSU && KSU != m
-	help
-	  Enable susfs.
+# config KSU_SYSCALL_HOOK
+# 	bool "KernelSU syscall hook mode."
+# 	depends on KSU
+# 	depends on KPROBES && KRETPROBES && HAVE_SYSCALL_TRACEPOINTS
+# 	help
+# 	  Enable KPROBES, KRETPROBES and TRACEPOINT hook for KernelSU core.
+# 	  This should not be used on kernel below 5.10.
+# config KSU_NONE_HOOK
+# 	bool "KernelSU none hook mode."
+# 	depends on KSU && KSU != m
+# 	help
+# 	  Enable susfs.
 
-endchoice
+# endchoice
 
 config KPM
 	  bool "Enable SukiSU KPM"
