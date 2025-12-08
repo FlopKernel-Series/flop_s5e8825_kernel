@@ -53,6 +53,10 @@ struct panfrost_gem_object {
 	} label;
 	bool noexec		:1;
 	bool is_heap		:1;
+	/* On coherent devices, this reflects the creation flags, not the true
+	 * cacheability attribute of the mapping.
+	 */
+	bool wb_mmap		:1;
 };
 
 struct panfrost_gem_mapping {
