@@ -15,10 +15,8 @@
 #else
 #include <linux/sched.h>
 #endif
-#ifdef CONFIG_KSU_SUSFS
 #include <linux/namei.h>
 #include <linux/susfs.h>
-#endif // #ifdef CONFIG_KSU_SUSFS
 
 #include "supercalls.h"
 #include "arch.h"
@@ -34,9 +32,7 @@
 #include "objsec.h"
 #include "file_wrapper.h"
 
-#ifdef CONFIG_KSU_SUSFS
-bool susfs_is_boot_completed_triggered = false;
-#endif // #ifdef CONFIG_KSU_SUSFS
+bool susfs_is_boot_completed_triggered __read_mostly = false;
 
 // Permission check functions
 bool only_manager(void)
@@ -251,14 +247,14 @@ static int do_uid_should_umount(void __user *arg)
 	return 0;
 }
 
-static int do_get_manager_uid(void __user *arg)
+static int do_get_manager_appid(void __user *arg)
 {
-	struct ksu_get_manager_uid_cmd cmd;
+	struct ksu_get_manager_appid_cmd cmd;
 
-	cmd.uid = ksu_get_manager_uid();
+	cmd.appid = ksu_get_manager_appid();
 
 	if (copy_to_user(arg, &cmd, sizeof(cmd))) {
-		pr_err("get_manager_uid: copy_to_user failed\n");
+		pr_err("get_manager_appid: copy_to_user failed\n");
 		return -EFAULT;
 	}
 
@@ -553,12 +549,12 @@ static int do_nuke_ext4_sysfs(void __user *arg)
 
 	ret = strncpy_from_user(mnt, cmd.arg, sizeof(mnt));
 	if (ret < 0) {
-		pr_err("nuke ext4 copy mnt failed: %ld\\n", ret);
+		pr_err("nuke ext4 copy mnt failed: %ld\n", ret);
 		return -EFAULT; // 或者 return ret;
 	}
 
 	if (ret == sizeof(mnt)) {
-		pr_err("nuke ext4 mnt path too long\\n");
+		pr_err("nuke ext4 mnt path too long\n");
 		return -ENAMETOOLONG;
 	}
 
@@ -583,7 +579,7 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 		  manager_or_root),
 	KSU_IOCTL(UID_SHOULD_UMOUNT, "UID_SHOULD_UMOUNT", do_uid_should_umount,
 		  manager_or_root),
-	KSU_IOCTL(GET_MANAGER_UID, "GET_MANAGER_UID", do_get_manager_uid,
+	KSU_IOCTL(GET_MANAGER_APPID, "GET_MANAGER_APPID", do_get_manager_appid,
 		  manager_or_root),
 	KSU_IOCTL(GET_APP_PROFILE, "GET_APP_PROFILE", do_get_app_profile,
 		  only_manager),
@@ -603,6 +599,44 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 	{ .cmd = 0, .name = NULL, .handler = NULL, .perm_check = NULL }
 };
 
+struct ksu_install_fd_tw {
+	struct callback_head cb;
+	int __user *outp;
+};
+
+static void ksu_install_fd_tw_func(struct callback_head *cb)
+{
+	struct ksu_install_fd_tw *tw =
+		container_of(cb, struct ksu_install_fd_tw, cb);
+	int fd = ksu_install_fd();
+
+	if (copy_to_user(tw->outp, &fd, sizeof(fd))) {
+		pr_err("install ksu fd reply err\n");
+		do_close_fd(fd);
+	}
+
+	kfree(tw);
+}
+
+static int ksu_handle_fd_request(void __user *arg)
+{
+	struct ksu_install_fd_tw *tw;
+
+	tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
+	if (!tw)
+		return 0;
+
+	tw->outp = (int __user *)arg;
+	tw->cb.func = ksu_install_fd_tw_func;
+
+	if (task_work_add(current, &tw->cb, TWA_RESUME)) {
+		kfree(tw);
+		pr_warn("install fd add task_work failed\n");
+	}
+
+	return 0;
+}
+
 int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 			  void __user **arg)
 {
@@ -614,7 +648,6 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 		magic2);
 #endif
 
-#ifdef CONFIG_KSU_SUSFS
 	// If magic2 is susfs and current process is root
 	if (magic2 == SUSFS_MAGIC && only_root()) {
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
@@ -703,16 +736,10 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 		}
 		return 0;
 	}
-#endif
+
 	// Check if this is a request to install KSU fd
 	if (magic2 == KSU_INSTALL_MAGIC2) {
-		int fd = ksu_install_fd();
-		// downstream: dereference all arg usage!
-		if (copy_to_user((void __user *)*arg, &fd, sizeof(fd))) {
-			pr_err("install ksu fd reply err\n");
-			do_close_fd(fd);
-		}
-		return 0;
+		return ksu_handle_fd_request((void __user *)*arg);
 	}
 
 	return 0;
