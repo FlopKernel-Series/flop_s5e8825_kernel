@@ -561,28 +561,36 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 		}
 
 #ifdef CONFIG_SOC_S5E8825_UNDERVOLT
-		// Apply undervolting via margins. Skip if superfloppy mode is enabled (defaults to 0% but users can still set via sysfs)
-		if (!is_superfloppy_mode()) {
+		{
+			signed char sf_mode;
+
+			/*
+			 * Apply undervolting via margins.
+			 * Modes 1-3 disable UV by default; mode 4 keeps UV enabled.
+			 */
+			sf_mode = get_superfloppy_mode();
+			if (sf_mode < 1 || sf_mode > 3) {
 #if CONFIG_SOC_S5E8825_CL0_UV != 0
-			/* Apply undervolt margin if the domain is CPUCL0 */
-			if (vclk->margin_id == MARGIN_CPUCL0) {
-				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_CL0_UV);
-			}
+				/* Apply undervolt margin if the domain is CPUCL0 */
+				if (vclk->margin_id == MARGIN_CPUCL0) {
+					cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_CL0_UV);
+				}
 #endif
 
 #if CONFIG_SOC_S5E8825_CL1_UV != 0
-			/* Apply undervolt margin if the domain is CPUCL1 */
-			if (vclk->margin_id == MARGIN_CPUCL1) {
-				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_CL1_UV);
-			}
+				/* Apply undervolt margin if the domain is CPUCL1 */
+				if (vclk->margin_id == MARGIN_CPUCL1) {
+					cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_CL1_UV);
+				}
 #endif
 
 #if CONFIG_SOC_S5E8825_GPU_UV != 0
-			/* Apply undervolt margin if the domain is G3D */
-			if (vclk->margin_id == MARGIN_G3D) {
-				cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_GPU_UV);
-			}
+				/* Apply undervolt margin if the domain is G3D */
+				if (vclk->margin_id == MARGIN_G3D) {
+					cal_dfs_set_volt_margin(i | ACPM_VCLK_TYPE, -CONFIG_SOC_S5E8825_GPU_UV);
+				}
 #endif
+			}
 		}
 #endif
 
@@ -788,11 +796,13 @@ int fvmap_init(void __iomem *sram_base)
 
 #ifdef CONFIG_SOC_S5E8825_UNDERVOLT
 	// Initialize runtime UV values from compile-time config for display purposes.
-	if (is_superfloppy_mode()) {
+	{
+		signed char sf_mode = get_superfloppy_mode();
+		if (sf_mode >= 1 && sf_mode <= 3) {
 		uv_cpucl0_percent = 0;
 		uv_cpucl1_percent = 0;
 		uv_gpu_percent = 0;
-	} else {
+		} else {
 #if CONFIG_SOC_S5E8825_CL0_UV != 0
 		uv_cpucl0_percent = CONFIG_SOC_S5E8825_CL0_UV;
 #endif
@@ -802,6 +812,7 @@ int fvmap_init(void __iomem *sram_base)
 #if CONFIG_SOC_S5E8825_GPU_UV != 0
 		uv_gpu_percent = CONFIG_SOC_S5E8825_GPU_UV;
 #endif
+		}
 	}
 
 	// Runtime undervolting controls
