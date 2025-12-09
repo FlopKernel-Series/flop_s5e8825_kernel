@@ -2,7 +2,8 @@ menu "KernelSU"
 
 config KSU
 	  tristate "KernelSU function support"
-	  default y
+	  depends on KSU_SUKI
+      default y if KSU_SUKI
 	  help
 		Enable kernel-level root privileges on Android System.
 		Choose "m" here to build KernelSU as LKM
@@ -55,11 +56,11 @@ config KPM
 		This option is suitable for scenarios where you need to force KPM to be enabled.
 		but it may affect system stability.
 
-config KSU_MANUAL_HOOK
-	bool "Hook KernelSU manually"
-	depends on KSU != m && !KSU_SUSFS
-	help
-	  If enabled, Hook required KernelSU syscalls with manually-patched function.
+# config KSU_MANUAL_HOOK
+# 	bool "Hook KernelSU manually"
+# 	depends on KSU != m && !KSU_SUSFS
+# 	help
+# 	  If enabled, Hook required KernelSU syscalls with manually-patched function.
 
 config KSU_MANUAL_HOOK_AUTO_SETUID_HOOK
 	bool "Automatically hook setuid by lsm"
