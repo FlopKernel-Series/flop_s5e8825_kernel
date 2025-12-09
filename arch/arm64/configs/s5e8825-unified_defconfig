@@ -1,16 +1,16 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 5.10.245 Kernel Configuration
+# Linux/arm64 5.10.246 Kernel Configuration
 #
-CONFIG_CC_VERSION_TEXT="Android (14278474, +pgo, +bolt, +lto, +mlgo, based on r574158) clang version 21.0.0 (https://android.googlesource.com/toolchain/llvm-project 9f872551d3c681d06fd303b36f16ed5c274735eb)"
+CONFIG_CC_VERSION_TEXT="Android (14488419, +pgo, +bolt, +lto, +mlgo, based on r584948) clang version 22.0.0 (https://android.googlesource.com/toolchain/llvm-project 2d65e4108033380e6fe8e08b1f1826cd2bfb0c99)"
 CONFIG_GCC_VERSION=0
 CONFIG_LD_VERSION=0
 CONFIG_CC_IS_CLANG=y
 CONFIG_LD_IS_LLD=y
-CONFIG_CLANG_VERSION=210000
+CONFIG_CLANG_VERSION=220000
 CONFIG_AS_IS_LLVM=y
-CONFIG_AS_VERSION=210000
-CONFIG_LLD_VERSION=210000
+CONFIG_AS_VERSION=220000
+CONFIG_LLD_VERSION=220000
 CONFIG_CC_CAN_LINK_STATIC=y
 CONFIG_CC_HAS_ASM_GOTO=y
 CONFIG_CC_HAS_ASM_GOTO_OUTPUT=y
@@ -1820,6 +1820,8 @@ CONFIG_GNSS=y
 # CONFIG_GNSS_CMDLINE_SERIAL is not set
 CONFIG_KSU_NEXT=y
 # CONFIG_KSU_SUKI is not set
+# CONFIG_KSU_MKSU is not set
+# CONFIG_KSU_RKSU is not set
 CONFIG_KSU_KPROBES_HOOK=y
 # CONFIG_KSU_TRACEPOINT_HOOK is not set
 # CONFIG_KSU_MANUAL_HOOK is not set
@@ -1829,6 +1831,21 @@ CONFIG_KSU_LSM_SECURITY_HOOKS=y
 # KernelSU
 #
 # CONFIG_KSU is not set
+# end of KernelSU
+
+#
+# KernelSU
+#
+
+#
+# KernelSU - SUSFS
+#
+# end of KernelSU - SUSFS
+# end of KernelSU
+
+#
+# KernelSU
+#
 
 #
 # KernelSU - SUSFS
