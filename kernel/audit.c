@@ -62,6 +62,9 @@
 
 #include "audit.h"
 
+#ifdef CONFIG_PROC_AVC
+#include <linux/proc_avc.h>
+#endif
 /* No auditing will take place until audit_initialized == AUDIT_INITIALIZED.
  * (Initialization happens after skb_init is called.) */
 #define AUDIT_DISABLED		-1

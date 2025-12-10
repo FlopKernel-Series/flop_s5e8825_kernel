@@ -122,3 +122,11 @@ config PROC_DLOG
 	bool "Enable delete logs for improving filesystem debug"
 	depends on PROC_FSLOG
 	default y
+	
+config PROC_AVC
+    bool "support (/proc/avc_msg)"
+    default n
+    help
+        support logging audit avc message
+        When PROC_AVC config is turned on, proc/avc_msg path is created and then,
+		can use it to analyze the SEandroid denial
