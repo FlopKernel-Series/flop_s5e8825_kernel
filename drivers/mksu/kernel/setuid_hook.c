@@ -98,6 +98,14 @@ static inline bool is_allow_su()
     return ksu_is_allow_uid_for_current(current_uid().val);
 }
 
+#ifdef CONFIG_KSU_SUSFS
+static void ksu_install_manager_fd_tw_func(struct callback_head *cb)
+{
+	ksu_install_fd();
+	kfree(cb);
+}
+#endif
+
 #ifndef CONFIG_KSU_SUSFS
 int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
