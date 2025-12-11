@@ -17,12 +17,20 @@
 #include <linux/syscalls.h>
 #include <linux/pagemap.h>
 #include <linux/compat.h>
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs_def.h>
+#include <linux/version.h>
+#endif
 
 #include <linux/uaccess.h>
 #include <asm/unistd.h>
 
 #include "internal.h"
 #include "mount.h"
+
+#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+extern void susfs_sus_ino_for_generic_fillattr(unsigned long ino, struct kstat *stat);
+#endif
 
 /**
  * generic_fillattr - Fill in the basic attributes from the inode struct
@@ -35,6 +43,17 @@
  */
 void generic_fillattr(struct inode *inode, struct kstat *stat)
 {
+#ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
+	if (likely(susfs_is_current_proc_umounted()) &&
+			unlikely(inode->i_mapping->flags & BIT_SUS_KSTAT)) {
+		susfs_sus_ino_for_generic_fillattr(inode->i_ino, stat);
+		stat->mode = inode->i_mode;
+		stat->rdev = inode->i_rdev;
+		stat->uid = inode->i_uid;
+		stat->gid = inode->i_gid;
+		return;
+	}
+#endif
 	stat->dev = inode->i_sb->s_dev;
 	stat->ino = inode->i_ino;
 	stat->mode = inode->i_mode;
@@ -156,6 +175,15 @@ int vfs_fstat(int fd, struct kstat *stat)
 	return error;
 }
 
+#ifdef CONFIG_KSU_SUSFS
+extern bool __ksu_is_allow_uid_for_current(uid_t uid);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+extern int ksu_handle_stat(int *dfd, struct filename **filename, int *flags);
+#else
+extern int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
+#endif
+#endif
+
 /**
  * vfs_statx - Get basic and extra attributes by filename
  * @dfd: A file descriptor representing the base dir for a relative filename
@@ -177,6 +205,18 @@ static int vfs_statx(int dfd, const char __user *filename, int flags,
 	struct path path;
 	unsigned lookup_flags = 0;
 	int error;
+
+#ifdef CONFIG_KSU_SUSFS
+	if (likely(susfs_is_current_proc_umounted())) {
+		goto orig_flow;
+	}
+
+	if (unlikely(__ksu_is_allow_uid_for_current(current_uid().val))) {
+		ksu_handle_stat(&dfd, &filename, &flags);
+	}
+
+orig_flow:
+#endif
 
 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
 		      AT_STATX_SYNC_TYPE))
