@@ -4,7 +4,7 @@
 
 <img src="https://kernelsu.org/logo.png" style="width: 96px;" alt="logo">
 
-A [KernelSU](https://github.com/tiann/KernelSU/commit/2159d0fb3c6e57a03332afd5552d7b81ce1d9e63)-based root solution for Android devices.
+A [KernelSU](https://github.com/tiann/KernelSU/commit/495638e78f8f6bdb3d54db078318b19fa71cb7dd)-based root solution for Android devices.
 
 [![Latest release](https://img.shields.io/github/v/release/tiann/KernelSU?label=Release&logo=github)](https://github.com/tiann/KernelSU/releases/latest)
 [![Weblate](https://img.shields.io/badge/Localization-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
