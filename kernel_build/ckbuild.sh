@@ -209,7 +209,7 @@ if [ "$DO_KSU" == "1" ]; then
     FK_TYPE_SHORT="KN"
 elif [ "$DO_SUKI" == "1" ]; then
     FK_TYPE="SukiSU-Ultra"
-    FK_TYPE_SHORT="SSU"
+    FK_TYPE_SHORT="SKS"
 elif [ "$DO_MKSU" == "1" ]; then
     FK_TYPE="MagicKSU"
     FK_TYPE_SHORT="MKS"
