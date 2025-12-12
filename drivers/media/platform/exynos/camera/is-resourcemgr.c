@@ -56,8 +56,6 @@
 
 #if IS_ENABLED(CONFIG_EXYNOS_SNAPSHOT)
 #include <linux/exynos-ss.h>
-#elif defined(CONFIG_DEBUG_SNAPSHOT)
-#include <linux/debug-snapshot.h>
 #endif
 #include <soc/samsung/debug-snapshot.h>
 #include <soc/samsung/exynos-bcm_dbg.h>
@@ -72,10 +70,10 @@
 #include "votf/camerapp-votf.h"
 #include "is-device-camif-dma.h"
 
-#define CLUSTER_MIN_MASK			0x0000FFFF
-#define CLUSTER_MIN_SHIFT			0
-#define CLUSTER_MAX_MASK			0xFFFF0000
-#define CLUSTER_MAX_SHIFT			16
+#define CLUSTER_MIN_MASK 0x0000FFFF
+#define CLUSTER_MIN_SHIFT 0
+#define CLUSTER_MAX_MASK 0xFFFF0000
+#define CLUSTER_MAX_SHIFT 16
 
 #if IS_ENABLED(CONFIG_CMU_EWF)
 static unsigned int idx_ewf;
@@ -89,164 +87,235 @@ static struct freq_qos_request exynos_isp_freq_qos[IS_FREQ_QOS_MAX];
 static struct emstune_mode_request emstune_req;
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
-#define IS_GET_CPU_QOS(cpu)										\
+#define IS_GET_CPU_QOS(cpu)                                                    \
 	(cpufreq_cpu_get(cpu) ? &(cpufreq_cpu_get(cpu)->constraints) : NULL)
 
 #if IS_ENABLED(CONFIG_ARM_FREQ_QOS_TRACER)
-#define C0MIN_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_tracer_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[0]),			\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN], FREQ_QOS_MIN, freq * 1000);	\
+#define C0MIN_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_tracer_add_request(                                   \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[0]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN],        \
+			FREQ_QOS_MIN, freq * 1000);                            \
 	} while (0)
-#define C0MIN_QOS_DEL()											\
-	freq_qos_tracer_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN])
-#define C0MIN_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN], freq * 1000)
-#define C0MAX_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_tracer_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[0]),			\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX], FREQ_QOS_MAX, freq * 1000);	\
+#define C0MIN_QOS_DEL()                                                        \
+	freq_qos_tracer_remove_request(                                        \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN])
+#define C0MIN_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN], freq * 1000)
+#define C0MAX_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_tracer_add_request(                                   \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[0]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX],        \
+			FREQ_QOS_MAX, freq * 1000);                            \
 	} while (0)
-#define C0MAX_QOS_DEL()											\
-	freq_qos_tracer_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX])
-#define C0MAX_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX], freq * 1000)
-#define C1MIN_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_tracer_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[1]),			\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN], FREQ_QOS_MIN, freq * 1000);	\
+#define C0MAX_QOS_DEL()                                                        \
+	freq_qos_tracer_remove_request(                                        \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX])
+#define C0MAX_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX], freq * 1000)
+#define C1MIN_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_tracer_add_request(                                   \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[1]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN],        \
+			FREQ_QOS_MIN, freq * 1000);                            \
 	} while (0)
-#define C1MIN_QOS_DEL()											\
-	freq_qos_tracer_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN])
-#define C1MIN_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN], freq * 1000)
-#define C1MAX_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_tracer_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[1]),			\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX], FREQ_QOS_MAX, freq * 1000);	\
+#define C1MIN_QOS_DEL()                                                        \
+	freq_qos_tracer_remove_request(                                        \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN])
+#define C1MIN_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN], freq * 1000)
+#define C1MAX_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_tracer_add_request(                                   \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[1]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX],        \
+			FREQ_QOS_MAX, freq * 1000);                            \
 	} while (0)
-#define C1MAX_QOS_DEL()											\
-	freq_qos_tracer_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX])
-#define C1MAX_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX], freq * 1000)
-#define C2MIN_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_tracer_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[2]),			\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN], FREQ_QOS_MIN, freq * 1000);	\
+#define C1MAX_QOS_DEL()                                                        \
+	freq_qos_tracer_remove_request(                                        \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX])
+#define C1MAX_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX], freq * 1000)
+#define C2MIN_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_tracer_add_request(                                   \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[2]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN],        \
+			FREQ_QOS_MIN, freq * 1000);                            \
 	} while (0)
-#define C2MIN_QOS_DEL()											\
-	freq_qos_tracer_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN])
-#define C2MIN_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN], freq * 1000)
-#define C2MAX_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_tracer_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[2]),			\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX], FREQ_QOS_MAX, freq * 1000);	\
+#define C2MIN_QOS_DEL()                                                        \
+	freq_qos_tracer_remove_request(                                        \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN])
+#define C2MIN_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN], freq * 1000)
+#define C2MAX_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_tracer_add_request(                                   \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[2]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX],        \
+			FREQ_QOS_MAX, freq * 1000);                            \
 	} while (0)
-#define C2MAX_QOS_DEL()											\
-	freq_qos_tracer_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX])
-#define C2MAX_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX], freq * 1000)
+#define C2MAX_QOS_DEL()                                                        \
+	freq_qos_tracer_remove_request(                                        \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX])
+#define C2MAX_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX], freq * 1000)
 #else
-#define C0MIN_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[0]),				\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN], FREQ_QOS_MIN, freq * 1000);	\
+#define C0MIN_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_add_request(                                          \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[0]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN],        \
+			FREQ_QOS_MIN, freq * 1000);                            \
 	} while (0)
-#define C0MIN_QOS_DEL() freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN])
-#define C0MIN_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN], freq * 1000)
-#define C0MAX_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[0]),				\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX], FREQ_QOS_MAX, freq * 1000);	\
+#define C0MIN_QOS_DEL()                                                        \
+	freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN])
+#define C0MIN_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MIN], freq * 1000)
+#define C0MAX_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_add_request(                                          \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[0]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX],        \
+			FREQ_QOS_MAX, freq * 1000);                            \
 	} while (0)
-#define C0MAX_QOS_DEL() freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX])
-#define C0MAX_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX], freq * 1000)
-#define C1MIN_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[1]),				\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN], FREQ_QOS_MIN, freq * 1000);	\
+#define C0MAX_QOS_DEL()                                                        \
+	freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX])
+#define C0MAX_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER0_MAX], freq * 1000)
+#define C1MIN_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_add_request(                                          \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[1]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN],        \
+			FREQ_QOS_MIN, freq * 1000);                            \
 	} while (0)
-#define C1MIN_QOS_DEL() freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN])
-#define C1MIN_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN], freq * 1000)
-#define C1MAX_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[1]),				\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX], FREQ_QOS_MAX, freq * 1000);	\
+#define C1MIN_QOS_DEL()                                                        \
+	freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN])
+#define C1MIN_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MIN], freq * 1000)
+#define C1MAX_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_add_request(                                          \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[1]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX],        \
+			FREQ_QOS_MAX, freq * 1000);                            \
 	} while (0)
-#define C1MAX_QOS_DEL() freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX])
-#define C1MAX_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX], freq * 1000)
-#define C2MIN_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[2]),				\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN], FREQ_QOS_MIN, freq * 1000);	\
+#define C1MAX_QOS_DEL()                                                        \
+	freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX])
+#define C1MAX_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER1_MAX], freq * 1000)
+#define C2MIN_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_add_request(                                          \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[2]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN],        \
+			FREQ_QOS_MIN, freq * 1000);                            \
 	} while (0)
-#define C2MIN_QOS_DEL() freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN])
-#define C2MIN_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN], freq * 1000)
-#define C2MAX_QOS_ADD(freq)										\
-	do {												\
-		struct exynos_platform_is *pdata = dev_get_platdata(is_get_is_dev());			\
-		freq_qos_add_request(IS_GET_CPU_QOS(pdata->cpu_cluster[2]),				\
-			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX], FREQ_QOS_MAX, freq * 1000);	\
+#define C2MIN_QOS_DEL()                                                        \
+	freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN])
+#define C2MIN_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MIN], freq * 1000)
+#define C2MAX_QOS_ADD(freq)                                                    \
+	do {                                                                   \
+		struct exynos_platform_is *pdata =                             \
+			dev_get_platdata(is_get_is_dev());                     \
+		freq_qos_add_request(                                          \
+			IS_GET_CPU_QOS(pdata->cpu_cluster[2]),                 \
+			&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX],        \
+			FREQ_QOS_MAX, freq * 1000);                            \
 	} while (0)
-#define C2MAX_QOS_DEL()											\
+#define C2MAX_QOS_DEL()                                                        \
 	freq_qos_remove_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX])
-#define C2MAX_QOS_UPDATE(freq)										\
-	freq_qos_update_request(&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX], freq * 1000)
+#define C2MAX_QOS_UPDATE(freq)                                                 \
+	freq_qos_update_request(                                               \
+		&exynos_isp_freq_qos[IS_FREQ_QOS_CLUSTER2_MAX], freq * 1000)
 #endif /* #if IS_ENABLED(CONFIG_ARM_FREQ_QOS_TRACER) */
 #else
-#define C0MIN_QOS_ADD(freq)									\
-	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MIN],			\
-		PM_QOS_CLUSTER0_FREQ_MIN, freq * 1000)
-#define C0MIN_QOS_DEL() is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MIN])
-#define C0MIN_QOS_UPDATE(freq)									\
-	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MIN], freq * 1000)
-#define C0MAX_QOS_ADD(freq)									\
-	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MAX],			\
-		PM_QOS_CLUSTER0_FREQ_MAX, freq * 1000)
-#define C0MAX_QOS_DEL() is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MAX])
-#define C0MAX_QOS_UPDATE(freq)									\
-	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MAX], freq * 1000)
-#define C1MIN_QOS_ADD(freq)									\
-	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MIN],			\
-		PM_QOS_CLUSTER1_FREQ_MIN, freq * 1000)
-#define C1MIN_QOS_DEL() is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MIN])
-#define C1MIN_QOS_UPDATE(freq)									\
-	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MIN], freq * 1000)
-#define C1MAX_QOS_ADD(freq)									\
-	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MAX],			\
-		PM_QOS_CLUSTER1_FREQ_MAX, freq * 1000)
-#define C1MAX_QOS_DEL() is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MAX])
-#define C1MAX_QOS_UPDATE(freq)									\
-	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MAX], freq * 1000)
-#define C2MIN_QOS_ADD(freq)									\
-	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MIN], 			\
-		PM_QOS_CLUSTER2_FREQ_MIN, freq * 1000)
-#define C2MIN_QOS_DEL() is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MIN])
-#define C2MIN_QOS_UPDATE(freq)									\
-	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MIN], freq * 1000)
-#define C2MAX_QOS_ADD(freq)									\
-	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MAX],			\
-		PM_QOS_CLUSTER2_FREQ_MAX, freq * 1000)
-#define C2MAX_QOS_DEL() is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MAX])
-#define C2MAX_QOS_UPDATE(freq)									\
-	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MAX], freq * 1000)
+#define C0MIN_QOS_ADD(freq)                                                    \
+	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MIN],      \
+			      PM_QOS_CLUSTER0_FREQ_MIN, freq * 1000)
+#define C0MIN_QOS_DEL()                                                        \
+	is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MIN])
+#define C0MIN_QOS_UPDATE(freq)                                                 \
+	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MIN],   \
+				 freq * 1000)
+#define C0MAX_QOS_ADD(freq)                                                    \
+	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MAX],      \
+			      PM_QOS_CLUSTER0_FREQ_MAX, freq * 1000)
+#define C0MAX_QOS_DEL()                                                        \
+	is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MAX])
+#define C0MAX_QOS_UPDATE(freq)                                                 \
+	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER0_MAX],   \
+				 freq * 1000)
+#define C1MIN_QOS_ADD(freq)                                                    \
+	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MIN],      \
+			      PM_QOS_CLUSTER1_FREQ_MIN, freq * 1000)
+#define C1MIN_QOS_DEL()                                                        \
+	is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MIN])
+#define C1MIN_QOS_UPDATE(freq)                                                 \
+	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MIN],   \
+				 freq * 1000)
+#define C1MAX_QOS_ADD(freq)                                                    \
+	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MAX],      \
+			      PM_QOS_CLUSTER1_FREQ_MAX, freq * 1000)
+#define C1MAX_QOS_DEL()                                                        \
+	is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MAX])
+#define C1MAX_QOS_UPDATE(freq)                                                 \
+	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER1_MAX],   \
+				 freq * 1000)
+#define C2MIN_QOS_ADD(freq)                                                    \
+	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MIN],      \
+			      PM_QOS_CLUSTER2_FREQ_MIN, freq * 1000)
+#define C2MIN_QOS_DEL()                                                        \
+	is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MIN])
+#define C2MIN_QOS_UPDATE(freq)                                                 \
+	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MIN],   \
+				 freq * 1000)
+#define C2MAX_QOS_ADD(freq)                                                    \
+	is_pm_qos_add_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MAX],      \
+			      PM_QOS_CLUSTER2_FREQ_MAX, freq * 1000)
+#define C2MAX_QOS_DEL()                                                        \
+	is_pm_qos_remove_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MAX])
+#define C2MAX_QOS_UPDATE(freq)                                                 \
+	is_pm_qos_update_request(&exynos_isp_pm_qos[IS_PM_QOS_CLUSTER2_MAX],   \
+				 freq * 1000)
 #endif /* #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)) */
 
 extern int is_sensor_runtime_suspend(struct device *dev);
@@ -276,7 +345,8 @@ static unsigned long pablo_vmap(unsigned long addr, unsigned int size)
 	return (unsigned long)vaddr;
 }
 
-static int pablo_rscmgr_init_log_rmem(struct is_resourcemgr *rscmgr, struct reserved_mem *rmem)
+static int pablo_rscmgr_init_log_rmem(struct is_resourcemgr *rscmgr,
+				      struct reserved_mem *rmem)
 {
 	rscmgr->minfo.phaddr_debug = rmem->base;
 	rscmgr->minfo.kvaddr_debug = pablo_vmap(rmem->base, rmem->size);
@@ -289,14 +359,14 @@ static int pablo_rscmgr_init_log_rmem(struct is_resourcemgr *rscmgr, struct rese
 	dbg_snapshot_add_bl_item_info("log_camera", rmem->base, rmem->size);
 
 	probe_info("[RSC]log rmem(V/P/S): 0x%pK/%pap/%pap\n",
-					rscmgr->minfo.kvaddr_debug,
-					&rmem->base, &rmem->size);
+		   rscmgr->minfo.kvaddr_debug, &rmem->base, &rmem->size);
 
 	return 0;
 }
 
 static struct vm_struct pablo_bin_vm;
-static int pablo_rscmgr_init_bin_rmem(struct is_resourcemgr *rscmgr, struct reserved_mem *rmem)
+static int pablo_rscmgr_init_bin_rmem(struct is_resourcemgr *rscmgr,
+				      struct reserved_mem *rmem)
 {
 	struct vm_struct *vm;
 	unsigned int npages;
@@ -307,13 +377,14 @@ static int pablo_rscmgr_init_bin_rmem(struct is_resourcemgr *rscmgr, struct rese
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0))
 	vm = __get_vm_area_caller(PAGE_ALIGN(rmem->size), 0, LIB_START,
-					VMALLOC_END, __builtin_return_address(0));
+				  VMALLOC_END, __builtin_return_address(0));
 #else
 	vm = __get_vm_area(PAGE_ALIGN(rmem->size), 0, LIB_START, VMALLOC_END);
 #endif
 
 	if (vm->size < LIB_SIZE) {
-		probe_err("insufficient bin rmem (0x%lx < 0x%lx)", vm->size, LIB_SIZE);
+		probe_err("insufficient bin rmem (0x%lx < 0x%lx)", vm->size,
+			  LIB_SIZE);
 		return -ENOMEM;
 	}
 
@@ -334,7 +405,8 @@ static int pablo_rscmgr_init_bin_rmem(struct is_resourcemgr *rscmgr, struct rese
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0))
 	if (map_kernel_range((unsigned long)pablo_bin_vm.addr,
-				get_vm_area_size(&pablo_bin_vm), prot, pages) < 0) {
+			     get_vm_area_size(&pablo_bin_vm), prot,
+			     pages) < 0) {
 #else
 	if (map_vm_area(&pablo_bin_vm, prot, pages)) {
 #endif
@@ -343,16 +415,16 @@ static int pablo_rscmgr_init_bin_rmem(struct is_resourcemgr *rscmgr, struct rese
 		return -ENOMEM;
 	}
 
-	probe_info("[RSC]bin rmem(V/P/S): 0x%pK/%pap/%pap\n",
-					pablo_bin_vm.addr,
-					&rmem->base, &rmem->size);
+	probe_info("[RSC]bin rmem(V/P/S): 0x%pK/%pap/%pap\n", pablo_bin_vm.addr,
+		   &rmem->base, &rmem->size);
 
 	kfree(pages);
 
 	return 0;
 }
 
-static int pablo_rscmgr_init_rmem(struct is_resourcemgr *rscmgr, struct device_node *np)
+static int pablo_rscmgr_init_rmem(struct is_resourcemgr *rscmgr,
+				  struct device_node *np)
 {
 	struct of_phandle_iterator i;
 	struct reserved_mem *rmem;
@@ -370,23 +442,26 @@ static int pablo_rscmgr_init_rmem(struct is_resourcemgr *rscmgr, struct device_n
 
 		rmem = of_reserved_mem_lookup(i.node);
 		if (!rmem) {
-			probe_err("failed to get [%s] reserved memory", i.node->name);
+			probe_err("failed to get [%s] reserved memory",
+				  i.node->name);
 			return -EINVAL;
 		}
 
 		if (!strcmp(i.node->name, "camera_rmem"))
 			pablo_rscmgr_init_log_rmem(rscmgr, rmem);
 		else if (!strcmp(i.node->name, "camera_ddk") ||
-				!strcmp(i.node->name, "camera-bin"))
+			 !strcmp(i.node->name, "camera-bin"))
 			pablo_rscmgr_init_bin_rmem(rscmgr, rmem);
 		else
-			probe_warn("callback not found for [%s], skipping", i.node->name);
+			probe_warn("callback not found for [%s], skipping",
+				   i.node->name);
 	}
 
 	return 0;
 }
 
-static int pablo_alloc_n_map(struct is_mem *mem, struct vm_struct *vm, pgprot_t prot)
+static int pablo_alloc_n_map(struct is_mem *mem, struct vm_struct *vm,
+			     pgprot_t prot)
 {
 	int npages = PAGE_ALIGN(vm->size) / PAGE_SIZE;
 	struct is_priv_buf *pb;
@@ -406,12 +481,12 @@ static int pablo_alloc_n_map(struct is_mem *mem, struct vm_struct *vm, pgprot_t 
 	pb = CALL_PTR_MEMOP(mem, alloc, mem->priv, vm->size, NULL, 0);
 	if (IS_ERR_OR_NULL(pb)) {
 		probe_err("failed to alloc buffer - addr: 0x%pK, size: 0x%lx",
-							vm->addr, vm->size);
+			  vm->addr, vm->size);
 		vfree(pages);
 		return -ENOMEM;
 	}
 
-	for_each_sg(pb->sgt->sgl, sg, pb->sgt->orig_nents, i) {
+	for_each_sg (pb->sgt->sgl, sg, pb->sgt->orig_nents, i) {
 		int npages_this_entry = PAGE_ALIGN(sg->length) / PAGE_SIZE;
 		struct page *page = sg_page(sg);
 
@@ -427,13 +502,13 @@ static int pablo_alloc_n_map(struct is_mem *mem, struct vm_struct *vm, pgprot_t 
 	}
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0))
-	if (map_kernel_range((unsigned long)vm->addr,
-				get_vm_area_size(vm), prot, pages) < 0) {
+	if (map_kernel_range((unsigned long)vm->addr, get_vm_area_size(vm),
+			     prot, pages) < 0) {
 #else
 	if (map_vm_area(vm, prot, pages)) {
 #endif
 		probe_err("failed to map buffer - addr: 0x%pK, size: 0x%lx",
-							vm->addr, vm->size);
+			  vm->addr, vm->size);
 		CALL_VOID_BUFOP(pb, free, pb);
 		vfree(pages);
 		return -ENOMEM;
@@ -458,14 +533,15 @@ static int is_resourcemgr_alloc_mem(struct is_resourcemgr *resourcemgr)
 
 	for (i = 0; i < SENSOR_POSITION_MAX; i++) {
 		/* calibration data for each sensor postion */
-		minfo->pb_cal[i] = CALL_PTR_MEMOP(mem, alloc, mem->priv, TOTAL_CAL_DATA_SIZE, NULL, 0);
+		minfo->pb_cal[i] = CALL_PTR_MEMOP(mem, alloc, mem->priv,
+						  TOTAL_CAL_DATA_SIZE, NULL, 0);
 		if (IS_ERR_OR_NULL(minfo->pb_cal[i])) {
 			err("failed to allocate buffer for TOTAL_CAL_DATA");
 			return -ENOMEM;
 		}
 		minfo->total_size += minfo->pb_cal[i]->size;
-		info("[RSC]memory_alloc(TOTAL_CAL_DATA_SIZE[%d]): 0x%08lx\n",
-			i, minfo->pb_cal[i]->size);
+		info("[RSC]memory_alloc(TOTAL_CAL_DATA_SIZE[%d]): 0x%08lx\n", i,
+		     minfo->pb_cal[i]->size);
 	}
 
 	/* library logging */
@@ -473,10 +549,10 @@ static int is_resourcemgr_alloc_mem(struct is_resourcemgr *resourcemgr)
 		minfo->pb_debug = mem->contig_alloc(DEBUG_REGION_SIZE + 0x10);
 		if (IS_ERR_OR_NULL(minfo->pb_debug)) {
 			/* retry by ION */
-			minfo->pb_debug = CALL_PTR_MEMOP(mem, alloc,
-						mem->priv,
-						DEBUG_REGION_SIZE + 0x10,
-						NULL, 0);
+			minfo->pb_debug =
+				CALL_PTR_MEMOP(mem, alloc, mem->priv,
+					       DEBUG_REGION_SIZE + 0x10, NULL,
+					       0);
 			if (IS_ERR_OR_NULL(minfo->pb_debug)) {
 				err("failed to allocate buffer for DEBUG_REGION");
 				return -ENOMEM;
@@ -484,65 +560,75 @@ static int is_resourcemgr_alloc_mem(struct is_resourcemgr *resourcemgr)
 		}
 		minfo->total_size += minfo->pb_debug->size;
 		info("[RSC]memory_alloc(DEBUG_REGION_SIZE): 0x%08lx\n",
-				minfo->pb_debug->size);
+		     minfo->pb_debug->size);
 	}
 
 	/* library event logging */
 	minfo->pb_event = mem->contig_alloc(EVENT_REGION_SIZE + 0x10);
 	if (IS_ERR_OR_NULL(minfo->pb_event)) {
 		/* retry by ION */
-		minfo->pb_event = CALL_PTR_MEMOP(mem, alloc, mem->priv, EVENT_REGION_SIZE + 0x10, NULL, 0);
+		minfo->pb_event =
+			CALL_PTR_MEMOP(mem, alloc, mem->priv,
+				       EVENT_REGION_SIZE + 0x10, NULL, 0);
 		if (IS_ERR_OR_NULL(minfo->pb_event)) {
 			err("failed to allocate buffer for EVENT_REGION");
 			return -ENOMEM;
 		}
 	}
 	minfo->total_size += minfo->pb_event->size;
-	info("[RSC]memory_alloc(EVENT_REGION_SIZE): 0x%08lx\n", minfo->pb_event->size);
+	info("[RSC]memory_alloc(EVENT_REGION_SIZE): 0x%08lx\n",
+	     minfo->pb_event->size);
 
 	/* parameter region */
-	minfo->pb_pregion = CALL_PTR_MEMOP(mem, alloc, mem->priv,
-						(IS_STREAM_COUNT * PARAM_REGION_SIZE), NULL, 0);
+	minfo->pb_pregion =
+		CALL_PTR_MEMOP(mem, alloc, mem->priv,
+			       (IS_STREAM_COUNT * PARAM_REGION_SIZE), NULL, 0);
 	if (IS_ERR_OR_NULL(minfo->pb_pregion)) {
 		err("failed to allocate buffer for PARAM_REGION");
 		return -ENOMEM;
 	}
 	minfo->total_size += minfo->pb_pregion->size;
 	info("[RSC]memory_alloc(PARAM_REGION_SIZE x %d): 0x%08lx\n",
-		IS_STREAM_COUNT, minfo->pb_pregion->size);
+	     IS_STREAM_COUNT, minfo->pb_pregion->size);
 
 	/* sfr dump addr region */
-	minfo->pb_sfr_dump_addr = CALL_PTR_MEMOP(mem, alloc, mem->priv, SFR_DUMP_SIZE, NULL, 0);
+	minfo->pb_sfr_dump_addr =
+		CALL_PTR_MEMOP(mem, alloc, mem->priv, SFR_DUMP_SIZE, NULL, 0);
 	if (IS_ERR_OR_NULL(minfo->pb_sfr_dump_addr)) {
 		err("failed to allocate buffer for SFR_DUMP_ADDR");
 		return -ENOMEM;
 	}
 	minfo->total_size += minfo->pb_sfr_dump_addr->size;
-	info("[RSC]memory_alloc(SFR_DUMP_ADDR_SIZE): 0x%08lx\n", minfo->pb_sfr_dump_addr->size);
+	info("[RSC]memory_alloc(SFR_DUMP_ADDR_SIZE): 0x%08lx\n",
+	     minfo->pb_sfr_dump_addr->size);
 
 	/* sfr dump value region */
-	minfo->pb_sfr_dump_value = CALL_PTR_MEMOP(mem, alloc, mem->priv, SFR_DUMP_SIZE, NULL, 0);
+	minfo->pb_sfr_dump_value =
+		CALL_PTR_MEMOP(mem, alloc, mem->priv, SFR_DUMP_SIZE, NULL, 0);
 	if (IS_ERR_OR_NULL(minfo->pb_sfr_dump_value)) {
 		err("failed to allocate buffer for SFR_DUMP_VALUE");
 		return -ENOMEM;
 	}
 	minfo->total_size += minfo->pb_sfr_dump_value->size;
-	info("[RSC]memory_alloc(SFR_DUMP_VALUE_SIZE): 0x%08lx\n", minfo->pb_sfr_dump_value->size);
+	info("[RSC]memory_alloc(SFR_DUMP_VALUE_SIZE): 0x%08lx\n",
+	     minfo->pb_sfr_dump_value->size);
 
 #if !defined(ENABLE_DYNAMIC_MEM)
 	/* 3aa/isp internal DMA buffer */
-	minfo->pb_taaisp = CALL_PTR_MEMOP(mem, alloc, mem->priv,
-				TAAISP_DMA_SIZE, NULL, 0);
+	minfo->pb_taaisp =
+		CALL_PTR_MEMOP(mem, alloc, mem->priv, TAAISP_DMA_SIZE, NULL, 0);
 	if (IS_ERR_OR_NULL(minfo->pb_taaisp)) {
 		err("failed to allocate buffer for TAAISP_DMA");
 		return -ENOMEM;
 	}
 	minfo->total_size += minfo->pb_taaisp->size;
-	info("[RSC]memory_alloc(TAAISP_DMA_SIZE): 0x%08lx\n", minfo->pb_taaisp->size);
+	info("[RSC]memory_alloc(TAAISP_DMA_SIZE): 0x%08lx\n",
+	     minfo->pb_taaisp->size);
 
 #if defined(ENABLE_TNR)
 	/* TNR internal DMA buffer */
-	minfo->pb_tnr = CALL_PTR_MEMOP(mem, alloc, mem->priv, tnr_size, NULL, 0);
+	minfo->pb_tnr =
+		CALL_PTR_MEMOP(mem, alloc, mem->priv, tnr_size, NULL, 0);
 	if (IS_ERR_OR_NULL(minfo->pb_tnr)) {
 		err("failed to allocate buffer for TNR DMA");
 		return -ENOMEM;
@@ -552,28 +638,33 @@ static int is_resourcemgr_alloc_mem(struct is_resourcemgr *resourcemgr)
 #endif
 #if (ORBMCH_DMA_SIZE > 0)
 	/* ORBMCH internal DMA buffer */
-	minfo->pb_orbmch = CALL_PTR_MEMOP(mem, alloc, mem->priv, ORBMCH_DMA_SIZE, NULL, 0);
+	minfo->pb_orbmch =
+		CALL_PTR_MEMOP(mem, alloc, mem->priv, ORBMCH_DMA_SIZE, NULL, 0);
 	if (IS_ERR_OR_NULL(minfo->pb_orbmch)) {
 		err("failed to allocate buffer for ORBMCH DMA");
 		return -ENOMEM;
 	}
 	minfo->total_size += minfo->pb_orbmch->size;
-	info("[RSC]memory_alloc(ORBMCH_DMA_SIZE): 0x%08lx\n", minfo->pb_orbmch->size);
+	info("[RSC]memory_alloc(ORBMCH_DMA_SIZE): 0x%08lx\n",
+	     minfo->pb_orbmch->size);
 #endif
 #endif
 
 	if (DUMMY_DMA_SIZE) {
-		minfo->pb_dummy = CALL_PTR_MEMOP(mem, alloc, mem->priv, DUMMY_DMA_SIZE,
-			"camera_heap", 0);
+		minfo->pb_dummy =
+			CALL_PTR_MEMOP(mem, alloc, mem->priv, DUMMY_DMA_SIZE,
+				       "camera_heap", 0);
 		if (IS_ERR_OR_NULL(minfo->pb_dummy)) {
 			err("failed to allocate buffer for dummy");
 			return -ENOMEM;
 		}
 		minfo->total_size += minfo->pb_dummy->size;
-		info("[RSC]memory_alloc(DUMMY_DMA_SIZE): 0x%08lx\n", minfo->pb_dummy->size);
+		info("[RSC]memory_alloc(DUMMY_DMA_SIZE): 0x%08lx\n",
+		     minfo->pb_dummy->size);
 	}
 
-	probe_info("[RSC]memory_alloc(Internal total): 0x%08lx\n", minfo->total_size);
+	probe_info("[RSC]memory_alloc(Internal total): 0x%08lx\n",
+		   minfo->total_size);
 
 	return 0;
 }
@@ -602,19 +693,23 @@ static int is_resourcemgr_init_mem(struct is_resourcemgr *resourcemgr)
 			CALL_BUFOP(minfo->pb_debug, phaddr, minfo->pb_debug);
 	}
 
-	resourcemgr->minfo.kvaddr_event = CALL_BUFOP(minfo->pb_event, kvaddr, minfo->pb_event);
-	resourcemgr->minfo.phaddr_event = CALL_BUFOP(minfo->pb_event, phaddr, minfo->pb_event);
+	resourcemgr->minfo.kvaddr_event =
+		CALL_BUFOP(minfo->pb_event, kvaddr, minfo->pb_event);
+	resourcemgr->minfo.phaddr_event =
+		CALL_BUFOP(minfo->pb_event, phaddr, minfo->pb_event);
 
-	resourcemgr->minfo.kvaddr_sfr_dump_addr = CALL_BUFOP(minfo->pb_sfr_dump_addr, kvaddr, minfo->pb_sfr_dump_addr);
-	resourcemgr->minfo.kvaddr_sfr_dump_value =
-		CALL_BUFOP(minfo->pb_sfr_dump_value, kvaddr, minfo->pb_sfr_dump_value);
+	resourcemgr->minfo.kvaddr_sfr_dump_addr = CALL_BUFOP(
+		minfo->pb_sfr_dump_addr, kvaddr, minfo->pb_sfr_dump_addr);
+	resourcemgr->minfo.kvaddr_sfr_dump_value = CALL_BUFOP(
+		minfo->pb_sfr_dump_value, kvaddr, minfo->pb_sfr_dump_value);
 
-	resourcemgr->minfo.kvaddr_region = CALL_BUFOP(minfo->pb_pregion, kvaddr, minfo->pb_pregion);
+	resourcemgr->minfo.kvaddr_region =
+		CALL_BUFOP(minfo->pb_pregion, kvaddr, minfo->pb_pregion);
 
-	resourcemgr->minfo.kvaddr_debug_cnt =  resourcemgr->minfo.kvaddr_debug
-						+ DEBUG_REGION_SIZE;
-	resourcemgr->minfo.kvaddr_event_cnt =  resourcemgr->minfo.kvaddr_event
-						+ EVENT_REGION_SIZE;
+	resourcemgr->minfo.kvaddr_debug_cnt =
+		resourcemgr->minfo.kvaddr_debug + DEBUG_REGION_SIZE;
+	resourcemgr->minfo.kvaddr_event_cnt =
+		resourcemgr->minfo.kvaddr_event + EVENT_REGION_SIZE;
 
 	for (i = 0; i < SENSOR_POSITION_MAX; i++)
 		resourcemgr->minfo.kvaddr_cal[i] =
@@ -628,13 +723,15 @@ static int is_resourcemgr_init_mem(struct is_resourcemgr *resourcemgr)
 		resourcemgr->minfo.phaddr_dummy =
 			CALL_BUFOP(minfo->pb_dummy, phaddr, minfo->pb_dummy);
 
-		probe_info("[RSC] Dummy buffer: dva(0x%pad) kva(0x%pK) pha(0x%pad)\n",
+		probe_info(
+			"[RSC] Dummy buffer: dva(0x%pad) kva(0x%pK) pha(0x%pad)\n",
 			&resourcemgr->minfo.dvaddr_dummy,
 			resourcemgr->minfo.kvaddr_dummy,
 			&resourcemgr->minfo.phaddr_dummy);
 	}
 
-	probe_info("[RSC] Kernel virtual for debug: 0x%pK\n", resourcemgr->minfo.kvaddr_debug);
+	probe_info("[RSC] Kernel virtual for debug: 0x%pK\n",
+		   resourcemgr->minfo.kvaddr_debug);
 	probe_info("[RSC] is_init_mem done\n");
 p_err:
 	return ret;
@@ -650,14 +747,15 @@ static int is_resourcemgr_alloc_dynamic_mem(struct is_resourcemgr *resourcemgr)
 	if (TAAISP_DMA_SIZE > 0) {
 		/* 3aa/isp internal DMA buffer */
 		minfo->pb_taaisp = CALL_PTR_MEMOP(mem, alloc, mem->priv,
-					TAAISP_DMA_SIZE, NULL, 0);
+						  TAAISP_DMA_SIZE, NULL, 0);
 		if (IS_ERR_OR_NULL(minfo->pb_taaisp)) {
 			err("failed to allocate buffer for TAAISP_DMA memory");
 			ret = -ENOMEM;
 			goto err_alloc_taaisp;
 		}
 
-		info("[RSC]memory_alloc(TAAISP_DMA_SIZE): 0x%08lx\n", minfo->pb_taaisp->size);
+		info("[RSC]memory_alloc(TAAISP_DMA_SIZE): 0x%08lx\n",
+		     minfo->pb_taaisp->size);
 	} else {
 		minfo->pb_taaisp = NULL;
 	}
@@ -665,9 +763,12 @@ static int is_resourcemgr_alloc_dynamic_mem(struct is_resourcemgr *resourcemgr)
 	if (TNR_DMA_SIZE > 0) {
 		/* TNR internal DMA buffer */
 #if defined(USE_CAMERA_HEAP)
-		minfo->pb_tnr = CALL_PTR_MEMOP(mem, alloc, mem->priv, TNR_DMA_SIZE, CAMERA_HEAP_NAME, 0);
+		minfo->pb_tnr =
+			CALL_PTR_MEMOP(mem, alloc, mem->priv, TNR_DMA_SIZE,
+				       CAMERA_HEAP_NAME, 0);
 #else
-		minfo->pb_tnr = CALL_PTR_MEMOP(mem, alloc, mem->priv, TNR_DMA_SIZE, NULL, 0);
+		minfo->pb_tnr = CALL_PTR_MEMOP(mem, alloc, mem->priv,
+					       TNR_DMA_SIZE, NULL, 0);
 #endif
 		if (IS_ERR_OR_NULL(minfo->pb_tnr)) {
 			err("failed to allocate buffer for TNR DMA");
@@ -675,7 +776,8 @@ static int is_resourcemgr_alloc_dynamic_mem(struct is_resourcemgr *resourcemgr)
 			goto err_alloc_tnr;
 		}
 
-		info("[RSC]memory_alloc(TNR_DMA_SIZE): 0x%08lx\n", minfo->pb_tnr->size);
+		info("[RSC]memory_alloc(TNR_DMA_SIZE): 0x%08lx\n",
+		     minfo->pb_tnr->size);
 	} else {
 		minfo->pb_tnr = NULL;
 	}
@@ -683,14 +785,15 @@ static int is_resourcemgr_alloc_dynamic_mem(struct is_resourcemgr *resourcemgr)
 	if (ORBMCH_DMA_SIZE > 0) {
 		/* ORBMCH internal DMA buffer */
 		minfo->pb_orbmch = CALL_PTR_MEMOP(mem, alloc, mem->priv,
-				ORBMCH_DMA_SIZE, NULL, 0);
+						  ORBMCH_DMA_SIZE, NULL, 0);
 		if (IS_ERR_OR_NULL(minfo->pb_orbmch)) {
 			err("failed to allocate buffer for ORBMCH DMA");
 			ret = -ENOMEM;
 			goto err_alloc_orbmch;
 		}
 
-		info("[RSC]memory_alloc(ORBMCH_DMA_SIZE): 0x%08lx\n", minfo->pb_orbmch->size);
+		info("[RSC]memory_alloc(ORBMCH_DMA_SIZE): 0x%08lx\n",
+		     minfo->pb_orbmch->size);
 	} else {
 		minfo->pb_orbmch = NULL;
 	}
@@ -728,7 +831,8 @@ static int is_resourcemgr_init_dynamic_mem(struct is_resourcemgr *resourcemgr)
 	if (minfo->pb_taaisp) {
 		kva = CALL_BUFOP(minfo->pb_taaisp, kvaddr, minfo->pb_taaisp);
 		dva = CALL_BUFOP(minfo->pb_taaisp, dvaddr, minfo->pb_taaisp);
-		info("[RSC] TAAISP_DMA memory kva:0x%pK, dva: %pad\n", kva, &dva);
+		info("[RSC] TAAISP_DMA memory kva:0x%pK, dva: %pad\n", kva,
+		     &dva);
 	}
 
 	if (minfo->pb_tnr) {
@@ -740,7 +844,8 @@ static int is_resourcemgr_init_dynamic_mem(struct is_resourcemgr *resourcemgr)
 	if (minfo->pb_orbmch) {
 		kva = CALL_BUFOP(minfo->pb_orbmch, kvaddr, minfo->pb_orbmch);
 		dva = CALL_BUFOP(minfo->pb_orbmch, dvaddr, minfo->pb_orbmch);
-		info("[RSC] ORBMCH_DMA memory kva:0x%pK, dva: %pad\n", kva, &dva);
+		info("[RSC] ORBMCH_DMA memory kva:0x%pK, dva: %pad\n", kva,
+		     &dva);
 	}
 
 	info("[RSC] %s done\n", __func__);
@@ -771,12 +876,15 @@ static int is_resourcemgr_deinit_dynamic_mem(struct is_resourcemgr *resourcemgr)
 #endif /* #ifdef ENABLE_DYNAMIC_MEM */
 
 #if IS_ENABLED(CONFIG_PABLO_KUNIT_TEST)
-int pablo_kunit_resourcemgr_init_dynamic_mem(struct is_resourcemgr *resourcemgr) {
+int pablo_kunit_resourcemgr_init_dynamic_mem(struct is_resourcemgr *resourcemgr)
+{
 	return is_resourcemgr_init_dynamic_mem(resourcemgr);
 }
 KUNIT_EXPORT_SYMBOL(pablo_kunit_resourcemgr_init_dynamic_mem);
 
-int pablo_kunit_resourcemgr_deinit_dynamic_mem(struct is_resourcemgr *resourcemgr) {
+int pablo_kunit_resourcemgr_deinit_dynamic_mem(
+	struct is_resourcemgr *resourcemgr)
+{
 	return is_resourcemgr_deinit_dynamic_mem(resourcemgr);
 }
 KUNIT_EXPORT_SYMBOL(pablo_kunit_resourcemgr_deinit_dynamic_mem);
@@ -791,9 +899,10 @@ static int is_resourcemgr_alloc_secure_mem(struct is_resourcemgr *resourcemgr)
 	if (IS_ENABLED(SECURE_CAMERA_TAAISP)) {
 		if (TAAISP_DMA_SIZE > 0) {
 			/* 3aa/isp internal DMA buffer */
-			minfo->pb_taaisp_s = CALL_PTR_MEMOP(mem, alloc, mem->priv,
-					TAAISP_DMA_SIZE, "camera_heap",
-					ION_FLAG_CACHED | ION_EXYNOS_FLAG_PROTECTED);
+			minfo->pb_taaisp_s = CALL_PTR_MEMOP(
+				mem, alloc, mem->priv, TAAISP_DMA_SIZE,
+				"camera_heap",
+				ION_FLAG_CACHED | ION_EXYNOS_FLAG_PROTECTED);
 			if (IS_ERR_OR_NULL(minfo->pb_taaisp_s)) {
 				err("failed to allocate buffer for TAAISP_DMA_S");
 				ret = -ENOMEM;
@@ -801,7 +910,7 @@ static int is_resourcemgr_alloc_secure_mem(struct is_resourcemgr *resourcemgr)
 			}
 
 			info("[RSC]memory_alloc(TAAISP_DMA_S): %08lx\n",
-					TAAISP_DMA_SIZE);
+			     TAAISP_DMA_SIZE);
 		} else {
 			minfo->pb_taaisp_s = NULL;
 		}
@@ -809,16 +918,19 @@ static int is_resourcemgr_alloc_secure_mem(struct is_resourcemgr *resourcemgr)
 
 	if (IS_ENABLED(SECURE_CAMERA_TNR)) {
 		if (TNR_S_DMA_SIZE > 0) {
-			minfo->pb_tnr_s = CALL_PTR_MEMOP(mem, alloc, mem->priv,
-					TNR_S_DMA_SIZE, "secure_camera_heap",
-					ION_EXYNOS_FLAG_PROTECTED);
+			minfo->pb_tnr_s =
+				CALL_PTR_MEMOP(mem, alloc, mem->priv,
+					       TNR_S_DMA_SIZE,
+					       "secure_camera_heap",
+					       ION_EXYNOS_FLAG_PROTECTED);
 			if (IS_ERR_OR_NULL(minfo->pb_tnr_s)) {
 				err("failed to allocate buffer for TNR_DMA_S");
 				ret = -ENOMEM;
 				goto err_alloc_tnr_s;
 			}
 
-			info("[RSC]memory_alloc(TNR_DMA_S): %08lx\n", TNR_S_DMA_SIZE);
+			info("[RSC]memory_alloc(TNR_DMA_S): %08lx\n",
+			     TNR_S_DMA_SIZE);
 		} else {
 			minfo->pb_tnr_s = NULL;
 		}
@@ -881,8 +993,8 @@ static int is_resourcemgr_deinit_secure_mem(struct is_resourcemgr *resourcemgr)
 	return ret;
 }
 
-int is_heap_mem_alloc_dynamic(struct is_resourcemgr *resourcemgr,
-	int type, int heap_size)
+int is_heap_mem_alloc_dynamic(struct is_resourcemgr *resourcemgr, int type,
+			      int heap_size)
 {
 	struct is_mem *mem = &resourcemgr->mem;
 	struct is_minfo *minfo = &resourcemgr->minfo;
@@ -894,41 +1006,54 @@ int is_heap_mem_alloc_dynamic(struct is_resourcemgr *resourcemgr,
 
 	if (type == IS_BIN_LIB_HINT_DDK) {
 		if (minfo->kvaddr_heap_ddk) {
-			info_lib("DDK heap is already allocated(addr:0x%pK), use it", minfo->kvaddr_heap_ddk);
+			info_lib(
+				"DDK heap is already allocated(addr:0x%pK), use it",
+				minfo->kvaddr_heap_ddk);
 			return 0;
 		}
 
 #if defined(USE_CAMERA_HEAP)
 		if (IS_ENABLED(DISABLE_DDK_HEAP_FREE))
-			minfo->pb_heap_ddk = CALL_PTR_MEMOP(mem, alloc, mem->priv, heap_size, NULL, 0);
+			minfo->pb_heap_ddk = CALL_PTR_MEMOP(
+				mem, alloc, mem->priv, heap_size, NULL, 0);
 		else
-			minfo->pb_heap_ddk = CALL_PTR_MEMOP(mem, alloc, mem->priv, heap_size, CAMERA_HEAP_NAME, 0);
+			minfo->pb_heap_ddk =
+				CALL_PTR_MEMOP(mem, alloc, mem->priv, heap_size,
+					       CAMERA_HEAP_NAME, 0);
 #else
-		minfo->pb_heap_ddk = CALL_PTR_MEMOP(mem, alloc, mem->priv, heap_size, NULL, 0);
+		minfo->pb_heap_ddk = CALL_PTR_MEMOP(mem, alloc, mem->priv,
+						    heap_size, NULL, 0);
 #endif
 		if (IS_ERR_OR_NULL(minfo->pb_heap_ddk)) {
 			err("failed to allocate buffer for DDK HEAP");
 			return -ENOMEM;
 		}
 
-		minfo->kvaddr_heap_ddk = CALL_BUFOP(minfo->pb_heap_ddk, kvaddr, minfo->pb_heap_ddk);
+		minfo->kvaddr_heap_ddk = CALL_BUFOP(minfo->pb_heap_ddk, kvaddr,
+						    minfo->pb_heap_ddk);
 
-		info_lib("memory_alloc(DDK heap)(V/S): 0x%pK/0x%x", minfo->kvaddr_heap_ddk, heap_size);
+		info_lib("memory_alloc(DDK heap)(V/S): 0x%pK/0x%x",
+			 minfo->kvaddr_heap_ddk, heap_size);
 	} else if (type == IS_BIN_LIB_HINT_RTA) {
 		if (minfo->kvaddr_heap_rta) {
-			info_lib("RTA heap is already allocated(addr:0x%pK), use it", minfo->kvaddr_heap_rta);
+			info_lib(
+				"RTA heap is already allocated(addr:0x%pK), use it",
+				minfo->kvaddr_heap_rta);
 			return 0;
 		}
 
-		minfo->pb_heap_rta = CALL_PTR_MEMOP(mem, alloc, mem->priv, heap_size, NULL, 0);
+		minfo->pb_heap_rta = CALL_PTR_MEMOP(mem, alloc, mem->priv,
+						    heap_size, NULL, 0);
 		if (IS_ERR_OR_NULL(minfo->pb_heap_rta)) {
 			err("failed to allocate buffer for RTA HEAP");
 			return -ENOMEM;
 		}
 
-		minfo->kvaddr_heap_rta = CALL_BUFOP(minfo->pb_heap_rta, kvaddr, minfo->pb_heap_rta);
+		minfo->kvaddr_heap_rta = CALL_BUFOP(minfo->pb_heap_rta, kvaddr,
+						    minfo->pb_heap_rta);
 
-		info_lib("memory_alloc(RTA heap)(V/S): 0x%pK/0x%x", minfo->kvaddr_heap_rta, heap_size);
+		info_lib("memory_alloc(RTA heap)(V/S): 0x%pK/0x%x",
+			 minfo->kvaddr_heap_rta, heap_size);
 	}
 
 	return 0;
@@ -956,8 +1081,8 @@ int is_heap_mem_free(struct is_resourcemgr *resourcemgr)
 	return ret;
 }
 
-void is_bts_scen(struct is_resourcemgr *resourcemgr,
-	unsigned int index, bool enable)
+void is_bts_scen(struct is_resourcemgr *resourcemgr, unsigned int index,
+		 bool enable)
 {
 #if IS_ENABLED(CONFIG_EXYNOS_BTS)
 	int ret = 0;
@@ -980,24 +1105,25 @@ void is_bts_scen(struct is_resourcemgr *resourcemgr,
 
 		if (ret) {
 			err("call bts_%s_scenario is fail (%d:%s)\n",
-				enable ? "add" : "del", scen_idx, name);
+			    enable ? "add" : "del", scen_idx, name);
 		} else {
 			info("call bts_%s_scenario (%d:%s)\n",
-				enable ? "add" : "del", scen_idx, name);
+			     enable ? "add" : "del", scen_idx, name);
 		}
 	}
 #endif
 }
 
 #if IS_ENABLED(CONFIG_EXYNOS_THERMAL) || IS_ENABLED(CONFIG_EXYNOS_THERMAL_V2)
-static int is_tmu_notifier(struct notifier_block *nb,
-	unsigned long state, void *data)
+static int is_tmu_notifier(struct notifier_block *nb, unsigned long state,
+			   void *data)
 {
 	int ret = 0, fps = 0;
 	struct is_resourcemgr *resourcemgr;
 	struct is_core *core;
 	struct is_dvfs_ctrl *dvfs_ctrl;
-#if IS_ENABLED(CONFIG_EXYNOS_SNAPSHOT_THERMAL) || IS_ENABLED(CONFIG_DEBUG_SNAPSHOT)
+#if IS_ENABLED(CONFIG_EXYNOS_SNAPSHOT_THERMAL) ||                              \
+	IS_ENABLED(CONFIG_DEBUG_SNAPSHOT)
 	char *cooling_device_name = "ISP";
 #endif
 	resourcemgr = container_of(nb, struct is_resourcemgr, tmu_notifier);
@@ -1046,9 +1172,11 @@ static int is_tmu_notifier(struct notifier_block *nb,
 	}
 
 #if IS_ENABLED(CONFIG_EXYNOS_SNAPSHOT_THERMAL)
-	exynos_ss_thermal(NULL, 0, cooling_device_name, resourcemgr->limited_fps);
+	exynos_ss_thermal(NULL, 0, cooling_device_name,
+			  resourcemgr->limited_fps);
 #elif IS_ENABLED(CONFIG_DEBUG_SNAPSHOT)
-	dbg_snapshot_thermal(NULL, 0, cooling_device_name, resourcemgr->limited_fps);
+	dbg_snapshot_thermal(NULL, 0, cooling_device_name,
+			     resourcemgr->limited_fps);
 #endif
 
 	return ret;
@@ -1067,8 +1195,8 @@ static int due_to_is(const char *desc, struct is_resourcemgr *rscmgr)
 	return 0;
 }
 
-static int is_itmon_notifier(struct notifier_block *nb,
-	unsigned long state, void *data)
+static int is_itmon_notifier(struct notifier_block *nb, unsigned long state,
+			     void *data)
 {
 	int i;
 	struct is_core *core;
@@ -1084,18 +1212,22 @@ static int is_itmon_notifier(struct notifier_block *nb,
 	if (!itmon)
 		return NOTIFY_DONE;
 
-	if (due_to_is(itmon->port, resourcemgr)
-			|| due_to_is(itmon->dest, resourcemgr)
-			|| due_to_is(itmon->master, resourcemgr)) {
+	if (due_to_is(itmon->port, resourcemgr) ||
+	    due_to_is(itmon->dest, resourcemgr) ||
+	    due_to_is(itmon->master, resourcemgr)) {
 		info("%s: init description : %s\n", __func__, itmon->port);
 		info("%s: target descrition: %s\n", __func__, itmon->dest);
 		info("%s: user description : %s\n", __func__, itmon->master);
-		info("%s: Transaction Type : %s\n", __func__, itmon->read ? "READ" : "WRITE");
-		info("%s: target address   : %lx\n",__func__, itmon->target_addr);
-		info("%s: Power Domain     : %s(%d)\n",__func__, itmon->pd_name, itmon->onoff);
+		info("%s: Transaction Type : %s\n", __func__,
+		     itmon->read ? "READ" : "WRITE");
+		info("%s: target address   : %lx\n", __func__,
+		     itmon->target_addr);
+		info("%s: Power Domain     : %s(%d)\n", __func__,
+		     itmon->pd_name, itmon->onoff);
 
 		for (i = 0; i < IS_STREAM_COUNT; ++i) {
-			if (!test_bit(IS_ISCHAIN_POWER_ON, &core->ischain[i].state))
+			if (!test_bit(IS_ISCHAIN_POWER_ON,
+				      &core->ischain[i].state))
 				continue;
 
 			is_debug_s2d(true, "ITMON error");
@@ -1167,8 +1299,10 @@ int is_resource_cdump(void)
 		if (test_bit(IS_ISCHAIN_CLOSING, &device->state))
 			continue;
 
-		if (device->sensor && !test_bit(IS_ISCHAIN_REPROCESSING, &device->state)) {
-			csi = (struct is_device_csi *)v4l2_get_subdevdata(device->sensor->subdev_csi);
+		if (device->sensor &&
+		    !test_bit(IS_ISCHAIN_REPROCESSING, &device->state)) {
+			csi = (struct is_device_csi *)v4l2_get_subdevdata(
+				device->sensor->subdev_csi);
 			if (csi)
 				csi_hw_cdump_all(csi);
 		}
@@ -1183,16 +1317,21 @@ int is_resource_cdump(void)
 
 			for (j = 0; j < ENTRY_END; j++) {
 				subdev = group->subdev[j];
-				if (subdev && test_bit(IS_SUBDEV_START, &subdev->state)) {
+				if (subdev &&
+				    test_bit(IS_SUBDEV_START, &subdev->state)) {
 					framemgr = GET_SUBDEV_FRAMEMGR(subdev);
 					if (framemgr) {
 						unsigned long flags;
 
 						cinfo("[%d][%s] framemgr dump\n",
-							subdev->instance, subdev->name);
-						framemgr_e_barrier_irqs(framemgr, 0, flags);
-						frame_manager_dump_queues(framemgr);
-						framemgr_x_barrier_irqr(framemgr, 0, flags);
+						      subdev->instance,
+						      subdev->name);
+						framemgr_e_barrier_irqs(
+							framemgr, 0, flags);
+						frame_manager_dump_queues(
+							framemgr);
+						framemgr_x_barrier_irqr(
+							framemgr, 0, flags);
 					}
 				}
 			}
@@ -1200,7 +1339,6 @@ int is_resource_cdump(void)
 			group = group->next;
 		}
 	}
-
 
 	/* dump per core */
 	for (i = 0; i < IS_STREAM_COUNT; ++i) {
@@ -1242,7 +1380,7 @@ int is_kernel_log_dump(bool overwrite)
 		when = resourcemgr->kernel_log_time;
 		usec = do_div(when, NSEC_PER_SEC) / NSEC_PER_USEC;
 		info("kernel log was saved already at [%5lu.%06lu]\n",
-				(unsigned long)when, usec);
+		     (unsigned long)when, usec);
 
 		return -ENOSPC;
 	}
@@ -1259,15 +1397,15 @@ int is_kernel_log_dump(bool overwrite)
 		resourcemgr->kernel_log_time = local_clock();
 
 		info("kernel log saved to %p(%p) from %p\n",
-				resourcemgr->kernel_log_buf,
-				(void *)virt_to_phys(resourcemgr->kernel_log_buf),
-				log_kernel);
+		     resourcemgr->kernel_log_buf,
+		     (void *)virt_to_phys(resourcemgr->kernel_log_buf),
+		     log_kernel);
 #if IS_ENABLED(CONFIG_EXYNOS_SNAPSHOT)
 		memcpy(resourcemgr->kernel_log_buf, log_kernel,
-				exynos_ss_get_item_size("log_kernel"));
+		       exynos_ss_get_item_size("log_kernel"));
 #elif IS_ENABLED(CONFIG_DEBUG_SNAPSHOT)
 		memcpy(resourcemgr->kernel_log_buf, log_kernel,
-				dbg_snapshot_get_item_size("log_kernel"));
+		       dbg_snapshot_get_item_size("log_kernel"));
 #endif
 
 		dumped = 1;
@@ -1321,8 +1459,10 @@ int is_resource_dump(void)
 		if (test_bit(IS_ISCHAIN_CLOSING, &device->state))
 			continue;
 
-		if (device->sensor && !test_bit(IS_ISCHAIN_REPROCESSING, &device->state)) {
-			csi = (struct is_device_csi *)v4l2_get_subdevdata(device->sensor->subdev_csi);
+		if (device->sensor &&
+		    !test_bit(IS_ISCHAIN_REPROCESSING, &device->state)) {
+			csi = (struct is_device_csi *)v4l2_get_subdevdata(
+				device->sensor->subdev_csi);
 			if (csi)
 				csi_hw_dump_all(csi);
 		}
@@ -1335,14 +1475,19 @@ int is_resource_dump(void)
 
 			for (j = 0; j < ENTRY_END; j++) {
 				subdev = group->subdev[j];
-				if (subdev && test_bit(IS_SUBDEV_START, &subdev->state)) {
+				if (subdev &&
+				    test_bit(IS_SUBDEV_START, &subdev->state)) {
 					framemgr = GET_SUBDEV_FRAMEMGR(subdev);
 					if (framemgr) {
 						unsigned long flags;
-						mserr(" dump framemgr..", subdev, subdev);
-						framemgr_e_barrier_irqs(framemgr, 0, flags);
-						frame_manager_print_queues(framemgr);
-						framemgr_x_barrier_irqr(framemgr, 0, flags);
+						mserr(" dump framemgr..",
+						      subdev, subdev);
+						framemgr_e_barrier_irqs(
+							framemgr, 0, flags);
+						frame_manager_print_queues(
+							framemgr);
+						framemgr_x_barrier_irqr(
+							framemgr, 0, flags);
 					}
 				}
 			}
@@ -1357,8 +1502,7 @@ exit:
 }
 
 #ifdef ENABLE_PANIC_HANDLER
-static int is_panic_handler(struct notifier_block *nb, ulong l,
-	void *buf)
+static int is_panic_handler(struct notifier_block *nb, ulong l, void *buf)
 {
 	if (IS_ENABLED(CLOGGING))
 		is_resource_cdump();
@@ -1374,8 +1518,7 @@ static struct notifier_block notify_panic_block = {
 #endif
 
 #if defined(ENABLE_REBOOT_HANDLER)
-static int is_reboot_handler(struct notifier_block *nb, ulong l,
-	void *buf)
+static int is_reboot_handler(struct notifier_block *nb, ulong l, void *buf)
 {
 	struct is_core *core;
 
@@ -1422,8 +1565,8 @@ struct freq_qos_request *is_get_freq_qos(void)
 
 static struct vm_struct pablo_heap_vm;
 static struct vm_struct pablo_heap_rta_vm;
-int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
-	void *private_data, struct platform_device *pdev)
+int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr, void *private_data,
+			 struct platform_device *pdev)
 {
 	int ret = 0;
 	struct device_node *np;
@@ -1499,10 +1642,10 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 		pgprot_t prot = PAGE_KERNEL_EXEC;
 		pablo_bin_vm.addr = (void *)LIB_START;
 		pablo_bin_vm.size = LIB_SIZE;
-		ret = pablo_alloc_n_map(&resourcemgr->mem, &pablo_bin_vm,
-							prot);
+		ret = pablo_alloc_n_map(&resourcemgr->mem, &pablo_bin_vm, prot);
 		if (ret) {
-			probe_err("failed to alloc and map for binary(%d)", ret);
+			probe_err("failed to alloc and map for binary(%d)",
+				  ret);
 			goto p_err;
 		}
 	}
@@ -1511,7 +1654,7 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 		pablo_heap_vm.addr = (void *)HEAP_START;
 		pablo_heap_vm.size = HEAP_SIZE;
 		ret = pablo_alloc_n_map(&resourcemgr->mem, &pablo_heap_vm,
-								PAGE_KERNEL);
+					PAGE_KERNEL);
 		if (ret) {
 			probe_err("failed to alloc and map for heap(%d)", ret);
 			goto p_err;
@@ -1520,9 +1663,10 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 		pablo_heap_rta_vm.addr = (void *)HEAP_RTA_START;
 		pablo_heap_rta_vm.size = HEAP_RTA_SIZE;
 		ret = pablo_alloc_n_map(&resourcemgr->mem, &pablo_heap_rta_vm,
-								PAGE_KERNEL);
+					PAGE_KERNEL);
 		if (ret) {
-			probe_err("failed to alloc and map for heap_rta(%d)", ret);
+			probe_err("failed to alloc and map for heap_rta(%d)",
+				  ret);
 			goto p_err;
 		}
 	}
@@ -1535,7 +1679,8 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 	}
 
 #ifdef ENABLE_PANIC_HANDLER
-	atomic_notifier_chain_register(&panic_notifier_list, &notify_panic_block);
+	atomic_notifier_chain_register(&panic_notifier_list,
+				       &notify_panic_block);
 #endif
 #if defined(ENABLE_REBOOT_HANDLER)
 	register_reboot_notifier(&notify_reboot_block);
@@ -1549,11 +1694,11 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 
 #ifdef ENABLE_KERNEL_LOG_DUMP
 #if IS_ENABLED(CONFIG_EXYNOS_SNAPSHOT)
-	resourcemgr->kernel_log_buf = kzalloc(exynos_ss_get_item_size("log_kernel"),
-						GFP_KERNEL);
+	resourcemgr->kernel_log_buf =
+		kzalloc(exynos_ss_get_item_size("log_kernel"), GFP_KERNEL);
 #elif IS_ENABLED(CONFIG_DEBUG_SNAPSHOT)
-	resourcemgr->kernel_log_buf = kzalloc(dbg_snapshot_get_item_size("log_kernel"),
-						GFP_KERNEL);
+	resourcemgr->kernel_log_buf =
+		kzalloc(dbg_snapshot_get_item_size("log_kernel"), GFP_KERNEL);
 #endif
 #endif
 
@@ -1562,7 +1707,8 @@ int is_resourcemgr_probe(struct is_resourcemgr *resourcemgr,
 	resourcemgr->global_param.state = 0;
 
 #if defined(DISABLE_CORE_IDLE_STATE)
-	INIT_WORK(&resourcemgr->c2_disable_work, is_resourcemgr_c2_disable_work);
+	INIT_WORK(&resourcemgr->c2_disable_work,
+		  is_resourcemgr_c2_disable_work);
 #endif
 
 	INIT_LIST_HEAD(&resourcemgr->regulator_list);
@@ -1572,7 +1718,8 @@ p_err:
 	return ret;
 }
 
-int is_resource_open(struct is_resourcemgr *resourcemgr, u32 rsc_type, void **device)
+int is_resource_open(struct is_resourcemgr *resourcemgr, u32 rsc_type,
+		     void **device)
 {
 	int ret = 0;
 	u32 stream;
@@ -1683,40 +1830,52 @@ static void is_resource_clear(struct is_resourcemgr *resourcemgr)
 {
 	u32 current_min, current_max;
 
-	current_min = (resourcemgr->cluster0 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-	current_max = (resourcemgr->cluster0 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
+	current_min =
+		(resourcemgr->cluster0 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
+	current_max =
+		(resourcemgr->cluster0 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
 	if (current_min) {
 		C0MIN_QOS_DEL();
-		warn("[RSC] cluster0 minfreq is not removed(%dMhz)\n", current_min);
+		warn("[RSC] cluster0 minfreq is not removed(%dMhz)\n",
+		     current_min);
 	}
 
 	if (current_max) {
 		C0MAX_QOS_DEL();
-		warn("[RSC] cluster0 maxfreq is not removed(%dMhz)\n", current_max);
+		warn("[RSC] cluster0 maxfreq is not removed(%dMhz)\n",
+		     current_max);
 	}
 
-	current_min = (resourcemgr->cluster1 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-	current_max = (resourcemgr->cluster1 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
+	current_min =
+		(resourcemgr->cluster1 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
+	current_max =
+		(resourcemgr->cluster1 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
 	if (current_min) {
 		C1MIN_QOS_DEL();
-		warn("[RSC] cluster1 minfreq is not removed(%dMhz)\n", current_min);
+		warn("[RSC] cluster1 minfreq is not removed(%dMhz)\n",
+		     current_min);
 	}
 
 	if (current_max) {
 		C1MAX_QOS_DEL();
-		warn("[RSC] cluster1 maxfreq is not removed(%dMhz)\n", current_max);
+		warn("[RSC] cluster1 maxfreq is not removed(%dMhz)\n",
+		     current_max);
 	}
 
-	current_min = (resourcemgr->cluster2 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-	current_max = (resourcemgr->cluster2 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
+	current_min =
+		(resourcemgr->cluster2 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
+	current_max =
+		(resourcemgr->cluster2 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
 	if (current_min) {
 		C2MIN_QOS_DEL();
-		warn("[RSC] cluster2 minfreq is not removed(%dMhz)\n", current_min);
+		warn("[RSC] cluster2 minfreq is not removed(%dMhz)\n",
+		     current_min);
 	}
 
 	if (current_max) {
 		C2MAX_QOS_DEL();
-		warn("[RSC] cluster2 maxfreq is not removed(%dMhz)\n", current_max);
+		warn("[RSC] cluster2 maxfreq is not removed(%dMhz)\n",
+		     current_max);
 	}
 
 	resourcemgr->cluster0 = 0;
@@ -1789,8 +1948,9 @@ int is_resource_get(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 	/* to secure kernel log when there was an instance that remain open */
 	{
 		struct is_resource *resource_ischain;
-		resource_ischain = GET_RESOURCE(resourcemgr, RESOURCE_TYPE_ISCHAIN);
-		if ((rsc_type != RESOURCE_TYPE_ISCHAIN)	&& rsccount == 1) {
+		resource_ischain =
+			GET_RESOURCE(resourcemgr, RESOURCE_TYPE_ISCHAIN);
+		if ((rsc_type != RESOURCE_TYPE_ISCHAIN) && rsccount == 1) {
 			if (atomic_read(&resource_ischain->rsccount) == 1)
 				is_kernel_log_dump(false);
 		}
@@ -1833,7 +1993,8 @@ int is_resource_get(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 #ifdef ENABLE_DYNAMIC_MEM
 		ret = is_resourcemgr_init_dynamic_mem(resourcemgr);
 		if (ret) {
-			err("is_resourcemgr_init_dynamic_mem is fail(%d)\n", ret);
+			err("is_resourcemgr_init_dynamic_mem is fail(%d)\n",
+			    ret);
 			goto p_err;
 		}
 #endif
@@ -1866,7 +2027,8 @@ int is_resource_get(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 			break;
 		case RESOURCE_TYPE_ISCHAIN:
 			if (test_bit(IS_RM_POWER_ON, &resourcemgr->state)) {
-				err("all resource is not power off(%lX)", resourcemgr->state);
+				err("all resource is not power off(%lX)",
+				    resourcemgr->state);
 				ret = -EINVAL;
 				goto p_err;
 			}
@@ -1884,10 +2046,11 @@ int is_resource_get(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 			}
 
 			if (IS_ENABLED(SECURE_CAMERA_MEM_SHARE)) {
-				ret = is_resourcemgr_init_secure_mem(resourcemgr);
+				ret = is_resourcemgr_init_secure_mem(
+					resourcemgr);
 				if (ret) {
 					err("is_resourcemgr_init_secure_mem is fail(%d)\n",
-							ret);
+					    ret);
 					goto p_err;
 				}
 			}
@@ -1919,15 +2082,15 @@ int is_resource_get(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 		}
 
 		if (!IS_ENABLED(SKIP_LIB_LOAD) &&
-				((rsc_type == RESOURCE_TYPE_ISCHAIN)
-				&& !test_and_set_bit(IS_BINARY_LOADED,
-					&resourcemgr->binary_state))) {
+		    ((rsc_type == RESOURCE_TYPE_ISCHAIN) &&
+		     !test_and_set_bit(IS_BINARY_LOADED,
+				       &resourcemgr->binary_state))) {
 			TIME_LAUNCH_STR(LAUNCH_DDK_LOAD);
 			ret = is_load_bin();
 			if (ret < 0) {
 				err("is_load_bin() is fail(%d)", ret);
 				clear_bit(IS_BINARY_LOADED,
-						&resourcemgr->binary_state);
+					  &resourcemgr->binary_state);
 				goto p_err;
 			}
 			TIME_LAUNCH_END(LAUNCH_DDK_LOAD);
@@ -1959,7 +2122,7 @@ p_err:
 	atomic_inc(&core->rsccount);
 
 	info("[RSC] rsctype: %d, rsccount: device[%d], core[%d]\n", rsc_type,
-			atomic_read(&resource->rsccount), rsccount + 1);
+	     atomic_read(&resource->rsccount), rsccount + 1);
 rsc_err:
 	mutex_unlock(&resourcemgr->rsc_lock);
 
@@ -2028,16 +2191,17 @@ int is_resource_put(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 			break;
 		case RESOURCE_TYPE_ISCHAIN:
 			if (!IS_ENABLED(SKIP_LIB_LOAD) &&
-			    test_bit(IS_BINARY_LOADED, &resourcemgr->binary_state)) {
+			    test_bit(IS_BINARY_LOADED,
+				     &resourcemgr->binary_state)) {
 				is_load_clear();
 				info("is_load_clear() done\n");
 			}
 
 			if (IS_ENABLED(SECURE_CAMERA_FACE)) {
 				if (is_secure_func(core, NULL,
-							IS_SECURE_CAMERA_FACE,
-							core->scenario,
-							SMC_SECCAM_UNPREPARE))
+						   IS_SECURE_CAMERA_FACE,
+						   core->scenario,
+						   SMC_SECCAM_UNPREPARE))
 					err("Failed to is_secure_func(FACE, UNPREPARE)");
 			}
 
@@ -2054,10 +2218,11 @@ int is_resource_put(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 				err("is_interface_close is fail(%d)", ret);
 
 			if (IS_ENABLED(SECURE_CAMERA_MEM_SHARE)) {
-				ret = is_resourcemgr_deinit_secure_mem(resourcemgr);
+				ret = is_resourcemgr_deinit_secure_mem(
+					resourcemgr);
 				if (ret)
 					err("is_resourcemgr_deinit_secure_mem is fail(%d)",
-							ret);
+					    ret);
 			}
 
 			ret = is_debug_close();
@@ -2077,7 +2242,9 @@ int is_resource_put(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 #endif
 
 			if (resourcemgr->cur_bts_scen_idx) {
-				is_bts_scen(resourcemgr, resourcemgr->cur_bts_scen_idx, false);
+				is_bts_scen(resourcemgr,
+					    resourcemgr->cur_bts_scen_idx,
+					    false);
 				resourcemgr->cur_bts_scen_idx = 0;
 			}
 			is_bts_scen(resourcemgr, 0, false);
@@ -2100,7 +2267,8 @@ int is_resource_put(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 #ifdef ENABLE_DYNAMIC_MEM
 		ret = is_resourcemgr_deinit_dynamic_mem(resourcemgr);
 		if (ret)
-			err("is_resourcemgr_deinit_dynamic_mem is fail(%d)", ret);
+			err("is_resourcemgr_deinit_dynamic_mem is fail(%d)",
+			    ret);
 #endif
 
 		is_vendor_resource_clean(core);
@@ -2119,14 +2287,15 @@ int is_resource_put(struct is_resourcemgr *resourcemgr, u32 rsc_type)
 	atomic_dec(&resource->rsccount);
 	atomic_dec(&core->rsccount);
 	info("[RSC] rsctype: %d, rsccount: device[%d], core[%d]\n", rsc_type,
-			atomic_read(&resource->rsccount), rsccount - 1);
+	     atomic_read(&resource->rsccount), rsccount - 1);
 p_err:
 	mutex_unlock(&resourcemgr->rsc_lock);
 
 	return ret;
 }
 
-int is_resource_ioctl(struct is_resourcemgr *resourcemgr, struct v4l2_control *ctrl)
+int is_resource_ioctl(struct is_resourcemgr *resourcemgr,
+		      struct v4l2_control *ctrl)
 {
 	int ret = 0;
 
@@ -2136,122 +2305,132 @@ int is_resource_ioctl(struct is_resourcemgr *resourcemgr, struct v4l2_control *c
 	mutex_lock(&resourcemgr->qos_lock);
 	switch (ctrl->id) {
 	/* APOLLO CPU0~3 */
-	case V4L2_CID_IS_DVFS_CLUSTER0:
-		{
-			u32 current_min, current_max;
-			u32 request_min, request_max;
+	case V4L2_CID_IS_DVFS_CLUSTER0: {
+		u32 current_min, current_max;
+		u32 request_min, request_max;
 
-			current_min = (resourcemgr->cluster0 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-			current_max = (resourcemgr->cluster0 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
-			request_min = (ctrl->value & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-			request_max = (ctrl->value & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
+		current_min = (resourcemgr->cluster0 & CLUSTER_MIN_MASK) >>
+			      CLUSTER_MIN_SHIFT;
+		current_max = (resourcemgr->cluster0 & CLUSTER_MAX_MASK) >>
+			      CLUSTER_MAX_SHIFT;
+		request_min =
+			(ctrl->value & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
+		request_max =
+			(ctrl->value & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
 
-			if (current_min) {
-				if (request_min)
-					C0MIN_QOS_UPDATE(request_min);
-				else
-					C0MIN_QOS_DEL();
-			} else {
-				if (request_min)
-					C0MIN_QOS_ADD(request_min);
-			}
-
-			if (current_max) {
-				if (request_max)
-					C0MAX_QOS_UPDATE(request_max);
-				else
-					C0MAX_QOS_DEL();
-			} else {
-				if (request_max)
-					C0MAX_QOS_ADD(request_max);
-			}
-
-			info("[RSC] cluster0 minfreq : %dMhz\n", request_min);
-			info("[RSC] cluster0 maxfreq : %dMhz\n", request_max);
-			resourcemgr->cluster0 = (request_max << CLUSTER_MAX_SHIFT) | request_min;
+		if (current_min) {
+			if (request_min)
+				C0MIN_QOS_UPDATE(request_min);
+			else
+				C0MIN_QOS_DEL();
+		} else {
+			if (request_min)
+				C0MIN_QOS_ADD(request_min);
 		}
-		break;
+
+		if (current_max) {
+			if (request_max)
+				C0MAX_QOS_UPDATE(request_max);
+			else
+				C0MAX_QOS_DEL();
+		} else {
+			if (request_max)
+				C0MAX_QOS_ADD(request_max);
+		}
+
+		info("[RSC] cluster0 minfreq : %dMhz\n", request_min);
+		info("[RSC] cluster0 maxfreq : %dMhz\n", request_max);
+		resourcemgr->cluster0 =
+			(request_max << CLUSTER_MAX_SHIFT) | request_min;
+	} break;
 	/* ATLAS CPU4~5 */
-	case V4L2_CID_IS_DVFS_CLUSTER1:
-		{
-			u32 current_min, current_max;
-			u32 request_min, request_max;
+	case V4L2_CID_IS_DVFS_CLUSTER1: {
+		u32 current_min, current_max;
+		u32 request_min, request_max;
 
-			current_min = (resourcemgr->cluster1 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-			current_max = (resourcemgr->cluster1 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
-			request_min = (ctrl->value & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-			request_max = (ctrl->value & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
+		current_min = (resourcemgr->cluster1 & CLUSTER_MIN_MASK) >>
+			      CLUSTER_MIN_SHIFT;
+		current_max = (resourcemgr->cluster1 & CLUSTER_MAX_MASK) >>
+			      CLUSTER_MAX_SHIFT;
+		request_min =
+			(ctrl->value & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
+		request_max =
+			(ctrl->value & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
 
-			if (current_min) {
-				if (request_min)
-					C1MIN_QOS_UPDATE(request_min);
-				else
-					C1MIN_QOS_DEL();
-			} else {
-				if (request_min)
-					C1MIN_QOS_ADD(request_min);
-			}
-
-			if (current_max) {
-				if (request_max)
-					C1MAX_QOS_UPDATE(request_max);
-				else
-					C1MAX_QOS_DEL();
-			} else {
-				if (request_max)
-					C1MAX_QOS_ADD(request_max);
-			}
-
-			info("[RSC] cluster1 minfreq : %dMhz\n", request_min);
-			info("[RSC] cluster1 maxfreq : %dMhz\n", request_max);
-			resourcemgr->cluster1 = (request_max << CLUSTER_MAX_SHIFT) | request_min;
+		if (current_min) {
+			if (request_min)
+				C1MIN_QOS_UPDATE(request_min);
+			else
+				C1MIN_QOS_DEL();
+		} else {
+			if (request_min)
+				C1MIN_QOS_ADD(request_min);
 		}
-		break;
+
+		if (current_max) {
+			if (request_max)
+				C1MAX_QOS_UPDATE(request_max);
+			else
+				C1MAX_QOS_DEL();
+		} else {
+			if (request_max)
+				C1MAX_QOS_ADD(request_max);
+		}
+
+		info("[RSC] cluster1 minfreq : %dMhz\n", request_min);
+		info("[RSC] cluster1 maxfreq : %dMhz\n", request_max);
+		resourcemgr->cluster1 =
+			(request_max << CLUSTER_MAX_SHIFT) | request_min;
+	} break;
 	/* ATLAS CPU6~7 */
-	case V4L2_CID_IS_DVFS_CLUSTER2:
-		{
+	case V4L2_CID_IS_DVFS_CLUSTER2: {
 #if defined(PM_QOS_CLUSTER2_FREQ_MAX_DEFAULT_VALUE)
-			u32 current_min, current_max;
-			u32 request_min, request_max;
+		u32 current_min, current_max;
+		u32 request_min, request_max;
 
-			current_min = (resourcemgr->cluster2 & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-			current_max = (resourcemgr->cluster2 & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
-			request_min = (ctrl->value & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
-			request_max = (ctrl->value & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
+		current_min = (resourcemgr->cluster2 & CLUSTER_MIN_MASK) >>
+			      CLUSTER_MIN_SHIFT;
+		current_max = (resourcemgr->cluster2 & CLUSTER_MAX_MASK) >>
+			      CLUSTER_MAX_SHIFT;
+		request_min =
+			(ctrl->value & CLUSTER_MIN_MASK) >> CLUSTER_MIN_SHIFT;
+		request_max =
+			(ctrl->value & CLUSTER_MAX_MASK) >> CLUSTER_MAX_SHIFT;
 
-			if (current_min) {
-				if (request_min)
-					C2MIN_QOS_UPDATE(request_min);
-				else
-					C2MIN_QOS_DEL();
-			} else {
-				if (request_min)
-					C2MIN_QOS_ADD(request_min);
-			}
-
-			if (current_max) {
-				if (request_max)
-					C2MAX_QOS_UPDATE(request_max);
-				else
-					C2MAX_QOS_DEL();
-			} else {
-				if (request_max)
-					C2MAX_QOS_ADD(request_max);
-			}
-
-			info("[RSC] cluster2 minfreq : %dMhz\n", request_min);
-			info("[RSC] cluster2 maxfreq : %dMhz\n", request_max);
-			resourcemgr->cluster2 = (request_max << CLUSTER_MAX_SHIFT) | request_min;
-#endif
+		if (current_min) {
+			if (request_min)
+				C2MIN_QOS_UPDATE(request_min);
+			else
+				C2MIN_QOS_DEL();
+		} else {
+			if (request_min)
+				C2MIN_QOS_ADD(request_min);
 		}
-		break;
+
+		if (current_max) {
+			if (request_max)
+				C2MAX_QOS_UPDATE(request_max);
+			else
+				C2MAX_QOS_DEL();
+		} else {
+			if (request_max)
+				C2MAX_QOS_ADD(request_max);
+		}
+
+		info("[RSC] cluster2 minfreq : %dMhz\n", request_min);
+		info("[RSC] cluster2 maxfreq : %dMhz\n", request_max);
+		resourcemgr->cluster2 =
+			(request_max << CLUSTER_MAX_SHIFT) | request_min;
+#endif
+	} break;
 	}
 	mutex_unlock(&resourcemgr->qos_lock);
 
 	return ret;
 }
 
-void is_resource_set_global_param(struct is_resourcemgr *resourcemgr, void *device)
+void is_resource_set_global_param(struct is_resourcemgr *resourcemgr,
+				  void *device)
 {
 	bool video_mode;
 	struct is_device_ischain *ischain = device;
@@ -2262,7 +2441,8 @@ void is_resource_set_global_param(struct is_resourcemgr *resourcemgr, void *devi
 	atomic_inc(&resourcemgr->global_param.sensor_cnt);
 
 	if (!global_param->state) {
-		video_mode = IS_VIDEO_SCENARIO(ischain->setfile & IS_SETFILE_MASK);
+		video_mode =
+			IS_VIDEO_SCENARIO(ischain->setfile & IS_SETFILE_MASK);
 		global_param->video_mode = video_mode;
 		ischain->hardware->video_mode = video_mode;
 		minfo("video mode %d\n", ischain, video_mode);
@@ -2279,7 +2459,8 @@ void is_resource_set_global_param(struct is_resourcemgr *resourcemgr, void *devi
 	mutex_unlock(&global_param->lock);
 }
 
-void is_resource_clear_global_param(struct is_resourcemgr *resourcemgr, void *device)
+void is_resource_clear_global_param(struct is_resourcemgr *resourcemgr,
+				    void *device)
 {
 	struct is_device_ischain *ischain = device;
 	struct is_global_param *global_param = &resourcemgr->global_param;
@@ -2301,7 +2482,8 @@ void is_resource_clear_global_param(struct is_resourcemgr *resourcemgr, void *de
 	mutex_unlock(&global_param->lock);
 }
 
-int is_resource_update_lic_sram(struct is_resourcemgr *resourcemgr, void *device, bool on)
+int is_resource_update_lic_sram(struct is_resourcemgr *resourcemgr,
+				void *device, bool on)
 {
 	struct is_device_ischain *ischain = device;
 	struct is_device_sensor *sensor;
@@ -2337,20 +2519,20 @@ int is_resource_update_lic_sram(struct is_resourcemgr *resourcemgr, void *device
 		atomic_add(sensor->sensor_width, &lic_sram->taa_sram_sum);
 	} else {
 		lic_sram->taa_sram[taa_id] = 0;
-		taa_sram_sum = atomic_sub_return(sensor->sensor_width, &lic_sram->taa_sram_sum);
+		taa_sram_sum = atomic_sub_return(sensor->sensor_width,
+						 &lic_sram->taa_sram_sum);
 		if (taa_sram_sum < 0) {
-			mwarn("[RSC] Invalid taa_sram_sum %d\n", ischain, taa_sram_sum);
+			mwarn("[RSC] Invalid taa_sram_sum %d\n", ischain,
+			      taa_sram_sum);
 			atomic_set(&lic_sram->taa_sram_sum, 0);
 		}
 	}
 
 p_skip_update_sram:
-	minfo("[RSC] LIC taa_sram([0]%d, [1]%d, [2]%d, [3]%d, [sum]%d)\n", ischain,
-		lic_sram->taa_sram[0],
-		lic_sram->taa_sram[1],
-		lic_sram->taa_sram[2],
-		lic_sram->taa_sram[3],
-		atomic_read(&lic_sram->taa_sram_sum));
+	minfo("[RSC] LIC taa_sram([0]%d, [1]%d, [2]%d, [3]%d, [sum]%d)\n",
+	      ischain, lic_sram->taa_sram[0], lic_sram->taa_sram[1],
+	      lic_sram->taa_sram[2], lic_sram->taa_sram[3],
+	      atomic_read(&lic_sram->taa_sram_sum));
 	return 0;
 }
 
@@ -2364,7 +2546,7 @@ int is_logsync(struct is_interface *itf, u32 sync_id, u32 msg_test_id)
 #ifdef ENABLE_FW_SYNC_LOG
 	ret = is_hw_msg_test(itf, sync_id, msg_test_id);
 	if (ret)
-	err("is_hw_msg_test(%d)", ret);
+		err("is_hw_msg_test(%d)", ret);
 #endif
 	return ret;
 }
@@ -2383,7 +2565,8 @@ struct is_dbuf_q *is_init_dbuf_q(void)
 	}
 
 	for (i_id = 0; i_id < ID_DBUF_MAX; i_id++) {
-		dbuf_q->dbuf_list[i_id] = vzalloc(sizeof(struct is_dbuf_list) * num_list);
+		dbuf_q->dbuf_list[i_id] =
+			vzalloc(sizeof(struct is_dbuf_list) * num_list);
 		if (!dbuf_q->dbuf_list[i_id]) {
 			err("failed to allocate dbuf_list");
 			ret = ERR_PTR(-ENOMEM);
@@ -2403,7 +2586,7 @@ struct is_dbuf_q *is_init_dbuf_q(void)
 	for (i_id = 0; i_id < ID_DBUF_MAX; i_id++) {
 		for (i_list = 0; i_list < num_list; i_list++) {
 			list_add_tail(&dbuf_q->dbuf_list[i_id][i_list].list,
-					&dbuf_q->free_list[i_id]);
+				      &dbuf_q->free_list[i_id]);
 			dbuf_q->free_count[i_id]++;
 		}
 	}
@@ -2439,7 +2622,7 @@ static void is_flush_dma_buf(struct is_dbuf_q *dbuf_q, u32 dma_id, u32 qcnt)
 	while (dbuf_q->queu_count[dma_id] > qcnt) {
 		/* get queue list */
 		dbuf_list = list_first_entry(&dbuf_q->queu_list[dma_id],
-					struct is_dbuf_list, list);
+					     struct is_dbuf_list, list);
 		list_del(&dbuf_list->list);
 		dbuf_q->queu_count[dma_id]--;
 
@@ -2449,7 +2632,8 @@ static void is_flush_dma_buf(struct is_dbuf_q *dbuf_q, u32 dma_id, u32 qcnt)
 	}
 }
 
-void is_q_dbuf_q(struct is_dbuf_q *dbuf_q, struct is_sub_dma_buf *sdbuf, u32 qcnt)
+void is_q_dbuf_q(struct is_dbuf_q *dbuf_q, struct is_sub_dma_buf *sdbuf,
+		 u32 qcnt)
 {
 	int dma_id, num_planes, p;
 	struct is_dbuf_list *dbuf_list;
@@ -2462,14 +2646,15 @@ void is_q_dbuf_q(struct is_dbuf_q *dbuf_q, struct is_sub_dma_buf *sdbuf, u32 qcn
 
 	if (dbuf_q->queu_count[dma_id] > qcnt) {
 		warn("dma_id(%d) dbuf qcnt(%d) > vb2 qcnt(%d)", dma_id,
-			dbuf_q->queu_count[dma_id], qcnt);
+		     dbuf_q->queu_count[dma_id], qcnt);
 
 		is_flush_dma_buf(dbuf_q, dma_id, qcnt);
 	}
 
-	if (!dbuf_q->free_count[dma_id] || list_empty(&dbuf_q->free_list[dma_id])) {
+	if (!dbuf_q->free_count[dma_id] ||
+	    list_empty(&dbuf_q->free_list[dma_id])) {
 		warn("dma_id(%d) free list is NULL[f(%d)/q(%d)]", dma_id,
-			dbuf_q->free_count[dma_id], dbuf_q->queu_count[dma_id]);
+		     dbuf_q->free_count[dma_id], dbuf_q->queu_count[dma_id]);
 
 		mutex_unlock(&dbuf_q->lock[dma_id]);
 		return;
@@ -2477,7 +2662,7 @@ void is_q_dbuf_q(struct is_dbuf_q *dbuf_q, struct is_sub_dma_buf *sdbuf, u32 qcn
 
 	/* get free list */
 	dbuf_list = list_first_entry(&dbuf_q->free_list[dma_id],
-				struct is_dbuf_list, list);
+				     struct is_dbuf_list, list);
 	list_del(&dbuf_list->list);
 	dbuf_q->free_count[dma_id]--;
 
@@ -2493,16 +2678,18 @@ void is_q_dbuf_q(struct is_dbuf_q *dbuf_q, struct is_sub_dma_buf *sdbuf, u32 qcn
 	mutex_unlock(&dbuf_q->lock[dma_id]);
 }
 
-void is_dq_dbuf_q(struct is_dbuf_q *dbuf_q, u32 dma_id, enum dma_data_direction dir)
+void is_dq_dbuf_q(struct is_dbuf_q *dbuf_q, u32 dma_id,
+		  enum dma_data_direction dir)
 {
 	u32 p;
 	struct is_dbuf_list *dbuf_list;
 
 	mutex_lock(&dbuf_q->lock[dma_id]);
 
-	if (!dbuf_q->queu_count[dma_id] || list_empty(&dbuf_q->queu_list[dma_id])) {
+	if (!dbuf_q->queu_count[dma_id] ||
+	    list_empty(&dbuf_q->queu_list[dma_id])) {
 		warn("dma_id(%d) queue list is NULL[f(%d)/q(%d)]", dma_id,
-			dbuf_q->free_count[dma_id], dbuf_q->queu_count[dma_id]);
+		     dbuf_q->free_count[dma_id], dbuf_q->queu_count[dma_id]);
 
 		mutex_unlock(&dbuf_q->lock[dma_id]);
 		return;
@@ -2510,7 +2697,7 @@ void is_dq_dbuf_q(struct is_dbuf_q *dbuf_q, u32 dma_id, enum dma_data_direction 
 
 	/* get queue list */
 	dbuf_list = list_first_entry(&dbuf_q->queu_list[dma_id],
-				struct is_dbuf_list, list);
+				     struct is_dbuf_list, list);
 	list_del(&dbuf_list->list);
 	dbuf_q->queu_count[dma_id]--;
 
@@ -2522,10 +2709,12 @@ void is_dq_dbuf_q(struct is_dbuf_q *dbuf_q, u32 dma_id, enum dma_data_direction 
 
 	/* cache maintenance */
 	for (p = 0; p < IS_MAX_PLANES && dbuf_list->dbuf[p]; p++) {
-		if (dir == DMA_FROM_DEVICE)	/* cache inv */
-			dma_buf_begin_cpu_access(dbuf_list->dbuf[p], DMA_FROM_DEVICE);
-		else if (dir == DMA_TO_DEVICE)	/* cache clean */
-			dma_buf_end_cpu_access(dbuf_list->dbuf[p], DMA_TO_DEVICE);
+		if (dir == DMA_FROM_DEVICE) /* cache inv */
+			dma_buf_begin_cpu_access(dbuf_list->dbuf[p],
+						 DMA_FROM_DEVICE);
+		else if (dir == DMA_TO_DEVICE) /* cache clean */
+			dma_buf_end_cpu_access(dbuf_list->dbuf[p],
+					       DMA_TO_DEVICE);
 		else
 			warn("invalid direction(%d), type(%d)", dir, dma_id);
 	}
