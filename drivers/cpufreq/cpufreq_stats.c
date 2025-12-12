@@ -273,19 +273,22 @@ void cpufreq_stats_record_transition(struct cpufreq_policy *policy,
 	if (unlikely(!stats))
 		return;
 
-	if (unlikely(READ_ONCE(stats->reset_pending)))
-		cpufreq_stats_reset_table(stats);
-
 	old_index = stats->last_index;
 	new_index = freq_table_get_index(stats, new_freq);
 
-	/* We can't do stats->time_in_state[-1]= .. */
-	if (unlikely(old_index == -1 || new_index == -1 || old_index == new_index))
+	if (new_index == -1)
 		return;
 
-	cpufreq_stats_update(stats, stats->last_time);
+	if (unlikely(READ_ONCE(stats->reset_pending)) && old_index != -1)
+		cpufreq_stats_reset_table(stats);
+
+	if (old_index != -1 && old_index != new_index) {
+		cpufreq_stats_update(stats, stats->last_time);
+		stats->trans_table[old_index * stats->max_state + new_index]++;
+		stats->total_trans++;
+	} else if (old_index == -1) {
+		stats->last_time = get_jiffies_64();
+	}
 
 	stats->last_index = new_index;
-	stats->trans_table[old_index * stats->max_state + new_index]++;
-	stats->total_trans++;
 }
