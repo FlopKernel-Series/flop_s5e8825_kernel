@@ -65,7 +65,7 @@ $(info -- KernelSU-Next tag: $(KSU_VERSION_TAG))
 ccflags-y += -DKSU_VERSION_TAG=\"$(KSU_VERSION_TAG)\"
 else
 $(warning "KSU_VERSION_TAG not defined! It is better to make KernelSU-Next a git submodule!")
-ccflags-y += -DKSU_VERSION_TAG=\"v0.0.0\"
+ccflags-y += -DKSU_VERSION_TAG=\"v3.0.0\"
 endif
 
 ifndef KSU_NEXT_MANAGER_SIZE
