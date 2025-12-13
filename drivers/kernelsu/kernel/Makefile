@@ -56,7 +56,7 @@ ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
 else
 # If there is no .git directory, use default version
 $(warning "KSU_GIT_VERSION not defined! It is better to make KernelSU-Next a git repository!")
-ccflags-y += -DKSU_VERSION=0
+ccflags-y += -DKSU_VERSION=32857
 endif
 
 ifdef KSU_GIT_VERSION_VALID
