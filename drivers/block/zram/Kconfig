@@ -51,7 +51,18 @@ config ZRAM_LRU_WRITEBACK_LIMIT
 	default 5120
 	depends on ZRAM_LRU_WRITEBACK
 
+config ZRAM_SIZE_AUTO
+	bool "Auto-detect zram size based on RAM"
+	default n
+	depends on ZRAM
+	help
+	  Automatically sets zram size based on total system memory.
+	  4GB RAM -> 4GB zram
+	  6GB RAM -> 6GB zram
+	  8GB RAM -> 8GB zram
+
 config ZRAM_SIZE_OVERRIDE
 	int "zram size to set from kernel"
+	depends on !ZRAM_SIZE_AUTO
 	range 1 8589934592
 	default 3221225472
