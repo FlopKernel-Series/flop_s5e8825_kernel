@@ -202,6 +202,8 @@ EXPORT_SYMBOL(is_aosp_mode);
 static signed char superfloppy_mode = -1;
 DEFINE_STATIC_KEY_FALSE(superfloppy_mode_key);
 EXPORT_SYMBOL(superfloppy_mode_key);
+DEFINE_STATIC_KEY_FALSE(superfloppy_overclock_mode_key);
+EXPORT_SYMBOL(superfloppy_overclock_mode_key);
 
 static int __init set_superfloppy_mode(char *val)
 {
@@ -217,13 +219,20 @@ static int __init set_superfloppy_mode(char *val)
 			superfloppy_mode = (signed char)tmp;
 	}
 
-	// Update static branch for hot path optimization
+	// Update static branches for hot path optimization
 	if (superfloppy_mode >= 1)
 		static_branch_enable(&superfloppy_mode_key);
 	else
 		static_branch_disable(&superfloppy_mode_key);
 
-	pr_info("Workaround: superfloppy=%d\n", superfloppy_mode);
+	// Update overclock static branch (mode 4 is downclock, not overclock)
+	if ((superfloppy_mode >= 1) && (superfloppy_mode != 4))
+		static_branch_enable(&superfloppy_overclock_mode_key);
+	else
+		static_branch_disable(&superfloppy_overclock_mode_key);
+
+	pr_info("Workaround: superfloppy=%d (overclock=%s)\n", superfloppy_mode,
+		((superfloppy_mode >= 1) && (superfloppy_mode != 4)) ? "yes" : "no");
 
 	return 0;
 }
@@ -240,6 +249,13 @@ signed char get_superfloppy_mode(void)
 	return superfloppy_mode;
 }
 EXPORT_SYMBOL(get_superfloppy_mode);
+
+bool is_superfloppy_overclock_mode(void)
+{
+	/* Mode 4 is underclock, not overclock. */
+	return (superfloppy_mode >= 1) && (superfloppy_mode != 4);
+}
+EXPORT_SYMBOL(is_superfloppy_overclock_mode);
 
 static bool force_perm_mode = false;
 

@@ -222,7 +222,7 @@ void handle_lock_dvfs(int clock) {
 
 GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 {
-	if (!is_superfloppy_mode()) {
+	if (!is_superfloppy_overclock_mode()) {
 		return -EINVAL;
 	}
 	if (sysfs_streq("0", buf) || sysfs_streq("1", buf)) {
@@ -237,7 +237,7 @@ CREATE_SYSFS_KOBJECT_WRITE_FUNCTION(set_gpu_unlock)
 
 GPEX_STATIC ssize_t get_gpu_unlock(char *buf)
 {
-	return snprintf(buf, PAGE_SIZE, "%d\n", is_superfloppy_mode() ? gpu_unlock : 0);
+	return snprintf(buf, PAGE_SIZE, "%d\n", is_superfloppy_overclock_mode() ? gpu_unlock : 0);
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(get_gpu_unlock)
 
@@ -551,6 +551,9 @@ int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 	clk_info = _clk_info;
 
 	gpu_clklck = is_superfloppy_mode() ? 1 : 0;
+
+	/* Set gpu_unlock default: 1 if superfloppy overclock mode, 0 otherwise */
+	gpu_unlock = is_superfloppy_overclock_mode() ? 1 : 0;
 
 	GPEX_UTILS_SYSFS_DEVICE_FILE_ADD(clock, show_clock, set_clock);
 	GPEX_UTILS_SYSFS_DEVICE_FILE_ADD_RO(asv_table, show_asv_table);

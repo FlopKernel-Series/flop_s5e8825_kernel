@@ -30,6 +30,15 @@ static inline bool is_superfloppy_mode_fast(void)
 	return static_branch_unlikely(&superfloppy_mode_key);
 }
 
+bool is_superfloppy_overclock_mode(void);
+
+// Optimized hot path version using static branch
+extern struct static_key_false superfloppy_overclock_mode_key;
+static inline bool is_superfloppy_overclock_mode_fast(void)
+{
+	return static_branch_unlikely(&superfloppy_overclock_mode_key);
+}
+
 bool is_force_perm_mode(void);
 
 bool is_ems_efficient(void);

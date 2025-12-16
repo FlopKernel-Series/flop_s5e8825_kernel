@@ -10,8 +10,8 @@
 #endif
 
 /* GPU Clocks */
-/* Max frequency for the GPU - use OC values if superfloppy mode is enabled */
-#define GPU_FREQ_KHZ_MAX (is_superfloppy_mode_fast() ? 1209000 : 897000)
+/* Max frequency for the GPU - use OC values if superfloppy overclock mode is enabled */
+#define GPU_FREQ_KHZ_MAX (is_superfloppy_overclock_mode_fast() ? 1209000 : 897000)
 #define GPU_FREQ_KHZ_MIN (104000)
 
 /* Stock frequencies */
@@ -30,35 +30,35 @@ static const unsigned int gpu_oc_staycount[] = {5, 5, 5, 5, 5, 5, 5, 3, 3, 2, 2,
 static const unsigned int gpu_oc_mem_freq[] = {2093000, 2093000, 1794000, 1794000, 1539000, 1352000, 1352000, 1014000, 1014000, 845000, 676000, 676000};
 static const unsigned int gpu_oc_lit[] = {1536000, 1440000, 1248000, 1056000, 1056000, 1056000, 1056000, 1056000, 0, 0, 0, 0};
 
-/* Runtime selection based on superfloppy mode */
+/* Runtime selection based on superfloppy overclock mode */
 static inline const unsigned int *gpu_custom_clock(void)
 {
-	return is_superfloppy_mode_fast() ? gpu_oc_clock : gpu_stock_clock;
+	return is_superfloppy_overclock_mode_fast() ? gpu_oc_clock : gpu_stock_clock;
 }
 
 static inline const unsigned int *gpu_custom_min_threshold(void)
 {
-	return is_superfloppy_mode_fast() ? gpu_oc_min_threshold : gpu_stock_min_threshold;
+	return is_superfloppy_overclock_mode_fast() ? gpu_oc_min_threshold : gpu_stock_min_threshold;
 }
 
 static inline const unsigned int *gpu_custom_max_threshold(void)
 {
-	return is_superfloppy_mode_fast() ? gpu_oc_max_threshold : gpu_stock_max_threshold;
+	return is_superfloppy_overclock_mode_fast() ? gpu_oc_max_threshold : gpu_stock_max_threshold;
 }
 
 static inline const unsigned int *gpu_custom_staycount(void)
 {
-	return is_superfloppy_mode_fast() ? gpu_oc_staycount : gpu_stock_staycount;
+	return is_superfloppy_overclock_mode_fast() ? gpu_oc_staycount : gpu_stock_staycount;
 }
 
 static inline const unsigned int *gpu_custom_mem_freq(void)
 {
-	return is_superfloppy_mode_fast() ? gpu_oc_mem_freq : gpu_stock_mem_freq;
+	return is_superfloppy_overclock_mode_fast() ? gpu_oc_mem_freq : gpu_stock_mem_freq;
 }
 
 static inline const unsigned int *gpu_custom_lit(void)
 {
-	return is_superfloppy_mode_fast() ? gpu_oc_lit : gpu_stock_lit;
+	return is_superfloppy_overclock_mode_fast() ? gpu_oc_lit : gpu_stock_lit;
 }
 
 static inline unsigned int gpu_custom_mid(void)
@@ -73,7 +73,7 @@ static inline unsigned int gpu_custom_big(void)
 
 static inline int gpu_custom_array_size(void)
 {
-	return is_superfloppy_mode_fast() ?
+	return is_superfloppy_overclock_mode_fast() ?
 		(sizeof(gpu_oc_clock) / sizeof(gpu_oc_clock[0])) :
 		(sizeof(gpu_stock_clock) / sizeof(gpu_stock_clock[0]));
 }
