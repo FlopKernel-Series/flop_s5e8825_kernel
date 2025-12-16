@@ -182,7 +182,7 @@ struct scan_control {
  */
 int vm_swappiness = 100;
 
-#define DEF_KSWAPD_THREADS_PER_NODE 1
+#define DEF_KSWAPD_THREADS_PER_NODE 2
 static int kswapd_threads = DEF_KSWAPD_THREADS_PER_NODE;
 static int __init kswapd_per_node_setup(char *str)
 {
