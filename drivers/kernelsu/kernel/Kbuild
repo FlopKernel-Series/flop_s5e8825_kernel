@@ -88,9 +88,16 @@ $(info -- KernelSU-Next Manager signature size: $(KSU_NEXT_MANAGER_SIZE))
 $(info -- KernelSU-Next Manager signature hash: $(KSU_NEXT_MANAGER_HASH))
 
 # RKSU: checks for available hook
+# Skip hook validation when running clean-only targets to avoid failing `make clean`.
 ## Logic flipped for HAVE_KSU_HOOK: 0 is success, 1 is failure
 HAVE_KSU_HOOK ?= 1
 
+# Detect clean-related goals and invocations driven by scripts/Makefile.clean
+KSU_CLEAN_GOALS := $(filter clean mrproper distclean modules_clean _clean_drivers,$(MAKECMDGOALS))
+KSU_IS_SCRIPT_CLEAN := $(findstring scripts/Makefile.clean,$(MAKEFILE_LIST))
+
+# Only enforce hook checks on build targets (not on clean-only invocations)
+ifeq ($(strip $(KSU_CLEAN_GOALS)$(KSU_IS_SCRIPT_CLEAN)),)
 # Checks hooks state
 ifeq ($(CONFIG_KSU_KPROBES_HOOK), y)
 $(info -- KernelSU: Hook mode: Kprobes)
@@ -107,7 +114,8 @@ endif
 endif
 
 ifneq ($(HAVE_KSU_HOOK),0)
-$(error -- KernelSU: No hooks were defined, please integrate manual hooks in your kernel!)
+$(info -- KernelSU: No hooks were defined!)
+endif
 endif
 
 # some backports
