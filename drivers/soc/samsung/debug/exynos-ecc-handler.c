@@ -91,8 +91,7 @@ static int ecc_irq_online_cpu(unsigned int cpu)
 			if (cpumask_test_cpu(core, &ecc_desc.ecc_irqs[i].affinity))
 				cpumask_set_cpu(core, &affinity);
 		}
-		if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
-			irq_set_affinity_hint(ecc_desc.ecc_irqs[i].irq, &affinity);
+		irq_set_affinity_hint(ecc_desc.ecc_irqs[i].irq, &affinity);
 	}
 	cpumask_set_cpu(cpu, &ecc_desc.ecc_online_cpus);
 	raw_spin_unlock_irqrestore(&ecc_desc.lock, flags);
@@ -189,8 +188,7 @@ static int exynos_ecc_handler_probe(struct platform_device *pdev)
 
 		cpumap_print_to_pagebuf(true, buf, &affinity_mask);
 		dev_info(&pdev->dev, "affinity of irq%d is %s", irq, buf);
-		if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
-			irq_set_affinity_hint(irq, &affinity_mask);
+		irq_set_affinity_hint(irq, &affinity_mask);
 		idx++;
 	}
 

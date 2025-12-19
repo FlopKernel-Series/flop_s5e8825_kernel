@@ -542,8 +542,7 @@ static int exynos_afm_cpuhp_callback(unsigned int cpu, bool up)
 		 */
 		if (cpumask_weight(&mask) == 1) {
 			afm_dom->cpu = cpu;
-			if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
-				irq_set_affinity_hint(afm_dom->irq, &afm_dom->interrupt_affinity);
+			irq_set_affinity_hint(afm_dom->irq, &afm_dom->interrupt_affinity);
 			control_afm_interrupt(afm_dom, SWI_ENABLE);
 		}
 	} else {
@@ -963,8 +962,7 @@ static int init_afm_domain(struct device_node *dn, struct platform_device *pdev)
 		return -ENODEV;
 	}
 
-	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
-		irq_set_affinity_hint(afm_dom->irq, &afm_dom->interrupt_affinity);
+	irq_set_affinity_hint(afm_dom->irq, &afm_dom->interrupt_affinity);
 
 	cpufreq_cpu_put(policy);
 
@@ -1006,8 +1004,7 @@ static int exynos_afm_resume(struct device *dev)
 	if (!afm_dom_found)
 		return 0;
 
-	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE))
-		irq_set_affinity_hint(afm_dom->irq, &afm_dom->interrupt_affinity);
+	irq_set_affinity_hint(afm_dom->irq, &afm_dom->interrupt_affinity);
 	control_afm_interrupt(afm_dom, SWI_ENABLE);
 
 	return 0;

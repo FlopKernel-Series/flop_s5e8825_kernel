@@ -517,13 +517,11 @@ int npu_interface_open(struct npu_system *system)
 		isr_cpu_affinity = 0;
 
 	npu_info("set the CPU affinity of ISR to %u\n", isr_cpu_affinity);
-	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE)) {
-		for (i = 0; i < system->irq_num; i++) {
-			ret = irq_set_affinity_hint(system->irq[i], cpumask_of(isr_cpu_affinity));
-			if (ret) {
-				npu_err("fail(%d) in irq_set_affinity_hint(%d)\n", ret, i);
-				goto err_probe_irq;
-			}
+	for (i = 0; i < system->irq_num; i++) {
+		ret = irq_set_affinity_hint(system->irq[i], cpumask_of(isr_cpu_affinity));
+		if (ret) {
+			npu_err("fail(%d) in irq_set_affinity_hint(%d)\n", ret, i);
+			goto err_probe_irq;
 		}
 	}
 
@@ -570,10 +568,8 @@ int npu_interface_close(struct npu_system *system)
 
 	dev = &system->pdev->dev;
 
-	if (!IS_ENABLED(CONFIG_IRQ_SBALANCE)) {
-		for (i = 0; i < system->irq_num; i++)
-			irq_set_affinity_hint(system->irq[i], NULL);
-	}
+	for (i = 0; i < system->irq_num; i++)
+		irq_set_affinity_hint(system->irq[i], NULL);
 
 	for (i = 0; i < system->irq_num; i++)
 		devm_free_irq(dev, system->irq[i], NULL);
