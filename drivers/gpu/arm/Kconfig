@@ -50,7 +50,7 @@ source "drivers/gpu/arm/bv_r32p1/Kconfig"
 endif
 
 if MALI_DDK_VALHALL_R38P1
-source "drivers/gpu/arm/bv_r38p1/Kconfig"
+source "drivers/gpu/arm/v_r38p1/Kconfig"
 endif
 
 endmenu
