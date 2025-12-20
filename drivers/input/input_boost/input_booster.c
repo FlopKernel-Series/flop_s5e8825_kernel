@@ -51,6 +51,43 @@ int evdev_mt_event[MAX_DEVICE_TYPE_NUM];
 int trigger_cnt;
 int send_ev_enable;
 
+/* Boost enhancement percentage for touch inputs. */
+#define TOUCH_BOOST_ENHANCE_PERCENT	50
+
+static void enhance_touch_boost_values(struct t_ib_device_tree *ib_dt)
+{
+	int i;
+	int head_val, tail_val;
+
+	/* Only enhance TOUCH and MULTI_TOUCH types */
+	if (ib_dt->type != TOUCH && ib_dt->type != MULTI_TOUCH)
+		return;
+
+	/* Find CLUSTER1 in allowed_resources and enhance its values */
+	for (i = 0; i < allowed_res_count; i++) {
+		if (allowed_resources[i] != CLUSTER1)
+			continue;
+
+		head_val = ib_dt->res[CLUSTER1].head_value;
+		tail_val = ib_dt->res[CLUSTER1].tail_value;
+
+		if (head_val > 0) {
+			head_val += (head_val * TOUCH_BOOST_ENHANCE_PERCENT) / 100;
+			ib_dt->res[CLUSTER1].head_value = head_val;
+		}
+
+		if (tail_val > 0) {
+			tail_val += (tail_val * TOUCH_BOOST_ENHANCE_PERCENT) / 100;
+			ib_dt->res[CLUSTER1].tail_value = tail_val;
+		}
+
+		pr_info(ITAG"Enhanced %s boost: CLUSTER1 head=%d KHz, tail=%d KHz",
+			ib_dt->label, ib_dt->res[CLUSTER1].head_value,
+			ib_dt->res[CLUSTER1].tail_value);
+		break;
+	}
+}
+
 struct t_ib_info* find_release_ib(int dev_type, int key_id);
 struct t_ib_info* create_ib_instance(struct t_ib_trigger* p_IbTrigger, int uniqId);
 bool is_validate_uniqid(unsigned int uniq_id);
@@ -890,6 +927,9 @@ void input_booster_init(void)
 			pr_err(ITAG" Fail Get Tail Time\n");
 			break;
 		}
+
+		/* Enhance touch boost values */
+		enhance_touch_boost_values(ib_dt);
 
 		//Init all type of ib list.
 		INIT_LIST_HEAD(&ib_list[device_count]);
