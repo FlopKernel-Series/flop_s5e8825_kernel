@@ -24,8 +24,267 @@ jobs:
           echo "${{ secrets.CHAT_ID }}" >> "../chat_ci"
           echo "${{ secrets.TOKEN }}" >> "../bot_token"
 
-      - name: Build
+      - name: Build (KernelSU Next)
         run: |
-          ./do_build.sh tkudcbq
-          ./do_build.sh tsudcbq
-          ./do_build.sh tudbq
+          rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
+          rm -rf kernel_build/images || true
+          mkdir -p kernel_build/images
+          ./do_build.sh tkq
+
+      - name: Prepare artifacts (KernelSU Next)
+        id: artifacts_tk
+        run: |
+          set -e
+          shopt -s nullglob
+
+          short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
+          variant_name="KSUNext"
+
+          zips=(kernel_build/*.zip)
+          if [ ${#zips[@]} -ne 1 ]; then
+            echo "ERROR: expected exactly 1 flashable zip, got ${#zips[@]}";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          zip_path="${zips[0]}"
+          zip_name="$(basename "$zip_path")"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+
+          tar_files=(kernel_build/*.tar)
+          if [ ${#tar_files[@]} -lt 1 ]; then
+            echo "ERROR: expected at least 1 tar, got 0";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          tar_bundle="kernel_build/Floppy_TARs-${short_sha}-${variant_name}.zip"
+          rm -f "$tar_bundle"
+          zip -j -q "$tar_bundle" "${tar_files[@]}"
+          echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
+          echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload flashable zip (KernelSU Next)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tk.outputs.zip_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tk.outputs.zip_path }}
+
+      - name: Upload TAR bundle (KernelSU Next)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tk.outputs.tar_bundle_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tk.outputs.tar_bundle_path }}
+
+      - name: Build (SukiSU Ultra)
+        run: |
+          rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
+          rm -rf kernel_build/images || true
+          mkdir -p kernel_build/images
+          ./do_build.sh tsq
+
+      - name: Prepare artifacts (SukiSU Ultra)
+        id: artifacts_ts
+        run: |
+          set -e
+          shopt -s nullglob
+
+          short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
+          variant_name="SukiSU"
+
+          zips=(kernel_build/*.zip)
+          if [ ${#zips[@]} -ne 1 ]; then
+            echo "ERROR: expected exactly 1 flashable zip, got ${#zips[@]}";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          zip_path="${zips[0]}"
+          zip_name="$(basename "$zip_path")"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+
+          tar_files=(kernel_build/*.tar)
+          if [ ${#tar_files[@]} -lt 1 ]; then
+            echo "ERROR: expected at least 1 tar, got 0";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          tar_bundle="kernel_build/Floppy_TARs-${short_sha}-${variant_name}.zip"
+          rm -f "$tar_bundle"
+          zip -j -q "$tar_bundle" "${tar_files[@]}"
+          echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
+          echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload flashable zip (SukiSU Ultra)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_ts.outputs.zip_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_ts.outputs.zip_path }}
+
+      - name: Upload TAR bundle (SukiSU Ultra)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_ts.outputs.tar_bundle_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_ts.outputs.tar_bundle_path }}
+
+      - name: Build (MagicKSU)
+        run: |
+          rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
+          rm -rf kernel_build/images || true
+          mkdir -p kernel_build/images
+          ./do_build.sh tMq
+
+      - name: Prepare artifacts (MagicKSU)
+        id: artifacts_tM
+        run: |
+          set -e
+          shopt -s nullglob
+
+          short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
+          variant_name="MagicKSU"
+
+          zips=(kernel_build/*.zip)
+          if [ ${#zips[@]} -ne 1 ]; then
+            echo "ERROR: expected exactly 1 flashable zip, got ${#zips[@]}";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          zip_path="${zips[0]}"
+          zip_name="$(basename "$zip_path")"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+
+          tar_files=(kernel_build/*.tar)
+          if [ ${#tar_files[@]} -lt 1 ]; then
+            echo "ERROR: expected at least 1 tar, got 0";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          tar_bundle="kernel_build/Floppy_TARs-${short_sha}-${variant_name}.zip"
+          rm -f "$tar_bundle"
+          zip -j -q "$tar_bundle" "${tar_files[@]}"
+          echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
+          echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload flashable zip (MagicKSU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tM.outputs.zip_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tM.outputs.zip_path }}
+
+      - name: Upload TAR bundle (MagicKSU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tM.outputs.tar_bundle_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tM.outputs.tar_bundle_path }}
+
+      - name: Build (RKSU)
+        run: |
+          rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
+          rm -rf kernel_build/images || true
+          mkdir -p kernel_build/images
+          ./do_build.sh tuq
+
+      - name: Prepare artifacts (RKSU)
+        id: artifacts_tu
+        run: |
+          set -e
+          shopt -s nullglob
+
+          short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
+          variant_name="RKSU"
+
+          zips=(kernel_build/*.zip)
+          if [ ${#zips[@]} -ne 1 ]; then
+            echo "ERROR: expected exactly 1 flashable zip, got ${#zips[@]}";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          zip_path="${zips[0]}"
+          zip_name="$(basename "$zip_path")"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+
+          tar_files=(kernel_build/*.tar)
+          if [ ${#tar_files[@]} -lt 1 ]; then
+            echo "ERROR: expected at least 1 tar, got 0";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          tar_bundle="kernel_build/Floppy_TARs-${short_sha}-${variant_name}.zip"
+          rm -f "$tar_bundle"
+          zip -j -q "$tar_bundle" "${tar_files[@]}"
+          echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
+          echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload flashable zip (RKSU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tu.outputs.zip_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tu.outputs.zip_path }}
+
+      - name: Upload TAR bundle (RKSU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tu.outputs.tar_bundle_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tu.outputs.tar_bundle_path }}
+
+      - name: Build (Vanilla)
+        run: |
+          rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
+          rm -rf kernel_build/images || true
+          mkdir -p kernel_build/images
+          ./do_build.sh tq
+
+      - name: Prepare artifacts (Vanilla)
+        id: artifacts_t
+        run: |
+          set -e
+          shopt -s nullglob
+
+          short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
+          variant_name="Vanilla"
+
+          zips=(kernel_build/*.zip)
+          if [ ${#zips[@]} -ne 1 ]; then
+            echo "ERROR: expected exactly 1 flashable zip, got ${#zips[@]}";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          zip_path="${zips[0]}"
+          zip_name="$(basename "$zip_path")"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+
+          tar_files=(kernel_build/*.tar)
+          if [ ${#tar_files[@]} -lt 1 ]; then
+            echo "ERROR: expected at least 1 tar, got 0";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          tar_bundle="kernel_build/Floppy_TARs-${short_sha}-${variant_name}.zip"
+          rm -f "$tar_bundle"
+          zip -j -q "$tar_bundle" "${tar_files[@]}"
+          echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
+          echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload flashable zip (Vanilla)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_t.outputs.zip_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_t.outputs.zip_path }}
+
+      - name: Upload TAR bundle (Vanilla)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_t.outputs.tar_bundle_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_t.outputs.tar_bundle_path }}
