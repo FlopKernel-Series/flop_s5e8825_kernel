@@ -3479,7 +3479,7 @@ static ssize_t disksize_store(struct device *dev,
 		 * Dynamic ZRAM Size Detection:
 		 * totalram_pages() returns usable pages.
 		 *
-		 * Set ZRAM to 50% of RAM to prevent deep-swap thrashing.
+		 * Set custom ZRAM sizes depending on physical ZRAM.
 		 *
 		 * Only apply auto-sizing on first boot. After that, users
 		 * can freely resize ZRAM via sysfs.
@@ -3490,15 +3490,15 @@ static ssize_t disksize_store(struct device *dev,
 
 		if (total_ram_mb > 6200) {
 			disksize = 4ULL * SZ_1G;
-			pr_info("Detected 8GB RAM variant (usable: %lu MB), setting ZRAM to 4GB (50%%)",
+			pr_info("Detected 8GB RAM variant (usable: %lu MB), setting ZRAM to 4GB",
 				total_ram_mb);
 		} else if (total_ram_mb > 4200) {
 			disksize = 3ULL * SZ_1G;
-			pr_info("Detected 6GB RAM variant (usable: %lu MB), setting ZRAM to 3GB (50%%)",
+			pr_info("Detected 6GB RAM variant (usable: %lu MB), setting ZRAM to 3GB",
 				total_ram_mb);
 		} else {
-			disksize = 2ULL * SZ_1G;
-			pr_info("Detected 4GB RAM variant (usable: %lu MB), setting ZRAM to 2GB (50%%)",
+			disksize = 3ULL * SZ_1G;
+			pr_info("Detected 4GB RAM variant (usable: %lu MB), setting ZRAM to 3GB",
 				total_ram_mb);
 		}
 		zram_auto_size_applied = true;
