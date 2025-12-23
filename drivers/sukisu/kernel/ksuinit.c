@@ -19,22 +19,21 @@
 #include "throne_tracker.h"
 #ifdef CONFIG_KSU_SYSCALL_HOOK
 #include "syscall_handler.h"
-#endif // #ifndef CONFIG_KSU_SUSFS
+#endif
 #if defined(CONFIG_KSU_MANUAL_HOOK) || defined(CONFIG_KSU_SUSFS)
 #include "setuid_hook.h"
 #include "sucompat.h"
-#endif
+#endif // #ifndef CONFIG_KSU_SUSFS
 #include "ksud.h"
 #include "supercalls.h"
 #include "ksu.h"
+#include "file_wrapper.h"
 
-struct cred* ksu_cred;
+struct cred *ksu_cred;
 
 extern void __init ksu_lsm_hook_init(void);
 
 #include "sulog.h"
-#include "throne_comm.h"
-#include "dynamic_manager.h"
 
 void sukisu_custom_config_init(void)
 {
@@ -42,9 +41,6 @@ void sukisu_custom_config_init(void)
 
 void sukisu_custom_config_exit(void)
 {
-	ksu_uid_exit();
-	ksu_throne_comm_exit();
-	ksu_dynamic_manager_exit();
 #if __SULOG_GATE
 	ksu_sulog_exit();
 #endif
@@ -58,13 +54,20 @@ int __init kernelsu_init(void)
 #endif
 
 #ifdef CONFIG_KSU_DEBUG
-	pr_alert("*************************************************************");
-	pr_alert("**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
-	pr_alert("**														 **");
-	pr_alert("**		 You are running KernelSU in DEBUG mode		  **");
-	pr_alert("**														 **");
-	pr_alert("**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
-	pr_alert("*************************************************************");
+	pr_alert(
+		"*************************************************************");
+	pr_alert(
+		"**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
+	pr_alert(
+		"**														 **");
+	pr_alert(
+		"**		 You are running KernelSU in DEBUG mode		  **");
+	pr_alert(
+		"**														 **");
+	pr_alert(
+		"**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
+	pr_alert(
+		"*************************************************************");
 #endif
 
 	ksu_cred = prepare_creds();
@@ -101,6 +104,8 @@ int __init kernelsu_init(void)
 	ksu_ksud_init();
 #endif // #ifndef CONFIG_KSU_SUSFS
 
+	ksu_file_wrapper_init();
+
 #ifdef MODULE
 #ifndef CONFIG_KSU_DEBUG
 	kobject_del(&THIS_MODULE->mkobj.kobj);
@@ -109,7 +114,9 @@ int __init kernelsu_init(void)
 	return 0;
 }
 
-#if defined(CONFIG_KSU_SYSCALL_HOOK) || defined(CONFIG_KSU_SUSFS)
+#if defined(CONFIG_KSU_SYSCALL_HOOK) || defined(CONFIG_KSU_SUSFS) ||          \
+	(LINUX_VERSION_CODE >= KERNEL_VERSION(6, 8, 0) &&                      \
+	 defined(CONFIG_KSU_MANUAL_HOOK))
 extern void ksu_observer_exit(void);
 #endif
 
@@ -119,7 +126,9 @@ void kernelsu_exit(void)
 
 	ksu_throne_tracker_exit();
 
-#if defined(CONFIG_KSU_SYSCALL_HOOK) || defined(CONFIG_KSU_SUSFS)
+#if defined(CONFIG_KSU_SYSCALL_HOOK) || defined(CONFIG_KSU_SUSFS) ||          \
+	(LINUX_VERSION_CODE >= KERNEL_VERSION(6, 8, 0) &&                      \
+	 defined(CONFIG_KSU_MANUAL_HOOK))
 	ksu_observer_exit();
 #endif
 #ifndef CONFIG_KSU_SUSFS

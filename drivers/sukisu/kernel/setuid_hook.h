@@ -7,7 +7,8 @@
 void ksu_setuid_hook_init(void);
 void ksu_setuid_hook_exit(void);
 
-int ksu_handle_setuid_common(uid_t new_uid, uid_t old_uid, uid_t new_euid,
-				 uid_t old_euid);
+#ifndef CONFIG_KSU_SUSFS
+int ksu_handle_setuid_common(uid_t new_uid, uid_t old_uid, uid_t new_euid);
+#endif
 
 #endif

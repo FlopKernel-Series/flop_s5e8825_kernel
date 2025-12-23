@@ -105,8 +105,8 @@ struct ksu_add_try_umount_cmd {
 };
 
 struct ksu_list_try_umount_cmd {
-    __aligned_u64 arg; // User buffer
-    __u32 buf_size; // Buffer size provided by userspace
+	__aligned_u64 arg; // User buffer
+	__u32 buf_size; // Buffer size provided by userspace
 };
 
 #define KSU_UMOUNT_WIPE 0 // ignore everything and wipe list
@@ -124,20 +124,6 @@ struct ksu_hook_type_cmd {
 
 struct ksu_enable_kpm_cmd {
 	__u8 enabled; // Output: true if KPM is enabled
-};
-
-struct ksu_dynamic_manager_cmd {
-	struct dynamic_manager_user_config config; // Input/Output: dynamic manager config
-};
-
-struct ksu_get_managers_cmd {
-	struct manager_list_info manager_info; // Output: manager list information
-};
-
-struct ksu_enable_uid_scanner_cmd {
-	__u32 operation; // Input: operation type (UID_SCANNER_OP_GET_STATUS, UID_SCANNER_OP_TOGGLE, UID_SCANNER_OP_CLEAR_ENV)
-	__u32 enabled; // Input: enable or disable (for UID_SCANNER_OP_TOGGLE)
-	void __user *status_ptr; // Input: pointer to store status (for UID_SCANNER_OP_GET_STATUS)
 };
 
 #ifdef CONFIG_KSU_MANUAL_SU
@@ -172,13 +158,10 @@ struct ksu_manual_su_cmd {
 #define KSU_IOCTL_GET_FULL_VERSION _IOC(_IOC_READ, 'K', 100, 0)
 #define KSU_IOCTL_HOOK_TYPE _IOC(_IOC_READ, 'K', 101, 0)
 #define KSU_IOCTL_ENABLE_KPM _IOC(_IOC_READ, 'K', 102, 0)
-#define KSU_IOCTL_DYNAMIC_MANAGER _IOC(_IOC_READ | _IOC_WRITE, 'K', 103, 0)
-#define KSU_IOCTL_GET_MANAGERS _IOC(_IOC_READ | _IOC_WRITE, 'K', 104, 0)
-#define KSU_IOCTL_ENABLE_UID_SCANNER _IOC(_IOC_READ | _IOC_WRITE, 'K', 105, 0)
 #ifdef CONFIG_KSU_MANUAL_SU
 #define KSU_IOCTL_MANUAL_SU _IOC(_IOC_READ | _IOC_WRITE, 'K', 106, 0)
 #endif
-#define KSU_IOCTL_LIST_TRY_UMOUNT _IOC(_IOC_READ|_IOC_WRITE, 'K', 301, 0)
+#define KSU_IOCTL_LIST_TRY_UMOUNT _IOC(_IOC_READ | _IOC_WRITE, 'K', 200, 0)
 
 // IOCTL handler types
 typedef int (*ksu_ioctl_handler_t)(void __user *arg);
@@ -192,11 +175,11 @@ struct ksu_ioctl_cmd_map {
 	ksu_perm_check_t perm_check; // Permission check function
 };
 
-#define KSU_IOCTL(CMD, NAME, HANDLER, PERM)									\
-	{ .cmd = KSU_IOCTL_##CMD,											  \
-	  .name = NAME,														\
-	  .handler = HANDLER,												  \
-	  .perm_check = PERM }
+#define KSU_IOCTL(CMD, NAME, HANDLER, PERM)                                    \
+	{                                                                      \
+		.cmd = KSU_IOCTL_##CMD, .name = NAME, .handler = HANDLER,      \
+		.perm_check = PERM                                             \
+	}
 
 // Install KSU fd to current process
 int ksu_install_fd(void);

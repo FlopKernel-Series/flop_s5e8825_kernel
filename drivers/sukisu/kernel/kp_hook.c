@@ -2,18 +2,10 @@
 #include <linux/compat.h>
 #include <linux/workqueue.h>
 
-#include "arch.h"
-#include "kp_hook.h"
-#include "ksu.h"
-#include "ksud.h"
-#include "kernel_compat.h"
-#include "supercalls.h"
-#include "kp_util.h"
-
-#define DECL_KP(name, sym, pre)												\
-	struct kprobe name = {												 \
-		.symbol_name = sym,											\
-		.pre_handler = pre,											\
+#define DECL_KP(name, sym, pre)                                                \
+	struct kprobe name = {                                                 \
+		.symbol_name = sym,                                            \
+		.pre_handler = pre,                                            \
 	}
 
 // ksud.c
@@ -40,8 +32,8 @@ static int sys_execve_handler_pre(struct kprobe *p, struct pt_regs *regs)
 
 	filename_in.name = path;
 	filename_p = &filename_in;
-	return ksu_handle_execveat_ksud(AT_FDCWD, &filename_p, &argv, NULL,
-					NULL);
+	return ksu_handle_execveat_ksud((int *)AT_FDCWD, &filename_p, &argv,
+					NULL, NULL);
 }
 
 static int sys_read_handler_pre(struct kprobe *p, struct pt_regs *regs)
@@ -49,7 +41,7 @@ static int sys_read_handler_pre(struct kprobe *p, struct pt_regs *regs)
 	struct pt_regs *real_regs = PT_REAL_REGS(regs);
 	unsigned int fd = PT_REGS_PARM1(real_regs);
 	char __user **buf_ptr = (char __user **)&PT_REGS_PARM2(real_regs);
-	size_t count_ptr = (size_t *)&PT_REGS_PARM3(real_regs);
+	size_t *count_ptr = (size_t *)&PT_REGS_PARM3(real_regs);
 
 	return ksu_handle_sys_read(fd, buf_ptr, count_ptr);
 }
@@ -149,10 +141,10 @@ static int reboot_handler_pre(struct kprobe *p, struct pt_regs *regs)
 	struct pt_regs *real_regs = PT_REAL_REGS(regs);
 	int magic1 = (int)PT_REGS_PARM1(real_regs);
 	int magic2 = (int)PT_REGS_PARM2(real_regs);
-	int cmd = (int)PT_REGS_PARM3(real_regs);
 	void __user **arg = (void __user **)&PT_REGS_SYSCALL_PARM4(real_regs);
 
-	return ksu_handle_sys_reboot(magic1, magic2, cmd, arg);
+	// cmd is not really used here, so we NULL!
+	return ksu_handle_sys_reboot(magic1, magic2, NULL, arg);
 }
 
 static DECL_KP(reboot_kp, REBOOT_SYMBOL, reboot_handler_pre);

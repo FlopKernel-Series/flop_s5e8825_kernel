@@ -5,9 +5,6 @@ ksu_obj-y += apk_sign.o
 ksu_obj-y += sucompat.o
 ksu_obj-y += throne_tracker.o
 ksu_obj-y += setuid_hook.o
-ksu_obj-y += lsm_hook.o
-ksu_obj-$(CONFIG_KSU_SUSFS) += pkg_observer.o
-ksu_obj-$(CONFIG_KSU_SYSCALL_HOOK) += kp_hook.o kp_util.o syscall_handler.o pkg_observer.o
 ksu_obj-y += kernel_compat.o
 ksu_obj-y += kernel_umount.o
 ksu_obj-y += supercalls.o
@@ -15,12 +12,12 @@ ksu_obj-y += feature.o
 ksu_obj-y += ksud.o
 ksu_obj-y += seccomp_cache.o
 ksu_obj-y += file_wrapper.o
+ksu_obj-y += su_mount_ns.o
+ksu_obj-y += shim.o
 ksu_obj-y += selinux/selinux.o
 ksu_obj-y += selinux/sepolicy.o
 ksu_obj-y += selinux/rules.o
 
-ksu_obj-y += dynamic_manager.o
-ksu_obj-y += throne_comm.o
 ksu_obj-y += sulog.o
 ksu_obj-$(CONFIG_KSU_MANUAL_SU) += manual_su.o
 obj-$(CONFIG_KPM) += kpm/
@@ -137,7 +134,7 @@ ccflags-y += -DKSU_COMPAT_HAS_CURRENT_SID
 endif
 
 ifeq ($(shell grep -q "struct selinux_state " $(srctree)/security/selinux/include/security.h; echo $$?),0)
-ccflags-y += -DKSU_COMPAT_HAS_SELINUX_STATE
+ccflags-y += -DKSU_COMPAT_USE_SELINUX_STATE
 endif
 
 # Handle optional backports
@@ -157,6 +154,10 @@ ifeq ($(shell grep -q "int\s\+path_umount" $(srctree)/fs/namespace.c; echo $$?),
 ccflags-y += -DKSU_HAS_PATH_UMOUNT
 endif
 
+ifeq ($(shell grep -q "int\s\+path_mount" $(srctree)/fs/namespace.c; echo $$?),0)
+ccflags-y += -DKSU_HAS_PATH_MOUNT
+endif
+
 ifeq ($(shell grep -q "inode_security_struct\s\+\*selinux_inode" $(srctree)/security/selinux/include/objsec.h; echo $$?),0)
 ccflags-y += -DKSU_OPTIONAL_SELINUX_INODE
 endif
@@ -171,11 +172,13 @@ endif
 
 # some old kernel backport this, let's check if put_seccomp_filter still exist
 ifneq ($(shell grep -wq "put_seccomp_filter" $(srctree)/kernel/seccomp.c $(srctree)/include/linux/seccomp.h; echo $$?),0)
+ifeq ($(shell grep -wq "seccomp_filter_release" $(srctree)/kernel/seccomp.c $(srctree)/include/linux/seccomp.h; echo $$?),0)
 ccflags-y += -DKSU_OPTIONAL_SECCOMP_FILTER_RELEASE
 endif
+endif
 
-ifeq ($(shell grep -q "anon_inode_getfd_secure" $(srctree)/fs/anon_inodes.c; echo $$?),0)
-ccflags-y += -DKSU_HAS_GETFD_SECURE
+ifeq ($(shell grep -q "security_inode_init_security_anon" $(srctree)/include/linux/security.h; echo $$?),0)
+ccflags-y += -DKSU_COMPAT_HAS_INIT_SEC_ANON
 endif
 
 # Checks Samsung
@@ -207,8 +210,9 @@ ccflags-y += -DKSU_MANAGER_PACKAGE=\"$(KSU_MANAGER_PACKAGE)\"
 $(info -- KernelSU Manager package name: $(KSU_MANAGER_PACKAGE))
 endif
 
-ccflags-y += -Wno-strict-prototypes -Wno-int-conversion -Wno-gcc-compat
-ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-missing-prototypes
+ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes
+ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-variable -Wno-missing-braces
+ccflags-y += -Wno-int-to-pointer-cast -Wno-declaration-after-statement
 
 ## For susfs stuff ##
 ifeq ($(shell test -e $(srctree)/fs/susfs.c; echo $$?),0)
