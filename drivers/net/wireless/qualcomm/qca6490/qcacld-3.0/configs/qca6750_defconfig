@@ -1,3 +1,0 @@
-CONFIG_CNSS_QCA6750 := y
-$(warning "### DBG CONFIG_CNSS_QCA6750")
-include $(WLAN_ROOT)/configs/default_defconfig
