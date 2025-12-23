@@ -110,7 +110,6 @@ fi
 ## Parse arguments
 DO_KSU=0
 DO_SUKI=0
-DO_MKSU=0
 DO_RKSU=0
 DO_CLEAN=0
 DO_MENUCONFIG=0
@@ -134,10 +133,6 @@ for arg in "$@"; do
     if [[ "$arg" == *s* ]]; then
         echo "INFO: SukiSU argument passed, a SukiSU build will be made"
         DO_SUKI=1
-    fi
-    if [[ "$arg" == *M* ]]; then
-        echo "INFO: MagicKSU argument passed, a MagicKSU build will be made"
-        DO_MKSU=1
     fi
     if [[ "$arg" == *u* ]]; then
         echo "INFO: RKSU argument passed, a RKSU build will be made"
@@ -187,7 +182,6 @@ done
 KSU_COUNT=0
 [ "$DO_KSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 [ "$DO_SUKI" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
-[ "$DO_MKSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 [ "$DO_RKSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 
 if [ "$KSU_COUNT" -gt 1 ]; then
@@ -210,9 +204,6 @@ if [ "$DO_KSU" == "1" ]; then
 elif [ "$DO_SUKI" == "1" ]; then
     FK_TYPE="SukiSU-Ultra"
     FK_TYPE_SHORT="SKS"
-elif [ "$DO_MKSU" == "1" ]; then
-    FK_TYPE="MagicKSU"
-    FK_TYPE_SHORT="MKS"
 elif [ "$DO_RKSU" == "1" ]; then
     FK_TYPE="RKSU"
     FK_TYPE_SHORT="RK"
