@@ -14,33 +14,12 @@
 // SukiSU Ultra kernel su version full strings
 extern bool ksu_uid_scanner_enabled;
 
-#ifndef KSU_VERSION_FULL 
+#ifndef KSU_VERSION_FULL
 #define KSU_VERSION_FULL "v3.x-00000000@unknown"
 #endif
 #define KSU_FULL_VERSION_STRING 255
 
-#define DYNAMIC_MANAGER_OP_SET 0
-#define DYNAMIC_MANAGER_OP_GET 1
-#define DYNAMIC_MANAGER_OP_CLEAR 2
-
-#define UID_SCANNER_OP_GET_STATUS 0
-#define UID_SCANNER_OP_TOGGLE 1
-#define UID_SCANNER_OP_CLEAR_ENV 2
-
-struct dynamic_manager_user_config {
-	unsigned int operation;
-	unsigned int size;
-	char hash[65];
-};
-
-struct manager_list_info {
-	int count;
-	struct {
-		uid_t uid;
-		int signature_index;
-	} managers[2];
-};
-
+#if 0
 static inline int startswith(char *s, char *prefix)
 {
 	return strncmp(s, prefix, strlen(prefix));
@@ -54,7 +33,8 @@ static inline int endswith(const char *s, const char *t)
 		return 1;
 	return strcmp(s + slen - tlen, t);
 }
+#endif
 
-extern struct cred* ksu_cred;
+extern struct cred *ksu_cred;
 
 #endif

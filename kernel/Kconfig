@@ -41,9 +41,10 @@ config KSU_SYSCALL_HOOK
 	help
 	  Enable KPROBES, KRETPROBES and TRACEPOINT hook for KernelSU core.
 	  This should not be used on kernel below 5.10.
+	  
 config KSU_NONE_HOOK
 	bool "KernelSU none hook mode."
-	depends on KSU && KSU != m
+	depends on KSU && KSU != m && KSU_SUSFS
 	help
 	  Enable susfs.
 
