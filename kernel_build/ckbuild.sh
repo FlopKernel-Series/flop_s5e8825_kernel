@@ -205,7 +205,7 @@ elif [ "$DO_SUKI" == "1" ]; then
     FK_TYPE="SukiSU-Ultra"
     FK_TYPE_SHORT="SKS"
 elif [ "$DO_KOWSU" == "1" ]; then
-    FK_TYPE="KowSU-NOSUS"
+    FK_TYPE="KowSU"
     FK_TYPE_SHORT="KWS"
 else
     FK_TYPE="Vanilla"
