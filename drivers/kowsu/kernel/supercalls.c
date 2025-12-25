@@ -771,72 +771,72 @@ static void ksu_install_fd_tw_func(struct callback_head *cb)
     kfree(tw);
 }
 
-// downstream: make sure to pass arg as reference, this can allow us to extend things.
-static int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg)
-{
+// // downstream: make sure to pass arg as reference, this can allow us to extend things.
+// static int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg)
+// {
 
-    if (magic1 != KSU_INSTALL_MAGIC1)
-    	return 0;
+//     if (magic1 != KSU_INSTALL_MAGIC1)
+//     	return 0;
 
-    pr_info("sys_reboot: intercepted call! magic: 0x%x id: %d\n", magic1, magic2);
+//     pr_info("sys_reboot: intercepted call! magic: 0x%x id: %d\n", magic1, magic2);
 
-    // arg4 = (unsigned long)PT_REGS_SYSCALL_PARM4(real_regs);
-    // downstream: dereference arg as arg4 so we can be inline to upstream
-    void __user *arg4 = (void __user *)*arg;
+//     // arg4 = (unsigned long)PT_REGS_SYSCALL_PARM4(real_regs);
+//     // downstream: dereference arg as arg4 so we can be inline to upstream
+//     void __user *arg4 = (void __user *)*arg;
 
-    // Check if this is a request to install KSU fd
-    if (magic2 == KSU_INSTALL_MAGIC2) {
-        struct ksu_install_fd_tw *tw;
+//     // Check if this is a request to install KSU fd
+//     if (magic2 == KSU_INSTALL_MAGIC2) {
+//         struct ksu_install_fd_tw *tw;
 
-        tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
-        if (!tw)
-            return 0;
+//         tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
+//         if (!tw)
+//             return 0;
 
-        tw->outp = (int __user *)arg4;
-        tw->cb.func = ksu_install_fd_tw_func;
+//         tw->outp = (int __user *)arg4;
+//         tw->cb.func = ksu_install_fd_tw_func;
 
-        if (task_work_add(current, &tw->cb, TWA_RESUME)) {
-            kfree(tw);
-            pr_warn("install fd add task_work failed\n");
-        }
-    }
+//         if (task_work_add(current, &tw->cb, TWA_RESUME)) {
+//             kfree(tw);
+//             pr_warn("install fd add task_work failed\n");
+//         }
+//     }
 
-    // downstream: extensions go here!
+//     // downstream: extensions go here!
 
-    // extensions
-    u64 reply = (u64)*arg;
+//     // extensions
+//     u64 reply = (u64)*arg;
 
-    if (magic2 == CHANGE_MANAGER_UID) {
-        // only root is allowed for this command
-        if (current_uid().val != 0)
-            return 0;
+//     if (magic2 == CHANGE_MANAGER_UID) {
+//         // only root is allowed for this command
+//         if (current_uid().val != 0)
+//             return 0;
 
-        pr_info("sys_reboot: ksu_set_manager_appid to: %d\n", cmd);
-        ksu_set_manager_appid(cmd);
+//         pr_info("sys_reboot: ksu_set_manager_appid to: %d\n", cmd);
+//         ksu_set_manager_appid(cmd);
 
-        if (cmd == ksu_get_manager_appid()) {
-            if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
-            	pr_info("sys_reboot: reply fail\n");
-        }
+//         if (cmd == ksu_get_manager_appid()) {
+//             if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
+//             	pr_info("sys_reboot: reply fail\n");
+//         }
 
-        return 0;
-    }
+//         return 0;
+//     }
 
-    if (magic2 == GET_SULOG_DUMP_V2) {
-        // only root is allowed for this command
-        if (current_uid().val != 0)
-            return 0;
+//     if (magic2 == GET_SULOG_DUMP_V2) {
+//         // only root is allowed for this command
+//         if (current_uid().val != 0)
+//             return 0;
 
-        int ret = send_sulog_dump(*arg);
-            if (ret)
-                return 0;
+//         int ret = send_sulog_dump(*arg);
+//             if (ret)
+//                 return 0;
 
-        if (copy_to_user((void __user *)*arg, &reply, sizeof(reply) ))
-            return 0;
-    }
+//         if (copy_to_user((void __user *)*arg, &reply, sizeof(reply) ))
+//             return 0;
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
 
 #ifndef CONFIG_KSU_SUSFS
 static int reboot_handler_pre(struct kprobe *p, struct pt_regs *regs)
