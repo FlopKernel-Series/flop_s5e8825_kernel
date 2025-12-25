@@ -21,6 +21,7 @@ obj-y				+= pci/
 # Kernel SU variants
 obj-$(CONFIG_KSU_NEXT)		+= kernelsu/kernel/
 obj-$(CONFIG_KSU_SUKI)		+= sukisu/kernel/
+obj-$(CONFIG_KSU_KOWSU)		+= kowsu/kernel/
 
 obj-$(CONFIG_PARISC)		+= parisc/
 obj-$(CONFIG_RAPIDIO)		+= rapidio/

@@ -22,6 +22,7 @@ build() {
     FRAGMENTS=""
     [ "$DO_KSU" = "1" ] && FRAGMENTS="$FRAGMENTS ksu.config"
     [ "$DO_SUKI" = "1" ] && FRAGMENTS="$FRAGMENTS sukisu.config"
+    [ "$DO_KOWSU" = "1" ] && FRAGMENTS="$FRAGMENTS kowsu.config"
 
     if [ "$DO_QUIET" = "1" ]; then
         make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS > /dev/null | tee log.txt

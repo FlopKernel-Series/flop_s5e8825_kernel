@@ -2,8 +2,8 @@ menu "KernelSU"
 
 config KSU
 	tristate "KernelSU function support"
-	depends on KPROBES
-	default y
+	depends on KPROBES && KSU_KOWSU
+	default y if KSU_KOWSU
 	help
 	  Enable kernel-level root privileges on Android System.
 	  Requires CONFIG_KPROBES for kernel hooking support.
