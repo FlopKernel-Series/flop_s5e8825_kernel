@@ -11,7 +11,7 @@
 #include <linux/debugfs.h>
 #include "panel_drv.h"
 #include "panel_debug.h"
-#include <linux/panel_notify.h>
+#include <linux/sec_panel_notifier_v2.h>
 #include "panel_freq_hop.h"
 #if defined(CONFIG_PANEL_FREQ_HOP)
 #include <linux/dev_ril_bridge.h>
@@ -22,7 +22,7 @@
 const char *panel_debugfs_name[] = {
 	[PANEL_DEBUGFS_LOG] = "log",
 	[PANEL_DEBUGFS_CMD_LOG] = "cmd_log",
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY)
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 	[PANEL_DEBUGFS_PANEL_EVENT] = "panel_event",
 #endif
 #if defined(CONFIG_PANEL_FREQ_HOP)
@@ -44,10 +44,7 @@ static int panel_debug_cmd_log_show(struct seq_file *s)
 	return 0;
 }
 
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY)
-struct panel_notifier_event_data {
-   unsigned int state;
-};
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 
 static int panel_debug_panel_event_show(struct seq_file *s)
 {
@@ -59,7 +56,7 @@ static int panel_debug_panel_event_show(struct seq_file *s)
 static int panel_debug_panel_event_noti(struct panel_device *panel, char *buf)
 {
 	int rc, event, state;
-	struct panel_notifier_event_data evt_data;
+	struct panel_notifier_event_data evt_data = {0};
 
 	rc = sscanf(buf, "%d %d", &event, &state);
 	if (rc < 2) {
@@ -79,7 +76,7 @@ static int panel_debug_panel_event_noti(struct panel_device *panel, char *buf)
 		return -EINVAL;
 	}
 #endif
-	evt_data.state = state;
+	evt_data.state = (enum panel_notifier_event_state_t)state;
 
 	panel_notifier_call_chain(event, &evt_data);
 	panel_info("event:%d state:%d\n", event, evt_data.state);
@@ -159,7 +156,7 @@ static int panel_debug_simple_show(struct seq_file *s, void *unused)
 	case PANEL_DEBUGFS_CMD_LOG:
 		panel_debug_cmd_log_show(s);
 		break;
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY)
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 	case PANEL_DEBUGFS_PANEL_EVENT:
 		panel_debug_panel_event_show(s);
 		break;
@@ -182,7 +179,7 @@ static ssize_t panel_debug_simple_write(struct file *file,
 	struct seq_file *s;
 	struct panel_debugfs *debugfs;
 	struct panel_device *panel;
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY) || defined(CONFIG_PANEL_FREQ_HOP)
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2) || defined(CONFIG_PANEL_FREQ_HOP)
 	char argbuf[SZ_128];
 #endif
 	int rc = 0;
@@ -209,7 +206,7 @@ static ssize_t panel_debug_simple_write(struct file *file,
 		panel_cmd_log = res;
 		panel_info("panel_cmd_log: %d\n", panel_cmd_log);
 		break;
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY)
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 	case PANEL_DEBUGFS_PANEL_EVENT:
 		if (copy_from_user(argbuf, buf, count))
 			return -EOVERFLOW;
