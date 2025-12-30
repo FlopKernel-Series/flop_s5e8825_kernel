@@ -69,6 +69,7 @@
 #include <linux/sti/abc_common.h>
 #endif
 #include <linux/notifier.h>
+#include <linux/samsung_panel_api.h>
 #if IS_ENABLED(CONFIG_VBUS_NOTIFIER)
 #include <linux/vbus_notifier.h>
 #if IS_ENABLED(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)

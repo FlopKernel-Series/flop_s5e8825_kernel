@@ -28,7 +28,8 @@ subdir-ccflags-y			:= -I$(srctree)/$(src)			\
 					   -I$(srctree)/$(src)/$(dpu-dir)	\
 					   -I$(srctree)/$(src)/include		\
 					   -I$(srctree)/$(src)/cal_common	\
-					   -I$(srctree)/$(src)/$(cal-dir)
+					   -I$(srctree)/$(src)/$(cal-dir) \
+					   -include $(srctree)/drivers/gpu/drm/samsung/panel_decon/decon_namespace.h
 
 subdir-ccflags-$(CONFIG_DRM_MCD_COMMON)	+= -I$(srctree)/$(src)/mcd_cal
 

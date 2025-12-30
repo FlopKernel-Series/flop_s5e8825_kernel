@@ -1,4 +1,5 @@
 #include "sec_input.h"
+#include <linux/samsung_panel_api.h>
 
 static char *lcd_id;
 module_param(lcd_id, charp, 0444);

@@ -19,6 +19,7 @@
 #include <linux/version.h>
 #include <linux/ion.h>
 #include <linux/sec_detect.h>
+#include <linux/samsung_panel_api.h>
 #include "../../../../drivers/gpu/drm/samsung/dpu/exynos_drm_tui.h"
 #include "../../../../drivers/gpu/drm/samsung/dpu_decon/exynos_drm_tui.h"
 #include <linux/dma-heap.h>

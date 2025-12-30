@@ -1,3 +1,5 @@
+subdir-ccflags-y += -include $(srctree)/drivers/gpu/drm/samsung/panel_decon/decon_namespace.h
+
 obj-$(CONFIG_DRM_PANEL_SAMSUNG_COMMON) += panel-samsung-drv.o
 obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3FAB) += panel-samsung-s6e3fab.o
 obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3FAC) += panel-samsung-s6e3fac.o
