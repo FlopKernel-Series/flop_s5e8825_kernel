@@ -30,10 +30,6 @@ static bool sec_feat_flags[SEC_FEAT_COUNT] = {0};
 #include <linux/jump_label.h>
 DEFINE_STATIC_KEY_FALSE(sec_feat_needs_decon_key);
 EXPORT_SYMBOL(sec_feat_needs_decon_key);
-DEFINE_STATIC_KEY_FALSE(sec_feat_lcd_device_key);
-EXPORT_SYMBOL(sec_feat_lcd_device_key);
-DEFINE_STATIC_KEY_FALSE(sec_feat_needs_blic_key);
-EXPORT_SYMBOL(sec_feat_needs_blic_key);
 #endif
 
 bool sec_get_feat(enum sec_feat feat) {
@@ -178,10 +174,7 @@ static inline void setup_camera_params(void) {
 // New function to print machine name and sec_ variables
 static inline void print_sec_variables(const char *machine_name) {
 	SEC_DETECT_LOG("Current machine name: %s\n", machine_name);
-	SEC_DETECT_LOG("sec_feat_needs_blic = %s\n", sec_get_feat(SEC_FEAT_NEEDS_BLIC) ? "true" : "false");
 	SEC_DETECT_LOG("sec_feat_needs_decon = %s\n", sec_get_feat(SEC_FEAT_NEEDS_DECON) ? "true" : "false");
-	SEC_DETECT_LOG("sec_feat_doze = %s\n", sec_get_feat(SEC_FEAT_DOZE) ? "true" : "false");
-	SEC_DETECT_LOG("sec_feat_lcd_device = %s\n", sec_get_feat(SEC_FEAT_LCD_DEVICE) ? "true" : "false");
 	SEC_DETECT_LOG("sec_feat_legacy_sinput = %s\n", sec_get_feat(SEC_FEAT_LEGACY_SINPUT) ? "true" : "false");
 	SEC_DETECT_LOG("sec_feat_slsi_usbpd = %s\n", sec_get_feat(SEC_FEAT_SLSI_USBPD) ? "true" : "false");
 }
@@ -244,14 +237,6 @@ static int __init sec_detect_init(void) {
 		g_sec_current_device = SEC_M33;
 		strscpy(g_sec_current_device_name, "m33x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
-		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
-#ifdef CONFIG_JUMP_LABEL
-		static_branch_enable(&sec_feat_needs_blic_key);
-#endif
-		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
-#ifdef CONFIG_JUMP_LABEL
-		static_branch_enable(&sec_feat_lcd_device_key);
-#endif
 		sec_feat_flags[SEC_FEAT_LEGACY_SINPUT] = true;
 	} else if (strstr(machine_name, "M34") != NULL) {
 		g_sec_current_device = SEC_M34;
@@ -267,14 +252,6 @@ static int __init sec_detect_init(void) {
 		g_sec_current_device = SEC_GTA4XLS;
 		strscpy(g_sec_current_device_name, "gta4xls", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = false;
-		sec_feat_flags[SEC_FEAT_NEEDS_BLIC] = true;
-#ifdef CONFIG_JUMP_LABEL
-		static_branch_enable(&sec_feat_needs_blic_key);
-#endif
-		sec_feat_flags[SEC_FEAT_LCD_DEVICE] = true;
-#ifdef CONFIG_JUMP_LABEL
-		static_branch_enable(&sec_feat_lcd_device_key);
-#endif
 	}
 
 	// Print machine name and sec_ variables
