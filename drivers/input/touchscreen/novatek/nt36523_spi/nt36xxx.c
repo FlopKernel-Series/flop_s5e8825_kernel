@@ -2808,12 +2808,12 @@ static int nvt_notifier_call(struct notifier_block *n, unsigned long data, void 
 #if (IS_ENABLED(CONFIG_EXYNOS_DPU30) || IS_ENABLED(CONFIG_DRM_SAMSUNG_DPU)) && (IS_ENABLED(CONFIG_PANEL_NOTIFY) || IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2))
 static int nvt_notifier_call(struct notifier_block *n, unsigned long data, void *v)
 {
-	if (data == PANEL_EVENT_UB_CON_CHANGED) {
+	if (data == PANEL_EVENT_UB_CON_STATE_CHANGED) {
 		int i = *((char *)v);
 
 		input_info(true, &ts->client->dev, "%s: data = %ld, i = %d\n", __func__, data, i);
 
-		if (i == PANEL_EVENT_UB_CON_DISCONNECTED) {
+		if (i == PANEL_EVENT_UB_CON_STATE_DISCONNECTED) {
 			input_info(true, &ts->client->dev, "%s: UB_CON_DISCONNECTED : disable irq & pin control\n", __func__);
 			nvt_irq_enable(false);
 			pinctrl_configure(ts, false);
