@@ -2464,7 +2464,7 @@ int panel_probe(struct panel_device *panel)
 	ret = mdnie_probe(&panel->mdnie, info->mdnie_tune);
 	if (unlikely(ret)) {
 		panel_err("failed to probe mdnie driver\n");
-		return -ENODEV;
+		// return -ENODEV;
 	}
 #endif
 
@@ -2473,8 +2473,8 @@ int panel_probe(struct panel_device *panel)
 	ret = copr_probe(panel, info->copr_data);
 	if (unlikely(ret)) {
 		panel_err("failed to probe copr driver\n");
-		BUG();
-		return -ENODEV;
+		// BUG();
+		// return -ENODEV;
 	}
 #endif
 
@@ -2482,8 +2482,8 @@ int panel_probe(struct panel_device *panel)
 	ret = aod_drv_probe(panel, info->aod_tune);
 	if (unlikely(ret)) {
 		panel_err("failed to probe aod driver\n");
-		BUG();
-		return -ENODEV;
+		// BUG();
+		// return -ENODEV;
 	}
 #endif
 
@@ -2491,7 +2491,7 @@ int panel_probe(struct panel_device *panel)
 	ret = panel_get_v4l2_abc_dev(panel, info->mafpc_info);
 	if (unlikely(ret < 0)) {
 		panel_err("failed to probe mafpc driver\n");
-		return -ENODEV;
+		// return -ENODEV;
 	}
 #endif
 
@@ -5392,7 +5392,7 @@ int panel_device_init(struct panel_device *panel)
 	ret = panel_blic_probe(panel);
 	if (ret < 0) {
 		panel_err("panel-%d:failed to parse blic\n", panel->id);
-		return ret;
+		// return ret;
 	}
 #endif
 

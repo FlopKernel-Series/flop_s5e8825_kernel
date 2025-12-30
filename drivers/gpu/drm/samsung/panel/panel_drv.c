@@ -4565,8 +4565,8 @@ int panel_probe(struct panel_device *panel)
 		ret = aod_drv_probe(panel, info->aod_tune);
 		if (unlikely(ret)) {
 			panel_err("failed to probe aod driver\n");
-			PANEL_BUG();
-			return -ENODEV;
+			// PANEL_BUG();
+			// return -ENODEV;
 		}
 	} else
 		panel_info("probe-self-display was set to 0 in dt\n");
@@ -4578,8 +4578,8 @@ int panel_probe(struct panel_device *panel)
 		ret = copr_probe(panel, info->copr_data);
 		if (unlikely(ret)) {
 			panel_err("failed to probe copr driver\n");
-			PANEL_BUG();
-			return -ENODEV;
+			// PANEL_BUG();
+			// return -ENODEV;
 		}
 	} else
 		panel_info("probe-copr was set to 0 in dt\n");
@@ -4622,7 +4622,7 @@ int panel_probe(struct panel_device *panel)
 		ret = mdnie_probe(&panel->mdnie, info->mdnie_tune);
 		if (unlikely(ret)) {
 			panel_err("failed to probe mdnie driver\n");
-			return -ENODEV;
+			// return -ENODEV;
 		}
 	} else
 		panel_info("probe-mdnie was set to 0 in dt\n");
@@ -4632,7 +4632,7 @@ int panel_probe(struct panel_device *panel)
 	ret = panel_bind_mafpc(panel, info->mafpc_info);
 	if (unlikely(ret < 0)) {
 		panel_err("failed to probe mafpc driver\n");
-		return -ENODEV;
+		// return -ENODEV;
 	}
 #endif
 
@@ -7809,7 +7809,7 @@ int panel_device_init(struct panel_device *panel)
 	ret = panel_blic_probe(panel);
 	if (ret < 0) {
 		panel_err("panel-%d:failed to parse blic\n", panel->id);
-		return ret;
+		// return ret;
 	}
 #endif
 
