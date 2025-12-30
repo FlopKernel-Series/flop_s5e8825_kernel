@@ -40,7 +40,6 @@ xperf.ko
 mcu_ipc.ko
 shm_ipc.ko
 exynos_dit.ko
-cpif_memlogger.ko
 cpif_page.ko
 direct_dm.ko
 hook.ko
