@@ -232,11 +232,17 @@ static int __init sec_detect_init(void) {
 		g_sec_current_device = SEC_A53;
 		strscpy(g_sec_current_device_name, "a53x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_needs_decon_key);
+#endif
 		sec_feat_flags[SEC_FEAT_DOZE] = true;
 	} else if (strstr(machine_name, "M33") != NULL) {
 		g_sec_current_device = SEC_M33;
 		strscpy(g_sec_current_device_name, "m33x", sizeof(g_sec_current_device_name));
 		sec_feat_flags[SEC_FEAT_NEEDS_DECON] = true;
+#ifdef CONFIG_JUMP_LABEL
+		static_branch_enable(&sec_feat_needs_decon_key);
+#endif
 		sec_feat_flags[SEC_FEAT_LEGACY_SINPUT] = true;
 	} else if (strstr(machine_name, "M34") != NULL) {
 		g_sec_current_device = SEC_M34;
