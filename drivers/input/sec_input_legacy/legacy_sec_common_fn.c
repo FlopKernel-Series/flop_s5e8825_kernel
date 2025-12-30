@@ -77,7 +77,7 @@ int legacy_sec_input_get_lcd_id(struct device *dev)
 
 #if IS_ENABLED(CONFIG_EXYNOS_DPU30) || IS_ENABLED(CONFIG_MCD_PANEL) || IS_ENABLED(CONFIG_USDM_PANEL)
 	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
-		connected = usdm_get_lcd_info("connected");
+		connected = get_lcd_info("connected");
 	else
 		connected = decon_get_lcd_info("connected");
 	if (connected < 0) {
@@ -93,7 +93,7 @@ int legacy_sec_input_get_lcd_id(struct device *dev)
 	input_info(true, dev, "%s: lcd is connected\n", __func__);
 
 	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
-		lcdtype = usdm_get_lcd_info("id");
+		lcdtype = get_lcd_info("id");
 	else
 		lcdtype = decon_get_lcd_info("id");
 	if (lcdtype < 0) {
