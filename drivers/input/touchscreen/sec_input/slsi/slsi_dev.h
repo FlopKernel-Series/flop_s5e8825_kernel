@@ -66,10 +66,6 @@ extern struct tsp_dump_callbacks dump_callbacks;
 #include "../sec_input.h"
 #include "../sec_tsp_log.h"
 
-#if IS_ENABLED(CONFIG_EXYNOS_DPU30)
-#include <linux/panel_notify.h>
-#endif
-
 #define SLSI_TS_I2C_NAME		"slsi_ts"
 #define SLSI_TS_DEVICE_NAME	"SLSI_TS"
 

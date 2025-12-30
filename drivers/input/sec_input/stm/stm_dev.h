@@ -63,11 +63,6 @@
 #define STM_PANEL_DETACHED	0
 #define STM_PANEL_ATTACHED	1
 #endif
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY)
-#include <linux/panel_notify.h>
-#define STM_PANEL_DETACHED	0
-#define STM_PANEL_ATTACHED	1
-#endif
 #endif
 
 #include <linux/input/sec_tclm_v2.h>

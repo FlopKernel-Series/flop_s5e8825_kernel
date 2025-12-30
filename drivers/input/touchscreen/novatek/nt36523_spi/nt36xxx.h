@@ -60,10 +60,6 @@
 #include <linux/sec_panel_notifier_v2.h>
 #endif
 
-#if (IS_ENABLED(CONFIG_EXYNOS_DPU30) || IS_ENABLED(CONFIG_DRM_SAMSUNG_DPU)) && IS_ENABLED(CONFIG_PANEL_NOTIFY)
-#include <linux/panel_notify.h>
-#endif
-
 #if IS_ENABLED(CONFIG_VBUS_NOTIFIER)
 #include <linux/vbus_notifier.h>
 #endif

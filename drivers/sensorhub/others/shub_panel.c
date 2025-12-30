@@ -25,9 +25,6 @@
 #include <linux/samsung_panel_api.h>
 
 #if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2) || IS_ENABLED(CONFIG_PANEL_NOTIFY) && IS_ENABLED(CONFIG_SHUB_PANEL_NOTIFY)
-#if IS_ENABLED(CONFIG_PANEL_NOTIFY)
-#include <linux/panel_notify.h>
-#endif
 #if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 #include <linux/sec_panel_notifier_v2.h>
 #endif

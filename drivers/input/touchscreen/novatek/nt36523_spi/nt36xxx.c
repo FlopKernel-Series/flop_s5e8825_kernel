@@ -24,7 +24,6 @@
 #include <linux/input/mt.h>
 #include <linux/of_gpio.h>
 #include <linux/of_irq.h>
-#include <linux/panel_notify.h>
 
 #include "nt36xxx.h"
 #if NVT_TOUCH_ESD_PROTECT
@@ -2806,7 +2805,7 @@ static int nvt_notifier_call(struct notifier_block *n, unsigned long data, void 
 }
 #endif
 
-#if (IS_ENABLED(CONFIG_EXYNOS_DPU30) || IS_ENABLED(CONFIG_DRM_SAMSUNG_DPU)) && IS_ENABLED(CONFIG_PANEL_NOTIFY)
+#if (IS_ENABLED(CONFIG_EXYNOS_DPU30) || IS_ENABLED(CONFIG_DRM_SAMSUNG_DPU)) && (IS_ENABLED(CONFIG_PANEL_NOTIFY) || IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2))
 static int nvt_notifier_call(struct notifier_block *n, unsigned long data, void *v)
 {
 	if (data == PANEL_EVENT_UB_CON_CHANGED) {
