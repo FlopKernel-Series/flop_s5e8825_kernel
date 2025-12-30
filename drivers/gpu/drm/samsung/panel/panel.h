@@ -480,6 +480,8 @@ enum {
 
 struct mask_layer_data {
 	u32 req;
+	u32 trigger_time;
+	u32 req_mask_layer;
 };
 #endif
 
