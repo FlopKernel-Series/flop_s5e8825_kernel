@@ -18,6 +18,7 @@
 #ifdef CONFIG_SUPPORT_DDI_FLASH
 #include "../panel_poc.h"
 #endif
+#include <linux/samsung_panel_api.h>
 
 /*
  * OFFSET ==> OFS means N-param - 1
