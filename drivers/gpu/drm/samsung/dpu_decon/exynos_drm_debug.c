@@ -467,6 +467,7 @@ int dpu_init_debug(struct exynos_drm_crtc *exynos_crtc)
 
 	crtc = &exynos_crtc->base;
 
+#ifdef CONFIG_DEBUG_FS
 	debugfs_create_file("err_event", 0664, crtc->debugfs_entry, exynos_crtc,
 			&dpu_err_event_fops);
 
@@ -478,6 +479,7 @@ int dpu_init_debug(struct exynos_drm_crtc *exynos_crtc)
 
 	debugfs_create_file("profile_hiber", 0444, crtc->debugfs_entry,
 			exynos_crtc, &dpu_profile_hiber_fops);
+#endif
 
 	dpu_init_memlogger(exynos_crtc);
 

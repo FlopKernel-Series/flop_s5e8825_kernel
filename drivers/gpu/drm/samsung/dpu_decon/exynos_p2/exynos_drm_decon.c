@@ -1083,10 +1083,13 @@ static void decon_atomic_print_state(struct drm_printer *p,
 static int decon_late_register(struct exynos_drm_crtc *exynos_crtc)
 {
 	struct decon_device *decon = exynos_crtc->ctx;
+#ifdef CONFIG_DEBUG_FS
 	struct drm_crtc *crtc = &exynos_crtc->base;
 	struct dentry *urgent_dent;
+#endif
 	struct device_node *te_np;
 
+#ifdef CONFIG_DEBUG_FS
 	urgent_dent = debugfs_create_dir("urgent", crtc->debugfs_entry);
 	if (!urgent_dent) {
 		DRM_ERROR("failed to create debugfs urgent directory\n");
@@ -1129,6 +1132,7 @@ static int decon_late_register(struct exynos_drm_crtc *exynos_crtc)
 #if IS_ENABLED(CONFIG_EXYNOS_FREQ_HOP)
 	dpu_freq_hop_debugfs(exynos_crtc);
 #endif
+#endif
 
 	te_np = of_get_child_by_name(decon->dev->of_node, "te_eint");
 	if (te_np) {
@@ -1139,10 +1143,12 @@ static int decon_late_register(struct exynos_drm_crtc *exynos_crtc)
 
 	return 0;
 
+#ifdef CONFIG_DEBUG_FS
 err_urgent:
 	debugfs_remove_recursive(urgent_dent);
 err:
 	return -ENOENT;
+#endif
 }
 
 #define DEFAULT_TIMEOUT_FPS 60
