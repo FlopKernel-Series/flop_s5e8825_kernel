@@ -28,6 +28,8 @@
 #include "spi.h"
 #endif
 
+#include <linux/sec_detect.h>
+
 #ifdef CONFIG_PANEL_AID_DIMMING
 #include "dimming.h"
 #endif
@@ -122,6 +124,11 @@ __visible_for_testing struct common_panel_info *panel_list[MAX_PANEL];
 int register_common_panel(struct common_panel_info *info)
 {
 	int i;
+
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON)) {
+		SEC_DETECT_LOG("Refusing to register DECON panel on USDM device\n");
+		return 0;
+	}
 
 	if (unlikely(!info)) {
 		panel_err("invalid panel_info\n");
