@@ -331,10 +331,7 @@ void init_shub_panel_callback(void)
 		panel_event_bl[i].level = -1;
 	}
 
-	if (sec_get_feat(SEC_FEAT_NEEDS_DECON))
-		ret = decon_panel_notifier_register(&panel_notify);
-	else
-		ret = usdm_panel_notifier_register(&panel_notify);
+	ret = panel_notifier_register(&panel_notify);
 	if (ret < 0)
 		shub_infof("panel_notifier_register failed(%d)", ret);
 
@@ -343,10 +340,7 @@ void init_shub_panel_callback(void)
 
 void remove_shub_panel_callback(void)
 {
-	if (sec_get_feat(SEC_FEAT_NEEDS_DECON))
-		decon_panel_notifier_unregister(&panel_notify);
-	else
-		usdm_panel_notifier_unregister(&panel_notify);
+	panel_notifier_unregister(&panel_notify);
 }
 
 void sync_panel_state(void)

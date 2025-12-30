@@ -3252,10 +3252,7 @@ static int32_t nvt_ts_probe(struct spi_device *client)
 #if IS_ENABLED(CONFIG_PANEL_NOTIFY) || IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
 	ts->nb.priority = 1;
 	ts->nb.notifier_call = nvt_notifier_call;
-	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON))
-		usdm_panel_notifier_register(&ts->nb);
-	else
-		decon_panel_notifier_register(&ts->nb);
+	panel_notifier_register(&ts->nb);
 #endif
 
 #if IS_ENABLED(CONFIG_SAMSUNG_TUI)
