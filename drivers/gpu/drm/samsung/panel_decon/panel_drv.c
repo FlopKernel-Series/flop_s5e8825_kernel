@@ -43,6 +43,8 @@
 
 #include "dpui.h"
 
+#include <linux/sec_detect.h>
+
 #ifdef CONFIG_EXYNOS_DECON_MDNIE_LITE
 #include "mdnie.h"
 #endif
@@ -5584,6 +5586,13 @@ extern struct platform_driver mafpc_driver;
 static int __init panel_drv_init(void)
 {
 	int ret;
+
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON)) {
+		pr_err("panel: Skipped DECON core panel driver (USDM device)\n");
+		return 0;
+	}
+
+	SEC_DETECT_LOG("Initialized DECON core panel driver\n");
 
 	panel_info("++\n");
 	ret = panel_create_lcd_class();

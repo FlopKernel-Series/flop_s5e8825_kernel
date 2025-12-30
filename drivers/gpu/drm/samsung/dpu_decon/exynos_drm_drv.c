@@ -37,6 +37,7 @@
 #include <exynos_drm_partial.h>
 #include <exynos_drm_tui.h>
 #include <exynos_drm_recovery.h>
+#include <linux/sec_detect.h>
 
 #if IS_ENABLED(CONFIG_DRM_MCD_COMMON)
 #include <mcd_drm_helper.h>
@@ -1118,6 +1119,13 @@ fail:
 static int exynos_drm_init(void)
 {
 	int ret;
+
+	if (!sec_get_feat(SEC_FEAT_NEEDS_DECON)) {
+		SEC_DETECT_LOG("Skipped DECON DPU driver (USDM device)\n");
+		return 0;
+	}
+
+	SEC_DETECT_LOG("Initialized Exynos DPU driver for DECON\n");
 
 	ret = exynos_drm_register_devices();
 	if (ret)

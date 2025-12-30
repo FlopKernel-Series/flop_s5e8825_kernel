@@ -41,6 +41,8 @@
 #include "panel_freq_hop.h"
 #endif
 
+#include <linux/sec_detect.h>
+
 #define MCD_PANEL_PROBE_DELAY_MSEC (5000)
 
 #define call_mcd_panel_func(p, func, args...) \
@@ -2743,6 +2745,13 @@ int exynos_panel_probe(struct mipi_dsi_device *dsi)
 	struct device *dev = &dsi->dev;
 	struct exynos_panel *ctx;
 	int ret = 0;
+
+	if (sec_get_feat(SEC_FEAT_NEEDS_DECON)) {
+		pr_err("mcd-panel: Skipped USDM panel probe (DECON device)\n");
+		return -EINVAL;
+	}
+
+	SEC_DETECT_LOG("Initialized USDM mcd-panel driver\n");
 
 	ctx = devm_kzalloc(dev, sizeof(struct exynos_panel), GFP_KERNEL);
 	if (!ctx)
