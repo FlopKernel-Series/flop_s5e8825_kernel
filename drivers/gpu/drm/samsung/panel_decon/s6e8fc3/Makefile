@@ -12,6 +12,7 @@ subdir-ccflags-$(CONFIG_SEC_KUNIT) += \
 	-Wno-implicit-fallthrough \
 	-Wno-format
 
+subdir-ccflags-y += -include $(srctree)/drivers/gpu/drm/samsung/panel_decon/decon_namespace.h
 
 mcd-panel-s6e8fc3_a33x-y += s6e8fc3.o s6e8fc3_a33x.o
 mcd-panel-s6e8fc3_a33x-$(CONFIG_EXTEND_LIVE_CLOCK) += s6e8fc3_aod.o

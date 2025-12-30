@@ -12,6 +12,7 @@ subdir-ccflags-$(CONFIG_SEC_KUNIT) += \
 	-Wno-implicit-fallthrough \
 	-Wno-format
 
+subdir-ccflags-y += -include $(srctree)/drivers/gpu/drm/samsung/panel_decon/decon_namespace.h
 
 mcd-panel-nt36672c_m33x_01-y += tft_common.o nt36672c_m33_01.o
 obj-m += mcd-panel-nt36672c_m33x_01.o
