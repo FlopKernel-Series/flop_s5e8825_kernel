@@ -597,8 +597,10 @@ static int exynos_panel_attach_properties(struct exynos_panel *ctx)
 
 	if (IS_ENABLED(CONFIG_DRM_SAMSUNG_DOZE)) {
 		ret = exynos_panel_attach_lp_mode(&ctx->exynos_connector, desc);
-		if (ret)
+		if (ret) {
 			panel_err(ctx, "Failed to attach lp mode (%d)\n", ret);
+			ret = 0;
+		}
 	}
 
 	return ret;
