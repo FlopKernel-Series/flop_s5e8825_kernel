@@ -1,0 +1,49 @@
+menuconfig USDM_PANEL_OLED_COMMON
+	tristate "OLED_COMMON DDI Panel Driver"
+	depends on USDM_PANEL
+	default y
+	help
+		This enables OLED_COMMON DDI dependent panel drivers of
+		common panel driver. say Y, if you have a panel based on
+		the OLED_COMMON DDI.
+
+
+########## FOR KUNIT ##########
+
+config OLED_COMMON_TEST
+	bool "KUnit test for oled_common ddi driver"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
+
+config OLED_COMMON_AOD_TEST
+	bool "KUnit test for oled_common_aod ddi driver"
+	depends on SEC_KUNIT
+	depends on USDM_PANEL_SELF_DISPLAY
+	help
+	  TODO: Describe config fully.
+
+config OLED_COMMON_COND_TEST
+	bool "KUnit test for oled_common_cond ddi driver"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
+
+config OLED_COMMON_DUMP_TEST
+	bool "KUnit test for oled_common_dump ddi driver"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
+
+config OLED_COMMON_MDNIE_TEST
+	bool "KUnit test for oled_common_mdnie ddi driver"
+	depends on SEC_KUNIT
+	depends on USDM_MDNIE
+	help
+	  TODO: Describe config fully.
+
+config OLED_FUNCTION_TEST
+	bool "KUnit test for oled_function driver"
+	depends on SEC_KUNIT
+	help
+	  TODO: Describe config fully.
