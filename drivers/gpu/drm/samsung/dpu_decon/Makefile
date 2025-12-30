@@ -32,7 +32,7 @@ subdir-ccflags-y			:= -I$(srctree)/$(src)			\
 
 subdir-ccflags-$(CONFIG_DRM_MCD_COMMON)	+= -I$(srctree)/$(src)/mcd_cal
 
-exynos-drm-y := exynos_drm_drv.o  exynos_drm_fb.o exynos_drm_format.o		\
+exynos-drm-decon-y := exynos_drm_drv.o  exynos_drm_fb.o exynos_drm_format.o		\
 		exynos_drm_crtc.o exynos_drm_plane.o exynos_drm_connector.o	\
 		exynos_drm_debug.o exynos_drm_gem.o exynos_drm_migov.o		\
 		exynos_drm_tui.o exynos_drm_partial.o				\
@@ -42,32 +42,32 @@ exynos-drm-y := exynos_drm_drv.o  exynos_drm_fb.o exynos_drm_format.o		\
 		$(hdr-dir)/exynos_drm_hdr.o		\
 		$(dpu-dir)/exynos_drm_freq_hop.o
 
-exynos-drm-$(CONFIG_DRM_MCD_COMMON) += mcd_cal/mcd_drm_decon.o mcd_cal/mcd_drm_dsim.o mcd_cal/mcd_drm_helper.o
+exynos-drm-decon-$(CONFIG_DRM_MCD_COMMON) += mcd_cal/mcd_drm_decon.o mcd_cal/mcd_drm_dsim.o mcd_cal/mcd_drm_helper.o
 
-exynos-drm-$(CONFIG_DRM_FBDEV_EMULATION) += exynos_drm_fbdev.o
-exynos-drm-$(CONFIG_DRM_SAMSUNG_DECON)	+= $(dpu-dir)/exynos_drm_decon.o
-exynos-drm-$(CONFIG_DRM_SAMSUNG_DPP)	+= $(dpu-dir)/exynos_drm_dpp.o
-exynos-drm-$(CONFIG_DRM_SAMSUNG_DSI)	+= $(dpu-dir)/exynos_drm_dsim.o
-exynos-drm-$(CONFIG_DRM_SAMSUNG_WB)	+= $(dpu-dir)/exynos_drm_writeback.o
-exynos-drm-$(CONFIG_DRM_SAMSUNG_DP)	+= $(dpu-dir)/exynos_drm_dp.o		\
+exynos-drm-decon-$(CONFIG_DRM_FBDEV_EMULATION) += exynos_drm_fbdev.o
+exynos-drm-decon-$(CONFIG_DRM_SAMSUNG_DECON)	+= $(dpu-dir)/exynos_drm_decon.o
+exynos-drm-decon-$(CONFIG_DRM_SAMSUNG_DPP)	+= $(dpu-dir)/exynos_drm_dpp.o
+exynos-drm-decon-$(CONFIG_DRM_SAMSUNG_DSI)	+= $(dpu-dir)/exynos_drm_dsim.o
+exynos-drm-decon-$(CONFIG_DRM_SAMSUNG_WB)	+= $(dpu-dir)/exynos_drm_writeback.o
+exynos-drm-decon-$(CONFIG_DRM_SAMSUNG_DP)	+= $(dpu-dir)/exynos_drm_dp.o		\
 					   $(dpu-dir)/exynos_drm_dp_edid.o	\
 					   $(dpu-dir)/exynos_drm_dp_hdcp13.o	\
 					   $(dpu-dir)/exynos_drm_dp_hdcp22_if.o	\
 					   $(cal-dir)/dp_reg.o
-exynos-drm-$(CONFIG_EXYNOS_DMA_DSIMFC)	+= $(dpu-dir)/exynos_drm_dsimfc.o	\
+exynos-drm-decon-$(CONFIG_EXYNOS_DMA_DSIMFC)	+= $(dpu-dir)/exynos_drm_dsimfc.o	\
 					   $(cal-dir)/dsimfc_reg.o
 
-exynos-drm-y				+= $(cal-dir)/decon_reg.o		\
+exynos-drm-decon-y				+= $(cal-dir)/decon_reg.o		\
 					   $(cal-dir)/dsim_reg.o		\
 					   $(cal-dir)/dpp_reg.o			\
 					   $(cal-dir)/dqe_reg.o			\
 					   $(cal-dir)/hdr_reg.o			\
 
-exynos-drm-$(CONFIG_EXYNOS_BTS)		+= $(dpu-dir)/exynos_drm_bts.o
+exynos-drm-decon-$(CONFIG_EXYNOS_BTS)		+= $(dpu-dir)/exynos_drm_bts.o
 
-obj-$(CONFIG_DRM_SAMSUNG_DPU)		+= exynos-drm.o
+obj-$(CONFIG_DRM_SAMSUNG_DPU)		+= exynos-drm-decon.o
 ifneq ($(filter y m,$(CONFIG_DRM_PANEL_MCD_COMMON)),)
-subdir-ccflags-y += -I$(srctree)/drivers/gpu/drm/samsung/panel
+subdir-ccflags-y += -I$(srctree)/drivers/gpu/drm/samsung/panel_decon
 obj-$(CONFIG_DRM_PANEL_MCD_COMMON)	+= panel/
 else
 obj-$(CONFIG_DRM_PANEL_SAMSUNG_COMMON)	+= panel/

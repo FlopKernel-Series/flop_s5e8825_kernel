@@ -6,4 +6,6 @@ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3FC3) += panel-samsung-s6e3fc3.o
 obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E8FC1) += panel-samsung-s6e8fc1.o
 obj-$(CONFIG_DRM_PANEL_SAMSUNG_EMUL) += panel-samsung-emul.o
 
-obj-$(CONFIG_DRM_PANEL_MCD_COMMON) += mcd-panel-samsung-drv.o mcd-panel-samsung-helper.o
+obj-$(CONFIG_DRM_PANEL_MCD_COMMON) += mcd-panel-samsung-drv-decon.o mcd-panel-samsung-helper-decon.o
+mcd-panel-samsung-drv-decon-y := mcd-panel-samsung-drv.o
+mcd-panel-samsung-helper-decon-y := mcd-panel-samsung-helper.o
