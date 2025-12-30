@@ -7,6 +7,7 @@
 
 subdir-ccflags-y := -I$(srctree) \
 	-I$(srctree)/$(src) \
+	-include $(srctree)/$(src)/decon_namespace.h \
 	-Wno-implicit-fallthrough
 
 mcd-panel-decon-y += timenval.o \
