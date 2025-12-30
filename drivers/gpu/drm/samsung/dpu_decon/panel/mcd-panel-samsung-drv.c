@@ -2825,7 +2825,7 @@ static struct mipi_dsi_driver exynos_panel_driver = {
 	.probe = exynos_panel_probe,
 	.remove = exynos_panel_remove,
 	.driver = {
-		.name = "mcd-panel-samsung-drv",
+		.name = "mcd-panel-samsung-drv-decon",
 		.of_match_table = exynos_panel_of_match,
 	},
 };

@@ -792,7 +792,7 @@ static inline int panel_get_rcd_info(struct panel_device *panel, void *arg) { re
 				ktime_to_ms(ktime_sub(ktime_get(), _start_))); \
 	} while (0)
 
-#define PANEL_DRV_NAME "panel-drv"
+#define PANEL_DRV_NAME "panel-drv-decon"
 
 #define PANEL_IOC_BASE	'P'
 

@@ -47,7 +47,7 @@
 #define CREATE_TRACE_POINTS
 #include <dpu_trace.h>
 
-#define DRIVER_NAME	"exynos-drmdpu"
+#define DRIVER_NAME	"exynos-drmdpu-decon"
 #define DRIVER_DESC	"Samsung SoC DRM"
 #define DRIVER_DATE	"20110530"
 #define DRIVER_MAJOR	1
@@ -1035,7 +1035,7 @@ static struct platform_driver exynos_drm_platform_driver = {
 	.remove	= exynos_drm_platform_remove,
 	.shutdown = exynos_drm_platform_shutdown,
 	.driver	= {
-		.name	= "exynos-drm",
+		.name	= "exynos-drm-decon",
 	},
 };
 

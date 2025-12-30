@@ -16,7 +16,7 @@
 #include <linux/kernel.h>
 #include <linux/miscdevice.h>
 
-#define MAFPC_DEV_NAME "mafpc"
+#define MAFPC_DEV_NAME "mafpc-decon"
 
 #define MAX_MAFPC_CTRL_CMD_SIZE 66
 
