@@ -299,7 +299,7 @@ static int __init hard_reset_hook_init(void)
 
 	hrtimer_init(&hard_reset_hook_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
 	hard_reset_hook_timer.function = hard_reset_hook_callback;
-	hold_time = ktime_set(6, 0); /* 6 seconds */
+	hold_time = ktime_set(5, 0); /* 5 seconds */
 
 	for (i = 0; i < ARRAY_SIZE(hard_reset_keys); i++)
 		all_pressed |= 0x1 << i;
