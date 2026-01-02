@@ -110,6 +110,7 @@ fi
 ## Parse arguments
 DO_KSU=0
 DO_SUKI=0
+DO_RKSU=0
 DO_CLEAN=0
 DO_MENUCONFIG=0
 IS_RELEASE=0
@@ -132,6 +133,10 @@ for arg in "$@"; do
     if [[ "$arg" == *s* ]]; then
         echo "INFO: SukiSU argument passed, a SukiSU build will be made"
         DO_SUKI=1
+    fi
+    if [[ "$arg" == *u* ]]; then
+        echo "INFO: RKSU argument passed, a RKSU build will be made"
+        DO_RKSU=1
     fi
     if [[ "$arg" == *c* ]]; then
         echo "INFO: clean argument passed, output directory will be wiped"
@@ -177,6 +182,7 @@ done
 KSU_COUNT=0
 [ "$DO_KSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 [ "$DO_SUKI" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
+[ "$DO_RKSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 
 if [ "$KSU_COUNT" -gt 1 ]; then
     echo "ERROR: Multiple KSU variants are mutually exclusive. Please select only one."
@@ -198,6 +204,9 @@ if [ "$DO_KSU" == "1" ]; then
 elif [ "$DO_SUKI" == "1" ]; then
     FK_TYPE="SukiSU-Ultra"
     FK_TYPE_SHORT="SKS"
+elif [ "$DO_RKSU" == "1" ]; then
+    FK_TYPE="RKSU"
+    FK_TYPE_SHORT="RKS"
 else
     FK_TYPE="Vanilla"
     FK_TYPE_SHORT="V"
