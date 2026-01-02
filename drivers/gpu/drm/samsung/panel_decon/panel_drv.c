@@ -4610,10 +4610,11 @@ static int panel_parse_panel_lookup(struct panel_device *panel)
 		node = of_parse_phandle(panel_np, DT_NAME_FREQ_TABLE, 0);
 		if (!node) {
 			panel_err("failed to get phandle of %s\n", DT_NAME_FREQ_TABLE);
-			return -EINVAL;
+			// return -EINVAL;
+		} else {
+			lut->freq_hop_node = node;
+			of_node_put(node);
 		}
-		lut->freq_hop_node = node;
-		of_node_put(node);
 #endif
 
 		sz = of_property_count_u32_elems(panel_np, "id-mask");
