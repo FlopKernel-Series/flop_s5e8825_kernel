@@ -2,6 +2,12 @@ build() {
     # Delete log.txt at the start
     rm -f log.txt
 
+    # Skip Samsung FIPS/FMP build-time integrity/HMAC embedding.
+    : "${SKIP_FIPS_CRYPTO_INTEGRITY:=1}"
+    : "${SKIP_EXYNOS_FMP_INTEGRITY:=1}"
+    export SKIP_FIPS_CRYPTO_INTEGRITY
+    export SKIP_EXYNOS_FMP_INTEGRITY
+
     if [ "$USE_CCACHE" == "1" ]; then
         export CC="ccache clang"
     else
