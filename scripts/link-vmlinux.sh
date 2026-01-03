@@ -463,7 +463,12 @@ if [ -n "${CONFIG_KALLSYMS}" ]; then
 fi
 
 if [ -n "${CONFIG_CRYPTO_FIPS}" ]; then
-	echo '  FIPS : Generating hmac of crypto and updating vmlinux... '
-	PYTHONDONTWRITEBYTECODE=0 "${srctree}/scripts/crypto/fips_crypto_integrity.py" \
-		"${objtree}/vmlinux" "${objtree}/crypto" "${objtree}/arch/arm64/crypto"
+	if [ "${SKIP_FIPS_CRYPTO_INTEGRITY}" = "1" ]; then
+		# echo '  FIPS : Skipping crypto HMAC update'
+		true
+	else
+		echo '  FIPS : Generating hmac of crypto and updating vmlinux... '
+		PYTHONDONTWRITEBYTECODE=0 "${srctree}/scripts/crypto/fips_crypto_integrity.py" \
+			"${objtree}/vmlinux" "${objtree}/crypto" "${objtree}/arch/arm64/crypto"
+	fi
 fi

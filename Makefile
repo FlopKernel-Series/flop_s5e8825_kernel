@@ -1427,8 +1427,14 @@ archprepare: outputmakefile archheaders archscripts scripts include/config/kerne
 
 prepare0: archprepare
 	$(Q)$(MAKE) $(build)=scripts/mod
+
+# Allow skipping Exynos FMP build-time integrity/HMAC tooling.
+# Set SKIP_EXYNOS_FMP_INTEGRITY=1 on the make command line to bypass.
 ifeq ($(CONFIG_EXYNOS_FMP_INTEGRITY_TEST), y)
+ifneq ($(SKIP_EXYNOS_FMP_INTEGRITY),1)
 	$(MAKE) -f $(srctree)/drivers/crypto/fmp/Makefile fips_clean
+endif
+
 endif
 	$(Q)$(MAKE) $(build)=.
 
@@ -1633,10 +1639,16 @@ modules_prepare: prepare
 modules_install: __modinst_pre
 PHONY += __modinst_pre
 __modinst_pre:
+
+# Optional: allow skipping Exynos FMP module HMAC embedding.
+# Set SKIP_EXYNOS_FMP_INTEGRITY=1 on the make command line to bypass.
 ifeq ($(CONFIG_EXYNOS_FMP_INTEGRITY_TEST), y)
+ifneq ($(SKIP_EXYNOS_FMP_INTEGRITY),1)
 	@$(kecho) ' FIPS Generate and embed HMAC ';
 	@$(srctree)/scripts/fmp/IntegrityCheckProvider.py \
 		drivers/crypto/fmp/fmp-core.ko drivers/crypto/fmp/fips140_ic_support.c
+endif
+
 endif
 	@rm -rf $(MODLIB)/kernel
 	@rm -f $(MODLIB)/source
