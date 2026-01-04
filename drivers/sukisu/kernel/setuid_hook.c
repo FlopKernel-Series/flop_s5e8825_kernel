@@ -21,7 +21,6 @@
 
 #include "allowlist.h"
 #include "setuid_hook.h"
-#include "feature.h"
 #include "klog.h" // IWYU pragma: keep
 #include "manager.h"
 #include "selinux/selinux.h"
@@ -32,8 +31,6 @@
 #endif
 #include "kernel_umount.h"
 #include "kernel_compat.h"
-
-#include "sulog.h"
 
 #ifdef CONFIG_KSU_SUSFS
 static inline bool is_zygote_isolated_service_uid(uid_t uid)
@@ -57,29 +54,6 @@ extern void susfs_reorder_mnt_id(void);
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 #endif // #ifdef CONFIG_KSU_SUSFS
 
-static bool ksu_enhanced_security_enabled = false;
-
-static int enhanced_security_feature_get(u64 *value)
-{
-	*value = ksu_enhanced_security_enabled ? 1 : 0;
-	return 0;
-}
-
-static int enhanced_security_feature_set(u64 value)
-{
-	bool enable = value != 0;
-	ksu_enhanced_security_enabled = enable;
-	pr_info("enhanced_security: set to %d\n", enable);
-	return 0;
-}
-
-static const struct ksu_feature_handler enhanced_security_handler = {
-	.feature_id = KSU_FEATURE_ENHANCED_SECURITY,
-	.name = "enhanced_security",
-	.get_handler = enhanced_security_feature_get,
-	.set_handler = enhanced_security_feature_set,
-};
-
 static void ksu_install_manager_fd_tw_func(struct callback_head *cb)
 {
 	ksu_install_fd();
@@ -99,14 +73,6 @@ static void do_install_manager_fd(void)
 	}
 }
 
-// force_sig kcompat, TODO: move it out of core_hook.c
-// https://elixir.bootlin.com/linux/v5.3-rc1/source/kernel/signal.c#L1613
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
-#define send_sigkill() force_sig(SIGKILL)
-#else
-#define send_sigkill() force_sig(SIGKILL, current)
-#endif
-
 extern void disable_seccomp(void);
 #ifndef CONFIG_KSU_SUSFS
 int ksu_handle_setuid_common(uid_t new_uid, uid_t old_uid, uid_t new_euid)
@@ -114,29 +80,8 @@ int ksu_handle_setuid_common(uid_t new_uid, uid_t old_uid, uid_t new_euid)
 #ifdef CONFIG_KSU_DEBUG
 	pr_info("handle_setuid from %d to %d\n", old_uid, new_uid);
 #endif
-
-	// if old process is root, ignore it.
-	if (old_uid != 0 && ksu_enhanced_security_enabled) {
-		// disallow any non-ksu domain escalation from non-root to root!
-		// euid is what we care about here as it controls permission
-		if (unlikely(new_euid == 0) && !is_ksu_domain()) {
-			pr_warn("find suspicious EoP: %d %s, from %d to %d\n",
-				current->pid, current->comm, old_uid, new_uid);
-			send_sigkill();
-			return 0;
-		}
-		// disallow appuid decrease to any other uid if it is not allowed to su
-		if (is_appuid(old_uid) && new_euid < current_euid().val &&
-		    !ksu_is_allow_uid_for_current(old_uid)) {
-			pr_warn("find suspicious EoP: %d %s, from %d to %d\n",
-				current->pid, current->comm, old_uid, new_euid);
-			send_sigkill();
-			return 0;
-		}
-		return 0;
-	}
-
-	if (ksu_get_manager_appid() == new_uid % PER_USER_RANGE) {
+	if (likely(ksu_is_manager_appid_valid()) &&
+	    unlikely(ksu_get_manager_appid() == new_uid % PER_USER_RANGE)) {
 		disable_seccomp();
 #ifdef CONFIG_KSU_SYSCALL_HOOK
 		ksu_set_task_tracepoint_flag(current);
@@ -155,10 +100,6 @@ int ksu_handle_setuid_common(uid_t new_uid, uid_t old_uid, uid_t new_euid)
 #endif
 	}
 
-#if __SULOG_GATE
-	ksu_sulog_report_syscall(new_uid, NULL, "setuid", NULL);
-#endif
-
 	// Handle kernel umount
 	ksu_handle_umount(old_uid, new_uid);
 
@@ -171,35 +112,8 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 	uid_t new_uid = ruid;
 	uid_t old_uid = current_uid().val;
 
-	// if old process is root, ignore it.
-	if (old_uid != 0 && ksu_enhanced_security_enabled) {
-		// disallow any non-ksu domain escalation from non-root to root!
-		// euid is what we care about here as it controls permission
-		if (unlikely(euid == 0)) {
-			if (!is_ksu_domain()) {
-				pr_warn("find suspicious EoP: %d %s, from %d to %d\n",
-					current->pid, current->comm, old_uid,
-					new_uid);
-				send_sigkill();
-				return 0;
-			}
-		}
-		// disallow appuid decrease to any other uid if it is not allowed to su
-		if (is_appuid(old_uid)) {
-			if (euid < current_euid().val &&
-			    !ksu_is_allow_uid_for_current(old_uid)) {
-				pr_warn("find suspicious EoP: %d %s, from %d to %d\n",
-					current->pid, current->comm, old_uid,
-					new_uid);
-				send_sigkill();
-				return 0;
-			}
-		}
-		return 0;
-	}
-
 	// We only interest in process spwaned by zygote
-	if (!susfs_is_sid_equal(current_cred()->security, susfs_zygote_sid)) {
+	if (!susfs_is_sid_equal(current_cred(), susfs_zygote_sid)) {
 		return 0;
 	}
 
@@ -214,7 +128,8 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 	//   will always return true, that's why we need to explicitly check if new_uid belongs to
 	//   ksu manager
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
-	if (ksu_get_manager_appid() == new_uid % PER_USER_RANGE) {
+	if (likely(ksu_is_manager_appid_valid()) &&
+	    unlikely(ksu_get_manager_appid() == new_uid % PER_USER_RANGE)) {
 		spin_lock_irq(&current->sighand->siglock);
 		ksu_seccomp_allow_cache(current->seccomp.filter, __NR_reboot);
 		spin_unlock_irq(&current->sighand->siglock);
@@ -239,7 +154,8 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 		}
 	}
 #else
-	if (ksu_get_manager_appid() == new_uid % PER_USER_RANGE) {
+	if (likely(ksu_is_manager_appid_valid()) &&
+	    unlikely(ksu_get_manager_appid() == new_uid % PER_USER_RANGE)) {
 		disable_seccomp();
 		pr_info("install fd for manager (uid=%d)\n", new_uid);
 		do_install_manager_fd();
@@ -258,10 +174,6 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 #endif
 
 	return 0;
-
-#if __SULOG_GATE
-	ksu_sulog_report_syscall(new_uid, NULL, "setuid", NULL);
-#endif
 
 do_umount:
 	// Handle kernel umount
@@ -286,6 +198,12 @@ do_umount:
      defined(CONFIG_KSU_MANUAL_HOOK))
 int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
+	if (!is_sid_equal(current_cred(), ksu_zygote_sid)) {
+#ifdef CONFIG_KSU_DEBUG
+		pr_info("setresuid: disallow non zygote sid!\n");
+#endif
+		return 0;
+	}
 	return ksu_handle_setuid_common(ruid, current_uid().val, euid);
 }
 #endif
@@ -293,14 +211,10 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 void ksu_setuid_hook_init(void)
 {
 	ksu_kernel_umount_init();
-	if (ksu_register_feature_handler(&enhanced_security_handler)) {
-		pr_err("Failed to register enhanced security feature handler\n");
-	}
 }
 
 void ksu_setuid_hook_exit(void)
 {
 	pr_info("ksu setuid exit\n");
 	ksu_kernel_umount_exit();
-	ksu_unregister_feature_handler(KSU_FEATURE_ENHANCED_SECURITY);
 }
