@@ -33,8 +33,6 @@
 #include "syscall_handler.h"
 #endif // #ifndef CONFIG_KSU_SUSFS
 
-#include "sulog.h"
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
 static struct group_info root_groups = {
 	.usage = REFCOUNT_INIT(2),
@@ -204,9 +202,6 @@ void escape_with_root_profile(void)
 	disable_seccomp();
 
 	setup_selinux(profile->selinux_domain);
-#if __SULOG_GATE
-	ksu_sulog_report_su_grant(current_euid().val, NULL, "escape_to_root");
-#endif
 
 #ifdef CONFIG_KSU_SYSCALL_HOOK
 	for_each_thread (current, t) {
@@ -326,10 +321,6 @@ void escape_to_root_for_cmd_su(uid_t target_uid, pid_t target_pid)
 		rcu_read_unlock();
 		pr_err("cmd_su: target task not found for PID: %d\n",
 		       target_pid);
-#if __SULOG_GATE
-		ksu_sulog_report_su_grant(target_uid, "cmd_su",
-					  "target_not_found");
-#endif
 		return;
 	}
 	get_task_struct(target_task);
@@ -346,10 +337,6 @@ void escape_to_root_for_cmd_su(uid_t target_uid, pid_t target_pid)
 	if (newcreds == NULL) {
 		pr_err("cmd_su: failed to allocate new cred for PID: %d\n",
 		       target_pid);
-#if __SULOG_GATE
-		ksu_sulog_report_su_grant(target_uid, "cmd_su",
-					  "cred_alloc_failed");
-#endif
 		put_task_struct(target_task);
 		return;
 	}
@@ -401,9 +388,6 @@ void escape_to_root_for_cmd_su(uid_t target_uid, pid_t target_pid)
 	}
 
 	put_task_struct(target_task);
-#if __SULOG_GATE
-	ksu_sulog_report_su_grant(target_uid, "cmd_su", "manual_escalation");
-#endif
 #ifdef CONFIG_KSU_SYSCALL_HOOK
 	for_each_thread (target_task, t) {
 		ksu_set_task_tracepoint_flag(t);

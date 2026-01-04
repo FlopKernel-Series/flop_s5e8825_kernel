@@ -33,17 +33,12 @@ struct cred *ksu_cred;
 
 extern void __init ksu_lsm_hook_init(void);
 
-#include "sulog.h"
-
 void sukisu_custom_config_init(void)
 {
 }
 
 void sukisu_custom_config_exit(void)
 {
-#if __SULOG_GATE
-	ksu_sulog_exit();
-#endif
 }
 
 int __init kernelsu_init(void)
@@ -57,15 +52,15 @@ int __init kernelsu_init(void)
 	pr_alert(
 		"*************************************************************");
 	pr_alert(
-		"**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
+		"**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
 	pr_alert(
-		"**														 **");
+		"**                                                         **");
 	pr_alert(
-		"**		 You are running KernelSU in DEBUG mode		  **");
+		"**         You are running KernelSU in DEBUG mode          **");
 	pr_alert(
-		"**														 **");
+		"**                                                         **");
 	pr_alert(
-		"**	 NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE	**");
+		"**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
 	pr_alert(
 		"*************************************************************");
 #endif

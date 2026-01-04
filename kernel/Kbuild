@@ -18,7 +18,7 @@ ksu_obj-y += selinux/selinux.o
 ksu_obj-y += selinux/sepolicy.o
 ksu_obj-y += selinux/rules.o
 
-ksu_obj-y += sulog.o
+ksu_obj-y += tiny_sulog.o
 ksu_obj-$(CONFIG_KSU_MANUAL_SU) += manual_su.o
 obj-$(CONFIG_KPM) += kpm/
 
@@ -192,6 +192,11 @@ endif
 # Function proc_ops check
 ifeq ($(shell grep -q "struct proc_ops " $(srctree)/include/linux/proc_fs.h; echo $$?),0)
 ccflags-y += -DKSU_COMPAT_HAS_PROC_OPS
+endif
+
+# Type ns_get_path check
+ifeq ($(shell grep -q "int ns_get_path" $(srctree)/include/linux/proc_ns.h; echo $$?),0)
+ccflags-y += -DKSU_TYPE_INT_NS_GET_PATH
 endif
 
 # Custom Signs
