@@ -685,11 +685,11 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 			  void __user **arg)
 {
 	if (magic1 != KSU_INSTALL_MAGIC1)
-		return 0;
+		return -EINVAL;
 
 	// Rare case that unlikely to happen
 	if (unlikely(!arg))
-		return 0;
+		return -EINVAL;
 
 #ifdef CONFIG_KSU_DEBUG
 	pr_info("sys_reboot: magic: 0x%x (id: %d)\n", magic1, magic2);
@@ -699,7 +699,7 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 	void __user *argp = (void __user *)*arg;
 	if (IS_ERR(argp)) {
 		pr_err("Failed to deref user arg, err: %lu\n", PTR_ERR(argp));
-		return 0;
+		return -EINVAL;
 	}
 
 	// If magic2 is susfs and current process is root
@@ -802,7 +802,8 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
 		return ksu_handle_fd_request(argp);
 	}
 
-	return 0;
+	// Not a KSU/SUSFS call - signal to proceed with normal reboot
+	return -EINVAL;
 }
 
 void ksu_supercalls_init(void)
