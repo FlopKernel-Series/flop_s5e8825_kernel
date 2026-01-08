@@ -225,14 +225,15 @@ static int __init set_superfloppy_mode(char *val)
 	else
 		static_branch_disable(&superfloppy_mode_key);
 
-	// Update overclock static branch (mode 4 is downclock, not overclock)
-	if ((superfloppy_mode >= 1) && (superfloppy_mode != 4))
+		/* Update overclock static branch (mode 4 is a downclock mode,
+		   and 5 is an overclock mode but limited.) */
+	if ((superfloppy_mode >= 1) && (superfloppy_mode != 4) && (superfloppy_mode != 5))
 		static_branch_enable(&superfloppy_overclock_mode_key);
 	else
 		static_branch_disable(&superfloppy_overclock_mode_key);
 
 	pr_info("Workaround: superfloppy=%d (overclock=%s)\n", superfloppy_mode,
-		((superfloppy_mode >= 1) && (superfloppy_mode != 4)) ? "yes" : "no");
+		((superfloppy_mode >= 1) && (superfloppy_mode != 4) && (superfloppy_mode != 5)) ? "yes" : "no");
 
 	return 0;
 }
@@ -252,8 +253,8 @@ EXPORT_SYMBOL(get_superfloppy_mode);
 
 bool is_superfloppy_overclock_mode(void)
 {
-	/* Mode 4 is underclock, not overclock. */
-	return (superfloppy_mode >= 1) && (superfloppy_mode != 4);
+	/* Mode 4 is underclock, mode 5 is balanced (CL0 only). Neither is full overclock. */
+	return (superfloppy_mode >= 1) && (superfloppy_mode != 4) && (superfloppy_mode != 5);
 }
 EXPORT_SYMBOL(is_superfloppy_overclock_mode);
 

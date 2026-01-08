@@ -1125,7 +1125,10 @@ init_constraint_table_dt(struct exynos_dm_freq *dm_table, int table_length,
 	signed char superfloppy_mode = get_superfloppy_mode();
 	const char *table_name;
 
-	if (superfloppy_mode == 4) {
+	if (superfloppy_mode == 5) {
+		/* BalancedFloppy */
+		table_name = "table";
+	} else if (superfloppy_mode == 4) {
 		table_name = "table_alt4";
 	} else if (superfloppy_mode == 3) {
 		table_name = "table_alt3";
@@ -1762,20 +1765,20 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 
 	/* Domain 0 (little cluster) only has alt, not alt2/alt3 */
 	if (domain->id == 0) {
-		if (superfloppy_mode >= 1 && superfloppy_mode <= 3) {
+		if ((superfloppy_mode >= 1 && superfloppy_mode <= 3) || superfloppy_mode == 5) {
 			max_freq_name = "max-freq_alt";
 		} else {
 			max_freq_name = "max-freq";
 		}
 	} else {
-		/* Domain 1 (big cluster) has all alt tables */
+		/* Domain 1 (big cluster) has all alt tables, mode 5 uses stock */
 		if (superfloppy_mode == 4) {
 			max_freq_name = "max-freq_alt4";
 		} else if (superfloppy_mode == 3) {
 			max_freq_name = "max-freq_alt3";
 		} else if (superfloppy_mode == 2) {
 			max_freq_name = "max-freq_alt2";
-		} else if (superfloppy_mode >= 1) {
+		} else if (superfloppy_mode >= 1 && superfloppy_mode != 5) {
 			max_freq_name = "max-freq_alt";
 		} else {
 			max_freq_name = "max-freq";
@@ -1806,20 +1809,21 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 	 * Domain 1 (big cluster) has more alt tables.
 	 */
 	if (domain->id == 0) {
-		/* Little cluster only supports mode 1-3 or default */
-		if (superfloppy_mode >= 1 && superfloppy_mode <= 3) {
+		/* Little cluster: mode 1-3 or 5 use alt table */
+		if ((superfloppy_mode >= 1 && superfloppy_mode <= 3) || superfloppy_mode == 5) {
 			table_name = "freq-table_alt";
 		} else {
 			table_name = "freq-table";
 		}
 	} else {
+		/* Big cluster: mode 5 uses stock (no OC) */
 		if (superfloppy_mode == 4) {
 			table_name = "freq-table_alt4";
 		} else if (superfloppy_mode == 3) {
 			table_name = "freq-table_alt3";
 		} else if (superfloppy_mode == 2) {
 			table_name = "freq-table_alt2";
-		} else if (superfloppy_mode >= 1) {
+		} else if (superfloppy_mode >= 1 && superfloppy_mode != 5) {
 			table_name = "freq-table_alt";
 		} else {
 			table_name = "freq-table";

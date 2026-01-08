@@ -566,10 +566,10 @@ static void fvmap_copy_from_sram(void __iomem *map_base, void __iomem *sram_base
 
 			/*
 			 * Apply undervolting via margins.
-			 * Modes 1-3 disable UV by default; mode 4 keeps UV enabled.
+			 * Modes 1-3 and 5 disable UV by default; mode 4 keeps UV enabled.
 			 */
 			sf_mode = get_superfloppy_mode();
-			if (sf_mode < 1 || sf_mode > 3) {
+			if ((sf_mode < 1 || sf_mode > 3) && sf_mode != 5) {
 #if CONFIG_SOC_S5E8825_CL0_UV != 0
 				/* Apply undervolt margin if the domain is CPUCL0 */
 				if (vclk->margin_id == MARGIN_CPUCL0) {
@@ -798,7 +798,7 @@ int fvmap_init(void __iomem *sram_base)
 	// Initialize runtime UV values from compile-time config for display purposes.
 	{
 		signed char sf_mode = get_superfloppy_mode();
-		if (sf_mode >= 1 && sf_mode <= 3) {
+		if ((sf_mode >= 1 && sf_mode <= 3) || sf_mode == 5) {
 		uv_cpucl0_percent = 0;
 		uv_cpucl1_percent = 0;
 		uv_gpu_percent = 0;
