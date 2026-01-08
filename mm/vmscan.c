@@ -2410,7 +2410,7 @@ static inline bool is_too_low_file(void)
 
 #ifdef CONFIG_KSWAPD_CPU
 static int set_kswapd_cpu_affinity_as_config(void);
-static int set_kswapd_cpu_affinity_as_boost(void);
+// static int set_kswapd_cpu_affinity_as_boost(void);
 #endif
 
 inline bool need_memory_boosting(void)
@@ -2458,12 +2458,14 @@ static ssize_t mem_boost_mode_store(struct kobject *kobj,
 	if (mem_boost_mode >= BOOST_HIGH)
 		rbin_oem_func(WAKE_RBIN_PRERECLAIM, NULL);
 #endif
+#if 0 /* Disabled: mem_boost should not override kswapd affinity */
 #ifdef CONFIG_KSWAPD_CPU
 	if (mem_boost_mode >= BOOST_HIGH)
 		set_kswapd_cpu_affinity_as_boost();
 	else if (mem_boost_mode == NO_BOOST)
 		set_kswapd_cpu_affinity_as_config();
 #endif
+#endif /* 0 */
 	return count;
 }
 
@@ -4312,6 +4314,7 @@ static int set_kswapd_cpu_affinity_as_config(void)
 	return 0;
 }
 
+#if 0
 static int set_kswapd_cpu_affinity_as_boost(void)
 {
 	int nid;
@@ -4328,6 +4331,7 @@ static int set_kswapd_cpu_affinity_as_boost(void)
 	}
 	return 0;
 }
+#endif
 #endif
 
 /*
