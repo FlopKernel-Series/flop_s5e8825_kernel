@@ -1,0 +1,4 @@
+[submodule "kernel_build/mkbootimg"]
+	path = kernel_build/mkbootimg
+	url = https://android.googlesource.com/platform/system/tools/mkbootimg/
+	branch = main
