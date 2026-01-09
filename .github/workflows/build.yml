@@ -12,6 +12,8 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Clean
         uses: rokibhasansagar/slimhub_actions@main
