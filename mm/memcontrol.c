@@ -47,6 +47,7 @@
 #include <linux/swap.h>
 #include <linux/swapops.h>
 #include <linux/spinlock.h>
+#include <linux/binfmts.h>
 #include <linux/eventfd.h>
 #include <linux/poll.h>
 #include <linux/sort.h>
@@ -4033,6 +4034,10 @@ static ssize_t mem_cgroup_write(struct kernfs_open_file *of,
 		}
 		break;
 	case RES_SOFT_LIMIT:
+		if (!task_is_booster(current)) {
+			ret = -EPERM;
+			break;
+		}
 		memcg->soft_limit = nr_pages;
 		ret = 0;
 		break;
@@ -4335,6 +4340,9 @@ static int mem_cgroup_swappiness_write(struct cgroup_subsys_state *css,
 				       struct cftype *cft, u64 val)
 {
 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+
+	if (!task_is_booster(current))
+		return -EPERM;
 
 	if (val > 200)
 		return -EINVAL;
