@@ -9,6 +9,9 @@
 #include <linux/path.h>
 #include <linux/printk.h>
 #include <linux/types.h>
+#ifndef KSU_HAS_PATH_UMOUNT
+#include <linux/syscalls.h>
+#endif
 
 #include "kernel_umount.h"
 #include "klog.h" // IWYU pragma: keep
@@ -16,6 +19,8 @@
 #include "selinux/selinux.h"
 #include "feature.h"
 #include "ksud.h"
+#include "ksu.h"
+#include "kernel_compat.h"
 
 static bool ksu_kernel_umount_enabled = true;
 
@@ -40,8 +45,9 @@ static const struct ksu_feature_handler kernel_umount_handler = {
 	.set_handler = kernel_umount_feature_set,
 };
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) ||                           \
+	defined(KSU_HAS_PATH_UMOUNT)
 extern int path_umount(struct path *path, int flags);
-
 static void ksu_umount_mnt(struct path *path, int flags)
 {
 	int err = path_umount(path, flags);
@@ -49,6 +55,29 @@ static void ksu_umount_mnt(struct path *path, int flags)
 		pr_info("umount %s failed: %d\n", path->dentry->d_iname, err);
 	}
 }
+#else
+static void ksu_sys_umount(const char *mnt, int flags)
+{
+	char __user *usermnt = (char __user *)mnt;
+	mm_segment_t old_fs;
+
+	old_fs = get_fs();
+	set_fs(KERNEL_DS);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 17, 0)
+	ksys_umount(usermnt, flags);
+#else
+	sys_umount(usermnt, flags); // cuz asmlinkage long sys##name
+#endif
+	set_fs(old_fs);
+}
+
+#define ksu_umount_mnt(mnt, __unused, flags)                                   \
+	({                                                                     \
+		path_put(__unused);                                            \
+		ksu_sys_umount(mnt, flags);                                    \
+	})
+
+#endif
 
 static void try_umount(const char *mnt, int flags)
 {
@@ -63,22 +92,21 @@ static void try_umount(const char *mnt, int flags)
 		path_put(&path);
 		return;
 	}
-
-    ksu_umount_mnt(&path, flags);
+#ifndef KSU_HAS_PATH_UMOUNT
+    ksu_umount_mnt(mnt, &path, flags);
+#else
+	ksu_umount_mnt(&path, flags);
+#endif
 }
 
 struct umount_tw {
 	struct callback_head cb;
-	const struct cred *old_cred;
 };
 
 static void umount_tw_func(struct callback_head *cb)
 {
 	struct umount_tw *tw = container_of(cb, struct umount_tw, cb);
-	const struct cred *saved = NULL;
-	if (tw->old_cred) {
-		saved = override_creds(tw->old_cred);
-	}
+	const struct cred *saved = override_creds(ksu_cred);
 
     struct mount_entry *entry;
     down_read(&mount_list_lock);
@@ -88,11 +116,7 @@ static void umount_tw_func(struct callback_head *cb)
     }
     up_read(&mount_list_lock);
 
-	if (saved)
-		revert_creds(saved);
-
-	if (tw->old_cred)
-		put_cred(tw->old_cred);
+	revert_creds(saved);
 
 	kfree(tw);
 }
@@ -107,6 +131,10 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 	}
 
 	if (!ksu_kernel_umount_enabled) {
+		return 0;
+	}
+
+	if (!ksu_cred) {
 		return 0;
 	}
 
@@ -140,14 +168,10 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 	if (!tw)
 		return 0;
 
-	tw->old_cred = get_current_cred();
 	tw->cb.func = umount_tw_func;
 
 	int err = task_work_add(current, &tw->cb, TWA_RESUME);
 	if (err) {
-		if (tw->old_cred) {
-			put_cred(tw->old_cred);
-		}
 		kfree(tw);
 		pr_warn("unmount add task_work failed\n");
 	}

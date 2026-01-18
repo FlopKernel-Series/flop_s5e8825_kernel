@@ -9,6 +9,13 @@
 #define KSU_INSTALL_MAGIC1 0xDEADBEEF
 #define KSU_INSTALL_MAGIC2 0xCAFEBABE
 
+// Toolkit extensions
+#define CHANGE_MANAGER_UID 10006
+#define GET_SULOG_DUMP_V2 10010
+#define CHANGE_KSUVER 10011     // change ksu version
+#define KSU_UMOUNT_GETSIZE 107   // get list size // shit is u8 we cant fit 10k+ on it
+#define KSU_UMOUNT_GETLIST 108   // get list
+
 // Command structures for ioctl
 
 struct ksu_become_daemon_cmd {
@@ -50,8 +57,8 @@ struct ksu_uid_should_umount_cmd {
 	__u8 should_umount; // Output: true if should umount, false otherwise
 };
 
-struct ksu_get_manager_uid_cmd {
-	__u32 uid; // Output: manager UID
+struct ksu_get_manager_appid_cmd {
+	__u32 appid; // Output: manager app id
 };
 
 struct ksu_get_app_profile_cmd {
@@ -122,7 +129,7 @@ struct ksu_add_try_umount_cmd {
 #define KSU_IOCTL_GET_DENY_LIST _IOC(_IOC_READ|_IOC_WRITE, 'K', 7, 0)
 #define KSU_IOCTL_UID_GRANTED_ROOT _IOC(_IOC_READ|_IOC_WRITE, 'K', 8, 0)
 #define KSU_IOCTL_UID_SHOULD_UMOUNT _IOC(_IOC_READ|_IOC_WRITE, 'K', 9, 0)
-#define KSU_IOCTL_GET_MANAGER_UID _IOC(_IOC_READ, 'K', 10, 0)
+#define KSU_IOCTL_GET_MANAGER_APPID _IOC(_IOC_READ, 'K', 10, 0)
 #define KSU_IOCTL_GET_APP_PROFILE _IOC(_IOC_READ|_IOC_WRITE, 'K', 11, 0)
 #define KSU_IOCTL_SET_APP_PROFILE _IOC(_IOC_WRITE, 'K', 12, 0)
 #define KSU_IOCTL_GET_FEATURE _IOC(_IOC_READ|_IOC_WRITE, 'K', 13, 0)
@@ -131,8 +138,8 @@ struct ksu_add_try_umount_cmd {
 #define KSU_IOCTL_MANAGE_MARK _IOC(_IOC_READ|_IOC_WRITE, 'K', 16, 0)
 #define KSU_IOCTL_NUKE_EXT4_SYSFS _IOC(_IOC_WRITE, 'K', 17, 0)
 #define KSU_IOCTL_ADD_TRY_UMOUNT _IOC(_IOC_WRITE, 'K', 18, 0)
-#define KSU_IOCTL_GET_HOOK_MODE _IOC(_IOC_READ, 'K', 19, 0)
-#define KSU_IOCTL_GET_VERSION_TAG _IOC(_IOC_READ, 'K', 20, 0)
+#define KSU_IOCTL_GET_HOOK_MODE _IOC(_IOC_READ, 'K', 98, 0)
+#define KSU_IOCTL_GET_VERSION_TAG _IOC(_IOC_READ, 'K', 99, 0)
 
 // IOCTL handler types
 typedef int (*ksu_ioctl_handler_t)(void __user *arg);

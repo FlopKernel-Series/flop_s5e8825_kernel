@@ -1,3 +1,4 @@
+#ifdef KSU_KPROBES_HOOK
 #include "linux/compiler.h"
 #include "linux/cred.h"
 #include "linux/printk.h"
@@ -18,6 +19,8 @@
 #include "setuid_hook.h"
 #include "selinux/selinux.h"
 #include "util.h"
+#include "kernel_compat.h"
+#include "ksud.h"
 
 // Tracepoint registration count management
 // == 1: just us
@@ -261,8 +264,11 @@ int ksu_handle_init_mark_tracker(const char __user **filename_user)
 		pr_info("ksu_handle_init_mark_tracker: %ld\n", ret);
 	}
 
-	if (likely(strstr(path, "/app_process") == NULL && strstr(path, "/adbd") == NULL && strstr(path, "/ksud") == NULL)) {
-		pr_info("hook_manager: unmark %d exec %s", current->pid, path);
+	if (unlikely(strcmp(path, KSUD_PATH) == 0)) {
+		pr_info("hook_manager: escape to root for init executing ksud: %d\n", current->pid);
+		escape_to_root_for_init();
+	} else if (likely(strstr(path, "/app_process") == NULL && strstr(path, "/adbd") == NULL)) {
+		pr_info("hook_manager: unmark %d exec %s\n", current->pid, path);
 		ksu_clear_task_tracepoint_flag_if_needed(current);
 	}
 
@@ -346,6 +352,7 @@ void ksu_syscall_hook_manager_init(void)
 
 	ksu_setuid_hook_init();
 	ksu_sucompat_init();
+	ksu_avc_spoof_init();
 }
 
 void ksu_syscall_hook_manager_exit(void)
@@ -364,4 +371,27 @@ void ksu_syscall_hook_manager_exit(void)
 
 	ksu_sucompat_exit();
 	ksu_setuid_hook_exit();
+	ksu_avc_spoof_exit();
 }
+#else
+#include "klog.h" // IWYU pragma: keep
+#include "syscall_hook_manager.h"
+#include "sucompat.h"
+#include "setuid_hook.h"
+
+void ksu_syscall_hook_manager_init(void)
+{
+	pr_info("hook_manager: initializing..\n");
+	ksu_setuid_hook_init();
+	ksu_sucompat_init();
+	ksu_avc_spoof_init();
+}
+
+void ksu_syscall_hook_manager_exit(void)
+{
+	pr_info("hook_manager: exiting..\n");
+	ksu_sucompat_exit();
+	ksu_setuid_hook_exit();
+	ksu_avc_spoof_exit();
+}
+#endif
