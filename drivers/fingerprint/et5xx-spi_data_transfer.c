@@ -31,10 +31,40 @@ int et5xx_spi_sync(struct et5xx_data *etspi, int len)
 
 	spi_message_init(&m);
 	spi_message_add_tail(&xfer, &m);
+
+	/* visible INFO log for every SPI transfer: opcode + short sample */
+	if (len > 0) {
+		if (len <= 64)
+			pr_info("et5xx SPI TX pid=%d len=%u op=0x%02x b1=0x%02x b2=0x%02x b3=0x%02x\n",
+				current->pid, (unsigned int)len, (unsigned int)etspi->buf[0],
+				(unsigned int)((len > 1) ? etspi->buf[1] : 0x00),
+				(unsigned int)((len > 2) ? etspi->buf[2] : 0x00),
+				(unsigned int)((len > 3) ? etspi->buf[3] : 0x00));
+		else
+			pr_info("et5xx SPI TX pid=%d len=%u op=0x%02x (truncated sample)\n",
+				current->pid, (unsigned int)len, (unsigned int)etspi->buf[0]);
+	} else {
+		pr_info("et5xx SPI TX pid=%d len=0\n", current->pid);
+	}
+
 	retval = spi_sync(etspi->spi, &m);
 
-	if (retval < 0)
+	/* always print a concise RX/result summary (safe for large frames) */
+	if (retval < 0) {
+		pr_info("et5xx SPI RX pid=%d len=%u op=0x%02x ret=%d\n",
+			current->pid, (unsigned int)len, (unsigned int)((len > 0) ? etspi->buf[0] : 0xff), retval);
 		pr_err("error retval = %d\n", retval);
+	} else {
+		if (len <= 64)
+			pr_info("et5xx SPI RX pid=%d len=%u op=0x%02x b1=0x%02x b2=0x%02x b3=0x%02x\n",
+				current->pid, (unsigned int)len, (unsigned int)etspi->buf[0],
+				(unsigned int)((len > 1) ? etspi->buf[1] : 0x00),
+				(unsigned int)((len > 2) ? etspi->buf[2] : 0x00),
+				(unsigned int)((len > 3) ? etspi->buf[3] : 0x00));
+		else
+			pr_info("et5xx SPI RX pid=%d len=%u op=0x%02x (truncated)\n",
+				current->pid, (unsigned int)len, (unsigned int)etspi->buf[0]);
+	}
 
 	return retval;
 }
@@ -62,6 +92,8 @@ int et5xx_io_burst_write_register(struct et5xx_data *etspi,
 	}
 	pr_debug("tx_buf = %p op = %x reg = %x, len = %d\n",
 			ioc->tx_buf, *etspi->buf, *(etspi->buf + 1), ioc->len + 1);
+	pr_info("et5xx BURST-W TX pid=%d op=0x%02x reg=0x%02x len=%d\n",
+		current->pid, etspi->buf[0], etspi->buf[1], ioc->len + 1);
 	retval = et5xx_spi_sync(etspi, ioc->len + 1);
 
 	if (retval < 0)
@@ -93,6 +125,8 @@ int et5xx_io_burst_write_register_backward(struct et5xx_data *etspi,
 	}
 	pr_debug("tx_buf = %p op = %x reg = %x, len = %d\n",
 		ioc->tx_buf, *etspi->buf, *(etspi->buf + 1), ioc->len + 1);
+	pr_info("et5xx BURST-W-BW TX pid=%d op=0x%02x reg=0x%02x len=%d\n",
+		current->pid, etspi->buf[0], etspi->buf[1], ioc->len + 1);
 	retval = et5xx_spi_sync(etspi, ioc->len + 1);
 
 	if (retval < 0)
@@ -124,12 +158,18 @@ int et5xx_io_burst_read_register(struct et5xx_data *etspi,
 	}
 	pr_debug("tx_buf = %p op = %x reg = %x, len = %d\n",
 			ioc->tx_buf, *etspi->buf, *(etspi->buf + 1), ioc->len + 2);
+	pr_info("et5xx BURST-R TX pid=%d op=0x%02x reg=0x%02x len=%d\n",
+		current->pid, etspi->buf[0], etspi->buf[1], ioc->len + 2);
 	retval = et5xx_spi_sync(etspi, ioc->len + 2);
 
 	if (retval < 0) {
 		pr_err("error retval = %d\n", retval);
 		return -ENOMEM;
 	}
+
+	/* short RX summary before copying back to userspace */
+	pr_info("et5xx BURST-R RX pid=%d op=0x%02x reg=0x%02x len=%d b1=0x%02x\n",
+		current->pid, etspi->buf[0], etspi->buf[1], ioc->len, etspi->buf[2]);
 
 	if (copy_to_user((u8 __user *) (uintptr_t)ioc->rx_buf, etspi->buf + 2,
 				ioc->len)) {
@@ -163,12 +203,17 @@ int et5xx_io_burst_read_register_backward(struct et5xx_data *etspi,
 	}
 	pr_debug("tx_buf = %p op = %x reg = %x, len = %d\n",
 			ioc->tx_buf, *etspi->buf, *(etspi->buf + 1), ioc->len + 2);
+	pr_info("et5xx BURST-R-BW TX pid=%d op=0x%02x reg=0x%02x len=%d\n",
+		current->pid, etspi->buf[0], etspi->buf[1], ioc->len + 2);
 	retval = et5xx_spi_sync(etspi, ioc->len + 2);
 
 	if (retval < 0) {
 		pr_err("error retval = %d\n", retval);
 		return retval;
 	}
+
+	pr_info("et5xx BURST-R-BW RX pid=%d op=0x%02x reg=0x%02x len=%d b1=0x%02x\n",
+		current->pid, etspi->buf[0], etspi->buf[1], ioc->len, etspi->buf[2]);
 
 	if (copy_to_user((u8 __user *) (uintptr_t)ioc->rx_buf, etspi->buf + 2,
 			ioc->len)) {
@@ -205,6 +250,8 @@ int et5xx_io_read_register(struct et5xx_data *etspi, u8 *addr, u8 *buf)
 
 	pr_debug("len = %d addr = %p val = %x\n",
 			read_len, addr, etspi->buf[2]);
+	pr_info("et5xx REG-R pid=%d addr=0x%02x val=0x%02x\n",
+		current->pid, (u8)etspi->buf[1], (u8)etspi->buf[2]);
 
 	if (copy_to_user((u8 __user *) (uintptr_t) buf, etspi->buf + 2, read_len)) {
 		pr_err("buffer copy_to_user fail retval\n");
@@ -232,6 +279,8 @@ int et5xx_io_write_register(struct et5xx_data *etspi, u8 *buf)
 
 	pr_debug("write_len = %d addr = %x data = %x\n",
 			write_len, etspi->buf[1], etspi->buf[2]);
+	pr_info("et5xx REG-W TX pid=%d addr=0x%02x data=0x%02x\n",
+		current->pid, etspi->buf[1], etspi->buf[2]);
 
 	etspi->buf[0] = OP_REG_W;
 	retval = et5xx_spi_sync(etspi, 3);
@@ -263,10 +312,15 @@ int et5xx_write_register(struct et5xx_data *etspi, u8 addr, u8 buf)
 	etspi->buf[2] = buf;
 	retval = et5xx_spi_sync(etspi, 3);
 
-	if (retval == 0)
+	if (retval == 0) {
 		pr_debug("address = %x\n", addr);
-	else
+		pr_info("et5xx REG-W pid=%d addr=0x%02x data=0x%02x OK\n",
+			current->pid, addr, buf);
+	} else {
 		pr_err("read data error retval = %d\n", retval);
+		pr_info("et5xx REG-W pid=%d addr=0x%02x data=0x%02x ERR=%d\n",
+			current->pid, addr, buf, retval);
+	}
 
 	if (etspi->users == 0) {
 		kfree(etspi->buf);
@@ -301,8 +355,12 @@ int et5xx_read_register(struct et5xx_data *etspi, u8 addr, u8 *buf)
 	if (retval == 0) {
 		*buf = etspi->buf[2];
 		pr_debug("address = %x result = %x %x\n", addr, etspi->buf[1], etspi->buf[2]);
+		pr_info("et5xx REG-R pid=%d addr=0x%02x val=0x%02x\n",
+			current->pid, addr, etspi->buf[2]);
 	} else {
 		pr_err("read data error retval = %d\n", retval);
+		pr_info("et5xx REG-R pid=%d addr=0x%02x ERR=%d\n",
+			current->pid, addr, retval);
 	}
 	if (etspi->users == 0) {
 		kfree(etspi->buf);
@@ -342,6 +400,9 @@ int et5xx_io_nvm_read(struct et5xx_data *etspi, struct egis_ioc_transfer *ioc)
 	etspi->buf[0] = OP_NVM_ON_R;
 
 	pr_debug("logical addr(%x) len(%d)\n", addr, ioc->len);
+	/* brief log (detailed summary after spi_len is determined) */
+	pr_info("et5xx NVM-R REQ pid=%d logical_addr=0x%02x len=%u\n",
+		current->pid, addr, (unsigned int)ioc->len);
 	if ((addr + ioc->len) > MAX_NVM_LEN)
 		return -EINVAL;
 
@@ -355,6 +416,10 @@ int et5xx_io_nvm_read(struct et5xx_data *etspi, struct egis_ioc_transfer *ioc)
 			spi_len = spi_len + (DIVISION_OF_IMAGE - (spi_len % DIVISION_OF_IMAGE));
 	}
 
+	/* detailed, accurate TX summary (safe now that spi_len/phys addr are known) */
+	pr_info("et5xx NVM-R TX pid=%d logical_addr=0x%02x len=%u phys_addr=0x%02x spi_len=%d\n",
+		current->pid, addr, (unsigned int)ioc->len, (unsigned int)etspi->buf[1], spi_len);
+
 	pr_debug("nvm read addr(%x) len(%d) xfer.rx_buf(%p), etspi->buf(%p)\n",
 			etspi->buf[1], spi_len, etspi->buf, etspi->buf);
 	retval = et5xx_spi_sync(etspi, spi_len);
@@ -363,6 +428,9 @@ int et5xx_io_nvm_read(struct et5xx_data *etspi, struct egis_ioc_transfer *ioc)
 		pr_err("error retval = %d\n", retval);
 		return retval;
 	}
+
+	pr_info("et5xx NVM-R RX pid=%d logical_addr=0x%02x len=%d ret=%d\n",
+		current->pid, addr, ioc->len, retval);
 
 	if (copy_to_user((u8 __user *) (uintptr_t) ioc->rx_buf, etspi->buf + 3
 			, ioc->len)) {
@@ -417,6 +485,8 @@ int et5xx_io_nvm_write(struct et5xx_data *etspi, struct egis_ioc_transfer *ioc)
 	len = (ioc->len - 1) / 2;
 	pr_debug("nvm write addr(%d) len(%d) xfer.tx_buf(%p), etspi->buf(%p)\n",
 			buf[0], len, etspi->buf, etspi->buf);
+	pr_info("et5xx NVM-W TX pid=%d logical_addr=0x%02x len=%d\n",
+		current->pid, buf[0], ioc->len - 1);
 	for (i = 0, addr = buf[0] / 2; /* thansfer to nvm physical length */
 			i < len; i++) {
 		etspi->buf[0] = OP_NVM_ON_W;
@@ -584,6 +654,8 @@ int et5xx_io_vdm_write(struct et5xx_data *etspi, struct egis_ioc_transfer *ioc)
 
 	pr_debug("len = %d, xfer.len = %d, buf = %p, tx_buf = %p\n",
 			ioc->len, spi_len, etspi->buf, ioc->tx_buf);
+	pr_info("et5xx VDM-W TX pid=%d len=%d op=0x%02x\n",
+		current->pid, ioc->len, OP_VDM_W);
 
 	etspi->buf[0] = OP_VDM_W;
 	retval = et5xx_spi_sync(etspi, spi_len);
@@ -611,6 +683,8 @@ int et5xx_io_get_frame(struct et5xx_data *etspi, u8 *fr, u32 size)
 
 	pr_debug("size = %d, xfer.len = %d, buf = %p, fr = %p\n",
 			size, spi_len, etspi->buf, fr);
+	pr_info("et5xx IMG-R TX pid=%d req_size=%u spi_len=%d\n",
+		current->pid, size, spi_len);
 
 	memset(etspi->buf, 0, spi_len);
 	etspi->buf[0] = OP_IMG_R;
@@ -620,6 +694,12 @@ int et5xx_io_get_frame(struct et5xx_data *etspi, u8 *fr, u32 size)
 		pr_err("read data error retval = %d\n", retval);
 		return retval;
 	}
+
+	/* short info only — first byte(s) of image payload to help correlation */
+	pr_info("et5xx IMG-R RX pid=%d req_size=%u ret=%d first=0x%02x second=0x%02x\n",
+		current->pid, size, retval,
+		(etspi->buf && spi_len > 1) ? etspi->buf[1] : 0x00,
+		(spi_len > 2) ? etspi->buf[2] : 0x00);
 
 	if (copy_to_user((u8 __user *) (uintptr_t) fr, etspi->buf + 1, size)) {
 		pr_err("buffer copy_to_user fail retval\n");
