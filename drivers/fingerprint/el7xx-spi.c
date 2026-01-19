@@ -197,6 +197,11 @@ static long el7xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		goto el7xx_ioctl_out;
 	}
 
+	/* high-level ioctl trace (visible at INFO) to correlate with SPI traces */
+	pr_info("el7xx IOCTL pid=%d opcode=0x%02x size=%u len=%u tx=%p rx=%p\n",
+		current->pid, (unsigned int)ioc->opcode, tmp,
+		(unsigned int)ioc->len, ioc->tx_buf, ioc->rx_buf);
+
 	switch (ioc->opcode) {
 #ifndef ENABLE_SENSORS_FPRINT_SECURE
 	/*
@@ -206,19 +211,22 @@ static long el7xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case FP_REGISTER_READ:
 		address = ioc->tx_buf;
 		result = ioc->rx_buf;
-		pr_debug("etspi FP_REGISTER_READ\n");
+		pr_info("el7xx IOCTL FP_REGISTER_READ pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_read_register(etspi, address, result, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_READ error retval = %d\n", retval);
 		break;
 	case FP_REGISTER_BREAD:
-		pr_debug("FP_REGISTER_BREAD\n");
+		pr_info("el7xx IOCTL FP_REGISTER_BREAD pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_burst_read_register(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BREAD error retval = %d\n", retval);
 		break;
 	case FP_REGISTER_BREAD_BACKWARD:
-		pr_debug("FP_REGISTER_BREAD_BACKWARD\n");
+		pr_info("el7xx IOCTL FP_REGISTER_BREAD_BACKWARD pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_burst_read_register_backward(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BREAD_BACKWARD error retval = %d\n", retval);
@@ -229,13 +237,15 @@ static long el7xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	 */
 	case FP_REGISTER_WRITE:
 		buf = ioc->tx_buf;
-		pr_debug("FP_REGISTER_WRITE\n");
+		pr_info("el7xx IOCTL FP_REGISTER_WRITE pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_write_register(etspi, buf, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_WRITE error retval = %d\n", retval);
 		break;
 	case FP_REGISTER_BWRITE:
-		pr_debug("FP_REGISTER_BWRITE\n");
+		pr_info("el7xx IOCTL FP_REGISTER_BWRITE pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_burst_write_register(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BWRITE error retval = %d\n", retval);
@@ -248,33 +258,38 @@ static long el7xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 
 	case FP_EFUSE_READ:
-		pr_debug("FP_EFUSE_READ\n");
+		pr_info("el7xx IOCTL FP_EFUSE_READ pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_read_efuse(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_EFUSE_READ error retval = %d\n", retval);
 		break;
 	case FP_EFUSE_WRITE:
-		pr_debug("FP_EFUSE_WRITE\n");
+		pr_info("el7xx IOCTL FP_EFUSE_WRITE pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_write_efuse(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_EFUSE_WRITE error retval = %d\n", retval);
 		break;
 	case FP_GET_IMG:
 		fr = ioc->rx_buf;
-		pr_debug("FP_GET_IMG\n");
+		pr_info("el7xx IOCTL FP_GET_IMG pid=%d rx=%p len=%u\n",
+			current->pid, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_get_frame(etspi, fr, ioc->len);
 		if (retval < 0)
 			pr_err("FP_GET_IMG error retval = %d\n", retval);
 		break;
 	case FP_WRITE_IMG:
 		fr = ioc->tx_buf;
-		pr_debug("FP_WRITE_IMG\n");
+		pr_info("el7xx IOCTL FP_WRITE_IMG pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_write_frame(etspi, fr, ioc->len);
 		if (retval < 0)
 			pr_err("FP_WRITE_IMG error retval = %d\n", retval);
 		break;
 	case FP_TRANSFER_COMMAND:
-		pr_debug("FP_TRANSFER_COMMAND\n");
+		pr_info("el7xx IOCTL FP_TRANSFER_COMMAND pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = el7xx_io_transfer_command(etspi, ioc->tx_buf, ioc->rx_buf, ioc->len);
 		if (retval < 0)
 			pr_err("FP_TRANSFER_COMMAND error retval = %d\n", retval);
