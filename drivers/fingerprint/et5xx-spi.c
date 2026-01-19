@@ -355,6 +355,11 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		goto out;
 	}
 
+	/* high-level ioctl trace (visible at INFO) to correlate with SPI traces */
+	pr_info("et5xx IOCTL pid=%d opcode=0x%02x size=%u len=%u tx=%p rx=%p\n",
+			current->pid, (unsigned int)ioc->opcode, tmp,
+			(unsigned int)ioc->len, ioc->tx_buf, ioc->rx_buf);
+
 	switch (ioc->opcode) {
 	/*
 	 * Read register
@@ -363,7 +368,8 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case FP_REGISTER_READ:
 		address = ioc->tx_buf;
 		result = ioc->rx_buf;
-		pr_debug("etspi FP_REGISTER_READ\n");
+		pr_info("et5xx IOCTL FP_REGISTER_READ pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 
 		retval = et5xx_io_read_register(etspi, address, result);
 		if (retval < 0)
@@ -376,7 +382,8 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	 */
 	case FP_REGISTER_WRITE:
 		buf = ioc->tx_buf;
-		pr_debug("FP_REGISTER_WRITE\n");
+		pr_info("et5xx IOCTL FP_REGISTER_WRITE pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 
 		retval = et5xx_io_write_register(etspi, buf);
 		if (retval < 0)
@@ -384,35 +391,40 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 
 	case FP_REGISTER_BREAD:
-		pr_debug("FP_REGISTER_BREAD\n");
+		pr_info("et5xx IOCTL FP_REGISTER_BREAD pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_burst_read_register(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BREAD error retval = %d\n", retval);
 		break;
 
 	case FP_REGISTER_BWRITE:
-		pr_debug("FP_REGISTER_BWRITE\n");
+		pr_info("et5xx IOCTL FP_REGISTER_BWRITE pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_burst_write_register(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BWRITE error retval = %d\n", retval);
 		break;
 
 	case FP_REGISTER_BREAD_BACKWARD:
-		pr_debug("FP_REGISTER_BREAD_BACKWARD\n");
+		pr_info("et5xx IOCTL FP_REGISTER_BREAD_BACKWARD pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_burst_read_register_backward(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BREAD_BACKWARD error retval = %d\n", retval);
 		break;
 
 	case FP_REGISTER_BWRITE_BACKWARD:
-		pr_debug("FP_REGISTER_BWRITE_BACKWARD\n");
+		pr_info("et5xx IOCTL FP_REGISTER_BWRITE_BACKWARD pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_burst_write_register_backward(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_REGISTER_BWRITE_BACKWARD error retval = %d\n", retval);
 		break;
 
 	case FP_NVM_READ:
-		pr_debug("FP_NVM_READ, (%d)\n", etspi->clk_setting->spi_speed);
+		pr_info("et5xx IOCTL FP_NVM_READ pid=%d spi=%u tx=%p rx=%p len=%u\n",
+			current->pid, etspi->clk_setting->spi_speed, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_nvm_read(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_NVM_READ error retval = %d\n", retval);
@@ -424,7 +436,8 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 
 	case FP_NVM_WRITE:
-		pr_debug("FP_NVM_WRITE, (%d)\n", etspi->clk_setting->spi_speed);
+		pr_info("et5xx IOCTL FP_NVM_WRITE pid=%d spi=%u tx=%p len=%u\n",
+			current->pid, etspi->clk_setting->spi_speed, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_nvm_write(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_NVM_WRITE error retval = %d\n", retval);
@@ -436,14 +449,15 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 
 	case FP_NVM_OFF:
-		pr_debug("FP_NVM_OFF\n");
+		pr_info("et5xx IOCTL FP_NVM_OFF pid=%d\n", current->pid);
 		retval = et5xx_io_nvm_off(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_NVM_OFF error retval = %d\n", retval);
 		break;
 
 	case FP_VDM_READ:
-		pr_debug("FP_VDM_READ\n");
+		pr_info("et5xx IOCTL FP_VDM_READ pid=%d tx=%p rx=%p len=%u\n",
+			current->pid, ioc->tx_buf, ioc->rx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_vdm_read(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_VDM_READ error retval = %d\n", retval);
@@ -452,7 +466,8 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 
 	case FP_VDM_WRITE:
-		pr_debug("FP_VDM_WRITE\n");
+		pr_info("et5xx IOCTL FP_VDM_WRITE pid=%d tx=%p len=%u\n",
+			current->pid, ioc->tx_buf, (unsigned int)ioc->len);
 		retval = et5xx_io_vdm_write(etspi, ioc);
 		if (retval < 0)
 			pr_err("FP_VDM_WRITE error retval = %d\n", retval);
@@ -464,7 +479,8 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	 */
 	case FP_GET_ONE_IMG:
 		fr = ioc->rx_buf;
-		pr_debug("FP_GET_ONE_IMG\n");
+		pr_info("et5xx IOCTL FP_GET_ONE_IMG pid=%d rx=%p len=%u\n",
+			current->pid, ioc->rx_buf, (unsigned int)ioc->len);
 
 		retval = et5xx_io_get_frame(etspi, fr, ioc->len);
 		if (retval < 0)
@@ -500,7 +516,8 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	 * Trigger initial routine
 	 */
 	case INT_TRIGGER_INIT:
-		pr_debug("Trigger function init\n");
+		pr_info("et5xx IOCTL INT_TRIGGER_INIT pid=%d pad=%02x,%02x,%02x\n",
+			current->pid, (unsigned int)ioc->pad[0], (unsigned int)ioc->pad[1], (unsigned int)ioc->pad[2]);
 		retval = et5xx_Interrupt_Init(
 				etspi,
 				(int)ioc->pad[0],
@@ -509,12 +526,12 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		break;
 	/* trigger */
 	case INT_TRIGGER_CLOSE:
-		pr_debug("Trigger function close\n");
+		pr_info("et5xx IOCTL INT_TRIGGER_CLOSE pid=%d\n", current->pid);
 		retval = et5xx_Interrupt_Free(etspi);
 		break;
 	/* Poll Abort */
 	case INT_TRIGGER_ABORT:
-		pr_debug("Trigger function abort\n");
+		pr_info("et5xx IOCTL INT_TRIGGER_ABORT pid=%d\n", current->pid);
 		et5xx_Interrupt_Abort(etspi);
 		break;
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
