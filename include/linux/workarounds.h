@@ -9,6 +9,11 @@ static inline bool is_aosp_mode(void)
 {
 	return true;
 }
+
+static inline bool is_aosp_mode_fast(void)
+{
+	return true;
+}
 #else
 bool is_aosp_mode(void);
 
