@@ -24,13 +24,13 @@ upload() {
     cd "$KDIR"
 
     if [ "$DO_BASHUP" = "1" ]; then
-        echo -e "\nINFO: Uploading build and log to bashupload.com\n"
-        curl -T "$ZIP_PATH" bashupload.com || echo "WARNING: bashupload operation failed (ignored)"
-        curl -T log.txt bashupload.com || echo "WARNING: bashupload operation failed (ignored)"
+        echo -e "\n$(log_info "Uploading build and log to bashupload.com")\n"
+        curl -T "$ZIP_PATH" bashupload.com || log_warn "bashupload operation failed (ignored)"
+        curl -T log.txt bashupload.com || log_warn "bashupload operation failed (ignored)"
     fi
 
     if [ "$DO_TG" = "1" ]; then
-        echo -e "\nINFO: Uploading to Telegram\n"
+        echo -e "\n$(log_info "Uploading to Telegram")\n"
         tgs "$ZIP_PATH"
     fi
 }

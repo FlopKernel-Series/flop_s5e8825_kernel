@@ -5,7 +5,7 @@ if [ -f /etc/doas.conf ] && command -v "doas" &>/dev/null; then
 elif command -v "sudo" &>/dev/null; then
 	  ROOT="sudo"
 else
-	  echo "ERROR: neither doas nor sudo found." >&2
+	  log_err "neither doas nor sudo found."
 	  return 1
 fi
 
@@ -64,7 +64,7 @@ elif echo "$DISTRO_IDS" | grep -Eq 'gentoo'; then
     GENTOO
 else
     echo ""
-    echo "INFO: distro not supported, install manually: ${DEPS[*]}"
+    log_info "distro not supported, install manually: ${DEPS[*]}"
     echo ""
 fi
 

@@ -1,41 +1,41 @@
 packing() {
-    echo -e "\nINFO: Building zip..."
+    echo -e "\n$(log_info "Building zip...")"
     cd "$AK3_DIR"
     cp -f "$OUT_VENDORBOOTIMG" vendor_boot.img
     cp -f "$OUT_DTBIMAGE" dtb
     cp -f "$OUT_KERNEL" .
     zip -r9 -q "$ZIP_PATH" * -x .git .github README.md
     cd "$KDIR"
-    echo -e "INFO: Done! \nINFO: Output: $ZIP_PATH\n"
+    echo -e "$(log_info "Done!") \n$(log_info "Output: $ZIP_PATH")\n"
     if [ "$AK3_TEST" != "1" ]; then
         rm -rf "$AK3_DIR"
     fi
 
     if [ "$DO_TAR" = "1" ]; then
-        echo -e "\nINFO: Building TAR files..."
+        echo -e "\n$(log_info "Building TAR files...")"
         cd "$KDIR/kernel_build"
 
         # Create OneUI TAR
-        echo -e "\nINFO: Creating OneUI TAR..."
+        echo -e "\n$(log_info "Creating OneUI TAR...")"
         rm -f "$TAR_PATH_ONEUI"
         lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG_ONEUI" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_ONEUI" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
-        echo -e "INFO: Output: $TAR_PATH_ONEUI"
+        echo -e "$(log_info "Output: $TAR_PATH_ONEUI")"
 
         # Create AOSP TAR
-        echo -e "\nINFO: Creating AOSP TAR..."
+        echo -e "\n$(log_info "Creating AOSP TAR...")"
         rm -f "$TAR_PATH_AOSP"
         lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG_AOSP" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_AOSP" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
-        echo -e "INFO: Output: $TAR_PATH_AOSP"
+        echo -e "$(log_info "Output: $TAR_PATH_AOSP")"
 
         # Create OneUI Permissive TAR (if requested)
         if [ "$DO_PERM" = "1" ]; then
-            echo -e "\nINFO: Creating OneUI Permissive TAR..."
+            echo -e "\n$(log_info "Creating OneUI Permissive TAR...")"
             local TAR_PATH_ONEUI_PERM="${TAR_PATH_ONEUI}"
             local ONEUI_PERM_KERNEL="$TMPDIR/Image_oneui_perm"
             cp "$OUT_KERNEL" "$ONEUI_PERM_KERNEL"
@@ -60,10 +60,10 @@ packing() {
             tar -cf "$TAR_PATH_ONEUI_PERM" boot.img.lz4 vendor_boot.img.lz4
             rm -f boot.img.lz4 vendor_boot.img.lz4
             rm -f "$ONEUI_PERM_KERNEL" "$ONEUI_PERM_BOOTIMG"
-            echo -e "INFO: Output: $TAR_PATH_ONEUI_PERM"
+            echo -e "$(log_info "Output: $TAR_PATH_ONEUI_PERM")"
 
             # Create AOSP Permissive TAR
-            echo -e "\nINFO: Creating AOSP Permissive TAR..."
+            echo -e "\n$(log_info "Creating AOSP Permissive TAR...")"
             local TAR_PATH_AOSP_PERM="${TAR_PATH_AOSP}"
             local AOSP_PERM_KERNEL="$TMPDIR/Image_aosp_perm"
             cp "$OUT_KERNEL" "$AOSP_PERM_KERNEL"
@@ -93,11 +93,11 @@ packing() {
             tar -cf "$TAR_PATH_AOSP_PERM" boot.img.lz4 vendor_boot.img.lz4
             rm -f boot.img.lz4 vendor_boot.img.lz4
             rm -f "$AOSP_PERM_KERNEL" "$AOSP_PERM_BOOTIMG"
-            echo -e "INFO: Output: $TAR_PATH_AOSP_PERM"
+            echo -e "$(log_info "Output: $TAR_PATH_AOSP_PERM")"
         fi
 
         # Create OneUI Unlocked TAR
-        echo -e "\nINFO: Creating OneUI Unlocked TAR..."
+        echo -e "\n$(log_info "Creating OneUI Unlocked TAR...")"
         local TAR_PATH_ONEUI_UNLOCKED="${TAR_PATH_ONEUI/-$FK_TYPE_TAR-/-$FK_TYPE_TAR+Unlocked-}"
         local ONEUI_UNLOCKED_KERNEL="$TMPDIR/Image_oneui_unlocked"
         cp "$OUT_KERNEL" "$ONEUI_UNLOCKED_KERNEL"
@@ -122,10 +122,10 @@ packing() {
         tar -cf "$TAR_PATH_ONEUI_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
         rm -f "$ONEUI_UNLOCKED_KERNEL" "$ONEUI_UNLOCKED_BOOTIMG"
-        echo -e "INFO: Output: $TAR_PATH_ONEUI_UNLOCKED"
+        echo -e "$(log_info "Output: $TAR_PATH_ONEUI_UNLOCKED")"
 
         # Create AOSP Unlocked TAR
-        echo -e "\nINFO: Creating AOSP Unlocked TAR..."
+        echo -e "\n$(log_info "Creating AOSP Unlocked TAR...")"
         local TAR_PATH_AOSP_UNLOCKED="${TAR_PATH_AOSP/-$FK_TYPE_TAR-/-$FK_TYPE_TAR+Unlocked-}"
         local AOSP_UNLOCKED_KERNEL="$TMPDIR/Image_aosp_unlocked"
         cp "$OUT_KERNEL" "$AOSP_UNLOCKED_KERNEL"
@@ -155,7 +155,7 @@ packing() {
         tar -cf "$TAR_PATH_AOSP_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
         rm -f "$AOSP_UNLOCKED_KERNEL" "$AOSP_UNLOCKED_BOOTIMG"
-        echo -e "INFO: Output: $TAR_PATH_AOSP_UNLOCKED"
+        echo -e "$(log_info "Output: $TAR_PATH_AOSP_UNLOCKED")"
 
         cd "$KDIR"
     fi

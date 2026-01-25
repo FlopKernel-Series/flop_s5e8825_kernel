@@ -47,15 +47,15 @@ build() {
 
     if [ "$DO_REGEN" = "1" ]; then
         if [ "$DO_KSU" = "1" ] || [ "$DO_SUKI" = "1" ] || [ "$DO_RKSU" = "1" ]; then
-            echo "ERROR: Can't regenerate with KSU variant argument"
+            log_err "Can't regenerate with KSU variant argument"
             exit 1
         fi
         if [ "$DO_PERM" = "1" ]; then
-            echo "ERROR: Can't regenerate with Permissive argument"
+            log_err "Can't regenerate with Permissive argument"
             exit 1
         fi
         cp -f out/.config arch/arm64/configs/$DEFCONFIG
-        echo "INFO: Configuration regenerated. Check the changes!"
+        log_info "Configuration regenerated. Check the changes!"
         exit 0
     fi
 
@@ -79,7 +79,7 @@ build() {
     fi
 
 
-    echo -e "\nINFO: Starting compilation...\n"
+    echo -e "\n$(log_info "Starting compilation...")\n"
 
     if [ "$DO_QUIET" = "1" ]; then
         make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs > /dev/null | tee log.txt
@@ -93,7 +93,7 @@ build() {
         make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs 2>&1 | tee -a log.txt
 
         make -j$(nproc --all) O=$OUTDIR CC="$CC" 2>&1 | tee -a log.txt
-        
+
         make -j$(nproc --all) O=$OUTDIR CC="$CC" \
             INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
             INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install 2>&1 | tee -a log.txt

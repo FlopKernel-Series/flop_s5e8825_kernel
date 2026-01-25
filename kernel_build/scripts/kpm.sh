@@ -9,7 +9,7 @@ apply_kpm_patch() {
         return 0
     fi
 
-    echo -e "\nINFO: Applying KPM patch..."
+    log_info "Applying KPM patch..."
 
     # Vars
     local KPM_URL="https://raw.githubusercontent.com/ShirkNeko/SukiSU_patch/refs/heads/main/kpm/patch_linux"
@@ -19,7 +19,7 @@ apply_kpm_patch() {
 
     # Check if magiskboot exists and is executable
     if [[ ! -f "$MAGISKBOOT" ]] || [[ ! -x "$MAGISKBOOT" ]]; then
-        echo "ERROR: magiskboot not found or not executable at $MAGISKBOOT"
+        log_err "magiskboot not found or not executable at $MAGISKBOOT"
         return 1
     fi
 
@@ -28,7 +28,7 @@ apply_kpm_patch() {
     cd "$WORK_DIR"
 
     if ! curl -LSs "$KPM_URL" -o patch; then
-        echo "ERROR: Failed to download KPM patch script"
+        log_err "Failed to download KPM patch script"
         cd "$KDIR"
         rm -rf "$WORK_DIR"
         return 1
@@ -41,7 +41,7 @@ apply_kpm_patch() {
         cp "$FULL_OUT_IMAGE" .
         img_file=$(basename "$FULL_OUT_IMAGE")
     else
-        echo "ERROR: Kernel image not found at $FULL_OUT_IMAGE"
+        log_err "Kernel image not found at $FULL_OUT_IMAGE"
         cd "$KDIR"
         rm -rf "$WORK_DIR"
         return 1
@@ -49,27 +49,27 @@ apply_kpm_patch() {
 
     # Extract kernel image for patching
     if [[ "$img_file" == *"Image.gz-dtb" ]]; then
-        echo "INFO: Extracting kernel from Image.gz-dtb..."
+        log_info "Extracting kernel from Image.gz-dtb..."
         if ! "$MAGISKBOOT" split "$img_file" || [[ ! -f kernel ]]; then
-            echo "ERROR: Failed to split $img_file"
+            log_err "Failed to split $img_file"
             cd "$KDIR"
             rm -rf "$WORK_DIR"
             return 1
         fi
         cp kernel Image
     elif [[ "$img_file" == *"Image.gz" ]]; then
-        echo "INFO: Decompressing Image.gz..."
+        log_info "Decompressing Image.gz..."
         if ! "$MAGISKBOOT" decompress "$img_file" Image 2>/dev/null && ! gunzip -c "$img_file" > Image 2>/dev/null; then
-            echo "ERROR: Failed to decompress $img_file"
+            log_err "Failed to decompress $img_file"
             cd "$KDIR" || exit
             rm -rf "$WORK_DIR"
             return 1
         fi
     elif [[ "$img_file" == *"Image" ]]; then
         # Image is already in the correct format, no need to copy
-        echo "INFO: Using uncompressed Image directly"
+        log_info "Using uncompressed Image directly"
     else
-        echo "ERROR: Unsupported kernel image format: $img_file"
+        log_err "Unsupported kernel image format: $img_file"
         cd "$KDIR"
         rm -rf "$WORK_DIR"
         return 1
@@ -77,37 +77,37 @@ apply_kpm_patch() {
 
     # Check Image file
     if [[ ! -f Image ]]; then
-        echo "ERROR: Image file not found after extraction"
+        log_err "Image file not found after extraction"
         cd "$KDIR"
         rm -rf "$WORK_DIR"
         return 1
     fi
 
     # Apply KPM patch
-    echo "INFO: Patching kernel..."
+    log_info "Patching kernel..."
     if ./patch 2>&1; then
         if [[ -f oImage ]]; then
             mv oImage Image
         fi
     else
-        echo "ERROR: KPM patch script failed"
+        log_err "KPM patch script failed"
         cd "$KDIR"
         rm -rf "$WORK_DIR"
         return 1
     fi
 
     # Recompress and copy back to original location
-    echo "INFO: Repacking kernel image..."
+    log_info "Repacking kernel image..."
     if [[ "$img_file" == *"Image.gz-dtb" ]]; then
         if ! "$MAGISKBOOT" compress=gzip Image kernel_new && ! gzip -c Image > kernel_new; then
-            echo "ERROR: Failed to compress patched Image"
+            log_err "Failed to compress patched Image"
             cd "$KDIR"
             rm -rf "$WORK_DIR"
             return 1
         fi
 
         if [[ ! -f kernel_dtb ]]; then
-            echo "ERROR: kernel_dtb not found, cannot recreate Image.gz-dtb"
+            log_err "kernel_dtb not found, cannot recreate Image.gz-dtb"
             cd "$KDIR"
             rm -rf "$WORK_DIR"
             return 1
@@ -117,7 +117,7 @@ apply_kpm_patch() {
         cp Image.gz-dtb "$FULL_OUT_IMAGE"
     elif [[ "$img_file" == *"Image.gz" ]]; then
         if ! gzip -c Image > Image.gz; then
-            echo "ERROR: Failed to compress patched Image"
+            log_err "Failed to compress patched Image"
             cd "$KDIR"
             rm -rf "$WORK_DIR"
             return 1
@@ -127,7 +127,7 @@ apply_kpm_patch() {
         cp Image "$FULL_OUT_IMAGE"
     fi
 
-    echo "INFO: KPM patching completed successfully"
+    log_info "KPM patching completed successfully"
     cd "$KDIR"
     rm -rf "$WORK_DIR"
     return 0

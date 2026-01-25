@@ -1,7 +1,7 @@
 build_images() {
     local MONTH="$(date +%Y-%m)"
 
-    echo -e "\nINFO: Building dtb image..."
+    echo -e "\n$(log_info "Building dtb image...")"
     python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
 
     # Build OneUI boot image (original kernel with aosp_mode=0)
@@ -11,7 +11,7 @@ build_images() {
         --ramdisk "$PREBUILT_RAMDISK" \
         --os_version 15.0.0 \
         --os_patch_level "$MONTH" || exit 1
-    echo -e "INFO: OneUI boot.img created!"
+    echo -e "$(log_info "OneUI boot.img created!")"
 
     # Create AOSP boot image (patch kernel for aosp_mode=1)
     local AOSP_KERNEL="$TMPDIR/Image_aosp"
@@ -28,11 +28,11 @@ build_images() {
         --ramdisk "$PREBUILT_RAMDISK" \
         --os_version 15.0.0 \
         --os_patch_level "$MONTH" || exit 1
-    echo -e "INFO: AOSP boot.img created!"
+    echo -e "$(log_info "AOSP boot.img created!")"
 
     rm -f "$AOSP_KERNEL"
 
-    echo -e "\nINFO: Building vendor_boot image..."
+    echo -e "\n$(log_info "Building vendor_boot image...")"
     cd "$DLKM_RAMDISK_DIR"
     find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > "../ramdisk_dlkm.lz4"
     cd "../ramdisk_platform"
@@ -52,5 +52,5 @@ build_images() {
         --os_patch_level "$MONTH" || exit 1
 
     cd "$KDIR"
-    echo -e "INFO: Done!"
+    echo -e "$(log_info "Done!")"
 }

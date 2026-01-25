@@ -3,8 +3,20 @@
 
 set -e
 
+# Use shared log helpers
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "${SCRIPT_DIR}/../lib/log.sh" ]; then
+    # shellcheck source=../lib/log.sh
+    source "${SCRIPT_DIR}/../lib/log.sh"
+fi
+
+# Fallbacks if log helpers aren't available
+command -v log_info >/dev/null 2>&1 || log_info() { echo "INFO: $*"; }
+command -v log_warn >/dev/null 2>&1 || log_warn() { echo "WARNING: $*" >&2; }
+command -v log_err  >/dev/null 2>&1 || log_err()  { echo "ERROR: $*" >&2; }
+
 if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Usage: $0 <modules_dir> <output_file> [kernel_dir]"
+    log_err "Usage: $0 <modules_dir> <output_file> [kernel_dir]"
     exit 1
 fi
 
@@ -14,7 +26,7 @@ KERNEL_DIR="${3:-.}"
 MODULES_ORDER="$MODULES_DIR/modules.order"
 
 if [ ! -f "$MODULES_ORDER" ]; then
-    echo "ERROR: modules.order not found at $MODULES_ORDER"
+    log_err "modules.order not found at $MODULES_ORDER"
     exit 1
 fi
 
@@ -42,7 +54,7 @@ EXCLUDE_MODULES=(
 # Run depmod to generate dependency information
 DEPMOD_BASE=$(dirname "$(dirname "$(dirname "$MODULES_DIR")")")
 depmod -b "$DEPMOD_BASE" "$KERNEL_VERSION" 2>/dev/null || {
-    echo "WARNING: depmod failed, will use modules.order without dependency resolution"
+    log_warn "depmod failed, will use modules.order without dependency resolution"
 }
 
 # Extract module names from modules.order
@@ -152,5 +164,5 @@ fi
 
 rm -f "$ALL_MODULES"
 
-echo "Generated modules.load with $(wc -l < "$OUTPUT_FILE") modules"
+log_info "Generated modules.load with $(wc -l < "$OUTPUT_FILE") modules"
 cp -f "$OUTPUT_FILE" "$KERNEL_DIR/modules.load.gen"

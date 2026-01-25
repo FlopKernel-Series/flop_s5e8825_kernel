@@ -13,6 +13,10 @@
 ## Variables
 set -e
 
+## Logging helpers (optional color)
+# Disable colors via NO_COLOR=1 or CKBUILD_NO_COLOR=1 (also auto-disabled when stdout isn't a TTY).
+source "$(pwd)/kernel_build/lib/log.sh"
+
 # Other
 DEFAULT_DEFCONFIG="s5e8825-unified_defconfig"
 KERNEL_URL="https://github.com/FlopKernel-Series/flop_s5e8825_kernel"
@@ -24,7 +28,7 @@ BUILD_HOST="$USER@$(hostname)"
 SCRIPTS_DIR="kernel_build/scripts"
 
 # Workspace
-if [ -d /workspace ]; then  
+if [ -d /workspace ]; then
     WP="/workspace"
     IS_GP=1
 else
@@ -32,12 +36,12 @@ else
 fi
 
 if [ -z "$WP" ]; then
-    echo -e "\nERROR: Environment not Gitpod! Please set the WP env var...\n"
+    echo -e "\n$(log_err "Environment not Gitpod! Please set the WP env var...")\n"
     exit 1
 fi
 
 if [ ! -d drivers ]; then
-    echo -e "\nERROR: Please execute from top-level kernel tree\n"
+    echo -e "\n$(log_err "Please execute from top-level kernel tree")\n"
     exit 1
 fi
 
@@ -123,57 +127,57 @@ DEFCONFIG=$DEFAULT_DEFCONFIG
 
 for arg in "$@"; do
     if [[ "$arg" == *m* ]]; then
-        echo "INFO: menuconfig argument passed, kernel configuration menu will be shown"
+        log_info "menuconfig argument passed, kernel configuration menu will be shown"
         DO_MENUCONFIG=1
     fi
     if [[ "$arg" == *k* ]]; then
-        echo "INFO: KernelSU argument passed, a KernelSU build will be made"
+        log_info "KernelSU argument passed, a KernelSU build will be made"
         DO_KSU=1
     fi
     if [[ "$arg" == *s* ]]; then
-        echo "INFO: SukiSU argument passed, a SukiSU build will be made"
+        log_info "SukiSU argument passed, a SukiSU build will be made"
         DO_SUKI=1
     fi
     if [[ "$arg" == *u* ]]; then
-        echo "INFO: RKSU argument passed, a RKSU build will be made"
+        log_info "RKSU argument passed, a RKSU build will be made"
         DO_RKSU=1
     fi
     if [[ "$arg" == *c* ]]; then
-        echo "INFO: clean argument passed, output directory will be wiped"
+        log_info "clean argument passed, output directory will be wiped"
         DO_CLEAN=1
     fi
     if [[ "$arg" == *R* ]]; then
-        echo "INFO: Release argument passed, build marked as release"
+        log_info "Release argument passed, build marked as release"
         IS_RELEASE=1
     fi
     if [[ "$arg" == *t* ]]; then
         if [ "$SECRETS" = "0" ]; then
-            echo "WARNING: Telegram argument was passed, but secrets were not found. Skipping Telegram Upload"  
+            log_warn "Telegram argument was passed, but secrets were not found. Skipping Telegram Upload"
         else
-            echo "INFO: Telegram argument passed, build will be uploaded to CI"
+            log_info "Telegram argument passed, build will be uploaded to CI"
             DO_TG=1
         fi
     fi
     if [[ "$arg" == *b* ]]; then
-        echo "INFO: bashupload.com argument passed, build will be uploaded to bashupload.com"
+        log_info "bashupload.com argument passed, build will be uploaded to bashupload.com"
         DO_BASHUP=1
     fi
     if [[ "$arg" == *r* ]]; then
-        echo "INFO: config regeneration mode"
+        log_info "config regeneration mode"
         DO_REGEN=1
     fi
     if [[ "$arg" == *l* ]]; then
-        echo "INFO: Full-LTO argument passed"
-        echo "WARNING: Full-LTO is VERY resource heavy and may take a long time to compile"
+        log_info "Full-LTO argument passed"
+        log_warn "Full-LTO is VERY resource heavy and may take a long time to compile"
         DO_FLTO=1
     fi
     if [[ "$arg" == *q* ]]; then
-        echo "INFO: Quiet argument passed"
-        echo "WARNING: Only errors and warnings will be shown"
+        log_info "Quiet argument passed"
+        log_warn "Only errors and warnings will be shown"
         DO_QUIET=1
     fi
     if [[ "$arg" == *p* ]]; then
-        echo "INFO: Permissive argument passed"
+        log_info "Permissive argument passed"
         DO_PERM=1
     fi
 done
@@ -185,7 +189,7 @@ KSU_COUNT=0
 [ "$DO_RKSU" == "1" ] && KSU_COUNT=$((KSU_COUNT + 1))
 
 if [ "$KSU_COUNT" -gt 1 ]; then
-    echo "ERROR: Multiple KSU variants are mutually exclusive. Please select only one."
+    log_err "Multiple KSU variants are mutually exclusive. Please select only one."
     exit 1
 fi
 
@@ -225,7 +229,7 @@ ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
 TAR_PATH_ONEUI="$KDIR/kernel_build/FloppyOneUI_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
 TAR_PATH_AOSP="$KDIR/kernel_build/FloppyAOSP_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
 
-echo -e "\nINFO: Build info:
+echo -e "\n$(log_info "Build info:")
 - Device: $DEVICE ($CODENAME)
 - Addons: $FK_TYPE
 - FloppyKernel version: $FK_VER
@@ -257,16 +261,16 @@ source "$SCRIPTS_DIR/upload.sh"
 
 prep_build() {
     if [ "$USE_CCACHE" == "1" ]; then
-        echo "INFO: Using ccache"
+        log_info "Using ccache"
         if [ "$IS_GP" == "1" ]; then
             export CCACHE_DIR="$WP/.ccache"
             ccache -M 10G
         else
-            echo "WARNING: Environment is not Gitpod, please make sure you setup your own ccache configuration!"
+            log_warn "Environment is not Gitpod, please make sure you setup your own ccache configuration!"
         fi
     fi
 
-    echo -e "INFO: Compiler: $KBUILD_COMPILER_STRING\n"
+    echo -e "$(log_info "Compiler: $KBUILD_COMPILER_STRING")\n"
 }
 
 
@@ -287,7 +291,7 @@ build
 
 # Technically this should not be needed since we have "set -e" but still let's keep it
 if [ ! -f "$OUT_KERNEL" ]; then
-    echo -e "\nERROR: Kernel files not found! Compilation failed?"
+    echo -e "\n$(log_err "Kernel files not found! Compilation failed?")"
     exit 1
 fi
 
@@ -301,7 +305,7 @@ fi
 kernel_modules
 build_images
 packing
-echo -e "\nINFO: Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !\n"
+echo -e "\n$(log_info "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !")\n"
 clean_tmp
 
 upload
