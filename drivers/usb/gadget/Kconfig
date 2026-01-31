@@ -492,6 +492,19 @@ config USB_UAC2_DEVICE_NAME
 	  USB interface association descriptor for the UAC2 gadget.
 	  The default is "Source/Sink".
 
+config USB_UAC2_OUTPUT_TERMINAL_TYPE
+	hex "UAC2 output terminal type"
+	depends on USB_CONFIGFS_F_UAC2
+	default "0x301"
+	help
+	  This option sets the terminal type for the I/O output terminal
+	  in the UAC2 gadget. This determines how the device appears to
+	  the host system.
+	  
+	  Default is 0x301 (Speaker/Line out).
+
+	  Valid terminal types are defined in the USB Audio Class 2.0.
+
 config USB_CONFIGFS_F_MIDI
 	bool "MIDI function"
 	depends on USB_CONFIGFS
