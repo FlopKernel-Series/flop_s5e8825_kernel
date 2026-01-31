@@ -483,6 +483,15 @@ config USB_CONFIGFS_F_UAC2
 	  received from the USB Host and choose to provide whatever it
 	  wants as audio data to the USB Host.
 
+config USB_UAC2_DEVICE_NAME
+	string "UAC2 device name"
+	depends on USB_CONFIGFS_F_UAC2
+	default "Source/Sink"
+	help
+	  This option sets the device name string that appears in the
+	  USB interface association descriptor for the UAC2 gadget.
+	  The default is "Source/Sink".
+
 config USB_CONFIGFS_F_MIDI
 	bool "MIDI function"
 	depends on USB_CONFIGFS

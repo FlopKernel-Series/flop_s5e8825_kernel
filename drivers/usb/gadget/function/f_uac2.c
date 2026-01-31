@@ -2121,7 +2121,7 @@ static struct usb_function_instance *afunc_alloc_inst(void)
 	opts->req_number = UAC2_DEF_REQ_NUM;
 	opts->fb_max = FBACK_FAST_MAX;
 
-	snprintf(opts->function_name, sizeof(opts->function_name), "Source/Sink");
+	snprintf(opts->function_name, sizeof(opts->function_name), "%s", CONFIG_USB_UAC2_DEVICE_NAME);
 
 	return &opts->func_inst;
 }
