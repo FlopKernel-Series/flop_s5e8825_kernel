@@ -38,6 +38,7 @@
 #include <linux/slab.h>
 #include <linux/pagemap.h>
 #include <linux/proc_fs.h>
+#include <linux/workarounds.h>
 #include <linux/swap.h>
 #include <linux/spinlock.h>
 #include <linux/syscalls.h>
@@ -121,7 +122,7 @@ static int __init enforcing_setup(char *str)
 }
 __setup("enforcing=", enforcing_setup);
 #else
-#define selinux_enforcing_boot 1
+static int selinux_enforcing_boot __initdata = 1;
 #endif
 
 int selinux_enabled_boot __initdata = 1;
@@ -7315,6 +7316,9 @@ static __init int selinux_init(void)
 	pr_info("SELinux:  Initializing.\n");
 
 	memset(&selinux_state, 0, sizeof(selinux_state));
+	// Apply runtime permissive override from cmdline
+	if (is_force_perm_mode())
+		selinux_enforcing_boot = 0;
 	enforcing_set(&selinux_state, selinux_enforcing_boot);
 	checkreqprot_set(&selinux_state, selinux_checkreqprot_boot);
 	selinux_avc_init(&selinux_state.avc);
