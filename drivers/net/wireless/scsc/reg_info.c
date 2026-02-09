@@ -73,10 +73,10 @@ int slsi_read_regulatory(struct slsi_dev *sdev)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0))
 	char *reg_file_t = "/vendor/etc/wifi/slsi_reg_database.bin";
 #else
-	char *reg_file_t = "../etc/wifi/slsi_reg_database.bin";
-	char *reg_file_t_new = "wifi/slsi_reg_database.bin";
+	char *reg_file_t = "wifi/slsi_reg_database.bin";
 #endif
 #endif
+	char *reg_file_t_legacy = "../etc/wifi/slsi_reg_database.bin";
 	int i = 0, j = 0, index = 0;
 	uint32_t num_freqbands = 0, num_rules = 0, num_collections = 0;
 	int script_version = 0;
@@ -94,12 +94,12 @@ int slsi_read_regulatory(struct slsi_dev *sdev)
 
 	r = mx140_request_file(sdev->maxwell_core, reg_file_t, &firm);
 	if (r) {
-		SLSI_INFO(sdev, "Error Loading %s file from old path %d\n", reg_file_t, r);
-		r = mx140_request_file(sdev->maxwell_core, reg_file_t_new, &firm);
+		SLSI_INFO(sdev, "Error Loading %s file %d\n", reg_file_t, r);
+		r = mx140_request_file(sdev->maxwell_core, reg_file_t_legacy, &firm);
 		if (r) {
-		        SLSI_INFO(sdev, "Error Loading %s file from new path %d\n", reg_file_t_new, r);
-		        sdev->regdb.regdb_state = SLSI_REG_DB_ERROR;
-		        return -EINVAL;
+			SLSI_INFO(sdev, "Error Loading 2nd %s file %d\n", reg_file_t_legacy, r);
+			sdev->regdb.regdb_state = SLSI_REG_DB_ERROR;
+			return -EINVAL;
 		}
 	}
 

@@ -223,3 +223,9 @@ config WLBT_DCXO_TUNE
 	depends on SOC_S5E8825
 	help
 		Enable to Control DCXO Calibration Tune value
+
+config SCSC_WLBT_PTR_PRINT
+	bool "Enable this flag to print memory address used for debugging"
+	default n
+	help
+		Enable this flag to print memory address used for debugging

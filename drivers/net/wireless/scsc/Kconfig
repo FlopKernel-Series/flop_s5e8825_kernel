@@ -183,18 +183,18 @@ config SCSC_AP_INTERFACE_NAME
         help
           AP net device interface name.
 
-config SCSC_AP_INTERFACE_NAME_ALT
-        string "Alt AP net device interface name"
-        default "wlan1"
-        help
-          Alternative AP net device interface name.
-
 config SCSC_WLAN_ACS_ENABLE
         bool "ACS Support"
         default y
         help
           This option tells if automatic channel selection is
 	  supported or not.
+
+config SCSC_AP_INTERFACE_NAME
+        string "AP net device interface name"
+        default "wlan1"
+        help
+          AP net device interface name.
 
 config SCSC_WLAN_MHS_STATIC_INTERFACE
         bool "Static AP Interface Support"

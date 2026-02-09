@@ -283,12 +283,6 @@ static int cac_send_addts(struct slsi_dev *sdev, int id, int ebw)
 	u8                      *bssid;
 	u8                      r = 0;
 
-	entry = find_tspec_entry(id, 0);
-	if (entry == NULL) {
-		SLSI_ERR(sdev, "CAC-ADDTS: Invalid TSPEC ID\n");
-		return -1;
-	}
-
 	SLSI_MUTEX_LOCK(sdev->netdev_add_remove_mutex);
 	netdev = get_netdev_for_station(sdev);
 	if (netdev == NULL) {
@@ -309,17 +303,26 @@ static int cac_send_addts(struct slsi_dev *sdev, int id, int ebw)
 		goto exit;
 	}
 	bssid = ndev_vif->sta.sta_bss->bssid;
+
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
+	entry = find_tspec_entry(id, 0);
+	if (!entry) {
+		SLSI_ERR(sdev, "CAC-ADDTS: Invalid TSPEC ID\n");
+		r = -1;
+		goto exit_unlock_tspec;
+	}
+
 	if (entry->accepted) {
 		SLSI_ERR(sdev, "CAC-ADDTS: TSPEC already accepted\n");
 		r = -1;
-		goto exit;
+		goto exit_unlock_tspec;
 	}
 
 	buf = kmalloc(IEEE80211_HEADER_SIZE + sizeof(*req) + extra_ie_len, GFP_KERNEL);
 	if (buf == NULL) {
 		SLSI_ERR(sdev, "CAC-ADDTS: Failed to allocate ADDTS request\n");
 		r = -1;
-		goto exit;
+		goto exit_unlock_tspec;
 	}
 
 	hdr = (struct ieee80211_hdr *)buf;
@@ -412,6 +415,8 @@ static int cac_send_addts(struct slsi_dev *sdev, int id, int ebw)
 
 exit_free_buf:
 	kfree(buf);
+exit_unlock_tspec:
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 exit:
 	SLSI_MUTEX_UNLOCK(ndev_vif->vif_mutex);
 	SLSI_MUTEX_UNLOCK(sdev->netdev_add_remove_mutex);
@@ -440,12 +445,6 @@ static int cac_send_delts(struct slsi_dev *sdev, int id)
 	u8                      r = 0;
 	struct slsi_peer        *stapeer;
 
-	entry = find_tspec_entry(id , 1);
-	if (entry == NULL) {
-		SLSI_ERR(sdev, "CAC-DELTS: no TSPEC has been established for tsid=%d\n", id);
-		return -1;
-	}
-
 	SLSI_MUTEX_LOCK(sdev->netdev_add_remove_mutex);
 	netdev = get_netdev_for_station(sdev);
 	if (netdev == NULL) {
@@ -473,11 +472,20 @@ static int cac_send_delts(struct slsi_dev *sdev, int id)
 	}
 
 	bssid = ndev_vif->sta.sta_bss->bssid;
+
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
+	entry = find_tspec_entry(id, 1);
+	if (!entry) {
+		SLSI_ERR(sdev, "CAC-DELTS: no TSPEC has been established for tsid=%d\n", id);
+		r = -1;
+		goto exit_unlock_tspec;
+	}
+
 	buf = kmalloc(24 + sizeof(*req), GFP_KERNEL);
 	if (buf == NULL) {
 		SLSI_ERR(sdev, "CAC-DELTS: Failed to allocate DELTS request\n");
 		r = -1;
-		goto exit;
+		goto exit_unlock_tspec;
 	}
 	hdr = (struct ieee80211_hdr *)buf;
 	hdr->frame_control = IEEE80211_FC(IEEE80211_FTYPE_MGMT, IEEE80211_STYPE_ACTION);
@@ -490,6 +498,7 @@ static int cac_send_delts(struct slsi_dev *sdev, int id)
 	req->hdr.action = WMM_ACTION_CODE_DELTS;
 	req->hdr.dialog_token = 0;
 	req->hdr.status_code = 0;
+
 	memcpy(&req->tspec, &entry->tspec, sizeof(entry->tspec));
 
 	/* TODO_HARDMAC: If PMF is negotiated over the link, the host shall not
@@ -535,6 +544,8 @@ static int cac_send_delts(struct slsi_dev *sdev, int id)
 		}
 exit_free_buf:
 	kfree(buf);
+exit_unlock_tspec:
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 exit:
 	SLSI_MUTEX_UNLOCK(ndev_vif->vif_mutex);
 	SLSI_MUTEX_UNLOCK(sdev->netdev_add_remove_mutex);
@@ -578,6 +589,7 @@ static int cac_create_tspec(struct slsi_dev *sdev, char *args)
 	SLSI_MUTEX_UNLOCK(ndev_vif->vif_mutex);
 	SLSI_MUTEX_UNLOCK(sdev->netdev_add_remove_mutex);
 
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 	if (args == NULL) {
 		/* No input for tid, so we use the auto increment*/
 		if (tspec_list_next_id <= 7) {
@@ -603,12 +615,14 @@ static int cac_create_tspec(struct slsi_dev *sdev, char *args)
 
 	if (id < TSID_MIN || id > TSID_MAX) {
 		SLSI_ERR(sdev, "CAC: Invalid TSID =%d, must be in range 0-7\n", id);
+		SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 		return -1;
 	}
 
 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
 	if (entry == NULL) {
 		SLSI_ERR(sdev, "CAC: Failed to allocate TSPEC\n");
+		SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 		return -1;
 	}
 
@@ -627,44 +641,9 @@ static int cac_create_tspec(struct slsi_dev *sdev, char *args)
 	entry->next = tspec_list;
 	tspec_list = entry;
 	SLSI_DBG1(sdev, SLSI_MLME, "CAC: Created TSPEC entry for id  =%d\n", id);
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 
 	return entry->id;
-}
-
-/* Name: cac_delete_tspec
- * Desc: delete a tspec from the list of the tspecs
- * sdev: pointer to the slsi_dev struct
- * id: the id of the tspec that will be deleted
- * return: 0 (succes), -1 (failure)
- */
-static int cac_delete_tspec(struct slsi_dev *sdev, int id)
-{
-	struct cac_tspec *itr;
-	struct cac_tspec *prev;
-
-	itr = tspec_list;
-	prev = NULL;
-	while (itr != NULL) {
-		if (itr->id == id) {
-			if (prev)
-				prev->next = itr->next;
-			else
-				tspec_list = itr->next;
-
-			if (itr->accepted)
-				cac_send_delts(sdev, itr->id);
-
-			SLSI_DBG3(sdev, SLSI_MLME, "CAC: TSPEC entry deleted for id  =%d\n", id);
-			kfree(itr);
-
-			return 0;
-		}
-		prev = itr;
-		itr = itr->next;
-	}
-	SLSI_ERR(sdev, "CAC: Couldn't find TSPEC with id %d for deletion", id);
-
-	return -1;
 }
 
 /* Name: cac_delete_tspec_by_state
@@ -790,28 +769,6 @@ int cac_ctrl_create_tspec(struct slsi_dev *sdev, char *args)
 
 	return id;
 }
-
-/* Name: cac_ctrl_delete_tspec
- * Desc: public function to delete tspec
- * sdev: pointer to the slsi_dev struct
- * args:pointer to a buffer that contains the agrs for deleting tspec from the list
- * return: 0 (succes), -1 (failure)
- */
-int cac_ctrl_delete_tspec(struct slsi_dev *sdev, char *args)
-{
-	int id;
-
-	if (strtoint(args, &id) < 0) {
-		SLSI_ERR(sdev, "CAC-DELETE-TSPEC: Invalid TSPEC ID\n");
-		return -1;
-	}
-
-	if (cac_delete_tspec(sdev, id) < 0)
-		return -1;
-
-	return 0;
-}
-
 /* Name: cac_ctrl_config_tspec
  * Desc: public function to configure a tspec
  * sdev: pointer to the slsi_dev struct
@@ -849,9 +806,12 @@ int cac_ctrl_config_tspec(struct slsi_dev *sdev, char *args)
 		SLSI_ERR(sdev, "CAC: Conversion error for tspecid value\n");
 		return -1;
 	}
-
-	if (cac_config_tspec(sdev, tspec_id, field, val) < 0)
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
+	if (cac_config_tspec(sdev, tspec_id, field, val) < 0) {
+		SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 		return -1;
+	}
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 
 	return 0;
 }
@@ -883,6 +843,7 @@ int cac_ctrl_send_addts(struct slsi_dev *sdev, char *args)
 		SLSI_ERR(sdev, "CAC: Conversion error for tspecid value\n");
 		return -1;
 	}
+
 	if (cac_send_addts(sdev, id, ebw) < 0)
 		return -1;
 
@@ -1040,6 +1001,7 @@ static void cac_process_addts_rsp(struct slsi_dev *sdev, struct net_device *netd
 	if (WARN_ON(!peer))
 		return;
 
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 	itr = tspec_list;
 	while (itr != NULL) {
 		if (itr->dialog_token == rsp->hdr.dialog_token) {
@@ -1050,14 +1012,17 @@ static void cac_process_addts_rsp(struct slsi_dev *sdev, struct net_device *netd
 	}
 	if (itr == NULL) {
 		SLSI_ERR(sdev, "CAC: No matching TSPEC found for ADDTS response\n");
+		SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 		return;
 	}
 
 	if (rsp->hdr.status_code != ADDTS_STATUS_ACCEPTED) {
 		SLSI_ERR(sdev, "CAC: TSPEC rejected (status=0x%02X)", rsp->hdr.status_code);
 		cac_delete_tspec_by_state(sdev, itr->id, 0);
+		SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 		return;
 	}
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 
 	if ((ccx_status == BSS_CCX_ENABLED) && cac_find_edca_ie(ie, ie_len, &tsid, &msdu_lifetime) != 0)
 		msdu_lifetime = MSDU_LIFETIME_DEFAULT;
@@ -1137,7 +1102,9 @@ static void cac_process_addts_rsp(struct slsi_dev *sdev, struct net_device *netd
 		  * Use UP from old entry so FW can replace the medium time
 		  * Delete the old entry in host, and replace UP in new entry.
 		  */
+		SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 		cac_delete_tspec_by_state(sdev, entry->id, 1);
+		SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 		if (priority != prev_priority) {
 			itr->tspec.ts_info[1] &= ~(7 << 3) ; /*clear the value*/
 			itr->tspec.ts_info[1] |= prev_priority << 3 ; /*set the value*/
@@ -1226,12 +1193,14 @@ void cac_rx_wmm_action(struct slsi_dev *sdev, struct net_device *netdev, struct 
 	if ((sdev == NULL) || (data == NULL) || (netdev == NULL) || (len == 0))
 		return;
 
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 	if (mgmt->u.action.u.wme_action.action_code == WMM_ACTION_CODE_ADDTS_RESP) {
 		addts = (struct action_addts_rsp *)&mgmt->u.action;
 		cac_process_addts_rsp(sdev, netdev, addts, mgmt->u.action.u.wme_action.variable, len - sizeof(*addts) + 1);
 	} else if (mgmt->u.action.u.wme_action.action_code == WMM_ACTION_CODE_DELTS) {
 		cac_process_delts_req(sdev, netdev, (struct action_delts_req *)&mgmt->u.action);
 	}
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 }
 
 /* Name: cac_get_active_tspecs
@@ -1425,7 +1394,9 @@ void cac_update_roam_traffic_params(struct slsi_dev *sdev, struct net_device *de
 	/* Roamed to new AP. TSPEC admitted to previous AP are no more valid.
 	 * Set all TSPEC to not admitted
 	 */
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 	cac_deactivate_tspecs(sdev);
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 
 	if (!peer) {
 		SLSI_ERR(sdev, "AP peer entry not found\n");
@@ -1442,12 +1413,12 @@ void cac_update_roam_traffic_params(struct slsi_dev *sdev, struct net_device *de
 		return;
 
 	/* update the admitted TSPECs from assoc resp and set traffic params in FW.*/
+	SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 	for (i = 0; i < assoc_rsp_tspec_count; i++) {
 		assoc_rsp_tspec = (struct wmm_tspec_element *)tspec_ie_arr[i];
 		SLSI_DBG3(sdev, SLSI_MLME, "rsp_tspec:[%d] ts: [%x|%x|%x] medium time[%x]\n", i,
 			  assoc_rsp_tspec->ts_info[0], assoc_rsp_tspec->ts_info[1], assoc_rsp_tspec->ts_info[2],
 			  assoc_rsp_tspec->medium_time);
-
 		itr = find_tspec_entry((assoc_rsp_tspec->ts_info[0] & 0x1E) >> 1, 0);
 		if (!itr) {
 			SLSI_DBG3(sdev, SLSI_MLME, "tspec entry not found\n");
@@ -1463,5 +1434,5 @@ void cac_update_roam_traffic_params(struct slsi_dev *sdev, struct net_device *de
 		slsi_mlme_set_traffic_parameters(sdev, dev, priority, assoc_rsp_tspec->medium_time,
 						 assoc_rsp_tspec->minimum_data_rate, ndev_vif->sta.sta_bss->bssid);
 	}
+	SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
 }
-

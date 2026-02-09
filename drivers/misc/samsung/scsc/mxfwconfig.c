@@ -18,7 +18,6 @@
 
 #define MXFWCONFIG_CFG_SUBDIR	"common"
 #define MXFWCONFIG_CFG_FILE_HW	"common.hcf"
-#define MXFWCONFIG_CFG_FILE_SW	"common_sw.hcf"
 
 static void mxfwconfig_get_dram_ref(struct scsc_mx *mx, struct mxmibref *cfg_ref);
 
@@ -300,17 +299,9 @@ int mxfwconfig_load(struct scsc_mx *mx, struct mxmibref *cfg_ref)
 			r = mxfwconfig_load_cfg(mx, cfg, filename);
 			if (r)
 				goto done;
-			memset(filename, 0, MX_WLAN_FILE_LEN_MAX);
-			scnprintf(filename, sizeof(filename), "%s.rev%d", MXFWCONFIG_CFG_FILE_SW, value);
-			r = mxfwconfig_load_cfg(mx, cfg, filename);
-			if (r == -EINVAL)
-				goto done;
 		} else {
 			r = mxfwconfig_load_cfg(mx, cfg, MXFWCONFIG_CFG_FILE_HW);
 			if (r)
-				goto done;
-			r = mxfwconfig_load_cfg(mx, cfg, MXFWCONFIG_CFG_FILE_SW);
-			if (r == -EINVAL)
 				goto done;
 		}
 	} else {
@@ -319,13 +310,6 @@ int mxfwconfig_load(struct scsc_mx *mx, struct mxmibref *cfg_ref)
 		r = mxfwconfig_load_cfg(mx, cfg, MXFWCONFIG_CFG_FILE_HW);
 		if (r)
 			goto done;
-
-		/* SW file is optional, but not without HW file */
-		r = mxfwconfig_load_cfg(mx, cfg, MXFWCONFIG_CFG_FILE_SW);
-		if (r == -EINVAL) {
-			/* If SW file is corrupt, abandon both HW and SW */
-			goto done;
-		}
 #if defined SCSC_SEP_VERSION
 	}
 #endif

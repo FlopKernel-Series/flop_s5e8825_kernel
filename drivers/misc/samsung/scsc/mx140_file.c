@@ -144,29 +144,13 @@ static char exe_dir[] = CONFIG_SCSC_CORE_TOOL_LOCATION;	/* fixed in defconfig */
 #if IS_ENABLED(CONFIG_SCSC_PCIE)
 static char base_dir_request_fw[] = "";
 #else
-static char base_dir_request_fw[] = "../etc/wifi";
-static char base_dir_request_fw_new[] = "wifi";
-static int fw_path_index = -1;
+static char base_dir_request_fw[] = "wifi";  /* fixed in defconfig */
+static char base_dir_request_fw_legacy[] = "../etc/wifi";  /* fixed in defconfig */
 #endif
-
 
 static bool enable_auto_sense;
 module_param(enable_auto_sense, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(enable_auto_sense, "deprecated");
-
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-static const char *get_fw_base_dir(int index)
-{
-	switch (index) {
-	case 0:
-		return base_dir_request_fw_new;
-	case 1:
-		return base_dir_request_fw;
-	default:
-		return NULL;
-	}
-}
-#endif
 
 static bool use_new_fw_structure = true;
 module_param(use_new_fw_structure, bool, S_IRUGO | S_IWUSR);
@@ -177,14 +161,13 @@ module_param(cfg_platform, charp, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(cfg_platform, "HCF config subdirectory");
 
 #if defined SCSC_SEP_VERSION
-static bool force_flat = true; /* Refer to hcf from /vendor/etc/wifi/ */
+static bool force_flat = true; /* Refer to hcf from /vendor/firmware/wifi/ */
 #else
 /* AOSP */
-static bool force_flat = false; /* Refer to hcf from /vendor/etc/wifi/mx140/conf/ */
+static bool force_flat = false; /* Refer to hcf from /vendor/firmware/wifi/mx140/conf/ */
 #endif
 module_param(force_flat, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(force_flat, "Forcely request flat conf");
-
 
 /* Reads a configuration file into memory (f/w profile specific) */
 static int __mx140_file_request_conf(struct scsc_mx *mx,
@@ -192,32 +175,22 @@ static int __mx140_file_request_conf(struct scsc_mx *mx,
 		const char *platform_dir,
 		const char *config_rel_path,
 		const char *filename,
-		const bool flat)
+		const bool flat,
+		char *base_dir_request_fw_local)
 
 {
 	char config_path[MX140_FW_PATH_MAX_LENGTH];
 	int r;
-	const char *fw_base;
 
 	if (mx140_basedir_file(mx))
 		return -ENOENT;
-
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	if (fw_path_index >= 0) {
-		fw_base = get_fw_base_dir(fw_path_index);
-	} else {
-		fw_base = base_dir_request_fw;
-	}
-#else
-	fw_base = base_dir_request_fw;
-#endif
 
 	if (flat) {
 		/* e.g. /etc/wifi/mx140_wlan.hcf */
 
 		scnprintf(config_path, sizeof(config_path),
 			"%s/%s%s_%s",
-			fw_base,
+			base_dir_request_fw_local,
 			firmware_variant,
 			fw_suffixes[0].suffix,
 			filename);
@@ -226,7 +199,7 @@ static int __mx140_file_request_conf(struct scsc_mx *mx,
 
 		scnprintf(config_path, sizeof(config_path),
 			"%s/%s%s/%s/%s%s%s/%s",
-			fw_base,
+			base_dir_request_fw_local,
 			firmware_variant,
 			fw_suffixes[0].suffix,
 			MX140_FW_CONF_SUBDIR,
@@ -258,7 +231,13 @@ int mx140_file_request_conf(struct scsc_mx *mx,
 	 */
 	if (strcmp(cfg_platform, "default")) {
 		SCSC_TAG_INFO(MX_FILE, "module param cfg_platform = %s\n", cfg_platform);
-		return __mx140_file_request_conf(mx, conf, cfg_platform, config_rel_path, filename, false);
+		 r = __mx140_file_request_conf(mx, conf, cfg_platform, config_rel_path, filename,
+					       false, base_dir_request_fw);
+		if (r)
+			r = __mx140_file_request_conf(mx, conf, cfg_platform, config_rel_path, filename,
+						      false, base_dir_request_fw_legacy);
+
+		return r;
 	}
 	/* This is done to update the fw_suffix_found index */
 	if (fw_suffix_found == -1) {
@@ -273,14 +252,21 @@ int mx140_file_request_conf(struct scsc_mx *mx,
 		/* Only request "flat" conf, where all hcf files are in FW root dir
 		 * e.g. /etc/wifi/<firmware-variant>-wlan.hcf
 		 */
-		r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename, true);
+		r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename,
+					      true, base_dir_request_fw);
+		if (r)
+			r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename,
+						      true, base_dir_request_fw_legacy);
 		SCSC_TAG_INFO(MX_FILE, "forcely request flat conf = %d\n", r);
 	} else {
 		/* Search in generic location. This is an override.
 		 * e.g. /etc/wifi/mx140/conf/wlan/wlan.hcf
 		 */
-		r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename, false);
-
+		r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename,
+					      false, base_dir_request_fw);
+		if (r)
+			r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename,
+						      false, base_dir_request_fw_legacy);
 #if defined CONFIG_SCSC_WLBT_CONFIG_PLATFORM
 		/* Then  search in platform location
 		 * e.g. /etc/wifi/mx140/conf/$platform_dir/wlan/wlan.hcf
@@ -290,7 +276,12 @@ int mx140_file_request_conf(struct scsc_mx *mx,
 
 			/* Don't bother if plat is empty string */
 			if (plat[0] != '\0')
-				r = __mx140_file_request_conf(mx, conf, plat, config_rel_path, filename, false);
+				r = __mx140_file_request_conf(mx, conf, plat, config_rel_path, filename,
+							      false, base_dir_request_fw);
+
+			if (r)
+				r = __mx140_file_request_conf(mx, conf, plat, config_rel_path, filename,
+							      false, base_dir_request_fw_legacy);
 		}
 #endif
 
@@ -298,7 +289,12 @@ int mx140_file_request_conf(struct scsc_mx *mx,
 		 * e.g. /etc/wifi/<firmware-variant>-wlan.hcf
 		 */
 		if (r)
-			r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename, true);
+			r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename,
+						      true, base_dir_request_fw);
+
+		if (r)
+			r = __mx140_file_request_conf(mx, conf, "", config_rel_path, filename,
+						      true, base_dir_request_fw_legacy);
 	}
 
 	return r;
@@ -310,26 +306,15 @@ EXPORT_SYMBOL(mx140_file_request_conf);
 int mx140_file_request_debug_conf(struct scsc_mx *mx, const struct firmware **conf, const char *config_rel_path)
 {
 	char          config_path[MX140_FW_PATH_MAX_LENGTH];
-	const char    *fw_base;
 
 	if (mx140_basedir_file(mx))
 		return -ENOENT;
-
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	if (fw_path_index >= 0) {
-		fw_base = get_fw_base_dir(fw_path_index);
-	} else {
-		fw_base = base_dir_request_fw;
-	}
-#else
-	fw_base = base_dir_request_fw;
-#endif
 
 	/* e.g. /etc/wifi/mx140/debug/log_strings.bin */
 
 	scnprintf(config_path, sizeof(config_path),
 		"%s/%s%s/%s/%s",
-		fw_base,
+		base_dir_request_fw,
 		firmware_variant,
 		fw_suffixes[fw_suffix_found].suffix,
 		MX140_FW_DEBUG_SUBDIR,
@@ -343,26 +328,15 @@ EXPORT_SYMBOL(mx140_file_request_debug_conf);
 int mx140_file_request_device_conf(struct scsc_mx *mx, const struct firmware **conf, const char *config_rel_path)
 {
 	char          config_path[MX140_FW_PATH_MAX_LENGTH];
-	const char    *fw_base;
 
 	if (mx140_basedir_file(mx))
 		return -ENOENT;
-
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	if (fw_path_index >= 0) {
-		fw_base = get_fw_base_dir(fw_path_index);
-	} else {
-		fw_base = base_dir_request_fw;
-	}
-#else
-	fw_base = base_dir_request_fw;
-#endif
 
 	/* e.g. /etc/wifi/conf/wlan/mac.txt */
 
 	snprintf(config_path, sizeof(config_path),
 		"%s/%s%s/%s",
-		fw_base,
+		base_dir_request_fw,
 		fw_suffixes[fw_suffix_found].suffix,
 		MX140_FW_CONF_SUBDIR,
 		config_rel_path);
@@ -385,57 +359,21 @@ static int __mx140_file_download_fw(struct scsc_mx *mx, void *dest, size_t dest_
 	const struct firmware *firm;
 	int                   r = 0;
 	char                  img_path_name[MX140_FW_PATH_MAX_LENGTH];
-	const char            *fw_base;
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	int                   path_try;
-#endif
 
 	if (mx140_basedir_file(mx))
 		return -ENOENT;
 
 	SCSC_TAG_INFO(MX_FILE, "firmware_variant=%s (%s)\n", firmware_variant, fw_suffix);
 
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	if (fw_path_index >= 0) {
-		fw_base = get_fw_base_dir(fw_path_index);
-		scnprintf(img_path_name, sizeof(img_path_name),
-			"%s/%s%s.bin",
-			fw_base,
-			firmware_variant,
-			fw_suffix);
-		SCSC_TAG_INFO(MX_FILE, "Load WLBT fw %s in shared address %p\n", img_path_name, dest);
-		r = mx140_request_file(mx, img_path_name, &firm);
-	} else {
-		for (path_try = 0; path_try < 2; path_try++) {
-			fw_base = get_fw_base_dir(path_try);
-			if (!fw_base)
-				continue;
-			scnprintf(img_path_name, sizeof(img_path_name),
-				"%s/%s%s.bin",
-				fw_base,
-				firmware_variant,
-				fw_suffix);
-			SCSC_TAG_INFO(MX_FILE, "Try WLBT fw %s (path %d)\n", img_path_name, path_try);
-			r = mx140_request_file(mx, img_path_name, &firm);
-			if (r == 0) {
-				fw_path_index = path_try;
-				SCSC_TAG_INFO(MX_FILE, "Found firmware at path index %d\n", fw_path_index);
-				break;
-			}
-		}
-	}
-#else
-	fw_base = base_dir_request_fw;
+	/* e.g. /etc/wifi/mx140.bin */
 	scnprintf(img_path_name, sizeof(img_path_name),
 		"%s/%s%s.bin",
-		fw_base,
+		base_dir_request_fw,
 		firmware_variant,
 		fw_suffix);
 
 	SCSC_TAG_INFO(MX_FILE, "Load WLBT fw %s in shared address %p\n", img_path_name, dest);
 	r = mx140_request_file(mx, img_path_name, &firm);
-#endif
-
 	if (r) {
 		SCSC_TAG_ERR(MX_FILE, "Error Loading FW, error %d\n", r);
 		return r;
@@ -502,60 +440,35 @@ static int __mx140_file_get_fw(struct scsc_mx *mx, const struct firmware **firm,
 {
 	int                   r = 0;
 	char                  img_path_name[MX140_FW_PATH_MAX_LENGTH];
-	const char            *fw_base;
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	int                   path_try;
-#endif
 
 	if (mx140_basedir_file(mx))
 		return -ENOENT;
 
 	SCSC_TAG_INFO(MX_FILE, "firmware_variant=%s (%s)\n", firmware_variant, fw_suffix);
 
-#if !IS_ENABLED(CONFIG_SCSC_PCIE)
-	if (fw_path_index >= 0) {
-		fw_base = get_fw_base_dir(fw_path_index);
-		scnprintf(img_path_name, sizeof(img_path_name),
-			"%s/%s%s.bin",
-			fw_base,
-			firmware_variant,
-			fw_suffix);
-		SCSC_TAG_INFO(MX_FILE, "Get WLBT fw %s\n", img_path_name);
-		r = mx140_request_file(mx, img_path_name, firm);
-	} else {
-		for (path_try = 0; path_try < 2; path_try++) {
-			fw_base = get_fw_base_dir(path_try);
-			if (!fw_base)
-				continue;
-			scnprintf(img_path_name, sizeof(img_path_name),
-				"%s/%s%s.bin",
-				fw_base,
-				firmware_variant,
-				fw_suffix);
-			SCSC_TAG_INFO(MX_FILE, "Try WLBT fw %s (path %d)\n", img_path_name, path_try);
-			r = mx140_request_file(mx, img_path_name, firm);
-			if (r == 0) {
-				fw_path_index = path_try;
-				SCSC_TAG_INFO(MX_FILE, "Found firmware at path index %d\n", fw_path_index);
-				break;
-			}
-		}
-	}
-#else
-	fw_base = base_dir_request_fw;
+	/* e.g. /etc/wifi/mx140.bin */
 	scnprintf(img_path_name, sizeof(img_path_name),
 		"%s/%s%s.bin",
-		fw_base,
+		base_dir_request_fw,
 		firmware_variant,
 		fw_suffix);
 
 	SCSC_TAG_INFO(MX_FILE, "Get WLBT fw %s\n", img_path_name);
 	r = mx140_request_file(mx, img_path_name, firm);
-#endif
-
 	if (r) {
-		SCSC_TAG_ERR(MX_FILE, "Error Loading FW, error %d\n", r);
-		return r;
+		SCSC_TAG_ERR(MX_FILE, "Error Loading FW try from legacy, error %d\n", r);
+		memset(img_path_name, 0, sizeof(img_path_name));
+		scnprintf(img_path_name, sizeof(img_path_name),
+			  "%s/%s%s.bin",
+			  base_dir_request_fw_legacy,
+			  firmware_variant,
+			  fw_suffix);
+		SCSC_TAG_INFO(MX_FILE, "Get WLBT fw %s\n", img_path_name);
+		r = mx140_request_file(mx, img_path_name, firm);
+		if (r) {
+			SCSC_TAG_ERR(MX_FILE, "Error Loading FW %d\n", r);
+			return r;
+		}
 	}
 	SCSC_TAG_INFO(MX_FILE, "Get WLBT fw success, size %zu\n", (*firm)->size);
 

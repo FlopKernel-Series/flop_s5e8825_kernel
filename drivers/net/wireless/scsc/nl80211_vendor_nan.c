@@ -513,6 +513,8 @@ static int slsi_nan_get_security_info_nl(struct slsi_dev *sdev, struct slsi_nan_
 		slsi_util_nla_get_u32(iter, &sec_info->key_info.body.passphrase_info.passphrase_len);
 		break;
 	case NAN_REQ_ATTR_SECURITY_PASSPHRASE:
+		if (sec_info->key_info.body.passphrase_info.passphrase_len > SLSI_NAN_SECURITY_MAX_PASSPHRASE_LEN)
+			return -EINVAL;
 		slsi_util_nla_get_data(iter, sec_info->key_info.body.passphrase_info.passphrase_len,
 				       sec_info->key_info.body.passphrase_info.passphrase);
 		break;
@@ -956,6 +958,8 @@ static int slsi_nan_publish_get_nl_params(struct slsi_dev *sdev, struct slsi_hal
 			break;
 
 		case NAN_REQ_ATTR_PUBLISH_SERVICE_NAME:
+			if (hal_req->service_name_len > SLSI_HAL_NAN_MAX_SERVICE_NAME_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->service_name_len, hal_req->service_name);
 			break;
 
@@ -968,7 +972,7 @@ static int slsi_nan_publish_get_nl_params(struct slsi_dev *sdev, struct slsi_hal
 			break;
 
 		case NAN_REQ_ATTR_PUBLISH_SERVICE_INFO:
-			if (hal_req->sdea_service_specific_info_len > SLSI_HAL_NAN_MAX_SDEA_SERVICE_SPEC_INFO_LEN)
+			if (hal_req->service_specific_info_len > SLSI_HAL_NAN_MAX_SERVICE_SPECIFIC_INFO_LEN)
 				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->service_specific_info_len,
 					       hal_req->service_specific_info);
@@ -979,6 +983,8 @@ static int slsi_nan_publish_get_nl_params(struct slsi_dev *sdev, struct slsi_hal
 			break;
 
 		case NAN_REQ_ATTR_PUBLISH_RX_MATCH_FILTER:
+			if (hal_req->rx_match_filter_len > SLSI_HAL_NAN_MAX_MATCH_FILTER_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter,  hal_req->rx_match_filter_len, hal_req->rx_match_filter);
 			break;
 
@@ -987,6 +993,8 @@ static int slsi_nan_publish_get_nl_params(struct slsi_dev *sdev, struct slsi_hal
 			break;
 
 		case NAN_REQ_ATTR_PUBLISH_TX_MATCH_FILTER:
+			if (hal_req->tx_match_filter_len > SLSI_HAL_NAN_MAX_MATCH_FILTER_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->tx_match_filter_len, hal_req->tx_match_filter);
 			break;
 
@@ -1007,6 +1015,8 @@ static int slsi_nan_publish_get_nl_params(struct slsi_dev *sdev, struct slsi_hal
 			break;
 
 		case NAN_REQ_ATTR_PUBLISH_SDEA:
+			if (hal_req->sdea_service_specific_info_len > SLSI_HAL_NAN_MAX_SDEA_SERVICE_SPEC_INFO_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->sdea_service_specific_info_len,
 					       hal_req->sdea_service_specific_info);
 			break;
@@ -1229,6 +1239,8 @@ static int slsi_nan_subscribe_get_nl_params(struct slsi_dev *sdev, struct slsi_h
 			break;
 
 		case NAN_REQ_ATTR_SUBSCRIBE_SERVICE_NAME:
+			if (hal_req->service_name_len > SLSI_HAL_NAN_MAX_SERVICE_NAME_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->service_name_len, hal_req->service_name);
 			break;
 
@@ -1237,6 +1249,8 @@ static int slsi_nan_subscribe_get_nl_params(struct slsi_dev *sdev, struct slsi_h
 			break;
 
 		case NAN_REQ_ATTR_SUBSCRIBE_SERVICE_INFO:
+			if (hal_req->service_specific_info_len > SLSI_HAL_NAN_MAX_SERVICE_SPECIFIC_INFO_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->service_specific_info_len,
 					       hal_req->service_specific_info);
 			break;
@@ -1256,6 +1270,8 @@ static int slsi_nan_subscribe_get_nl_params(struct slsi_dev *sdev, struct slsi_h
 			break;
 
 		case NAN_REQ_ATTR_SUBSCRIBE_TX_MATCH_FILTER:
+			if (hal_req->tx_match_filter_len > SLSI_HAL_NAN_MAX_MATCH_FILTER_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->tx_match_filter_len, hal_req->tx_match_filter);
 			break;
 
@@ -1286,6 +1302,8 @@ static int slsi_nan_subscribe_get_nl_params(struct slsi_dev *sdev, struct slsi_h
 			break;
 
 		case NAN_REQ_ATTR_PUBLISH_SDEA:
+			if (hal_req->sdea_service_specific_info_len > SLSI_HAL_NAN_MAX_SDEA_SERVICE_SPEC_INFO_LEN)
+				return -EINVAL;
 			slsi_util_nla_get_data(iter, hal_req->sdea_service_specific_info_len,
 					       hal_req->sdea_service_specific_info);
 

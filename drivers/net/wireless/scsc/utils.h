@@ -14,6 +14,9 @@
 #include <linux/skbuff.h>
 #include <net/cfg80211.h>
 #include <linux/firmware.h>
+#include <scsc/scsc_warn.h>
+#include <linux/string.h>
+#include <linux/overflow.h>
 
 #include "netif.h"
 #include "fapi.h"
@@ -565,6 +568,19 @@ static inline int strtoint(const char *s, int *res)
 		if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
 			base = 16;
 	return kstrtoint(s, base, res);
+}
+
+static inline size_t slsi_size_add(size_t a, size_t b)
+{
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0))
+	size_t bytes;
+
+	if (check_add_overflow(a, b, &bytes))
+		return SIZE_MAX;
+	return bytes;
+#else
+	return size_add(a, b);
+#endif
 }
 
 static inline u8 *slsi_mem_dup(u8 *src, size_t len)

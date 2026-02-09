@@ -118,7 +118,7 @@
 #define MAX_SSID_LEN 100
 #define SLSI_MAX_NUM_RING 10
 
-// #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 #ifdef CONFIG_SCSC_WLAN_ENHANCED_LOGGING
 static int mem_dump_buffer_size;
@@ -866,6 +866,8 @@ static int slsi_gscan_add_read_params(struct slsi_nl_gscan_param *nl_gscan_param
 		case GSCAN_ATTRIBUTE_NUM_BUCKETS:
 			if (slsi_util_nla_get_u32(iter, &nl_gscan_param->num_buckets))
 				return -EINVAL;
+			if (nl_gscan_param->num_buckets > SLSI_GSCAN_MAX_BUCKETS)
+				nl_gscan_param->num_buckets = SLSI_GSCAN_MAX_BUCKETS;
 			break;
 		case GSCAN_ATTRIBUTE_CH_BUCKET_1:
 		case GSCAN_ATTRIBUTE_CH_BUCKET_2:
@@ -895,6 +897,9 @@ static int slsi_gscan_add_read_params(struct slsi_nl_gscan_param *nl_gscan_param
 				case GSCAN_ATTRIBUTE_BUCKET_NUM_CHANNELS:
 					if (slsi_util_nla_get_u32(iter1, &(nl_bucket[j].num_channels)))
 						return -EINVAL;
+
+					if (nl_bucket[j].num_channels > SLSI_GSCAN_MAX_CHANNELS)
+						nl_bucket[j].num_channels = SLSI_GSCAN_MAX_CHANNELS;
 					break;
 				case GSCAN_ATTRIBUTE_BUCKET_CHANNELS:
 					nla_for_each_nested(iter2, iter1, tmp2) {
@@ -2263,6 +2268,8 @@ static void slsi_lls_iface_ap_stats(struct slsi_dev *sdev, struct netdev_vif *nd
 		iface_stat->info.capabilities |= SLSI_LLS_CAPABILITY_QOS;
 }
 
+#define SLSI_PSID_UNIFI_AC_SUCCESS 0x0C20
+
 static void slsi_lls_iface_stat_fill(struct slsi_dev *sdev,
 				     struct net_device *net_dev,
 				     struct slsi_lls_iface_stat *iface_stat)
@@ -2271,7 +2278,11 @@ static void slsi_lls_iface_stat_fill(struct slsi_dev *sdev,
 	struct netdev_vif         *ndev_vif;
 	struct slsi_mib_data      mibrsp = { 0, NULL };
 	struct slsi_mib_value     *values = NULL;
-	struct slsi_mib_get_entry get_values[] = {{ SLSI_PSID_UNIFI_AC_RETRIES, { SLSI_TRAFFIC_Q_BE + 1, 0 } },
+	struct slsi_mib_get_entry get_values[] = { { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_BE + 1, 0 } },
+						 { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_BK + 1, 0 } },
+						 { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_VI + 1, 0 } },
+						 { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_VO + 1, 0 } },
+						 { SLSI_PSID_UNIFI_AC_RETRIES, { SLSI_TRAFFIC_Q_BE + 1, 0 } },
 						 { SLSI_PSID_UNIFI_AC_RETRIES, { SLSI_TRAFFIC_Q_BK + 1, 0 } },
 						 { SLSI_PSID_UNIFI_AC_RETRIES, { SLSI_TRAFFIC_Q_VI + 1, 0 } },
 						 { SLSI_PSID_UNIFI_AC_RETRIES, { SLSI_TRAFFIC_Q_VO + 1, 0 } },
@@ -2330,25 +2341,25 @@ static void slsi_lls_iface_stat_fill(struct slsi_dev *sdev,
 	for (i = 0; i < SLSI_LLS_AC_MAX; i++) {
 		if (values[i].type == SLSI_MIB_TYPE_UINT) {
 			iface_stat->ac[i].ac = slsi_fapi_to_android_traffic_q(i);
-			iface_stat->ac[i].retries = values[i].u.uintValue;
+			iface_stat->ac[i].retries = values[i + 4].u.uintValue;
 			iface_stat->ac[i].rx_mpdu = ndev_vif->rx_packets[i];
-			iface_stat->ac[i].tx_mpdu = ndev_vif->tx_packets[i];
-			ndev_vif->tx_no_ack[i] = values[i + 7].u.uintValue;
+			iface_stat->ac[i].tx_mpdu = values[i].u.uintValue;
+			ndev_vif->tx_no_ack[i] = values[i + 11].u.uintValue;
 			iface_stat->ac[i].mpdu_lost = ndev_vif->tx_no_ack[i];
 		}
 	}
 
-	if (values[4].type == SLSI_MIB_TYPE_UINT)
-		iface_stat->beacon_rx = values[4].u.uintValue;
+	if (values[8].type == SLSI_MIB_TYPE_UINT)
+		iface_stat->beacon_rx = values[8].u.uintValue;
 
-	if (values[5].type == SLSI_MIB_TYPE_UINT) {
-		iface_stat->leaky_ap_detected = values[5].u.uintValue;
-		iface_stat->leaky_ap_guard_time = 5; /* 5 milli sec. As mentioned in lls document */
+	if (values[9].type == SLSI_MIB_TYPE_UINT) {
+		iface_stat->leaky_ap_detected = values[9].u.uintValue;
+		iface_stat->leaky_ap_guard_time = 9; /* 5 milli sec. As mentioned in lls document */
 	}
 
-	if (values[6].type == SLSI_MIB_TYPE_INT) {
-		iface_stat->rssi_data = values[6].u.intValue;
-		iface_stat->rssi_mgmt = values[6].u.intValue;
+	if (values[10].type == SLSI_MIB_TYPE_INT) {
+		iface_stat->rssi_data = values[10].u.intValue;
+		iface_stat->rssi_mgmt = values[10].u.intValue;
 	}
 
 exit:

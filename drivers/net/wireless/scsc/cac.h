@@ -176,7 +176,6 @@ int cac_ctrl_send_delts(struct slsi_dev *sdev, char *args);
 int cac_update_local_tspec(struct slsi_dev *sdev, u16 msdu_lifetime, struct wmm_tspec_element *tspec);
 int cac_get_active_tspecs(struct cac_activated_tspec **tspecs);
 void cac_delete_tspec_list(struct slsi_dev *sdev);
-int cac_ctrl_delete_tspec(struct slsi_dev *sdev, char *args);
 void cac_rx_wmm_action(struct slsi_dev *sdev, struct net_device *netdev, struct ieee80211_mgmt *data, size_t len);
 void cac_update_roam_traffic_params(struct slsi_dev *sdev, struct net_device *dev);
 #endif /* CAC_H */

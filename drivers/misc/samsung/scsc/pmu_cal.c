@@ -15,7 +15,7 @@
  *	};
  */
 
-extern int enable_hwbypass;
+extern enable_hwbypass;
 
 static char *pmu_cal_getsfr(int sfr)
 {

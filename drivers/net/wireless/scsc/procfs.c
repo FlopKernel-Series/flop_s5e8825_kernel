@@ -441,9 +441,6 @@ static int slsi_procfs_build_show(struct seq_file *m, void *v)
 #ifdef CONFIG_SCSC_AP_INTERFACE_NAME
 	seq_printf(m, "CONFIG_SCSC_AP_INTERFACE_NAME                   : %s\n", CONFIG_SCSC_AP_INTERFACE_NAME);
 #endif
-#ifdef CONFIG_SCSC_AP_INTERFACE_NAME_ALT
-	seq_printf(m, "CONFIG_SCSC_AP_INTERFACE_NAME_ALT               : %s\n", CONFIG_SCSC_AP_INTERFACE_NAME_ALT);
-#endif
 #ifdef CONFIG_SCSC_WIFI_NAN_ENABLE
 	seq_puts(m, "CONFIG_SCSC_WIFI_NAN_ENABLE                       : y\n");
 #else
@@ -832,42 +829,6 @@ static ssize_t slsi_procfs_send_delts_write(struct file *file, const char __user
 	/* to do: call to config_tspec() to configure a tspec field */
 	if (cac_ctrl_send_delts(sfdev, read_string) < 0) {
 		SLSI_ERR(sfdev, "send delts error\n");
-		kfree(read_string);
-		return -EINVAL;
-	}
-	kfree(read_string);
-	return count;
-}
-
-static ssize_t slsi_procfs_del_tspec_read(struct file *file,  char __user *user_buf, size_t count, loff_t *ppos)
-{
-	static const char *extra_info = "Not implemented yet";
-	int               value = 10;
-
-	return slsi_procfs_read_int(file, user_buf, count, ppos, value, extra_info);
-}
-
-static ssize_t slsi_procfs_del_tspec_write(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos)
-{
-	struct slsi_dev *sfdev = (struct slsi_dev *)file->private_data;
-	char            *read_string = kmalloc(count + 1, GFP_KERNEL);
-
-	if (!read_string) {
-		SLSI_ERR(sfdev, "Malloc for read_string failed\n");
-		return -ENOMEM;
-	}
-
-	if (!count) {
-		kfree(read_string);
-		return 0;
-	}
-
-	simple_write_to_buffer(read_string, count, ppos, user_buf, count);
-	read_string[count] = '\0';
-
-	/* to do: call to config_tspec() to configure a tspec field */
-	if (cac_ctrl_delete_tspec(sfdev, read_string) < 0) {
-		SLSI_ERR(sfdev, "config tspec error\n");
 		kfree(read_string);
 		return -EINVAL;
 	}
@@ -1306,7 +1267,6 @@ SLSI_PROCFS_RW_FILE_OPS(create_tspec);
 SLSI_PROCFS_RW_FILE_OPS(confg_tspec);
 SLSI_PROCFS_RW_FILE_OPS(send_addts);
 SLSI_PROCFS_RW_FILE_OPS(send_delts);
-SLSI_PROCFS_RW_FILE_OPS(del_tspec);
 SLSI_PROCFS_RW_FILE_OPS(tput);
 SLSI_PROCFS_READ_FILE_OPS(fd_opened);
 SLSI_PROCFS_SEQ_FILE_OPS(build);
@@ -1359,7 +1319,6 @@ int slsi_create_proc_dir(struct slsi_dev *sdev)
 		SLSI_PROCFS_ADD_FILE(sdev, confg_tspec, parent, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 		SLSI_PROCFS_ADD_FILE(sdev, send_addts, parent, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 		SLSI_PROCFS_ADD_FILE(sdev, send_delts, parent, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-		SLSI_PROCFS_ADD_FILE(sdev, del_tspec, parent, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 		SLSI_PROCFS_ADD_FILE(sdev, tput, parent, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 		SLSI_PROCFS_ADD_FILE(sdev, fd_opened, parent, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 #ifdef CONFIG_SCSC_WLAN_MUTEX_DEBUG
@@ -1405,7 +1364,6 @@ void slsi_remove_proc_dir(struct slsi_dev *sdev)
 		SLSI_PROCFS_REMOVE_FILE(confg_tspec, sdev->procfs_dir);
 		SLSI_PROCFS_REMOVE_FILE(send_addts, sdev->procfs_dir);
 		SLSI_PROCFS_REMOVE_FILE(send_delts, sdev->procfs_dir);
-		SLSI_PROCFS_REMOVE_FILE(del_tspec, sdev->procfs_dir);
 		SLSI_PROCFS_REMOVE_FILE(tput, sdev->procfs_dir);
 		SLSI_PROCFS_REMOVE_FILE(fd_opened, sdev->procfs_dir);
 #ifdef CONFIG_SCSC_WLAN_MUTEX_DEBUG

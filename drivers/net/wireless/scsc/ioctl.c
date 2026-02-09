@@ -21,7 +21,6 @@
 #include <scsc/scsc_log_collector.h>
 #include "dev.h"
 #include "fapi.h"
-#include <linux/workarounds.h>
 
 #define CMD_RXFILTERADD         "RXFILTER-ADD"
 #define CMD_RXFILTERREMOVE              "RXFILTER-REMOVE"
@@ -982,18 +981,10 @@ static int slsi_create_interface(struct net_device *dev, char *buffer, int buf_l
 	SLSI_VERIFY_IOCTL_ARGS(sdev, ioctl_args);
 
 	intf_name = ioctl_args->args[0];
-	if (is_aosp_mode_fast()) {
-		if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME_ALT, intf_name) != 0) {
-			SLSI_NET_ERR(dev, "Creation of %s not allowed!\n", intf_name);
-			kfree(ioctl_args);
-			return -EINVAL;
-		}
-	} else {
-		if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME, intf_name) != 0) {
-			SLSI_NET_ERR(dev, "Creation of %s not allowed!\n", intf_name);
-			kfree(ioctl_args);
-			return -EINVAL;
-		}
+	if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME, intf_name) != 0) {
+		SLSI_NET_ERR(dev, "Creation of %s not allowed!\n", intf_name);
+		kfree(ioctl_args);
+		return -EINVAL;
 	}
 	ap_dev = slsi_get_netdev(sdev, SLSI_NET_INDEX_P2PX_SWLAN);
 	if (ap_dev && (strcmp(ap_dev->name, intf_name) == 0)) {
@@ -1025,23 +1016,13 @@ static int slsi_delete_interface(struct net_device *dev, char *buffer, int buf_l
 	SLSI_VERIFY_IOCTL_ARGS(sdev, ioctl_args);
 
 	intf_name = ioctl_args->args[0];
-	if (is_aosp_mode_fast()) {
-		if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME_ALT, intf_name) != 0) {
-			SLSI_NET_ERR(dev, "Deletion of %s not allowed!\n", intf_name);
-			kfree(ioctl_args);
-			return -EINVAL;
-		}
-		if (strcmp(intf_name, CONFIG_SCSC_AP_INTERFACE_NAME_ALT) == 0)
-			dev = slsi_get_netdev(sdev, SLSI_NET_INDEX_P2PX_SWLAN);
-	} else {
-		if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME, intf_name) != 0) {
-			SLSI_NET_ERR(dev, "Deletion of %s not allowed!\n", intf_name);
-			kfree(ioctl_args);
-			return -EINVAL;
-		}
-		if (strcmp(intf_name, CONFIG_SCSC_AP_INTERFACE_NAME) == 0)
-			dev = slsi_get_netdev(sdev, SLSI_NET_INDEX_P2PX_SWLAN);
+	if (strcmp(CONFIG_SCSC_AP_INTERFACE_NAME, intf_name) != 0) {
+		SLSI_NET_ERR(dev, "Deletion of %s not allowed!\n", intf_name);
+		kfree(ioctl_args);
+		return -EINVAL;
 	}
+	if (strcmp(intf_name, CONFIG_SCSC_AP_INTERFACE_NAME) == 0)
+		dev = slsi_get_netdev(sdev, SLSI_NET_INDEX_P2PX_SWLAN);
 
 	if (!dev) {
 		SLSI_WARN(sdev, "AP dev is NULL");

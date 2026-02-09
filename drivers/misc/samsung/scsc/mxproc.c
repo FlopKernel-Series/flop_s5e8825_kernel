@@ -757,7 +757,8 @@ static ssize_t mx_procfs_mx_dcxo_cal_write(struct file *file, const char __user 
 		char buff[8];
 		int ret;
 
-		if (copy_from_user(buff, user_buf, count))
+		/* Have to check count variable or it can make stack corruption */
+		if (count > 8 || copy_from_user(buff, user_buf, count))
 			return -EFAULT;
 
 		ret = kstrtouint(buff, 10, &val);

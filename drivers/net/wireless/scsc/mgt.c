@@ -301,11 +301,23 @@ static ssize_t sysfs_store_debugdump(struct kobject *kobj,
 	int r;
 	struct slsi_dev *sdev = slsi_get_sdev();
 
+	if (!sdev) {
+		SLSI_INFO_NODEV("sdev is NULL can't proceed\n");
+		return count;
+	}
+
 	r = kstrtoint(buf, 10, &dump_in_progress);
-	if (r < 0)
+	if (r < 0) {
+		SLSI_INFO_NODEV("kstrtoint error:%d buf:%c\n", r, buf[0]);
 		dump_in_progress = 0;
+		return count;
+	}
 
 	SLSI_INFO_NODEV("dump_in_progress: %d\n", dump_in_progress);
+	if (dump_in_progress != 1) {
+		dump_in_progress = 0;
+		return count;
+	}
 
 	queue_work(sdev->device_wq, &sdev->chipset_logging_work);
 	return (r == 0) ? count : 0;
@@ -682,8 +694,10 @@ static void write_softap_info_file(struct slsi_dev *sdev)
 
 	if (!fp)  {
 		SLSI_WARN(sdev, "%s doesn't exist\n", filepath);
+		buf = NULL;
 	} else if (IS_ERR(fp)) {
 		SLSI_WARN(sdev, "%s open returned error %d\n", filepath, IS_ERR(fp));
+		buf = NULL;
 	} else {
 		kernel_write(fp, buf, strlen(buf), 0);
 	}
@@ -3109,8 +3123,11 @@ void slsi_vif_deactivated(struct slsi_dev *sdev, struct net_device *dev)
 		memset(ndev_vif->sta.keepalive_host_tag, 0, sizeof(ndev_vif->sta.keepalive_host_tag));
 
 		/* delete the TSPEC entries (if any) if it is a STA vif */
-		if (ndev_vif->iftype == NL80211_IFTYPE_STATION)
+		if (ndev_vif->iftype == NL80211_IFTYPE_STATION){
+			SLSI_MUTEX_LOCK(sdev->tspec_mutex);
 			cac_delete_tspec_list(sdev);
+			SLSI_MUTEX_UNLOCK(sdev->tspec_mutex);
+		}
 
 		if (ndev_vif->sta.tdls_enabled)
 			WARN(ndev_vif->sta.tdls_peer_sta_records, "vif:%d, tdls_peer_sta_records:%d", ndev_vif->ifnum, ndev_vif->sta.tdls_peer_sta_records);
@@ -5909,7 +5926,7 @@ void slsi_roam_channel_cache_prune(struct net_device *dev, int seconds, char *ss
 		list_for_each_safe(pos, q, &ndev_vif->sta.network_map) {
 			network_map = list_entry(pos, struct slsi_roaming_network_map_entry, list);
 			age = (now - network_map->last_seen_jiffies) / HZ;
-			for (i = 1; i <= 38; i++) {
+			for (i = 1; i < 38; i++) {
 				if (time_after_eq(now, network_map->channel_jiffies[i] + (seconds * HZ))) {
 					if (i <= 14)
 						network_map->channels_24_ghz &= ~(1 << (i));
@@ -6190,6 +6207,7 @@ int slsi_read_regulatory_rules(struct slsi_dev *sdev, struct slsi_802_11d_reg_do
 	int i = 0;
 	int country_index = 0;
 	struct ieee80211_reg_rule *reg_rule = NULL;
+	int num_rules = 0;
 
 	if ((sdev->regdb.regdb_state == SLSI_REG_DB_NOT_SET) || (sdev->regdb.regdb_state == SLSI_REG_DB_ERROR)) {
 		SLSI_ERR(sdev, "Regulatory is not set!\n");
@@ -6208,7 +6226,9 @@ int slsi_read_regulatory_rules(struct slsi_dev *sdev, struct slsi_802_11d_reg_do
 	domain_info->regdomain->dfs_region = sdev->regdb.country[country_index].operating_class_set;
 
 	for (i = 0; i < sdev->regdb.country[country_index].collection->reg_rule_num; i++) {
-		reg_rule = &domain_info->regdomain->reg_rules[i];
+		if (sdev->regdb.country[country_index].collection->reg_rule[i]->flags & SLSI_REGULATORY_DUP_RULE)
+			continue;
+		reg_rule = &domain_info->regdomain->reg_rules[num_rules++];
 
 		/* start freq 2 bytes */
 		reg_rule->freq_range.start_freq_khz = (sdev->regdb.country[country_index].collection->reg_rule[i]->freq_range->start_freq * 1000);
@@ -6229,7 +6249,7 @@ int slsi_read_regulatory_rules(struct slsi_dev *sdev, struct slsi_802_11d_reg_do
 		reg_rule->flags = slsi_remap_reg_rule_flags(sdev->regdb.country[country_index].collection->reg_rule[i]->flags);
 	}
 
-	domain_info->regdomain->n_reg_rules = sdev->regdb.country[country_index].collection->reg_rule_num;
+	domain_info->regdomain->n_reg_rules = num_rules;
 
 	return 0;
 }
@@ -7968,9 +7988,7 @@ void slsi_collect_chipset_logs(struct work_struct *work)
 	void                    *buffer = NULL;
 	size_t size;
 	size_t bytes = 0;
-#ifdef CONFIG_SCSC_WLBTD
 	int ret = 0;
-#endif
 	char build_id_fw[128];
 	char build_id_drv[64];
 	size_t total_header;

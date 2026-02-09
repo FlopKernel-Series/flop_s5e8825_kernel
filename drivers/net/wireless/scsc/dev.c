@@ -375,6 +375,7 @@ struct slsi_dev *slsi_dev_attach(struct device *dev, struct scsc_mx *core, struc
 	SLSI_MUTEX_INIT(sdev->start_stop_mutex);
 	SLSI_MUTEX_INIT(sdev->device_config_mutex);
 	SLSI_MUTEX_INIT(sdev->logger_mutex);
+	SLSI_MUTEX_INIT(sdev->tspec_mutex);
 	slsi_spinlock_create(&sdev->netdev_lock);
 	slsi_spinlock_create(&sdev->wake_stats_lock);
 	sdev->dev = dev;
