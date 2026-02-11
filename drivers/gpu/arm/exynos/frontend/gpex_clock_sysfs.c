@@ -554,8 +554,6 @@ int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 {
 	clk_info = _clk_info;
 
-	gpu_clklck = is_superfloppy_mode() ? 1 : 0;
-
 	/* Set gpu_unlock default: 1 if superfloppy overclock mode, 0 otherwise */
 	gpu_unlock = is_superfloppy_overclock_mode() ? 1 : 0;
 
