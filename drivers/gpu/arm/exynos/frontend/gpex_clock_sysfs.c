@@ -153,36 +153,32 @@ GPEX_STATIC ssize_t set_max_lock_dvfs(const char *buf, size_t count)
 	if (task_is_booster(current))
 		return count;
 
-	if (!gpu_clklck) {
-		if (sysfs_streq("0", buf)) {
-			clk_info->user_max_lock_input = 0;
-			gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
-		} else {
-			ret = kstrtoint(buf, 0, &clock);
-			if (ret) {
-				GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid value\n", __func__);
-				return -ENOENT;
-			}
-
-			clk_info->user_max_lock_input = clock;
-
-			clock = gpex_get_valid_gpu_clock(clock, false);
-
-			ret = gpex_clock_get_table_idx(clock);
-			if ((ret < gpex_clock_get_table_idx(gpex_clock_get_max_clock())) ||
-				(ret > gpex_clock_get_table_idx(gpex_clock_get_min_clock()))) {
-				GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid clock value (%d)\n", __func__,
-					clock);
-				return -ENOENT;
-			}
-
-			if (clock == gpex_clock_get_max_clock())
-				gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
-			else
-				gpex_clock_lock_clock(GPU_CLOCK_MAX_LOCK, SYSFS_LOCK, clock);
-		}
+	if (sysfs_streq("0", buf)) {
+		clk_info->user_max_lock_input = 0;
+		gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
 	} else {
-		GPU_LOG(MALI_EXYNOS_INFO, "%s: GPU clock locking is disabled.\n", __func__);
+		ret = kstrtoint(buf, 0, &clock);
+		if (ret) {
+			GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid value\n", __func__);
+			return -ENOENT;
+		}
+
+		clk_info->user_max_lock_input = clock;
+
+		clock = gpex_get_valid_gpu_clock(clock, false);
+
+		ret = gpex_clock_get_table_idx(clock);
+		if ((ret < gpex_clock_get_table_idx(gpex_clock_get_max_clock())) ||
+			(ret > gpex_clock_get_table_idx(gpex_clock_get_min_clock()))) {
+			GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid clock value (%d)\n", __func__,
+				clock);
+			return -ENOENT;
+		}
+
+		if (clock == gpex_clock_get_max_clock())
+			gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
+		else
+			gpex_clock_lock_clock(GPU_CLOCK_MAX_LOCK, SYSFS_LOCK, clock);
 	}
 
 	return count;
@@ -306,37 +302,38 @@ GPEX_STATIC ssize_t set_min_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (!gpu_clklck) {
-		if (sysfs_streq("0", buf)) {
-			clk_info->user_min_lock_input = 0;
-			gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
-		} else {
-			ret = kstrtoint(buf, 0, &clock);
-			if (ret) {
-				GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid value\n", __func__);
-				return -ENOENT;
-			}
+	if (gpu_clklck && task_is_booster(current))
+		return count;
 
-			clk_info->user_min_lock_input = clock;
-
-			clock = gpex_get_valid_gpu_clock(clock, true);
-
-			ret = gpex_clock_get_table_idx(clock);
-			if ((ret < gpex_clock_get_table_idx(gpex_clock_get_max_clock())) ||
-				(ret > gpex_clock_get_table_idx(gpex_clock_get_min_clock()))) {
-				GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid clock value (%d)\n", __func__,
-					clock);
-				return -ENOENT;
-			}
-
-			if (clock > gpex_clock_get_max_clock_limit())
-				clock = gpex_clock_get_max_clock_limit();
-
-			if (clock == gpex_clock_get_min_clock())
-				gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
-			else
-				gpex_clock_lock_clock(GPU_CLOCK_MIN_LOCK, SYSFS_LOCK, clock);
+	if (sysfs_streq("0", buf)) {
+		clk_info->user_min_lock_input = 0;
+		gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
+	} else {
+		ret = kstrtoint(buf, 0, &clock);
+		if (ret) {
+			GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid value\n", __func__);
+			return -ENOENT;
 		}
+
+		clk_info->user_min_lock_input = clock;
+
+		clock = gpex_get_valid_gpu_clock(clock, true);
+
+		ret = gpex_clock_get_table_idx(clock);
+		if ((ret < gpex_clock_get_table_idx(gpex_clock_get_max_clock())) ||
+			(ret > gpex_clock_get_table_idx(gpex_clock_get_min_clock()))) {
+			GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid clock value (%d)\n", __func__,
+				clock);
+			return -ENOENT;
+		}
+
+		if (clock > gpex_clock_get_max_clock_limit())
+			clock = gpex_clock_get_max_clock_limit();
+
+		if (clock == gpex_clock_get_min_clock())
+			gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
+		else
+			gpex_clock_lock_clock(GPU_CLOCK_MIN_LOCK, SYSFS_LOCK, clock);
 	}
 
 	return count;
