@@ -29,6 +29,7 @@
 
 static struct _clock_info *clk_info;
 #include <linux/workarounds.h>
+#include <linux/binfmts.h>
 static int gpu_unlock = 0;
 static int gpu_clklck = 1;
 
@@ -148,6 +149,9 @@ CREATE_SYSFS_DEVICE_WRITE_FUNCTION(reset_time_in_state)
 GPEX_STATIC ssize_t set_max_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
+
+	if (task_is_booster(current))
+		return count;
 
 	if (!gpu_clklck) {
 		if (sysfs_streq("0", buf)) {
