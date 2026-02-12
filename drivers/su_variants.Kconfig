@@ -49,6 +49,13 @@ config KSU_MANUAL_HOOK
 	help
 	  Use manual hooks instead of kprobes/tracepoints.
 
+config KSU_SYSCALL_HOOK
+	bool "KernelSU syscall hook mode."
+	depends on KPROBES && KRETPROBES && HAVE_SYSCALL_TRACEPOINTS
+	help
+	  Enable KPROBES, KRETPROBES and TRACEPOINT hook for KernelSU core.
+	  This should not be used on kernel below 5.10.
+
 endchoice
 
 # SukiSU Ultra specific options
