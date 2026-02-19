@@ -23,7 +23,7 @@ UBUNTU() {
     done
 
     if [ ${#MISSING[@]} -gt 0 ]; then
-        $ROOT apt-get update -qq
+        $ROOT apt-get update -qq || true
         $ROOT apt-get install -y "${MISSING[@]}"
     fi
 }
