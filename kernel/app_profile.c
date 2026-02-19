@@ -245,16 +245,16 @@ void disable_seccomp(void)
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) ||                          \
      defined(KSU_OPTIONAL_SECCOMP_FILTER_RELEASE))
 	memcpy(fake, current, sizeof(*fake));
+	atomic_set(&current->seccomp.filter_count, 0);
 #endif
-	current->seccomp.mode = 0;
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0) &&                           \
      !defined(KSU_OPTIONAL_SECCOMP_FILTER_RELEASE))
 	// put_seccomp_filter is allowed while we holding sighand
 	put_seccomp_filter(current);
 #endif
+	current->seccomp.mode = 0;
 	current->seccomp.filter = NULL;
-
-	atomic_set(&current->seccomp.filter_count, 0);
+	
     spin_unlock_irq(&current->sighand->siglock);
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) ||                          \
@@ -314,12 +314,11 @@ void escape_with_root_profile(void)
 	       sizeof(cred->cap_bset));
 
 	setup_groups(profile, cred);
+	setup_selinux(profile->selinux_domain, cred);
 
 	commit_creds(cred);
 
 	disable_seccomp();
-
-	setup_selinux(profile->selinux_domain);
 
 #ifdef KSU_KPROBES_HOOK
 	struct task_struct *p = current;
@@ -333,5 +332,12 @@ void escape_with_root_profile(void)
 }
 
 void escape_to_root_for_init(void) {
-	setup_selinux(KERNEL_SU_CONTEXT);
+	struct cred *cred = prepare_creds();
+    if (!cred) {
+        pr_err("Failed to prepare init's creds!\n");
+        return;
+    }
+
+    setup_selinux(KERNEL_SU_CONTEXT, cred);
+    commit_creds(cred);
 }
