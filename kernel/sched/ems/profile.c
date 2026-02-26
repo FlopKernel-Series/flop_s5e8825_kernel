@@ -300,7 +300,7 @@ static void profile_update_cpu_util(int cpu, int *busy_cnt, unsigned long *util_
 	int cpu_util;
 	struct cpu_profile *cs = get_cpu_profile(cpu, CPU_UTIL);
 
-	cpu_util = ml_cpu_util(cpu) + cpu_util_rt(cpu_rq(cpu));
+	cpu_util = cpu_util_cfs(cpu) + cpu_util_rt(cpu_rq(cpu));
 	(*util_sum) += cpu_util;
 
 	if (check_busy(cpu_util, capacity_cpu(cpu))) {

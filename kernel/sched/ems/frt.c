@@ -34,7 +34,7 @@ static u64 frt_cpu_util(int cpu)
 	struct rq *rq = cpu_rq(cpu);
 	u64 cpu_util;
 
-	cpu_util = ml_cpu_util(cpu);
+	cpu_util = cpu_util_cfs(cpu);
 	cpu_util += READ_ONCE(rq->avg_rt.util_avg) + READ_ONCE(rq->avg_dl.util_avg);
 
 	return cpu_util;

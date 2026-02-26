@@ -322,7 +322,6 @@ extern void ntu_init(struct kobject *ems_kobj);
 extern unsigned long ml_task_util(struct task_struct *p);
 extern unsigned long ml_task_util_est(struct task_struct *p);
 extern unsigned long ml_task_load_avg(struct task_struct *p);
-extern unsigned long ml_cpu_util(int cpu);
 extern unsigned long ml_cpu_util_with(struct task_struct *p, int dst_cpu);
 extern unsigned long ml_cpu_util_without(int cpu, struct task_struct *p);
 extern unsigned long ml_cpu_load_avg(int cpu);
@@ -915,7 +914,7 @@ static inline unsigned long capacity_cpu(int cpu)
 
 static inline int cpu_overutilized(int cpu)
 {
-	return (capacity_cpu(cpu) * 1024) < (ml_cpu_util(cpu) * 1280);
+	return (capacity_cpu(cpu) * 1024) < (cpu_util_cfs(cpu) * 1280);
 }
 
 static inline struct task_struct *task_of(struct sched_entity *se)
@@ -1004,7 +1003,7 @@ static inline bool is_busy_cpu(int cpu)
 
 	cfs_rq = &cpu_rq(cpu)->cfs;
 
-	util = ml_cpu_util(cpu);
+	util = cpu_util_cfs(cpu);
 	runnable = READ_ONCE(cfs_rq->avg.runnable_avg);
 	capacity = capacity_orig_of(cpu);
 	nr_running = cpu_rq(cpu)->nr_running;

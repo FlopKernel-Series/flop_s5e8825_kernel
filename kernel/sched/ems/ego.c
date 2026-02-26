@@ -772,7 +772,7 @@ out:
 static unsigned long ego_get_util(struct ego_cpu *egc)
 {
 	struct rq *rq = cpu_rq(egc->cpu);
-	unsigned long util = ml_cpu_util(egc->cpu);
+	unsigned long util = cpu_util_cfs(egc->cpu);
 	unsigned long max = arch_scale_cpu_capacity(egc->cpu);
 
 	egc->max = max;
