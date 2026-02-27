@@ -1,0 +1,72 @@
+name: Build ksud
+on:
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+      os:
+        required: false
+        type: string
+        default: ubuntu-latest
+      pack_lkm:
+        required: false
+        type: boolean
+        default: true
+      pack_ksuinit:
+        required: false
+        type: boolean
+        default: true
+      use_cache:
+        required: false
+        type: boolean
+        default: true
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  build:
+    runs-on: ${{ inputs.os }}
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v7
+    
+    - name: Prepare LKM fies
+      if: ${{ inputs.pack_lkm }}
+      run: |
+        cp android*-lkm/*_kernelsu.ko ./userspace/ksud/bin/aarch64/
+    
+    - name: Prepare ksuinit
+      if: ${{ inputs.pack_ksuinit }}
+      run: |
+        mv ksuinit/*/release/ksuinit ./userspace/ksud/bin/aarch64/
+     
+    - name: Setup Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        targets: ${{ inputs.target }}
+        components: rust-src
+        
+    - uses: Swatinem/rust-cache@v2
+      if: github.event_name != 'pull_request'
+      with:
+        prefix-key: ksud-${{ inputs.target }}-rust
+        workspaces: userspace/ksud
+        
+    - name: Setup cargo-ndk
+      run: cargo install cargo-ndk --locked
+        
+    - name: Build ksud
+      run: |
+        cd userspace/ksud/
+        cargo ndk b -t ${{ inputs.target }} -r
+
+    - name: Upload ksud artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: ksud-${{ inputs.target }}
+        path: userspace/ksud/target/**/release/ksud*
