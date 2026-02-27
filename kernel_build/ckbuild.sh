@@ -135,7 +135,7 @@ for arg in "$@"; do
         DO_KSU=1
     fi
     if [[ "$arg" == *s* ]]; then
-        log_info "SukiSU argument passed, a SukiSU build will be made"
+        log_info "ReSukiSU argument passed, a ReSukiSU build will be made"
         DO_SUKI=1
     fi
     if [[ "$arg" == *u* ]]; then
@@ -206,8 +206,8 @@ if [ "$DO_KSU" == "1" ]; then
     FK_TYPE="KSUNext-NOSUS"
     FK_TYPE_SHORT="KN"
 elif [ "$DO_SUKI" == "1" ]; then
-    FK_TYPE="SukiSU-Ultra"
-    FK_TYPE_SHORT="SKS"
+    FK_TYPE="ReSukiSU"
+    FK_TYPE_SHORT="RESKS"
 elif [ "$DO_RKSU" == "1" ]; then
     FK_TYPE="RKSU-NOSUS"
     FK_TYPE_SHORT="RKS"
@@ -295,7 +295,7 @@ if [ ! -f "$OUT_KERNEL" ]; then
     exit 1
 fi
 
-# Apply KPM patch for SukiSU builds
+# Apply KPM patch for ReSukiSU builds
 # DISABLE for now because it's not compatible with Exynos 5.10 kernels!
 # if ! apply_kpm_patch; then
 #     echo "ERROR: KPM patching failed"
