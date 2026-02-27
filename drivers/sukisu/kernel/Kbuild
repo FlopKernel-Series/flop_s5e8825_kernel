@@ -51,23 +51,45 @@ GIT_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin git
 CURL_BIN := /usr/bin/env PATH="$$PATH":/usr/bin:/usr/local/bin curl
 
 KSU_SRC := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+KSU_VERSION_SRC := $(KSU_SRC)
+
+# Fallback metadata source when ReSukiSU isn't checked out as a git submodule.
+KSU_FALLBACK_REPO := https://github.com/ReSukiSU/ReSukiSU.git
+KSU_FALLBACK_COMMIT := 5fb3ab698f28488440bdf093517ce34479b01963
+KSU_FALLBACK_DIR := /tmp/resukisu-meta-cache
 
 LOCAL_GIT_EXISTS := $(shell test -e $(KSU_SRC)/../.git && echo 1 || echo 0)
 
 ifeq ($(LOCAL_GIT_EXISTS),0)
-$(info -- Can't found $(REPO_NAME) git submodule!)
-$(info -- If you are using bazel to build this kernel,)
-$(info -- Please goto Kbuild and change KSU_SRC to the absolute path of ksu kernel folder path)
-$(error You should use $(REPO_NAME) as an git submodule instead of directly copy code)
+$(info -- Can't find $(REPO_NAME) git submodule, using fallback metadata repo.)
+$(info -- Fallback source: $(KSU_FALLBACK_REPO) @ $(KSU_FALLBACK_COMMIT))
+$(shell if [ ! -d "$(KSU_FALLBACK_DIR)/.git" ]; then \
+	mkdir -p "$(KSU_FALLBACK_DIR)"; \
+	cd "$(KSU_FALLBACK_DIR)" && \
+	$(GIT_BIN) init -q && \
+	$(GIT_BIN) remote add origin "$(KSU_FALLBACK_REPO)"; \
+fi)
+$(shell cd "$(KSU_FALLBACK_DIR)" && \
+	$(GIT_BIN) remote set-url origin "$(KSU_FALLBACK_REPO)" >/dev/null 2>&1 || true)
+$(shell cd "$(KSU_FALLBACK_DIR)" && \
+	$(GIT_BIN) fetch --tags origin >/dev/null 2>&1 || true)
+$(shell cd "$(KSU_FALLBACK_DIR)" && \
+	($(GIT_BIN) cat-file -e $(KSU_FALLBACK_COMMIT)^{commit} 2>/dev/null || \
+	 $(GIT_BIN) fetch origin $(KSU_FALLBACK_COMMIT)) >/dev/null 2>&1)
+$(shell cd "$(KSU_FALLBACK_DIR)" && \
+	$(GIT_BIN) checkout -q --detach $(KSU_FALLBACK_COMMIT) >/dev/null 2>&1 || true)
+KSU_VERSION_SRC := $(KSU_FALLBACK_DIR)
 endif
 
-$(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
-KSU_LOCAL_VERSION := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-list --count HEAD)
+ifneq ($(LOCAL_GIT_EXISTS),0)
+$(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow >/dev/null 2>&1 || true)
+endif
+KSU_LOCAL_VERSION := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-list --count HEAD 2>/dev/null || echo 0)
 KSU_VERSION := $(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700)
 
-KSU_TAG_NAME    := $(shell cd $(KSU_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "unknown")
-KSU_COMMIT_SHA  := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown")
-KSU_BRANCH_NAME := $(shell cd $(KSU_SRC); $(GIT_BIN) branch --show-current 2>/dev/null || echo "unknown")
+KSU_TAG_NAME    := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "unknown")
+KSU_COMMIT_SHA  := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown")
+KSU_BRANCH_NAME := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) branch --show-current 2>/dev/null || echo "detached")
 
 # make ddk happy
 ifneq ($(KDIR),)
