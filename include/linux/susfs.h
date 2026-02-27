@@ -50,11 +50,11 @@ struct st_external_dir {
 
 /* sus_mount */
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-struct st_susfs_hide_sus_mnts_for_all_procs {
+struct st_susfs_hide_sus_mnts_for_non_su_procs {
 	bool                                    enabled;
 	int                                     err;
 };
-#endif
+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 
 /* sus_kstat */
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
@@ -170,7 +170,7 @@ void susfs_add_sus_path_loop(void __user **user_info);
 
 /* sus_mount */
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
-void susfs_set_hide_sus_mnts_for_all_procs(void __user **user_info);
+void susfs_set_hide_sus_mnts_for_non_su_procs(void __user **user_info);
 #endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 
 /* sus_kstat */
@@ -214,6 +214,8 @@ void susfs_set_avc_log_spoofing(void __user **user_info);
 void susfs_get_enabled_features(void __user **user_info);
 void susfs_show_variant(void __user **user_info);
 void susfs_show_version(void __user **user_info);
+
+void susfs_start_sdcard_monitor_fn(void);
 
 /* susfs_init */
 void susfs_init(void);
