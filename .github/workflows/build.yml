@@ -50,8 +50,10 @@ jobs:
           fi
           zip_path="${zips[0]}"
           zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
           echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
           echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
 
           tar_files=(kernel_build/*.tar)
           if [ ${#tar_files[@]} -lt 1 ]; then
@@ -65,12 +67,19 @@ jobs:
           echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
           echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
 
+      - name: Prepare flashable payload (KernelSU Next)
+        run: |
+          rm -rf artifact_payload_tk
+          mkdir -p artifact_payload_tk
+          unzip -q "${{ steps.artifacts_tk.outputs.zip_path }}" -d artifact_payload_tk
+
       - name: Upload flashable zip (KernelSU Next)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.artifacts_tk.outputs.zip_name }}
+          name: ${{ steps.artifacts_tk.outputs.zip_stem }}
           if-no-files-found: error
-          path: ${{ steps.artifacts_tk.outputs.zip_path }}
+          path: artifact_payload_tk/*
+          compression-level: 0
 
       - name: Upload TAR bundle (KernelSU Next)
         uses: actions/upload-artifact@v4
@@ -93,7 +102,7 @@ jobs:
           shopt -s nullglob
 
           short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
-          variant_name="SukiSU"
+          variant_name="ReSukiSU"
 
           zips=(kernel_build/*.zip)
           if [ ${#zips[@]} -ne 1 ]; then
@@ -103,8 +112,10 @@ jobs:
           fi
           zip_path="${zips[0]}"
           zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
           echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
           echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
 
           tar_files=(kernel_build/*.tar)
           if [ ${#tar_files[@]} -lt 1 ]; then
@@ -118,12 +129,19 @@ jobs:
           echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
           echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
 
+      - name: Prepare flashable payload (SukiSU Ultra)
+        run: |
+          rm -rf artifact_payload_ts
+          mkdir -p artifact_payload_ts
+          unzip -q "${{ steps.artifacts_ts.outputs.zip_path }}" -d artifact_payload_ts
+
       - name: Upload flashable zip (SukiSU Ultra)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.artifacts_ts.outputs.zip_name }}
+          name: ${{ steps.artifacts_ts.outputs.zip_stem }}
           if-no-files-found: error
-          path: ${{ steps.artifacts_ts.outputs.zip_path }}
+          path: artifact_payload_ts/*
+          compression-level: 0
 
       - name: Upload TAR bundle (SukiSU Ultra)
         uses: actions/upload-artifact@v4
@@ -156,8 +174,10 @@ jobs:
           fi
           zip_path="${zips[0]}"
           zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
           echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
           echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
 
           tar_files=(kernel_build/*.tar)
           if [ ${#tar_files[@]} -lt 1 ]; then
@@ -171,12 +191,19 @@ jobs:
           echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
           echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
 
+      - name: Prepare flashable payload (RKSU)
+        run: |
+          rm -rf artifact_payload_tu
+          mkdir -p artifact_payload_tu
+          unzip -q "${{ steps.artifacts_tu.outputs.zip_path }}" -d artifact_payload_tu
+
       - name: Upload flashable zip (RKSU)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.artifacts_tu.outputs.zip_name }}
+          name: ${{ steps.artifacts_tu.outputs.zip_stem }}
           if-no-files-found: error
-          path: ${{ steps.artifacts_tu.outputs.zip_path }}
+          path: artifact_payload_tu/*
+          compression-level: 0
 
       - name: Upload TAR bundle (RKSU)
         uses: actions/upload-artifact@v4
@@ -209,8 +236,10 @@ jobs:
           fi
           zip_path="${zips[0]}"
           zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
           echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
           echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
 
           tar_files=(kernel_build/*.tar)
           if [ ${#tar_files[@]} -lt 1 ]; then
@@ -224,12 +253,19 @@ jobs:
           echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
           echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
 
+      - name: Prepare flashable payload (Vanilla)
+        run: |
+          rm -rf artifact_payload_t
+          mkdir -p artifact_payload_t
+          unzip -q "${{ steps.artifacts_t.outputs.zip_path }}" -d artifact_payload_t
+
       - name: Upload flashable zip (Vanilla)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.artifacts_t.outputs.zip_name }}
+          name: ${{ steps.artifacts_t.outputs.zip_stem }}
           if-no-files-found: error
-          path: ${{ steps.artifacts_t.outputs.zip_path }}
+          path: artifact_payload_t/*
+          compression-level: 0
 
       - name: Upload TAR bundle (Vanilla)
         uses: actions/upload-artifact@v4
