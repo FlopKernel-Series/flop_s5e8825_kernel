@@ -1167,7 +1167,7 @@ struct vfsmount *vfs_create_mount(struct fs_context *fc)
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 	// - We will just stop checking for ksu process if /sdcard/Android is accessible,
 	//   for the sake of performance
-	if (!susfs_is_sdcard_android_data_decrypted && susfs_is_current_ksu_domain()) {
+	if (!READ_ONCE(susfs_is_sdcard_android_data_decrypted) && susfs_is_current_ksu_domain()) {
 		mnt = susfs_alloc_non_unshare_ksu_vfsmnt(fc->source ?: "none");
 		goto bypass_orig_flow;
 	}
@@ -1262,7 +1262,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
 #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 	// - We will just stop checking for ksu process if /sdcard/Android is accessible,
 	//   for the sake of performance
-	if (susfs_is_sdcard_android_data_decrypted) {
+	if (READ_ONCE(susfs_is_sdcard_android_data_decrypted)) {
 		goto skip_checking_for_ksu_proc;
 	}
 
