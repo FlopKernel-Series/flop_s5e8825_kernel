@@ -83,7 +83,7 @@ MKDTBOIMG="$(pwd)/kernel_build/dtb/mkdtboimg.py"
 
 ## Customizable vars
 # Kernel version
-FK_VER="v6.2.2"
+FK_VER="v6.2.3"
 
 # Toggles
 USE_CCACHE=1
