@@ -1536,6 +1536,14 @@ static struct dentry *lookup_dcache(const struct qstr *name,
 			return ERR_PTR(error);
 		}
 	}
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+	if (dentry && !IS_ERR(dentry) && dentry->d_inode && susfs_is_inode_sus_path(dentry->d_inode)) {
+		if (d_in_lookup(dentry))
+			d_lookup_done(dentry);
+		dput(dentry);
+		return NULL;
+	}
+#endif
 	return dentry;
 }
 
@@ -1554,41 +1562,18 @@ static struct dentry *__lookup_hash(const struct qstr *name,
 	struct inode *dir = base->d_inode;
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 	bool found_sus_path = false;
-
-retry:
 #endif
 
 	if (dentry)
-#ifdef CONFIG_KSU_SUSFS_SUS_PATH
-	{
-		if (!IS_ERR(dentry) && !found_sus_path && dentry->d_inode && susfs_is_inode_sus_path(dentry->d_inode)) {
-			if (d_in_lookup(dentry))
-				d_lookup_done(dentry);
-			dput(dentry);
-			dentry = lookup_dcache(&susfs_fake_qstr_name, base, flags);
-			found_sus_path = true;
-			goto retry;
-		}
 		return dentry;
-	}
-#else
-		return dentry;
-#endif
 
 	/* Don't create child dentry for a dead directory. */
 	if (unlikely(IS_DEADDIR(dir)))
 		return ERR_PTR(-ENOENT);
 
-#ifdef CONFIG_KSU_SUSFS_SUS_PATH
-	if (found_sus_path) {
-		dentry = d_alloc(base, &susfs_fake_qstr_name);
-		goto skip_orig_flow;
-	}
-#endif
-
 	dentry = d_alloc(base, name);
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
-skip_orig_flow:
+retry:
 #endif
 	if (unlikely(!dentry))
 		return ERR_PTR(-ENOMEM);
@@ -1598,6 +1583,18 @@ skip_orig_flow:
 		dput(dentry);
 		dentry = old;
 	}
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+	if (unlikely(dentry) && !IS_ERR(dentry) && dentry->d_inode &&
+	    !found_sus_path && susfs_is_inode_sus_path(dentry->d_inode)) {
+		if (d_in_lookup(dentry))
+			d_lookup_done(dentry);
+		if (!(flags & LOOKUP_RCU))
+			dput(dentry);
+		dentry = d_alloc(base, &susfs_fake_qstr_name);
+		found_sus_path = true;
+		goto retry;
+	}
+#endif
 	return dentry;
 }
 
@@ -1741,7 +1738,8 @@ retry:
 	{
 		if (d_in_lookup(dentry))
 			d_lookup_done(dentry);
-		dput(dentry);
+		if (!(flags & LOOKUP_RCU))
+			dput(dentry);
 		dentry = d_alloc_parallel(dir, &susfs_fake_qstr_name, &wq);
 		found_sus_path = true;
 		goto retry;
