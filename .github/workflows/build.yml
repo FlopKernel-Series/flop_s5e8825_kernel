@@ -150,6 +150,68 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.artifacts_ts.outputs.tar_bundle_path }}
 
+      - name: Build (MamboSU)
+        run: |
+          rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
+          rm -rf kernel_build/images || true
+          mkdir -p kernel_build/images
+          ./do_build.sh tuq
+
+      - name: Prepare artifacts (MamboSU)
+        id: artifacts_tu
+        run: |
+          set -e
+          shopt -s nullglob
+
+          short_sha="$(echo "$GITHUB_SHA" | cut -c1-7)"
+          variant_name="MamboSU"
+
+          zips=(kernel_build/*.zip)
+          if [ ${#zips[@]} -ne 1 ]; then
+            echo "ERROR: expected exactly 1 flashable zip, got ${#zips[@]}";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          zip_path="${zips[0]}"
+          zip_name="$(basename "$zip_path")"
+          zip_stem="${zip_name%.zip}"
+          echo "zip_path=$zip_path" >> "$GITHUB_OUTPUT"
+          echo "zip_name=$zip_name" >> "$GITHUB_OUTPUT"
+          echo "zip_stem=$zip_stem" >> "$GITHUB_OUTPUT"
+
+          tar_files=(kernel_build/*.tar)
+          if [ ${#tar_files[@]} -lt 1 ]; then
+            echo "ERROR: expected at least 1 tar, got 0";
+            ls -la kernel_build || true
+            exit 1
+          fi
+          tar_bundle="kernel_build/Floppy_TARs-${short_sha}-${variant_name}.zip"
+          rm -f "$tar_bundle"
+          zip -j -q "$tar_bundle" "${tar_files[@]}"
+          echo "tar_bundle_path=$tar_bundle" >> "$GITHUB_OUTPUT"
+          echo "tar_bundle_name=$(basename "$tar_bundle")" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare flashable payload (MamboSU)
+        run: |
+          rm -rf artifact_payload_tu
+          mkdir -p artifact_payload_tu
+          unzip -q "${{ steps.artifacts_tu.outputs.zip_path }}" -d artifact_payload_tu
+
+      - name: Upload flashable zip (MamboSU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tu.outputs.zip_stem }}
+          if-no-files-found: error
+          path: artifact_payload_tu/*
+          compression-level: 0
+
+      - name: Upload TAR bundle (MamboSU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifacts_tu.outputs.tar_bundle_name }}
+          if-no-files-found: error
+          path: ${{ steps.artifacts_tu.outputs.tar_bundle_path }}
+
       - name: Build (Vanilla)
         run: |
           rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true

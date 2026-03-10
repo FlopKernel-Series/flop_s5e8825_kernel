@@ -17,11 +17,11 @@ config KSU_SUKI
 	  Enable SukiSU Ultra with SUSFS support.
 	  This is a KernelSU fork with additional features.
 
-config KSU_RKSU
-	bool "RKSU"
+config KSU_MAMBO
+	bool "MamboSU"
 	select OVERLAY_FS
 	help
-	  Enable RKSU.
+	  Enable MamboSU.
 	  This is a KernelSU fork with additional features.
 
 endchoice
@@ -129,4 +129,4 @@ config KSU_ALLOWLIST_WORKAROUND
 # Load variant-specific configs
 source "drivers/kernelsu/kernel/Kconfig"
 source "drivers/sukisu/kernel/Kconfig"
-source "drivers/rksu/kernel/Kconfig"
+source "drivers/mambosu/kernel/Kconfig"
