@@ -152,7 +152,7 @@ static void move_from_spared_cpus(struct cpumask *spared_cpus)
 			struct rq *rq = cpu_rq(cpu);
 			int cpu_util;
 
-			cpu_util = ml_cpu_util(cpu) + cpu_util_rt(rq);
+			cpu_util = cpu_util_cfs(cpu) + cpu_util_rt(rq);
 			if (min_util < cpu_util)
 				continue;
 

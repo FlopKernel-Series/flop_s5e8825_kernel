@@ -191,7 +191,7 @@ static void lb_find_busiest_faster_queue(int dst_cpu,
 
 		trace_lb_cpu_util(src_cpu, "faster");
 
-		util = ml_cpu_util(src_cpu) + cpu_util_rt(src_rq);
+		util = cpu_util_cfs_boost(src_cpu) + cpu_util_rt(src_rq);
 		util_sum += util;
 		nr_task_sum += src_rq->cfs.h_nr_running;
 
@@ -242,7 +242,7 @@ static void lb_find_busiest_slower_queue(int dst_cpu,
 			!lb_queue_need_active_mgt(src_rq, cpu_rq(dst_cpu)))
 			continue;
 
-		util = ml_cpu_util(src_cpu) + cpu_util_rt(src_rq);
+		util = cpu_util_cfs_boost(src_cpu) + cpu_util_rt(src_rq);
 		if (util < busiest_util)
 			continue;
 
@@ -272,7 +272,7 @@ static void lb_find_busiest_equivalent_queue(int dst_cpu,
 			continue;
 
 		/* find highest util cpu */
-		util = ml_cpu_util(src_cpu) + cpu_util_rt(src_rq);
+		util = cpu_util_cfs_boost(src_cpu) + cpu_util_rt(src_rq);
 		if (util < busiest_util)
 			continue;
 

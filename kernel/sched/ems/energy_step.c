@@ -978,7 +978,7 @@ static void esgov_update_cpu_util(struct esgov_policy *esg_policy, u64 time, uns
 		esg_cpu->io_util = esgov_iowait_apply(esg_cpu, time, max);
 
 		/* update sched_util */
-		esg_cpu->pelt_util = ml_cpu_util(cpu) + cpu_util_rt(rq);
+		esg_cpu->pelt_util = cpu_util_cfs(cpu) + cpu_util_rt(rq);
 
 		/* update step_util, If cpu is idle, we want to ignore step_util */
 		esg_cpu->step_util = esgov_get_step_util(esg_cpu, max);

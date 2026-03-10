@@ -60,22 +60,6 @@ unsigned long ml_task_load_avg(struct task_struct *p)
  *                            MULTI LOAD for CPU                              *
  ******************************************************************************/
 /*
- * ml_cpu_util - cpu utilization
- */
-unsigned long ml_cpu_util(int cpu)
-{
-	struct cfs_rq *cfs_rq;
-	unsigned int util;
-
-	cfs_rq = &cpu_rq(cpu)->cfs;
-	util = READ_ONCE(cfs_rq->avg.util_avg);
-
-	util = max(util, READ_ONCE(cfs_rq->avg.util_est.enqueued));
-
-	return min_t(unsigned long, util, capacity_cpu_orig(cpu));
-}
-
-/*
  * ml_cpu_util_est - return cpu util_est
  */
 unsigned long ml_cpu_util_est(int cpu)
@@ -110,7 +94,7 @@ unsigned long ml_cpu_util_without(int cpu, struct task_struct *p)
 
 	/* Task has no contribution or is new */
 	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-		return ml_cpu_util(cpu);
+		return cpu_util_cfs(cpu);
 
 	cfs_rq = &cpu_rq(cpu)->cfs;
 

@@ -343,7 +343,7 @@ static void ontime_heavy_migration(void)
 	 * No need to traverse rq to find a heavy task
 	 * if this CPU utilization is under upper boundary
 	 */
-	if (ml_cpu_util(cpu_of(rq)) < dom->upper_boundary)
+	if (cpu_util_cfs(cpu_of(rq)) < dom->upper_boundary)
 		return;
 
 	raw_spin_rq_lock_irqsave(rq, flags);
@@ -431,7 +431,7 @@ int ontime_can_migrate_task(struct task_struct *p, int dst_cpu)
 		 * (criteria : task util is under 75% of cpu util)
 		 */
 		if (cpu_overutilized(src_cpu) &&
-			util * 100 < (ml_cpu_util(src_cpu) * 75)) {
+			util * 100 < (cpu_util_cfs(src_cpu) * 75)) {
 			trace_ontime_can_migrate_task(p, dst_cpu, true, "src overutil");
 			return true;
 		}

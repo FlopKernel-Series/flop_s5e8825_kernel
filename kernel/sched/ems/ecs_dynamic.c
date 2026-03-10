@@ -159,7 +159,7 @@ static void dynamic_enqueue_release_cpus(int prev_cpu, struct task_struct *p)
 
 	for_each_cpu(cpu, &domain->governor_cpus) {
 		struct rq *rq = cpu_rq(cpu);
-		int cpu_util = ml_cpu_util(cpu) + cpu_util_rt(rq) + cpu_util_dl(rq);
+		int cpu_util = cpu_util_cfs(cpu) + cpu_util_rt(rq) + cpu_util_dl(rq);
 
 		if (cpu_util > min_util)
 			continue;
@@ -282,7 +282,7 @@ static int update_domain_info(struct dynamic_dom *domain, int slower_misfit_cnt)
 		misfit += ems_rq_nr_misfited(rq);
 
 		/* 4. compute util */
-		util += (ml_cpu_util(cpu) + cpu_util_rt(rq));
+		util += (cpu_util_cfs(cpu) + cpu_util_rt(rq));
 
 		/* 5. compute average active ratio */
 		cur_ar = mlt_art_value(cpu, cur_idx);

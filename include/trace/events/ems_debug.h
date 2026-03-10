@@ -2048,7 +2048,7 @@ TRACE_EVENT(lb_cpu_util,
 		__entry->nr_running             = cpu_rq(cpu)->nr_running;
 		__entry->cfs_nr_running         = cpu_rq(cpu)->cfs.h_nr_running;
 		__entry->nr_misfits             = ems_rq_nr_misfited(cpu_rq(cpu));
-		__entry->cpu_util               = ml_cpu_util(cpu);
+		__entry->cpu_util               = cpu_util_cfs(cpu);
 		__entry->capacity_orig          = capacity_orig_of(cpu);
 		strncpy(__entry->label, label, 63);
 		),
