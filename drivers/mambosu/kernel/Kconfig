@@ -2,7 +2,8 @@ menu "KernelSU"
 
 config KSU
 	tristate "KernelSU function support"
-	default y
+	depends on KSU_MAMBO
+	default y if KSU_MAMBO
 	help
 	  Enable kernel-level root privileges on Android System.
 	  Requires CONFIG_KPROBES for kernel hooking support.
@@ -18,6 +19,7 @@ config KSU_DEBUG
 
 config KSU_THRONE_TRACKER_ALWAYS_THREADED
 	bool "Always run throne tracker in a kthread"
+	depends on KSU
 	default y
 	help
 	  Runs throne_tracker in a separate kthread, including the first run.
