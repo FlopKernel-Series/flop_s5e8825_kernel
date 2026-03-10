@@ -1,5 +1,6 @@
 choice
 	prompt "Select SU variant"
+	optional
 	help
 	  Select which Kernel SU variant to build.
 
@@ -28,6 +29,8 @@ endchoice
 
 choice
 	prompt "Hook method"
+	optional
+	depends on KSU_NEXT || KSU_SUKI || KSU_MAMBO
 	help
 	  Select which hook method to use.
 
