@@ -30,6 +30,7 @@
 
 #ifdef CONFIG_KSU_SUSFS_SUS_KSTAT
 extern void susfs_generic_fillattr_spoofer(struct inode *inode, struct kstat *stat);
+extern int susfs_get_non_sus_mnt_id_from_mnt(struct mount *orig_mnt);
 #endif
 
 /**
@@ -228,7 +229,15 @@ retry:
 		goto out;
 
 	error = vfs_getattr(&path, stat, request_mask, flags);
+#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+	if (real_mount(path.mnt)->mnt_id >= DEFAULT_KSU_MNT_ID &&
+		likely(susfs_is_current_proc_umounted_app()))
+		stat->mnt_id = susfs_get_non_sus_mnt_id_from_mnt(real_mount(path.mnt));
+	else
+		stat->mnt_id = real_mount(path.mnt)->mnt_id;
+#else
 	stat->mnt_id = real_mount(path.mnt)->mnt_id;
+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
 	stat->result_mask |= STATX_MNT_ID;
 	if (path.mnt->mnt_root == path.dentry)
 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
