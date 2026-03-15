@@ -64,18 +64,21 @@ ifeq ($(LOCAL_GIT_EXISTS),0)
 $(info -- Can't find $(REPO_NAME) git submodule!)
 $(info -- If you are using bazel to build this kernel,)
 $(info -- Please go to Kbuild and change KSU_SRC to the absolute path of the KSU kernel folder.)
-$(error You should use $(REPO_NAME) as a git submodule instead of copying code directly)
 endif
 
 ifneq ($(LOCAL_GIT_EXISTS),0)
 $(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow >/dev/null 2>&1 || true)
 endif
-KSU_LOCAL_VERSION := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-list --count HEAD 2>/dev/null || echo 0)
-KSU_VERSION := $(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700)
+KSU_VERSION_OVERRIDE :=
+KSU_TAG_NAME_OVERRIDE :=
+KSU_COMMIT_SHA_OVERRIDE :=
+KSU_BRANCH_NAME_OVERRIDE :=
+KSU_LOCAL_VERSION := $(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-list --count HEAD 2>/dev/null || echo 0),0)
+KSU_VERSION := $(if $(strip $(KSU_VERSION_OVERRIDE)),$(KSU_VERSION_OVERRIDE),$(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700))
 
-KSU_TAG_NAME    := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "unknown")
-KSU_COMMIT_SHA  := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown")
-KSU_BRANCH_NAME := $(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) branch --show-current 2>/dev/null || echo "detached")
+KSU_TAG_NAME    := $(if $(strip $(KSU_TAG_NAME_OVERRIDE)),$(KSU_TAG_NAME_OVERRIDE),$(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "unknown"),unknown))
+KSU_COMMIT_SHA  := $(if $(strip $(KSU_COMMIT_SHA_OVERRIDE)),$(KSU_COMMIT_SHA_OVERRIDE),$(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown"),unknown))
+KSU_BRANCH_NAME := $(if $(strip $(KSU_BRANCH_NAME_OVERRIDE)),$(KSU_BRANCH_NAME_OVERRIDE),$(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) branch --show-current 2>/dev/null || echo "detached"),subtree))
 
 # make ddk happy
 ifneq ($(KDIR),)
