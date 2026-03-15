@@ -114,7 +114,7 @@ static inline void ksu_set_ksud_status(uid_t new_uid)
 
 int ksu_handle_setuid(uid_t new_uid, uid_t old_uid, uid_t euid) // (new_euid)
 {
-    // We only interest in process spwaned by zygote
+    // We are only interested in processes spawned by zygote.
     if (!is_zygote(current_cred())) {
         return 0;
     }

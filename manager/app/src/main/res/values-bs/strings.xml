@@ -60,7 +60,6 @@
     <string name="profile_selinux_context">SELinux kontekst</string>
     <string name="profile_umount_modules">Umount module</string>
     <string name="failed_to_update_app_profile">Ažuriranje Profila Aplikacije za %s nije uspjelo</string>
-    <string name="require_kernel_version" formatted="false">The current KernelSU version %s is too low for the manager to work properly. Please upgrade to version %s or higher!</string>
     <string name="settings_umount_modules_default">Umount module po zadanom</string>
     <string name="settings_umount_modules_default_summary">Globalna zadana vrijednost za \"Umount module\" u Profilima Aplikacije. Ako je omogućeno, uklonit će sve izmjene modula na sistemu za aplikacije koje nemaju postavljen Profil.</string>
     <string name="profile_umount_modules_summary">Uključivanjem ove opcije omogućit će KernelSU-u da vrati sve izmjenute datoteke od strane modula za ovu aplikaciju.</string>

@@ -54,9 +54,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.WarningCard
@@ -64,22 +61,19 @@ import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.splicedLazyColumnGroup
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.theme.ThemeConfig
+import com.resukisu.resukisu.ui.theme.haze
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.viewmodel.UmountManagerScreenViewModel
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Destination<RootGraph>
 @Composable
-fun UmountManagerScreen(navigator: DestinationsNavigator) {
+fun UmountManagerScreen() {
     val viewModel = viewModel<UmountManagerScreenViewModel>()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val snackBarHost = LocalSnackbarHost.current
@@ -90,25 +84,6 @@ fun UmountManagerScreen(navigator: DestinationsNavigator) {
     var isLoading by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
     var showAddDialog by remember { mutableStateOf(false) }
-    val hazeState = if (ThemeConfig.backgroundImageLoaded) rememberHazeState() else null
-
-    val hazeStyle = if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = 0.8f
-        ),
-        tint = HazeTint(Color.Transparent)
-    ) else null
-
-    val collapsedFraction = scrollBehavior.state.collapsedFraction
-    val modifier = if (ThemeConfig.backgroundImageLoaded && hazeStyle != null && hazeState != null) {
-        Modifier.hazeEffect(hazeState) {
-            style = hazeStyle
-            noiseFactor = 0f
-            blurRadius = 30.dp
-            alpha = collapsedFraction
-        }
-    }
-    else Modifier
 
     val confirmDelete = stringResource(R.string.confirm_delete)
 
@@ -121,12 +96,14 @@ fun UmountManagerScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             LargeFlexibleTopAppBar(
-                modifier = modifier,
+                modifier = Modifier
+                    .haze(scrollBehavior.state.collapsedFraction),
                 title = { Text(stringResource(R.string.umount_path_manager)) },
                 navigationIcon = {
+                    val navigator = LocalNavigator.current
                     AppBackButton(
                         onClick = {
-                            navigator.popBackStack()
+                            navigator.pop()
                         }
                     )
                 },
@@ -182,7 +159,7 @@ fun UmountManagerScreen(navigator: DestinationsNavigator) {
                 },
                 modifier = Modifier
                     .fillMaxSize()
-                    .then(if (hazeState != null) Modifier.hazeSource(hazeState) else Modifier)
+                    .hazeSource()
             ) {
                 LazyColumn(
                     modifier = Modifier

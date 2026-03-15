@@ -18,46 +18,15 @@ object Natives {
     // 11071: Fix the issue of failing to set a custom SELinux type.
     // 12143: breaking: new supercall impl
     // 32310: new get_allow_list ioctl
-    const val MINIMAL_SUPPORTED_KERNEL = 32310
+    // 34634(upstream 32336): new set_sepolicy ioctl 
+    const val MINIMAL_SUPPORTED_KERNEL = 34634
 
-    // 12040: Support disable sucompat mode
     const val KERNEL_SU_DOMAIN = "u:r:su:s0"
-
-    const val MINIMAL_SUPPORTED_KERNEL_FULL = "v4.0.0"
-
-    const val MINIMAL_SUPPORTED_KPM = 12800
-
-    const val MINIMAL_SUPPORTED_DYNAMIC_MANAGER = 13215
-
-    const val MINIMAL_NEW_IOCTL_KERNEL = 13490
 
     const val ROOT_UID = 0
     const val ROOT_GID = 0
 
-    // 获取完整版本号
     external fun getFullVersion(): String
-
-    fun isVersionLessThan(v1Full: String, v2Full: String): Boolean {
-        fun extractVersionParts(version: String): List<Int> {
-            val match = Regex("""v\d+(\.\d+)*""").find(version)
-            val simpleVersion = match?.value ?: version
-            return simpleVersion.trimStart('v').split('.').map { it.toIntOrNull() ?: 0 }
-        }
-
-        val v1Parts = extractVersionParts(v1Full)
-        val v2Parts = extractVersionParts(v2Full)
-        val maxLength = maxOf(v1Parts.size, v2Parts.size)
-        for (i in 0 until maxLength) {
-            val num1 = v1Parts.getOrElse(i) { 0 }
-            val num2 = v2Parts.getOrElse(i) { 0 }
-            if (num1 != num2) return num1 < num2
-        }
-        return false
-    }
-
-    fun getSimpleVersionFull(): String = getFullVersion().let { version ->
-        Regex("""v\d+(\.\d+)*""").find(version)?.value ?: version
-    }
 
     init {
         System.loadLibrary("kernelsu")
@@ -72,6 +41,8 @@ object Natives {
     val isLkmMode: Boolean
         external get
 
+    val isLateLoadMode: Boolean
+        external get
     val isManager: Boolean
         external get
 
@@ -168,8 +139,7 @@ object Natives {
     }
 
     fun requireNewKernel(): Boolean {
-        if (version != -1 && version < MINIMAL_SUPPORTED_KERNEL) return true
-        return isVersionLessThan(getFullVersion(), MINIMAL_SUPPORTED_KERNEL_FULL)
+        return version != -1 && version < MINIMAL_SUPPORTED_KERNEL
     }
 
     @Immutable

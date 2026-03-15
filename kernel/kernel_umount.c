@@ -133,12 +133,6 @@ static void umount_tw_func(struct callback_head *cb)
     }
     up_read(&mount_list_lock);
 
-#ifdef CONFIG_KSU_SUSFS_SUS_PATH
-    // susfs_run_sus_path_loop() runs here with ksu_cred so that it can reach all the paths.
-
-    susfs_run_sus_path_loop();
-#endif // #ifdef CONFIG_KSU_SUSFS_SUS_PATH
-
     revert_creds(saved);
 
     kfree(tw);
@@ -147,6 +141,9 @@ static void umount_tw_func(struct callback_head *cb)
 int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 {
     struct umount_tw *tw;
+#ifdef CONFIG_KSU_SUSFS
+    const struct cred *saved;
+#endif
 
     if (!ksu_cred) {
         return 0;
@@ -156,8 +153,8 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
     // 1. Normal app: zygote -> appuid
     // 2. Isolated process forked from zygote: zygote -> isolated_process
     // 3. App zygote forked from zygote: zygote -> appuid
-    // 4. Isolated process froked from app zygote: appuid -> isolated_process (already handled by 3)
-    // 5. Isolated process froked from webview zygote (no need to handle, app cannot run custom code)
+    // 4. Isolated process forked from app zygote: appuid -> isolated_process (already handled by 3)
+    // 5. Isolated process forked from webview zygote (no need to handle because app cannot run custom code)
     if (!is_appuid(new_uid) && !is_isolated_process(new_uid)) {
         return 0;
     }
@@ -166,9 +163,10 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
         return 0;
     }
 
-    // no need check zygote there, because we already check in setuid call
+    // no need to check zygote here, because we already check it in the setuid call.
 
-    if (!ksu_kernel_umount_enabled) { // in susfs's impl, it ignore ksu_kernel_umount feature, keep same behavior
+    // in susfs's implementation, ksu_kernel_umount is ignored, so this keeps the same behavior.
+    if (!ksu_kernel_umount_enabled) {
         goto skip_umount_task;
     }
 
@@ -194,7 +192,16 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 
 skip_umount_task:
     // do susfs setuid when susfs enabled
+
 #ifdef CONFIG_KSU_SUSFS
+    saved = override_creds(ksu_cred);
+
+#ifdef CONFIG_KSU_SUSFS_SUS_PATH
+    susfs_run_sus_path_loop();
+#endif // #ifdef CONFIG_KSU_SUSFS_SUS_PATH
+
+    revert_creds(saved);
+
     susfs_set_current_proc_umounted();
 #endif
 

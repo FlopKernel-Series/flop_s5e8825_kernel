@@ -158,7 +158,8 @@ int ksu_handle_execve_sucompat_tp_internal(const char __user **filename_user,
 }
 #endif
 
-// the call from execve_handler_pre won't provided correct value for __never_use_argument, use them after fix execve_handler_pre, keeping them for consistence for manually patched code
+// the call from execve_handler_pre does not provide correct values for __never_use_* arguments.
+// keep these arguments for consistency with manually patched code after execve_handler_pre is fixed.
 int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
                                  void *__never_use_argv, void *__never_use_envp,
                                  int *__never_use_flags)

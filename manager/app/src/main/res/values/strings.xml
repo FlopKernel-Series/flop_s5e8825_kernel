@@ -31,12 +31,23 @@
     <string name="install">Install</string>
     <string name="reboot">Reboot</string>
     <string name="settings">Settings</string>
-    <string name="reboot_userspace">Soft Reboot</string>
+    <string name="reboot_soft">Soft restart</string>
+    <string name="reboot_userspace">Userspace reboot</string>
     <string name="reboot_recovery">Reboot to Recovery</string>
     <string name="reboot_bootloader">Reboot to Bootloader</string>
     <string name="reboot_download">Reboot to Download</string>
     <string name="reboot_edl">Reboot to EDL</string>
     <string name="about">About</string>
+    <string name="about_anime_character_sticker"><![CDATA[The images of the files with anime character sticker are copyrighted by %1$s, the Brand Intellectual Property in the images is owned by %2$s. Before using these files, in addition to complying with %3$s, you also need to comply with the authorization of the two authors to use these artistic contents.]]></string>
+    <string name="get_source_code">Check for source code</string>
+    <string name="get_source_code_detail">Check for source code on GitHub</string>
+    <string name="join_telegram_group">Join community</string>
+    <string name="join_telegram_group_detail">Join our Telegram channel</string>
+    <string name="open_source_license">Open Source License</string>
+    <string name="open_source_license_settings_description">View third-party open-source libraries and their licenses</string>
+    <string name="visit_home_page">Visit Home Page</string>
+    <string name="license">License: %s</string>
+    <string name="no_license_text">No license text available.</string>
     <string name="module_uninstall_confirm">Are you sure you want to uninstall module %s?</string>
     <string name="metamodule_uninstall_confirm">Are you sure you want to uninstall module %s? This action will affect all modules, and certain features provided by the metamodule (such as mounting) will no longer work</string>
     <string name="module_uninstall_success">%s uninstalled</string>
@@ -48,6 +59,13 @@
     <string name="hide_system_apps">Hide system apps</string>
     <string name="send_log">Send logs</string>
     <string name="safe_mode">Safe mode</string>
+    <string name="jailbreak_mode">Jailbreak mode</string>
+    <string name="home_jailbreak">Jailbreak</string>
+    <string name="jailbreak_timeout">Jailbreak may have failed, please check logs</string>
+    <string name="jailbreak_flash_warning">You are in **Jailbreak mode**. Flashing a partition on a device with a **locked bootloader** will break AVB (Android Verified Boot) and may cause the device to **fail to boot**.\n\nMake sure your bootloader is unlocked before proceeding!</string>
+    <string name="jailbreak_flash_warning_countdown">Continue (%1$d)</string>
+    <string name="settings_auto_jailbreak">Auto jailbreak</string>
+    <string name="settings_auto_jailbreak_summary">Automatically use Magica to escalate privileges when Permissive SELinux is detected at boot. Requires granting autostart permission to this app.</string>
     <string name="reboot_to_apply">Reboot to take effect</string>
     <string name="module_magisk_conflict">Modules are unavailable due to a conflict with Magisk!</string>
     <string name="home_learn_kernelsu">Learn KernelSU</string>
@@ -71,7 +89,6 @@
     <string name="profile_umount_modules">Umount modules</string>
     <string name="failed_to_update_app_profile">Failed to update App Profile for %s</string>
     <string name="debug_version_notice">"You are using DEBUG build of manager, if you don't know what is DEBUG version, switch into RELEASE build immediately"</string>
-    <string name="require_kernel_version" formatted="false">The current KernelSU version %s is too low for the manager to work properly. Please upgrade to version %s or higher!</string>
     <string name="settings_umount_modules_default">Umount modules by default</string>
     <string name="settings_umount_modules_default_summary">The global default value for \"Umount modules\" in App Profile. If enabled, it will remove all module modifications to the system for apps that don\'t have a profile set</string>
     <string name="profile_umount_modules_summary">Enabling this option will allow KernelSU to restore any modified files by the modules for this app</string>

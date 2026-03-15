@@ -187,7 +187,7 @@ class WebViewInterface(private val state: WebUIState) {
 
     @JavascriptInterface
     fun enableEdgeToEdge(enable: Boolean = true) {
-        state?.isInsetsEnabled = enable
+        state.isInsetsEnabled = enable
     }
 
     @JavascriptInterface

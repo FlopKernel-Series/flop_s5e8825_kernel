@@ -60,7 +60,6 @@
     <string name="profile_selinux_context">SELinux kontekst</string>
     <string name="profile_umount_modules">Lahtihaagitud moodulid</string>
     <string name="failed_to_update_app_profile">Rakenduseprofiili uuendamine %s jaoks ebaõnnestus</string>
-    <string name="require_kernel_version" formatted="false">The current KernelSU version %s is too low for the manager to work properly. Please upgrade to version %s or higher!</string>
     <string name="settings_umount_modules_default">Haagi moodulid vaikimisi lahti</string>
     <string name="settings_umount_modules_default_summary">Globaalne vaikeväärtus \"Lahtihaagitud moodulitele\" rakenduseprofiilis. Lubamisel eemaldab see kõik moodulite süsteemimuudatused rakendustele, millel ei ole profiili määratud.</string>
     <string name="profile_umount_modules_summary">Selle valiku lubamine lubab KernelSU-l taastada selle rakenduse moodulite poolt mistahes muudetud faile.</string>

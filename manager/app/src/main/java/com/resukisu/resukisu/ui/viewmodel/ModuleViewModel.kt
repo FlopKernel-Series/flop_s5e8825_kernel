@@ -271,32 +271,6 @@ class ModuleViewModel : ViewModel() {
     }
 }
 
-fun ModuleViewModel.ModuleInfo.copy(
-    id: String = this.id,
-    name: String = this.name,
-    author: String = this.author,
-    version: String = this.version,
-    versionCode: Int = this.versionCode,
-    description: String = this.description,
-    enabled: Boolean = this.enabled,
-    update: Boolean = this.update,
-    remove: Boolean = this.remove,
-    updateJson: String = this.updateJson,
-    hasWebUi: Boolean = this.hasWebUi,
-    hasActionScript: Boolean = this.hasActionScript,
-    metamodule: Boolean = this.metamodule,
-    actionIconPath: String? = this.actionIconPath,
-    webUiIconPath: String? = this.webUiIconPath,
-    dirId: String = this.dirId,
-    moduleUpdate: ModuleViewModel.ModuleUpdateInfo? = this.moduleUpdate,
-): ModuleViewModel.ModuleInfo {
-    return ModuleViewModel.ModuleInfo(
-        id, name, author, version, versionCode, description,
-        enabled, update, remove, updateJson, hasWebUi, hasActionScript, metamodule,
-        actionIconPath, webUiIconPath, dirId, moduleUpdate
-    )
-}
-
 private fun JSONObject.getBooleanCompat(key: String, default: Boolean = false): Boolean {
     if (!has(key)) return default
     return when (val value = opt(key)) {

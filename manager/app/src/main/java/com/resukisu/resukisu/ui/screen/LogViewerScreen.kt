@@ -15,14 +15,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,6 +47,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,23 +68,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.SearchAppBar
-import com.resukisu.resukisu.ui.component.pinnedScrollBehavior
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberLoadingDialog
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.getCardColors
-import com.resukisu.resukisu.ui.theme.getCardElevation
+import com.resukisu.resukisu.ui.theme.haze
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.getRootShell
 import com.resukisu.resukisu.ui.util.runCmd
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -156,10 +151,10 @@ private fun loadExcludedSubTypes(context: Context): Set<LogExclType> {
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Destination<RootGraph>
 @Composable
-fun LogViewerScreen(navigator: DestinationsNavigator) {
-    val scrollBehavior = pinnedScrollBehavior()
+fun LogViewerScreen() {
+    val topAppBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
     val snackBarHost = LocalSnackbarHost.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -172,8 +167,6 @@ fun LogViewerScreen(navigator: DestinationsNavigator) {
     var lastLogFileHash by remember { mutableStateOf("") }
     val currentUid = remember { myUid().toString() }
 
-    val hazeState = if (ThemeConfig.backgroundImageLoaded) rememberHazeState() else null
-
     val initialExcluded = remember {
         loadExcludedSubTypes(context)
     }
@@ -182,6 +175,10 @@ fun LogViewerScreen(navigator: DestinationsNavigator) {
 
     LaunchedEffect(excludedSubTypes) {
         saveExcludedSubTypes(context, excludedSubTypes)
+    }
+
+    LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
     }
 
     val filteredEntries = remember(
@@ -268,10 +265,24 @@ fun LogViewerScreen(navigator: DestinationsNavigator) {
 
     Scaffold(
         topBar = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .background(
+                        if (ThemeConfig.backgroundImageLoaded) Color.Transparent
+                        else MaterialTheme.colorScheme.surfaceContainer
+                    )
+                    .haze(
+                        scrollBehavior.state.collapsedFraction
+                    )
+            ) {
+                val navigator = LocalNavigator.current
+                val clearLogs = stringResource(R.string.log_viewer_clear_logs)
+                val clearLogsConfirm = stringResource(R.string.log_viewer_clear_logs_confirm)
+                val logsCleared = stringResource(R.string.log_viewer_logs_cleared)
                 SearchAppBar(
                     scrollBehavior = scrollBehavior,
-                    onBackClick = { navigator.navigateUp() },
+                    onBackClick = { navigator.pop() },
+                    title = stringResource(R.string.log_viewer_title),
                     searchText = searchQuery,
                     onSearchTextChange = { searchQuery = it },
                     searchBarPlaceHolderText = stringResource(R.string.log_viewer_search_placeholder),
@@ -285,15 +296,15 @@ fun LogViewerScreen(navigator: DestinationsNavigator) {
                         IconButton(onClick = {
                             scope.launch {
                                 val result = confirmDialog.awaitConfirm(
-                                    title = context.getString(R.string.log_viewer_clear_logs),
-                                    content = context.getString(R.string.log_viewer_clear_logs_confirm)
+                                    title = clearLogs,
+                                    content = clearLogsConfirm
                                 )
                                 if (result == ConfirmResult.Confirmed) {
                                     loadingDialog.withLoading {
                                         clearLogs()
                                         loadPage(0, true)
                                     }
-                                    snackBarHost.showSnackbar(context.getString(R.string.log_viewer_logs_cleared))
+                                    snackBarHost.showSnackbar(logsCleared)
                                 }
                             }
                         }) {
@@ -303,7 +314,7 @@ fun LogViewerScreen(navigator: DestinationsNavigator) {
                             )
                         }
                     },
-                    hazeState = hazeState
+                    haze = false,
                 )
                 Box(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -328,15 +339,16 @@ fun LogViewerScreen(navigator: DestinationsNavigator) {
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface,
         snackbarHost = { SnackbarHost(snackBarHost) },
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { paddingValues ->
         Column (
-            modifier = if (hazeState != null) Modifier.hazeSource(hazeState) else Modifier
+            modifier = Modifier.hazeSource()
         ){
             // 日志列表
             if (isLoading && logEntries.isEmpty()) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
                     LoadingIndicator()
@@ -376,8 +388,11 @@ private fun LogControlPanel(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        colors = getCardColors(MaterialTheme.colorScheme.surfaceContainerLow),
-        elevation = getCardElevation()
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest.copy(
+                alpha = CardConfig.cardAlpha
+            )
+        ),
     ) {
         Column {
             // 标题栏（点击展开/收起）

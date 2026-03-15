@@ -68,7 +68,7 @@ bool allowed_for_su(void)
 
 static int do_grant_root(void __user *arg)
 {
-    // we already check uid above on allowed_for_su()
+    // we already checked the uid above in allowed_for_su().
 
     pr_info("allow root for: %d\n", current_uid().val);
     escape_with_root_profile();
@@ -81,10 +81,13 @@ static int do_get_info(void __user *arg)
     struct ksu_get_info_cmd cmd = { .version = KERNEL_SU_VERSION, .flags = 0 };
 
 #ifdef MODULE
-    cmd.flags |= 0x1;
+    cmd.flags |= KSU_GET_INFO_FLAG_LKM;
 #endif
     if (is_manager()) {
-        cmd.flags |= 0x2;
+        cmd.flags |= KSU_GET_INFO_FLAG_MANAGER;
+    }
+    if (ksu_late_loaded) {
+        cmd.flags |= KSU_GET_INFO_FLAG_LATE_LOAD;
     }
     cmd.features = KSU_FEATURE_MAX;
 
@@ -109,12 +112,16 @@ static int do_report_event(void __user *arg)
         static bool post_fs_data_lock = false;
         if (!post_fs_data_lock) {
             post_fs_data_lock = true;
-            pr_info("post-fs-data triggered\n");
-            on_post_fs_data();
+            if (ksu_late_loaded) {
+                pr_info("post-fs-data skipped (late load)\n");
+            } else {
+                pr_info("post-fs-data triggered\n");
+                on_post_fs_data();
 #if __SULOG_GATE
-            ksu_sulog_init();
+                ksu_sulog_init();
 #endif
-            ksu_dynamic_manager_init();
+                ksu_dynamic_manager_init();
+            }
         }
         break;
     }
@@ -122,11 +129,15 @@ static int do_report_event(void __user *arg)
         static bool boot_complete_lock = false;
         if (!boot_complete_lock) {
             boot_complete_lock = true;
-            pr_info("boot_complete triggered\n");
-            on_boot_completed();
+            if (ksu_late_loaded) {
+                pr_info("boot_complete skipped (late load)\n");
+            } else {
+                pr_info("boot_complete triggered\n");
+                on_boot_completed();
 #ifdef CONFIG_KSU_SUSFS
-            susfs_start_sdcard_monitor_fn();
+                susfs_start_sdcard_monitor_fn();
 #endif
+            }
         }
         break;
     }
@@ -150,7 +161,7 @@ static int do_set_sepolicy(void __user *arg)
         return -EFAULT;
     }
 
-    return handle_sepolicy(cmd.cmd, (void __user *)cmd.arg);
+    return handle_sepolicy((void __user *)cmd.data, cmd.data_len);
 }
 
 static int do_check_safemode(void __user *arg)
@@ -313,10 +324,10 @@ static int do_uid_should_umount(void __user *arg)
     return 0;
 }
 
-// this api mostly use case is tell zygisk impl who is the root manager
-// we return last use manager's uid to make them can inject ZYGISK_ENABLED=1
-// if user are not open any manager yet, we return the first registered manager
-// if no manager registered, return -1 (KSU_INVALID_APPID)
+// this api is mainly used to tell the zygisk implementation which app is the root manager.
+// we return the last used manager's uid so it can inject ZYGISK_ENABLED=1.
+// if the user has not opened any manager yet, we return the first registered manager.
+// if no manager is registered, return -1 (KSU_INVALID_APPID).
 static int do_get_manager_appid(void __user *arg)
 {
     struct ksu_get_manager_appid_cmd cmd;
@@ -626,8 +637,8 @@ static int ksu_umount_list_getlist(struct ksu_manage_try_umount_cmd *cmd,
         user_buf += len;
 
         if (!legacy) {
-            // not legacy, we put flags too
-            // userspace can simple use an struct to recv data, because it memory layout are 100% consistent
+            // non-legacy mode, includes flags too.
+            // userspace can use a struct to receive data because the memory layout is fully consistent.
             if (copy_to_user(user_buf, &entry->flags, sizeof(entry->flags))) {
                 up_read(&mount_list_lock);
                 return -EFAULT;
@@ -744,9 +755,9 @@ static int manage_try_umount(void __user *arg)
     }
 
     // WARNING! this is straight up pointerwalking.
-    // this way we dont need to redefine the ioctl defs.
+    // this way we don't need to redefine the ioctl defs.
     // this also avoids us needing to kmalloc
-    // userspace have to send pointer to memory or pointer to a VLA.
+    // userspace has to send pointer to memory or pointer to a VLA.
     // userspace also has to process the flat blob itself and zero init properly.
     case KSU_UMOUNT_GETLIST_LEGACY: {
         return ksu_umount_list_getlist(&cmd, true);
@@ -1044,14 +1055,6 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd,
         }
         if (cmd == CMD_SUSFS_ADD_SUS_PATH_LOOP) {
             susfs_add_sus_path_loop(arg);
-            return 0;
-        }
-        if (cmd == CMD_SUSFS_SET_ANDROID_DATA_ROOT_PATH) {
-            susfs_set_i_state_on_external_dir(arg);
-            return 0;
-        }
-        if (cmd == CMD_SUSFS_SET_SDCARD_ROOT_PATH) {
-            susfs_set_i_state_on_external_dir(arg);
             return 0;
         }
 #endif //#ifdef CONFIG_KSU_SUSFS_SUS_PATH

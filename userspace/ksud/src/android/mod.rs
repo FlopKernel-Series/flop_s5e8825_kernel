@@ -6,6 +6,8 @@ mod init_event;
 #[cfg(all(target_arch = "aarch64", target_os = "android"))]
 mod kpm;
 mod ksucalls;
+mod late_load;
+mod magica;
 mod module;
 mod profile;
 mod restorecon;

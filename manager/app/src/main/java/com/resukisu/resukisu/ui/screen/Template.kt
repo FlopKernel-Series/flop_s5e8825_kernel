@@ -60,25 +60,16 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.getSystemService
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.TemplateEditorScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.result.ResultRecipient
-import com.ramcosta.composedestinations.result.getOr
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.component.settings.SettingsJumpPageWidget
 import com.resukisu.resukisu.ui.component.settings.splicedLazyColumnGroup
-import com.resukisu.resukisu.ui.theme.CardConfig
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.theme.ThemeConfig
+import com.resukisu.resukisu.ui.theme.haze
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.viewmodel.TemplateViewModel
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -88,28 +79,27 @@ import kotlinx.coroutines.launch
  */
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Destination<RootGraph>
 @Composable
-fun AppProfileTemplateScreen(
-    navigator: DestinationsNavigator,
-    resultRecipient: ResultRecipient<TemplateEditorScreenDestination, Boolean>
-) {
+fun AppProfileTemplateScreen() {
     val pullRefreshState = rememberPullToRefreshState()
     val viewModel = viewModel<TemplateViewModel>()
     val scope = rememberCoroutineScope()
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val hazeState = if (CardConfig.isCustomBackgroundEnabled) rememberHazeState() else null
+    val navigator = LocalNavigator.current
+
     LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+
         if (viewModel.templateList.isEmpty()) {
             viewModel.fetchTemplates()
         }
-    }
 
-    // handle result from TemplateEditorScreen, refresh if needed
-    resultRecipient.onNavResult { result ->
-        if (result.getOr { false }) {
-            scope.launch { viewModel.fetchTemplates() }
+        navigator.observeResult<Boolean>("template_edit").collect { success ->
+            if (success) {
+                navigator.clearResult("template_edit")
+                scope.launch { viewModel.fetchTemplates() }
+            }
         }
     }
 
@@ -122,8 +112,14 @@ fun AppProfileTemplateScreen(
                     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                 }
             }
+            val appProfileTemplateImportEmpty =
+                stringResource(R.string.app_profile_template_import_empty)
+            val appProfileTemplateImportSuccess =
+                stringResource(R.string.app_profile_template_import_success)
+            val appProfileTemplateExportEmpty =
+                stringResource(R.string.app_profile_template_export_empty)
             TopBar(
-                onBack = dropUnlessResumed { navigator.popBackStack() },
+                onBack = dropUnlessResumed { navigator.pop() },
                 onSync = {
                     scope.launch { viewModel.fetchTemplates(true) }
                 },
@@ -131,13 +127,13 @@ fun AppProfileTemplateScreen(
                     scope.launch {
                         val clipboardText = clipboardManager?.primaryClip?.getItemAt(0)?.text?.toString()
                         if (clipboardText.isNullOrEmpty()) {
-                            showToast(context.getString(R.string.app_profile_template_import_empty))
+                            showToast(appProfileTemplateImportEmpty)
                             return@launch
                         }
                         viewModel.importTemplates(
                             clipboardText,
                             {
-                                showToast(context.getString(R.string.app_profile_template_import_success))
+                                showToast(appProfileTemplateImportSuccess)
                                 viewModel.fetchTemplates(false)
                             },
                             showToast
@@ -148,7 +144,7 @@ fun AppProfileTemplateScreen(
                     scope.launch {
                         viewModel.exportTemplates(
                             {
-                                showToast(context.getString(R.string.app_profile_template_export_empty))
+                                showToast(appProfileTemplateExportEmpty)
                             }
                         ) { text ->
                             clipboardManager?.setPrimaryClip(ClipData.newPlainText("", text))
@@ -156,17 +152,17 @@ fun AppProfileTemplateScreen(
                     }
                 },
                 scrollBehavior = scrollBehavior,
-                hazeState = hazeState
             )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
-                    navigator.navigate(
-                        TemplateEditorScreenDestination(
+                    navigator.navigateForResult(
+                        Route.TemplateEditor(
                             TemplateViewModel.TemplateInfo(),
                             false
-                        )
+                        ),
+                        "template_edit"
                     )
                 },
                 icon = { Icon(Icons.Filled.Add, null) },
@@ -180,9 +176,11 @@ fun AppProfileTemplateScreen(
     ) { innerPadding ->
         PullToRefreshBox(
             state = pullRefreshState,
-            modifier = (if (hazeState != null) Modifier.hazeSource(hazeState) else Modifier).nestedScroll(
-                scrollBehavior.nestedScrollConnection
-            ),
+            modifier = Modifier
+                .nestedScroll(
+                    scrollBehavior.nestedScrollConnection
+                )
+                .hazeSource(),
             isRefreshing = viewModel.isRefreshing,
             onRefresh = {
                 scope.launch { viewModel.fetchTemplates() }
@@ -212,7 +210,7 @@ fun AppProfileTemplateScreen(
                 splicedLazyColumnGroup(
                     items = viewModel.templateList,
                     key = { _, app -> app.id }) { _, app ->
-                    TemplateItem(navigator, app)
+                    TemplateItem(app)
                 }
 
                 item {
@@ -226,14 +224,17 @@ fun AppProfileTemplateScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun TemplateItem(
-    navigator: DestinationsNavigator,
     template: TemplateViewModel.TemplateInfo
 ) {
+    val navigator = LocalNavigator.current
     SettingsJumpPageWidget(
         title = template.name,
         iconPlaceholder = false,
         onClick = {
-            navigator.navigate(TemplateEditorScreenDestination(template, !template.local))
+            navigator.navigateForResult(
+                Route.TemplateEditor(template, !template.local),
+                "template_edit"
+            )
         },
         descriptionColumnContent = {
             Text(
@@ -285,31 +286,12 @@ private fun TopBar(
     onSync: () -> Unit = {},
     onImport: () -> Unit = {},
     onExport: () -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior? = null,
-    hazeState: HazeState?
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    MaterialTheme.colorScheme
-
-    val hazeStyle = if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = 0.8f
-        ),
-        tint = HazeTint(Color.Transparent)
-    ) else null
-
-    val collapsedFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
-    val modifier =
-        if (ThemeConfig.backgroundImageLoaded && hazeStyle != null && hazeState != null) {
-            Modifier.hazeEffect(hazeState) {
-                style = hazeStyle
-                noiseFactor = 0f
-                blurRadius = 30.dp
-                alpha = collapsedFraction
-            }
-        } else Modifier
-
     LargeFlexibleTopAppBar(
-        modifier = modifier,
+        modifier = Modifier.haze(
+            scrollBehavior.state.collapsedFraction
+        ),
         title = {
             Text(stringResource(R.string.settings_profile_template))
         },

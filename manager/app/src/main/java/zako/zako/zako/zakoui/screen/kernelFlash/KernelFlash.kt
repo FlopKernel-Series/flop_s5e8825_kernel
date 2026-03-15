@@ -7,7 +7,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -16,9 +29,32 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -30,13 +66,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.KeyEventBlocker
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
+import com.resukisu.resukisu.ui.util.install
 import com.resukisu.resukisu.ui.util.reboot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -47,7 +82,8 @@ import zako.zako.zako.zakoui.screen.kernelFlash.state.HorizonKernelState
 import zako.zako.zako.zakoui.screen.kernelFlash.state.HorizonKernelWorker
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * @author ShirkNeko
@@ -66,10 +102,8 @@ private object KernelFlashStateHolder {
  * Kernel刷写界面
  */
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<RootGraph>
 @Composable
 fun KernelFlashScreen(
-    navigator: DestinationsNavigator,
     kernelUri: Uri,
     selectedSlot: String? = null,
     kpmPatchEnabled: Boolean = false,
@@ -115,6 +149,8 @@ fun KernelFlashScreen(
         showFloatAction = true
         KernelFlashStateHolder.isFlashing = false
 
+        install()
+
         // 如果需要自动退出，延迟1.5秒后退出
         if (shouldAutoExit) {
             scope.launch {
@@ -125,6 +161,8 @@ fun KernelFlashScreen(
             }
         }
     }
+
+    val horizonFlashComplete = stringResource(R.string.horizon_flash_complete)
 
     // 开始刷写
     LaunchedEffect(Unit) {
@@ -163,11 +201,15 @@ fun KernelFlashScreen(
             if (flashState.error.isNotEmpty()) {
                 logText += "\n${flashState.error}\n"
             } else if (flashState.isCompleted) {
-                logText += "\n${context.getString(R.string.horizon_flash_complete)}\n\n\n"
+                logText += "\n${horizonFlashComplete}\n\n\n"
                 showFloatAction = true
+
+                install()
             }
         }
     }
+
+    val navigator = LocalNavigator.current
 
     val onBack: () -> Unit = {
         if (!flashState.isFlashing || flashState.isCompleted || flashState.error.isNotEmpty()) {
@@ -180,7 +222,7 @@ fun KernelFlashScreen(
                 KernelFlashStateHolder.currentKpmUndoPatch = false
                 KernelFlashStateHolder.isFlashing = false
             }
-            navigator.popBackStack()
+            navigator.pop()
         }
     }
 

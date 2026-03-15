@@ -197,8 +197,8 @@ void *ksu_compat_kvrealloc(const void *p, size_t oldsize, size_t newsize,
 #endif
 
 #ifndef KSU_COMPAT_HAS_BITMAP_ALLOC_HELPER
-// kernel below 4.19 maybe not have 3 helper, but impl that is very easy
-// copy from https://github.com/torvalds/linux/commit/c42b65e363ce97a828f81b59033c3558f8fa7f70
+// kernels below 4.19 may not have these three helpers, but implementing them is straightforward.
+// copied from: https://github.com/torvalds/linux/commit/c42b65e363ce97a828f81b59033c3558f8fa7f70
 unsigned long *ksu_bitmap_alloc(unsigned int nbits, gfp_t flags)
 {
     return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
