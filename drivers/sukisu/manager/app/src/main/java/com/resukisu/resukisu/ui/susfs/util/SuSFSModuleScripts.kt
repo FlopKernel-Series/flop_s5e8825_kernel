@@ -2,6 +2,7 @@ package com.resukisu.resukisu.ui.susfs.util
 
 import android.annotation.SuppressLint
 
+// TODO REFACTOR!!!! WHEN BRANCH SUSFS-KSUD MERGE TO MAIN, WE SHOULD USE OUR CONFIG TO REPLACE THEM
 /**
  * Magisk模块脚本生成器
  * 用于生成各种启动脚本的内容

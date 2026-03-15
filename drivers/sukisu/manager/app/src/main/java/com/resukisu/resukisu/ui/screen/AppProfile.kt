@@ -43,6 +43,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,11 +65,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.AppProfileTemplateScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.TemplateEditorScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.profile.AppProfileConfig
@@ -78,8 +74,11 @@ import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsSwitchWidget
 import com.resukisu.resukisu.ui.component.settings.SplicedColumnGroup
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.theme.CardConfig
-import com.resukisu.resukisu.ui.theme.ThemeConfig
+import com.resukisu.resukisu.ui.theme.haze
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.forceStopApp
 import com.resukisu.resukisu.ui.util.getSepolicy
@@ -88,12 +87,6 @@ import com.resukisu.resukisu.ui.util.restartApp
 import com.resukisu.resukisu.ui.util.setSepolicy
 import com.resukisu.resukisu.ui.viewmodel.SuperUserViewModel
 import com.resukisu.resukisu.ui.viewmodel.getTemplateInfoById
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 /**
@@ -101,12 +94,11 @@ import kotlinx.coroutines.launch
  * @date 2023/5/16.
  */
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<RootGraph>
 @Composable
 fun AppProfileScreen(
-    navigator: DestinationsNavigator,
     appGroup: SuperUserViewModel.AppGroup,
 ) {
+    val navigator = LocalNavigator.current
     val context = LocalContext.current
     val snackBarHost = LocalSnackbarHost.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -134,8 +126,10 @@ fun AppProfileScreen(
         colorScheme.surfaceContainer
     }
 
-    val hazeState = if (CardConfig.isCustomBackgroundEnabled) rememberHazeState() else null
-
+    LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+    }
+    
     Scaffold(
         topBar = {
             TopBar(
@@ -145,9 +139,8 @@ fun AppProfileScreen(
                     containerColor = cardColor,
                     scrolledContainerColor = cardColor
                 ),
-                onBack = dropUnlessResumed { navigator.popBackStack() },
+                onBack = dropUnlessResumed { navigator.pop() },
                 scrollBehavior = scrollBehavior,
-                hazeState = hazeState
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackBarHost) },
@@ -156,9 +149,10 @@ fun AppProfileScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { paddingValues ->
         AppProfileInner(
-            modifier = (if (hazeState != null) Modifier.hazeSource(hazeState) else Modifier)
+            modifier = Modifier
                 .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .hazeSource(),
             topPadding = paddingValues.calculateTopPadding(),
             appGroup = appGroup,
             appIcon = {
@@ -175,11 +169,11 @@ fun AppProfileScreen(
             profile = profile,
             onViewTemplate = {
                 getTemplateInfoById(it)?.let { info ->
-                    navigator.navigate(TemplateEditorScreenDestination(info))
+                    navigator.push(Route.TemplateEditor(info, true))
                 }
             },
             onManageTemplate = {
-                navigator.navigate(AppProfileTemplateScreenDestination())
+                navigator.push(Route.AppProfileTemplate)
             },
             onProfileChange = {
                 scope.launch {
@@ -499,28 +493,11 @@ private fun TopBar(
     onBack: () -> Unit,
     colors: TopAppBarColors,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    hazeState: HazeState? = null
 ) {
-    val hazeStyle = if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = 0.8f
-        ),
-        tint = HazeTint(Color.Transparent)
-    ) else null
-
-    val collapsedFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
-    val modifier = if (ThemeConfig.backgroundImageLoaded && hazeStyle != null && hazeState != null) {
-        Modifier.hazeEffect(hazeState) {
-            style = hazeStyle
-            noiseFactor = 0f
-            blurRadius = 30.dp
-            alpha = collapsedFraction
-        }
-    }
-    else Modifier
-
     LargeFlexibleTopAppBar(
-        modifier = modifier,
+        modifier = Modifier.haze(
+            scrollBehavior?.state?.collapsedFraction ?: 1f
+        ),
         title = {
             Text(
                 text = title,

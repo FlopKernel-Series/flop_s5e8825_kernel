@@ -60,7 +60,6 @@
     <string name="profile_selinux_context">SELinux kontekstas</string>
     <string name="profile_umount_modules">Atjungti modulius</string>
     <string name="failed_to_update_app_profile">Nepavyko atnaujinti programos profilio %s</string>
-    <string name="require_kernel_version" formatted="false">The current KernelSU version %s is too low for the manager to work properly. Please upgrade to version %s or higher!</string>
     <string name="settings_umount_modules_default">Atjungti modulius pagal numatytuosius parametrus</string>
     <string name="settings_umount_modules_default_summary">Visuotinė numatytoji „Modulių atjungimo“ reikšmė programų profiliuose. Jei įjungta, ji pašalins visus sistemos modulio pakeitimus programoms, kurios neturi profilio.</string>
     <string name="profile_umount_modules_summary">Įjungus šią parinktį, KernelSU galės atkurti visus modulių modifikuotus failus šiai programai.</string>

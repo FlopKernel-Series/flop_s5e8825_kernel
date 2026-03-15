@@ -28,43 +28,42 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.resukisu.resukisu.ui.MainActivity
 import com.resukisu.resukisu.ui.screen.BottomBarDestination
 import com.resukisu.resukisu.ui.theme.ThemeConfig
+import com.resukisu.resukisu.ui.theme.haze
 import com.resukisu.resukisu.ui.util.LocalHandlePageChange
 import com.resukisu.resukisu.ui.util.LocalSelectedPage
 import com.resukisu.resukisu.ui.util.getKpmModuleCount
 import com.resukisu.resukisu.ui.util.getModuleCount
 import com.resukisu.resukisu.ui.util.getSuperuserCount
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
+// TODO Add FloatingBottomBar as an choice to user
 @SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavigationBar(
     destinations: List<BottomBarDestination>,
-    hazeState: HazeState?,
     isBottomBar: Boolean
 ) {
     val activity = LocalContext.current as MainActivity
 
     // 是否隐藏 badge
-    val isHideOtherInfo by activity.settingsStateFlow
-        .map { it.isHideOtherInfo }
-        .collectAsState(initial = false)
+    val isHideOtherInfo by remember(activity.settingsStateFlow) {
+        activity.settingsStateFlow.map { it.isHideOtherInfo }
+    }.collectAsState(initial = false)
 
     // 翻页处理
     val page = LocalSelectedPage.current
@@ -94,27 +93,18 @@ fun NavigationBar(
         }
     }
 
-    val hazeStyle = if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = 0.8f
-        ),
+    if (ThemeConfig.backgroundImageLoaded) HazeStyle(
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         tint = HazeTint(Color.Transparent)
     ) else null
 
-    var modifier = Modifier.windowInsetsPadding(
-        WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
-    )
-
-    if (ThemeConfig.backgroundImageLoaded && hazeStyle != null && hazeState != null)
-        modifier = modifier.hazeEffect(hazeState) {
-            style = hazeStyle
-            blurRadius = 30.dp
-            noiseFactor = 0f
-        }
-
     if (isBottomBar) {
         FlexibleBottomAppBar(
-            modifier = modifier,
+            modifier = Modifier
+                .windowInsetsPadding(
+                    WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+                )
+                .haze(),
             containerColor = if (ThemeConfig.backgroundImageLoaded) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface
         ) {
@@ -134,7 +124,11 @@ fun NavigationBar(
         }
     } else {
         WideNavigationRail(
-            modifier = modifier,
+            modifier = Modifier
+                .windowInsetsPadding(
+                    WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+                )
+                .haze(),
             colors = WideNavigationRailColors(
                 containerColor = if (ThemeConfig.backgroundImageLoaded) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh,
                 contentColor = MaterialTheme.colorScheme.onSurface,

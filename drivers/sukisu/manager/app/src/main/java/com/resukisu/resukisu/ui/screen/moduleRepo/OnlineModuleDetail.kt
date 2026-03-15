@@ -80,10 +80,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.GithubMarkdown
@@ -91,18 +87,16 @@ import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.SplicedColumnGroup
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.ThemeConfig
+import com.resukisu.resukisu.ui.theme.haze
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.module.ReleaseAssetInfo
 import com.resukisu.resukisu.ui.util.module.ReleaseInfo
 import com.resukisu.resukisu.ui.viewmodel.ModuleRepoViewModel
 import com.resukisu.resukisu.ui.viewmodel.formatFileSize
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -111,9 +105,9 @@ import kotlinx.coroutines.launch
  * @date 2025/12/7
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
-@Destination<RootGraph>
 @Composable
-fun OnlineModuleDetailScreen(navigator: DestinationsNavigator, module: ModuleRepoViewModel.RepoModule) {
+fun OnlineModuleDetailScreen(module: ModuleRepoViewModel.RepoModule) {
+    val navigator = LocalNavigator.current
     val snackBarHost = LocalSnackbarHost.current
     val topAppBarState = rememberTopAppBarState()
     val coroutineScope = rememberCoroutineScope()
@@ -122,7 +116,6 @@ fun OnlineModuleDetailScreen(navigator: DestinationsNavigator, module: ModuleRep
     val tabTitles = listOf(stringResource(R.string.readme), stringResource(R.string.release), stringResource(R.string.info))
     val uriHandler = LocalUriHandler.current
     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
-    val hazeState = if (ThemeConfig.backgroundImageLoaded) rememberHazeState() else null
 
     LaunchedEffect(Unit) {
         scrollBehavior.state.heightOffset =
@@ -131,26 +124,10 @@ fun OnlineModuleDetailScreen(navigator: DestinationsNavigator, module: ModuleRep
 
     Scaffold(
         topBar = {
-            val hazeStyle = if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-                backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                    alpha = 0.8f
-                ),
-                tint = HazeTint(Color.Transparent)
-            ) else null
-
-            val collapsedFraction = scrollBehavior.state.collapsedFraction
-            val modifier = if (ThemeConfig.backgroundImageLoaded && hazeStyle != null && hazeState != null) {
-                Modifier.hazeEffect(hazeState) {
-                    style = hazeStyle
-                    noiseFactor = 0f
-                    blurRadius = 30.dp
-                    alpha = collapsedFraction
-                }
-            }
-            else Modifier
-
             Column(
-                modifier = modifier
+                modifier = Modifier.haze(
+                    scrollBehavior.state.collapsedFraction
+                )
             ) {
                 LargeFlexibleTopAppBar(
                     title = { Text(module.moduleName) },
@@ -158,7 +135,7 @@ fun OnlineModuleDetailScreen(navigator: DestinationsNavigator, module: ModuleRep
                     navigationIcon = {
                         AppBackButton(
                             onClick = {
-                                navigator.popBackStack()
+                                navigator.pop()
                             }
                         )
                     },
@@ -222,9 +199,12 @@ fun OnlineModuleDetailScreen(navigator: DestinationsNavigator, module: ModuleRep
         ),
         snackbarHost = { SnackbarHost(hostState = snackBarHost) }
     ) { innerPadding ->
-        Column(modifier = if (hazeState != null) Modifier.hazeSource(hazeState) else Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .hazeSource()
+        ) {
 
             HorizontalPager(
                 state = pagerState,
@@ -232,7 +212,12 @@ fun OnlineModuleDetailScreen(navigator: DestinationsNavigator, module: ModuleRep
             ) { page ->
                 when (page) {
                     0 -> ReadmeTab(module, scrollBehavior.nestedScrollConnection, innerPadding.calculateTopPadding())
-                    1 -> ReleasesTab(module, scrollBehavior.nestedScrollConnection, coroutineScope, navigator, innerPadding.calculateTopPadding())
+                    1 -> ReleasesTab(
+                        module,
+                        scrollBehavior.nestedScrollConnection,
+                        coroutineScope,
+                        innerPadding.calculateTopPadding()
+                    )
                     2 -> InfoTab(module, scrollBehavior.nestedScrollConnection, innerPadding.calculateTopPadding())
                 }
             }
@@ -304,7 +289,6 @@ fun ReleasesTab(
     module: ModuleRepoViewModel.RepoModule,
     nestedScrollConnection: NestedScrollConnection,
     coroutineScope: CoroutineScope,
-    navigator: DestinationsNavigator,
     topPadding: Dp
 ) {
     LazyColumn(
@@ -320,7 +304,7 @@ fun ReleasesTab(
             items = module.releases,
             key = { it.tagName }
         ) {
-            ReleaseCard(module, it, coroutineScope, navigator)
+            ReleaseCard(module, it, coroutineScope)
         }
     }
 }
@@ -390,7 +374,12 @@ fun ReadmeTab(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ReleaseCard(module: ModuleRepoViewModel.RepoModule, release: ReleaseInfo, coroutineScope: CoroutineScope, navigator: DestinationsNavigator) {
+fun ReleaseCard(
+    module: ModuleRepoViewModel.RepoModule,
+    release: ReleaseInfo,
+    coroutineScope: CoroutineScope
+) {
+    val navigator = LocalNavigator.current
     val context = LocalContext.current
     val confirmInstallTitle =
         stringResource(R.string.confirm_install_module_title, module.moduleName)
@@ -576,5 +565,5 @@ fun ReleaseCardPreview() {
             )
         }
     )
-    ReleaseCard(initFakeRepoModuleForPreview(),release, rememberCoroutineScope(), EmptyDestinationsNavigator)
+    ReleaseCard(initFakeRepoModuleForPreview(), release, rememberCoroutineScope())
 }

@@ -34,6 +34,7 @@
 #include "allowlist.h"
 #include "arch.h"
 #include "klog.h" // IWYU pragma: keep
+#include "ksu.h"
 #include "ksud.h"
 #include "util.h"
 #include "kernel_compat.h"
@@ -227,6 +228,43 @@ fail:
     return false;
 }
 
+static void ksu_apply_rules(void)
+{
+    apply_kernelsu_rules();
+    cache_sid();
+    setup_ksu_cred();
+}
+
+#ifdef KSU_TP_HOOK
+static void ksu_initialize_selinux_tw_func(struct callback_head *cb)
+{
+    ksu_apply_rules();
+    kfree(cb);
+}
+#endif
+
+static void ksu_initialize_selinux(void)
+{
+#ifdef KSU_TP_HOOK
+    // When tracepoint hook, we maybe in atomic context
+    // use task_work to escape that
+    struct callback_head *cb = kzalloc(sizeof(*cb), GFP_ATOMIC);
+    if (cb) {
+        cb->func = ksu_initialize_selinux_tw_func;
+        if (task_work_add(current, cb, TWA_RESUME)) {
+            kfree(cb);
+            pr_warn("ksu_initialize_selinux failed to add task work\n");
+        }
+    } else {
+        pr_warn("ksu_initialize_selinux failed to allocate task work\n");
+    }
+#else
+    // for manual hook, we NEVER in atomic context
+    // no need use task_work to escape
+    ksu_apply_rules();
+#endif
+}
+
 // IMPORTANT NOTE: the call from execve_handler_pre WON'T provided correct value for envp and flags in GKI version
 int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
                              struct user_arg_ptr *argv,
@@ -259,9 +297,7 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
         if (!init_second_stage_executed &&
             check_argv(*argv, 1, "second_stage", buf, sizeof(buf))) {
             pr_info("/system/bin/init second_stage executed via argv1 check\n");
-            apply_kernelsu_rules();
-            cache_sid();
-            setup_ksu_cred();
+            ksu_initialize_selinux();
             init_second_stage_executed = true;
         }
     } else if (unlikely(!memcmp(filename->name, old_system_init,
@@ -276,9 +312,7 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
             if (!init_second_stage_executed &&
                 check_argv(*argv, 1, "--second-stage", buf, sizeof(buf))) {
                 pr_info("/init second_stage executed via argv1 check\n");
-                apply_kernelsu_rules();
-                cache_sid();
-                setup_ksu_cred();
+                ksu_initialize_selinux();
                 init_second_stage_executed = true;
             }
         } else if (argc == 1 && !init_second_stage_executed && envp) {
@@ -307,9 +341,7 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
                         (!strcmp(env_value, "1") ||
                          !strcmp(env_value, "true"))) {
                         pr_info("/init second_stage executed via envp check\n");
-                        apply_kernelsu_rules();
-                        cache_sid();
-                        setup_ksu_cred();
+                        ksu_initialize_selinux();
                         init_second_stage_executed = true;
                         break;
                     }
@@ -420,7 +452,7 @@ append_ksu_rc:
 static bool is_init_rc(struct file *fp)
 {
     if (strcmp(current->comm, "init")) {
-        // we are only interest in `init` process
+        // we are only interested in the `init` process.
         return false;
     }
 
@@ -430,7 +462,7 @@ static bool is_init_rc(struct file *fp)
 
     const char *short_name = fp->f_path.dentry->d_name.name;
     if (strcmp(short_name, "init.rc")) {
-        // we are only interest `init.rc` file name file
+        // we are only interested in the `init.rc` file name.
         return false;
     }
     char path[256];
@@ -780,6 +812,10 @@ bool ksu_is_safe_mode()
     if (safe_mode) {
         // don't need to check again, userspace may call multiple times
         return true;
+    }
+
+    if (ksu_late_loaded) {
+        return false;
     }
 
     // stop hook first!

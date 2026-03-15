@@ -28,7 +28,7 @@ fun ksuIsValid() : Boolean {
 
     val isManager = Natives.isManager
     val ksuVersion = if (isManager) Natives.version else null
-    ksuIsValid = ksuVersion != null
+    ksuIsValid = ksuVersion != null && ksuVersion >= Natives.MINIMAL_SUPPORTED_KERNEL
     tested = true
 
     return ksuIsValid

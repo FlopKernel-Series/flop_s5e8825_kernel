@@ -19,7 +19,7 @@ use is_executable::is_executable;
 use java_properties::PropertiesIter;
 use log::{debug, info, warn};
 use regex_lite::Regex;
-use zip_extensions::zip_extract_file_to_memory;
+use zip_extensions::zip_extract::zip_extract_file_to_memory;
 
 use crate::{
     android::{
@@ -64,7 +64,7 @@ pub fn validate_module_id(module_id: &str) -> Result<()> {
 
 /// Get common environment variables for script execution
 pub fn get_common_script_envs() -> Vec<(&'static str, String)> {
-    vec![
+    let mut envs = vec![
         ("ASH_STANDALONE", "1".to_string()),
         ("KSU", "true".to_string()),
         ("KSU_SUKISU", "true".to_string()),
@@ -79,7 +79,13 @@ pub fn get_common_script_envs() -> Vec<(&'static str, String)> {
                 defs::BINARY_DIR.trim_end_matches('/')
             ),
         ),
-    ]
+    ];
+
+    if ksucalls::is_late_load() {
+        envs.push(("KSU_LATE_LOAD", "1".to_string()));
+    }
+
+    envs
 }
 
 fn exec_install_script(module_file: &str, is_metamodule: bool) -> Result<()> {

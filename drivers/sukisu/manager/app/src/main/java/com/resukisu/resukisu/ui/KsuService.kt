@@ -3,10 +3,12 @@ package com.resukisu.resukisu.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageInfo
-import android.os.*
+import android.os.IBinder
+import android.os.UserHandle
+import android.os.UserManager
 import android.util.Log
-import com.topjohnwu.superuser.ipc.RootService
 import com.resukisu.zako.IKsuInterface
+import com.topjohnwu.superuser.ipc.RootService
 
 /**
  * @author ShirkNeko
@@ -16,7 +18,7 @@ class KsuService : RootService() {
 
     private val TAG = "KsuService"
 
-    private val cacheLock = Object()
+    private val cacheLock = Any()
     private var _all: List<PackageInfo>? = null
     private val allPackages: List<PackageInfo>
         get() = synchronized(cacheLock) {

@@ -76,10 +76,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.resukisu.resukisu.R
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.susfs.component.AddAppPathDialog
 import com.resukisu.resukisu.ui.susfs.component.AddKstatStaticallyDialog
 import com.resukisu.resukisu.ui.susfs.component.AddPathDialog
@@ -104,6 +102,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// TODO REFACTOR!!! there are fully shit, we should refactor them after susfs-ksud branch merge
 /**
  * 标签页枚举类
  */
@@ -133,11 +132,8 @@ enum class SuSFSTab(val displayNameRes: Int) {
  */
 @SuppressLint("SdCardPath", "AutoboxingStateCreation")
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<RootGraph>
 @Composable
-fun SuSFSConfigScreen(
-    navigator: DestinationsNavigator
-) {
+fun SuSFSConfigScreen() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -902,10 +898,11 @@ fun SuSFSConfigScreen(
                     }
                 },
                 navigationIcon = {
+                    val navigator = LocalNavigator.current
                     IconButton(onClick = {
                         if (!isNavigating) {
                             isNavigating = true
-                            navigator.popBackStack()
+                            navigator.pop()
                         }
                     }) {
                         Icon(

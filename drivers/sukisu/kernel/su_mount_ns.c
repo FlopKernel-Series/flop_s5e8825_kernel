@@ -110,7 +110,7 @@ try_setns:
 
     rcu_read_lock();
     // &init_task is not init, but swapper/idle, which forks the init process
-    // so we need find init process
+    // so we need to find the init process
     struct pid *pid_struct = find_pid_ns(1, &init_pid_ns);
     if (unlikely(!pid_struct)) {
         rcu_read_unlock();

@@ -60,7 +60,6 @@
     <string name="profile_selinux_context">Konteks SELinux</string>
     <string name="profile_umount_modules">Umount Modul</string>
     <string name="failed_to_update_app_profile">Gagal membarui Profil pada %s</string>
-    <string name="require_kernel_version" formatted="false">Versi KernelSU saat ini %s terlalu rendah untuk menjalankan manager dengan baik. Harap tingkatkan ke versi %s atau yang lebih tinggi!</string>
     <string name="settings_umount_modules_default">Melepas Modul secara bawaan</string>
     <string name="settings_umount_modules_default_summary">Menggunakan \"Umount Modul\" secara universal pada Profil Aplikasi. Jika diaktifkan, akan menghapus semua modifikasi sistem untuk aplikasi yang tidak memiliki set profil.</string>
     <string name="profile_umount_modules_summary">Aktifkan opsi ini agar KernelSU dapat memulihkan kembali berkas termodifikasi oleh modul pada aplikasi ini.</string>

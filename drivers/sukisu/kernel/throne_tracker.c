@@ -368,10 +368,9 @@ void track_throne(bool prune_only, bool force_search_manager)
         while ((bit = find_next_bit(diff_map, MAX_APP_ID, bit + 1)) <
                MAX_APP_ID) {
             u16 appid = bit + FIRST_APPLICATION_UID;
-            // we check the uninstalled app is manager or not
-            // if it is manager, unregister its appid,
-            // because it is invalid for now,
-            // if keep them alive, we may grant unknown app manager privillage
+            // check whether the uninstalled app is a manager.
+            // if it is, unregister its appid because it is currently invalid.
+            // if we keep it, we may grant manager privilege to an unknown app.
             if (ksu_is_manager_appid(appid)) {
                 pr_info("Manager APK removed, invalidate previous App ID: %d\n",
                         appid);

@@ -74,6 +74,8 @@ import com.resukisu.resukisu.ui.susfs.util.SuSFSManager
 import com.resukisu.resukisu.ui.viewmodel.SuperUserViewModel
 import kotlinx.coroutines.launch
 
+// TODO REFACTOR!!! there are fully shit, we should refactor them after susfs-ksud branch merge
+
 /**
  * 添加路径对话框
  */

@@ -2,9 +2,11 @@ package com.resukisu.resukisu.ui.screen.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.system.Os
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -50,6 +52,8 @@ import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material.icons.twotone.Error
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -90,33 +94,32 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SuSFSConfigScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.resukisu.resukisu.BuildConfig
 import com.resukisu.resukisu.KernelSUApplication
 import com.resukisu.resukisu.KernelVersion
 import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.R
+import com.resukisu.resukisu.magica.MagicaService
 import com.resukisu.resukisu.ui.component.KsuIsValid
 import com.resukisu.resukisu.ui.component.WarningCard
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
+import com.resukisu.resukisu.ui.component.rememberLoadingDialog
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.screen.LabelText
 import com.resukisu.resukisu.ui.theme.CardConfig.cardElevation
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.getCardColors
 import com.resukisu.resukisu.ui.theme.getCardElevation
+import com.resukisu.resukisu.ui.theme.haze
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.checkNewVersion
 import com.resukisu.resukisu.ui.util.module.LatestVersionInfo
 import com.resukisu.resukisu.ui.util.reboot
 import com.resukisu.resukisu.ui.viewmodel.HomeViewModel
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -127,9 +130,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomePage(
-    navigator: DestinationsNavigator,
     bottomPadding: Dp,
-    hazeState: HazeState?
 ) {
     val context = LocalContext.current
     val viewModel = viewModel<HomeViewModel>(
@@ -148,14 +149,15 @@ fun HomePage(
     val topAppBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
     val scrollState = rememberScrollState()
+    val navigator = LocalNavigator.current
+    val loadingDialog = rememberLoadingDialog()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             TopBar(
                 viewModel = viewModel,
                 scrollBehavior = scrollBehavior,
-                navigator = navigator,
-                hazeState = hazeState
             )
         },
         containerColor = Color.Transparent,
@@ -174,8 +176,9 @@ fun HomePage(
             state = pullRefreshState,
             isRefreshing = viewModel.isRefreshing,
             onRefresh = { viewModel.refreshData(context) },
-            modifier = (if (hazeState != null) Modifier.hazeSource(state = hazeState) else Modifier)
-                .fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .hazeSource(),
             indicator = {
                 PullToRefreshDefaults.LoadingIndicator(
                     modifier = Modifier
@@ -191,18 +194,56 @@ fun HomePage(
                     .fillMaxSize()
                     .nestedScroll(scrollBehavior.nestedScrollConnection)
                     .verticalScroll(scrollState)
-                    .padding(top = 12.dp, start = 16.dp, end = 16.dp),
+                    .padding(
+                        top = innerPadding.calculateTopPadding() + 2.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    ),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
                 // 状态卡片
                 if (viewModel.isCoreDataLoaded) {
                     StatusCard(
                         systemStatus = viewModel.systemStatus,
                         onClickInstall = {
-                            navigator.navigate(InstallScreenDestination(preselectedKernelUri = null))
+                            navigator.push(Route.Install(preselectedKernelUri = null))
+                        },
+                        onClickJailbreak = {
+                            loadingDialog.showLoading()
+                            context.startService(Intent(context, MagicaService::class.java))
+                            // Manager will be force-stopped and restarted by late-load on success.
+                            // If that doesn't happen within timeout, jailbreak likely failed.
+                            scope.launch(Dispatchers.IO) {
+                                delay(30_000)
+                                withContext(Dispatchers.Main) {
+                                    loadingDialog.hide()
+                                    Toast.makeText(
+                                        context,
+                                        R.string.jailbreak_timeout,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
                         }
                     )
+
+                    if (viewModel.systemStatus.requireNewKernel) {
+                        WarningCard(
+                            message = stringResource(
+                                id = R.string.incompatible_kernel_msg,
+                                Natives.version,
+                                Natives.MINIMAL_SUPPORTED_KERNEL
+                            ),
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.TwoTone.Error,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        )
+                    }
 
                     // 警告信息
                     if (BuildConfig.DEBUG) {
@@ -218,28 +259,19 @@ fun HomePage(
                             }
                         )
                     }
-                    if (viewModel.systemStatus.requireNewKernel) {
-                        WarningCard(
-                            message = stringResource(id = R.string.require_kernel_version).format(
-                                Natives.getSimpleVersionFull(),
-                                Natives.MINIMAL_SUPPORTED_KERNEL_FULL
-                            )
-                        )
-                    }
 
                     if (viewModel.systemStatus.ksuVersion != null && !viewModel.systemStatus.isRootAvailable) {
                         WarningCard(
-                            message = stringResource(id = R.string.grant_root_failed)
+                            message = stringResource(id = R.string.grant_root_failed),
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.TwoTone.Error,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         )
-                    }
-
-                    // 只有在没有其他警告信息时才显示不兼容内核警告
-                    val shouldShowWarnings = viewModel.systemStatus.requireNewKernel ||
-                            (viewModel.systemStatus.ksuVersion != null && !viewModel.systemStatus.isRootAvailable)
-
-                    if (Natives.version <= Natives.MINIMAL_NEW_IOCTL_KERNEL && !shouldShowWarnings && viewModel.systemStatus.ksuVersion != null) {
-                        IncompatibleKernelCard()
-                        Spacer(Modifier.height(12.dp))
                     }
                 }
 
@@ -343,31 +375,13 @@ fun RebootDropdownItem(@StringRes id: Int, reason: String = "") {
 private fun TopBar(
     viewModel: HomeViewModel,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigator: DestinationsNavigator,
-    hazeState: HazeState? = null
 ) {
-    LocalContext.current
-
-    val hazeStyle = if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = 0.8f
-        ),
-        tint = HazeTint(Color.Transparent)
-    ) else null
-
-    val collapsedFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
-    val modifier = if (ThemeConfig.backgroundImageLoaded && hazeStyle != null && hazeState != null) {
-        Modifier.hazeEffect(hazeState) {
-            style = hazeStyle
-            noiseFactor = 0f
-            blurRadius = 30.dp
-            alpha = collapsedFraction
-        }
-    }
-    else Modifier
+    val navigator = LocalNavigator.current
 
     LargeFlexibleTopAppBar(
-        modifier = modifier,
+        modifier = Modifier.haze(
+            scrollBehavior?.state?.collapsedFraction ?: 1f
+        ),
         title = {
             Text(
                 text = stringResource(R.string.app_name)
@@ -386,7 +400,7 @@ private fun TopBar(
                 // SuSFS 配置按钮
                 if (viewModel.systemInfo.susfsVersionSupported) {
                     IconButton(onClick = {
-                        navigator.navigate(SuSFSConfigScreenDestination)
+                        navigator.push(Route.SuSFSConfig)
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Tune,
@@ -410,6 +424,7 @@ private fun TopBar(
                             showDropdown = false
                         }) {
                             RebootDropdownItem(id = R.string.reboot)
+                            RebootDropdownItem(id = R.string.reboot_soft, reason = "soft_reboot")
 
                             val pm =
                                 LocalContext.current.getSystemService(Context.POWER_SERVICE) as PowerManager?
@@ -434,7 +449,8 @@ private fun TopBar(
 @Composable
 private fun StatusCard(
     systemStatus: HomeViewModel.SystemStatus,
-    onClickInstall: () -> Unit = {}
+    onClickInstall: () -> Unit = {},
+    onClickJailbreak: () -> Unit = {}
 ) {
     ElevatedCard(
         colors = getCardColors(
@@ -498,10 +514,18 @@ private fun StatusCard(
                                 containerColor = MaterialTheme.colorScheme.primary
                             )
 
-                            Spacer(Modifier.width(6.dp))
+                            if (Natives.isLateLoadMode) {
+                                Spacer(Modifier.width(6.dp))
+                                LabelText(
+                                    label = stringResource(id = R.string.jailbreak_mode),
+                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                    containerColor = MaterialTheme.colorScheme.primary
+                                )
+                            }
 
                             // 架构标签
                             if (Os.uname().machine != "aarch64") {
+                                Spacer(Modifier.width(6.dp))
                                 LabelText(
                                     label = Os.uname().machine,
                                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -541,7 +565,9 @@ private fun StatusCard(
                             ),
                     )
 
-                    Column(Modifier.padding(start = 20.dp)) {
+                    Column(Modifier
+                        .padding(start = 20.dp)
+                        .weight(1f)) {
                         Text(
                             text = stringResource(R.string.home_not_installed),
                             style = MaterialTheme.typography.titleMedium,
@@ -554,6 +580,18 @@ private fun StatusCard(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
+                    }
+
+                    if (systemStatus.isSELinuxPermissive) {
+                        Button(
+                            onClick = onClickJailbreak,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError
+                            )
+                        ) {
+                            Text(stringResource(R.string.home_jailbreak))
+                        }
                     }
                 }
 
@@ -916,20 +954,4 @@ private fun StatusCardPreview() {
             )
         )
     }
-}
-
-@Composable
-private fun IncompatibleKernelCard() {
-    val currentKver = remember { Natives.version }
-    val threshold   = Natives.MINIMAL_NEW_IOCTL_KERNEL
-
-    val msg = stringResource(
-        id = R.string.incompatible_kernel_msg,
-        currentKver,
-        threshold
-    )
-
-    WarningCard(
-        message = msg
-    )
 }

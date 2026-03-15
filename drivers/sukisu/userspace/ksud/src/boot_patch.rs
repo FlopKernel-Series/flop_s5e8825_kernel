@@ -238,7 +238,7 @@ mod android {
         let target_slot = i32::from(current_slot == "0");
 
         Command::new(BOOTCTL_PATH)
-            .arg(format!("set-active-boot-slot {target_slot}"))
+            .args(["set-active-boot-slot", target_slot.to_string().as_str()])
             .status()?;
 
         let post_fs_data = Path::new(ADB_DIR).join("post-fs-data.d");

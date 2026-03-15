@@ -60,7 +60,6 @@
     <string name="profile_selinux_context">SELinux konteksi</string>
     <string name="profile_umount_modules">Modulları umount et</string>
     <string name="failed_to_update_app_profile">%s görə tətbiq profillərini güncəlləmək mümkün olmadı</string>
-    <string name="require_kernel_version" formatted="false">The current KernelSU version %s is too low for the manager to work properly. Please upgrade to version %s or higher!</string>
     <string name="settings_umount_modules_default">Defolt olaraq modulları umount et</string>
     <string name="settings_umount_modules_default_summary">Tətbiq Profillərində \"Umount modulları\" üçün qlobal standart dəyər. Aktivləşdirilərsə, o, Profil dəsti olmayan proqramlar üçün sistemdəki bütün modul dəyişikliklərini siləcək.</string>
     <string name="profile_umount_modules_summary">Bu seçimi aktivləşdirmək KernelSU-ya bu proqram üçün modullar tərəfindən hər hansı dəyişdirilmiş faylları bərpa etməyə imkan verəcək.</string>

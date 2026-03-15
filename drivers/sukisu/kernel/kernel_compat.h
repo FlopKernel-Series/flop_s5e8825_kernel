@@ -113,7 +113,7 @@ extern void *ksu_compat_kvrealloc(const void *p, size_t oldsize, size_t newsize,
 #define ksu_bitmap_zalloc bitmap_zalloc
 #define ksu_bitmap_free bitmap_free
 #else
-// for kernel not support, impl by ourselves
+// for kernels that do not support these helpers, we provide our own implementation.
 /*
  * Allocation and deallocation of bitmap.
  * Provided in kernel_compat.c to avoid circular dependency.

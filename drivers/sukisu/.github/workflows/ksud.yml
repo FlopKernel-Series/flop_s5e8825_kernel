@@ -32,7 +32,7 @@ jobs:
         fetch-depth: 0
 
     - name: Download artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
     
     - name: Prepare LKM fies
       if: ${{ inputs.pack_lkm }}
@@ -47,7 +47,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
+        toolchain: nightly
         targets: ${{ inputs.target }}
         components: rust-src
         
@@ -63,10 +63,10 @@ jobs:
     - name: Build ksud
       run: |
         cd userspace/ksud/
-        cargo ndk b -t ${{ inputs.target }} -r
+        cargo ndk b -t ${{ inputs.target }} -r -Z build-std=std,core,panic_abort -Z build-std-features="optimize_for_size" -Z trim-paths
 
     - name: Upload ksud artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: ksud-${{ inputs.target }}
         path: userspace/ksud/target/**/release/ksud*

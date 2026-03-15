@@ -60,7 +60,6 @@
     <string name="profile_selinux_context">บริบท SELinux</string>
     <string name="profile_umount_modules">Umount โมดูล</string>
     <string name="failed_to_update_app_profile">ไม่สามารถอัปเดตโปรไฟล์แอปสำหรับ %s ได้</string>
-    <string name="require_kernel_version" formatted="false">The current KernelSU version %s is too low for the manager to work properly. Please upgrade to version %s or higher!</string>
     <string name="settings_umount_modules_default">Umount โมดูลตามค่าเริ่มต้น</string>
     <string name="settings_umount_modules_default_summary">หากเปิดใช้งานค่าเริ่มต้นโดยทั่วไปสำหรับ \"Umount โมดูล\" ในโปรไฟล์แอป จะเป็นการลบการแก้ไขโมดูลทั้งหมดในระบบสำหรับแอปพลิเคชันที่ไม่มีการตั้งค่าโปรไฟล์</string>
     <string name="profile_umount_modules_summary">การเปิดใช้งานตัวเลือกนี้จะทำให้ KernelSU สามารถกู้คืนไฟล์ที่แก้ไขโดยโมดูลสำหรับแอปนี้ได้</string>

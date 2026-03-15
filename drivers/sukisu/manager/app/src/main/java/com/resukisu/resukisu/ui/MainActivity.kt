@@ -10,22 +10,31 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -40,28 +49,39 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.compose.rememberNavController
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.ExecuteModuleActionScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.FlashScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.spec.NavHostGraphSpec
-import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavEntryDecorator
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberDecoratedNavEntries
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.SceneInfo
+import androidx.navigation3.scene.SinglePaneSceneStrategy
+import androidx.navigation3.scene.rememberSceneState
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEvent.Companion.EDGE_LEFT
+import androidx.navigationevent.NavigationEventTransitionState.InProgress
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.NavigationEventState
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.ui.activity.component.NavigationBar
 import com.resukisu.resukisu.ui.activity.util.ThemeChangeContentObserver
@@ -70,11 +90,32 @@ import com.resukisu.resukisu.ui.component.InstallConfirmationDialog
 import com.resukisu.resukisu.ui.component.ZipFileDetector
 import com.resukisu.resukisu.ui.component.ZipFileInfo
 import com.resukisu.resukisu.ui.component.ZipType
+import com.resukisu.resukisu.ui.navigation.HandleDeepLink
+import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.navigation.Route
+import com.resukisu.resukisu.ui.navigation.rememberNavigator
+import com.resukisu.resukisu.ui.screen.AppProfileScreen
+import com.resukisu.resukisu.ui.screen.AppProfileTemplateScreen
 import com.resukisu.resukisu.ui.screen.BottomBarDestination
+import com.resukisu.resukisu.ui.screen.ExecuteModuleActionScreen
 import com.resukisu.resukisu.ui.screen.FlashIt
+import com.resukisu.resukisu.ui.screen.FlashScreen
+import com.resukisu.resukisu.ui.screen.InstallScreen
+import com.resukisu.resukisu.ui.screen.LogViewerScreen
+import com.resukisu.resukisu.ui.screen.TemplateEditorScreen
+import com.resukisu.resukisu.ui.screen.UmountManagerScreen
+import com.resukisu.resukisu.ui.screen.about.AboutScreen
+import com.resukisu.resukisu.ui.screen.about.OpenSourceLicenseScreen
+import com.resukisu.resukisu.ui.screen.moduleRepo.ModuleRepoScreen
+import com.resukisu.resukisu.ui.screen.moduleRepo.OnlineModuleDetailScreen
+import com.resukisu.resukisu.ui.susfs.SuSFSConfigScreen
+import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.KernelSUTheme
 import com.resukisu.resukisu.ui.theme.ThemeConfig
+import com.resukisu.resukisu.ui.theme.backgroundImagePainter
+import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalHandlePageChange
+import com.resukisu.resukisu.ui.util.LocalHazeState
 import com.resukisu.resukisu.ui.util.LocalPagerState
 import com.resukisu.resukisu.ui.util.LocalSelectedPage
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
@@ -83,13 +124,14 @@ import com.resukisu.resukisu.ui.util.rootAvailable
 import com.resukisu.resukisu.ui.viewmodel.HomeViewModel
 import com.resukisu.resukisu.ui.viewmodel.SuperUserViewModel
 import com.resukisu.resukisu.ui.webui.WebUIActivity
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import zako.zako.zako.zakoui.screen.kernelFlash.KernelFlashScreen
+import zako.zako.zako.zakoui.screen.moreSettings.MoreSettingsScreen
 import zako.zako.zako.zakoui.screen.moreSettings.util.LocaleHelper
 
 class MainActivity : ComponentActivity() {
@@ -175,54 +217,7 @@ class MainActivity : ComponentActivity() {
             setContent {
                 KernelSUTheme {
                     val context = LocalContext.current
-                    val navController = rememberNavController()
                     val snackBarHostState = remember { SnackbarHostState() }
-
-                    val navigator = navController.rememberDestinationsNavigator()
-
-                    InstallConfirmationDialog(
-                        show = showConfirmationDialog.value,
-                        zipFiles = pendingZipFiles.value,
-                        onConfirm = { confirmedFiles ->
-                            showConfirmationDialog.value = false
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                val moduleUris = confirmedFiles.filter { it.type == ZipType.MODULE }
-                                    .map { it.uri }
-                                val kernelUris = confirmedFiles.filter { it.type == ZipType.KERNEL }
-                                    .map { it.uri }
-
-                                when {
-                                    kernelUris.isNotEmpty() && moduleUris.isEmpty() -> {
-                                        if (kernelUris.size == 1 && rootAvailable()) {
-                                            withContext(Dispatchers.Main) {
-                                                navigator.navigate(
-                                                    InstallScreenDestination(
-                                                        preselectedKernelUri = kernelUris.first()
-                                                            .toString()
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    moduleUris.isNotEmpty() -> {
-                                        withContext(Dispatchers.Main) {
-                                            navigator.navigate(
-                                                FlashScreenDestination(
-                                                    FlashIt.FlashModules(ArrayList(moduleUris))
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        onDismiss = {
-                            showConfirmationDialog.value = false
-                            pendingZipFiles.value = emptyList()
-                            finish()
-                        }
-                    )
 
                     LaunchedEffect(zipUri) {
                         if (zipUri.isNullOrEmpty()) return@LaunchedEffect
@@ -243,10 +238,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    ShortcutIntentHandler(
-                        intentState = intentState,
-                        navigator = navigator
-                    )
                     val settings by settingsStateFlow.collectAsState()
                     val systemDensity = LocalDensity.current
 
@@ -254,37 +245,334 @@ class MainActivity : ComponentActivity() {
                         if (settings.dpi <= 0f) {
                             systemDensity
                         } else {
-                            // 直接计算自定义 DPI 占 160 (标准 MDPI) 的比例
-                            // 公式：Density = TargetDPI / 160
                             val targetDensity = settings.dpi / 160f
                             Density(density = targetDensity, fontScale = systemDensity.fontScale)
                         }
                     }
 
+                    val navigator = rememberNavigator(Route.Main)
+
                     CompositionLocalProvider(
+                        LocalNavigator provides navigator,
                         LocalSnackbarHost provides snackBarHostState,
                         LocalDensity provides density
                     ) {
-                        DestinationsNavHost(
-                            navGraph = NavGraphs.root as NavHostGraphSpec,
-                            navController = navController,
-                            defaultTransitions = object :
-                                NavHostAnimatedDestinationStyle() {
-                                override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-                                    slideInHorizontally(initialOffsetX = { it })
-                                }
+                        HandleDeepLink(
+                            intentState = intentState.collectAsState()
+                        )
 
-                                override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-                                    slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
-                                }
+                        ShortcutIntentHandler(
+                            intentState = intentState
+                        )
 
-                                override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-                                    slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
-                                }
+                        InstallConfirmationDialog(
+                            show = showConfirmationDialog.value,
+                            zipFiles = pendingZipFiles.value,
+                            onConfirm = { confirmedFiles ->
+                                showConfirmationDialog.value = false
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    val moduleUris =
+                                        confirmedFiles.filter { it.type == ZipType.MODULE }
+                                            .map { it.uri }
+                                    val kernelUris =
+                                        confirmedFiles.filter { it.type == ZipType.KERNEL }
+                                            .map { it.uri }
 
-                                override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-                                    scaleOut(targetScale = 0.9f) + fadeOut()
+                                    when {
+                                        kernelUris.isNotEmpty() && moduleUris.isEmpty() -> {
+                                            if (kernelUris.size == 1 && rootAvailable()) {
+                                                withContext(Dispatchers.Main) {
+                                                    navigator.push(
+                                                        Route.Install(
+                                                            preselectedKernelUri = kernelUris.first()
+                                                                .toString()
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        moduleUris.isNotEmpty() -> {
+                                            withContext(Dispatchers.Main) {
+                                                navigator.push(
+                                                    Route.Flash(
+                                                        FlashIt.FlashModules(ArrayList(moduleUris))
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
+                            },
+                            onDismiss = {
+                                showConfirmationDialog.value = false
+                                pendingZipFiles.value = emptyList()
+                                finish()
+                            }
+                        )
+
+                        val exitAnimatable = remember { Animatable(0f) }
+                        var exitingPageKey by remember { mutableStateOf<String?>(null) }
+                        var gestureState: NavigationEventState<SceneInfo<NavKey>>? = null
+                        val navigationScope = rememberCoroutineScope()
+                        val onBack: (() -> Unit) -> Unit = { callBack ->
+                            navigationScope.launch {
+                                exitingPageKey = navigator.current().toString()
+                                exitAnimatable.animateTo(
+                                    targetValue = 1f,
+                                    animationSpec = tween(
+                                        durationMillis = 200,
+                                        easing = FastOutSlowInEasing
+                                    )
+                                )
+
+                                exitAnimatable.snapTo(0f)
+                                callBack()
+
+                                when (val top = navigator.current()) {
+                                    is Route.TemplateEditor -> {
+                                        if (!top.readOnly) {
+                                            navigator.setResult("template_edit", true)
+                                        } else {
+                                            navigator.pop()
+                                        }
+                                    }
+
+                                    else -> navigator.pop()
+                                }
+                            }
+                        }
+                        val windowInfo = LocalWindowInfo.current
+                        val containerHeightPx = windowInfo.containerSize.height
+                        val containerWidthPx = windowInfo.containerSize.width.toFloat()
+
+                        val entries =
+                            rememberDecoratedNavEntries(
+                                backStack = navigator.backStack,
+                                entryDecorators = listOf(
+                                    rememberSaveableStateHolderNavEntryDecorator(),
+                                    rememberViewModelStoreNavEntryDecorator(),
+                                    NavEntryDecorator { content ->
+                                        val pageKey = content.contentKey.toString()
+                                        val navContent = LocalNavAnimatedContentScope.current
+                                        val transition = navContent.transition
+
+                                        val tripe =
+                                            if (pageKey == navigator.current()
+                                                    .toString() || exitingPageKey == content.contentKey.toString()
+                                            ) {
+                                                val animatedScale by transition.animateFloat(
+                                                    label = "PredictiveScale"
+                                                ) { state ->
+                                                    when (state) {
+                                                        EnterExitState.PostExit -> 0.85f
+                                                        else -> 1f
+                                                    }
+                                                }
+
+                                                val touchY =
+                                                    (gestureState?.transitionState as? InProgress)?.latestEvent?.touchY
+
+                                                val currentPivotY =
+                                                    if (touchY != null && containerHeightPx > 0) {
+                                                        (touchY / containerHeightPx).coerceIn(
+                                                            0.1f,
+                                                            0.9f
+                                                        )
+                                                    } else 0.5f
+
+                                                val edge =
+                                                    (gestureState?.transitionState as? InProgress)?.latestEvent?.swipeEdge
+                                                        ?: 0
+
+                                                val directionMultiplier =
+                                                    if (edge == EDGE_LEFT) 1f else -1f
+                                                val currentPivotX =
+                                                    if (edge == EDGE_LEFT) 0.8f else 0.2f
+
+                                                val progress = if (pageKey != navigator.current()
+                                                        .toString()
+                                                ) 1f else exitAnimatable.value
+                                                val animatedTranslationX =
+                                                    containerWidthPx * progress * directionMultiplier
+
+                                                val modifier = Modifier.graphicsLayer {
+                                                    scaleX = animatedScale
+                                                    scaleY = animatedScale
+                                                    translationX = animatedTranslationX
+                                                    transformOrigin = TransformOrigin(
+                                                        currentPivotX,
+                                                        currentPivotY
+                                                    )
+                                                }
+                                                val backgroundColor =
+                                                    if (CardConfig.isCustomBackgroundEnabled)
+                                                        Color.Transparent
+                                                    else
+                                                        MaterialTheme.colorScheme.surfaceContainer
+
+                                                Triple(
+                                                    modifier,
+                                                    backgroundColor,
+                                                    if (gestureState?.transitionState is InProgress) 16.dp else 0.dp
+                                                )
+                                            } else {
+                                                val modifier =
+                                                    if (gestureState?.transitionState is InProgress) {
+                                                        val progress = exitAnimatable.value
+                                                        val dynamicAlpha = 0.5f * (1f - progress)
+
+                                                        Modifier
+                                                            .graphicsLayer()
+                                                            .drawWithContent {
+                                                                drawContent()
+                                                                drawRect(
+                                                                    color = Color.Black.copy(
+                                                                        alpha = dynamicAlpha
+                                                                    )
+                                                                )
+                                                            }
+                                                    } else Modifier
+
+                                                Triple(modifier, Color.Transparent, 0.dp)
+                                            }
+
+                                        val surfaceContainer =
+                                            MaterialTheme.colorScheme.surfaceContainer
+
+                                        CompositionLocalProvider(
+                                            LocalHazeState provides if (CardConfig.isCustomBackgroundEnabled) rememberHazeState() else null
+                                        ) {
+                                            Surface(
+                                                modifier = tripe.first,
+                                                color = tripe.second,
+                                                shape = RoundedCornerShape(tripe.third),
+                                            ) {
+                                                Box(
+                                                    modifier = backgroundImagePainter?.let {
+                                                        Modifier
+                                                            .fillMaxSize()
+                                                            .zIndex(-1f)
+                                                            .paint(
+                                                                painter = it,
+                                                                contentScale = ContentScale.Crop,
+                                                            )
+                                                            .drawWithContent {
+                                                                drawContent()
+                                                                drawRect(
+                                                                    color = surfaceContainer.copy(
+                                                                        alpha = ThemeConfig.backgroundDim
+                                                                    )
+                                                                )
+                                                            }
+                                                            .hazeSource()
+                                                    } ?: Modifier
+                                                )
+                                                content.Content()
+                                            }
+                                        }
+                                    }
+                                ),
+                                entryProvider = entryProvider {
+                                    entry<Route.About> { AboutScreen() }
+                                    entry<Route.OpenSourceLicense> { OpenSourceLicenseScreen() }
+                                    entry<Route.Main> { MainScreen() }
+                                    entry<Route.AppProfileTemplate> { AppProfileTemplateScreen() }
+                                    entry<Route.TemplateEditor> { key ->
+                                        TemplateEditorScreen(
+                                            key.template,
+                                            key.readOnly
+                                        )
+                                    }
+                                    entry<Route.AppProfile> { key -> AppProfileScreen(key.appGroup) }
+                                    entry<Route.ModuleRepo> { ModuleRepoScreen() }
+                                    entry<Route.ModuleRepoDetail> { key ->
+                                        OnlineModuleDetailScreen(
+                                            key.module
+                                        )
+                                    }
+                                    entry<Route.Install> { key -> InstallScreen(key.preselectedKernelUri) }
+                                    entry<Route.Flash> { key -> FlashScreen(key.flashIt) }
+                                    entry<Route.ExecuteModuleAction> { key ->
+                                        ExecuteModuleActionScreen(
+                                            key.moduleId
+                                        )
+                                    }
+                                    entry<Route.Home> { MainScreen() }
+                                    entry<Route.SuperUser> { MainScreen() }
+                                    entry<Route.Module> { MainScreen() }
+                                    entry<Route.Settings> { MainScreen() }
+                                    entry<Route.MoreSettings> { MoreSettingsScreen() }
+                                    entry<Route.SuSFSConfig> { SuSFSConfigScreen() }
+                                    entry<Route.LogViewer> { LogViewerScreen() }
+                                    entry<Route.UmountManager> { UmountManagerScreen() }
+                                    entry<Route.KernelFlash> { key ->
+                                        KernelFlashScreen(
+                                            key.kernelUri,
+                                            key.selectedSlot,
+                                            key.kpmPatchEnabled,
+                                            key.kpmUndoPatch
+                                        )
+                                    }
+                                },
+                            )
+
+                        val sceneState =
+                            rememberSceneState(
+                                entries = entries,
+                                sceneStrategies = listOf(SinglePaneSceneStrategy()),
+                                sceneDecoratorStrategies = emptyList(),
+                                sharedTransitionScope = null,
+                                onBack = {
+                                    onBack {}
+                                },
+                            )
+                        val scene = sceneState.currentScene
+
+                        // Predictive Back Handling
+                        val currentInfo = SceneInfo(scene)
+                        val previousSceneInfos = sceneState.previousScenes.map { SceneInfo(it) }
+                        gestureState = rememberNavigationEventState(
+                            currentInfo = currentInfo,
+                            backInfo = previousSceneInfos
+                        )
+
+                        NavigationBackHandler(
+                            state = gestureState,
+                            isBackEnabled = scene.previousEntries.isNotEmpty(),
+                            onBackCompleted = { callBack ->
+                                onBack(callBack)
+                            },
+                            onBackCancelled = { callBack ->
+                                callBack()
+                            }
+                        )
+
+                        NavDisplay(
+                            sceneState = sceneState,
+                            navigationEventState = gestureState,
+                            contentAlignment = Alignment.TopStart,
+                            sizeTransform = null,
+                            predictivePopTransitionSpec = {
+                                ContentTransform(
+                                    targetContentEnter = EnterTransition.None,
+                                    initialContentExit = ExitTransition.None,
+                                    sizeTransform = null
+                                )
+                            },
+                            popTransitionSpec = {
+                                ContentTransform(
+                                    targetContentEnter = slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn(),
+                                    initialContentExit = scaleOut(targetScale = 0.9f) + fadeOut(),
+                                    sizeTransform = null
+                                )
+                            },
+                            transitionSpec = {
+                                ContentTransform(
+                                    targetContentEnter = slideInHorizontally(initialOffsetX = { it }),
+                                    initialContentExit = slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut(),
+                                    sizeTransform = null
+                                )
                             }
                         )
                     }
@@ -351,12 +639,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/**
- * @param navigator 页面导航
- */
-@Destination<RootGraph>(start = true)
 @Composable
-fun MainScreen(navigator: DestinationsNavigator) {
+fun MainScreen() {
     // 页面隐藏处理
     val activity = LocalActivity.current as MainActivity
     val settings by activity.settingsStateFlow.collectAsState()
@@ -382,7 +666,6 @@ fun MainScreen(navigator: DestinationsNavigator) {
     var animating by remember { mutableStateOf(false) }
     var animateJob by remember { mutableStateOf<Job?>(null) }
     var lastRequestedPage by remember { mutableIntStateOf(pagerState.currentPage) }
-    val hazeState = if (ThemeConfig.backgroundImageLoaded) rememberHazeState() else null
 
     val handlePageChange: (Int) -> Unit = remember(pagerState, coroutineScope) {
         { page ->
@@ -446,8 +729,6 @@ fun MainScreen(navigator: DestinationsNavigator) {
             MainScreenContent(
                 isPortrait = isPortrait,
                 pages = pages,
-                hazeState = hazeState,
-                navigator = navigator,
                 userScrollEnabled = userScrollEnabled,
                 pagerState = pagerState,
             )
@@ -459,8 +740,6 @@ fun MainScreen(navigator: DestinationsNavigator) {
 private fun MainScreenContent(
     isPortrait: Boolean,
     pages: List<BottomBarDestination>,
-    hazeState: HazeState?,
-    navigator: DestinationsNavigator,
     userScrollEnabled: Boolean,
     pagerState: PagerState
 ) {
@@ -473,7 +752,7 @@ private fun MainScreenContent(
         ) { pageIndex ->
             if (pages.isEmpty()) return@HorizontalPager
             val destination = pages[pageIndex]
-            destination.direction(navigator, paddingBottom, hazeState)
+            destination.direction(paddingBottom)
         }
     }
 
@@ -483,7 +762,6 @@ private fun MainScreenContent(
             bottomBar = {
                 NavigationBar(
                     destinations = pages,
-                    hazeState = hazeState,
                     isBottomBar = true,
                 )
             },
@@ -495,7 +773,6 @@ private fun MainScreenContent(
         Row(modifier = Modifier.fillMaxSize()) {
             NavigationBar(
                 destinations = pages,
-                hazeState = hazeState,
                 isBottomBar = false,
             )
             content(0.dp)
@@ -505,9 +782,9 @@ private fun MainScreenContent(
 
 @Composable
 private fun ShortcutIntentHandler(
-    intentState: MutableStateFlow<Int>,
-    navigator: DestinationsNavigator
+    intentState: MutableStateFlow<Int>
 ) {
+    val navigator = LocalNavigator.current
     val activity = LocalActivity.current ?: return
     val context = LocalContext.current
     val intentStateValue by intentState.collectAsState()
@@ -517,9 +794,7 @@ private fun ShortcutIntentHandler(
         when (type) {
             "module_action" -> {
                 val moduleId = intent.getStringExtra("module_id") ?: return@LaunchedEffect
-                navigator.navigate(ExecuteModuleActionScreenDestination(moduleId)) {
-                    launchSingleTop = true
-                }
+                navigator.push(Route.ExecuteModuleAction(moduleId))
             }
 
             "module_webui" -> {
