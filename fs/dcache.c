@@ -3221,9 +3221,10 @@ static void __init vfs_cache_pressure_init(void)
 	/*
 	 * Use physical RAM rather than totalram_pages(), which is already
 	 * reduced by reserved-memory carveouts on these Exynos devices.
-	 * A cutoff above 5 GB cleanly separates 4 GB variants from 6/8 GB.
+	 * Keep the 6 GB class on the safer 75 setting and reserve the more
+	 * aggressive cache retention for the 8 GB class only.
 	 */
-	if (total_ram_mb > 5200)
+	if (total_ram_mb > 6200)
 		sysctl_vfs_cache_pressure = 50;
 }
 
