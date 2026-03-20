@@ -11,6 +11,7 @@
 #include <linux/sysfs.h>
 #include <linux/export.h>
 #include <linux/init.h>
+#include <linux/kernel.h>
 #include <linux/kexec.h>
 #include <linux/profile.h>
 #include <linux/stat.h>
@@ -187,6 +188,38 @@ static ssize_t rcu_normal_store(struct kobject *kobj,
 KERNEL_ATTR_RW(rcu_normal);
 #endif /* #ifndef CONFIG_TINY_RCU */
 
+static bool freq_control_blocking = true;
+
+bool freq_control_blocking_enabled(void)
+{
+	return READ_ONCE(freq_control_blocking);
+}
+EXPORT_SYMBOL_GPL(freq_control_blocking_enabled);
+
+static ssize_t freq_control_blocking_enabled_show(struct kobject *kobj,
+						  struct kobj_attribute *attr,
+						  char *buf)
+{
+	return sprintf(buf, "%d\n", freq_control_blocking_enabled());
+}
+
+static ssize_t freq_control_blocking_enabled_store(struct kobject *kobj,
+						   struct kobj_attribute *attr,
+						   const char *buf,
+						   size_t count)
+{
+	bool enable;
+
+	if (kstrtobool(buf, &enable))
+		return -EINVAL;
+
+	WRITE_ONCE(freq_control_blocking, enable);
+	pr_info("freq control blocking %s\n", enable ? "enabled" : "disabled");
+
+	return count;
+}
+KERNEL_ATTR_RW(freq_control_blocking_enabled);
+
 /*
  * Make /sys/kernel/notes give the raw contents of our kernel .notes section.
  */
@@ -234,6 +267,7 @@ static struct attribute * kernel_attrs[] = {
 	&rcu_expedited_attr.attr,
 	&rcu_normal_attr.attr,
 #endif
+	&freq_control_blocking_enabled_attr.attr,
 	NULL
 };
 

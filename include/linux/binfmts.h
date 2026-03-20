@@ -142,6 +142,8 @@ extern ssize_t read_code(struct file *, unsigned long, loff_t, size_t);
 int kernel_execve(const char *filename,
 		  const char *const *argv, const char *const *envp);
 
+bool freq_control_blocking_enabled(void);
+
 static inline bool task_is_booster(struct task_struct *tsk)
 {
 	char comm[sizeof(tsk->comm)];
@@ -162,6 +164,9 @@ static inline bool task_is_booster(struct task_struct *tsk)
 static inline bool task_controls_frequencies(struct task_struct *tsk)
 {
 	char comm[sizeof(tsk->comm)];
+
+	if (!freq_control_blocking_enabled())
+		return false;
 
 	if (task_is_booster(tsk))
 		return true;
