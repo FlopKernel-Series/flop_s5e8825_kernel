@@ -172,12 +172,8 @@ static inline bool task_controls_frequencies(struct task_struct *tsk)
 		return true;
 
 	get_task_comm(comm, tsk);
-	return !strncmp(comm, "thermal_", 8) ||
-	       !strcmp(comm, "HyPerThread") ||
-	       !strcmp(comm, "argosd") ||
-	       !strncmp(comm, "POSIX timer", 11) ||
-	       !strcmp(comm, "RenderEngine") ||
-	       !strcmp(comm, "mali-cmar-backe");
+	return !strcmp(comm, "HyPerThread") ||
+	       !strcmp(comm, "argosd");
 }
 
 #endif /* _LINUX_BINFMTS_H */
