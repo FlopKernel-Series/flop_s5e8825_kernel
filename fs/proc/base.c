@@ -984,7 +984,7 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
 		vma = find_vma(mm, addr);
 		if (vma && vma->vm_file) {
 			struct inode *inode = file_inode(vma->vm_file);
-			if (PRE_CHECK_SUS_MAP(inode)) {
+			if (SUSFS_IS_INODE_SUS_MAP(inode)) {
 				if (write) {
 					copied = -EFAULT;
 				} else {
@@ -1913,7 +1913,7 @@ static int do_proc_readlink(struct path *path, char __user *buffer, int buflen)
 		return -ENOMEM;
 
 #ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
-	if (PRE_CHECK_OPEN_REDIRECT(path->dentry->d_inode)) {
+	if (SUSFS_IS_INODE_OPEN_REDIRECT(path->dentry->d_inode)) {
 		if (!susfs_open_redirect_spoof_do_proc_readlink(path->dentry->d_inode, tmp, buflen)) {
 			len = strlen(tmp);
 			if (copy_to_user(buffer, tmp, len))
@@ -2554,7 +2554,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
 			continue;
 #ifdef CONFIG_KSU_SUSFS_SUS_MAP
 		inode = file_inode(vma->vm_file);
-		if (PRE_CHECK_SUS_MAP(inode))
+		if (SUSFS_IS_INODE_SUS_MAP(inode))
 			continue;
 #endif
 		if (++pos <= ctx->pos)
