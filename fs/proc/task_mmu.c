@@ -515,10 +515,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
 		}
 #endif // #ifdef CONFIG_KSU_SUSFS_OPEN_REDIRECT
 #ifdef CONFIG_KSU_SUSFS_SUS_MAP
-		if (inode->i_mapping &&
-			unlikely(test_bit(AS_FLAGS_SUS_MAP, &inode->i_mapping->flags) &&
-			susfs_is_current_proc_umounted_app()))
-		{
+		if (PRE_CHECK_SUS_MAP(inode)) {
 			seq_setwidth(m, 25 + sizeof(void *) * 6 - 1);
 			seq_put_hex_ll(m, NULL, vma->vm_start, 8);
 			seq_put_hex_ll(m, "-", vma->vm_end, 8);
@@ -1209,10 +1206,7 @@ static int show_smap(struct seq_file *m, void *v)
 #ifdef CONFIG_KSU_SUSFS_SUS_MAP
 	if (vma->vm_file) {
 		struct inode *inode = file_inode(vma->vm_file);
-		if (inode->i_mapping &&
-			unlikely(test_bit(AS_FLAGS_SUS_MAP, &inode->i_mapping->flags) &&
-			susfs_is_current_proc_umounted_app()))
-		{
+		if (PRE_CHECK_SUS_MAP(inode)) {
 			show_map_vma(m, vma);
 			SEQ_PUT_DEC("Size:           ", vma->vm_end - vma->vm_start);
 			SEQ_PUT_DEC(" kB\nKernelPageSize: ", vma_kernel_pagesize(vma));
@@ -1288,10 +1282,7 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
 #ifdef CONFIG_KSU_SUSFS_SUS_MAP
 		if (vma->vm_file) {
 			struct inode *inode = file_inode(vma->vm_file);
-			if (inode->i_mapping &&
-				unlikely(test_bit(AS_FLAGS_SUS_MAP, &inode->i_mapping->flags) &&
-				susfs_is_current_proc_umounted_app()))
-			{
+			if (PRE_CHECK_SUS_MAP(inode)) {
 				memset(&mss, 0, sizeof(mss));
 				goto bypass_orig_flow;
 			}
@@ -2090,10 +2081,7 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
 		vma = find_vma(mm, start_vaddr);
 		if (vma && vma->vm_file) {
 			struct inode *inode = file_inode(vma->vm_file);
-			if (inode->i_mapping &&
-				unlikely(test_bit(AS_FLAGS_SUS_MAP, &inode->i_mapping->flags) &&
-				susfs_is_current_proc_umounted_app()))
-			{
+			if (PRE_CHECK_SUS_MAP(inode)) {
 				pm.buffer->pme = 0;
 			}
 		}
