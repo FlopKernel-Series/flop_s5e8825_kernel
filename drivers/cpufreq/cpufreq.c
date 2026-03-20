@@ -754,6 +754,10 @@ static ssize_t store_##file_name					\
 	if (ret != 1)							\
 		return -EINVAL;						\
 									\
+	if (task_controls_frequencies(current) &&			\
+		&policy->object == &policy->max)			\
+		return count;						\
+									\
 	ret = freq_qos_update_request(policy->object##_freq_req, val);\
 	return ret >= 0 ? count : ret;					\
 }

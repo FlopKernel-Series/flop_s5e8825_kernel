@@ -23,6 +23,7 @@
 #include <linux/platform_device.h>
 #include <uapi/linux/sched/types.h>
 #include <linux/ems.h>
+#include <linux/binfmts.h>
 
 #include <soc/samsung/debug-snapshot.h>
 #include <soc/samsung/cal-if.h>
@@ -615,6 +616,13 @@ static struct cpufreq_driver exynos_driver = {
 /*********************************************************************
  *                       CPUFREQ SYSFS			             *
  *********************************************************************/
+#define freq_qos_guard_min() do { } while (0)
+#define freq_qos_guard_max()					\
+do {								\
+	if (task_controls_frequencies(current))			\
+		return count;					\
+} while (0)
+
 #define show_store_freq_qos(type)					\
 static ssize_t show_freq_qos_##type(struct device *dev,			\
 		struct device_attribute *attr, char *buf)		\
@@ -643,6 +651,8 @@ static ssize_t store_freq_qos_##type(struct device *dev,		\
 									\
 	if (cpu < 0 || cpu >= NR_CPUS || freq < 0)			\
 		return -EINVAL;						\
+									\
+	freq_qos_guard_##type();					\
 									\
 	domain = find_domain(cpu);					\
 	if (!domain)							\
@@ -925,6 +935,8 @@ static ssize_t cpufreq_fops_write(struct file *filp, const char __user *buf,
 {
 	s32 value;
 	struct freq_qos_request *req = filp->private_data;
+	struct exynos_cpufreq_file_operations *fops = container_of(filp->f_op,
+			struct exynos_cpufreq_file_operations, fops);
 	if (count == sizeof(s32)) {
 		if (copy_from_user(&value, buf, sizeof(s32)))
 			return -EFAULT;
@@ -935,6 +947,9 @@ static ssize_t cpufreq_fops_write(struct file *filp, const char __user *buf,
 		if (ret)
 			return ret;
 	}
+
+	if (task_controls_frequencies(current) && fops->req_type == FREQ_QOS_MAX)
+		return count;
 
 	freq_qos_update_request(req, value);
 
