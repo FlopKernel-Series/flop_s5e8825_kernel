@@ -206,10 +206,10 @@ if [ "$DO_KSU" == "1" ]; then
     FK_TYPE="KSUNext"
     FK_TYPE_SHORT="KN"
 elif [ "$DO_SUKI" == "1" ]; then
-    FK_TYPE="ReSukiSU"
+    FK_TYPE="ReSukiSU-SUSFS"
     FK_TYPE_SHORT="RESKS"
 elif [ "$DO_MAMBO" == "1" ]; then
-    FK_TYPE="MamboSU"
+    FK_TYPE="MamboSU-SUSFS"
     FK_TYPE_SHORT="MBS"
 else
     FK_TYPE="Vanilla"
