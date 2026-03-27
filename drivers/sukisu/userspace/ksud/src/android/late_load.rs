@@ -3,7 +3,7 @@ use log::{info, warn};
 use std::process::Command;
 
 use crate::android::module::{handle_updated_modules, metamodule, prune_modules};
-use crate::android::{init_event, restorecon, utils};
+use crate::android::{dynamic_manager, init_event, restorecon, utils};
 use crate::{assets, defs};
 
 fn dump_process_info(label: &str) {
@@ -107,17 +107,21 @@ pub fn run() -> Result<()> {
     if let Err(e) = metamodule::exec_mount_script(defs::MODULE_DIR) {
         warn!("execute metamodule mount failed: {e}");
     }
+    // 11. Execute dynamic manager booted load
+    if let Err(e) = dynamic_manager::booted_load() {
+        warn!("set dynamic manager failed: {e}");
+    }
 
-    // 11. Execute post-mount stage scripts (blocking)
+    // 12. Execute post-mount stage scripts (blocking)
     init_event::run_stage("post-mount", true);
 
-    // 12. Execute service stage scripts (non-blocking)
+    // 13. Execute service stage scripts (non-blocking)
     init_event::run_stage("service", false);
 
-    // 13. Execute boot-completed stage scripts (non-blocking)
+    // 14. Execute boot-completed stage scripts (non-blocking)
     init_event::run_stage("boot-completed", false);
 
-    // 14. Restart Manager so it gets a fresh ksu fd from the newly loaded kernel module
+    // 15. Restart Manager so it gets a fresh ksu fd from the newly loaded kernel module
     info!("Restarting KernelSU Manager...");
     let pkg = "com.resukisu.resukisu";
     let _ = Command::new("am").args(["force-stop", pkg]).status();

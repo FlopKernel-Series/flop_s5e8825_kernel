@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
@@ -82,6 +81,7 @@ import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.KeyEventBlocker
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
+import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.theme.ThemeConfig
@@ -248,6 +248,10 @@ fun FlashScreen(flashIt: FlashIt) {
 
     // 当前模块安装状态
     val currentStatus = moduleInstallStatus.value
+
+    LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+    }
 
     // 重置状态
     LaunchedEffect(flashIt) {
@@ -787,12 +791,9 @@ private fun TopBar(
             }
         },
         navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.back),
-                )
-            }
+            AppBackButton(
+                onClick = onBack
+            )
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor =

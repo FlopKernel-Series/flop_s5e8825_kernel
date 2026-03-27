@@ -677,7 +677,8 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
     }
 
     return true;
-#elif defined(CONFIG_IS_HW_HISI)
+
+#elif defined(KSU_COMPAT_IS_HISI_LEGACY)
     /*
    * Huawei use type_attr_map and type_val_to_struct.
    * And use ebitmap not flex_array.
@@ -806,7 +807,13 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
         flex_array_free(old_fa);
     }
 
+// Huawei's EMUI 10+ / HM2 HKIP is closed, use the original flex_array_get and HISI_SELINUX_EBITMAP_RO(false)
+#if defined(KSU_COMPAT_IS_HISI_LEGACY_HM2)
+    ebitmap_init(flex_array_get(db->type_attr_map_array, value - 1),
+                 HISI_SELINUX_EBITMAP_RO);
+#else
     ebitmap_init(flex_array_get(db->type_attr_map_array, value - 1));
+#endif
     ebitmap_set_bit(flex_array_get(db->type_attr_map_array, value - 1),
                     value - 1, 1);
 
@@ -869,10 +876,16 @@ static void add_typeattribute_raw(struct policydb *db, struct type_datum *type,
 {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
     struct ebitmap *sattr = &db->type_attr_map_array[type->value - 1];
-#elif defined(CONFIG_IS_HW_HISI)
+
+#elif defined(KSU_COMPAT_IS_HISI_LEGACY_HM2)
+    /* EMUI 10+ / HM2 dedicated branch (HKIP is closed, use the original flex_array_get) */
+    struct ebitmap *sattr =
+        flex_array_get(db->type_attr_map_array, type->value - 1);
+
+#elif defined(KSU_COMPAT_IS_HISI_LEGACY)
     /*
-   *   HISI_SELINUX_EBITMAP_RO is Huawei's unique features.
-   */
+    *  HISI_SELINUX_EBITMAP_RO is Huawei's unique features.
+    */
     struct ebitmap *sattr = &db->type_attr_map[type->value - 1],
                    HISI_SELINUX_EBITMAP_RO;
 #else

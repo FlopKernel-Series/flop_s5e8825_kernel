@@ -419,27 +419,39 @@ NativeBridgeNP(getManagersList, jobject) {
     return obj;
 }
 
-int fork_dont_care() {
-    int pid = fork();
-    if (pid < 0) {
-        PLOGE("fork");
-        return pid;
-    } else if (pid > 0) {
-        TEMP_FAILURE_RETRY(waitpid(pid, nullptr, 0));
-        return pid;
-    }
-    // child
+int fork_dont_care_and_exec_ksud(const char *path) {
+	int pid = fork();
+	if (pid < 0) {
+		PLOGE("fork");
+		return pid;
+	} else if (pid > 0) {
+		int status = 0;
+		if (TEMP_FAILURE_RETRY(waitpid(pid, &status, 0)) < 0) {
+			PLOGE("waitpid");
+			return -1;
+		}
+		if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+			LOGE("magica bootstrap child failed, status=%d", status);
+		}
+		return pid;
+	}
 
-    pid = fork();
-    if (pid < 0) {
-        PLOGE("fork 2");
-        _exit(1);
-    } else if (pid > 0) {
-        _exit(0);
-    }
+	if (setuid(0) != 0) {
+		PLOGE("setuid");
+		_exit(1);
+	}
 
-    // grandchild
-    return 0;
+	pid = fork();
+	if (pid < 0) {
+		PLOGE("fork 2");
+		_exit(1);
+	} else if (pid > 0) {
+		_exit(0);
+	}
+
+	execl(path, "ksud", "late-load", "--magica", "5555", nullptr);
+	PLOGE("exec magica");
+	_exit(1);
 }
 
 JNIEXPORT void JNICALL
@@ -448,10 +460,6 @@ Java_com_resukisu_resukisu_magica_AppZygotePreload_forkDontCareAndExecKsud(JNIEn
                                                                            jstring ksud_path) {
     const char *path = GetEnvironment()->GetStringUTFChars(env, ksud_path, nullptr);
     LOGD("executing magica %s", path);
-    if (fork_dont_care() == 0) {
-        execl(path, "ksud", "late-load", "--magica", "5555", nullptr);
-        PLOGE("exec magica");
-        _exit(1);
-    }
+	fork_dont_care_and_exec_ksud(path);
     GetEnvironment()->ReleaseStringUTFChars(env, ksud_path, path);
 }

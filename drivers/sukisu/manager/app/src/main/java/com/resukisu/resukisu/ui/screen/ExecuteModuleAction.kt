@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.KeyEventBlocker
+import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.haze
@@ -78,6 +78,10 @@ fun ExecuteModuleActionScreen(moduleId: String) {
     val activity = LocalActivity.current
     val navigator = LocalNavigator.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    LaunchedEffect(Unit) {
+        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
+    }
 
     BackHandler(enabled = isActionRunning) {
         // Disable back button if action is running
@@ -211,15 +215,9 @@ private fun TopBar(
         title = { Text(stringResource(R.string.action)) },
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-            IconButton(
-                onClick = onBack,
-                enabled = !isActionRunning
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.back),
-                )
-            }
+            AppBackButton(
+                onClick = onBack
+            )
         },
         actions = {
             IconButton(

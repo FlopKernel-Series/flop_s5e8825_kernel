@@ -23,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoMode
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.CleaningServices
@@ -46,7 +45,6 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -77,6 +75,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.resukisu.resukisu.R
+import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.susfs.component.AddAppPathDialog
 import com.resukisu.resukisu.ui.susfs.component.AddKstatStaticallyDialog
@@ -899,17 +898,14 @@ fun SuSFSConfigScreen() {
                 },
                 navigationIcon = {
                     val navigator = LocalNavigator.current
-                    IconButton(onClick = {
-                        if (!isNavigating) {
-                            isNavigating = true
-                            navigator.pop()
+                    AppBackButton(
+                        onClick = {
+                            if (!isNavigating) {
+                                isNavigating = true
+                                navigator.pop()
+                            }
                         }
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = CardConfig.cardAlpha),

@@ -14,7 +14,9 @@
 
 // kernel 4.4 and 4.9
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0) ||                           \
-    defined(CONFIG_IS_HW_HISI) || defined(CONFIG_KSU_ALLOWLIST_WORKAROUND)
+    defined(KSU_COMPAT_IS_HISI_LEGACY) ||                                      \
+    defined(KSU_COMPAT_IS_HISI_LEGACY_HM2) ||                                  \
+    defined(CONFIG_KSU_ALLOWLIST_WORKAROUND)
 static int ksu_key_permission(key_ref_t key_ref, const struct cred *cred,
                               unsigned perm)
 {
@@ -60,7 +62,9 @@ static int ksu_file_permission(struct file *file, int mask)
 
 static struct security_hook_list ksu_hooks[] = {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0) ||                           \
-    defined(CONFIG_IS_HW_HISI) || defined(CONFIG_KSU_ALLOWLIST_WORKAROUND)
+    defined(KSU_COMPAT_IS_HISI_LEGACY) ||                                      \
+    defined(KSU_COMPAT_IS_HISI_LEGACY_HM2) ||                                  \
+    defined(CONFIG_KSU_ALLOWLIST_WORKAROUND)
     LSM_HOOK_INIT(key_permission, ksu_key_permission),
 #endif
 

@@ -1,5 +1,6 @@
 package com.resukisu.resukisu.ui.util
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Environment
 import android.os.Parcelable
@@ -31,6 +32,7 @@ private fun getKsuDaemonPath(): String {
     return ksuApp.applicationInfo.nativeLibraryDir + File.separator + "libksud.so"
 }
 
+@SuppressLint("RestrictedApi")
 object KsuCli {
     var SHELL: Shell = createRootShell()
     val GLOBAL_MNT_SHELL: Shell = createRootShell(true)
@@ -40,6 +42,26 @@ fun getRootShell(globalMnt: Boolean = false): Shell {
     return if (globalMnt) KsuCli.GLOBAL_MNT_SHELL else {
         KsuCli.SHELL
     }
+}
+
+fun generateMainShellBuilder(): Shell.Builder {
+    val builder = Shell.Builder.create()
+    try {
+        builder.setCommands(getKsuDaemonPath(), "debug", "su")
+        builder.build()
+    } catch (e: Throwable) {
+        Log.w(TAG, "ksu failed: ", e)
+        try {
+            builder.setCommands("su")
+            builder.build()
+        } catch (e: Throwable) {
+            Log.e(TAG, "su failed: ", e)
+            builder.setCommands("sh")
+            builder.build()
+        }
+    }
+
+    return builder
 }
 
 inline fun <T> withNewRootShell(
@@ -81,6 +103,15 @@ fun execKsud(args: String, newShell: Boolean = false): Boolean {
     } else {
         ShellUtils.fastCmdResult(getRootShell(), "${getKsuDaemonPath()} $args")
     }
+}
+
+suspend fun isOfficialSignature(): Boolean = withContext(Dispatchers.IO) {
+    val shell = getRootShell()
+    val out = shell.newJob()
+        .add("${getKsuDaemonPath()} debug get-sign ${ksuApp.packageResourcePath}")
+        .to(ArrayList<String>(), null).exec().out
+    out.firstOrNull()?.trim()
+        .orEmpty() == "size: 0x377, hash: d3469712b6214462764a1d8d3e5cbe1d6819a0b629791b9f4101867821f1df64"
 }
 
 suspend fun getFeatureStatus(feature: String): String = withContext(Dispatchers.IO) {

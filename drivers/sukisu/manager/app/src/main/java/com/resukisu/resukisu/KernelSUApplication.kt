@@ -1,5 +1,6 @@
 package com.resukisu.resukisu
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Build
 import android.system.Os
@@ -8,9 +9,11 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import coil.Coil
 import coil.ImageLoader
+import com.resukisu.resukisu.ui.util.generateMainShellBuilder
 import com.resukisu.resukisu.ui.viewmodel.HomeViewModel
 import com.resukisu.resukisu.ui.viewmodel.ModuleViewModel
 import com.resukisu.resukisu.ui.viewmodel.SuperUserViewModel
+import com.topjohnwu.superuser.internal.MainShell
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +33,7 @@ class KernelSUApplication : Application(), ViewModelStoreOwner {
     val UserAgent = "ReSukiSU/${BuildConfig.VERSION_CODE}"
     private val appViewModelStore by lazy { ViewModelStore() }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate() {
         super.onCreate()
         ksuApp = this
@@ -41,6 +45,8 @@ class KernelSUApplication : Application(), ViewModelStoreOwner {
                 return
             }
         }
+
+        MainShell.setBuilder(generateMainShellBuilder())
 
         // For faster response when first entering superuser or webui activity
         val superUserViewModel = ViewModelProvider(this)[SuperUserViewModel::class.java]
