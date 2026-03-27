@@ -612,12 +612,7 @@ private fun getMetaModuleWarningText(
     context: Context
 ) : String? {
     if (!showMetamoduleWarning) return null
-
-    val hasSystemModule = viewModel.moduleList.any { module ->
-        SuFile.open("/data/adb/modules/${module.id}/system").exists()
-    }
-
-    if (!hasSystemModule) return null
+    if (!viewModel.hasModuleRequireMount) return null
 
     val metaProp = SuFile.open("/data/adb/metamodule/module.prop").exists()
     val metaRemoved = SuFile.open("/data/adb/metamodule/remove").exists()
@@ -956,7 +951,11 @@ private fun ModuleList(
         },
         isRefreshing = viewModel.isRefreshing
     ) {
-        val metaModuleWarningText by produceState<String?>(initialValue = null, viewModel.moduleList) {
+        val metaModuleWarningText by produceState<String?>(
+            initialValue = null,
+            viewModel.hasModuleRequireMount,
+            showMetamoduleWarning
+        ) {
             value = withContext(Dispatchers.IO) {
                 getMetaModuleWarningText(viewModel, context)
             }

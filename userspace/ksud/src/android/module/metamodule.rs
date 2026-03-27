@@ -226,7 +226,7 @@ pub fn exec_metauninstall_script(module_id: &str) -> Result<()> {
         return Ok(());
     };
 
-    info!("Executing metamodule metauninstall.sh for module: {module_id}",);
+    info!("Executing metamodule metauninstall.sh for module: {module_id}");
 
     let mut command = Command::new(assets::BUSYBOX_PATH);
     command
@@ -252,7 +252,7 @@ pub fn exec_metauninstall_script(module_id: &str) -> Result<()> {
         "Metamodule metauninstall.sh failed for module {module_id}",
     );
 
-    info!("Metamodule metauninstall.sh executed successfully for {module_id}",);
+    info!("Metamodule metauninstall.sh executed successfully for {module_id}");
     Ok(())
 }
 
@@ -283,7 +283,7 @@ pub fn exec_mount_script(module_dir: &str) -> Result<()> {
     }
     let result = command.status()?;
 
-    ensure!(result.success(), "Metamodule mount script failed",);
+    ensure!(result.success(), "Metamodule mount script failed");
 
     info!("Metamodule mount script executed successfully");
     Ok(())

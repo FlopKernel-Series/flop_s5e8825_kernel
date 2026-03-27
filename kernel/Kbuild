@@ -65,7 +65,7 @@ $(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow)
 KSU_LOCAL_VERSION := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-list --count HEAD)
 KSU_VERSION := $(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700)
 
-KSU_TAG_NAME    := $(shell cd $(KSU_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "unknown")
+KSU_TAG_NAME    := $(shell cd $(KSU_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "v4.1.0")
 KSU_COMMIT_SHA  := $(shell cd $(KSU_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown")
 KSU_BRANCH_NAME := $(shell cd $(KSU_SRC); $(GIT_BIN) branch --show-current 2>/dev/null || echo "unknown")
 
@@ -216,6 +216,13 @@ endif
 ifeq ($(shell grep -q "SEC_SELINUX_PORTING_COMMON" $(srctree)/security/selinux/avc.c; echo $$?),0)
 $(info -- $(REPO_NAME)/compat/samsung: SEC_SELINUX_PORTING_COMMON found)
 ccflags-y += -DSAMSUNG_SELINUX_PORTING
+endif
+
+## For Huawei EMUI10+ check  
+# Scan Kernel Tree to find CONFIG_HKIP_SELINUX_PROT in ebitmap.h
+ifeq ($(shell grep -q "CONFIG_HKIP_SELINUX_PROT" $(srctree)/security/selinux/ss/ebitmap.h 2>/dev/null; echo $$?),0)
+  $(info -- $(REPO_NAME): CONFIG_HKIP_SELINUX_PROT found!)
+  ccflags-y += -DKSU_COMPAT_IS_HISI_HM2
 endif
 
 # Function proc_ops check
@@ -394,15 +401,17 @@ ifeq ($(CONFIG_KSU_MANUAL_HOOK), y)
   endif
 endif
 
-ifneq ($(KERNEL_TYPE), GKI 2.0)
-    ifeq ($(KSU_TP_HOOK), y)
-        $(info -- $(REPO_NAME) TP Hooks are only supported on GKI 2.0 kernels.)
-        $(info -- Current Kernel Type: $(KERNEL_TYPE))
-        $(info -- If you really want to continue, go to Kbuild and comment out this warning.)
-        $(info -- Usually, this error occurs because you forgot to enable some kernel configurations.)
-        $(info -- Read: https://resukisu.github.io/guide/manual-integrate.html)
-        $(error TP hooks are incompatible with Non-GKI/GKI 1.0 kernels in this configuration.)
-    endif
+ifeq ($(CONFIG_KSU),y)
+  ifneq ($(KERNEL_TYPE), GKI 2.0)
+      ifeq ($(KSU_TP_HOOK), y)
+          $(info -- $(REPO_NAME) TP Hooks are only supported on GKI 2.0 kernels.)
+          $(info -- Current Kernel Type: $(KERNEL_TYPE))
+          $(info -- If you really want to continue, go to Kbuild and comment out this warning.)
+          $(info -- Usually, this error occurs because you forgot to enable some kernel configurations.)
+          $(info -- Read: https://resukisu.github.io/guide/manual-integrate.html)
+          $(error TP hooks are incompatible with Non-GKI/GKI 1.0 kernels in this configuration.)
+      endif
+  endif
 endif
 
 # Keep a new line here!! Because someone may append config
