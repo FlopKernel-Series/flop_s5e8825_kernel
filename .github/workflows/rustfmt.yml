@@ -1,0 +1,38 @@
+name: Rustfmt check
+
+on:
+  push:
+    branches:
+      - 'next'
+    paths:
+      - '.github/workflows/rustfmt.yml'
+      - 'userspace/**'
+  pull_request:
+    branches:
+      - 'next'
+    paths:
+      - '.github/workflows/rustfmt.yml'
+      - 'userspace/**'
+
+permissions:
+  checks: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+
+      - uses: LoliGothick/rustfmt-check@master
+        with:
+          token: ${{ github.token }}
+          working-directory: userspace/ksud
+
+      - uses: LoliGothick/rustfmt-check@master
+        with:
+          token: ${{ github.token }}
+          working-directory: userspace/ksuinit

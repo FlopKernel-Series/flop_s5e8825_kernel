@@ -1,2 +1,4 @@
-manager
-userspace
+.idea
+.vscode
+CLAUDE.md
+AGENTS.md

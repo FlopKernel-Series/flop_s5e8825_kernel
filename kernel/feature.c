@@ -19,10 +19,11 @@ int ksu_register_feature_handler(const struct ksu_feature_handler *handler)
 		return -EINVAL;
 	}
 
-	if (!handler->get_handler && !handler->set_handler) {
-		pr_err("feature: no handler provided for feature %u\n", handler->feature_id);
-		return -EINVAL;
-	}
+    if (!handler->get_handler && !handler->set_handler) {
+        pr_err("feature: no handler provided for feature %u\n",
+               handler->feature_id);
+        return -EINVAL;
+    }
 
 	mutex_lock(&feature_mutex);
 
