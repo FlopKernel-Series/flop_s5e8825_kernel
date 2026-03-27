@@ -2,6 +2,7 @@
 #define __KSU_H_KSUD
 
 #include <linux/types.h>
+#include <asm/syscall.h>
 
 #define KSUD_PATH "/data/adb/ksud"
 
@@ -14,12 +15,13 @@ void on_boot_completed(void);
 
 bool ksu_is_safe_mode(void);
 
-int nuke_ext4_sysfs(const char* mnt);
+int nuke_ext4_sysfs(const char *mnt);
 
 extern u32 ksu_file_sid;
 extern bool ksu_module_mounted;
 extern bool ksu_boot_completed;
 
-extern bool ksu_execveat_hook __read_mostly;
+void ksu_execve_hook_ksud(const struct pt_regs *regs);
+void ksu_stop_ksud_execve_hook();
 
 #endif

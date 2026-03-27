@@ -95,7 +95,7 @@ int ksu_handle_slow_avc_audit(u32 *tsid)
 	return 0;
 }
 
-#ifdef KSU_KPROBES_HOOK
+#ifdef CONFIG_KPROBES
 #include <linux/kprobes.h>
 #include <linux/slab.h>
 #include "arch.h"
@@ -157,11 +157,11 @@ static void destroy_kprobe(struct kprobe **kp_ptr)
 	kfree(kp);
 	*kp_ptr = NULL;
 }
-#endif // KSU_KPROBES_HOOK
+#endif // CONFIG_KPROBES
 
 void ksu_avc_spoof_disable(void)
 {
-#ifdef KSU_KPROBES_HOOK
+#ifdef CONFIG_KPROBES
 	pr_info("avc_spoof/exit: unregister slow_avc_audit kprobe!\n");
 	destroy_kprobe(&slow_avc_audit_kp);
 #endif
@@ -177,7 +177,7 @@ void ksu_avc_spoof_enable(void)
 		return;
 	}
 
-#ifdef KSU_KPROBES_HOOK
+#ifdef CONFIG_KPROBES
 	pr_info("avc_spoof/init: register slow_avc_audit kprobe!\n");
 	slow_avc_audit_kp = init_kprobe("slow_avc_audit", slow_avc_audit_pre_handler);
 #endif	

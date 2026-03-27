@@ -1,3 +1,9 @@
+#include "ss/avtab.h"
+#include "ss/constraint.h"
+#include "ss/ebitmap.h"
+#include "ss/hashtab.h"
+#include "ss/policydb.h"
+#include "ss/services.h"
 #include <linux/gfp.h>
 #include <linux/printk.h>
 #include <linux/slab.h>
@@ -6,7 +12,6 @@
 #include "sepolicy.h"
 #include "../klog.h" // IWYU pragma: keep
 #include "ss/symtab.h"
-#include "../kernel_compat.h" // Add check Huawei Device
 
 #define KSU_SUPPORT_ADD_TYPE
 
@@ -340,7 +345,7 @@ static void add_xperm_rule_raw(struct policydb *db, struct type_datum *src,
 
         if (datum->u.xperms == NULL) {
             datum->u.xperms = (struct avtab_extended_perms *)(kzalloc(
-                sizeof(xperms), GFP_ATOMIC));
+                sizeof(xperms), GFP_KERNEL));
             if (!datum->u.xperms) {
                 pr_err("alloc xperms failed\n");
                 return;
@@ -508,76 +513,41 @@ static bool add_filename_trans(struct policydb *db, const char *s,
         return false;
     }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0)
-	struct filename_trans_key key;
-	key.ttype = tgt->value;
-	key.tclass = cls->value;
-	key.name = (char *)o;
+    struct filename_trans_key key;
+    key.ttype = tgt->value;
+    key.tclass = cls->value;
+    key.name = (char *)o;
 
-	struct filename_trans_datum *last = NULL;
+    struct filename_trans_datum *last = NULL;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
-	struct filename_trans_datum *trans = policydb_filenametr_search(db, &key);
-#else
-	struct filename_trans_datum *trans = hashtab_search(&db->filename_trans, &key);
-#endif
-	while (trans) {
-		if (ebitmap_get_bit(&trans->stypes, src->value - 1)) {
-			// Duplicate, overwrite existing data and return
-			trans->otype = def->value;
-			return true;
-		}
-		if (trans->otype == def->value)
-			break;
-		last = trans;
-		trans = trans->next;
-	}
+    struct filename_trans_datum *trans = policydb_filenametr_search(db, &key);
+    while (trans) {
+        if (ebitmap_get_bit(&trans->stypes, src->value - 1)) {
+            // Duplicate, overwrite existing data and return
+            trans->otype = def->value;
+            return true;
+        }
+        if (trans->otype == def->value)
+            break;
+        last = trans;
+        trans = trans->next;
+    }
 
     if (trans == NULL) {
         trans = (struct filename_trans_datum *)kcalloc(1, sizeof(*trans),
-                                                       GFP_ATOMIC);
-		struct filename_trans_key *new_key =
-			(struct filename_trans_key *)kzalloc(sizeof(*new_key), GFP_ATOMIC);
-		*new_key = key;
-		new_key->name = kstrdup(key.name, GFP_ATOMIC);
-		trans->next = last;
-		trans->otype = def->value;
-		hashtab_insert(&db->filename_trans, new_key, trans,
+                                                       GFP_KERNEL);
+        struct filename_trans_key *new_key =
+            (struct filename_trans_key *)kzalloc(sizeof(*new_key), GFP_KERNEL);
+        *new_key = key;
+        new_key->name = kstrdup(key.name, GFP_KERNEL);
+        trans->next = last;
+        trans->otype = def->value;
+        hashtab_insert(&db->filename_trans, new_key, trans,
                        filenametr_key_params);
-	}
+    }
 
-	db->compat_filename_trans_count++;
-	return ebitmap_set_bit(&trans->stypes, src->value - 1, 1) == 0;
-#else // < 5.7.0, has no filename_trans_key, but struct filename_trans
-
-	struct filename_trans key;
-	key.ttype = tgt->value;
-	key.tclass = cls->value;
-	key.name = (char *)o;
-
-	struct filename_trans_datum *trans = hashtab_search(db->filename_trans, &key);
-
-	if (trans == NULL) {
-		trans = (struct filename_trans_datum *)kcalloc(sizeof(*trans), 1,
-                                                       GFP_ATOMIC);
-		if (!trans) {
-			pr_err("add_filename_trans: Failed to alloc datum\n");
-			return false;
-		}
-		struct filename_trans *new_key =
-			(struct filename_trans *)kzalloc(sizeof(*new_key), GFP_ATOMIC);
-		if (!new_key) {
-			pr_err("add_filename_trans: Failed to alloc new_key\n");
-			return false;
-		}
-		*new_key = key;
-		new_key->name = kstrdup(key.name, GFP_ATOMIC);
-		trans->otype = def->value;
-		hashtab_insert(db->filename_trans, new_key, trans);
-	}
-
-	return ebitmap_set_bit(&db->filename_trans_ttypes, src->value - 1, 1) == 0;
-#endif
+    db->compat_filename_trans_count++;
+    return ebitmap_set_bit(&trans->stypes, src->value - 1, 1) == 0;
 }
 
 static bool add_genfscon(struct policydb *db, const char *fs_name,
@@ -588,10 +558,30 @@ static bool add_genfscon(struct policydb *db, const char *fs_name,
 
 // https://github.com/torvalds/linux/commit/590b9d576caec6b4c46bba49ed36223a399c3fc5#diff-cc9aa90e094e6e0f47bd7300db4f33cf4366b98b55d8753744f31eb69c691016R844-R845
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
-#define ksu_kvrealloc(p, new_size, _old_size) kvrealloc(p, new_size, GFP_ATOMIC)
-#else
+#define ksu_kvrealloc(p, new_size, _old_size) kvrealloc(p, new_size, GFP_KERNEL)
+// https://github.com/torvalds/linux/commit/de2860f4636256836450c6543be744a50118fc66#diff-fa19cdd9c3369d7f59aa2e8404628109408dbf8e1b568d1157a27328f75b8410R638-R652
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 #define ksu_kvrealloc(p, new_size, old_size)                                   \
-	ksu_compat_kvrealloc(p, old_size, new_size, GFP_ATOMIC)
+    kvrealloc(p, old_size, new_size, GFP_KERNEL)
+#else
+// https://cs.android.com/android/_/android/kernel/common/+/f5f3e54f811679761c33526e695bd296190faade
+// Some 5.10 kernel don't have this backport, so copy one.
+void *ksu_kvrealloc_compat(const void *p, size_t oldsize, size_t newsize,
+                           gfp_t flags)
+{
+    void *newp;
+
+    if (oldsize >= newsize)
+        return (void *)p;
+    newp = kvmalloc(newsize, flags);
+    if (!newp)
+        return NULL;
+    memcpy(newp, p, oldsize);
+    kvfree(p);
+    return newp;
+}
+#define ksu_kvrealloc(p, new_size, old_size)                                   \
+    ksu_kvrealloc_compat(p, old_size, new_size, GFP_KERNEL)
 #endif
 
 static bool add_type(struct policydb *db, const char *type_name, bool attr)
@@ -603,7 +593,7 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
     }
 
     u32 value = ++db->p_types.nprim;
-    type = (struct type_datum *)kzalloc(sizeof(struct type_datum), GFP_ATOMIC);
+    type = (struct type_datum *)kzalloc(sizeof(struct type_datum), GFP_KERNEL);
     if (!type) {
         pr_err("add_type: alloc type_datum failed.\n");
         return false;
@@ -613,7 +603,7 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
     type->value = value;
     type->attribute = attr;
 
-    char *key = kstrdup(type_name, GFP_ATOMIC);
+    char *key = kstrdup(type_name, GFP_KERNEL);
     if (!key) {
         pr_err("add_type: alloc key failed.\n");
         return false;
@@ -624,10 +614,9 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
         return false;
     }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
     struct ebitmap *new_type_attr_map_array =
         ksu_kvrealloc(db->type_attr_map_array, value * sizeof(struct ebitmap),
-                    (value - 1) * sizeof(struct ebitmap));
+                      (value - 1) * sizeof(struct ebitmap));
 
     if (!new_type_attr_map_array) {
         pr_err("add_type: alloc type_attr_map_array failed\n");
@@ -636,8 +625,8 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
 
     struct type_datum **new_type_val_to_struct =
         ksu_kvrealloc(db->type_val_to_struct,
-                    sizeof(*db->type_val_to_struct) * value,
-                    sizeof(*db->type_val_to_struct) * (value - 1));
+                      sizeof(*db->type_val_to_struct) * value,
+                      sizeof(*db->type_val_to_struct) * (value - 1));
 
     if (!new_type_val_to_struct) {
         pr_err("add_type: alloc type_val_to_struct failed\n");
@@ -646,7 +635,7 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
 
     char **new_val_to_name_types =
         ksu_kvrealloc(db->sym_val_to_name[SYM_TYPES], sizeof(char *) * value,
-                    sizeof(char *) * (value - 1));
+                      sizeof(char *) * (value - 1));
     if (!new_val_to_name_types) {
         pr_err("add_type: alloc val_to_name failed\n");
         return false;
@@ -664,171 +653,10 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
 
     int i;
     for (i = 0; i < db->p_roles.nprim; ++i) {
-        ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1,
-                1);
+        ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1, 1);
     }
 
     return true;
-#elif defined(CONFIG_IS_HW_HISI)
-	/*
-   * Huawei use type_attr_map and type_val_to_struct.
-   * And use ebitmap not flex_array.
-   */
-	size_t new_size = sizeof(struct ebitmap) * db->p_types.nprim;
-	struct ebitmap *new_type_attr_map =
-		(krealloc(db->type_attr_map, new_size, GFP_ATOMIC));
-
-	struct type_datum **new_type_val_to_struct =
-		krealloc(db->type_val_to_struct,
-			 sizeof(*db->type_val_to_struct) * db->p_types.nprim,
-			 GFP_ATOMIC);
-
-	if (!new_type_attr_map) {
-		pr_err("add_type: alloc type_attr_map failed\n");
-		return false;
-	}
-
-	if (!new_type_val_to_struct) {
-		pr_err("add_type: alloc type_val_to_struct failed\n");
-		return false;
-	}
-
-	char **new_val_to_name_types =
-		krealloc(db->sym_val_to_name[SYM_TYPES],
-			 sizeof(char *) * db->symtab[SYM_TYPES].nprim,
-			 GFP_KERNEL);
-	if (!new_val_to_name_types) {
-		pr_err("add_type: alloc val_to_name failed\n");
-		return false;
-	}
-
-	db->type_attr_map = new_type_attr_map;
-	ebitmap_init(&db->type_attr_map[value - 1], HISI_SELINUX_EBITMAP_RO);
-	ebitmap_set_bit(&db->type_attr_map[value - 1], value - 1, 1);
-
-	db->type_val_to_struct = new_type_val_to_struct;
-	db->type_val_to_struct[value - 1] = type;
-
-	db->sym_val_to_name[SYM_TYPES] = new_val_to_name_types;
-	db->sym_val_to_name[SYM_TYPES][value - 1] = key;
-
-	int i;
-	for (i = 0; i < db->p_roles.nprim; ++i) {
-		ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1,
-				1);
-	}
-
-	return true;
-#else
-	// flex_array is not extensible, we need to create a new bigger one instead
-	struct flex_array *new_type_attr_map_array =
-		flex_array_alloc(sizeof(struct ebitmap), db->p_types.nprim,
-				 GFP_ATOMIC | __GFP_ZERO);
-
-	struct flex_array *new_type_val_to_struct =
-		flex_array_alloc(sizeof(struct type_datum *), db->p_types.nprim,
-				 GFP_ATOMIC | __GFP_ZERO);
-
-	struct flex_array *new_val_to_name_types =
-		flex_array_alloc(sizeof(char *), db->symtab[SYM_TYPES].nprim,
-				 GFP_ATOMIC | __GFP_ZERO);
-
-	if (!new_type_attr_map_array) {
-		pr_err("add_type: alloc type_attr_map_array failed\n");
-		return false;
-	}
-
-	if (!new_type_val_to_struct) {
-		pr_err("add_type: alloc type_val_to_struct failed\n");
-		return false;
-	}
-
-	if (!new_val_to_name_types) {
-		pr_err("add_type: alloc val_to_name failed\n");
-		return false;
-	}
-
-	// preallocate so we don't have to worry about the put ever failing
-	if (flex_array_prealloc(new_type_attr_map_array, 0, db->p_types.nprim,
-				GFP_ATOMIC | __GFP_ZERO)) {
-		pr_err("add_type: prealloc type_attr_map_array failed\n");
-		return false;
-	}
-
-	if (flex_array_prealloc(new_type_val_to_struct, 0, db->p_types.nprim,
-				GFP_ATOMIC | __GFP_ZERO)) {
-		pr_err("add_type: prealloc type_val_to_struct_array failed\n");
-		return false;
-	}
-
-	if (flex_array_prealloc(new_val_to_name_types, 0,
-				db->symtab[SYM_TYPES].nprim,
-				GFP_ATOMIC | __GFP_ZERO)) {
-		pr_err("add_type: prealloc val_to_name_types failed\n");
-		return false;
-	}
-
-	int j;
-	void *old_elem;
-	// copy the old data or pointers to new flex arrays
-	for (j = 0; j < db->type_attr_map_array->total_nr_elements; j++) {
-		old_elem = flex_array_get(db->type_attr_map_array, j);
-		if (old_elem)
-			flex_array_put(new_type_attr_map_array, j, old_elem,
-				       GFP_ATOMIC | __GFP_ZERO);
-	}
-
-	for (j = 0; j < db->type_val_to_struct_array->total_nr_elements; j++) {
-		old_elem = flex_array_get_ptr(db->type_val_to_struct_array, j);
-		if (old_elem)
-			flex_array_put_ptr(new_type_val_to_struct, j, old_elem,
-					   GFP_ATOMIC | __GFP_ZERO);
-	}
-
-	for (j = 0; j < db->symtab[SYM_TYPES].nprim; j++) {
-		old_elem =
-			flex_array_get_ptr(db->sym_val_to_name[SYM_TYPES], j);
-		if (old_elem)
-			flex_array_put_ptr(new_val_to_name_types, j, old_elem,
-					   GFP_ATOMIC | __GFP_ZERO);
-	}
-
-	// store the pointer of old flex arrays first, when assigning new ones we
-	// should free it
-	struct flex_array *old_fa;
-
-	old_fa = db->type_attr_map_array;
-	db->type_attr_map_array = new_type_attr_map_array;
-	if (old_fa) {
-		flex_array_free(old_fa);
-	}
-
-	ebitmap_init(flex_array_get(db->type_attr_map_array, value - 1));
-	ebitmap_set_bit(flex_array_get(db->type_attr_map_array, value - 1),
-			value - 1, 1);
-
-	old_fa = db->type_val_to_struct_array;
-	db->type_val_to_struct_array = new_type_val_to_struct;
-	if (old_fa) {
-		flex_array_free(old_fa);
-	}
-	flex_array_put_ptr(db->type_val_to_struct_array, value - 1, type,
-			   GFP_ATOMIC | __GFP_ZERO);
-
-	old_fa = db->sym_val_to_name[SYM_TYPES];
-	db->sym_val_to_name[SYM_TYPES] = new_val_to_name_types;
-	if (old_fa) {
-		flex_array_free(old_fa);
-	}
-	flex_array_put_ptr(db->sym_val_to_name[SYM_TYPES], value - 1, key,
-			   GFP_ATOMIC | __GFP_ZERO);
-
-	int i;
-	for (i = 0; i < db->p_roles.nprim; ++i) {
-		ebitmap_set_bit(&db->role_val_to_struct[i]->types, value - 1, 1);
-	}
-	return true;
-#endif
 }
 
 static bool set_type_state(struct policydb *db, const char *type_name,
@@ -860,18 +688,7 @@ static bool set_type_state(struct policydb *db, const char *type_name,
 static void add_typeattribute_raw(struct policydb *db, struct type_datum *type,
                                   struct type_datum *attr)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
     struct ebitmap *sattr = &db->type_attr_map_array[type->value - 1];
-#elif defined(CONFIG_IS_HW_HISI)
-	/*
-   *   HISI_SELINUX_EBITMAP_RO is Huawei's unique features.
-   */
-	struct ebitmap *sattr = &db->type_attr_map[type->value - 1],
-		       HISI_SELINUX_EBITMAP_RO;
-#else
-	struct ebitmap *sattr =
-		flex_array_get(db->type_attr_map_array, type->value - 1);
-#endif
     ebitmap_set_bit(sattr, attr->value - 1, 1);
 
     struct hashtab_node *node;
@@ -1023,4 +840,466 @@ bool ksu_genfscon(struct policydb *db, const char *fs_name, const char *path,
                   const char *ctx)
 {
     return add_genfscon(db, fs_name, path, ctx);
+}
+
+// https://github.com/torvalds/linux/commit/581646c3fb98494009671f6d347ea125bc0e663a
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 10, 0)
+#define CONST_IF_6_10 const
+#else
+#define CONST_IF_6_10
+#endif
+
+// ======== begin copy ========
+
+static int copy_hashtab_node(struct hashtab_node *new_node,
+                             CONST_IF_6_10 struct hashtab_node *old_node,
+                             void *data)
+{
+    new_node->datum = old_node->datum;
+    new_node->key = old_node->key;
+    return 0;
+}
+
+static int destroy_hashtab_node(void *key, void *datum, void *data)
+{
+    // just copied pointer, no need to free
+    return 0;
+}
+
+static int shallow_copy_hashtab(struct hashtab *new_tab,
+                                struct hashtab *old_tab)
+{
+    return hashtab_duplicate(new_tab, old_tab, copy_hashtab_node,
+                             destroy_hashtab_node, NULL);
+}
+
+// ======== class_datum ========
+
+static int
+copy_class_datum_partially_callback(struct hashtab_node *new_node,
+                                    CONST_IF_6_10 struct hashtab_node *old_node,
+                                    void *data)
+{
+    struct policydb *db = data;
+    struct class_datum *cls = old_node->datum, *new_cls;
+    struct constraint_node *oldn, *n, *nprev = NULL;
+    struct constraint_expr *olde, *e, *eprev;
+    new_node->key = old_node->key;
+    new_cls = kmemdup(cls, sizeof(struct class_datum), GFP_KERNEL);
+    if (!new_cls)
+        return -ENOMEM;
+    new_node->datum = new_cls;
+    new_cls->constraints = NULL;
+    for (oldn = cls->constraints; oldn; oldn = oldn->next) {
+        n = kmemdup(oldn, sizeof(struct constraint_node), GFP_KERNEL);
+        if (!n)
+            goto out_nomem;
+        if (nprev) {
+            nprev->next = n;
+        } else {
+            new_cls->constraints = n;
+        }
+        eprev = NULL;
+        n->expr = NULL;
+        for (olde = oldn->expr; olde; olde = olde->next) {
+            e = kmemdup(olde, sizeof(struct constraint_expr), GFP_KERNEL);
+            if (!e) {
+                goto out_nomem;
+            }
+            if (eprev) {
+                eprev->next = e;
+            } else {
+                n->expr = e;
+            }
+            if (olde->expr_type == CEXPR_NAMES) {
+                if (ebitmap_cpy(&e->names, &olde->names) < 0) {
+                    goto out_nomem;
+                }
+            }
+            eprev = e;
+        }
+        nprev = n;
+    }
+
+    db->class_val_to_struct[new_cls->value - 1] = new_cls;
+
+    return 0;
+out_nomem:
+    return -ENOMEM;
+}
+
+static int destroy_class_datum_partially_callback(void *key, void *datum,
+                                                  void *data)
+{
+    struct class_datum *cls = datum;
+    struct constraint_node *n, *nprev;
+    struct constraint_expr *e, *eprev;
+    if (cls) {
+        for (n = cls->constraints; n;) {
+            for (e = n->expr; e;) {
+                if (e->expr_type == CEXPR_NAMES) {
+                    ebitmap_destroy(&e->names);
+                }
+                eprev = e;
+                e = e->next;
+                kfree(eprev);
+            }
+            nprev = n;
+            n = n->next;
+            kfree(nprev);
+        }
+    }
+    kfree(cls);
+
+    return 0;
+}
+
+static void free_class_datum_partially(struct policydb *db)
+{
+    if (db->class_val_to_struct) {
+        kfree(db->class_val_to_struct);
+    }
+
+    if (db->p_classes.table.htable) {
+        hashtab_map(&db->p_classes.table,
+                    destroy_class_datum_partially_callback, NULL);
+        hashtab_destroy(&db->p_classes.table);
+    }
+}
+
+static int copy_class_datum_partially(struct policydb *new_db,
+                                      struct policydb *old_db)
+{
+    int ret;
+    u32 n = new_db->symtab[SYM_CLASSES].nprim;
+    struct class_datum **new_class_val_to_struct;
+
+    new_db->class_val_to_struct = NULL;
+    memset(&new_db->p_classes.table, 0, sizeof(new_db->p_classes.table));
+
+    new_class_val_to_struct =
+        kcalloc(n, sizeof(struct class_datum *), GFP_KERNEL);
+    if (!new_class_val_to_struct) {
+        ret = -ENOMEM;
+        goto exit;
+    }
+    new_db->class_val_to_struct = new_class_val_to_struct;
+
+    ret = hashtab_duplicate(&new_db->p_classes.table, &old_db->p_classes.table,
+                            copy_class_datum_partially_callback,
+                            destroy_class_datum_partially_callback, new_db);
+
+    if (ret) {
+        goto exit;
+    }
+
+    return 0;
+
+exit:
+    free_class_datum_partially(new_db);
+    return ret;
+}
+
+// ======== avtab ========
+
+static int copy_avtab(struct avtab *new_avtab, struct avtab *old_avtab)
+{
+    int ret, i;
+    struct avtab_node *n, *p;
+    ret = avtab_alloc_dup(new_avtab, old_avtab);
+    if (ret < 0)
+        return ret;
+
+    for (i = 0; i < old_avtab->nslot; i++) {
+        n = old_avtab->htable[i];
+        while (n) {
+            p = avtab_insert_nonunique(new_avtab, &n->key, &n->datum);
+            if (!p) {
+                ret = -ENOMEM;
+                goto out_free;
+            }
+            n = n->next;
+        }
+    }
+
+    return 0;
+
+out_free:
+    avtab_destroy(new_avtab);
+    return ret;
+}
+
+// ======== role_datum ========
+
+static int
+copy_role_datum_partially_callback(struct hashtab_node *new_node,
+                                   CONST_IF_6_10 struct hashtab_node *old_node,
+                                   void *data)
+{
+    int ret = 0;
+    struct policydb *db = data;
+    struct role_datum *role = old_node->datum, *new_role;
+    new_role = kmemdup(role, sizeof(struct role_datum), GFP_KERNEL);
+    if (!new_role) {
+        ret = -ENOMEM;
+        goto out;
+    }
+    new_node->datum = new_role;
+    new_node->key = old_node->key;
+
+    ret = ebitmap_cpy(&new_role->types, &role->types);
+    if (ret) {
+        goto out;
+    }
+    db->role_val_to_struct[role->value - 1] = new_role;
+
+out:
+    return ret;
+}
+
+static int destroy_role_datum_partially_callback(void *key, void *datum,
+                                                 void *data)
+{
+    struct role_datum *role = datum;
+    if (role) {
+        ebitmap_destroy(&role->types);
+        kfree(role);
+    }
+    return 0;
+}
+
+static void free_role_datum_partially(struct policydb *db)
+{
+    if (db->role_val_to_struct) {
+        kfree(db->role_val_to_struct);
+    }
+    if (db->p_roles.table.htable) {
+        hashtab_map(&db->p_roles.table, destroy_role_datum_partially_callback,
+                    NULL);
+        hashtab_destroy(&db->p_roles.table);
+    }
+}
+
+static int copy_role_datum_partially(struct policydb *new_db,
+                                     struct policydb *old_db)
+{
+    int ret;
+    struct role_datum **new_role_val_to_struct;
+    u32 n = old_db->p_roles.nprim;
+
+    new_db->role_val_to_struct = NULL;
+    memset(&new_db->p_roles.table, 0, sizeof(new_db->p_roles.table));
+
+    new_role_val_to_struct =
+        kcalloc(n, sizeof(*new_db->role_val_to_struct), GFP_KERNEL);
+    if (!new_role_val_to_struct) {
+        ret = -ENOMEM;
+        goto out_free;
+    }
+    new_db->role_val_to_struct = new_role_val_to_struct;
+
+    ret = hashtab_duplicate(&new_db->p_roles.table, &old_db->p_roles.table,
+                            copy_role_datum_partially_callback,
+                            destroy_role_datum_partially_callback, new_db);
+    if (ret)
+        goto out_free;
+    return 0;
+
+out_free:
+    free_role_datum_partially(new_db);
+
+    return ret;
+}
+
+// ======== type_datum ========
+
+static void free_type_datum_partially(struct policydb *db)
+{
+    u32 sz = db->p_types.nprim, i;
+    if (db->type_attr_map_array) {
+        for (i = 0; i < sz; i++) {
+            ebitmap_destroy(&db->type_attr_map_array[i]);
+        }
+
+        kvfree(db->type_attr_map_array);
+    }
+
+    if (db->type_val_to_struct) {
+        kvfree(db->type_val_to_struct);
+    }
+
+    if (db->sym_val_to_name[SYM_TYPES]) {
+        kvfree(db->sym_val_to_name[SYM_TYPES]);
+    }
+
+    hashtab_destroy(&db->p_types.table);
+}
+
+static int copy_type_datum_partially(struct policydb *new_db,
+                                     struct policydb *old_db)
+{
+    int ret = -ENOMEM;
+    u32 sz = new_db->p_types.nprim, i;
+    struct ebitmap *new_type_attr_map_array;
+    struct type_datum **new_type_val_to_struct;
+    char **new_sym_val_to_name_types;
+
+    new_db->type_attr_map_array = NULL;
+    new_db->type_val_to_struct = NULL;
+    new_db->sym_val_to_name[SYM_TYPES] = NULL;
+    memset(&new_db->p_types.table, 0, sizeof(new_db->p_types.table));
+
+    // ======== type_attr_map_array ========
+
+    new_type_attr_map_array = kvcalloc(sz, sizeof(struct ebitmap), GFP_KERNEL);
+
+    if (!new_type_attr_map_array) {
+        goto out;
+    }
+
+    new_db->type_attr_map_array = new_type_attr_map_array;
+    for (i = 0; i < sz; i++) {
+        ret = ebitmap_cpy(&new_db->type_attr_map_array[i],
+                          &old_db->type_attr_map_array[i]);
+        if (ret < 0)
+            goto out;
+    }
+
+    // ======== type_val_to_struct ========
+    ret = -ENOMEM;
+
+    new_type_val_to_struct =
+        kvcalloc(sz, sizeof(*new_db->type_val_to_struct), GFP_KERNEL);
+    if (!new_type_val_to_struct) {
+        goto out;
+    }
+    new_db->type_val_to_struct = new_type_val_to_struct;
+    memcpy(new_db->type_val_to_struct, old_db->type_val_to_struct,
+           sz * sizeof(*new_db->type_val_to_struct));
+
+    // ======== sym_val_to_name[SYM_TYPES] ========
+
+    new_sym_val_to_name_types =
+        kvcalloc(sz, sizeof(*new_db->sym_val_to_name[SYM_TYPES]), GFP_KERNEL);
+    if (!new_sym_val_to_name_types)
+        goto out;
+    new_db->sym_val_to_name[SYM_TYPES] = new_sym_val_to_name_types;
+    memcpy(new_db->sym_val_to_name[SYM_TYPES],
+           old_db->sym_val_to_name[SYM_TYPES],
+           sz * sizeof(*new_db->sym_val_to_name[SYM_TYPES]));
+
+    // ======== p_types ========
+
+    ret = shallow_copy_hashtab(&new_db->p_types.table, &old_db->p_types.table);
+    if (ret < 0)
+        goto out;
+
+    return 0;
+out:
+    free_type_datum_partially(new_db);
+    return ret;
+}
+
+// ======== permissive_map ========
+
+static void free_permissive_map(struct policydb *db)
+{
+    ebitmap_destroy(&db->permissive_map);
+}
+
+static int copy_permissive_map(struct policydb *new_db, struct policydb *old_db)
+{
+    // On failure, the old ebitmap is cleaned.
+    return ebitmap_cpy(&new_db->permissive_map, &old_db->permissive_map);
+}
+
+// ======== filename_trans ========
+
+static void free_filename_trans(struct policydb *db)
+{
+    hashtab_destroy(&db->filename_trans);
+}
+
+static int copy_filename_trans(struct policydb *new_db, struct policydb *old_db)
+{
+    // On failure, the old hashtab is cleaned.
+    return shallow_copy_hashtab(&new_db->filename_trans,
+                                &old_db->filename_trans);
+}
+
+// ======== sepolicy ========
+
+void ksu_destroy_sepolicy(struct selinux_policy *pol)
+{
+    if (!pol)
+        return;
+
+    struct policydb *db = &pol->policydb;
+
+    free_class_datum_partially(db);
+
+    avtab_destroy(&db->te_avtab);
+
+    free_role_datum_partially(db);
+
+    free_type_datum_partially(db);
+
+    free_permissive_map(db);
+
+    free_filename_trans(db);
+
+    kfree(pol);
+}
+
+struct selinux_policy *ksu_dup_sepolicy(struct selinux_policy *old_pol)
+{
+    int ret;
+    struct selinux_policy *new_pol =
+        kmemdup(old_pol, sizeof(*old_pol), GFP_KERNEL);
+    if (!new_pol) {
+        return NULL;
+    }
+    struct policydb *new_db = &new_pol->policydb, *old_db = &old_pol->policydb;
+
+    ret = copy_class_datum_partially(new_db, old_db);
+    if (ret < 0) {
+        pr_err("ksu_dup_sepolicy: copy_class_datum_partially\n");
+        goto out;
+    }
+
+    ret = copy_avtab(&new_db->te_avtab, &old_db->te_avtab);
+    if (ret < 0) {
+        pr_err("ksu_dup_sepolicy: copy_avtab\n");
+        goto out;
+    }
+
+    ret = copy_role_datum_partially(new_db, old_db);
+    if (ret < 0) {
+        pr_err("ksu_dup_sepolicy: copy_role_datum_partially\n");
+        goto out;
+    }
+
+    ret = copy_type_datum_partially(new_db, old_db);
+    if (ret < 0) {
+        pr_err("ksu_dup_sepolicy: copy_type_datum_partially\n");
+        goto out;
+    }
+
+    ret = copy_permissive_map(new_db, old_db);
+    if (ret < 0) {
+        pr_err("ksu_dup_sepolicy: copy_permissive_map\n");
+        goto out;
+    }
+
+    ret = copy_filename_trans(new_db, old_db);
+    if (ret < 0) {
+        pr_err("ksu_dup_sepolicy: copy_filename_trans\n");
+        goto out;
+    }
+
+    return new_pol;
+
+out:
+    kfree(new_pol);
+    return NULL;
 }
