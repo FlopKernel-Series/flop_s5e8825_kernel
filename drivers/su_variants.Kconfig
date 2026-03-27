@@ -7,8 +7,10 @@ choice
 config KSU_NEXT
 	bool "KernelSU Next"
 	select OVERLAY_FS
+	select KPROBES
+	select EXT4_FS
 	help
-	  Enable KernelSU Next with SUSFS support.
+	  Enable KernelSU Next.
 	  This is the standard KernelSU Next variant.
 
 config KSU_SUKI
@@ -103,15 +105,6 @@ config KPM
 	  Enabling this option will activate the KPM feature of SukiSU.
 	  This option is suitable for scenarios where you need to force KPM to be enabled,
 	  but it may affect system stability.
-
-# KernelSU Next specific options
-config KSU_LSM_SECURITY_HOOKS
-	bool "Use LSM security hooks"
-	depends on KSU_NEXT
-	default y
-	help
-	  Disabling this is mostly only useful for kernel 4.1 and older.
-	  Make sure to implement manual hooks on security/security.c.
 
 # Common options
 config KSU_DEBUG
