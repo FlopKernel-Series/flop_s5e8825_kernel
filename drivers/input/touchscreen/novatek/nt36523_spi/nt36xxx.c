@@ -2402,7 +2402,7 @@ void nvt_ts_proximity_report(uint8_t *data)
 	status = p_event_proximity->status;
 
 	if (is_aosp_mode_fast())
-		status = !status ? 5 : 0;
+		status = !status;
 
 	input_info(true, &ts->client->dev,"proximity->status = %d\n", status);
 
