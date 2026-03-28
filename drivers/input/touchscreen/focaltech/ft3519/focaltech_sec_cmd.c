@@ -18,8 +18,6 @@
 #include "focaltech_core.h"
 #include "focaltech_pramtest_ft3519.h"
 
-#include <linux/workarounds.h>
-
 enum ALL_NODE_TEST_TYPE {
 	ALL_NODE_TYPE_SHORT,
 	ALL_NODE_TYPE_SCAP_CB,
@@ -3036,10 +3034,6 @@ static int ear_detect_enable_save(void *device_data)
 		if (sec->block_ed3)
 			sec->cmd_param[0] = 1;
 	}
-
-	// Force ed3 for aosp
-	if (is_aosp_mode() && sec->cmd_param[0] == 1)
-		sec->cmd_param[0] = 3;
 
 	if (sec->cmd_param[0])
 		ts_data->power_mode |= FTS_POWER_MODE_EAR_DETECT;
