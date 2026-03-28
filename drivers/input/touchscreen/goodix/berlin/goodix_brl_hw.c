@@ -16,6 +16,7 @@
  *
  */
 #include "goodix_ts_core.h"
+#include <linux/workarounds.h>
 
 
 #define GOODIX_FW_VERSION_ADDR		0x10014
@@ -1414,7 +1415,10 @@ static void goodix_ts_report_status(struct goodix_ts_data *ts, struct goodix_ts_
 	} else if (ts_event->status_type == TYPE_STATUS_EVENT_VENDOR_INFO) {
 		if (ts_event->status_id == STATUS_EVENT_VENDOR_PROXIMITY) {
 			ts->ts_event.hover_event = ts_event->status_data[0];
-			sec_input_proximity_report(ts->bus->dev, ts_event->status_data[0]);
+			if (!is_aosp_mode_fast() ||
+			    atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM ||
+			    !ts->plat_data->touch_count)
+				sec_input_proximity_report(ts->bus->dev, ts_event->status_data[0]);
 		} else if (ts_event->status_id == STATUS_EVENT_VENDOR_STATE_CHANGED) {
 			if (ts_event->status_data[0] == 2 && ts_event->status_data[1] == 2)
 				ts_info("Normal changed");

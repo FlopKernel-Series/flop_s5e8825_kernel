@@ -14,6 +14,7 @@
  */
 
 #include "nt36xxx.h"
+#include <linux/workarounds.h>
 
 //int nvt_ts_nt36523_ics_i2c_read(struct nvt_ts_data *ts, u32 address, u8 *data, u16 len);
 //int nvt_ts_nt36523_ics_i2c_write(struct nvt_ts_data *ts, u32 address, u8 *data, u16 len);
@@ -2206,6 +2207,7 @@ static void ear_detect_enable(void *device_data)
 	struct nvt_ts_data *ts = container_of(sec, struct nvt_ts_data, sec);
 	char buff[SEC_CMD_STR_LEN] = { 0 };
 	int ret;
+	int ed_mode;
 
 	legacy_sec_cmd_set_default_result(sec);
 
@@ -2218,13 +2220,18 @@ static void ear_detect_enable(void *device_data)
 		input_err(true, &ts->client->dev, "%s: invalid parameter %d\n", __func__, sec->cmd_param[0]);
 		goto out;
 	} else {
-		ts->ear_detect_mode = sec->cmd_param[0];
+		ed_mode = sec->cmd_param[0];
 	}
 
-	if (sec->cmd_param[0] == 3) {
+	if (ed_mode == 3) {
 		if (sec->block_ed3)
-			sec->cmd_param[0] = 1;
+			ed_mode = 1;
 	}
+
+	if (is_aosp_mode() && ts->power_status != LP_MODE_STATUS)
+		ed_mode = ed_mode ? 3 : 0;
+
+	ts->ear_detect_mode = ed_mode;
 
 	if (ts->power_status == POWER_OFF_STATUS || ts->power_status == LP_MODE_EXIT) {
 		ts->ed_reset_flag = true;
@@ -2252,7 +2259,7 @@ static void ear_detect_enable(void *device_data)
 	legacy_sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
 	legacy_sec_cmd_set_cmd_exit(sec);
 
-	input_info(true, &ts->client->dev, "%s,%d: %s\n", __func__, sec->cmd_param[0], buff);
+	input_info(true, &ts->client->dev, "%s,%d: %s\n", __func__, ts->ear_detect_mode, buff);
 
 	return;
 out:
@@ -5811,7 +5818,10 @@ static ssize_t protos_event_store(struct device *dev,
 		return count;
 	}
 
-	ts->ear_detect_mode = data;
+	if (is_aosp_mode() && ts->power_status != LP_MODE_STATUS)
+		ts->ear_detect_mode = data ? 3 : 0;
+	else
+		ts->ear_detect_mode = data;
 
 	ret = set_ear_detect(ts, ts->ear_detect_mode, true);
 	if (ret) {

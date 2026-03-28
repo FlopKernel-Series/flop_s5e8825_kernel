@@ -16,6 +16,7 @@
  *
  */
 #include "goodix_ts_core.h"
+#include <linux/workarounds.h>
 
 int goodix_set_cmd(struct goodix_ts_data *ts, u8 reg, u8 mode)
 {
@@ -1759,7 +1760,14 @@ static int ear_detect_enable_save(void *device_data)
 			sec->cmd_param[0] = 1;
 	}
 
-	ts->plat_data->ed_enable = sec->cmd_param[0];
+	if (is_aosp_mode()) {
+		if (atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM)
+			ts->plat_data->ed_enable = sec->cmd_param[0];
+		else
+			ts->plat_data->ed_enable = sec->cmd_param[0] ? 3 : 0;
+	} else {
+		ts->plat_data->ed_enable = sec->cmd_param[0];
+	}
 	ts_info("ear detect mode(%d), block_ed3=%d", ts->plat_data->ed_enable, sec->block_ed3);
 
 	sec->cmd_state = SEC_CMD_STATUS_OK;
@@ -2962,7 +2970,14 @@ static ssize_t virtual_prox_store(struct device *dev,
 		return -EINVAL;
 	}
 
-	ts->plat_data->ed_enable = data;
+	if (is_aosp_mode()) {
+		if (atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM)
+			ts->plat_data->ed_enable = data;
+		else
+			ts->plat_data->ed_enable = data ? 3 : 0;
+	} else {
+		ts->plat_data->ed_enable = data;
+	}
 	ts_info("ear detect mode(%d)", ts->plat_data->ed_enable);
 
 	if (atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_POWER_OFF) {

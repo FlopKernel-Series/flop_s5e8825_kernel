@@ -17,6 +17,7 @@
 
 #include "focaltech_core.h"
 #include "focaltech_pramtest_ft3519.h"
+#include <linux/workarounds.h>
 
 enum ALL_NODE_TEST_TYPE {
 	ALL_NODE_TYPE_SHORT,
@@ -3035,12 +3036,17 @@ static int ear_detect_enable_save(void *device_data)
 			sec->cmd_param[0] = 1;
 	}
 
-	if (sec->cmd_param[0])
+	if (is_aosp_mode() &&
+	    atomic_read(&ts_data->pdata->power_state) != SEC_INPUT_STATE_LPM)
+		ts_data->pdata->ed_enable = sec->cmd_param[0] ? 3 : 0;
+	else
+		ts_data->pdata->ed_enable = sec->cmd_param[0];
+
+	if (ts_data->pdata->ed_enable)
 		ts_data->power_mode |= FTS_POWER_MODE_EAR_DETECT;
 	else
 		ts_data->power_mode &= ~FTS_POWER_MODE_EAR_DETECT;
 
-	ts_data->pdata->ed_enable = sec->cmd_param[0];
 	sec->cmd_state = SEC_CMD_STATUS_OK;
 
 	return SEC_SUCCESS;

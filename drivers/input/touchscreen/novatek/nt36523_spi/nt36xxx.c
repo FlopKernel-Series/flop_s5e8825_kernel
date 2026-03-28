@@ -24,6 +24,7 @@
 #include <linux/input/mt.h>
 #include <linux/of_gpio.h>
 #include <linux/of_irq.h>
+#include <linux/workarounds.h>
 
 #include "nt36xxx.h"
 #if NVT_TOUCH_ESD_PROTECT
@@ -2398,6 +2399,9 @@ void nvt_ts_proximity_report(uint8_t *data)
 	}
 
 	status = p_event_proximity->status;
+
+	if (is_aosp_mode_fast() && ts->power_status != LP_MODE_STATUS && ts->touch_count)
+		return;
 
 	input_info(true, &ts->client->dev,"proximity->status = %d\n", status);
 

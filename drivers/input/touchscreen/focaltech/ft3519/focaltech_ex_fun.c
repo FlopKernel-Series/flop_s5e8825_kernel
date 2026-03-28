@@ -33,6 +33,7 @@
 * 1.Included header files
 *****************************************************************************/
 #include "focaltech_core.h"
+#include <linux/workarounds.h>
 
 /*****************************************************************************
 * Private constant and macro definitions using #define
@@ -1204,18 +1205,26 @@ static ssize_t fts_proximity_store(
 	struct device_attribute *attr, const char *buf, size_t count)
 {
 	struct fts_ts_data *ts_data = fts_data;
+	u8 requested_mode = ts_data->pdata->ed_enable;
 
 	mutex_lock(&ts_data->pdata->enable_mutex);
 	if (FTS_SYSFS_ECHO_ON(buf)) {
-		ts_data->pdata->ed_enable = ENABLE;
-		FTS_DEBUG("enable low proximity %d", ts_data->pdata->ed_enable);
+		requested_mode = ENABLE;
+		FTS_DEBUG("enable low proximity %d", requested_mode);
 	} else if (FTS_SYSFS_ECHO_OFF(buf)) {
-		ts_data->pdata->ed_enable = DISABLE;
-		FTS_DEBUG("disable proximity %d", ts_data->pdata->ed_enable);
+		requested_mode = DISABLE;
+		FTS_DEBUG("disable proximity %d", requested_mode);
 	} else if (buf[0] == '3') {
-		ts_data->pdata->ed_enable = 3;
-		FTS_DEBUG("enable sensitive proximity %d", ts_data->pdata->ed_enable);
+		requested_mode = 3;
+		FTS_DEBUG("enable sensitive proximity %d", requested_mode);
 	}
+
+	if (is_aosp_mode() &&
+	    atomic_read(&ts_data->pdata->power_state) != SEC_INPUT_STATE_LPM)
+		ts_data->pdata->ed_enable = requested_mode ? 3 : 0;
+	else
+		ts_data->pdata->ed_enable = requested_mode;
+
 	fts_write_reg(FTS_REG_PROXIMITY_MODE, ts_data->pdata->ed_enable);
 	mutex_unlock(&ts_data->pdata->enable_mutex);
 

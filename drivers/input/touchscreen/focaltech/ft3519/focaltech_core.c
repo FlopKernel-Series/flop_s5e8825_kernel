@@ -37,6 +37,7 @@
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
 #include <linux/of_irq.h>
+#include <linux/workarounds.h>
 #include "focaltech_core.h"
 #if IS_ENABLED(CONFIG_SAMSUNG_TUI)
 #include <linux/input/stui_inf.h>
@@ -842,6 +843,11 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 		return 0;
 	else
 		ts_data->hover_event = (val >> 4);
+
+	if (is_aosp_mode_fast() &&
+	    atomic_read(&ts_data->pdata->power_state) != SEC_INPUT_STATE_LPM &&
+	    ts_data->pdata->touch_count)
+		return 0;
 
 	if (!ts_data->legacy_mode)
 		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
