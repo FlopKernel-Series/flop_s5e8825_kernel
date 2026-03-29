@@ -2,7 +2,11 @@
 #ifndef _LINUX_BINFMTS_H
 #define _LINUX_BINFMTS_H
 
+#include <linux/file.h>
+#include <linux/fs.h>
+#include <linux/mm.h>
 #include <linux/sched.h>
+#include <linux/string.h>
 #include <linux/unistd.h>
 #include <asm/exec.h>
 #include <uapi/linux/binfmts.h>
@@ -144,9 +148,28 @@ int kernel_execve(const char *filename,
 
 bool freq_control_blocking_enabled(void);
 
+static inline bool task_has_exec_prefix(struct task_struct *tsk, const char *prefix)
+{
+	struct file *exe_file;
+	const char *exe_name;
+	bool match = false;
+
+	exe_file = get_task_exe_file(tsk);
+	if (!exe_file)
+		return false;
+
+	exe_name = exe_file->f_path.dentry->d_name.name;
+	if (exe_name)
+		match = !strncmp(exe_name, prefix, strlen(prefix));
+
+	fput(exe_file);
+	return match;
+}
+
 static inline bool task_is_booster(struct task_struct *tsk)
 {
 	char comm[sizeof(tsk->comm)];
+
 	get_task_comm(comm, tsk);
 	return !strcmp(comm, "init") || !strcmp(comm, "NodeLooperThrea") ||
 	       !strcmp(comm, "power@1.2-servi") ||
@@ -158,7 +181,19 @@ static inline bool task_is_booster(struct task_struct *tsk)
 	       !strcmp(comm, "power@2.0-servic") ||
 	       !strcmp(comm, "iop@") ||
 	       !strcmp(comm, "PERFD-SERVER") ||
-	       !strncmp(comm, "system_perf_ini", 9);
+	       !strncmp(comm, "system_perf_ini", 9) ||
+	       task_has_exec_prefix(tsk, "init") ||
+	       task_has_exec_prefix(tsk, "NodeLooperThrea") ||
+	       task_has_exec_prefix(tsk, "power@1.2-servi") ||
+	       task_has_exec_prefix(tsk, "power@1.3-servi") ||
+	       task_has_exec_prefix(tsk, "perf@1.0-servic") ||
+	       task_has_exec_prefix(tsk, "perf@2.0-servic") ||
+	       task_has_exec_prefix(tsk, "perf@2.1-servic") ||
+	       task_has_exec_prefix(tsk, "perf@2.2-servic") ||
+	       task_has_exec_prefix(tsk, "power@2.0-servic") ||
+	       task_has_exec_prefix(tsk, "iop@") ||
+	       task_has_exec_prefix(tsk, "PERFD-SERVER") ||
+	       task_has_exec_prefix(tsk, "system_perf_ini");
 }
 
 static inline bool task_is_frequency_controller(struct task_struct *tsk)
@@ -170,7 +205,9 @@ static inline bool task_is_frequency_controller(struct task_struct *tsk)
 
 	get_task_comm(comm, tsk);
 	return !strcmp(comm, "HyPerThread") ||
-	       !strcmp(comm, "argosd");
+	       !strcmp(comm, "argosd") ||
+	       task_has_exec_prefix(tsk, "vendor.samsung.hardware.hyper-service") ||
+	       task_has_exec_prefix(tsk, "argosd");
 }
 
 static inline bool task_controls_frequencies(struct task_struct *tsk)
