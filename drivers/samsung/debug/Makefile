@@ -4,12 +4,13 @@ ccflags-y := -Wformat
 
 # Samsung Debugging Features
 obj-$(CONFIG_SEC_DEBUG_BASE)		+= sec_debug.o
-sec_debug-y				+= sec_debug_base.o sec_dump_sink.o
-sec_debug-y				+= sec_debug_atomic_sleep.o
+sec_debug-y				+= sec_debug_base.o
+sec_debug-$(CONFIG_SEC_DEBUG_ATOMIC_SLEEP) 	+= sec_debug_atomic_sleep.o
+sec_debug-$(CONFIG_SEC_DUMP_SINK)	+= sec_dump_sink.o
 obj-$(CONFIG_SEC_DEBUG_BASE)		+= sec_debug_base_early.o
-obj-$(CONFIG_SEC_DEBUG_BASE)		+= sec_debug_test.o
-obj-$(CONFIG_SEC_DEBUG_BASE)		+= sec_debug_dprm.o
-obj-$(CONFIG_SEC_DEBUG_BASE)		+= sec_debug_dprt.o
+obj-$(CONFIG_SEC_DEBUG_TEST)		+= sec_debug_test.o
+obj-$(CONFIG_SEC_DEBUG_DPRM)		+= sec_debug_dprm.o
+obj-$(CONFIG_SEC_DEBUG_DPRT)		+= sec_debug_dprt.o
 
 obj-$(CONFIG_SEC_DEBUG_BASE_BUILT_IN)		+= sec_debug_base_built.o
 obj-$(CONFIG_SEC_DEBUG_MODE)			+= sec_debug_mode.o

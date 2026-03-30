@@ -12,6 +12,43 @@ config SEC_DEBUG_BASE
 	help
 	  Samsung Debug Base Driver
 
+config SEC_DUMP_SINK
+	bool "Enable dump sink support in Samsung debug core"
+	depends on SEC_DEBUG_BASE
+	default y
+	help
+	  This option enables the dump sink support that is wired into the
+	  Samsung debug core.
+
+config SEC_DEBUG_TEST
+	tristate "Enable Samsung debug test driver"
+	depends on SEC_DEBUG_BASE
+	default n
+	help
+	  This option enables the Samsung debug test driver that exposes fault
+	  injection and debug test hooks.
+
+config SEC_DEBUG_DPRM
+	tristate "Enable Samsung debug DPRM helper"
+	depends on SEC_DEBUG_BASE
+	default n
+	help
+	  This option enables the Samsung debug DPRM helper.
+
+config SEC_DEBUG_DPRT
+	tristate "Enable Samsung debug DPRT helper"
+	depends on SEC_DEBUG_BASE
+	default n
+	help
+	  This option enables the Samsung debug DPRT helper.
+
+config SEC_DEBUG_ATOMIC_SLEEP
+	tristate "Enable Samsung debug atomic sleep helper"
+	depends on SEC_DEBUG_BASE
+	default n
+	help
+	  This option enables the Samsung debug atomic sleep helper.
+
 config SEC_DEBUG_BASE_BUILT_IN
 	bool "Samsung Debug Built-In Support"
 	depends on SEC_DEBUG
@@ -286,13 +323,6 @@ config SEC_DEBUG_QSPIN_OWNER
 	help
 	  This option enables spinlock owner information.
 	  The CPU number of owner is written into lock value.
-
-config SEC_DUMP_SINK
-	tristate "Enable to dump_sink"
-	depends on SEC_DEBUG
-	default n
-	help
-	  This option enables dump sink.
 
 config SEC_DEBUG_LOGBUF_IF
 	tristate "Enable sec debug logbuf interface driver"

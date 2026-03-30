@@ -508,7 +508,14 @@ extern void secdbg_exin_get_extra_info_F(char *ptr);
 extern void secdbg_exin_get_extra_info_M(char *ptr);
 extern void secdbg_exin_get_extra_info_T(char *ptr);
 
+#if IS_ENABLED(CONFIG_SEC_DEBUG_ATOMIC_SLEEP)
 int secdbg_atsl_init(void);
+#else
+static inline int secdbg_atsl_init(void)
+{
+	return 0;
+}
+#endif
 
 #ifndef MODULE
 extern void *secdbg_base_built_get_debug_base(int type);

@@ -136,10 +136,14 @@ static int secdbg_base_built_reboot_handler(struct notifier_block *nb,
 
 	switch (state) {
 	case SYS_RESTART:
+#if IS_ENABLED(CONFIG_SEC_DEBUG_TASK_IN_STATE_INFO)
 		secdbg_base_built_set_task_in_sys_reboot(current);
+#endif
 		break;
 	case SYS_POWER_OFF:
+#if IS_ENABLED(CONFIG_SEC_DEBUG_TASK_IN_STATE_INFO)
 		secdbg_base_built_set_task_in_sys_shutdown(current);
+#endif
 		break;
 	default:
 		break;

@@ -23,7 +23,14 @@
 #include "../../../kernel/sched/sched.h"
 #include "sec_debug_internal.h"
 
+#if IS_ENABLED(CONFIG_SEC_DUMP_SINK)
 extern int sec_dump_sink_init(void);
+#else
+static inline int sec_dump_sink_init(void)
+{
+	return 0;
+}
+#endif
 
 /* TODO: masking ? */
 enum sec_debug_upload_cause_t {
