@@ -20,11 +20,6 @@
 #include "segment.h"
 #include "gc.h"
 #include <trace/events/f2fs.h>
-#ifdef CONFIG_PROC_FSLOG
-#include <linux/fslog.h>
-#else
-#define ST_LOG(fmt, ...)
-#endif
 
 #define SEC_BIGDATA_VERSION	(3)
 

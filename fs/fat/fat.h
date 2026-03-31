@@ -12,11 +12,12 @@
 #include <linux/ratelimit.h>
 #include <linux/msdos_fs.h>
 #include <linux/kobject.h>
+#include <linux/printk.h>
 
 #ifdef CONFIG_FAT_SUPPORT_STLOG
 #include <linux/fslog.h>
 #else
-#define ST_LOG(fmt, ...)
+#define ST_LOG(fmt, ...) no_printk(fmt, ##__VA_ARGS__)
 #endif
 
 /*

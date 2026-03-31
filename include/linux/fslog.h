@@ -7,6 +7,8 @@
 #ifndef _LINUX_FSLOG_H
 #define  _LINUX_FSLOG_H
 
+#include <linux/printk.h>
+
 int fslog_stlog(const char *fmt, ...);
 
 /* deprecated function */
@@ -17,7 +19,7 @@ int fslog_stlog(const char *fmt, ...);
 #ifdef CONFIG_PROC_STLOG
 #define ST_LOG(fmt, ...) fslog_stlog(fmt, ##__VA_ARGS__)
 #else
-#define ST_LOG(fmt, ...)
+#define ST_LOG(fmt, ...) no_printk(fmt, ##__VA_ARGS__)
 #endif /* CONFIG_PROC_STLOG */
 
 #endif /* _FSLOG_H */

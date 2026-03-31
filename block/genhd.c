@@ -27,7 +27,7 @@
 #ifdef CONFIG_BLOCK_SUPPORT_STLOG
 #include <linux/fslog.h>
 #else
-#define ST_LOG(fmt, ...)
+#define ST_LOG(fmt, ...) no_printk(fmt, ##__VA_ARGS__)
 #endif
 
 #include "blk.h"

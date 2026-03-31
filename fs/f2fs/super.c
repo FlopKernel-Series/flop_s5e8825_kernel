@@ -35,11 +35,6 @@
 #include "segment.h"
 #include "xattr.h"
 #include "gc.h"
-#ifdef CONFIG_PROC_FSLOG
-#include <linux/fslog.h>
-#else
-#define ST_LOG(fmt, ...)
-#endif
 
 /* @fs.sec -- 1f886d6941ebe5b547fded7e6bc457c5 -- */
 /* @fs.sec -- 31ec0bc200a96535a74acf850b47ae01 -- */
@@ -4824,4 +4819,3 @@ MODULE_DESCRIPTION("Flash Friendly File System");
 MODULE_LICENSE("GPL");
 MODULE_IMPORT_NS(ANDROID_GKI_VFS_EXPORT_ONLY);
 MODULE_SOFTDEP("pre: crc32");
-

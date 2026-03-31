@@ -51,7 +51,7 @@
 #include <linux/stlog.h>
 #endif
 #else
-#define ST_LOG(fmt, ...)
+#define ST_LOG(fmt, ...) no_printk(fmt, ##__VA_ARGS__)
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
@@ -487,4 +487,3 @@ void __sdfat_dmsg(int level, const char *fmt, ...)
 #endif
 }
 #endif
-
