@@ -706,11 +706,6 @@ static void register_disk(struct device *parent, struct gendisk *disk,
 	struct hd_struct *part;
 	int err;
 
-#ifdef CONFIG_BLOCK_SUPPORT_STLOG
-	int major = disk->major;
-	int first_minor = disk->first_minor;
-#endif
-
 	ddev->parent = parent;
 
 	dev_set_name(ddev, "%s", disk->disk_name);
@@ -751,14 +746,14 @@ static void register_disk(struct device *parent, struct gendisk *disk,
 	/* announce disk after possible partitions are created */
 	dev_set_uevent_suppress(ddev, 0);
 	kobject_uevent(&ddev->kobj, KOBJ_ADD);
-	ST_LOG("<%s> KOBJ_ADD %d:%d", __func__, major, first_minor);
+	ST_LOG("<%s> KOBJ_ADD %d:%d", __func__, disk->major, disk->first_minor);
 
 	/* announce possible partitions */
 	disk_part_iter_init(&piter, disk, 0);
 	while ((part = disk_part_iter_next(&piter))) {
 		kobject_uevent(&part_to_dev(part)->kobj, KOBJ_ADD);
-		ST_LOG("<%s> KOBJ_ADD %d:%d", __func__, major,
-		                        first_minor + part->partno);
+		ST_LOG("<%s> KOBJ_ADD %d:%d", __func__, disk->major,
+		                        disk->first_minor + part->partno);
 	}
 	disk_part_iter_exit(&piter);
 
