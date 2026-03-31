@@ -2,8 +2,10 @@
 
 #if defined(CONFIG_SENSORS_FINGERPRINT_MODULE)
 #if IS_ENABLED(CONFIG_EXYNOS_PM_QOS) || IS_ENABLED(CONFIG_EXYNOS_PM_QOS_MODULE)
+#include <soc/samsung/gpu_cooling.h>
 #include <soc/samsung/exynos_pm_qos.h>
 static struct exynos_pm_qos_request fingerprint_boost_qos;
+static struct exynos_pm_qos_request fingerprint_gpu_boost_qos;
 #endif
 #elif defined(CONFIG_SECURE_OS_BOOSTER_API)
 #include <mach/secos_booster.h>
@@ -104,12 +106,32 @@ int cpu_speedup_enable(struct boosting_config *boosting)
 {
 	int retval = 0;
 
+#if defined(CONFIG_SENSORS_FINGERPRINT_MODULE)
+#if IS_ENABLED(CONFIG_EXYNOS_PM_QOS) || IS_ENABLED(CONFIG_EXYNOS_PM_QOS_MODULE)
+	unsigned int gpu_freq = gpu_dvfs_get_max_freq();
+#endif
+#endif
+
 	pr_info("%s\n", __func__);
 /* Module build & TEEGris */
 #if defined(CONFIG_SENSORS_FINGERPRINT_MODULE)
 #if IS_ENABLED(CONFIG_EXYNOS_PM_QOS) || IS_ENABLED(CONFIG_EXYNOS_PM_QOS_MODULE)
-	exynos_pm_qos_add_request(&fingerprint_boost_qos, PM_QOS_CLUSTER1_FREQ_MIN,
-			PM_QOS_CLUSTER1_FREQ_MAX_DEFAULT_VALUE);
+
+	if (!exynos_pm_qos_request_active(&fingerprint_boost_qos))
+		exynos_pm_qos_add_request(&fingerprint_boost_qos,
+				PM_QOS_CLUSTER1_FREQ_MIN,
+				PM_QOS_CLUSTER1_FREQ_MAX_DEFAULT_VALUE);
+	else
+		exynos_pm_qos_update_request(&fingerprint_boost_qos,
+				PM_QOS_CLUSTER1_FREQ_MAX_DEFAULT_VALUE);
+
+	if (gpu_freq) {
+		if (!exynos_pm_qos_request_active(&fingerprint_gpu_boost_qos))
+			exynos_pm_qos_add_request(&fingerprint_gpu_boost_qos,
+					PM_QOS_GPU_THROUGHPUT_MIN, gpu_freq);
+		else
+			exynos_pm_qos_update_request(&fingerprint_gpu_boost_qos, gpu_freq);
+	}
 #endif
 /* TEEGris */
 #elif defined(CONFIG_TZDEV_BOOST)
@@ -136,7 +158,10 @@ int cpu_speedup_disable(struct boosting_config *boosting)
 /* Module build & TEEGris */
 #if defined(CONFIG_SENSORS_FINGERPRINT_MODULE)
 #if IS_ENABLED(CONFIG_EXYNOS_PM_QOS) || IS_ENABLED(CONFIG_EXYNOS_PM_QOS_MODULE)
-	exynos_pm_qos_remove_request(&fingerprint_boost_qos);
+	if (exynos_pm_qos_request_active(&fingerprint_boost_qos))
+		exynos_pm_qos_remove_request(&fingerprint_boost_qos);
+	if (exynos_pm_qos_request_active(&fingerprint_gpu_boost_qos))
+		exynos_pm_qos_remove_request(&fingerprint_gpu_boost_qos);
 #endif
 /* TEEGris */
 #elif defined(CONFIG_TZDEV_BOOST)
