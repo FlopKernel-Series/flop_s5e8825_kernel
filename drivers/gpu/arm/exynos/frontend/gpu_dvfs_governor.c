@@ -140,11 +140,22 @@ static int gpu_dvfs_governor_default(int utilization)
 
 static int gpu_dvfs_governor_interactive(int utilization)
 {
-	if ((dvfs->step > gpex_clock_get_table_idx(gpex_clock_get_max_clock())) &&
-	    (utilization > dvfs->table[dvfs->step].max_threshold)) {
-		int highspeed_level = gpex_clock_get_table_idx(dvfs->interactive.highspeed_clock);
-		if ((highspeed_level > 0) && (dvfs->step > highspeed_level) &&
-		    (utilization > dvfs->interactive.highspeed_load)) {
+	int max_clock_level = gpex_clock_get_table_idx(gpex_clock_get_max_clock());
+	int min_clock_level = gpex_clock_get_table_idx(gpex_clock_get_min_clock());
+	int highspeed_level = gpex_clock_get_table_idx(dvfs->interactive.highspeed_clock);
+	bool highspeed_active =
+		(highspeed_level >= max_clock_level) &&
+		(highspeed_level <= min_clock_level) &&
+		(dvfs->step >= highspeed_level) &&
+		(utilization > dvfs->interactive.highspeed_load);
+
+	/*
+	 * Keep the GPU at least at the configured hispeed clock while the
+	 * hispeed load condition is met. Otherwise low-frequency table
+	 * thresholds can trap interactive workloads at the floor clock.
+	 */
+	if (highspeed_active) {
+		if (dvfs->step > highspeed_level) {
 			if (dvfs->interactive.delay_count == dvfs->interactive.highspeed_delay) {
 				dvfs->step = highspeed_level;
 				dvfs->interactive.delay_count = 0;
@@ -152,13 +163,21 @@ static int gpu_dvfs_governor_interactive(int utilization)
 				dvfs->interactive.delay_count++;
 			}
 		} else {
-			dvfs->step--;
 			dvfs->interactive.delay_count = 0;
 		}
+
 		if (dvfs->table[dvfs->step].clock > gpex_clock_get_max_clock_limit())
 			dvfs->step = gpex_clock_get_table_idx(gpex_clock_get_max_clock_limit());
 		dvfs->down_requirement = dvfs->table[dvfs->step].down_staycount;
-	} else if ((dvfs->step < gpex_clock_get_table_idx(gpex_clock_get_min_clock())) &&
+	} else if ((dvfs->step > max_clock_level) &&
+		   (utilization > dvfs->table[dvfs->step].max_threshold)) {
+		dvfs->step--;
+		dvfs->interactive.delay_count = 0;
+
+		if (dvfs->table[dvfs->step].clock > gpex_clock_get_max_clock_limit())
+			dvfs->step = gpex_clock_get_table_idx(gpex_clock_get_max_clock_limit());
+		dvfs->down_requirement = dvfs->table[dvfs->step].down_staycount;
+	} else if ((dvfs->step < min_clock_level) &&
 		   (utilization < dvfs->table[dvfs->step].min_threshold)) {
 		dvfs->interactive.delay_count = 0;
 		dvfs->down_requirement--;
