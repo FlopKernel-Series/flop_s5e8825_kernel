@@ -1737,7 +1737,32 @@
 			update_fvp = "true";
 			use_migov = "true";
 			sysbusy = "true";
+			use_get_dev = "true";
+			use_alt_dvfs;
+			polling_ms = <0x00>;
 			phandle = <0xf7>;
+
+			alt_mode {
+				default_mode = <0x00>;
+
+				mode_0 {
+					mode_id = <0x00>;
+					target_load = "35 676000:45 1014000:55 1539000:65 1794000:75 2093000:95";
+					min_sample_time = <0x32>;
+					hold_sample_time = <0x64>;
+					hispeed_load = <0x37>;
+					hispeed_freq = <0x1b5fd0>;
+				};
+
+				mode_1 {
+					mode_id = <0x01>;
+					target_load = "3 2093000:3";
+					min_sample_time = <0x32>;
+					hold_sample_time = <0x64>;
+					hispeed_load = <0x03>;
+					hispeed_freq = <0x1fefc8>;
+				};
+			};
 		};
 
 		devfreq_int@17000020 {
