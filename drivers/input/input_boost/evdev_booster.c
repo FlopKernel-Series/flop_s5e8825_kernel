@@ -301,6 +301,7 @@ int get_device_type(int *device_type, unsigned int *keyId,
 			case KEY_VOLUMEUP:
 			case KEY_VOLUMEDOWN:
 			case KEY_POWER:
+			case KEY_WAKEUP:
 #if IS_ENABLED(CONFIG_SOC_S5E5515) // watch - lower key(back key) Code : 0x244(580)
 			case KEY_APPSELECT:
 #endif
