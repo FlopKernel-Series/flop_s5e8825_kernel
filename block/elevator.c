@@ -730,8 +730,6 @@ static int elevator_switch(struct request_queue *q, struct elevator_type *new_e)
 	return err;
 }
 
-bool task_is_booster(struct task_struct *tsk);
-
 /*
  * Switch this queue to the given IO scheduler.
  */
@@ -739,9 +737,6 @@ static int __elevator_change(struct request_queue *q, const char *name)
 {
 	char elevator_name[ELV_NAME_MAX];
 	struct elevator_type *e;
-
-	if (task_is_booster(current))
-		return 0;
 
 	/* Make sure queue is not in the middle of being removed */
 	if (!blk_queue_registered(q))
@@ -769,6 +764,8 @@ static int __elevator_change(struct request_queue *q, const char *name)
 
 	return elevator_switch(q, e);
 }
+
+bool task_is_booster(struct task_struct *tsk);
 
 ssize_t elv_iosched_store(struct request_queue *q, const char *name,
 			  size_t count)
