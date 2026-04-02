@@ -742,10 +742,6 @@ static ssize_t store_##file_name					\
 	unsigned long val;						\
 	int ret;							\
 													\
-	if (task_is_booster(current) &&					\
- 		&policy->object == &policy->min)			\
- 		return count;						\
- 									\
  	if (task_is_booster(current) &&					\
  		&policy->object == &policy->max)			\
  		return count;						\
