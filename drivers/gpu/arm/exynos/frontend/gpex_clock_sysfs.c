@@ -33,6 +33,11 @@ static struct _clock_info *clk_info;
 static int gpu_unlock = 0;
 static int gpu_clklck = 1;
 
+static bool gpu_clock_lock_blocks_current(void)
+{
+	return gpu_clklck && task_controls_frequencies(current);
+}
+
 /*************************************
  * sysfs node functions
  *************************************/
@@ -57,6 +62,9 @@ GPEX_STATIC ssize_t set_clock(const char *buf, size_t count)
 {
 	unsigned int clk = 0;
 	int ret;
+
+	if (gpu_clock_lock_blocks_current())
+		return count;
 
 	ret = kstrtoint(buf, 0, &clk);
 	if (ret) {
@@ -150,7 +158,7 @@ GPEX_STATIC ssize_t set_max_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (task_is_booster(current))
+	if (gpu_clock_lock_blocks_current())
 		return count;
 
 	if (sysfs_streq("0", buf)) {
@@ -225,6 +233,10 @@ GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 	if (!is_superfloppy_overclock_mode()) {
 		return -EINVAL;
 	}
+
+	if (gpu_clock_lock_blocks_current())
+		return count;
+
 	if (sysfs_streq("0", buf) || sysfs_streq("1", buf)) {
 		gpu_unlock = sysfs_streq("1", buf);
 		handle_lock_dvfs(gpu_unlock ? GPU_FREQ_KHZ_MAX : GPU_FREQ_STOCK_KHZ_MAX);
@@ -302,7 +314,7 @@ GPEX_STATIC ssize_t set_min_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (gpu_clklck && task_is_booster(current))
+	if (gpu_clock_lock_blocks_current())
 		return count;
 
 	if (sysfs_streq("0", buf)) {
@@ -402,7 +414,7 @@ GPEX_STATIC ssize_t set_mm_min_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (!gpu_clklck) {
+	if (!gpu_clock_lock_blocks_current()) {
 		if (sysfs_streq("0", buf)) {
 			gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, MM_LOCK, 0);
 		} else {
