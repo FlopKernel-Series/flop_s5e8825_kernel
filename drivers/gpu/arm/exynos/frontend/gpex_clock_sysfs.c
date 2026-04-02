@@ -31,11 +31,16 @@ static struct _clock_info *clk_info;
 #include <linux/workarounds.h>
 #include <linux/binfmts.h>
 static int gpu_unlock = 0;
-static int gpu_clklck = 1;
+static int gpu_clklck = 0;
+
+static bool gpu_max_freq_write_blocked(void)
+{
+	return task_controls_frequencies(current);
+}
 
 static bool gpu_clock_lock_blocks_current(void)
 {
-	return gpu_clklck && task_controls_frequencies(current);
+	return gpu_clklck && gpu_max_freq_write_blocked();
 }
 
 /*************************************
@@ -63,7 +68,7 @@ GPEX_STATIC ssize_t set_clock(const char *buf, size_t count)
 	unsigned int clk = 0;
 	int ret;
 
-	if (gpu_clock_lock_blocks_current())
+	if (gpu_max_freq_write_blocked())
 		return count;
 
 	ret = kstrtoint(buf, 0, &clk);
@@ -158,7 +163,7 @@ GPEX_STATIC ssize_t set_max_lock_dvfs(const char *buf, size_t count)
 {
 	int ret, clock = 0;
 
-	if (gpu_clock_lock_blocks_current())
+	if (gpu_max_freq_write_blocked())
 		return count;
 
 	if (sysfs_streq("0", buf)) {
@@ -234,7 +239,7 @@ GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 		return -EINVAL;
 	}
 
-	if (gpu_clock_lock_blocks_current())
+	if (gpu_max_freq_write_blocked())
 		return count;
 
 	if (sysfs_streq("0", buf) || sysfs_streq("1", buf)) {
