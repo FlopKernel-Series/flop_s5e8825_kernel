@@ -75,6 +75,8 @@ extern int ecs_request_unregister(char *name);
 extern int ecs_request(char *name, const struct cpumask *mask);
 extern const struct cpumask *ecs_cpus_allowed(struct task_struct *p);
 extern const struct cpumask *cpus_binding_mask(struct task_struct *p);
+extern int ems_select_task_rq_fair(struct task_struct *p, int prev_cpu,
+				   int sd_flag, int wake_flag);
 
 extern void et_init_dsu_table(unsigned long *freq_table, unsigned int *volt_table, int size);
 extern void et_register_dsu_constraint(int cpu, void *p, int size);
@@ -124,11 +126,6 @@ static inline void halo_unregister_periodic_irq(int irq_num) { };
 static inline void register_mhdvfs_dsufreq_callback(void (*callback)(int ratio)) { };
 static inline void register_mhdvfs_miffreq_callback(void (*callback)(int ratio)) { };
 static inline void register_mhdvfs_cpufreq_callback(void (*callback)(int *ratio)) { };
-#endif
-
-#ifdef CONFIG_SCHED_CASS
-extern int cass_select_task_rq_fair(struct task_struct *p, int prev_cpu,
-				    int sd_flag, int wake_flags);
 #endif
 
 #endif	/* ENDIF _LINUX_EMS_H */

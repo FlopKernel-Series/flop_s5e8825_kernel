@@ -1320,9 +1320,12 @@ int __ems_select_task_rq_fair(struct task_struct *p, int prev_cpu,
 
 	/*
 	 * EMS still owns policy constraints and sysbusy overrides. Leave the
-	 * general runqueue placement decision to CASS.
+	 * general runqueue placement decision to CASS for normal scheduler
+	 * wake/fork/exec paths, but keep EMS placement for internal migrations
+	 * such as ontime.
 	 */
-	goto out;
+	if (sd_flag || wake_flag)
+		goto out;
 #endif
 
 	/* Find cpu candidates suitable for task operation */
