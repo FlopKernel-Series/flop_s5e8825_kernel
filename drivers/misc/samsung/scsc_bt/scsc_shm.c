@@ -31,6 +31,7 @@
 #include <scsc/scsc_mifram.h>
 #include <scsc/api/bsmhcp.h>
 #include <scsc/scsc_logring.h>
+#include <linux/workarounds.h>
 
 #ifdef CONFIG_SCSC_LOG_COLLECTION
 #include <scsc/scsc_log_collector.h>
@@ -276,7 +277,7 @@ static ssize_t scsc_bt_shm_h4_hci_cmd_write(const unsigned char *data, size_t co
 		memcpy(td->data, data, count);
 		td->length = (u16)count;
 
-		if (op_code == HCI_ENH_SETUP_ESCO_CONNECTION) {
+		if (is_aosp_mode_fast() && op_code == HCI_ENH_SETUP_ESCO_CONNECTION) {
 			// input_transport_unit_size
 			td->data[55] = 16;
 			// output_transport_unit_size
