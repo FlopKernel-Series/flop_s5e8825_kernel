@@ -61,7 +61,7 @@ static void remove_uid_from_arr(uid_t uid)
     }
 }
 
-static void init_default_profiles(void)
+static void __init init_default_profiles(void)
 {
     kernel_cap_t full_cap = CAP_FULL_SET;
 
@@ -351,6 +351,10 @@ bool ksu_uid_should_umount(uid_t uid)
         // we should not umount on manager!
         return false;
     }
+    if (unlikely(uid == WEBVIEW_ZYGOTE_UID)) {
+        // we should not umount for webview zygote
+        return false;
+    }
 #ifdef CONFIG_KSU_DISABLE_POLICY
     return !__ksu_is_allow_uid(uid);
 #else
@@ -560,7 +564,7 @@ void ksu_prune_allowlist(bool (*is_uid_valid)(uid_t, char *, void *), void *data
     }
 }
 
-void ksu_allowlist_init(void)
+void __init ksu_allowlist_init(void)
 {
     int i;
 
@@ -575,7 +579,7 @@ void ksu_allowlist_init(void)
     init_default_profiles();
 }
 
-void ksu_allowlist_exit(void)
+void __exit ksu_allowlist_exit(void)
 {
     struct perm_data *np = NULL;
     struct perm_data *n = NULL;

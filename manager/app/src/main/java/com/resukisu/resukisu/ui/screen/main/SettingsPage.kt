@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,6 +32,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.automirrored.rounded.Article
+import androidx.compose.material.icons.filled.Adb
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteForever
@@ -39,12 +42,10 @@ import androidx.compose.material.icons.filled.FolderOff
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.rounded.ElectricalServices
 import androidx.compose.material.icons.rounded.FolderDelete
 import androidx.compose.material.icons.rounded.RemoveCircle
@@ -58,13 +59,13 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -94,6 +95,7 @@ import com.resukisu.resukisu.ksuApp
 import com.resukisu.resukisu.magica.BootCompletedReceiver
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.DialogHandle
+import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
 import com.resukisu.resukisu.ui.component.ksuIsValid
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
@@ -112,9 +114,9 @@ import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.execKsud
 import com.resukisu.resukisu.ui.util.getBugreportFile
+import com.resukisu.resukisu.ui.util.getFeaturePersistValue
 import com.resukisu.resukisu.ui.util.getFeatureStatus
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
+import com.topjohnwu.superuser.ShellUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -136,14 +138,13 @@ fun SettingsPage(bottomPadding: Dp) {
     val snackBarHost = LocalSnackbarHost.current
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    var isSuLogEnabled by remember { mutableStateOf(Natives.isSuLogEnabled()) }
 
     Scaffold(
         topBar = {
             TopBar(scrollBehavior = scrollBehavior)
         },
         snackbarHost = {
-            SnackbarHost(
+            SwipeableSnackbarHost(
                 modifier = Modifier.padding(bottom = bottomPadding),
                 hostState = snackBarHost
             )
@@ -216,28 +217,23 @@ fun SettingsPage(bottomPadding: Dp) {
                             }
 
                             item {
-                                var suCompatMode by rememberSaveable {
-                                    mutableIntStateOf(
-                                        run {
-                                            val currentEnabled = Natives.isSuEnabled()
-                                            val savedPersist = prefs.getInt("su_compat_mode", 0)
-                                            if (savedPersist == 2) 2 else if (!currentEnabled) 1 else 0
-                                        }
-                                    )
+                                val currentSuEnabled = Natives.isSuEnabled()
+                                var suCompatMode by rememberSaveable { mutableIntStateOf(if (!currentSuEnabled) 1 else 0) }
+                                val suPersistValue by produceState(initialValue = null as Long?) {
+                                    value = getFeaturePersistValue("su_compat")
                                 }
-                                var savedSuStatus by rememberSaveable { mutableStateOf("") }
-                                val suStatus by produceState(initialValue = savedSuStatus) {
-                                    value = withContext(Dispatchers.IO) {
-                                        savedSuStatus = getFeatureStatus("su_compat")
-                                        return@withContext savedSuStatus
+                                LaunchedEffect(suPersistValue) {
+                                    suPersistValue?.let { v ->
+                                        suCompatMode =
+                                            if (v == 0L) 2 else if (!currentSuEnabled) 1 else 0
                                     }
+                                }
+
+                                val suStatus by produceState(initialValue = "") {
+                                    value = getFeatureStatus("su_compat")
                                 }
                                 val suSummary = when (suStatus) {
-                                    "unsupported" -> {
-                                        suCompatMode = 0 // fix wrongly display
-                                        stringResource(id = R.string.feature_status_unsupported_summary)
-                                    }
-
+                                    "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
                                     "managed" -> stringResource(id = R.string.feature_status_managed_summary)
                                     else -> stringResource(id = R.string.settings_sucompat_summary)
                                 }
@@ -344,68 +340,67 @@ fun SettingsPage(bottomPadding: Dp) {
                                 )
                             }
 
-                            item {
-                                var suLogMode by rememberSaveable {
-                                    mutableIntStateOf(
-                                        run {
-                                            val currentEnabled = Natives.isSuLogEnabled()
-                                            val savedPersist = prefs.getInt("sulog_mode", 0)
-                                            if (savedPersist == 2) 2 else if (!currentEnabled) 1 else 0
-                                        }
-                                    )
-                                }
-                                var savedSuLogStatus by rememberSaveable { mutableStateOf("") }
-                                val suLogStatus by produceState(initialValue = savedSuLogStatus) {
-                                    value = withContext(Dispatchers.IO) {
-                                        savedSuLogStatus = getFeatureStatus("sulog")
-                                        return@withContext savedSuLogStatus
-                                    }
-                                }
-                                val suLogSummary = when (suLogStatus) {
-                                    "unsupported" -> {
-                                        isSuLogEnabled =
-                                            true // some old kernel support sulog, we need allow show sulog in there
-                                        suLogMode = 0 // fix wrongly display
-                                        stringResource(id = R.string.feature_status_unsupported_summary)
-                                    }
+                            item(
+                                visible = Build.VERSION.SDK_INT > Build.VERSION_CODES.Q
+                            ) {
+                                var isAdbRootEnabled by remember { mutableStateOf(false) }
 
+                                var savedAdbRootStatus by rememberSaveable { mutableStateOf("") }
+                                val adbRootStatus by produceState(initialValue = savedAdbRootStatus) {
+                                    value = withContext(Dispatchers.IO) {
+                                        savedAdbRootStatus = getFeatureStatus("adb_root")
+                                        isAdbRootEnabled = getFeaturePersistValue("adb_root") == 1L
+                                        return@withContext savedAdbRootStatus
+                                    }
+                                }
+                                val adbRootSummary = when (adbRootStatus) {
+                                    "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
+                                    "managed" -> stringResource(id = R.string.feature_status_managed_summary)
+                                    else -> stringResource(id = R.string.settings_adb_root_summary)
+                                }
+
+                                SettingsSwitchWidget(
+                                    icon = Icons.Filled.Adb,
+                                    title = stringResource(id = R.string.settings_adb_root),
+                                    description = adbRootSummary,
+                                    checked = isAdbRootEnabled,
+                                    enabled = adbRootStatus == "supported",
+                                    onCheckedChange = { checked ->
+                                        if (execKsud("feature set adb_root ${if (checked) 1 else 0}", true)) {
+                                            ShellUtils.fastCmd("setprop ctl.restart adbd")
+                                            execKsud("feature save", true)
+                                        }
+                                        isAdbRootEnabled = checked
+                                    }
+                                )
+                            }
+
+
+                            item {
+                                var isSuLogEnabled by remember { mutableStateOf(Natives.isSuLogEnabled()) }
+
+                                var savedSulogStatus by rememberSaveable { mutableStateOf("") }
+                                val sulogStatus by produceState(initialValue = savedSulogStatus) {
+                                    value = withContext(Dispatchers.IO) {
+                                        savedSulogStatus = getFeatureStatus("sulog")
+                                        return@withContext savedSulogStatus
+                                    }
+                                }
+                                val sulogSummary = when (sulogStatus) {
+                                    "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
                                     "managed" -> stringResource(id = R.string.feature_status_managed_summary)
                                     else -> stringResource(id = R.string.settings_sulog_summary)
                                 }
-                                SettingsDropdownWidget(
-                                    icon = Icons.Default.RemoveRedEye,
+                                SettingsSwitchWidget(
+                                    icon = Icons.AutoMirrored.Rounded.Article,
                                     title = stringResource(id = R.string.settings_sulog),
-                                    description = suLogSummary,
-                                    items = modeItems,
-                                    enabled = suLogStatus == "supported",
-                                    selectedIndex = suLogMode,
-                                    onSelectedIndexChange = { index ->
-                                        when (index) {
-                                            // Default: enable and save to persist
-                                            0 -> if (Natives.setSuLogEnabled(true)) {
-                                                execKsud("feature save", true)
-                                                prefs.edit { putInt("sulog_mode", 0) }
-                                                suLogMode = 0
-                                                isSuLogEnabled = true
-                                            }
-
-                                            // Temporarily disable: save enabled state first, then disable
-                                            1 -> if (Natives.setSuLogEnabled(true)) {
-                                                execKsud("feature save", true)
-                                                if (Natives.setSuLogEnabled(false)) {
-                                                    prefs.edit { putInt("sulog_mode", 0) }
-                                                    suLogMode = 1
-                                                    isSuLogEnabled = false
-                                                }
-                                            }
-
-                                            // Permanently disable: disable and save
-                                            2 -> if (Natives.setSuLogEnabled(false)) {
-                                                execKsud("feature save", true)
-                                                prefs.edit { putInt("sulog_mode", 2) }
-                                                suLogMode = 2
-                                                isSuLogEnabled = false
-                                            }
+                                    description = sulogSummary,
+                                    enabled = sulogStatus == "supported",
+                                    checked = isSuLogEnabled,
+                                    onCheckedChange = { checked ->
+                                        if (Natives.setSuLogEnabled(checked)) {
+                                            execKsud("feature save", true)
+                                            isSuLogEnabled = checked
                                         }
                                     }
                                 )
@@ -481,20 +476,6 @@ fun SettingsPage(bottomPadding: Dp) {
                                     showBottomsheet = true
                                 }
                             ) {}
-                        }
-
-                        if (ksuIsValid() && isSuLogEnabled) {
-                            item {
-                                // 查看使用日志
-                                SettingsJumpPageWidget(
-                                    icon = Icons.Filled.Visibility,
-                                    title = stringResource(R.string.log_viewer_view_logs),
-                                    description = stringResource(R.string.log_viewer_view_logs_summary),
-                                    onClick = {
-                                        navigator.push(Route.LogViewer)
-                                    }
-                                )
-                            }
                         }
 
                         if (ksuIsValid()) {
@@ -848,13 +829,6 @@ fun rememberUninstallDialog(onSelected: (UninstallType) -> Unit): DialogHandle {
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
-    if (ThemeConfig.backgroundImageLoaded) HazeStyle(
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-            alpha = 0.8f
-        ),
-        tint = HazeTint(Color.Transparent)
-    ) else null
-
     LargeFlexibleTopAppBar(
         modifier = Modifier.haze(
             scrollBehavior?.state?.collapsedFraction ?: 1f

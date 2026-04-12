@@ -27,6 +27,7 @@
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 #include "compat/kernel_compat.h"
+#include "arch.h"
 #include "policy/allowlist.h"
 #include "policy/feature.h"
 #include "klog.h" // IWYU pragma: keep
@@ -35,9 +36,10 @@
 #include "policy/app_profile.h"
 #ifdef KSU_TP_HOOK
 #include "hook/syscall_hook.h"
+#else
+#include "feature/adb_root.h"
 #endif
-
-#include "sulog.h"
+#include "sulog/event.h"
 
 #define SU_PATH "/system/bin/su"
 #define SH_PATH "/system/bin/sh"
@@ -125,6 +127,8 @@ int ksu_handle_execve_sucompat_tp_internal(const char __user **filename_user, in
 {
     const char su[] = SU_PATH;
     const char __user *fn;
+    const char __user *const __user *argv_user = (const char __user *const __user *)PT_REGS_PARM2(regs);
+    struct ksu_sulog_pending_event *pending_sucompat = NULL;
     char path[sizeof(su) + 1];
     long ret;
     unsigned long addr;
@@ -149,23 +153,24 @@ int ksu_handle_execve_sucompat_tp_internal(const char __user **filename_user, in
     if (likely(memcmp(path, su, sizeof(su))))
         goto do_orig_execve;
 
-    ksu_sulog_report_syscall(ksu_get_uid_t(current_uid()), NULL, "execve", su_path);
-    ksu_sulog_report_su_attempt(ksu_get_uid_t(current_uid()), NULL, su_path, true);
-
     pr_info("sys_execve su found\n");
+    pending_sucompat = ksu_sulog_capture_sucompat_tracepoint(*filename_user, argv_user, GFP_KERNEL);
     *filename_user = ksud_user_path();
 
     ret = escape_with_root_profile();
     if (ret) {
         pr_err("escape_with_root_profile failed: %ld\n", ret);
+        ksu_sulog_emit_pending(pending_sucompat, ret, GFP_KERNEL);
         goto do_orig_execve;
     }
 
     ret = ksu_syscall_table[orig_nr](regs);
     if (ret < 0) {
         pr_err("failed to execve ksud as su: %ld, fallback to sh\n", ret);
+        ksu_sulog_emit_pending(pending_sucompat, ret, GFP_KERNEL);
         *filename_user = sh_user_path();
     } else {
+        ksu_sulog_emit_pending(pending_sucompat, ret, GFP_KERNEL);
         return ret;
     }
 
@@ -174,11 +179,14 @@ do_orig_execve:
 }
 #endif
 
+#if defined(CONFIG_KSU_SUSFS) || defined(CONFIG_KSU_MANUAL_HOOK)
+
 // This is only used when we are in manual hook/susfs inline hook
 // We can't remove __never_use params, because it were using by the fucking susfs
-int ksu_handle_execveat_sucompat(int *fd, const char *filename, void *__never_use_argv, void *__never_use_envp,
+int ksu_handle_execveat_sucompat(int *fd, const char *filename, struct user_arg_ptr *argv, void *__never_use_envp,
                                  int *__never_use_flags)
 {
+    struct ksu_sulog_pending_event *pending_sucompat = NULL;
     struct path kpath;
     bool is_allowed = ksu_is_allow_uid_for_current(ksu_get_uid_t(current_uid()));
 
@@ -192,28 +200,26 @@ int ksu_handle_execveat_sucompat(int *fd, const char *filename, void *__never_us
     if (likely(memcmp(filename, su_path, sizeof(su_path))))
         return 0;
 
-    ksu_sulog_report_syscall(ksu_get_uid_t(current_uid()), NULL, "execve", su_path);
-    ksu_sulog_report_su_attempt(ksu_get_uid_t(current_uid()), NULL, su_path, is_allowed);
-
     pr_info("do_execveat_common su found\n");
 
     escape_with_root_profile();
+
+    pending_sucompat = ksu_sulog_capture_sucompat_manual(filename, *argv, GFP_KERNEL);
 
     // We are only check ksud exists
     // In manual hook, we can't try exec ksud, and detect exec success or not
     if (kern_path(KSUD_PATH, LOOKUP_FOLLOW, &kpath)) {
         pr_info("sucompat: /data/adb/ksud not found, fallback to /system/bin/sh");
         memcpy((void *)filename, sh_path, sizeof(sh_path));
-        return 0;
+        goto out;
     }
 
     path_put(&kpath);
     memcpy((void *)filename, ksud_path, sizeof(ksud_path));
-
+out:
+    ksu_sulog_emit_pending(pending_sucompat, 0, GFP_KERNEL);
     return 0;
 }
-
-#if defined(CONFIG_KSU_SUSFS) || defined(CONFIG_KSU_MANUAL_HOOK)
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0) || defined(KSU_HAS_MODERN_STATIC_KEY_INTERFACE)
 extern struct static_key_true ksud_execve_key;
@@ -221,26 +227,32 @@ extern struct static_key_true ksud_execve_key;
 extern bool ksud_execve_key;
 #endif
 
-static inline void ksu_handle_execveat_init(const char *name)
+static inline void ksu_handle_execveat_init(const char *filename, void *envp)
 {
     if (current->pid != 1 && is_init(current_cred())) {
-        if (unlikely(strcmp(name, KSUD_PATH) == 0)) {
+        if (unlikely(strcmp(filename, KSUD_PATH) == 0)) {
             pr_info("hook_manager: escape to root for init executing ksud: %d\n", current->pid);
             escape_to_root_for_init();
         }
 #ifdef CONFIG_KSU_SUSFS
-        else if (likely(strstr(name, "/app_process") == NULL && strstr(name, "/adbd") == NULL) &&
+        else if (likely(strstr(filename, "/app_process") == NULL && strstr(filename, "/adbd") == NULL) &&
                  !susfs_is_current_proc_umounted()) {
-            pr_info("susfs: mark no sucompat checks for pid: '%d', exec: '%s'\n", current->pid, name);
+            pr_info("susfs: mark no sucompat checks for pid: '%d', exec: '%s'\n", current->pid, filename);
             susfs_set_current_proc_umounted();
         }
 #endif
+        int ret = ksu_adb_root_handle_execve_manual(filename, (struct user_arg_ptr *)envp);
+        if (ret) {
+            pr_err("adb root failed: %d\n", (int)ret);
+        }
     }
 }
 
 int ksu_handle_execve(int *fd, const char *filename, void *argv, void *envp, int *flags)
 {
-    ksu_handle_execveat_init(filename);
+    struct ksu_sulog_pending_event *pending_root_execve = NULL;
+
+    ksu_handle_execveat_init(filename, envp);
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0) || defined(KSU_HAS_MODERN_STATIC_KEY_INTERFACE)
     if (static_branch_unlikely(&ksud_execve_key)) {
@@ -252,7 +264,20 @@ int ksu_handle_execve(int *fd, const char *filename, void *argv, void *envp, int
     }
 #endif
 
-    return ksu_handle_execveat_sucompat(fd, filename, argv, envp, flags);
+    // Yep, we write check in there maybe cause susfs can't record sulog
+    // But i don't want care about it, susfs even revert that in their's patch file
+    // susfs, go to hell!
+    if (ksu_get_uid_t(current_uid()) == 0) {
+        pending_root_execve =
+            ksu_sulog_capture_root_execve_manual(filename, *((struct user_arg_ptr *)argv), GFP_KERNEL);
+    }
+
+    int ret = ksu_handle_execveat_sucompat(fd, filename, argv, envp, flags);
+
+    // record sulog!
+    ksu_sulog_emit_pending(pending_root_execve, ret, GFP_KERNEL);
+
+    return ret;
 }
 
 // old hook, link to ksu_handle_execve
@@ -282,7 +307,6 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
     ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
 
     if (unlikely(!memcmp(path, su_path, sizeof(su_path)))) {
-        ksu_sulog_report_syscall(ksu_get_uid_t(current_uid()), NULL, "faccessat", path);
         pr_info("faccessat su->sh!\n");
         *filename_user = sh_user_path();
     }
@@ -308,7 +332,6 @@ int ksu_handle_stat(int *dfd, struct filename **filename, int *flags)
         return 0;
     }
 
-    ksu_sulog_report_syscall(ksu_get_uid_t(current_uid()), NULL, "newfstatat", (*filename)->name);
     pr_info("ksu_handle_stat: su->sh!\n");
     memcpy((void *)((*filename)->name), sh_path, sizeof(sh_path));
     return 0;
@@ -332,7 +355,6 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
     ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
 
     if (unlikely(!memcmp(path, su_path, sizeof(su_path)))) {
-        ksu_sulog_report_syscall(ksu_get_uid_t(current_uid()), NULL, "newfstatat", path);
         pr_info("ksu_handle_stat: su->sh!\n");
         *filename_user = sh_user_path();
     }
@@ -348,14 +370,14 @@ int __maybe_unused ksu_handle_devpts(struct inode *inode)
 }
 
 // sucompat: permitted process can execute 'su' to gain root access.
-void ksu_sucompat_init()
+void __init ksu_sucompat_init()
 {
     if (ksu_register_feature_handler(&su_compat_handler)) {
         pr_err("Failed to register su_compat feature handler\n");
     }
 }
 
-void ksu_sucompat_exit()
+void __exit ksu_sucompat_exit()
 {
     ksu_unregister_feature_handler(KSU_FEATURE_SU_COMPAT);
 }

@@ -7,18 +7,15 @@
 #include <linux/pid.h>
 #include <linux/slab.h>
 #include <linux/syscalls.h>
-#ifdef KSU_TP_HOOK
-#include <linux/task_work.h>
-#endif
 #include <linux/uaccess.h>
 #include <linux/version.h>
+
 #ifdef CONFIG_KSU_SUSFS
 #include <linux/namei.h>
 #include <linux/susfs.h>
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 #include "compat/kernel_compat.h"
-#include "feature/sulog.h"
 #include "uapi/supercall.h"
 #include "supercall/internal.h"
 #include "arch.h"
@@ -77,38 +74,18 @@ int ksu_install_fd(void)
     // Install fd
     fd_install(fd, filp);
 
-    ksu_sulog_report_permission_check(ksu_get_uid_t(current_uid()), current->comm, fd >= 0);
-
     pr_info("ksu fd installed: %d for pid %d\n", fd, current->pid);
 
     return fd;
 }
 
-#ifdef KSU_TP_HOOK
-// I think only when Tracepoint hook are call ksu_handle_sys_reboot when atomic context
-// skip task work create because it is unnessary
-struct ksu_install_fd_tw {
-    struct callback_head cb;
-    int __user *outp;
-};
-
-static void ksu_install_fd_tw_func(struct callback_head *cb)
-{
-    struct ksu_install_fd_tw *tw = container_of(cb, struct ksu_install_fd_tw, cb);
-
-    ksu_install_fd_to_user(tw->outp);
-
-    kfree(tw);
-}
+#ifdef CONFIG_KSU_TOOLKIT_SUPPORT
+extern int ksu_try_handle_toolkit_cmd(int magic2, unsigned int cmd, void __user **arg);
 #endif
 
 // downstream: make sure to pass arg as reference, this can allow us to extend things.
 int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg)
 {
-#ifdef KSU_TP_HOOK
-    struct ksu_install_fd_tw *tw;
-#endif
-
     if (magic1 != KSU_INSTALL_MAGIC1)
         return -EINVAL;
 
@@ -118,30 +95,29 @@ int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user 
 
     // Check if this is a request to install KSU fd
     if (magic2 == KSU_INSTALL_MAGIC2) {
-#ifdef KSU_TP_HOOK
-        tw = kzalloc(sizeof(*tw), GFP_ATOMIC);
-        if (!tw)
-            return 0;
-
-        tw->outp = (int __user *)*arg;
-        tw->cb.func = ksu_install_fd_tw_func;
-
-        if (task_work_add(current, &tw->cb, TWA_RESUME)) {
-            kfree(tw);
-            pr_warn("install fd add task_work failed\n");
-        }
-#else
         ksu_install_fd_to_user((int __user *)*arg);
-#endif
-
         return 0;
     }
 
     // extensions
 
+#if !defined(CONFIG_KSU_TOOLKIT_SUPPORT) && !defined(CONFIG_KSU_SUSFS)
+    return 0;
+#endif
+
+    // other sys_reboot extensions are fully require uid 0,
+    // so let's check it before
+    if (ksu_get_uid_t(current_uid()) != 0)
+        return 0;
+
+#ifdef CONFIG_KSU_TOOLKIT_SUPPORT
+    if (ksu_try_handle_toolkit_cmd(magic2, cmd, arg))
+        return 0;
+#endif
+
 #ifdef CONFIG_KSU_SUSFS
     // If magic2 is susfs and current process is root
-    if (magic2 == SUSFS_MAGIC && ksu_get_uid_t(current_uid()) == 0) {
+    if (magic2 == SUSFS_MAGIC) {
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
         if (cmd == CMD_SUSFS_ADD_SUS_PATH) {
             susfs_add_sus_path(arg);
@@ -244,7 +220,7 @@ static struct kprobe reboot_kp = {
 };
 #endif
 
-void ksu_supercalls_init(void)
+void __init ksu_supercalls_init(void)
 {
     int rc;
 
@@ -260,7 +236,7 @@ void ksu_supercalls_init(void)
 #endif
 }
 
-void ksu_supercalls_exit(void)
+void __exit ksu_supercalls_exit(void)
 {
 #ifdef KSU_TP_HOOK
     unregister_kprobe(&reboot_kp);

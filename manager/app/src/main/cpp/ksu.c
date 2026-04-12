@@ -213,10 +213,6 @@ bool is_kernel_umount_enabled() {
     return value != 0;
 }
 
-bool set_sulog_enabled(bool enabled) {
-    return set_feature(KSU_FEATURE_SULOG, enabled ? 1 : 0);
-}
-
 bool is_sulog_enabled() {
     uint64_t value = 0;
     bool supported = false;
@@ -227,6 +223,10 @@ bool is_sulog_enabled() {
         return false;
     }
     return value != 0;
+}
+
+bool set_sulog_enabled(bool enabled) {
+    return set_feature(KSU_FEATURE_SULOG, enabled ? 1 : 0);
 }
 
 void get_full_version(char* buff) {

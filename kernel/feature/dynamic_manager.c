@@ -72,7 +72,7 @@ int ksu_handle_dynamic_manager(struct ksu_dynamic_manager_cmd *cmd)
         }
 
         if (dynamic_manager.is_set) {
-            ksu_unregister_manager_by_signature_index(DYNAMIC_MANAGER_SIGNATURE_INDEX_MAGIC);
+            ksu_unregister_manager_by_signature_index(KSU_SIGNATURE_INDEX_DYNAMIC_MANAGER);
         }
 
         dynamic_manager.size = cmd->size;
@@ -100,7 +100,7 @@ int ksu_handle_dynamic_manager(struct ksu_dynamic_manager_cmd *cmd)
     case DYNAMIC_MANAGER_OP_WIPE:
         dynamic_manager.is_set = 0;
         ret = 0;
-        ksu_unregister_manager_by_signature_index(DYNAMIC_MANAGER_SIGNATURE_INDEX_MAGIC);
+        ksu_unregister_manager_by_signature_index(KSU_SIGNATURE_INDEX_DYNAMIC_MANAGER);
         pr_info("dynamic manager kernel settings reseted");
         break;
 
@@ -110,14 +110,4 @@ int ksu_handle_dynamic_manager(struct ksu_dynamic_manager_cmd *cmd)
     }
 
     return ret;
-}
-
-void ksu_dynamic_manager_init(void)
-{
-    // do nothing
-}
-
-void ksu_dynamic_manager_exit(void)
-{
-    // do nothing
 }

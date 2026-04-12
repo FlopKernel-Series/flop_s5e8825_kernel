@@ -46,6 +46,7 @@
     <string name="reboot_to_apply">Reboot agar berfungsi</string>
     <string name="module_magisk_conflict">Konflik dengan Magisk, fungsi modul ditiadakan!</string>
     <string name="home_learn_kernelsu">Pelajari KernelSU</string>
+    <string name="home_learn_kernelsu_url">https://kernelsu.org/id_ID/guide/what-is-kernelsu.html</string>
     <string name="home_click_to_learn_kernelsu">Pelajari cara instal KernelSU dan menggunakan modul</string>
     <string name="home_support_title">Dukung Kami</string>
     <string name="home_support_content">KernelSU akan selalu menjadi aplikasi gratis dan terbuka. Anda dapat memberikan donasi sebagai bentuk dukungan.</string>
@@ -421,6 +422,8 @@
     <string name="susfs_hide_mounts_current_setting">Pengaturan saat ini: %s</string>
     <string name="susfs_hide_mounts_setting_all">Sembunyikan untuk semua proses</string>
     <string name="susfs_hide_mounts_setting_non_ksu">Sembunyikan hanya untuk proses non-KSU</string>
+    <string name="kernel_simple_kernel">Mode Ringkas Versi Kernel</string>
+    <string name="kernel_simple_kernel_summary">Aktifkan atau nonaktifkan mode bersih yang ditampilkan oleh versi kernel SukiSU</string>
     <string name="susfs_android_data_path_set">Jalur Data Android telah diatur ke: %s</string>
     <string name="susfs_sdcard_path_set">Jalur SD card telah diatur ke: %s</string>
     <string name="susfs_path_setup_warning">Penyiapan jalur mungkin tidak sepenuhnya berhasil, tetapi jalur SUS akan terus ditambahkan</string>
@@ -572,9 +575,6 @@ Diaktifkan: Aktifkan pemalsuan sus tcontext dari \'su\' dengan \'u:r:priv_app:s0
     <string name="susfs_reset_sus_maps_message">Tindakan ini akan menghapus semua peta SUS yang telah dikonfigurasi. Tindakan ini tidak dapat dibatalkan.</string>
     <string name="sus_maps_section">Penyembunyian Peta Memori</string>
     <string name="sus_maps_description_title">Sembunyikan berkas nyata yang di-mmapped dari berbagai peta di /proc/self/</string>
-    <string name="log_viewer_search">Cari</string>
-    <string name="log_viewer_clear_logs">Bersihkan Log</string>
-    <string name="log_viewer_clear_logs_confirm">Apakah Anda yakin ingin mengosongkan berkas log yang dipilih? Tindakan ini tidak dapat dibatalkan.</string>
     <string name="settings_sucompat">Rutekan ulang biner su</string>
     <string name="settings_sucompat_summary">Memungkinkan aplikasi yang diberi izin Superuser di Profil Aplikasi mendapatkan shell superuser dengan menjalankan /system/bin/su; efektif hanya untuk proses baru.</string>
     <string name="settings_kernel_umount">Umount kernel</string>

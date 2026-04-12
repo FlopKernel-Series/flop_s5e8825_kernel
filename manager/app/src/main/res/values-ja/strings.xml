@@ -21,7 +21,6 @@
     <string name="module_failed_to_disable">%s モジュールを OFF にできませんでした</string>
     <string name="module_empty">モジュールがインストールされていません</string>
     <string name="module">モジュール</string>
-    <string name="module_repo"></string>
     <string name="module_sort_action_first">並べ替え (アクションを優先)</string>
     <string name="module_sort_enabled_first">並べ替え (最初に有効)</string>
     <string name="uninstall">アンインストール</string>
@@ -48,6 +47,7 @@
     <string name="reboot_to_apply">再起動すると有効化されます</string>
     <string name="module_magisk_conflict">モジュールが Magisk との競合により利用できません！</string>
     <string name="home_learn_kernelsu">KernelSU について学ぶ</string>
+    <string name="home_learn_kernelsu_url">https://kernelsu.org/ja_JP/guide/what-is-kernelsu.html</string>
     <string name="home_click_to_learn_kernelsu">KernelSU のインストール方法やモジュールの使い方を学習できます。</string>
     <string name="home_support_title">支援する</string>
     <string name="home_support_content">KernelSU は今後も無料でオープンソースです。ですが、寄付をして頂けると開発者への貢献になります。</string>
@@ -436,6 +436,8 @@
     <string name="susfs_hide_mounts_current_setting">現在の設定: %s</string>
     <string name="susfs_hide_mounts_setting_all">すべてのプロセスを非表示</string>
     <string name="susfs_hide_mounts_setting_non_ksu">非 KSU プロセスのみ非表示</string>
+    <string name="kernel_simple_kernel">簡潔モードなカーネル バージョン</string>
+    <string name="kernel_simple_kernel_summary">SukiSU のカーネル バージョンによって表示されるクリーンモードを有効または無効します。</string>
     <string name="susfs_android_data_path_set">Android データパスが設定されました: %s</string>
     <string name="susfs_sdcard_path_set">SD カードのパスは次のように設定済みです: %s</string>
     <string name="susfs_path_setup_warning">パスの設定は完全に成功しない可能性がありますが、SUS パスは引き続き追加されます。</string>
@@ -511,6 +513,7 @@
     <string name="susfs_reset_loop_paths_title">ループパスをリセット</string>
     <string name="susfs_reset_loop_paths_message">すべての SUS ループパスを消去してもよろしいですか？この操作は元に戻せません。</string>
     <string name="susfs_loop_path_label">ループパス</string>
+    <string name="susfs_loop_path_placeholder">/data/example/path</string>
     <string name="susfs_loop_path_restriction_warning">注意: ループパス経由で追加できるのは「/storage/」と「/sdcard/」内にないパスのみです。</string>
     <string name="susfs_loop_path_invalid_location">エラー: ループパスは「/storage/」または「/sdcard/」のディレクトリ内に配置できません。</string>
     <string name="loop_paths_section">ループパス</string>
@@ -573,6 +576,7 @@
     <string name="supported_devices">対応しているデバイス</string>
     <string name="susfs_tab_sus_maps">SUS マップ</string>
     <string name="susfs_sus_map_label">ライブラリのパス</string>
+    <string name="susfs_sus_map_placeholder">/data/adb/modules/my_module/zygisk/arm64-v8a.so</string>
     <string name="susfs_add_sus_map">SUS マップを追加</string>
     <string name="susfs_edit_sus_map">SUS マップを編集</string>
     <string name="susfs_sus_map_added_success">SUS マップを追加しました: %1$s</string>
@@ -582,26 +586,6 @@
     <string name="susfs_reset_sus_maps_title">SUS マップをリセット</string>
     <string name="susfs_reset_sus_maps_message">構成されている SUS マップをすべて削除します。この操作は元に戻せません。</string>
     <string name="sus_maps_section">メモリマップの非表示</string>
-    <string name="log_viewer_title">ログビューア</string>
-    <string name="log_viewer_back">戻る</string>
-    <string name="log_viewer_search">検索</string>
-    <string name="log_viewer_clear_logs">ログを消去</string>
-    <string name="log_viewer_logs_cleared">ログを消去しました</string>
-    <string name="log_viewer_filter_type">タイプで絞り込み</string>
-    <string name="log_viewer_all_types">すべてのタイプ</string>
-    <string name="log_viewer_no_logs">ログが見つかりません</string>
-    <string name="log_viewer_no_matching_logs">一致するログがありません</string>
-    <string name="log_viewer_refresh">更新</string>
-    <string name="log_viewer_raw_log">生のログ</string>
-    <string name="log_viewer_search_placeholder">UID、コマンドまたは詳細で検索…</string>
-    <string name="log_viewer_clear_search">検索を消去</string>
-    <string name="log_viewer_view_logs">使用ログを表示</string>
-    <string name="log_viewer_view_logs_summary">KernelSU スーパーユーザーアクセスログを表示</string>
-    <string name="log_viewer_exclude_subtypes">サブタイプを除外</string>
-    <string name="log_viewer_exclude_current_app">現在のアプリ</string>
-    <string name="log_viewer_page_info">ページ: %1$d/%2$d | ログの合計: %3$d</string>
-    <string name="log_viewer_load_more">さらにログを読み込む</string>
-    <string name="log_viewer_all_logs_loaded">すべてのログを表示</string>
     <string name="umount_path_manager">アンマウントパスの管理</string>
     <string name="umount_path_manager_summary">カーネルアンマウントパスの管理</string>
     <string name="add_umount_path">アンマウントパスを追加</string>
