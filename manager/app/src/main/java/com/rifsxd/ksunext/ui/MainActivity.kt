@@ -258,9 +258,27 @@ class MainActivity : ComponentActivity() {
 
                     if (zipUri.isNullOrEmpty() && navigateLoc != null) {
                         when (navigateLoc) {
-                            NavigateLocation.SUPERUSER -> navigator.navigate(SuperUserScreenDestination)
-                            NavigateLocation.MODULES -> navigator.navigate(ModuleScreenDestination)
-                            NavigateLocation.SETTINGS -> navigator.navigate(SettingScreenDestination)
+                            NavigateLocation.SUPERUSER -> navigator.navigate(SuperUserScreenDestination) {
+                                    popUpTo(NavGraphs.root.startRoute) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            NavigateLocation.MODULES -> navigator.navigate(ModuleScreenDestination) {
+                                    popUpTo(NavGraphs.root.startRoute) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            NavigateLocation.SETTINGS -> navigator.navigate(SettingScreenDestination) {
+                                    popUpTo(NavGraphs.root.startRoute) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             else -> { /* no-op for exhaustiveness */ }
                         }
                         navigateLoc = null
