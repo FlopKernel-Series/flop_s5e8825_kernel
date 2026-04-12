@@ -965,7 +965,7 @@ CONFIG_DAMON_LRU_SORT=y
 #
 # SEC Memory Management Options
 #
-# CONFIG_SEC_MM is not set
+CONFIG_SEC_MM=y
 # end of SEC Memory Management Options
 
 CONFIG_NET=y
