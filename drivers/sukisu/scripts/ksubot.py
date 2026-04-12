@@ -1,5 +1,6 @@
 import asyncio
-import os,re
+import os
+import random
 import sys,json
 from telegram import Bot,InputMediaDocument
 from telegram.constants import ParseMode
@@ -125,6 +126,7 @@ def check_environ():
         MESSAGE_THREAD_ID = None
 
 async def send_media_group(bot: Bot, chat_id: int, media: list, message_thread_id=None):
+    await asyncio.sleep(random.uniform(0.2, 0.8))
     return await bot.send_media_group(chat_id=chat_id, media=media, message_thread_id=message_thread_id,
                                    read_timeout=350,write_timeout=350,connect_timeout=350,pool_timeout=350)
 

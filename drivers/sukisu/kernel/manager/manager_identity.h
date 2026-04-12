@@ -6,6 +6,10 @@
 
 #include "compat/kernel_compat.h"
 
+#define KSU_SIGNATURE_INDEX_DYNAMIC_MANAGER 255
+#define KSU_SIGNATURE_INDEX_KSU_DEBUG 254
+#define KSU_SIGNATURE_INDEX_KSU_TOOLKIT 253
+
 #ifdef CONFIG_KSU_DISABLE_MANAGER
 static inline void ksu_mark_manager(u32 uid)
 {

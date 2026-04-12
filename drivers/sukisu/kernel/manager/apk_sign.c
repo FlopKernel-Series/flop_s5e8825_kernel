@@ -15,6 +15,7 @@
 #endif
 
 #include "manager/apk_sign.h"
+#include "manager/manager_identity.h"
 #include "policy/app_profile.h"
 #include "feature/dynamic_manager.h"
 #include "klog.h" // IWYU pragma: keep
@@ -123,8 +124,11 @@ static bool check_block(struct file *fp, u32 *size4, loff_t *pos, u32 *offset, u
     bin2hex(hash_str, digest, SHA256_DIGEST_SIZE);
     hash_str[SHA256_DIGEST_SIZE * 2] = '\0';
 
-    BUILD_BUG_ON(ARRAY_SIZE(apk_sign_keys) >=
-                 255); // keep 255, because i want use 255 as the magic number of dynamic manager
+    // keep 255, 254, 253 here
+    // 255 reserved for dynamic manager
+    // 254 reserved for ksu debug
+    // 253 reserved for ksu toolkit
+    BUILD_BUG_ON(ARRAY_SIZE(apk_sign_keys) >= 253);
     for (i = 0; i < ARRAY_SIZE(apk_sign_keys); i++) {
         sign_key = apk_sign_keys[i];
         if (*size4 == sign_key.size && strcmp(sign_key.sha256, hash_str) == 0) {
@@ -139,7 +143,7 @@ static bool check_block(struct file *fp, u32 *size4, loff_t *pos, u32 *offset, u
         sign_key = ksu_get_dynamic_manager_sign();
         if (*size4 == sign_key.size && strcmp(sign_key.sha256, hash_str) == 0) {
             if (matched_index)
-                *matched_index = DYNAMIC_MANAGER_SIGNATURE_INDEX_MAGIC;
+                *matched_index = KSU_SIGNATURE_INDEX_DYNAMIC_MANAGER;
             signature_valid = true;
         }
     }
@@ -324,15 +328,13 @@ clean:
 }
 
 #ifdef CONFIG_KSU_DEBUG
-
 int ksu_debug_manager_appid = -1;
-
-#include "manager/manager_identity.h"
 
 static int set_expected_size(const char *val, const struct kernel_param *kp)
 {
     int rv = param_set_uint(val, kp);
-    ksu_set_manager_appid(ksu_debug_manager_appid);
+    ksu_unregister_manager_by_signature_index(KSU_SIGNATURE_INDEX_KSU_DEBUG);
+    ksu_register_manager(ksu_debug_manager_appid, KSU_SIGNATURE_INDEX_KSU_DEBUG);
     pr_info("ksu_manager_appid set to %d\n", ksu_debug_manager_appid);
     return rv;
 }

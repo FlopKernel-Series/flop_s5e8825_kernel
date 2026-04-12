@@ -12,7 +12,7 @@
 #include <sys/prctl.h>
 #include <sys/syscall.h>
 
-#include "uapi/supercall.h"
+#include "uapi/ksu.h"
 
 uint32_t get_version();
 
@@ -45,13 +45,14 @@ bool clear_dynamic_manager();
 bool set_su_enabled(bool enabled);
 bool is_su_enabled();
 
+// sulog
+bool is_sulog_enabled();
+
+bool set_sulog_enabled(bool enabled);
+
 // Kernel umount
 bool set_kernel_umount_enabled(bool enabled);
 bool is_kernel_umount_enabled();
-
-// Sulog
-bool set_sulog_enabled(bool enabled);
-bool is_sulog_enabled();
 
 bool get_managers_list(struct ksu_get_managers_cmd **out_cmd);
 bool get_allow_list(struct ksu_new_get_allow_list_cmd *);

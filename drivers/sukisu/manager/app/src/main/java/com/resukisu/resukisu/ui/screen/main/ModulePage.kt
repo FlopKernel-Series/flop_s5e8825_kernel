@@ -63,6 +63,7 @@ import androidx.compose.material.icons.rounded.Photo
 import androidx.compose.material.icons.rounded.Restore
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -77,7 +78,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
@@ -133,6 +133,7 @@ import com.resukisu.resukisu.ksuApp
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.InstallConfirmationDialog
 import com.resukisu.resukisu.ui.component.SearchAppBar
+import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
 import com.resukisu.resukisu.ui.component.WarningCard
 import com.resukisu.resukisu.ui.component.ZipFileDetector.parseModuleInfo
 import com.resukisu.resukisu.ui.component.ZipFileInfo
@@ -360,7 +361,7 @@ fun ModulePage(bottomPadding: Dp) {
             WindowInsetsSides.Top + WindowInsetsSides.Horizontal
         ),
         snackbarHost = {
-            SnackbarHost(
+            SwipeableSnackbarHost(
                 hostState = snackBarHost
             )
         }
@@ -643,6 +644,7 @@ private fun MetaModuleWarningCard(
         exit = fadeOut() + shrinkVertically()
     ) {
         WarningCard(
+            shape = CardDefaults.elevatedShape,
             message = text,
             onClose = {
                 showMetamoduleWarning = false

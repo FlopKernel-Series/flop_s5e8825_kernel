@@ -15,7 +15,7 @@ rust-embed = { version = "8", features = [
     "compression", # must clean build after updating binaries
 ] }
 which = "8"
-sha1 = "0.10"
+sha1 = "0.11"
 sha256 = "1"
 tempfile = "3"
 chrono = "0.4"
@@ -56,7 +56,7 @@ adb_client = { git = "https://github.com/Kernel-SU/adb_client" }
 prop-rs-android = { git = "https://github.com/Kernel-SU/ksu_props" }
 
 [target.'cfg(not(target_os = "android"))'.dependencies]
-env_logger = { version = "0.11.9", default-features = false }
+env_logger = { version = "0.11.10", default-features = false }
 
 [profile.release]
 strip = true
@@ -65,4 +65,4 @@ lto = true
 codegen-units = 1
 
 [build-dependencies]
-bindgen = "0.71.0"
+bindgen = "0.72.1"

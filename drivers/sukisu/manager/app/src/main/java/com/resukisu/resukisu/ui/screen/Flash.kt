@@ -48,7 +48,6 @@ import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -80,6 +79,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.R
 import com.resukisu.resukisu.ui.component.KeyEventBlocker
+import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
 import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
@@ -534,7 +534,7 @@ fun FlashScreen(flashIt: FlashIt) {
                 )
             }
         },
-        snackbarHost = { SnackbarHost(hostState = snackBarHost) },
+        snackbarHost = { SwipeableSnackbarHost(hostState = snackBarHost) },
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface
     ) { innerPadding ->

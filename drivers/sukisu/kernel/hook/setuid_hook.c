@@ -29,7 +29,6 @@
 #endif
 #include "compat/kernel_compat.h"
 #include "feature/kernel_umount.h"
-#include "feature/sulog.h"
 
 static inline void ksu_set_file_immutable(const char *path_name, bool immutable)
 {
@@ -88,7 +87,6 @@ int ksu_handle_setuid(uid_t new_uid, uid_t old_uid)
 
     if (old_uid != new_uid) {
         pr_info("handle_setresuid from %d to %d\n", old_uid, new_uid);
-        ksu_sulog_report_syscall(new_uid, NULL, "setuid", NULL);
     }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
@@ -153,12 +151,12 @@ int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 #endif
 }
 
-void ksu_setuid_hook_init(void)
+void __init ksu_setuid_hook_init(void)
 {
     ksu_kernel_umount_init();
 }
 
-void ksu_setuid_hook_exit(void)
+void __exit ksu_setuid_hook_exit(void)
 {
     pr_info("ksu_setuid_hook_exit\n");
     ksu_kernel_umount_exit();

@@ -53,7 +53,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -97,6 +96,7 @@ import com.resukisu.resukisu.ui.component.ConfirmDialogHandle
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.DialogHandle
 import com.resukisu.resukisu.ui.component.SearchAppBar
+import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
@@ -184,7 +184,7 @@ fun ModuleRepoScreen() {
         contentWindowInsets = WindowInsets.safeDrawing.only(
             WindowInsetsSides.Top + WindowInsetsSides.Horizontal
         ),
-        snackbarHost = { SnackbarHost(hostState = snackBarHost) }
+        snackbarHost = { SwipeableSnackbarHost(hostState = snackBarHost) }
     ) { innerPadding ->
         var offline by remember { mutableStateOf(!isNetworkAvailable(context)) }
 

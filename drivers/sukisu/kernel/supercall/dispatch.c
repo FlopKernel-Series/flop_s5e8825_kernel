@@ -19,7 +19,6 @@
 #include "feature/kernel_umount.h"
 #include "compat/kernel_compat.h"
 #include "manager/manager_identity.h"
-#include "feature/sulog.h"
 #include "selinux/selinux.h"
 #include "infra/file_wrapper.h"
 #ifdef KSU_TP_HOOK
@@ -31,15 +30,33 @@
 #include "kpm/kpm.h"
 #endif
 
+#ifdef CONFIG_KSU_TOOLKIT_SUPPORT
+#include <linux/utsname.h> // utsname() and uts_sem
+#include "manager/manager_identity.h" // for change_manager_appid
+#endif
+
+#include "sulog/event.h"
+#include "sulog/fd.h"
+#include "supercall/supercall.h"
+
 static int do_grant_root(void __user *arg)
 {
+    int ret;
     // we already checked the uid above in allowed_for_su().
+    __u32 audit_uid = ksu_get_uid_t(current_uid());
+    __u32 audit_euid = ksu_get_uid_t(current_euid());
 
-    pr_info("allow root for: %d\n", ksu_get_uid_t(current_uid()));
-    escape_with_root_profile();
+    pr_info("allow root for: %d\n", audit_uid);
+    ret = escape_with_root_profile();
+    ksu_sulog_emit_grant_root(ret, audit_uid, audit_euid, GFP_KERNEL);
 
-    return 0;
+    return ret;
 }
+
+#ifdef CONFIG_KSU_TOOLKIT_SUPPORT
+static uint32_t ksuver_override = 0;
+static uint32_t ksuflags_override = 0;
+#endif
 
 static int do_get_info(void __user *arg)
 {
@@ -55,6 +72,14 @@ static int do_get_info(void __user *arg)
         cmd.flags |= KSU_GET_INFO_FLAG_LATE_LOAD;
     }
     cmd.features = KSU_FEATURE_MAX;
+
+#ifdef CONFIG_KSU_TOOLKIT_SUPPORT
+    if (ksuver_override)
+        cmd.version = ksuver_override;
+
+    if (ksuflags_override)
+        cmd.flags = ksuflags_override;
+#endif
 
     if (copy_to_user(arg, &cmd, sizeof(cmd))) {
         pr_err("get_version: copy_to_user failed\n");
@@ -82,10 +107,6 @@ static int do_report_event(void __user *arg)
             } else {
                 pr_info("post-fs-data triggered\n");
                 on_post_fs_data();
-                ksu_sulog_init();
-#ifndef CONFIG_KSU_DISABLE_MANAGER
-                ksu_dynamic_manager_init();
-#endif
             }
         }
         break;
@@ -773,6 +794,23 @@ out:
     return err;
 }
 
+static int do_get_sulog_fd(void __user *arg)
+{
+    struct ksu_get_sulog_fd_cmd cmd;
+
+    if (copy_from_user(&cmd, arg, sizeof(cmd))) {
+        pr_err("get_sulog_fd: copy_from_user failed\n");
+        return -EFAULT;
+    }
+
+    if (cmd.flags) {
+        pr_err("get_sulog_fd: unsupported flags 0x%x\n", cmd.flags);
+        return -EINVAL;
+    }
+
+    return ksu_install_sulog_fd();
+}
+
 // 100. GET_FULL_VERSION - Get full version string
 static int do_get_full_version(void __user *arg)
 {
@@ -888,6 +926,127 @@ static int do_get_managers(void __user *arg)
 
     return 0;
 }
+
+#ifdef CONFIG_KSU_TOOLKIT_SUPPORT
+int ksu_try_handle_toolkit_cmd(int magic2, unsigned int cmd, void __user **arg)
+{
+    u64 reply = (u64)*arg;
+
+    if (magic2 == CHANGE_MANAGER_UID) {
+        pr_info("handle_toolkit_cmd: ksu_set_manager_appid to: %d\n", cmd);
+        ksu_unregister_manager_by_signature_index(KSU_SIGNATURE_INDEX_KSU_TOOLKIT);
+        ksu_register_manager(cmd, KSU_SIGNATURE_INDEX_KSU_TOOLKIT);
+
+        if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
+            pr_err("handle_toolkit_cmd: reply fail\n");
+
+        return 1;
+    }
+
+    if (magic2 == CHANGE_KSUVER) {
+        pr_info("handle_toolkit_cmd: ksu_change_ksuver to: %d\n", cmd);
+        ksuver_override = cmd;
+
+        if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
+            pr_err("handle_toolkit_cmd: reply fail\n");
+
+        return 1;
+    }
+
+    // WARNING!!! triple ptr zone! ***
+    // https://wiki.c2.com/?ThreeStarProgrammer
+    if (magic2 == CHANGE_SPOOF_UNAME) {
+        char release_buf[65];
+        char version_buf[65];
+        static char original_release_buf[65] = { 0 };
+        static char original_version_buf[65] = { 0 };
+
+        // basically void * void __user * void __user *arg
+        void ***ppptr = (void ***)(uintptr_t)arg;
+
+        // user pointer storage
+        // init this as zero so this works on 32-on-64 compat (LE)
+        uint64_t u_pptr = 0;
+        uint64_t u_ptr = 0;
+
+        pr_info("handle_toolkit_cmd: ppptr: 0x%lx \n", (uintptr_t)ppptr);
+
+        // arg here is ***, dereference to pull out **
+        if (copy_from_user(&u_pptr, (void __user *)*ppptr, sizeof(u_pptr))) {
+            pr_err("handle_toolkit_cmd: copy_from_user fail\n");
+            return 1;
+        }
+
+        pr_info("handle_toolkit_cmd: u_pptr: 0x%lx \n", (uintptr_t)u_pptr);
+
+        // now we got the __user **
+        // we cannot dereference this as this is __user
+        // we just do another copy_from_user to get it
+        if (copy_from_user(&u_ptr, (void __user *)u_pptr, sizeof(u_ptr))) {
+            pr_err("handle_toolkit_cmd: copy_from_user fail\n");
+            return 1;
+        }
+
+        pr_info("handle_toolkit_cmd: u_ptr: 0x%lx \n", (uintptr_t)u_ptr);
+
+        // for release
+        if (strncpy_from_user(release_buf, (char __user *)u_ptr, sizeof(release_buf)) < 0) {
+            pr_err("handle_toolkit_cmd: strncpy_from_user fail\n");
+            return 1;
+        }
+        release_buf[sizeof(release_buf) - 1] = '\0';
+
+        // for version
+        if (strncpy_from_user(version_buf, (char __user *)(u_ptr + strlen(release_buf) + 1), sizeof(version_buf)) < 0) {
+            pr_err("handle_toolkit_cmd: strncpy_from_user fail\n");
+            return 1;
+        }
+        version_buf[sizeof(version_buf) - 1] = '\0';
+
+        if (original_release_buf[0] == '\0') {
+            struct new_utsname *u_curr = utsname();
+            // we save current version as the original before modifying
+            strncpy(original_release_buf, u_curr->release, sizeof(original_release_buf));
+            strncpy(original_version_buf, u_curr->version, sizeof(original_version_buf));
+            pr_info("handle_toolkit_cmd: original uname saved: %s %s\n", original_release_buf, original_version_buf);
+        }
+
+        // so user can reset
+        if (!strcmp(release_buf, "default")) {
+            memcpy(release_buf, original_release_buf, sizeof(release_buf));
+        }
+        if (!strcmp(version_buf, "default")) {
+            memcpy(version_buf, original_version_buf, sizeof(version_buf));
+        }
+
+        pr_info("handle_toolkit_cmd: spoofing kernel to: %s - %s\n", release_buf, version_buf);
+
+        struct new_utsname *u = utsname();
+
+        down_write(&uts_sem);
+        strncpy(u->release, release_buf, sizeof(u->release));
+        strncpy(u->version, version_buf, sizeof(u->version));
+        up_write(&uts_sem);
+
+        // we write our confirmation on **
+        if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
+            pr_err("handle_toolkit_cmd: reply fail\n");
+
+        return 1;
+    }
+
+    if (magic2 == CHANGE_KSUFLAGS) {
+        pr_info("handle_toolkit_cmd: ksu_change_ksuflags to: %d\n", cmd);
+        ksuflags_override = cmd;
+
+        if (copy_to_user((void __user *)*arg, &reply, sizeof(reply)))
+            pr_err("handle_toolkit_cmd: reply fail\n");
+
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 // IOCTL handlers mapping table
 // clang-format off
@@ -1018,6 +1177,12 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
         .handler = do_set_init_pgrp, 
         .perm_check = only_root 
     },
+    {
+        .cmd = KSU_IOCTL_GET_SULOG_FD,
+        .name = "GET_SULOG_FD",
+        .handler = do_get_sulog_fd,
+        .perm_check = only_root
+    },
     // downstream begin
     { 
         .cmd = KSU_IOCTL_GET_FULL_VERSION,
@@ -1066,12 +1231,6 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
 };
 // clang-format on
 
-static inline void ksu_ioctl_audit(unsigned int cmd, const char *cmd_name, uid_t uid, int ret)
-{
-    const char *result = (ret == 0) ? "SUCCESS" : (ret == -EPERM) ? "DENIED" : "FAILED";
-    ksu_sulog_report_syscall(uid, NULL, cmd_name, result);
-}
-
 long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
 {
     int i;
@@ -1085,12 +1244,10 @@ long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
             // Check permission first
             if (ksu_ioctl_handlers[i].perm_check && !ksu_ioctl_handlers[i].perm_check()) {
                 pr_warn("ksu ioctl: permission denied for cmd=0x%x uid=%d\n", cmd, ksu_get_uid_t(current_uid()));
-                ksu_ioctl_audit(cmd, ksu_ioctl_handlers[i].name, ksu_get_uid_t(current_uid()), -EPERM);
                 return -EPERM;
             }
             // Execute handler
             int ret = ksu_ioctl_handlers[i].handler(argp);
-            ksu_ioctl_audit(cmd, ksu_ioctl_handlers[i].name, ksu_get_uid_t(current_uid()), ret);
             return ret;
         }
     }
@@ -1099,7 +1256,7 @@ long ksu_supercall_handle_ioctl(unsigned int cmd, void __user *argp)
     return -ENOTTY;
 }
 
-void ksu_supercall_dump_commands(void)
+void __init ksu_supercall_dump_commands(void)
 {
     int i;
 

@@ -47,6 +47,7 @@
     <string name="reboot_to_apply">Перезагрузите, чтобы изменения вступили в силу</string>
     <string name="module_magisk_conflict">Модули недоступны из-за конфликта с Magisk!</string>
     <string name="home_learn_kernelsu">Узнайте о KernelSU</string>
+    <string name="home_learn_kernelsu_url">https://kernelsu.org/ru_RU/guide/what-is-kernelsu.html</string>
     <string name="home_click_to_learn_kernelsu">Узнайте, как установить KernelSU и использовать модули</string>
     <string name="home_support_title">Поддержите нас</string>
     <string name="home_support_content">KernelSU был и всегда будет бесплатным и открытым проектом. Однако Вы всегда можете поддержать нас, отправив небольшое пожертвование.</string>
@@ -423,6 +424,8 @@
     <string name="susfs_hide_mounts_current_setting">Текущие настройки: %s</string>
     <string name="susfs_hide_mounts_setting_all">Скрыть для всех процессов</string>
     <string name="susfs_hide_mounts_setting_non_ksu">Скрыть только для процессов, не связанных с KSU</string>
+    <string name="kernel_simple_kernel">Скрыть доп. информацию о ядре</string>
+    <string name="kernel_simple_kernel_summary">Включить или отключить чистый режим, отображаемой версии ядра SukiSU</string>
     <string name="susfs_android_data_path_set">Путь к данным Android был установлен на: %s</string>
     <string name="susfs_sdcard_path_set">Путь к SD-карте был установлен на: %s</string>
     <string name="susfs_path_setup_warning">Установка пути может быть не вполне успешной, но SUS пути будут добавлены</string>
@@ -572,29 +575,6 @@
     <string name="sus_maps_description_text">Скрыть реальные пути к папкам памяти из /proc/self/[maps|smaps_rollup|map_files|mem|pagemap]. Обратите внимание: эта функция не поддерживает скрытие анонимных карт и может скрыть встроенные хуки или PLT хуки вызванные инъекцией самой библиотеки.</string>
     <string name="sus_maps_warning">Важное уведомление: для приложений с хорошо реализованными механизмами обнаружений эта функция может работать не эффективно .</string>
     <string name="sus_maps_debug_info">Сначала найдите PID и UID целевого приложения, используя ps -enf, затем проверьте соответствующие пути в /proc/&lt;pid&gt;/maps и сравните номера устройства с номерами в /proc/1/mountinfo. Функция скрытия  будет работать должным образом только если номера устройств совпадают.</string>
-    <string name="log_viewer_title">Просмотр логов</string>
-    <string name="log_viewer_back">Назад</string>
-    <string name="log_viewer_search">Поиск</string>
-    <string name="log_viewer_clear_logs">Очистить логи</string>
-    <string name="log_viewer_clear_logs_confirm">Вы уверены, что хотите удалить выбранный файл журнала? Это действие нельзя отменить.</string>
-    <string name="log_viewer_logs_cleared">Логи успешно очищены</string>
-    <string name="log_viewer_filter_type">Фильтрация по типу</string>
-    <string name="log_viewer_all_types">Все типы</string>
-    <string name="log_viewer_showing_entries">Показаны записи %1$d из %2$d</string>
-    <string name="log_viewer_no_logs">Логи не найдены</string>
-    <string name="log_viewer_no_matching_logs">Совпадающих журналов не найдено</string>
-    <string name="log_viewer_refresh">Обновить</string>
-    <string name="log_viewer_raw_log">Необработанный лог</string>
-    <string name="log_viewer_search_placeholder">Поиск по UID, команде или деталям…</string>
-    <string name="log_viewer_clear_search">Очистить поиск</string>
-    <string name="log_viewer_view_logs">Просмотр логов использования</string>
-    <string name="log_viewer_view_logs_summary">Просмотр журналов доступа к KernelSU</string>
-    <string name="log_viewer_exclude_subtypes">Исключить подтипы</string>
-    <string name="log_viewer_exclude_current_app">Текущее приложение</string>
-    <string name="log_viewer_page_info">Страница: %1$d/%2$d | Всего журналов: %3$d</string>
-    <string name="log_viewer_too_many_logs">Слишком много журналов, отображаются только последние записи %1$d</string>
-    <string name="log_viewer_load_more">Загрузить больше логов</string>
-    <string name="log_viewer_all_logs_loaded">Все логи отображаются</string>
     <string name="incompatible_kernel_msg">    Текущий менеджер несовместим с этим ядром! Пожалуйста, обновите ядро до версии %2$d или выше (сейчас %1$d)
     </string>
     <string name="umount_path_manager">Управление путями размонтирования</string>
