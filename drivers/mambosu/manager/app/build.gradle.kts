@@ -14,6 +14,9 @@ plugins {
 
 val managerVersionCode: Int by rootProject.extra
 val managerVersionName: String by rootProject.extra
+val androidCompileNdkVersion: String by rootProject.extra
+val androidBuildToolsVersion: String by rootProject.extra
+val androidCmakeVersion: String by rootProject.extra
 
 apksign {
     storeFileProperty = "KEYSTORE_FILE"
@@ -23,17 +26,19 @@ apksign {
 }
 
 android {
-    namespace = "com.rifsxd.ksunext"
+    namespace = "me.weishu.kernelsu"
+    ndkVersion = androidCompileNdkVersion
+    buildToolsVersion = androidBuildToolsVersion
 
     defaultConfig {
-        versionCode = rootProject.extra["managerVersionCode"] as Int
-        versionName = rootProject.extra["managerVersionName"] as String
+        applicationId = "com.rapli.mambosu"
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            vcsInfo.include = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -43,10 +48,6 @@ android {
         buildConfig = true
         compose = true
         prefab = true
-    }
-
-    kotlinOptions {
-        jvmTarget = "21"
     }
 
     packaging {
@@ -67,13 +68,14 @@ android {
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
+            version = androidCmakeVersion
         }
     }
 
     applicationVariants.all {
         outputs.forEach {
             val output = it as BaseVariantOutputImpl
-            output.outputFileName = "KernelSU_Next_${managerVersionName}_${managerVersionCode}-$name.apk"
+            output.outputFileName = "MamboSU_${managerVersionName}_${managerVersionCode}-$name.apk"
         }
         kotlin.sourceSets {
             getByName(name) {
@@ -125,6 +127,13 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.compose.ui.geometry)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.foundation.layout)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
@@ -144,7 +153,13 @@ dependencies {
 
     implementation(libs.io.coil.kt.coil.compose)
 
+    implementation(libs.coilGif)
+
     implementation(libs.kotlinx.coroutines.core)
+
+    implementation(libs.markwon)
+
+    implementation(libs.material.kolor)
 
     implementation(libs.me.zhanghai.android.appiconloader.coil)
 
@@ -152,10 +167,9 @@ dependencies {
     implementation(libs.sheet.compose.dialogs.list)
     implementation(libs.sheet.compose.dialogs.input)
 
-    implementation(libs.markdown)
     implementation(libs.androidx.webkit)
 
     implementation(libs.lsposed.cxx)
 
-    implementation(libs.mmrl.ui)
+    implementation(libs.ucrop)
 }

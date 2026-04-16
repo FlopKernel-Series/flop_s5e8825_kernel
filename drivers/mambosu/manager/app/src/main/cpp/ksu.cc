@@ -88,8 +88,8 @@ uint32_t get_version() {
     return info.version;
 }
 
-bool get_allow_list(struct ksu_get_allow_list_cmd *cmd) {
-    return ksuctl(KSU_IOCTL_GET_ALLOW_LIST, cmd) == 0;
+bool get_allow_list(struct ksu_new_get_allow_list_cmd *cmd) {
+    return ksuctl(KSU_IOCTL_NEW_GET_ALLOW_LIST, cmd) == 0;
 }
 
 bool is_safe_mode() {
@@ -101,17 +101,33 @@ bool is_safe_mode() {
 bool is_lkm_mode() {
     auto info = get_info();
     if (info.version > 0) {
-        return (info.flags & 0x1) != 0;
+        return (info.flags & KSU_GET_INFO_FLAG_LKM) != 0;
     }
-    return (legacy_get_info().second & 0x1) != 0;
+    return (legacy_get_info().second & KSU_GET_INFO_FLAG_LKM) != 0;
+}
+
+bool is_late_load_mode() {
+    auto info = get_info();
+    if (info.version > 0) {
+        return (info.flags & KSU_GET_INFO_FLAG_LATE_LOAD) != 0;
+    }
+    return false;
 }
 
 bool is_manager() {
     auto info = get_info();
     if (info.version > 0) {
-        return (info.flags & 0x2) != 0;
+        return (info.flags & KSU_GET_INFO_FLAG_MANAGER) != 0;
     }
     return legacy_get_info().first > 0;
+}
+
+bool is_pr_build() {
+    auto info = get_info();
+    if (info.version > 0) {
+        return (info.flags & KSU_GET_INFO_FLAG_PR_BUILD) != 0;
+    }
+    return false;
 }
 
 bool uid_should_umount(int uid) {
@@ -204,38 +220,4 @@ bool is_kernel_umount_enabled() {
         return false;
     }
     return value != 0;
-}
-
-const char* get_hook_mode(void)
-{
-    static struct ksu_get_hook_mode_cmd cmd = {0};
-
-    if (ksuctl(KSU_IOCTL_GET_HOOK_MODE, &cmd) == 0)
-        return cmd.mode;
-
-    return "Unknown";
-}
-
-uid_t get_manager_appid(void)
-{
-    static struct ksu_get_manager_appid_cmd cmd = {0};
-
-    if (ksuctl(KSU_IOCTL_GET_MANAGER_APPID, &cmd) == 0)
-        return cmd.appid;
-
-    return 0;
-}
-
-const char* get_version_tag(void)
-{
-    static struct ksu_get_version_tag_cmd cmd = {0};
-
-    if (ksuctl(KSU_IOCTL_GET_VERSION_TAG, &cmd) == 0)
-        return cmd.tag;
-
-    return "Unknown";
-}
-
-bool is_zygisk_enabled() {
-    return !!getenv("ZYGISK_ENABLED");
 }

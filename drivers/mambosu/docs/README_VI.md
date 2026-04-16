@@ -1,63 +1,56 @@
-[English](README.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Türkçe](README_TR.md) | [Português (Brasil)](README_PT-BR.md) | [한국어](README_KO.md) | [Français](README_FR.md) | [Bahasa Indonesia](README_ID.md) | [Русский](README_RU.md) | [Українська](README_UA.md) | [ภาษาไทย](README_TH.md) | **Tiếng Việt** | [Italiano](README_IT.md) | [Polski](README_PL.md) | [Български](README_BG.md) | [日本語](README_JA.md) | [Español](README_ES.md)
+[English](README.md) | [Español](README_ES.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [日本語](README_JP.md) | [한국어](README_KR.md) | [Polski](README_PL.md) | [Português (Brasil)](README_PT-BR.md) | [Türkçe](README_TR.md) | [Русский](README_RU.md) | **Tiếng Việt** | [Indonesia](README_ID.md) | [עברית](README_IW.md) | [हिंदी](README_IN.md) | [Italiano](README_IT.md)
 
-# KernelSU Next
+# KernelSU
 
-<img src="/assets/kernelsu_next.png" style="width: 96px;" alt="logo">
+<img src="https://kernelsu.org/logo.png" style="width: 96px;" alt="logo">
 
-Một giải pháp root từ nhân linux dành cho các thiết bị chạy Android
+Giải pháp root thông qua thay đổi trên Kernel hệ điều hành cho các thiết bị Android.
 
-[![Phiên bản mới nhất](https://img.shields.io/github/v/release/KernelSU-Next/KernelSU-Next?label=Release&logo=github)](https://github.com/KernelSU-Next/KernelSU-Next/releases/latest)
-[![CI build mới nhất](https://img.shields.io/badge/Nightly%20Release-gray?logo=hackthebox&logoColor=fff)](https://nightly.link/KernelSU-Next/KernelSU-Next/workflows/build-manager-ci/next/Manager)
-[![Gíây pháp: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![Gíây phép GITHUB](https://img.shields.io/github/license/KernelSU-Next/KernelSU-Next?logo=gnu)](/LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/tiann/KernelSU?label=Release&logo=github)](https://github.com/tiann/KernelSU/releases/latest)
+[![Weblate](https://img.shields.io/badge/Localization-Weblate-teal?logo=weblate)](https://hosted.weblate.org/engage/kernelsu)
+[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://t.me/KernelSU)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange.svg?logo=gnu)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![GitHub License](https://img.shields.io/github/license/tiann/KernelSU?logo=gnu)](/LICENSE)
 
 ## Tính năng
 
-1. Quản lý quyền truy cập SU dựa trên kernel android.
-2. Hệ thống mount module dựa trên 1 trong 2 cơ chế mount [Magic Mount](https://topjohnwu.github.io/Magisk/details.html#magic-mount) / [OverlayFS](https://en.wikipedia.org/wiki/OverlayFS).
-3. [App Profile](https://kernelsu.org/guide/app-profile.html): Quản lý quyền truy cập root 1 cách chặt chẽ
+1. Hỗ trợ gói thực thi `su` và quản lý quyền root.
+2. Hệ thống mô-đun thông qua [metamodules](https://kernelsu.org/vi_VN/guide/metamodule.html): Cơ sở hạ tầng có thể cắm cho các sửa đổi systemless.
+3. [App Profile](https://kernelsu.org/guide/app-profile.html): Hạn chế quyền root của ứng dụng.
 
-## Danh sách tương thích
+## Tình trạng tương thích
 
-KernelSU Next hỗ trợ chính thức các kernel Android từ phiên bản 4.4 đến 6.6
- - GKI 2.0 (5.10+) kernels có thể cài đặt qua những .img/.zip đã được build sẵn và LKM/KMI hoặc tự vá qua manager (nếu được)
- - GKI 1.0 (4.19 - 5.4) kernels cần dược build lại với các nhân KernelSU Next
- - EOL (<4.14) kernels cần dược build lại với các nhân KernelSU Next (các kernels 3.18+ đang dược thử nghiệm và có thể cần backports 1 vài thứ ).
+KernelSU chính thức hỗ trợ các thiết bị Android với kernel GKI 2.0 (phiên bản kernel 5.10+), các phiên bản kernel cũ hơn (4.14+) cũng tương thích, nhưng bạn cần phải tự biên dịch.
 
-Hiện tại kernelSU Next chỉ hỗ trợ những cpu có `arm64-v8a`, `armeabi-v7a` & `x86_64` 
+WSA, ChromeOS và Android dựa trên container(container-based) cũng được hỗ trợ bởi KernelSU.
+
+Hiện tại, các kiến trúc `arm64-v8a` và `x86_64` được hỗ trợ.
+
+> [!CAUTION]
+> Các phiên bản kernel gần đây đã áp dụng một thay đổi lớn có thể khiến KernelSU gặp lỗi và có khả năng gây ra kernel panic trên `x86_64`! Hãy kiểm tra trang web để biết thêm thông tin!
 
 ## Sử dụng
 
-- [Hướng dẫn vá KernelSU Next vào Kernel của bạn (yêu cầu kernel source)](https://ksunext.org/pages/installation.html)
+- [Hướng dẫn cài đặt](https://kernelsu.org/vi_VN/guide/installation.html)
+- [Cách để build?](https://kernelsu.org/vi_VN/guide/how-to-build.html)
+- [Website Chính Thức](https://kernelsu.org/vi_VN/)
 
-## Bảo mật
+## Hỗ trợ dịch
 
-Để biết thêm thông tin về việc báo cáo lỗ hổng bảo mật trong KernelSU Next vui lòng đọc (Thông tin sẽ dược gửi về KernelSU)[SECURITY.md](/SECURITY.md).
+Nếu bạn muốn hỗ trợ dịch KernelSU sang một ngôn ngữ khác hoặc cải thiện các bản dịch trước, vui lòng sử dụng [Weblate](https://hosted.weblate.org/engage/kernelsu/).
 
-## Gíây phép
+## Thảo luận
 
-- Những thư mục/tập tin trong `kernel` là giấy phép [GPL-2.0-only](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
-- Những thư mục/tập tin ngoài `kernel` là giấy phép [GPL-3.0-or-later](https://www.gnu.org/licenses/gpl-3.0.html).
+- Telegram: [@KernelSU](https://t.me/KernelSU)
 
-## Quyên góp/Hỗ trợ
+## Giấy phép
 
-- 0x12b5224b7aca0121c2f003240a901e1d064371c1 [ USDT BEP20 ]
+- Tất cả các file trong thư mục `kernel` dùng giấy phép [GPL-2-only](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
+- Tất cả các thành phần khác ngoại trừ thư mục `kernel` dùng giấy phép [GPL-3-or-later](https://www.gnu.org/licenses/gpl-3.0.html).
 
-- TYUVMWGTcnR5svnDoX85DWHyqUAeyQcdjh [ USDT TRC20 ]
+## Lời cảm ơn
 
-- 0x12b5224b7aca0121c2f003240a901e1d064371c1 [ USDT ERC20 ]
-
-- 0x12b5224b7aca0121c2f003240a901e1d064371c1 [ ETH ERC20 ]
-
-- Ld238uYBuRQdZB5YwdbkuU6ektBAAUByoL [ LTC ]
-
-- 19QgifcjMjSr1wB2DJcea5cxitvWVcXMT6 [ BTC ]
-
-## Lời cảm ơn tới...
-
-- [Kernel-Assisted Superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/): Ý tưởng cho sự ra đời của KernelSU.
-- [Magisk](https://github.com/topjohnwu/Magisk): Công cụ root mạnh mẽ, quen thuộc và tương thích cao cho các thiết bị chạy Android.
-- [genuine](https://github.com/brevent/genuine/): Chữ kí apk v2.
-- [Diamorphine](https://github.com/m0nad/Diamorphine): Một vài kỹ năng rootkit.
-- [KernelSU](https://github.com/tiann/KernelSU): Nguồn gốc của KernelSU Next, thanks to tiann.
-- [Magic Mount Port](https://github.com/5ec1cff/KernelSU/blob/main/userspace/ksud/src/magic_mount.rs): 5ec1cff - người đã cứu lấy KernelSU💜 !
+- [kernel-assisted-superuser](https://git.zx2c4.com/kernel-assisted-superuser/about/): ý tưởng cho KernelSU.
+- [Magisk](https://github.com/topjohnwu/Magisk): công cụ root mạnh mẽ.
+- [genuine](https://github.com/brevent/genuine/): phương pháp xác thực apk v2.
+- [Diamorphine](https://github.com/m0nad/Diamorphine): các phương pháp ẩn của rootkit.

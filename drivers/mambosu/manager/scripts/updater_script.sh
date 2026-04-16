@@ -1,1 +1,1 @@
-# KernelSU-Next installer/uninstaller script
+# KernelSU installer/uninstaller script

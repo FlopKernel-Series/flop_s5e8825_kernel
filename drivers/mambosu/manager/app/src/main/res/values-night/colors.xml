@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ucrop_color_widget_background">#141218</color> 
+    <color name="ucrop_color_widget_text">#CAC4D0</color>
+    <color name="ucrop_color_inactive_controls_color">#CAC4D0</color>
+</resources>

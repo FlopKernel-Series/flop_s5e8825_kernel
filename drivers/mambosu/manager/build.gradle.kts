@@ -18,7 +18,7 @@ cmaker {
                 "-DANDROID_STL=none",
             )
         )
-        abiFilters("arm64-v8a", "x86_64")
+        abiFilters("arm64-v8a", "x86_64", "riscv64", "armeabi-v7a")
     }
     buildTypes {
         if (it.name == "release") {
@@ -32,68 +32,40 @@ val androidTargetSdkVersion = 36
 val androidCompileSdkVersion = 36
 val androidBuildToolsVersion = "36.1.0"
 val androidCompileNdkVersion by extra(libs.versions.ndk.get())
+val androidCmakeVersion by extra("4.1.0+")
 val androidSourceCompatibility = JavaVersion.VERSION_21
 val androidTargetCompatibility = JavaVersion.VERSION_21
 val managerVersionCode by extra(getVersionCode())
 val managerVersionName by extra(getVersionName())
 
-// Helper for shell cmds.
-fun runCommand(vararg command: String): String =
-    ProcessBuilder(*command)
-        .redirectErrorStream(true)
-        .start()
-        .inputStream.bufferedReader()
-        .use { it.readText().trim() }
+extra["androidCompileNdkVersion"] = androidCompileNdkVersion
+extra["androidBuildToolsVersion"] = androidBuildToolsVersion
 
-// Get cur. branch; strip '-susfs'
-fun getCurrentBranch(): String {
-    val branchRaw = runCommand("git", "rev-parse", "--abbrev-ref", "HEAD")
-    return branchRaw.replace("-susfs", "")
+fun getGitCommitCount(): Int {
+    val process = Runtime.getRuntime().exec(arrayOf("git", "rev-list", "--count", "HEAD"))
+    return process.inputStream.bufferedReader().use { it.readText().trim().toInt() }
 }
 
-// Get upstream: commit count, hash, describe number
-fun getUpstreamDescribe(): Triple<Int, String, Int> {
-    val branch = getCurrentBranch()
-
-    // Use full ref. (avoids ambiguous ref. warning)
-    val describe = runCommand(
-        "git", "describe", "--tags", "--long", "--abbrev=8", "refs/remotes/origin/$branch"
-    )
-    // describe format: tag-commits_since_tag-ghash
-    val parts = describe.split("-")
-    val num = parts[1].toInt()
-    val hash = parts[2].removePrefix("g")
-
-    val commitCount = runCommand(
-        "git", "rev-list", "--count", "refs/remotes/origin/$branch"
-    ).toInt()
-
-    return Triple(commitCount, hash, num)
+fun getGitDescribe(): String {
+    val process = Runtime.getRuntime().exec(arrayOf("git", "describe", "--tags", "--always"))
+    return process.inputStream.bufferedReader().use { it.readText().trim() }
 }
 
-// Version code calc.
 fun getVersionCode(): Int {
-    val (commitCount, _, _) = getUpstreamDescribe()
-    val major = 1
-    return major * 30000 + commitCount
+    val commitCount = getGitCommitCount()
+    return 30000 + commitCount
 }
 
-// Version name (upstream tag, describe number, hash)
 fun getVersionName(): String {
-    val (_, hash, num) = getUpstreamDescribe()
-    val tag = runCommand("git", "describe", "--tags", "--abbrev=0", "refs/remotes/origin/${getCurrentBranch()}")
-    return "$tag-$num-g$hash"
+    return getGitDescribe()
 }
-
-// Root project version info. assignment (extras)
-rootProject.extra.set("managerVersionCode", getVersionCode())
-rootProject.extra.set("managerVersionName", getVersionName())
 
 subprojects {
     plugins.withType(AndroidBasePlugin::class.java) {
         extensions.configure(CommonExtension::class.java) {
             compileSdk = androidCompileSdkVersion
             ndkVersion = androidCompileNdkVersion
+            buildToolsVersion = androidBuildToolsVersion
 
             defaultConfig {
                 minSdk = androidMinSdkVersion
@@ -103,7 +75,7 @@ subprojects {
                     versionName = managerVersionName
                 }
                 ndk {
-                    abiFilters += listOf("arm64-v8a", "x86_64")
+                    abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
                 }
             }
 
