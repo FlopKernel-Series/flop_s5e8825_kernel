@@ -1448,19 +1448,16 @@ fun ModuleItem(
                     LabelText(
                         label = module.dirId,
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                     if (module.metamodule) {
                         LabelText(
                             label = "META",
                             containerColor = MaterialTheme.colorScheme.tertiary,
-                            contentColor = MaterialTheme.colorScheme.onTertiary
                         )
                     }
                     LabelText(
                         label = sizeStr ?: "0 KB",
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }

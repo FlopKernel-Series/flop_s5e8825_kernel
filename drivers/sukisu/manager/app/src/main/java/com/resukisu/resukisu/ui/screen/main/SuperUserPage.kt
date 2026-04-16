@@ -788,7 +788,6 @@ private fun AppGroupItem(
                         LabelText(
                             label = "UMOUNT",
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
@@ -796,12 +795,11 @@ private fun AppGroupItem(
                     LabelText(
                         label = "CUSTOM",
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                     )
                 } else if (!appGroup.allowSu) {
                     LabelText(
                         label = "DEFAULT",
-                        containerColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
                 if (appGroup.apps.size > 1) {
@@ -809,7 +807,6 @@ private fun AppGroupItem(
                         LabelText(
                             label = it,
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
                 }

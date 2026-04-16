@@ -255,24 +255,20 @@ private fun TemplateItem(
                 LabelText(
                     label = "GID: ${template.gid}",
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 LabelText(
                     label = template.context,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 if (template.local) {
                     LabelText(
                         label = stringResource(R.string.local),
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 } else {
                     LabelText(
                         label = stringResource(R.string.remote),
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }

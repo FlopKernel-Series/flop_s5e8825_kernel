@@ -528,7 +528,6 @@ private fun StatusCard(
                             // 工作模式标签
                             LabelText(
                                 label = workingModeSurfaceText,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
                                 containerColor = MaterialTheme.colorScheme.primary
                             )
 
@@ -536,7 +535,6 @@ private fun StatusCard(
                                 Spacer(Modifier.width(6.dp))
                                 LabelText(
                                     label = stringResource(id = R.string.jailbreak_mode),
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
                                     containerColor = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -546,7 +544,6 @@ private fun StatusCard(
                                 Spacer(Modifier.width(6.dp))
                                 LabelText(
                                     label = Os.uname().machine,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
                                     containerColor = MaterialTheme.colorScheme.primary
                                 )
                             }
