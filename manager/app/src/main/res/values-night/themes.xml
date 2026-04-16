@@ -5,6 +5,13 @@
         <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
     </style>
 
-    <style name="Theme.KernelSU.WebUI" parent="Theme.KernelSU" />
+    <style name="Theme.KernelSU.WebUI" parent="Theme.KernelSU"/>
+
+    <style name="Theme.UCropCustom" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
 
 </resources>

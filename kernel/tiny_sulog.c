@@ -17,7 +17,7 @@ void sulog_init_heap()
 {
 	sulog_buf_ptr = kzalloc(SULOG_BUFSIZ, GFP_KERNEL);
 	if (!sulog_buf_ptr)
-		sulog_buf_ptr = NULL;
+		return;
 	
 	pr_info("sulog_init: allocated %lu bytes on 0x%p \n", SULOG_BUFSIZ, sulog_buf_ptr);
 }
@@ -33,10 +33,12 @@ void write_sulog(uint8_t sym)
 	// WARNING!!! this is LE only!
 	entry.s_time = (uint32_t)(ktime_get_boottime() / 1000000000);
 	entry.data = (uint32_t)current_uid().val;
-	memcpy((void *)&entry.data + 3, &sym, 1);
+	*((char *)&entry.data + 3) = sym;
 
+	// we can perform this write atomic on 64-bit, memcpy is kill
+	// however this still has to be locked for exclusion as there is a reader
 	spin_lock(&sulog_lock);
-	memcpy(sulog_buf_ptr + offset, &entry, sizeof(entry));
+	*(volatile uint64_t *)(sulog_buf_ptr + offset) = *(volatile uint64_t *)&entry;
 	spin_unlock(&sulog_lock);
 
 	// move ptr for next iteration

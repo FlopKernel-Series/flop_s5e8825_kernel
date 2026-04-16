@@ -1,4 +1,7 @@
 use anyhow::{Context, Error, Ok, Result, bail};
+use rustix::fs::{Mode, OFlags, open};
+use rustix::process::setpgid;
+use rustix::stdio::{dup2_stderr, dup2_stdin, dup2_stdout};
 use std::{
     fs::{File, OpenOptions, create_dir_all, remove_file, write},
     io::{
@@ -186,8 +189,9 @@ fn link_ksud_to_bin() -> Result<()> {
     Ok(())
 }
 
-pub fn install(magiskboot: Option<PathBuf>) -> Result<()> {
+pub fn install(magiskboot: Option<PathBuf>, libadbroot: Option<PathBuf>) -> Result<()> {
     ensure_dir_exists(defs::ADB_DIR)?;
+    let _ = std::fs::remove_file(defs::DAEMON_PATH);
     std::fs::copy(
         std::env::current_exe().with_context(|| "Failed to get self exe path")?,
         defs::DAEMON_PATH,
@@ -200,13 +204,20 @@ pub fn install(magiskboot: Option<PathBuf>) -> Result<()> {
 
     if let Some(magiskboot) = magiskboot {
         ensure_dir_exists(defs::BINARY_DIR)?;
+        let _ = std::fs::remove_file(defs::MAGISKBOOT_PATH);
         let _ = std::fs::copy(magiskboot, defs::MAGISKBOOT_PATH);
+    }
+
+    if let Some(libadbroot) = libadbroot {
+        ensure_dir_exists(defs::LIBRARY_DIR)?;
+        let _ = std::fs::remove_file(defs::LIBADBROOT_PATH);
+        let _ = std::fs::copy(libadbroot, defs::LIBADBROOT_PATH);
     }
 
     Ok(())
 }
 
-pub fn uninstall(magiskboot_path: Option<PathBuf>) -> Result<()> {
+pub fn uninstall(magiskboot_path: Option<PathBuf>, package_name: &str) -> Result<()> {
     if Path::new(defs::MODULE_DIR).exists() {
         println!("- Uninstall modules..");
         module::uninstall_all_modules()?;
@@ -221,14 +232,111 @@ pub fn uninstall(magiskboot_path: Option<PathBuf>) -> Result<()> {
         boot: None,
         flash: true,
         magiskboot: magiskboot_path,
+        out: None,
         out_name: None,
     })?;
-    println!("- Uninstall KernelSU Next manager..");
+    println!("- Uninstall KernelSU manager..");
     Command::new("pm")
-        .args(["uninstall", "com.rifsxd.ksunext"])
+        .args(["uninstall", package_name])
         .spawn()?;
     println!("- Rebooting in 5 seconds..");
     std::thread::sleep(std::time::Duration::from_secs(5));
     Command::new("reboot").spawn()?;
     Ok(())
+}
+
+pub fn reset_std() -> Result<()> {
+    let null_fd = open("/dev/null", OFlags::RDWR, Mode::empty())?;
+    dup2_stdin(&null_fd)?;
+    dup2_stdout(&null_fd)?;
+    dup2_stderr(&null_fd)?;
+    Ok(())
+}
+
+pub fn daemonize_with<F: FnOnce() -> Result<()>>(use_init_pgrp: bool, configure: F) -> Result<()> {
+    if !create_daemon_impl(use_init_pgrp, configure)? {
+        unsafe { libc::_exit(0) }
+    }
+    Ok(())
+}
+
+pub fn daemonize(use_init_pgrp: bool) -> Result<()> {
+    daemonize_with(use_init_pgrp, || Ok(()))
+}
+
+pub fn create_daemon(use_init_pgrp: bool) -> Result<bool> {
+    create_daemon_with(use_init_pgrp, || Ok(()))
+}
+
+pub fn create_daemon_with<F: FnOnce() -> Result<()>>(
+    use_init_pgrp: bool,
+    configure: F,
+) -> Result<bool> {
+    create_daemon_impl(use_init_pgrp, configure)
+}
+
+fn create_daemon_impl<F: FnOnce() -> Result<()>>(
+    use_init_pgrp: bool,
+    configure: F,
+) -> Result<bool> {
+    unsafe {
+        let pid = libc::fork();
+        if pid < 0 {
+            bail!("fork error {}", std::io::Error::last_os_error());
+        } else if pid > 0 {
+            let mut status: i32 = -1;
+            loop {
+                if libc::waitpid(pid, &raw mut status, 0) < 0 {
+                    if *libc::__errno() != libc::EINTR {
+                        libc::_exit(1);
+                    }
+                } else {
+                    break;
+                }
+            }
+            if !libc::WIFEXITED(status) || libc::WEXITSTATUS(status) != 0 {
+                bail!("child exited with unexpected status {status}")
+            }
+            return Ok(false);
+        }
+    }
+
+    let do_configure = || -> Result<()> {
+        detach_process_group(use_init_pgrp);
+        switch_cgroups();
+        configure()?;
+        reset_std()?;
+
+        unsafe {
+            let pid = libc::fork();
+            if pid < 0 {
+                bail!("fork error {}", std::io::Error::last_os_error());
+            } else if pid > 0 {
+                libc::_exit(0);
+            }
+        }
+        Ok(())
+    };
+
+    if let Err(e) = do_configure() {
+        log::error!("failed to configure daemon: {e:?}");
+        unsafe {
+            libc::_exit(1);
+        }
+    }
+
+    Ok(true)
+}
+
+pub fn detach_process_group(use_init_pgrp: bool) {
+    if use_init_pgrp {
+        if let Err(e) = ksucalls::set_init_pgrp() {
+            log::error!("failed to switch to init group: {e:?}");
+        } else {
+            return;
+        }
+    }
+    if let Err(e2) = setpgid(None, None) {
+        log::error!("failed to set process group: {e2:?}");
+    }
 }

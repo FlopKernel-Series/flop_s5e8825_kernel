@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#FFFFFFFF</color>
+    <color name="ucrop_color_widget_background">#FEF7FF</color> 
+    <color name="ucrop_color_widget_text">#49454F</color>
+    <color name="ucrop_color_inactive_controls_color">#49454F</color>
 </resources>

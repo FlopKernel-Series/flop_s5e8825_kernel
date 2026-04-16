@@ -3,13 +3,15 @@ name: Rustfmt check
 on:
   push:
     branches:
-      - 'next'
+      - 'main'
+      - 'dev'
     paths:
       - '.github/workflows/rustfmt.yml'
       - 'userspace/**'
   pull_request:
     branches:
-      - 'next'
+      - 'main'
+      - 'dev'
     paths:
       - '.github/workflows/rustfmt.yml'
       - 'userspace/**'
@@ -21,18 +23,11 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt
 
-      - uses: LoliGothick/rustfmt-check@master
-        with:
-          token: ${{ github.token }}
-          working-directory: userspace/ksud
-
-      - uses: LoliGothick/rustfmt-check@master
-        with:
-          token: ${{ github.token }}
-          working-directory: userspace/ksuinit
+      - name: Run rustfmt
+        run: cargo fmt --all --check
