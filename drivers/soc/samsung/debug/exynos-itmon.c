@@ -993,7 +993,7 @@ static void itmon_report_pathinfo(struct itmon_dev *itmon,
 	struct itmon_nodeinfo *node = data->node;
 	/* SEC DEBUG FEATURE */
 #if IS_ENABLED(CONFIG_SEC_DEBUG_EXTRA_INFO)
-	int acon = (itmon_get_dpm_policy(itmon) > 0) ? 1 : 0;
+	int __maybe_unused acon = (itmon_get_dpm_policy(itmon) > 0) ? 1 : 0;
 #endif
 	/* SEC DEBUG FEATURE */
 
