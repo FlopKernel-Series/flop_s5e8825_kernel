@@ -92,3 +92,5 @@ else
   # 4.2+, user manual hook ksu_handle_rename will let track_throne scan twice
   $(eval $(call check_ksu_hook_incompatible,ksu_handle_rename,$(srctree)/security/security.c))
 endif
+
+# opt ksu_key_permission, i think it are no need for UL

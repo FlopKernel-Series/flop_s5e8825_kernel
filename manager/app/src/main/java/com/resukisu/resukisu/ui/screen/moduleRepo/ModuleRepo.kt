@@ -511,20 +511,17 @@ fun OnlineModuleItem(
                 LabelText(
                     label = module.moduleId,
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
                 if (module.metamodule) {
                     LabelText(
                         label = "META",
                         containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
                     )
                 }
                 if (module.installed) {
                     LabelText(
                         label = stringResource(R.string.installed),
                         containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
                     )
                 }
             }

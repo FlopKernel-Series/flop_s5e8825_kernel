@@ -47,7 +47,6 @@
 
 extern long ksu_strncpy_from_user_nofault(char *dst, const void __user *unsafe_addr, long count);
 
-extern struct file *ksu_filp_open_compat(const char *filename, int flags, umode_t mode);
 extern ssize_t ksu_kernel_read_compat(struct file *p, void *buf, size_t count, loff_t *pos);
 extern ssize_t ksu_kernel_write_compat(struct file *p, const void *buf, size_t count, loff_t *pos);
 
@@ -285,6 +284,14 @@ static inline u64 ksu_ktime_get_ns(void)
 
 #ifndef in_compat_syscall
 #define in_compat_syscall() is_compat_task()
+#endif
+
+extern void ksu_run_in_init_if_possible(void (*callback)(void *), void *data);
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0) || defined(KSU_COMPAT_IS_HISI_LEGACY) ||                             \
+    defined(KSU_COMPAT_IS_HISI_LEGACY_HM2)
+#define KSU_COMPAT_REQUIRE_SESSION_KEYRING
+extern int ksu_key_permission(key_ref_t key_ref, const struct cred *cred, unsigned perm);
 #endif
 
 #endif

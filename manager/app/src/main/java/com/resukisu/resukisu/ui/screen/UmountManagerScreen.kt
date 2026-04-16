@@ -218,7 +218,6 @@ fun UmountManagerScreen() {
                                     LabelText(
                                         label = entry.flagName,
                                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 }
                             }
