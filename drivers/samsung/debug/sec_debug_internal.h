@@ -479,7 +479,15 @@ extern unsigned long secdbg_base_get_buf_size(int type);
 extern void *secdbg_base_get_ncva(unsigned long pa);
 extern unsigned long secdbg_base_get_end_addr(void);
 extern void *secdbg_base_get_kcnst_base(void);
+
+#if IS_ENABLED(CONFIG_SEC_DEBUG_DPRT)
 extern int secdbg_part_init_bdev_path(struct device *dev);
+#else
+static inline int secdbg_part_init_bdev_path(struct device *dev)
+{
+	return 0;
+}
+#endif
 
 #if IS_ENABLED(CONFIG_SEC_DEBUG_LOCKUP_INFO)
 void secdbg_base_set_info_hard_lockup(unsigned int cpu, struct task_struct *task);

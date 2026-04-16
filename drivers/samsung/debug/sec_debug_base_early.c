@@ -91,6 +91,7 @@ static void secdbg_base_set_kconstants(void)
 	pr_info("%s: end to get kernel constants\n", __func__);
 }
 
+#if IS_ENABLED(CONFIG_DEBUG_SNAPSHOT_API)
 dss_extern_get_log_by_cpu(task);
 dss_extern_get_log_by_cpu(work);
 dss_extern_get_log_by_cpu(cpuidle);
@@ -170,6 +171,16 @@ static void secdbg_base_get_kevent_info(struct ess_info_offset *p, int type)
 		break;
 	}
 }
+#else
+static void secdbg_base_get_kevent_info(struct ess_info_offset *p, int type)
+{
+	p->base = 0;
+	p->nr = 0;
+	p->size = 0;
+	p->per_core = 0;
+	p->last = 0;
+}
+#endif
 
 static void init_ess_info(struct secdbg_snapshot_offset *ss_info, unsigned int index, char *key)
 {
