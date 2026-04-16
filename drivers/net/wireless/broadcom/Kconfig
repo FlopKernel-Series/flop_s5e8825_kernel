@@ -15,7 +15,5 @@ if BCM_DHD_WLAN
 source "drivers/net/wireless/broadcom/b43/Kconfig"
 source "drivers/net/wireless/broadcom/b43legacy/Kconfig"
 source "drivers/net/wireless/broadcom/brcm80211/Kconfig"
-source "drivers/net/wireless/broadcom/bcmdhd_101_10/Kconfig"
-source "drivers/net/wireless/broadcom/bcmdhd_101_24/Kconfig"
 
 endif # BCM_DHD_WLAN
