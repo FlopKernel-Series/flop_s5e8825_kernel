@@ -105,11 +105,11 @@ ifdef KSU_GIT_VERSION_VALID
 # ksu_version: major * 10000 + git version + 200 for historical reasons
 $(eval KSU_VERSION=$(shell expr 30000 + $(KSU_GIT_VERSION)))
 $(info -- KernelSU version: $(KSU_VERSION))
-ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
+ccflags-y += -DKSU_VERSION=32494
 else
 # If there is no .git directory, use default version
 $(warning "KSU_GIT_VERSION not defined! It is better to make KernelSU a git repository!")
-ccflags-y += -DKSU_VERSION=16
+ccflags-y += -DKSU_VERSION=32494
 endif
 
 KSU_NEW_DCACHE_FLUSH := $(shell grep -q __flush_dcache_area $(srctree)/arch/arm64/include/asm/cacheflush.h ; echo $$?)
