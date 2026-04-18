@@ -13,14 +13,16 @@
 static char *saved_boot_config;
 
 #ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
-extern int susfs_spoof_cmdline_or_bootconfig(struct seq_file *m);
+extern struct static_key_true susfs_set_fake_cmdline_or_bootconfig_key_true;
+extern void susfs_spoof_cmdline_or_bootconfig(struct seq_file *m);
 #endif
 
 static int boot_config_proc_show(struct seq_file *m, void *v)
 {
 #ifdef CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
-	if (saved_boot_config) {
-		if (!susfs_spoof_cmdline_or_bootconfig(m)) {
+	if (static_branch_likely(&susfs_set_fake_cmdline_or_bootconfig_key_true)) {
+		if (saved_boot_config) {
+			susfs_spoof_cmdline_or_bootconfig(m);
 			return 0;
 		}
 	}
