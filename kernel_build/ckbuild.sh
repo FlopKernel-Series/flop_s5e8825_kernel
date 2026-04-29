@@ -111,7 +111,10 @@ else
     SECRETS="0"
 fi
 
-## Parse arguments
+# Droidspaces support
+DROIDSPACES=1
+
+# Other variables
 DO_KSU=0
 DO_SUKI=0
 DO_MAMBO=0
