@@ -24,6 +24,9 @@
 #include <linux/posix_acl_xattr.h>
 
 #include <linux/uaccess.h>
+#ifdef CONFIG_ZEROMOUNT
+#include <linux/zeromount.h>
+#endif
 
 static const char *
 strcmp_prefix(const char *a, const char *a_prefix)
@@ -403,6 +406,12 @@ EXPORT_SYMBOL(__vfs_getxattr);
 ssize_t
 vfs_getxattr(struct dentry *dentry, const char *name, void *value, size_t size)
 {
+#ifdef CONFIG_ZEROMOUNT
+	ssize_t zm_ret;
+	zm_ret = zeromount_spoof_xattr(dentry, name, value, size);
+	if (zm_ret != -EOPNOTSUPP)
+		return zm_ret;
+#endif
 	return __vfs_getxattr(dentry, dentry->d_inode, name, value, size, 0);
 }
 EXPORT_SYMBOL_NS_GPL(vfs_getxattr, ANDROID_GKI_VFS_EXPORT_ONLY);

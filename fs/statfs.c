@@ -13,6 +13,9 @@
 #include <linux/susfs_def.h>
 #endif // #if defined(CONFIG_KSU_SUSFS_SUS_MOUNT) || defined(CONFIG_KSU_SUSFS_OPEN_REDIRECT)
 #include "internal.h"
+#ifdef CONFIG_ZEROMOUNT
+#include <linux/zeromount.h>
+#endif
 
 static int flags_by_mnt(int mnt_flags)
 {
@@ -145,7 +148,14 @@ int user_statfs(const char __user *pathname, struct kstatfs *st)
 retry:
 	error = user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
 	if (!error) {
+#ifdef CONFIG_ZEROMOUNT
+		int spoofed;
+#endif
 		error = vfs_statfs(&path, st);
+#ifdef CONFIG_ZEROMOUNT
+		spoofed = zeromount_spoof_statfs(pathname, st);
+		(void)spoofed;
+#endif
 		path_put(&path);
 		if (retry_estale(error, lookup_flags)) {
 			lookup_flags |= LOOKUP_REVAL;

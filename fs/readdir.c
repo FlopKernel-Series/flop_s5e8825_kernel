@@ -21,6 +21,9 @@
 #include <linux/unistd.h>
 #include <linux/compat.h>
 #include <linux/uaccess.h>
+#ifdef CONFIG_ZEROMOUNT
+#include <linux/zeromount.h>
+#endif
 
 #include <asm/unaligned.h>
 
@@ -321,10 +324,20 @@ SYSCALL_DEFINE3(getdents, unsigned int, fd,
 		.current_dir = dirent
 	};
 	int error;
+#ifdef CONFIG_ZEROMOUNT
+	int initial_count = count;
+#endif
 
 	f = fdget_pos(fd);
 	if (!f.file)
 		return -EBADF;
+
+#ifdef CONFIG_ZEROMOUNT
+	if (f.file->f_pos >= ZEROMOUNT_MAGIC_POS) {
+		error = 0;
+		goto skip_real_iterate;
+	}
+#endif
 
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 	buf.sb = f.file->f_inode->i_sb;
@@ -332,6 +345,16 @@ SYSCALL_DEFINE3(getdents, unsigned int, fd,
 	error = iterate_dir(f.file, &buf.ctx);
 	if (error >= 0)
 		error = buf.error;
+
+#ifdef CONFIG_ZEROMOUNT
+skip_real_iterate:
+	if (error >= 0 && !signal_pending(current)) {
+		zeromount_inject_dents(f.file, (void __user **)&dirent, &count, &f.file->f_pos);
+		if (count != initial_count)
+			error = initial_count - count;
+		goto zm_out;
+	}
+#endif
 	if (buf.prev_reclen) {
 		struct linux_dirent __user * lastdirent;
 		lastdirent = (void __user *)buf.current_dir - buf.prev_reclen;
@@ -341,6 +364,9 @@ SYSCALL_DEFINE3(getdents, unsigned int, fd,
 		else
 			error = count - buf.count;
 	}
+#ifdef CONFIG_ZEROMOUNT
+zm_out:
+#endif
 	fdput_pos(f);
 	return error;
 }
@@ -425,10 +451,20 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
 		.current_dir = dirent
 	};
 	int error;
+#ifdef CONFIG_ZEROMOUNT
+	int initial_count = count;
+#endif
 
 	f = fdget_pos(fd);
 	if (!f.file)
 		return -EBADF;
+
+#ifdef CONFIG_ZEROMOUNT
+	if (f.file->f_pos >= ZEROMOUNT_MAGIC_POS) {
+		error = 0;
+		goto skip_real_iterate;
+	}
+#endif
 
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 	buf.sb = f.file->f_inode->i_sb;
@@ -436,6 +472,16 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
 	error = iterate_dir(f.file, &buf.ctx);
 	if (error >= 0)
 		error = buf.error;
+
+#ifdef CONFIG_ZEROMOUNT
+skip_real_iterate:
+	if (error >= 0 && !signal_pending(current)) {
+		zeromount_inject_dents64(f.file, (void __user **)&dirent, &count, &f.file->f_pos);
+		if (count != initial_count)
+			error = initial_count - count;
+		goto zm_out;
+	}
+#endif
 	if (buf.prev_reclen) {
 		struct linux_dirent64 __user * lastdirent;
 		typeof(lastdirent->d_off) d_off = buf.ctx.pos;
@@ -446,6 +492,9 @@ SYSCALL_DEFINE3(getdents64, unsigned int, fd,
 		else
 			error = count - buf.count;
 	}
+#ifdef CONFIG_ZEROMOUNT
+zm_out:
+#endif
 	fdput_pos(f);
 	return error;
 }
@@ -635,10 +684,20 @@ COMPAT_SYSCALL_DEFINE3(getdents, unsigned int, fd,
 		.count = count
 	};
 	int error;
+#ifdef CONFIG_ZEROMOUNT
+	int initial_count = count;
+#endif
 
 	f = fdget_pos(fd);
 	if (!f.file)
 		return -EBADF;
+
+#ifdef CONFIG_ZEROMOUNT
+	if (f.file->f_pos >= ZEROMOUNT_MAGIC_POS) {
+		error = 0;
+		goto skip_real_iterate;
+	}
+#endif
 
 #ifdef CONFIG_KSU_SUSFS_SUS_PATH
 	buf.sb = f.file->f_inode->i_sb;
@@ -646,6 +705,16 @@ COMPAT_SYSCALL_DEFINE3(getdents, unsigned int, fd,
 	error = iterate_dir(f.file, &buf.ctx);
 	if (error >= 0)
 		error = buf.error;
+
+#ifdef CONFIG_ZEROMOUNT
+skip_real_iterate:
+	if (error >= 0 && !signal_pending(current)) {
+		zeromount_inject_dents(f.file, (void __user **)&dirent, &count, &f.file->f_pos);
+		if (count != initial_count)
+			error = initial_count - count;
+		goto zm_out;
+	}
+#endif
 	if (buf.prev_reclen) {
 		struct compat_linux_dirent __user * lastdirent;
 		lastdirent = (void __user *)buf.current_dir - buf.prev_reclen;
@@ -655,6 +724,9 @@ COMPAT_SYSCALL_DEFINE3(getdents, unsigned int, fd,
 		else
 			error = count - buf.count;
 	}
+#ifdef CONFIG_ZEROMOUNT
+zm_out:
+#endif
 	fdput_pos(f);
 	return error;
 }
