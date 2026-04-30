@@ -206,7 +206,7 @@ fi
 LINUX_VER=$(make kernelversion 2>/dev/null)
 
 if [ "$DO_KSU" == "1" ]; then
-    FK_TYPE="KSUNext"
+    FK_TYPE="KSUNext-SUSFS"
     FK_TYPE_SHORT="KN"
 elif [ "$DO_SUKI" == "1" ]; then
     FK_TYPE="ReSukiSU-SUSFS"
