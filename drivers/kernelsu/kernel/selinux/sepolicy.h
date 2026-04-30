@@ -43,4 +43,8 @@ bool ksu_type_member(struct policydb *db, const char *src, const char *tgt,
 bool ksu_genfscon(struct policydb *db, const char *fs_name, const char *path,
           const char *ctx);
 
+struct selinux_policy;
+struct selinux_policy *ksu_dup_sepolicy(struct selinux_policy *old_pol);
+void ksu_destroy_sepolicy(struct selinux_policy *pol);
+
 #endif
