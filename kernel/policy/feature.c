@@ -1,4 +1,4 @@
-#include "policy/feature.h"
+#include "feature.h"
 #include "klog.h" // IWYU pragma: keep
 
 #include <linux/mutex.h>
@@ -7,7 +7,7 @@ static const struct ksu_feature_handler *feature_handlers[KSU_FEATURE_MAX];
 
 static DEFINE_MUTEX(feature_mutex);
 
-int __init ksu_register_feature_handler(const struct ksu_feature_handler *handler)
+int ksu_register_feature_handler(const struct ksu_feature_handler *handler)
 {
 	if (!handler) {
 		pr_err("feature: register handler is NULL\n");
@@ -19,11 +19,10 @@ int __init ksu_register_feature_handler(const struct ksu_feature_handler *handle
 		return -EINVAL;
 	}
 
-    if (!handler->get_handler && !handler->set_handler) {
-        pr_err("feature: no handler provided for feature %u\n",
-               handler->feature_id);
-        return -EINVAL;
-    }
+	if (!handler->get_handler && !handler->set_handler) {
+		pr_err("feature: no handler provided for feature %u\n", handler->feature_id);
+		return -EINVAL;
+	}
 
 	mutex_lock(&feature_mutex);
 

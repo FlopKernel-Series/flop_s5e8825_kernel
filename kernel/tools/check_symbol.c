@@ -66,21 +66,21 @@ void close_elf(ElfFile *elf)
     munmap(elf->data, elf->size);
 }
 
-Elf64_Shdr *find_symtab(ElfFile *elf)
+Elf64_Shdr *find_section(ElfFile *elf, const char *name)
 {
     for (int i = 0; i < elf->ehdr->e_shnum; i++) {
-        if (elf->shdr[i].sh_type == SHT_SYMTAB) {
+        const char *section_name = elf->shstrtab + elf->shdr[i].sh_name;
+        if (strcmp(section_name, name) == 0) {
             return &elf->shdr[i];
         }
     }
     return NULL;
 }
 
-Elf64_Shdr *find_section(ElfFile *elf, const char *name)
+Elf64_Shdr *find_symtab(ElfFile *elf)
 {
     for (int i = 0; i < elf->ehdr->e_shnum; i++) {
-        const char *section_name = elf->shstrtab + elf->shdr[i].sh_name;
-        if (strcmp(section_name, name) == 0) {
+        if (elf->shdr[i].sh_type == SHT_SYMTAB) {
             return &elf->shdr[i];
         }
     }

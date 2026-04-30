@@ -28,9 +28,35 @@ void sulog_init_heap(void)
 {
 	sulog_buf_ptr = kzalloc(SULOG_BUFSIZ, GFP_KERNEL);
 	if (!sulog_buf_ptr)
-		sulog_buf_ptr = NULL;
+		return;
 	
 	pr_info("sulog_init: allocated %lu bytes on 0x%p \n", SULOG_BUFSIZ, sulog_buf_ptr);
+}
+
+/*
+ *
+ *  boottime_s_get, get kernel uptime in seconds
+ *
+ * - handles sub 4.10 compat
+ * - we do this forced pointer cast to cut down on compat, pre 4.10, ktime is a union
+ *
+ * - bs handling 64-bit division on 32-bit (do_div)
+ * - remainder = do_div(dividend, divisor); dividend will hold the quotient 
+ * - for 64-bit we can straight up just use divide
+ *
+ */
+static inline uint32_t boottime_s_get()
+{
+	ktime_t boottime_kt = ktime_get_boottime();
+
+#ifdef CONFIG_64BIT 
+	uint64_t boottime_s = *(uint64_t *)&boottime_kt / 1000000000;
+#else
+	uint64_t boottime_s = *(uint64_t *)&boottime_kt;
+	do_div(boottime_s, 1000000000);
+#endif
+
+	return (uint32_t)boottime_s;
 }
 
 void write_sulog(uint8_t sym)
@@ -42,12 +68,20 @@ void write_sulog(uint8_t sym)
 	struct sulog_entry entry = {0};
 
 	// WARNING!!! this is LE only!
-	entry.s_time = (uint32_t)(ktime_get_boottime() / 1000000000);
+	entry.s_time = boottime_s_get();
 	entry.data = (uint32_t)current_uid().val;
-	memcpy((void *)&entry.data + 3, &sym, 1);
+	*((char *)&entry.data + 3) = sym;
+
+	// we can perform this write atomic on 64-bit
+	// however this still has to be locked for exclusion as theres a reader
 
 	spin_lock(&sulog_lock);
-	memcpy(sulog_buf_ptr + offset, &entry, sizeof(entry));
+
+#ifdef CONFIG_64BIT
+	*(volatile uint64_t *)(sulog_buf_ptr + offset) = *(volatile uint64_t *)&entry;
+#else
+	__builtin_memcpy(sulog_buf_ptr + offset, &entry, sizeof(entry));
+#endif
 	spin_unlock(&sulog_lock);
 
 	// move ptr for next iteration
@@ -77,7 +111,9 @@ int send_sulog_dump(void __user *uptr)
 		return 1;
 
 	// send uptime
-	uint32_t uptime = (uint32_t)(ktime_get_boottime() / 1000000000);
+
+	uint32_t uptime =  boottime_s_get();
+
 	if (copy_to_user((void __user *)sbuf.uptime_ptr, &uptime, sizeof(uptime) ))
 		return 1;
 
