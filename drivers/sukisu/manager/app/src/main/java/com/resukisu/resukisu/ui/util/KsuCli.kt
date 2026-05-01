@@ -259,7 +259,7 @@ fun restoreBoot(
 ): Boolean {
     val magiskboot = File(ksuApp.applicationInfo.nativeLibraryDir, "libmagiskboot.so")
     val result = flashWithIO(
-        "${getKsuDaemonPath()} boot-restore -f --magiskboot $magiskboot",
+        "${getKsuDaemonPath()} boot-restore -f",
         onStdout,
         onStderr
     )

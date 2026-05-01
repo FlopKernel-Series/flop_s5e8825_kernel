@@ -2,14 +2,19 @@ package com.resukisu.resukisu.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.EnterTransition
@@ -63,6 +68,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -82,6 +88,7 @@ import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.NavigationEventState
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.resukisu.resukisu.Natives
+import com.resukisu.resukisu.ui.activity.PermissionRequestInterface
 import com.resukisu.resukisu.ui.activity.component.NavigationBar
 import com.resukisu.resukisu.ui.activity.util.ThemeChangeContentObserver
 import com.resukisu.resukisu.ui.activity.util.ThemeUtils
@@ -116,6 +123,7 @@ import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalHandlePageChange
 import com.resukisu.resukisu.ui.util.LocalHazeState
 import com.resukisu.resukisu.ui.util.LocalPagerState
+import com.resukisu.resukisu.ui.util.LocalPermissionRequestInterface
 import com.resukisu.resukisu.ui.util.LocalSelectedPage
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.install
@@ -128,10 +136,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import zako.zako.zako.zakoui.screen.kernelFlash.KernelFlashScreen
 import zako.zako.zako.zakoui.screen.moreSettings.MoreSettingsScreen
 import zako.zako.zako.zakoui.screen.moreSettings.util.LocaleHelper
+import kotlin.coroutines.resume
 
 class MainActivity : ComponentActivity() {
     private lateinit var superUserViewModel: SuperUserViewModel
@@ -250,7 +262,107 @@ class MainActivity : ComponentActivity() {
 
                     val navigator = rememberNavigator(Route.Main)
 
+                    lateinit var permissionRequestHandler: ManagedActivityResultLauncher<Array<String>, Map<String, @JvmSuppressWildcards Boolean>>
+
+                    val permissionRequestInterface = object : PermissionRequestInterface {
+                        private val mutex = Mutex()
+                        private var currentCallback: ((Map<String, @JvmSuppressWildcards Boolean>) -> Unit)? =
+                            null
+
+                        override fun requestPermission(
+                            permission: String,
+                            callback: (Boolean) -> Unit,
+                            requestDescription: String
+                        ) {
+                            if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                                callback(true)
+                                return
+                            }
+
+                            lifecycleScope.launch {
+                                mutex.withLock {
+                                    suspendCancellableCoroutine { continuation ->
+                                        currentCallback = { result ->
+                                            callback(result.any { it.value })
+                                            continuation.resume(Unit)
+                                        }
+
+                                        if (requestDescription.isNotBlank() && ActivityCompat.shouldShowRequestPermissionRationale(
+                                                this@MainActivity,
+                                                permission
+                                            )
+                                        )
+                                            Toast.makeText(
+                                                context,
+                                                requestDescription,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                        permissionRequestHandler.launch(arrayOf(permission))
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun requestPermissions(
+                            permissions: Array<String>,
+                            callback: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit,
+                            requestDescription: Map<String, String>
+                        ) {
+                            val permissionsToRequest = permissions.filter {
+                                checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+                            }.toTypedArray()
+
+                            if (permissionsToRequest.isEmpty()) {
+                                callback(permissions.associateWith { true })
+                                return
+                            }
+
+                            lifecycleScope.launch {
+                                mutex.withLock {
+                                    suspendCancellableCoroutine { continuation ->
+                                        currentCallback = { result ->
+                                            val finalResult = permissions.associateWith { perm ->
+                                                result[perm] ?: true
+                                            }
+                                            callback(finalResult)
+                                            continuation.resume(Unit)
+                                        }
+
+                                        permissionsToRequest.forEach { perm ->
+                                            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                                                    this@MainActivity,
+                                                    perm
+                                                )
+                                            ) {
+                                                val msg = requestDescription[perm]
+                                                if (!msg.isNullOrBlank()) {
+                                                    Toast.makeText(
+                                                        this@MainActivity,
+                                                        msg,
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
+                                        }
+
+                                        permissionRequestHandler.launch(permissionsToRequest)
+                                    }
+                                }
+                            }
+                        }
+
+                        fun onPermissionRequestCallback(result: Map<String, @JvmSuppressWildcards Boolean>) =
+                            currentCallback?.invoke(result)
+                    }
+
+                    permissionRequestHandler = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.RequestMultiplePermissions(),
+                        onResult = permissionRequestInterface::onPermissionRequestCallback
+                    )
+
                     CompositionLocalProvider(
+                        LocalPermissionRequestInterface provides permissionRequestInterface,
                         LocalNavigator provides navigator,
                         LocalDensity provides density
                     ) {

@@ -24,6 +24,7 @@ bool is_lkm_mode();
 
 bool is_manager();
 bool is_late_load_mode();
+bool is_pr_build();
 
 void get_full_version(char* buff);
 
@@ -34,6 +35,8 @@ int get_app_profile(struct app_profile* profile);
 bool is_KPM_enable();
 
 void get_hook_type(char* hook_type);
+
+int get_kernel_patch_implement();
 
 bool set_dynamic_manager(unsigned int size, const char* hash);
 

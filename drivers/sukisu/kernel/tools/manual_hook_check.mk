@@ -21,11 +21,11 @@ $(eval $(call check_ksu_hook_incompatible,is_ksu_transition,$(srctree)/security/
 
 ifeq ($(CONFIG_KSU_MANUAL_HOOK_AUTO_SETUID_HOOK), y)
   $(info -- $(REPO_NAME)/manual_hook: You are using LSM hooks for setuid hooks.)
-  ifeq ($(shell test \( \( $(VERSION) -gt 6 \) -o \( $(VERSION) -eq 6 -a $(PATCHLEVEL) -ge 8 \) \) -o \( \( $(VERSION) -lt 4 \) -o \( $(VERSION) -eq 4 -a $(PATCHLEVEL) -lt 2 \) \) && echo y),y)
-      $(info -- You can't use LSM hooks for kernel version >=6.8 or <4.2)
+  ifeq ($(shell test \( $(VERSION) -gt 6 -o \( $(VERSION) -eq 6 -a $(PATCHLEVEL) -ge 8 \) \) && echo y),y)
+      $(info -- You can't use LSM hooks for kernel version >=6.8)
       $(info -- You should turn off CONFIG_KSU_MANUAL_HOOK_AUTO_SETUID_HOOK and hook setresuid manually)
       $(info -- Read: https://resukisu.github.io/guide/manual-integrate.html)
-      $(error You can't use LSM hooks when kernel version >= 6.8 or <4.2)
+      $(error You can't use LSM hooks when kernel version >= 6.8)
   endif
 else
   $(info -- $(REPO_NAME)/manual_hook: You are using a manual setresuid hook for setuid hooks.)
@@ -34,11 +34,11 @@ endif
 
 ifeq ($(CONFIG_KSU_MANUAL_HOOK_AUTO_INITRC_HOOK), y)
   $(info -- $(REPO_NAME)/manual_hook: You are using LSM hooks for init rc hooks.)
-  ifeq ($(shell test \( \( $(VERSION) -gt 6 \) -o \( $(VERSION) -eq 6 -a $(PATCHLEVEL) -ge 8 \) \) -o \( \( $(VERSION) -lt 4 \) -o \( $(VERSION) -eq 4 -a $(PATCHLEVEL) -lt 2 \) \) && echo y),y)
-      $(info -- You can't use LSM hooks for kernel version >=6.8 or <4.2)
+  ifeq ($(shell test \( $(VERSION) -gt 6 -o \( $(VERSION) -eq 6 -a $(PATCHLEVEL) -ge 8 \) \) && echo y),y)
+      $(info -- You can't use LSM hooks for kernel version >=6.8)
       $(info -- You should turn off CONFIG_KSU_MANUAL_HOOK_AUTO_INITRC_HOOK and hook sys_read manually.)
       $(info -- Read: https://resukisu.github.io/guide/manual-integrate.html)
-      $(error You can't use LSM hooks when kernel version >= 6.8 or <4.2)
+      $(error You can't use LSM hooks when kernel version >= 6.8)
   endif
 else
   $(info -- $(REPO_NAME)/manual_hook: You are using a manual sys_read hook for init rc hooks.)
@@ -85,12 +85,7 @@ else
   $(eval $(call check_ksu_hook,ksu_handle_sys_reboot,$(srctree)/kernel/reboot.c))
 endif
 
-ifeq ($(shell test \( $(VERSION) -lt 4 -o \( $(VERSION) -eq 4 -a $(PATCHLEVEL) -le 2 \) \) && echo y),y)
-  # 4.2-, check ksu_handle_rename manual hook
-  $(eval $(call check_ksu_hook,ksu_handle_rename,$(srctree)/security/security.c))
-else
-  # 4.2+, user manual hook ksu_handle_rename will let track_throne scan twice
-  $(eval $(call check_ksu_hook_incompatible,ksu_handle_rename,$(srctree)/security/security.c))
-endif
+# we no need this hook, because we can directly replace selinux_ops to LSM hook in UL
+$(eval $(call check_ksu_hook_incompatible,ksu_handle_rename,$(srctree)/security/security.c))
 
 # opt ksu_key_permission, i think it are no need for UL

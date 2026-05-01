@@ -151,9 +151,9 @@ import com.resukisu.resukisu.ui.screen.LabelText
 import com.resukisu.resukisu.ui.theme.getCardColors
 import com.resukisu.resukisu.ui.theme.getCardElevation
 import com.resukisu.resukisu.ui.theme.hazeSource
-import com.resukisu.resukisu.ui.util.DownloadListener
+import com.resukisu.resukisu.ui.util.LocalPermissionRequestInterface
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
-import com.resukisu.resukisu.ui.util.download
+import com.resukisu.resukisu.ui.util.downloader.download
 import com.resukisu.resukisu.ui.util.hasMagisk
 import com.resukisu.resukisu.ui.util.module.ModuleUtils
 import com.resukisu.resukisu.ui.util.module.Shortcut
@@ -424,9 +424,6 @@ fun ModulePage(bottomPadding: Dp) {
                     viewModel = viewModel,
                     listState = listState,
                     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                    onInstallModule = {
-                        navigator.push(Route.Flash(FlashIt.FlashModule(it)))
-                    },
                     onUpdateModule = {
                         navigator.push(Route.Flash(FlashIt.FlashModuleUpdate(it)))
                     },
@@ -662,7 +659,6 @@ private fun ModuleList(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     boxModifier: Modifier = Modifier,
-    onInstallModule: (Uri) -> Unit,
     onUpdateModule: (Uri) -> Unit,
     onClickModule: (id: String, name: String, hasWebUi: Boolean) -> Unit,
     context: Context,
@@ -670,6 +666,7 @@ private fun ModuleList(
     bottomPadding : Dp,
     topPadding : Dp,
 ) {
+    val permissionRequestInterface = LocalPermissionRequestInterface.current
     val pullRefreshState = rememberPullToRefreshState()
     val failedEnable = stringResource(R.string.module_failed_to_enable)
     val failedDisable = stringResource(R.string.module_failed_to_disable)
@@ -687,7 +684,6 @@ private fun ModuleList(
     val downloadingText = stringResource(R.string.module_downloading)
     val startDownloadingText = stringResource(R.string.module_start_downloading)
     val fetchChangeLogFailed = stringResource(R.string.module_changelog_failed)
-    val downloadErrorText = stringResource(R.string.module_download_error)
 
     val loadingDialog = rememberLoadingDialog()
     val confirmDialog = rememberConfirmDialog()
@@ -838,9 +834,9 @@ private fun ModuleList(
         withContext(Dispatchers.IO) {
             download(
                 context,
+                permissionRequestInterface,
                 downloadUrl,
                 fileName,
-                downloading,
                 onDownloaded = { uri ->
                     onUpdateModule(uri)
                 },
@@ -849,11 +845,6 @@ private fun ModuleList(
                         Toast.makeText(context, downloading, Toast.LENGTH_SHORT).show()
                     }
                 },
-                onError = { errorMsg ->
-                    launch(Dispatchers.Main) {
-                        Toast.makeText(context, "$downloadErrorText: $errorMsg", Toast.LENGTH_LONG).show()
-                    }
-                }
             )
         }
     }
@@ -1055,8 +1046,6 @@ private fun ModuleList(
                 Spacer(modifier = Modifier.height(bottomPadding))
             }
         }
-
-        DownloadListener(context, onInstallModule)
     }
 
     if (showShortcutDialog.value) {

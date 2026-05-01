@@ -62,10 +62,10 @@ void setup_selinux(const char *domain, struct cred *cred)
     }
 }
 
-void setup_ksu_cred(void)
+void setup_ksu_cred_selinux(void)
 {
     if (ksu_cred && transive_to_domain(KERNEL_SU_CONTEXT, ksu_cred, false)) {
-        pr_err("setup ksu cred failed.\n");
+        pr_err("setup ksu cred selinux domain failed.\n");
     }
 }
 

@@ -14,7 +14,7 @@ import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.getKernelVersion
 import com.resukisu.resukisu.ksuApp
 import com.resukisu.resukisu.ui.susfs.util.SuSFSManager
-import com.resukisu.resukisu.ui.util.checkNewVersion
+import com.resukisu.resukisu.ui.util.downloader.checkNewVersion
 import com.resukisu.resukisu.ui.util.getKpmModuleCount
 import com.resukisu.resukisu.ui.util.getKpmVersion
 import com.resukisu.resukisu.ui.util.getMetaModuleImplement
@@ -47,7 +47,8 @@ class HomeViewModel : ViewModel() {
         val isKpmConfigured: Boolean = false,
         val requireNewKernel: Boolean = false,
         val isSELinuxPermissive: Boolean = false,
-        val isOfficialSignature: Boolean = false,
+        val isOfficialSignature: Boolean = true,
+        val kernelPatchImplement: Natives.KernelPatchImplement = Natives.KernelPatchImplement.NO_KERNEL_PATCH_SUPPORT,
     )
 
     // 系统信息
@@ -187,6 +188,7 @@ class HomeViewModel : ViewModel() {
                     requireNewKernel = requireNewKernel,
                     isSELinuxPermissive = isSELinuxPermissive,
                     isOfficialSignature = isOfficialSignature,
+                    kernelPatchImplement = Natives.getKernelPatchImplement(),
                 )
 
                 isCoreDataLoaded = true

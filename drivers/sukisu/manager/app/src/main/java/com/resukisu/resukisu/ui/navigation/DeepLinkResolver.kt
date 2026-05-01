@@ -2,7 +2,6 @@ package com.resukisu.resukisu.ui.navigation
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -11,6 +10,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
+import com.resukisu.resukisu.ui.screen.FlashIt
+import com.resukisu.resukisu.ui.util.downloader.DownloadService
 
 /**
  * Deep link resolution: maps external Intent/Uri to an initial back stack.
@@ -19,6 +21,13 @@ import androidx.compose.ui.platform.LocalContext
 object DeepLinkResolver {
     fun resolve(intent: Intent?): List<Route> {
         if (intent == null) return emptyList()
+        if (intent.action == DownloadService.ACTION_INSTALL_MODULE) {
+            val uriString = intent.getStringExtra(DownloadService.EXTRA_MODULE_URI)
+                ?: return emptyList()
+            val uri = uriString.toUri()
+            return listOf(Route.Main, Route.Flash(FlashIt.FlashModule(uri)))
+        }
+
         val shortcutType = intent.getStringExtra("shortcut_type")
         return when (shortcutType) {
             "module_action" -> {
@@ -28,10 +37,6 @@ object DeepLinkResolver {
 
             else -> emptyList()
         }
-    }
-
-    fun resolve(uri: Uri?): List<Route> {
-        return emptyList()
     }
 }
 

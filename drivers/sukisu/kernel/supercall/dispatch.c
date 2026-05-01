@@ -21,7 +21,7 @@
 #include "manager/manager_identity.h"
 #include "selinux/selinux.h"
 #include "infra/file_wrapper.h"
-#ifdef KSU_TP_HOOK
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
 #include "hook/tp_marker.h"
 #endif
 #include "feature/dynamic_manager.h"
@@ -33,6 +33,10 @@
 #ifdef CONFIG_KSU_TOOLKIT_SUPPORT
 #include <linux/utsname.h> // utsname() and uts_sem
 #include "manager/manager_identity.h" // for change_manager_appid
+#endif
+
+#ifdef CONFIG_ARM64
+#include "compat/apatch_conflict.h"
 #endif
 
 #include "sulog/event.h"
@@ -64,6 +68,9 @@ static int do_get_info(void __user *arg)
 
 #ifdef MODULE
     cmd.flags |= KSU_GET_INFO_FLAG_LKM;
+#endif
+#ifdef EXPECTED_PR_BUILD_SIZE
+    cmd.flags |= KSU_GET_INFO_FLAG_PR_BUILD;
 #endif
     if (is_manager()) {
         cmd.flags |= KSU_GET_INFO_FLAG_MANAGER;
@@ -333,24 +340,30 @@ static int do_get_app_profile(void __user *arg)
 #ifdef CONFIG_KSU_DISABLE_POLICY
     return -EOPNOTSUPP;
 #endif
+    uid_t uid;
+    struct app_profile *profile;
+    int ret = 0;
 
-    struct ksu_get_app_profile_cmd cmd;
-
-    if (copy_from_user(&cmd, arg, sizeof(cmd))) {
+    if (copy_from_user(&uid, (char __user *)arg + offsetof(struct ksu_get_app_profile_cmd, profile.curr_uid),
+                       sizeof(uid_t))) {
         pr_err("get_app_profile: copy_from_user failed\n");
         return -EFAULT;
     }
 
-    if (!ksu_get_app_profile(&cmd.profile)) {
-        return -ENOENT;
+    rcu_read_lock();
+    profile = ksu_get_app_profile(uid);
+    rcu_read_unlock();
+    if (!profile) {
+        ret = -ENOENT;
+    } else {
+        if (copy_to_user((char __user *)arg + offsetof(struct ksu_get_app_profile_cmd, profile), profile,
+                         sizeof(struct app_profile))) {
+            pr_err("get_app_profile: copy_to_user failed\n");
+            ret = -EFAULT;
+        }
+        ksu_put_app_profile(profile);
     }
-
-    if (copy_to_user(arg, &cmd, sizeof(cmd))) {
-        pr_err("get_app_profile: copy_to_user failed\n");
-        return -EFAULT;
-    }
-
-    return 0;
+    return ret;
 }
 
 static int do_set_app_profile(void __user *arg)
@@ -370,7 +383,7 @@ static int do_set_app_profile(void __user *arg)
     ret = ksu_set_app_profile(&cmd.profile);
     if (!ret) {
         ksu_persistent_allow_list();
-#ifdef KSU_TP_HOOK
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
         ksu_mark_running_process();
 #endif
     }
@@ -461,7 +474,7 @@ static int do_manage_mark(void __user *arg)
 
     switch (cmd.operation) {
     case KSU_MARK_GET: {
-#if defined(KSU_TP_HOOK)
+#if defined(CONFIG_KSU_TRACEPOINT_HOOK)
         // Get task mark status
         ret = ksu_get_task_mark(cmd.pid);
         if (ret < 0) {
@@ -483,7 +496,7 @@ static int do_manage_mark(void __user *arg)
         break;
     }
     case KSU_MARK_MARK: {
-#ifdef KSU_TP_HOOK
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
         if (cmd.pid == 0) {
             ksu_mark_all_process();
         } else {
@@ -501,7 +514,7 @@ static int do_manage_mark(void __user *arg)
         break;
     }
     case KSU_MARK_UNMARK: {
-#ifdef KSU_TP_HOOK
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
         if (cmd.pid == 0) {
             ksu_unmark_all_process();
         } else {
@@ -519,7 +532,7 @@ static int do_manage_mark(void __user *arg)
         break;
     }
     case KSU_MARK_REFRESH: {
-#ifdef KSU_TP_HOOK
+#ifdef CONFIG_KSU_TRACEPOINT_HOOK
         ksu_mark_running_process();
         pr_info("manage_mark: refreshed running processes\n");
 #else
@@ -834,7 +847,7 @@ static int do_get_full_version(void __user *arg)
 static int do_get_hook_type(void __user *arg)
 {
     struct ksu_hook_type_cmd cmd = { 0 };
-#if defined(KSU_TP_HOOK)
+#if defined(CONFIG_KSU_TRACEPOINT_HOOK)
     const char *type = "Tracepoint Syscall Redirect";
 #elif defined(CONFIG_KSU_MANUAL_HOOK)
     const char *type = "Manual";
@@ -921,6 +934,24 @@ static int do_get_managers(void __user *arg)
 #endif
 
     if (copy_to_user(arg, &cmd, sizeof(struct ksu_get_managers_cmd))) {
+        return -EFAULT;
+    }
+
+    return 0;
+}
+
+static int do_get_kernel_patch_implement(void __user *arg)
+{
+    struct ksu_get_kernel_patch_implement cmd = { 0 };
+#ifdef CONFIG_ARM64
+    cmd.type = kernel_patch_type;
+#else
+    // Kernel Patch are only support aarch64 ABI
+    cmd.type = KERNEL_PATCH_NOT_FOUND;
+#endif
+
+    if (copy_to_user(arg, &cmd, sizeof(cmd))) {
+        pr_err("get_kernel_patch_implement: copy_to_user failed\n");
         return -EFAULT;
     }
 
@@ -1212,6 +1243,12 @@ static const struct ksu_ioctl_cmd_map ksu_ioctl_handlers[] = {
         .cmd = KSU_IOCTL_GET_MANAGERS, 
         .name = "GET_MANAGERS", 
         .handler = do_get_managers, 
+        .perm_check = manager_or_root 
+    },
+    { 
+        .cmd = KSU_IOCTL_GET_KERNEL_PATCH_IMPLEMENT, 
+        .name = "GET_KERNEL_PATCH_IMPLEMENT", 
+        .handler = do_get_kernel_patch_implement, 
         .perm_check = manager_or_root 
     },
 #ifdef CONFIG_KPM

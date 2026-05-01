@@ -132,6 +132,14 @@ bool is_late_load_mode() {
     return false;
 }
 
+bool is_pr_build() {
+    auto info = get_info();
+    if (info.version > 0) {
+        return (info.flags & KSU_GET_INFO_FLAG_PR_BUILD) != 0;
+    }
+    return false;
+}
+
 bool uid_should_umount(int uid) {
     struct ksu_uid_should_umount_cmd cmd = {};
     cmd.uid = uid;
@@ -255,6 +263,13 @@ void get_hook_type(char *buff) {
     } else {
         legacy_get_hook_type(buff, 32);
     }
+}
+
+int get_kernel_patch_implement() {
+    struct ksu_get_kernel_patch_implement cmd = {0};
+    if (ksuctl(KSU_IOCTL_GET_KERNEL_PATCH_IMPLEMENT, &cmd) != 0)
+        return 0;
+    return cmd.type;
 }
 
 bool set_dynamic_manager(unsigned int size, const char *hash)

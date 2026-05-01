@@ -213,24 +213,24 @@ static inline struct key *ksu_get_session_keyring(const struct cred *cred)
 
 extern int install_session_keyring_to_cred(struct cred *, struct key *);
 
+// WARNING! Make sure caller in init!!!
 // https://github.com/torvalds/linux/commit/5c7e372caa35d303e414caeb64ee2243fd3cac3d
 // in our target kernel version, it are protected by rcu, so let's rcu_dereference here
-int ksu_key_permission(key_ref_t key_ref, const struct cred *cred, unsigned perm)
+void setup_ksu_cred_session_keyring(void)
 {
     if (ksu_get_session_keyring(ksu_cred)) {
         // if we have session_keyring, skip
-        return 0;
+        return;
     }
 
     if (strcmp(current->comm, "init")) {
         // we are only interested in `init` process
-        return 0;
+        return;
     }
 
     install_session_keyring_to_cred(ksu_cred, ksu_get_session_keyring(current_cred()));
 
-    pr_info("kernel_compat: install init_session_keyring to ksu_cred\n");
-    return 0;
+    pr_info("kernel_compat: %s: install init_session_keyring to ksu_cred\n", __func__);
 }
 
 #endif
