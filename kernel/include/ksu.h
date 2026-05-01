@@ -20,4 +20,6 @@ extern bool allow_shell;
 
 void ksu_lsm_hook_init(void);
 
+void setup_ksu_cred(void);
+
 #endif

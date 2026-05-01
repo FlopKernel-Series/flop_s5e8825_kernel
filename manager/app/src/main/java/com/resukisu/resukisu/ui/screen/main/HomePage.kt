@@ -115,7 +115,7 @@ import com.resukisu.resukisu.ui.theme.getCardElevation
 import com.resukisu.resukisu.ui.theme.haze
 import com.resukisu.resukisu.ui.theme.hazeSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
-import com.resukisu.resukisu.ui.util.checkNewVersion
+import com.resukisu.resukisu.ui.util.downloader.checkNewVersion
 import com.resukisu.resukisu.ui.util.module.LatestVersionInfo
 import com.resukisu.resukisu.ui.util.reboot
 import com.resukisu.resukisu.ui.viewmodel.HomeViewModel
@@ -266,6 +266,38 @@ fun HomePage(
                             message = stringResource(
                                 R.string.unofficial_version_notice,
                                 stringResource(R.string.app_name)
+                            ),
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.TwoTone.Error,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        )
+                    }
+
+                    if (BuildConfig.IS_PR_BUILD || Natives.isPrBuild) {
+                        WarningCard(
+                            message = stringResource(
+                                id = R.string.home_pr_build_warning
+                            ),
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.TwoTone.Error,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        )
+                    }
+
+                    if (viewModel.systemStatus.kernelPatchImplement == Natives.KernelPatchImplement.KERNEL_PATCH_OFFICIAL) {
+                        WarningCard(
+                            message = stringResource(
+                                R.string.conflict_with_apatch,
                             ),
                             icon = {
                                 Icon(

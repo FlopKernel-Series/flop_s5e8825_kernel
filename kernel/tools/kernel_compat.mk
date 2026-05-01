@@ -217,3 +217,10 @@ ifneq ($(wildcard $(srctree)/include/linux/proc_ns.h),)
 $(info -- $(REPO_NAME)/compat: modern proc ns header file found)
 ccflags-y += -DKSU_HAS_MODERN_PROC_NS
 endif
+
+# Kernel 4.2-
+# have that can avoid scan selinux_ops
+ifeq ($(shell grep -q "^struct security_operations selinux_ops" $(srctree)/security/selinux/hooks.c; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: exported selinux_ops found!)
+CFLAGS_ksu.o += -DKSU_HAS_EXPORTED_SELINUX_OPS
+endif

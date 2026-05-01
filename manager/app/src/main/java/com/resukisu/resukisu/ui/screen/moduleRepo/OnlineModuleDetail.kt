@@ -59,6 +59,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,6 +81,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.resukisu.resukisu.R
+import com.resukisu.resukisu.ui.activity.PermissionRequestInterface
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.GithubMarkdown
 import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
@@ -88,10 +90,13 @@ import com.resukisu.resukisu.ui.component.settings.AppBackButton
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.SplicedColumnGroup
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.navigation.Navigator
+import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.haze
 import com.resukisu.resukisu.ui.theme.hazeSource
+import com.resukisu.resukisu.ui.util.LocalPermissionRequestInterface
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
 import com.resukisu.resukisu.ui.util.module.ReleaseAssetInfo
 import com.resukisu.resukisu.ui.util.module.ReleaseInfo
@@ -381,6 +386,7 @@ fun ReleaseCard(
 ) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
+    val permissionRequestInterface = LocalPermissionRequestInterface.current
     val confirmInstallTitle =
         stringResource(R.string.confirm_install_module_title, module.moduleName)
     val confirmDialog = rememberConfirmDialog()
@@ -454,6 +460,7 @@ fun ReleaseCard(
 
                             downloadAssetAndInstall(
                                 context,
+                                permissionRequestInterface,
                                 module,
                                 assetInfo,
                                 navigator,
@@ -565,5 +572,27 @@ fun ReleaseCardPreview() {
             )
         }
     )
-    ReleaseCard(initFakeRepoModuleForPreview(), release, rememberCoroutineScope())
+
+    val fakeModule = initFakeRepoModuleForPreview()
+
+    CompositionLocalProvider(
+        LocalNavigator provides Navigator(Route.ModuleRepoDetail(fakeModule)),
+        LocalPermissionRequestInterface provides object : PermissionRequestInterface {
+            override fun requestPermission(
+                permission: String,
+                callback: (Boolean) -> Unit,
+                requestDescription: String
+            ) {
+            }
+
+            override fun requestPermissions(
+                permissions: Array<String>,
+                callback: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit,
+                requestDescription: Map<String, String>
+            ) {
+            }
+        },
+    ) {
+        ReleaseCard(fakeModule, release, rememberCoroutineScope())
+    }
 }

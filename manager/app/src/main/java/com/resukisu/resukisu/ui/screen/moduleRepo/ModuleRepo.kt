@@ -65,6 +65,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -91,6 +92,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.resukisu.resukisu.R
+import com.resukisu.resukisu.ui.activity.PermissionRequestInterface
 import com.resukisu.resukisu.ui.activity.util.isNetworkAvailable
 import com.resukisu.resukisu.ui.component.ConfirmDialogHandle
 import com.resukisu.resukisu.ui.component.ConfirmResult
@@ -107,8 +109,9 @@ import com.resukisu.resukisu.ui.screen.LabelText
 import com.resukisu.resukisu.ui.theme.getCardColors
 import com.resukisu.resukisu.ui.theme.getCardElevation
 import com.resukisu.resukisu.ui.theme.hazeSource
+import com.resukisu.resukisu.ui.util.LocalPermissionRequestInterface
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
-import com.resukisu.resukisu.ui.util.download
+import com.resukisu.resukisu.ui.util.downloader.download
 import com.resukisu.resukisu.ui.util.module.ReleaseAssetInfo
 import com.resukisu.resukisu.ui.util.module.ReleaseInfo
 import com.resukisu.resukisu.ui.viewmodel.ModuleRepoViewModel
@@ -412,6 +415,7 @@ fun OnlineModuleItem(
     currentModuleForChooseDialog: MutableState<RepoModule?>
 ) {
     val context = LocalContext.current
+    val permissionRequestInterface = LocalPermissionRequestInterface.current
     val navigator = LocalNavigator.current
 
     ElevatedCard(
@@ -569,6 +573,7 @@ fun OnlineModuleItem(
                                         assets.firstOrNull()?.let { asset ->
                                             downloadAssetAndInstall(
                                                 context,
+                                                permissionRequestInterface,
                                                 module,
                                                 asset,
                                                 navigator,
@@ -598,20 +603,20 @@ fun OnlineModuleItem(
 
 fun downloadAssetAndInstall(
     context: Context,
+    permissionRequestInterface: PermissionRequestInterface,
     module: RepoModule,
     asset: ReleaseAssetInfo,
     navigator: Navigator,
     coroutineScope: CoroutineScope
 ) {
     val downloadingText = context.getText(R.string.module_downloading).toString()
-    val downloadErrorText = context.getText(R.string.module_download_error).toString()
     coroutineScope.launch {
         withContext(Dispatchers.IO) {
             download(
-                context,
-                asset.downloadUrl,
-                asset.name,
-                downloadingText.format(module.moduleName),
+                context = context,
+                permissionRequestInterface = permissionRequestInterface,
+                url = asset.downloadUrl,
+                fileName = asset.name,
                 onDownloaded = { uri ->
                     navigator.push(
                         Route.Flash(
@@ -624,12 +629,6 @@ fun downloadAssetAndInstall(
                         Toast.makeText(context, downloadingText.format(module.moduleName), Toast.LENGTH_SHORT).show()
                     }
                 },
-                onError = { errorMsg ->
-                    launch(Dispatchers.Main) {
-                        Toast.makeText(context, "$downloadErrorText: $errorMsg", Toast.LENGTH_LONG)
-                            .show()
-                    }
-                }
             )
         }
     }
@@ -643,6 +642,7 @@ fun ChooseDialogContent(
 ) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
+    val permissionRequestInterface = LocalPermissionRequestInterface.current
     val module = currentModuleForChooseDialog.value
     if (module == null || module.latestAsset == null) {
         dismiss()
@@ -725,7 +725,14 @@ fun ChooseDialogContent(
                             }
                             selectedAsset?.let { selected ->
                                 dismiss()
-                                downloadAssetAndInstall(context,module,selected, navigator, viewModel.viewModelScope)
+                                downloadAssetAndInstall(
+                                    context = context,
+                                    permissionRequestInterface = permissionRequestInterface,
+                                    module = module,
+                                    asset = selected,
+                                    navigator = navigator,
+                                    coroutineScope = viewModel.viewModelScope
+                                )
                             }
                         }
                     ) {
@@ -797,13 +804,32 @@ fun initFakeRepoModuleForPreview() : RepoModule {
 fun OnlineModuleItemPreview() {
     val currentModuleForChooseDialog = remember { mutableStateOf<RepoModule?>(null) }
 
-    OnlineModuleItem(
-        initFakeRepoModuleForPreview(),
-        viewModel<ModuleRepoViewModel>(),
-        rememberConfirmDialog(),
-        rememberCustomDialog { },
-        currentModuleForChooseDialog,
-    )
+    CompositionLocalProvider(
+        LocalNavigator provides Navigator(Route.ModuleRepo),
+        LocalPermissionRequestInterface provides object : PermissionRequestInterface {
+            override fun requestPermission(
+                permission: String,
+                callback: (Boolean) -> Unit,
+                requestDescription: String
+            ) {
+            }
+
+            override fun requestPermissions(
+                permissions: Array<String>,
+                callback: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit,
+                requestDescription: Map<String, String>
+            ) {
+            }
+        }
+    ) {
+        OnlineModuleItem(
+            initFakeRepoModuleForPreview(),
+            viewModel<ModuleRepoViewModel>(),
+            rememberConfirmDialog(),
+            rememberCustomDialog { },
+            currentModuleForChooseDialog,
+        )
+    }
 }
 
 @Preview(locale = "zh-rCN", showBackground = true)
@@ -811,5 +837,24 @@ fun OnlineModuleItemPreview() {
 fun ChooseDialogPreview() {
     val currentModuleForChooseDialog = remember { mutableStateOf<RepoModule?>(initFakeRepoModuleForPreview()) }
 
-    ChooseDialogContent(currentModuleForChooseDialog, viewModel<ModuleRepoViewModel>()) {}
+    CompositionLocalProvider(
+        LocalNavigator provides Navigator(Route.ModuleRepo),
+        LocalPermissionRequestInterface provides object : PermissionRequestInterface {
+            override fun requestPermission(
+                permission: String,
+                callback: (Boolean) -> Unit,
+                requestDescription: String
+            ) {
+            }
+
+            override fun requestPermissions(
+                permissions: Array<String>,
+                callback: (Map<String, @JvmSuppressWildcards Boolean>) -> Unit,
+                requestDescription: Map<String, String>
+            ) {
+            }
+        }
+    ) {
+        ChooseDialogContent(currentModuleForChooseDialog, viewModel<ModuleRepoViewModel>()) {}
+    }
 }

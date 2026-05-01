@@ -48,6 +48,10 @@ NativeBridgeNP(isManager, jboolean) {
 	return is_manager();
 }
 
+NativeBridgeNP(isPrBuild, jboolean) {
+	return is_pr_build();
+}
+
 NativeBridgeNP(isLateLoadMode, jboolean) {
 	return is_late_load_mode();
 }
@@ -123,7 +127,7 @@ NativeBridge(getAppProfile, jobject, jstring pkg, jint uid) {
 	profile.version = KSU_APP_PROFILE_VER;
 
 	strcpy(profile.key, key);
-	profile.current_uid = uid;
+	profile.curr_uid = uid;
 
 	bool useDefaultProfile = get_app_profile(&profile) != 0;
 
@@ -148,7 +152,7 @@ NativeBridge(getAppProfile, jobject, jstring pkg, jint uid) {
 	jfieldID umountModulesField = GetEnvironment()->GetFieldID(env, cls, "umountModules", "Z");
 
 	GetEnvironment()->SetObjectField(env, obj, keyField, GetEnvironment()->NewStringUTF(env, profile.key));
-	GetEnvironment()->SetIntField(env, obj, currentUidField, profile.current_uid);
+	GetEnvironment()->SetIntField(env, obj, currentUidField, profile.curr_uid);
 
 	if (useDefaultProfile) {
 		// no profile found, so just use default profile:
@@ -250,7 +254,7 @@ NativeBridge(setAppProfile, jboolean, jobject profile) {
 
 	strcpy(p.key, p_key);
 	p.allow_su = allowSu;
-	p.current_uid = currentUid;
+	p.curr_uid = currentUid;
 
 	if (allowSu) {
 		p.rp_config.use_default = GetEnvironment()->GetBooleanField(env, profile, rootUseDefaultField);
@@ -333,6 +337,38 @@ NativeBridgeNP(getHookType, jstring) {
     char hook_type[32] = { 0 };
 	get_hook_type((char *) &hook_type);
 	return GetEnvironment()->NewStringUTF(env, hook_type);
+}
+
+// Get KernelPatch implement
+NativeBridgeNP(getKernelPatchImplement, jobject) {
+	int type = get_kernel_patch_implement();
+
+	jclass cls = GetEnvironment()->FindClass(env,
+											 "com/resukisu/resukisu/Natives$KernelPatchImplement");
+	if (cls == nullptr) {
+		jclass exCls = GetEnvironment()->FindClass(env, "java/lang/IllegalStateException");
+		GetEnvironment()->ThrowNew(env, exCls, "Could not find KernelPatchImplement class");
+		return nullptr;
+	}
+
+	jmethodID valuesMethod = GetEnvironment()->GetStaticMethodID(env, cls, "values",
+																 "()[Lcom/resukisu/resukisu/Natives$KernelPatchImplement;");
+	if (valuesMethod == nullptr) {
+		jclass exCls = GetEnvironment()->FindClass(env, "java/lang/IllegalStateException");
+		GetEnvironment()->ThrowNew(env, exCls,
+								   "Could not find values() method in KernelPatchImplement");
+		return nullptr;
+	}
+
+	jobjectArray valuesArray = (jobjectArray) GetEnvironment()->CallStaticObjectMethod(env, cls,
+																					   valuesMethod);
+	if (valuesArray == nullptr) {
+		jclass exCls = GetEnvironment()->FindClass(env, "java/lang/IllegalStateException");
+		GetEnvironment()->ThrowNew(env, exCls, "Could get valuesArray in KernelPatchImplement");
+		return nullptr;
+	}
+
+	return GetEnvironment()->GetObjectArrayElement(env, valuesArray, (jsize) type);
 }
 
 // dynamic manager
