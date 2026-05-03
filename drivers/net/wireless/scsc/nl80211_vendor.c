@@ -7,6 +7,7 @@
 #include <net/cfg80211.h>
 #include <net/ip.h>
 #include <linux/etherdevice.h>
+#include <linux/sec_detect.h>
 #include <linux/workarounds.h>
 #include "dev.h"
 #include "cfg80211_ops.h"
@@ -2287,6 +2288,7 @@ static void slsi_lls_iface_stat_fill(struct slsi_dev *sdev,
 	struct netdev_vif         *ndev_vif;
 	struct slsi_mib_data      mibrsp = { 0, NULL };
 	struct slsi_mib_value     *values = NULL;
+	bool                      use_fw_tx_mpdu = sec_get_current_device() == SEC_A26XS;
 	struct slsi_mib_get_entry get_values[] = { { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_BE + 1, 0 } },
 						 { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_BK + 1, 0 } },
 						 { SLSI_PSID_UNIFI_AC_SUCCESS, { SLSI_TRAFFIC_Q_VI + 1, 0 } },
@@ -2348,14 +2350,16 @@ static void slsi_lls_iface_stat_fill(struct slsi_dev *sdev,
 		goto exit;
 
 	for (i = 0; i < SLSI_LLS_AC_MAX; i++) {
-		if (values[i].type == SLSI_MIB_TYPE_UINT) {
-			iface_stat->ac[i].ac = slsi_fapi_to_android_traffic_q(i);
+		if (use_fw_tx_mpdu && values[i].type != SLSI_MIB_TYPE_UINT)
+			continue;
+		iface_stat->ac[i].ac = slsi_fapi_to_android_traffic_q(i);
+		if (values[i + 4].type == SLSI_MIB_TYPE_UINT)
 			iface_stat->ac[i].retries = values[i + 4].u.uintValue;
-			iface_stat->ac[i].rx_mpdu = ndev_vif->rx_packets[i];
-			iface_stat->ac[i].tx_mpdu = values[i].u.uintValue;
+		iface_stat->ac[i].rx_mpdu = ndev_vif->rx_packets[i];
+		iface_stat->ac[i].tx_mpdu = use_fw_tx_mpdu ? values[i].u.uintValue : ndev_vif->tx_packets[i];
+		if (values[i + 11].type == SLSI_MIB_TYPE_UINT)
 			ndev_vif->tx_no_ack[i] = values[i + 11].u.uintValue;
-			iface_stat->ac[i].mpdu_lost = ndev_vif->tx_no_ack[i];
-		}
+		iface_stat->ac[i].mpdu_lost = ndev_vif->tx_no_ack[i];
 	}
 
 	if (values[8].type == SLSI_MIB_TYPE_UINT)
