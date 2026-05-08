@@ -143,7 +143,6 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
 obj-$(CONFIG_EROFS_FS)		+= erofs/
 obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
 obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
-obj-$(CONFIG_ZEROMOUNT)		+= zeromount.o
 
 ifdef CONFIG_SEC_KUNIT
 endif
