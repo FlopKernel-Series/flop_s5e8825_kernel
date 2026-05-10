@@ -93,9 +93,9 @@ KSU_VERSION := $(if $(strip $(KSU_VERSION_OVERRIDE)),$(KSU_VERSION_OVERRIDE),$(s
 
 KSU_TAG_NAME    := $(if $(strip $(KSU_TAG_NAME_OVERRIDE)),$(KSU_TAG_NAME_OVERRIDE),$(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) describe --abbrev=0 --tags 2>/dev/null || echo "v4.1.0"),unknown))
 KSU_COMMIT_SHA  := $(if $(strip $(KSU_COMMIT_SHA_OVERRIDE)),$(KSU_COMMIT_SHA_OVERRIDE),$(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-parse --short=8 HEAD 2>/dev/null || echo "unknown"),unknown))
-ifneq ($(shell cd $(KSU_SRC); $(GIT_BIN) diff-index --quiet HEAD; echo $$?),0)
-KSU_COMMIT_SHA  := $(KSU_COMMIT_SHA)-dirty
-endif
+# ifneq ($(shell cd $(KSU_SRC); $(GIT_BIN) diff-index --quiet HEAD; echo $$?),0)
+# KSU_COMMIT_SHA  := $(KSU_COMMIT_SHA)-dirty
+# endif
 KSU_BRANCH_NAME := $(if $(strip $(KSU_BRANCH_NAME_OVERRIDE)),$(KSU_BRANCH_NAME_OVERRIDE),$(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) branch --show-current 2>/dev/null || echo "detached"),subtree))
 
 # call subst to process placeholders
