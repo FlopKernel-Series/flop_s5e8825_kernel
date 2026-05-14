@@ -248,3 +248,8 @@ ifeq ($(shell grep -q "POLICYDB_CONFIG_ANDROID_NETLINK_GETNEIGH" $(srctree)/secu
 $(info -- $(REPO_NAME)/compat: android spec POLICYDB_CONFIG_ANDROID_NETLINK_GETNEIGH found!!)
 ccflags-y += -DKSU_COMPAT_HAS_POLICYDB_CONFIG_ANDROID_NETLINK_GETNEIGH
 endif
+
+ifneq ($(shell grep -q "flex_array" $(srctree)/security/selinux/ss/policydb.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found modern selinux policydb)
+ccflags-y += -DKSU_COMPAT_HAS_MODERN_POLICYDB
+endif
