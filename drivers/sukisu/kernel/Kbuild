@@ -84,9 +84,9 @@ endif
 ifneq ($(LOCAL_GIT_EXISTS),0)
 $(shell cd $(KSU_SRC); [ -f ../.git/shallow ] && $(GIT_BIN) fetch --unshallow >/dev/null 2>&1 || true)
 endif
-KSU_VERSION_OVERRIDE := 34895
+KSU_VERSION_OVERRIDE := 34898
 KSU_TAG_NAME_OVERRIDE := v4.1.0
-KSU_COMMIT_SHA_OVERRIDE := 0d096be05c40338205bc183f5ec072233e15f9c0
+KSU_COMMIT_SHA_OVERRIDE := 3d790eaaabe9e7e33d938bbf836e0f247121e79e
 KSU_BRANCH_NAME_OVERRIDE := main
 KSU_LOCAL_VERSION := $(if $(filter 1,$(LOCAL_GIT_EXISTS)),$(shell cd $(KSU_VERSION_SRC); $(GIT_BIN) rev-list --count HEAD 2>/dev/null || echo 0),0)
 KSU_VERSION := $(if $(strip $(KSU_VERSION_OVERRIDE)),$(KSU_VERSION_OVERRIDE),$(shell expr 30000 + $(KSU_LOCAL_VERSION) + 700))
