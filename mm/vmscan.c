@@ -3408,7 +3408,7 @@ static void reset_ctrl_pos(struct lruvec *lruvec, int type, bool carryover)
 	bool clear = carryover ? NR_HIST_GENS == 1 : NR_HIST_GENS > 1;
 	unsigned long seq = carryover ? lrugen->min_seq[type] : lrugen->max_seq + 1;
 
-	lockdep_assert_held(&lruvec_pgdat(lruvec)->lru_lock);
+	lockdep_assert_held(&lruvec->lru_lock);
 
 	if (!carryover && !clear)
 		return;
