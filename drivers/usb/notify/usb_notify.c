@@ -4171,6 +4171,8 @@ int set_otg_notify(struct otg_notify *n)
 				  reserve_state_check);
 		schedule_delayed_work(&u_notify->b_delay.booting_work,
 				n->booting_delay_sec*HZ);
+	} else {
+		send_external_notify(EXTERNAL_NOTIFY_POSSIBLE_USB, 1);
 	}
 
 	if (n->device_check_sec)
