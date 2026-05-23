@@ -148,6 +148,7 @@ struct sec_cmd_data {
 	u8 cmd_all_factory_state;
 	struct attribute_group *vendor_attr_group;
 	bool block_ed3;
+	int htpr_force;
 };
 
 void sec_cmd_set_cmd_exit(struct sec_cmd_data *data);

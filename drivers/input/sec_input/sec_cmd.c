@@ -312,6 +312,12 @@ check_not_support_cmd:
 		input_info(false, data->fac_dev, "%s: cmd = %s(%s)\n", __func__, buff, sec_cmd_ptr->cmd_name);
 	}
 
+	if (data->htpr_force == 1 && sec_cmd_ptr->cmd_name &&
+			strcmp(sec_cmd_ptr->cmd_name, "set_game_mode") == 0) {
+		data->cmd_param[0] = 1;
+		input_info(true, data->fac_dev, "%s: htpr_force is active, overriding game_mode command to 1\n", __func__);
+	}
+
 	if (sec_cmd_ptr->cmd_use_cases)
 		sec_cmd_check_store_condition(data, sec_cmd_ptr);
 	else
@@ -443,6 +449,12 @@ check_not_support_cmd:
 			tdbuff, sec_cmd_ptr->wait_read_result ? " (wait)" : "");
 	} else {
 		input_info(false, data->fac_dev, "%s: cmd = %s(%s)\n", __func__, buff, sec_cmd_ptr->cmd_name);
+	}
+
+	if (data->htpr_force == 1 && sec_cmd_ptr->cmd_name &&
+			strcmp(sec_cmd_ptr->cmd_name, "set_game_mode") == 0) {
+		data->cmd_param[0] = 1;
+		input_info(true, data->fac_dev, "%s: htpr_force is active, overriding game_mode command to 1\n", __func__);
 	}
 
 	if (sec_cmd_ptr->cmd_use_cases)
@@ -743,6 +755,58 @@ __visible_for_testing ssize_t cmd_list_show(struct device *dev,
 EXPORT_SYMBOL_KUNIT(cmd_list_show);
 #endif
 
+static void sec_cmd_set_game_mode(struct sec_cmd_data *data, int enable)
+{
+	struct sec_cmd *sec_cmd_ptr;
+
+	list_for_each_entry(sec_cmd_ptr, &data->cmd_list_head, list) {
+		if (sec_cmd_ptr->cmd_name && !strcmp(sec_cmd_ptr->cmd_name, "set_game_mode")) {
+			data->cmd_param[0] = enable;
+			if (sec_cmd_ptr->cmd_func) {
+				input_info(true, data->fac_dev, "%s: setting game_mode to %d via %s\n", __func__, enable, sec_cmd_ptr->cmd_name);
+				sec_cmd_ptr->cmd_func(data);
+			}
+			break;
+		}
+	}
+}
+
+static ssize_t htpr_force_show(struct device *dev, struct device_attribute *attr,
+					char *buf)
+{
+	struct sec_cmd_data *data = dev_get_drvdata(dev);
+
+	if (!data)
+		return -EINVAL;
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", data->htpr_force);
+}
+
+static ssize_t htpr_force_store(struct device *dev, struct device_attribute *attr,
+					const char *buf, size_t count)
+{
+	struct sec_cmd_data *data = dev_get_drvdata(dev);
+	int val;
+
+	if (!data)
+		return -EINVAL;
+
+	if (kstrtoint(buf, 10, &val) < 0)
+		return -EINVAL;
+
+	if (val != 0 && val != 1)
+		return -EINVAL;
+
+	data->htpr_force = val;
+	input_info(true, dev, "%s: htpr_force set to %d\n", __func__, val);
+
+	sec_cmd_set_game_mode(data, val);
+
+	return count;
+}
+
+static DEVICE_ATTR_RW(htpr_force);
+
 static DEVICE_ATTR(cmd, 0220, NULL, cmd_store);
 static DEVICE_ATTR_RO(cmd_status);
 static DEVICE_ATTR_RO(cmd_status_all);
@@ -757,6 +821,7 @@ static struct attribute *sec_fac_attrs[] = {
 	&dev_attr_cmd_result.attr,
 	&dev_attr_cmd_result_all.attr,
 	&dev_attr_cmd_list.attr,
+	&dev_attr_htpr_force.attr,
 	NULL,
 };
 
@@ -909,6 +974,10 @@ static ssize_t enabled_store(struct device *dev, struct device_attribute *attr,
 			goto out;
 		}
 		ret = sec_input_enable_device(plat_data->dev);
+		if (ret >= 0 && sec->htpr_force == 1) {
+			input_info(true, sec->fac_dev, "%s: htpr_force is active, refreshing game_mode to 1\n", __func__);
+			sec_cmd_set_game_mode(sec, 1);
+		}
 	} else if (buff[0] == DISPLAY_STATE_OFF && buff[1] == DISPLAY_EVENT_EARLY) {
 		input_info(true, sec->dev, "%s: DISPLAY_STATE_OFF\n", __func__);
 		if (!atomic_read(&plat_data->enabled)) {
@@ -923,6 +992,10 @@ static ssize_t enabled_store(struct device *dev, struct device_attribute *attr,
 			goto out;
 		}
 		ret = sec_input_enable_device(plat_data->dev);
+		if (ret >= 0 && sec->htpr_force == 1) {
+			input_info(true, sec->fac_dev, "%s: htpr_force is active, refreshing game_mode to 1\n", __func__);
+			sec_cmd_set_game_mode(sec, 1);
+		}
 	} else if (buff[0] == DISPLAY_STATE_FORCE_OFF || buff[0] == DISPLAY_STATE_LPM_OFF) {
 		input_info(true, sec->dev, "%s: %s\n", __func__, buff[0] == DISPLAY_STATE_FORCE_OFF ?
 				"DISPLAY_STATE_FORCE_OFF" : "DISPLAY_STATE_LPM_OFF");
