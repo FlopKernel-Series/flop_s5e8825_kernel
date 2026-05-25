@@ -1030,7 +1030,7 @@ else
 CC_FLAGS_LTO	:= -flto
 endif
 
-CC_FLAGS_LTO	+= -fvisibility=hidden
+CC_FLAGS_LTO	+= -fvisibility=default
 
 # LLVM tunings
 KBUILD_LDFLAGS += -mllvm -import-hot-multiplier=2
