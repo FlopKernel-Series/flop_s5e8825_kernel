@@ -1026,19 +1026,17 @@ endif
 ifdef CONFIG_LTO_CLANG
 ifdef CONFIG_LTO_CLANG_THIN
 CC_FLAGS_LTO	:= -flto=thin -fsplit-lto-unit -funified-lto
-
-# LLVM tunings
-KBUILD_LDFLAGS += -mllvm -inline-threshold=500
 else
 CC_FLAGS_LTO	:= -flto
 endif
 
 CC_FLAGS_LTO	+= -fvisibility=hidden
 
-# Limit inlining across translation units to reduce binary size
-KBUILD_LDFLAGS += -mllvm -import-instr-limit=15
-KBUILD_LDFLAGS += -mllvm -import-hot-multiplier=5
-KBUILD_LDFLAGS += -mllvm -import-cold-multiplier=0
+# LLVM tunings
+KBUILD_LDFLAGS += -mllvm -import-hot-multiplier=2
+KBUILD_LDFLAGS += -mllvm -inline-threshold=500
+KBUILD_LDFLAGS += -mllvm -import-instr-limit=80
+KBUILD_CFLAGS  += -mllvm -unroll-threshold=600
 endif
 
 ifdef CONFIG_LTO
