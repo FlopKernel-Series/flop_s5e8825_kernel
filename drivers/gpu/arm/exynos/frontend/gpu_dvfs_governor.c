@@ -146,7 +146,7 @@ static int gpu_dvfs_governor_interactive(int utilization)
 	bool highspeed_active =
 		(highspeed_level >= max_clock_level) &&
 		(highspeed_level <= min_clock_level) &&
-		(dvfs->step >= highspeed_level) &&
+		(dvfs->step > highspeed_level) &&
 		(utilization > dvfs->interactive.highspeed_load);
 
 	/*
