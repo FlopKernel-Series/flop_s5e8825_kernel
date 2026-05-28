@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.system.OsConstants
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -40,6 +41,7 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Fence
 import androidx.compose.material.icons.filled.FolderOff
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Save
@@ -100,11 +102,11 @@ import com.resukisu.resukisu.ui.component.ksuIsValid
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
 import com.resukisu.resukisu.ui.component.rememberLoadingDialog
+import com.resukisu.resukisu.ui.component.settings.SegmentedColumn
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsDropdownWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsJumpPageWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsSwitchWidget
-import com.resukisu.resukisu.ui.component.settings.SplicedColumnGroup
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.screen.FlashIt
@@ -202,7 +204,7 @@ fun SettingsPage(bottomPadding: Dp) {
                         stringResource(id = R.string.settings_mode_disable_always),
                     )
 
-                    SplicedColumnGroup(
+                    SegmentedColumn(
                         title = stringResource(R.string.configuration),
                         content = {
                             item {
@@ -407,6 +409,57 @@ fun SettingsPage(bottomPadding: Dp) {
                                 )
                             }
 
+
+                            item {
+                                var isSelinuxHideEnabled by remember { mutableStateOf(Natives.isSelinuxHideEnabled()) }
+
+                                var savedSelinuxHideStatus by rememberSaveable { mutableStateOf("") }
+                                val selinuxHideStatus by produceState(initialValue = savedSelinuxHideStatus) {
+                                    value = withContext(Dispatchers.IO) {
+                                        savedSelinuxHideStatus = getFeatureStatus("selinux_hide")
+                                        return@withContext savedSelinuxHideStatus
+                                    }
+                                }
+                                val selinuxHideSummary = when (selinuxHideStatus) {
+                                    "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
+                                    "managed" -> stringResource(id = R.string.feature_status_managed_summary)
+                                    else -> stringResource(id = R.string.settings_selinux_hide_summary)
+                                }
+                                SettingsSwitchWidget(
+                                    icon = Icons.Filled.Policy,
+                                    title = stringResource(id = R.string.settings_selinux_hide),
+                                    description = selinuxHideSummary,
+                                    enabled = selinuxHideStatus == "supported",
+                                    checked = isSelinuxHideEnabled,
+                                    onCheckedChange = { checked ->
+                                        val status = Natives.setSelinuxHideEnabled(checked)
+                                        execKsud("feature save", true)
+                                        isSelinuxHideEnabled = checked
+
+                                        when (status) {
+                                            0 -> {}
+                                            -OsConstants.EAGAIN -> {
+                                                Toast.makeText(
+                                                    context,
+                                                    R.string.settings_selinux_hide_reboot_required,
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
+                                            else -> {
+                                                Toast.makeText(
+                                                    context,
+                                                    ksuApp.getString(
+                                                        R.string.settings_selinux_hide_failed,
+                                                        status
+                                                    ),
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+
                             item {
                                 // 卸载模块开关
                                 var umountChecked by rememberSaveable { mutableStateOf(Natives.isDefaultUmountModules()) }
@@ -429,7 +482,7 @@ fun SettingsPage(bottomPadding: Dp) {
 
             item {
                 // 应用设置卡片
-                SplicedColumnGroup(
+                SegmentedColumn(
                     title = stringResource(R.string.app_settings),
                     content = {
                         item {
@@ -466,7 +519,7 @@ fun SettingsPage(bottomPadding: Dp) {
 
             item {
                 // 工具卡片
-                SplicedColumnGroup(
+                SegmentedColumn(
                     title = stringResource(R.string.tools),
                     content = {
                         item {
@@ -550,7 +603,7 @@ fun SettingsPage(bottomPadding: Dp) {
 
             // 关于卡片
             item {
-                SplicedColumnGroup(
+                SegmentedColumn(
                     title = stringResource(R.string.about),
                     content = {
                         item {
