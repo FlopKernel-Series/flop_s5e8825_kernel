@@ -141,6 +141,28 @@ int gpex_clock_get_boot_clock(void);
 int gpex_clock_get_max_clock(void);
 
 /**
+ * gpex_clock_set_runtime_max_clock() - update the runtime-visible GPU max clock
+ * @clk: target runtime max GPU clock
+ *
+ * Return: 0 on success
+ */
+int gpex_clock_set_runtime_max_clock(int clk);
+
+/**
+ * gpex_clock_get_stock_max_clock() - get the default stock GPU max clock
+ *
+ * Return: stock GPU max clock in Khz
+ */
+int gpex_clock_get_stock_max_clock(void);
+
+/**
+ * gpex_clock_get_unlock_max_clock() - get the unlocked GPU max clock
+ *
+ * Return: unlocked GPU max clock in Khz
+ */
+int gpex_clock_get_unlock_max_clock(void);
+
+/**
  * gpex_clock_get_max_clock_limit() - get the GPU max clock from cal-if (from bl2)
  *
  * Return: GPU max clock in Khz (from cal-if)

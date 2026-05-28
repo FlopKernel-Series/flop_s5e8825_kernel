@@ -217,44 +217,32 @@ GPEX_STATIC ssize_t get_gpu_clklck(char *buf)
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(get_gpu_clklck)
 
-void handle_lock_dvfs(int clock) {
-	int ret;
-	clk_info->user_max_lock_input = clock;
-	clock = gpex_get_valid_gpu_clock(clock, false);
-	ret = gpex_clock_get_table_idx(clock);
-	if ((ret < gpex_clock_get_table_idx(gpex_clock_get_max_clock())) ||
-	    (ret > gpex_clock_get_table_idx(gpex_clock_get_min_clock()))) {
-		return;
-	}
-	if (clock == gpex_clock_get_max_clock()) {
-		gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
-	} else {
-		gpex_clock_lock_clock(GPU_CLOCK_MAX_LOCK, SYSFS_LOCK, clock);
-	}
-}
-
 GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 {
-	if (!is_superfloppy_overclock_mode()) {
-		return -EINVAL;
-	}
+	int ret;
+	bool enable;
+	int target_clock;
 
-	if (gpu_max_freq_write_blocked())
-		return count;
-
-	if (sysfs_streq("0", buf) || sysfs_streq("1", buf)) {
-		gpu_unlock = sysfs_streq("1", buf);
-		handle_lock_dvfs(gpu_unlock ? GPU_FREQ_KHZ_MAX : GPU_FREQ_STOCK_KHZ_MAX);
-	} else {
+	if (!sysfs_streq("0", buf) && !sysfs_streq("1", buf))
 		return -EINVAL;
-	}
+
+	enable = sysfs_streq("1", buf);
+	target_clock = enable ? gpex_clock_get_unlock_max_clock() :
+				gpex_clock_get_stock_max_clock();
+
+	ret = gpex_clock_set_runtime_max_clock(target_clock);
+	if (ret)
+		return ret;
+
+	gpu_unlock = enable;
+
 	return count;
 }
 CREATE_SYSFS_KOBJECT_WRITE_FUNCTION(set_gpu_unlock)
 
 GPEX_STATIC ssize_t get_gpu_unlock(char *buf)
 {
-	return snprintf(buf, PAGE_SIZE, "%d\n", is_superfloppy_overclock_mode() ? gpu_unlock : 0);
+	return snprintf(buf, PAGE_SIZE, "%d\n", gpu_unlock);
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(get_gpu_unlock)
 
@@ -568,8 +556,7 @@ int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 {
 	clk_info = _clk_info;
 
-	/* Set gpu_unlock default: 1 if superfloppy overclock mode, 0 otherwise */
-	gpu_unlock = is_superfloppy_overclock_mode() ? 1 : 0;
+	gpu_unlock = clk_info->gpu_max_clock == clk_info->gpu_unlock_max_clock;
 
 	GPEX_UTILS_SYSFS_DEVICE_FILE_ADD(clock, show_clock, set_clock);
 	GPEX_UTILS_SYSFS_DEVICE_FILE_ADD_RO(asv_table, show_asv_table);

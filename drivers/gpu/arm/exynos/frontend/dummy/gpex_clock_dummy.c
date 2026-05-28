@@ -84,6 +84,21 @@ int gpex_clock_get_max_clock(void)
 	return 0;
 }
 
+int gpex_clock_set_runtime_max_clock(int clk)
+{
+	return 0;
+}
+
+int gpex_clock_get_stock_max_clock(void)
+{
+	return 0;
+}
+
+int gpex_clock_get_unlock_max_clock(void)
+{
+	return 0;
+}
+
 int gpex_clock_get_max_clock_limit(void)
 {
 	return 0;

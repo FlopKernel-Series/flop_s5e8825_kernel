@@ -34,6 +34,8 @@ typedef struct _gpu_clock_info {
 struct _clock_info {
 	struct kbase_device *kbdev;
 	int gpu_max_clock;
+	int gpu_stock_max_clock;
+	int gpu_unlock_max_clock;
 	int gpu_min_clock;
 	int gpu_max_clock_limit;
 	int boot_clock; // was known as gpu_dvfs_start_clock

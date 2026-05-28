@@ -245,6 +245,9 @@ static ssize_t show_highspeed_clock(char *buf)
 	highspeed_clock = dvfs->interactive.highspeed_clock;
 	spin_unlock_irqrestore(&dvfs->spinlock, flags);
 
+	if (highspeed_clock > gpex_clock_get_max_clock())
+		highspeed_clock = gpex_clock_get_max_clock();
+
 	ret += snprintf(buf + ret, PAGE_SIZE - ret, "%d", highspeed_clock);
 
 	if (ret < PAGE_SIZE - 1) {
