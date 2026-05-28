@@ -82,12 +82,13 @@ static struct security_hook_list ksu_hooks[] = {
 #endif
 };
 
-void __init ksu_lsm_hook_init(void)
+void __init ksu_lsm_hook_built_in_init(void)
 {
     if (ARRAY_SIZE(ksu_hooks) == 0)
         return;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
+        // https://github.com/torvalds/linux/commit/d69dece5f5b6bc7a5e39d2b6136ddc69469331fe
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0) || defined(KSU_COMPAT_REQUIRE_PROVIDE_LSM_NAME)
     security_add_hooks(ksu_hooks, ARRAY_SIZE(ksu_hooks), "ksu");
 #else
     // https://elixir.bootlin.com/linux/v4.10.17/source/include/linux/lsm_hooks.h#L1892
@@ -96,6 +97,7 @@ void __init ksu_lsm_hook_init(void)
 }
 #else // linux kernel >= 4.2
 #include "avc_ss.h"
+#include "feature/selinux_hide.h"
 
 #ifdef CONFIG_KSU_MANUAL_HOOK_AUTO_SETUID_HOOK
 #define IF_CONFIG_KSU_MANUAL_HOOK_AUTO_SETUID_HOOK(x) x
@@ -134,6 +136,8 @@ void __init ksu_lsm_hook_init(void)
     }
 
 LSM_HOOK_LIST(GENERATE_LSM_HOOK_DEFS)
+
+setprocattr_fn ksu_orig_setprocattr;
 
 #undef STRIP_PARENS
 #undef GENERATE_LSM_HOOK_DEFS
@@ -367,6 +371,23 @@ static int ksu_register_lsm_hook(void *data)
 }
 #undef ASSIGN_ORIG_AND_HOOK
 
+void ksu_unregister_setprocattr_lsm_hook()
+{
+    struct security_operations *ops = (struct security_operations *)selinux_ops_addr;
+
+    if (ksu_orig_setprocattr) {
+        ops->setprocattr = ksu_orig_setprocattr;
+    }
+}
+
+void ksu_register_setprocattr_lsm_hook()
+{
+    struct security_operations *ops = (struct security_operations *)selinux_ops_addr;
+
+    ksu_orig_setprocattr = ops->setprocattr;
+    ops->setprocattr = ksu_handle_selinux_setprocattr;
+}
+
 #ifdef CONFIG_KSU_MANUAL_HOOK_AUTO_INITRC_HOOK
 static int ksu_unregister_file_permission(void *data)
 {
@@ -382,7 +403,7 @@ static int ksu_unregister_file_permission(void *data)
 }
 #endif
 
-void __init ksu_lsm_hook_init(void)
+void __init ksu_lsm_hook_built_in_init(void)
 {
     set_selinux_ops();
 

@@ -8,7 +8,7 @@ use std::{
 
 use android_bootimg::{
     cpio::{Cpio, CpioEntry},
-    parser::BootImage,
+    parser::{BootImage, RamdiskImage},
     patcher::BootImagePatchOption,
 };
 use anyhow::{Context, Result, anyhow, bail, ensure};
@@ -345,6 +345,31 @@ fn parse_kmi_from_boot(image: &PathBuf) -> Result<String> {
     }
 }
 
+/// For vendor boot, prefer the `init_boot` ramdisk entry over the one with empty name,
+/// matching the original magiskboot lookup order (init_boot.cpio before ramdisk.cpio).
+fn extract_ramdisk(ramdisk_image: &RamdiskImage) -> Result<(Cpio, Option<usize>)> {
+    if ramdisk_image.is_vendor_ramdisk() {
+        let (pos, target) = ramdisk_image
+            .iter_vendor_ramdisk()
+            .enumerate()
+            .find(|e| e.1.get_name_raw() == b"init_boot")
+            .or_else(|| {
+                ramdisk_image
+                    .iter_vendor_ramdisk()
+                    .enumerate()
+                    .find(|e| e.1.get_name_raw() == b"")
+            })
+            .ok_or_else(|| anyhow!("No suitable vendor ramdisk entry found"))?;
+        let mut buf = Vec::<u8>::new();
+        target.dump(&mut buf, false)?;
+        Ok((Cpio::load_from_data(&buf)?, Some(pos)))
+    } else {
+        let mut buf = Vec::<u8>::new();
+        ramdisk_image.dump(&mut buf, false)?;
+        Ok((Cpio::load_from_data(&buf)?, None))
+    }
+}
+
 #[derive(clap::Args, Debug)]
 #[allow(clippy::struct_excessive_bools)]
 pub struct BootPatchArgs {
@@ -424,7 +449,9 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
             no_install,
             #[cfg(target_os = "android")]
             ota,
+            #[cfg(target_os = "android")]
             flash,
+            #[cfg(target_os = "android")]
             partition,
             ..
         } = args;
@@ -532,49 +559,30 @@ pub fn patch(args: BootPatchArgs) -> Result<()> {
         } else {
             println!("- Adding KernelSU LKM");
 
-            let kernelsu_ko = if let Some(kmod) = kmod {
+            let kernelsu_ko: Box<dyn AsRef<[u8]>> = if let Some(kmod) = kmod {
                 Box::new(map_file(&kmod)?)
             } else if !no_install {
                 // If kmod is not specified, extract from assets
                 println!("- KMI: {kmi}");
                 let name = format!("{kmi}_kernelsu.ko");
-                assets::get_asset(&name)?
+                Box::new(assets::get_asset(&name)?)
             } else {
                 bail!("");
             };
 
-            let ksu_init = if let Some(init) = init {
+            let ksu_init: Box<dyn AsRef<[u8]>> = if let Some(init) = init {
                 Box::new(map_file(&init)?)
             } else if !no_install {
-                assets::get_asset("ksuinit")?
+                Box::new(assets::get_asset("ksuinit")?)
             } else {
                 bail!("");
             };
 
             let (mut cpio, vendor_ramdisk_idx) =
                 if let Some(ramdisk_image) = boot_image.get_blocks().get_ramdisk() {
-                    if ramdisk_image.is_vendor_ramdisk() {
-                        let (pos, target) = ramdisk_image
-                            .iter_vendor_ramdisk()
-                            .enumerate()
-                            .find(|entry| entry.1.get_name_raw() == b"")
-                            .or_else(|| {
-                                ramdisk_image
-                                    .iter_vendor_ramdisk()
-                                    .enumerate()
-                                    .find(|entry| entry.1.get_name_raw() == b"init_boot")
-                            })
-                            .ok_or_else(|| anyhow!("No suitable vendor ramdisk entry found"))?;
-
-                        let mut ramdisk = Vec::<u8>::new();
-                        target.dump(&mut ramdisk, false)?;
-                        (Cpio::load_from_data(ramdisk.as_slice())?, Some(pos))
-                    } else {
-                        let mut ramdisk = Vec::<u8>::new();
-                        ramdisk_image.dump(&mut ramdisk, false)?;
-                        (Cpio::load_from_data(ramdisk.as_slice())?, None)
-                    }
+                    extract_ramdisk(ramdisk_image)?
                 } else {
+                    println!("- No ramdisk, create by default");
                     (Cpio::new(), None)
                 };
 
@@ -798,27 +806,7 @@ pub fn restore(args: BootRestoreArgs) -> Result<()> {
 
         let (mut cpio, vendor_ramdisk_idx) =
             if let Some(ramdisk_image) = boot_image.get_blocks().get_ramdisk() {
-                if ramdisk_image.is_vendor_ramdisk() {
-                    let (pos, target) = ramdisk_image
-                        .iter_vendor_ramdisk()
-                        .enumerate()
-                        .find(|entry| entry.1.get_name_raw() == b"")
-                        .or_else(|| {
-                            ramdisk_image
-                                .iter_vendor_ramdisk()
-                                .enumerate()
-                                .find(|entry| entry.1.get_name_raw() == b"init_boot")
-                        })
-                        .ok_or_else(|| anyhow!("No suitable vendor ramdisk entry found"))?;
-
-                    let mut ramdisk = Vec::<u8>::new();
-                    target.dump(&mut ramdisk, false)?;
-                    (Cpio::load_from_data(ramdisk.as_slice())?, Some(pos))
-                } else {
-                    let mut ramdisk = Vec::<u8>::new();
-                    ramdisk_image.dump(&mut ramdisk, false)?;
-                    (Cpio::load_from_data(ramdisk.as_slice())?, None)
-                }
+                extract_ramdisk(ramdisk_image)?
             } else {
                 bail!("No compatible ramdisk found.")
             };
