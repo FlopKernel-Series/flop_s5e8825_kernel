@@ -94,7 +94,9 @@ static int gpex_clock_update_config_data_from_dt(void)
 
 	clk_info.gpu_unlock_max_clock = GPU_FREQ_UNLOCK_KHZ_MAX;
 	clk_info.gpu_stock_max_clock = GPU_FREQ_STOCK_KHZ_MAX;
-	clk_info.gpu_max_clock = clk_info.gpu_stock_max_clock;
+	clk_info.gpu_max_clock = is_superfloppy_overclock_mode() ?
+				 clk_info.gpu_unlock_max_clock :
+				 clk_info.gpu_stock_max_clock;
 	clk_info.gpu_min_clock = GPU_FREQ_KHZ_MIN;
 	clk_info.boot_clock = gpexbe_clock_get_boot_freq();
 	clk_info.gpu_max_clock_limit = GPU_FREQ_UNLOCK_KHZ_MAX;
