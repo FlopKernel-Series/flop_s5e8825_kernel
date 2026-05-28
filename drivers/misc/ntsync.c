@@ -20,6 +20,7 @@
 #include <linux/sched/signal.h>
 #include <linux/slab.h>
 #include <linux/spinlock.h>
+#include <linux/time_namespace.h>
 #include <uapi/linux/ntsync.h>
 
 #define NTSYNC_NAME	"ntsync"
@@ -847,6 +848,8 @@ static int ntsync_schedule(const struct ntsync_q *q, const struct ntsync_wait_ar
 
 	if (args->flags & NTSYNC_WAIT_REALTIME)
 		clock = CLOCK_REALTIME;
+	else
+		timeout = timens_ktime_to_host(clock, timeout);
 
 	do {
 		if (signal_pending(current)) {
