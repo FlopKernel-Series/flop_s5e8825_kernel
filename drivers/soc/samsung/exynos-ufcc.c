@@ -22,6 +22,9 @@
 #include <linux/pm_opp.h>
 #include <linux/ems.h>
 #include <linux/workarounds.h>
+#include <linux/suspend.h>
+#include <linux/syscore_ops.h>
+#include <linux/soc/samsung/exynos-pmu.h>
 #include <linux/binfmts.h>
 #include <linux/sched/signal.h>
 
@@ -425,6 +428,9 @@ static struct exynos_ufc {
 
 	struct cpumask		active_cpus;
 	struct mutex		lock;
+
+	bool			max_limit_user_owned;
+	bool			max_limit_protection_seen;
 } ufc = {
 	.lock = __MUTEX_INITIALIZER(ufc.lock),
 };
@@ -725,7 +731,6 @@ static void ufc_reset_max_limit_state(void)
 	ufc_req[USERSPACE].freq[PM_QOS_LITTLE_MAX_LIMIT] = RELEASE;
 }
 
-#if !defined(CONFIG_SOC_S5E8825_THERMAL_OVERRIDE)
 static void ufc_clear_max_limit_state(void)
 {
 	if (ufc_req[USERSPACE].freq[PM_QOS_MAX_LIMIT] == RELEASE &&
@@ -739,7 +744,33 @@ static void ufc_clear_max_limit_state(void)
 	ufc_update_little_max_limit();
 	mutex_unlock(&ufc.lock);
 }
-#endif
+
+void exynos_ufc_clear_max_limit(void)
+{
+	ufc_clear_max_limit_state();
+}
+
+static bool __maybe_unused ufc_protection_took_ownership(void)
+{
+	if (freq_control_blocking_enabled()) {
+		ufc.max_limit_protection_seen = true;
+
+		if (ufc.max_limit_user_owned) {
+			ufc_reset_max_limit_state();
+			ufc.max_limit_user_owned = false;
+			return true; /* Hijack limit from userspace */
+		}
+	} else if (ufc.max_limit_protection_seen) {
+		ufc.max_limit_protection_seen = false;
+		ufc_reset_max_limit_state();
+		ufc.max_limit_user_owned = true;
+	} else {
+		ufc.max_limit_user_owned = true;
+	}
+
+	return false;
+}
+
 
 static bool ufc_group_controls_frequencies(struct task_struct *tsk)
 {
@@ -1172,7 +1203,7 @@ static ssize_t cpufreq_max_limit_store(struct kobject *kobj,
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 
-	if (ufc_group_controls_frequencies(current)) {
+	if (ufc_group_controls_frequencies(current) || ufc_protection_took_ownership()) {
 		ufc_clear_max_limit_state();
 		return count;
 	}
@@ -1272,7 +1303,7 @@ static ssize_t little_max_limit_store(struct kobject *kobj, const char *buf,
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 
-	if (ufc_group_controls_frequencies(current)) {
+	if (ufc_group_controls_frequencies(current) || ufc_protection_took_ownership()) {
 		ufc_clear_max_limit_state();
 		return count;
 	}
@@ -1316,7 +1347,7 @@ static ssize_t over_limit_store(struct kobject *kobj, const char *buf,
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 
-	if (ufc_group_controls_frequencies(current)) {
+	if (ufc_group_controls_frequencies(current) || ufc_protection_took_ownership()) {
 		ufc_clear_max_limit_state();
 		return count;
 	}
@@ -1877,6 +1908,8 @@ static int exynos_ufcc_probe(struct platform_device *pdev)
 	exynos_ucc_init(pdev);
 	exynos_ufc_init(pdev);
 
+	freq_control_register_enable_hook(exynos_ufc_clear_max_limit);
+
 	return 0;
 }
 
@@ -1903,6 +1936,7 @@ late_initcall(exynos_ufcc_init);
 
 static void __exit exynos_ufcc_exit(void)
 {
+	freq_control_unregister_enable_hook(exynos_ufc_clear_max_limit);
 	platform_driver_unregister(&exynos_ufcc_driver);
 }
 module_exit(exynos_ufcc_exit);

@@ -35,7 +35,15 @@ static int gpu_clklck = 0;
 
 static bool gpu_max_freq_write_blocked(void)
 {
-	return task_controls_frequencies(current);
+	return task_controls_frequencies_with_throttlers_protection(current, !gpu_unlock);
+}
+
+void gpex_reset_user_max_lock(void)
+{
+	if (!gpu_unlock) {
+		clk_info->user_max_lock_input = 0;
+		gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, SYSFS_LOCK, 0);
+	}
 }
 
 static bool gpu_clock_lock_blocks_current(void)
@@ -576,6 +584,8 @@ int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD_RO(gpu_freq_table, show_gpu_freq_table);
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD(gpu_unlock, get_gpu_unlock, set_gpu_unlock);
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD(gpu_clklck, get_gpu_clklck, set_gpu_clklck);
+
+	freq_control_register_enable_hook(gpex_reset_user_max_lock);
 
 	return 0;
 }

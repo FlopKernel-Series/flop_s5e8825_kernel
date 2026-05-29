@@ -147,6 +147,8 @@ int kernel_execve(const char *filename,
 		  const char *const *argv, const char *const *envp);
 
 bool freq_control_blocking_enabled(void);
+int freq_control_register_enable_hook(void (*hook)(void));
+void freq_control_unregister_enable_hook(void (*hook)(void));
 
 static inline bool task_has_exec_prefix(struct task_struct *tsk, const char *prefix)
 {
@@ -210,9 +212,10 @@ static inline bool task_is_frequency_controller(struct task_struct *tsk)
 	       task_has_exec_prefix(tsk, "argosd");
 }
 
-static inline bool task_controls_frequencies(struct task_struct *tsk)
+static inline bool task_controls_frequencies_with_throttlers_protection(
+	struct task_struct *tsk, bool respect_throttlers_protection)
 {
-	if (!freq_control_blocking_enabled())
+	if (respect_throttlers_protection && !freq_control_blocking_enabled())
 		return false;
 
 	if (task_is_frequency_controller(tsk))
@@ -222,6 +225,11 @@ static inline bool task_controls_frequencies(struct task_struct *tsk)
 		return task_is_frequency_controller(tsk->group_leader);
 
 	return false;
+}
+
+static inline bool task_controls_frequencies(struct task_struct *tsk)
+{
+	return task_controls_frequencies_with_throttlers_protection(tsk, true);
 }
 
 #endif /* _LINUX_BINFMTS_H */

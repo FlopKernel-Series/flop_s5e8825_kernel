@@ -99,7 +99,9 @@ int gpex_qos_set(gpex_qos_flag flags, int val)
 		return -ENOENT;
 	}
 
-	if (task_controls_frequencies(current) && (flags & PMQOS_MAX))
+	if (task_controls_frequencies_with_throttlers_protection(current,
+			gpex_clock_get_max_clock() != gpex_clock_get_unlock_max_clock()) &&
+			(flags & PMQOS_MAX))
 		return 0;
 
 	gpexbe_qos_request_update((mali_pmqos_flags)flags, val);

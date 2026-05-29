@@ -701,7 +701,7 @@ cur_state_store(struct device *dev, struct device_attribute *attr,
 	if ((long)state < 0)
 		return -EINVAL;
 
-	if (task_controls_frequencies(current))
+	if (task_controls_frequencies_with_throttlers_protection(current, false))
 		return count;
 
 	mutex_lock(&cdev->lock);

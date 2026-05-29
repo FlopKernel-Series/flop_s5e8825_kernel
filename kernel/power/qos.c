@@ -22,8 +22,10 @@
 
 #include <linux/pm_qos.h>
 #include <linux/sched.h>
-#include <linux/spinlock.h>
+#include <linux/workqueue.h>
 #include <linux/slab.h>
+#include <linux/binfmts.h>
+#include <linux/spinlock.h>
 #include <linux/time.h>
 #include <linux/fs.h>
 #include <linux/device.h>
@@ -661,9 +663,30 @@ s32 freq_qos_read_value(struct freq_constraints *qos,
 			pm_qos_read_value(&qos->min_freq);
 		break;
 	case FREQ_QOS_MAX:
-		ret = IS_ERR_OR_NULL(qos) ?
-			FREQ_QOS_MAX_DEFAULT_VALUE :
-			pm_qos_read_value(&qos->max_freq);
+		if (IS_ERR_OR_NULL(qos)) {
+			ret = FREQ_QOS_MAX_DEFAULT_VALUE;
+		} else {
+			if (freq_control_blocking_enabled()) {
+				struct plist_node *node;
+				struct freq_qos_request *req;
+				s32 max = FREQ_QOS_MAX_DEFAULT_VALUE;
+				unsigned long flags;
+				spin_lock_irqsave(&pm_qos_lock, flags);
+				plist_for_each(node, &qos->max_freq.list) {
+					req = container_of(node,
+							   struct freq_qos_request,
+							   pnode);
+					if (!req->is_throttler) {
+						max = node->prio;
+						break;
+					}
+				}
+				spin_unlock_irqrestore(&pm_qos_lock, flags);
+				ret = max;
+			} else {
+				ret = pm_qos_read_value(&qos->max_freq);
+			}
+		}
 		break;
 	default:
 		WARN_ON(1);
@@ -731,6 +754,8 @@ int freq_qos_add_request(struct freq_constraints *qos,
 
 	req->qos = qos;
 	req->type = type;
+	req->is_throttler =
+		task_controls_frequencies_with_throttlers_protection(current, false);
 	ret = freq_qos_apply(req, PM_QOS_ADD_REQ, value);
 	if (ret < 0) {
 		req->qos = NULL;
@@ -762,6 +787,9 @@ int freq_qos_update_request(struct freq_qos_request *req, s32 new_value)
 		 "%s() called for unknown object\n", __func__))
 		return -EINVAL;
 
+	req->is_throttler =
+		task_controls_frequencies_with_throttlers_protection(current, false);
+
 	trace_android_vh_freq_qos_update_request(req, new_value);
 	if (req->pnode.prio == new_value)
 		return 0;
@@ -769,6 +797,52 @@ int freq_qos_update_request(struct freq_qos_request *req, s32 new_value)
 	return freq_qos_apply(req, PM_QOS_UPDATE_REQ, new_value);
 }
 EXPORT_SYMBOL_GPL(freq_qos_update_request);
+
+int freq_qos_reset_max_limits(struct freq_constraints *qos, s32 value)
+{
+	struct pm_qos_constraints *c;
+	struct freq_qos_request *req;
+	int prev_value, curr_value;
+	int ret;
+
+	if (IS_ERR_OR_NULL(qos))
+		return -EINVAL;
+
+	c = &qos->max_freq;
+
+	spin_lock(&pm_qos_lock);
+	prev_value = pm_qos_get_value(c);
+
+	while (!plist_head_empty(&c->list)) {
+		req = container_of(plist_first(&c->list),
+				   struct freq_qos_request, pnode);
+		if (req->pnode.prio >= value)
+			break;
+
+		plist_del(&req->pnode, &c->list);
+		plist_node_init(&req->pnode, value);
+		plist_add(&req->pnode, &c->list);
+		req->is_throttler = false;
+	}
+
+	curr_value = pm_qos_get_value(c);
+	pm_qos_set_value(c, curr_value);
+	spin_unlock(&pm_qos_lock);
+
+	trace_pm_qos_update_target(PM_QOS_UPDATE_REQ, prev_value, curr_value);
+	if (prev_value != curr_value) {
+		ret = 1;
+		if (c->notifiers)
+			blocking_notifier_call_chain(c->notifiers,
+						 (unsigned long)curr_value,
+						 NULL);
+	} else {
+		ret = 0;
+	}
+
+	return ret;
+}
+EXPORT_SYMBOL_GPL(freq_qos_reset_max_limits);
 
 /**
  * freq_qos_remove_request - Remove frequency QoS request from its list.

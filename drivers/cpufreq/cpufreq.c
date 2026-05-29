@@ -29,6 +29,7 @@
 #include <linux/suspend.h>
 #include <linux/syscore_ops.h>
 #include <linux/tick.h>
+#include <linux/binfmts.h>
 #include <trace/events/power.h>
 #include <trace/hooks/cpufreq.h>
 #include <linux/binfmts.h>
@@ -2910,6 +2911,9 @@ int cpufreq_unregister_driver(struct cpufreq_driver *driver)
 }
 EXPORT_SYMBOL_GPL(cpufreq_unregister_driver);
 
+static int __init cpufreq_core_init(void);
+void cpufreq_reset_max_frequencies(void);
+
 static int __init cpufreq_core_init(void)
 {
 	struct cpufreq_governor *gov = cpufreq_default_governor();
@@ -2923,8 +2927,24 @@ static int __init cpufreq_core_init(void)
 	if (!strlen(default_governor))
 		strncpy(default_governor, gov->name, CPUFREQ_NAME_LEN);
 
+	freq_control_register_enable_hook(cpufreq_reset_max_frequencies);
+
 	return 0;
 }
 module_param(off, int, 0444);
 module_param_string(default_governor, default_governor, CPUFREQ_NAME_LEN, 0444);
 core_initcall(cpufreq_core_init);
+
+void cpufreq_reset_max_frequencies(void)
+{
+	struct cpufreq_policy *policy;
+
+	cpus_read_lock();
+	for_each_active_policy(policy) {
+		down_write(&policy->rwsem);
+		freq_qos_reset_max_limits(&policy->constraints, policy->cpuinfo.max_freq);
+		refresh_frequency_limits(policy);
+		up_write(&policy->rwsem);
+	}
+	cpus_read_unlock();
+}
