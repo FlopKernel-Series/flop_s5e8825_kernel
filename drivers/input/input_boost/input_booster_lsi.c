@@ -7,6 +7,7 @@
 #include <soc/samsung/exynos_pm_qos.h>
 #include <soc/samsung/exynos-ufcc.h>
 
+struct exynos_pm_qos_request cluster0_qos;
 struct exynos_pm_qos_request mif_qos;
 struct exynos_pm_qos_request int_qos;
 struct exynos_pm_qos_request disp_qos;
@@ -33,6 +34,9 @@ void ib_set_booster(long *qos_values)
 			mutex_lock(&input_lock);
 			ufc_update_request(UFC_INPUT, PM_QOS_MIN_LIMIT, value);
 			mutex_unlock(&input_lock);
+			break;
+		case CLUSTER0:
+			exynos_pm_qos_update_request(&cluster0_qos, value);
 			break;
 		case MIF:
 			exynos_pm_qos_update_request(&mif_qos, value);
@@ -70,6 +74,9 @@ void ib_release_booster(long *rel_flags)
 		case CLUSTER1:
 			ufc_update_request(UFC_INPUT, PM_QOS_MIN_LIMIT, release_val[CLUSTER1]);
 			break;
+		case CLUSTER0:
+			exynos_pm_qos_update_request(&cluster0_qos, release_val[CLUSTER0]);
+			break;
 		case MIF:
 			exynos_pm_qos_update_request(&mif_qos, release_val[MIF]);
 			break;
@@ -89,6 +96,10 @@ int input_booster_init_vendor(void)
 	int res_type = 0;
 	for (res_type = 0; res_type < allowed_res_count; res_type++) {
 		switch (allowed_resources[res_type]) {
+		case CLUSTER0:
+			exynos_pm_qos_add_request(&cluster0_qos,
+				PM_QOS_CLUSTER0_FREQ_MIN, PM_QOS_CLUSTER0_FREQ_MIN_DEFAULT_VALUE);
+			break;
 		case MIF:
 			exynos_pm_qos_add_request(&mif_qos,
 				PM_QOS_BUS_THROUGHPUT, PM_QOS_BUS_THROUGHPUT_DEFAULT_VALUE);
@@ -113,6 +124,9 @@ void input_booster_exit_vendor(void)
 
 	for (res_type = 0; res_type < allowed_res_count; res_type++) {
 		switch (allowed_resources[res_type]) {
+		case CLUSTER0:
+			exynos_pm_qos_remove_request(&cluster0_qos);
+			break;
 		case MIF:
 			exynos_pm_qos_remove_request(&mif_qos);
 			break;
