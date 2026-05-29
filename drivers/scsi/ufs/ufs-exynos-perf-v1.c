@@ -515,9 +515,9 @@ int ufs_perf_init_v1(struct ufs_perf *perf)
 	perf->ctrl[__CTRL_REQ_DVFS] = __ctrl_dvfs;
 
 	/* default thresholds for stats */
-	stat->th_qd_max = 14;
+	stat->th_qd_max = 6;
 	stat->th_qd_min = 2;
-	stat->th_dwell_in_high = 1;
+	stat->th_dwell_in_high = 0;
 	stat->th_reach_up_to_high = 30;
 
 	stat->th_duration = 1;
