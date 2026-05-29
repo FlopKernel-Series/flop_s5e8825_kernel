@@ -9,6 +9,9 @@
 
 struct exynos_pm_qos_request mif_qos;
 struct exynos_pm_qos_request int_qos;
+struct exynos_pm_qos_request disp_qos;
+
+#define TOUCH_DISP_BOOST_KHZ	(666 * 1000)
 
 static DEFINE_MUTEX(input_lock);
 
@@ -36,6 +39,12 @@ void ib_set_booster(long *qos_values)
 			break;
 		case INT:
 			exynos_pm_qos_update_request(&int_qos, value);
+			/*
+			 * Touch-time INT boosts are synthesized in the generic
+			 * booster layer, so mirror that window into DISP to keep
+			 * the display fabric hot enough for 120 Hz UI animation.
+			 */
+			exynos_pm_qos_update_request(&disp_qos, TOUCH_DISP_BOOST_KHZ);
 			break;
 		default:
 			break;
@@ -66,6 +75,8 @@ void ib_release_booster(long *rel_flags)
 			break;
 		case INT:
 			exynos_pm_qos_update_request(&int_qos, release_val[INT]);
+			exynos_pm_qos_update_request(&disp_qos,
+				PM_QOS_DISPLAY_THROUGHPUT_DEFAULT_VALUE);
 			break;
 		default:
 			break;
@@ -85,6 +96,8 @@ int input_booster_init_vendor(void)
 		case INT:
 			exynos_pm_qos_add_request(&int_qos,
 				PM_QOS_DEVICE_THROUGHPUT, PM_QOS_DEVICE_THROUGHPUT_DEFAULT_VALUE);
+			exynos_pm_qos_add_request(&disp_qos,
+				PM_QOS_DISPLAY_THROUGHPUT, PM_QOS_DISPLAY_THROUGHPUT_DEFAULT_VALUE);
 			break;
 		default:
 			break;
@@ -105,6 +118,7 @@ void input_booster_exit_vendor(void)
 			break;
 		case INT:
 			exynos_pm_qos_remove_request(&int_qos);
+			exynos_pm_qos_remove_request(&disp_qos);
 			break;
 		default:
 			break;
