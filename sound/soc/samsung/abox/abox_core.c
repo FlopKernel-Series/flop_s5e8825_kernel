@@ -524,7 +524,14 @@ static int abox_core_load_firmware(struct abox_core *core,
 	struct device *dev = core->dev;
 	int ret;
 
-	ret = request_firmware(&fw->firmware, fw->name, core->dev);
+	ret = request_firmware_direct(&fw->firmware, fw->name, core->dev);
+	if (ret == 0 && fw->firmware && fw->firmware->size == 0) {
+		release_firmware(fw->firmware);
+		fw->firmware = NULL;
+		ret = -ENOENT;
+	}
+	if (ret < 0)
+		ret = request_firmware(&fw->firmware, fw->name, core->dev);
 	if (ret >= 0) {
 		/* Validate firmware - reject empty files */
 		if (!fw->firmware || fw->firmware->size == 0) {
