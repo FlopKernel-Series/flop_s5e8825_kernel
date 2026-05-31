@@ -867,6 +867,7 @@ static const struct attribute * const exynos_fc_attrs[] = {
 static int init_exynos_fc_sysfs(void)
 {
 	int ret;
+	signed char superfloppy_mode = get_superfloppy_mode();
 
 	exynos_fc_kobj = kobject_create_and_add("exynos_fc", kernel_kobj);
 	if (!exynos_fc_kobj)
@@ -876,6 +877,20 @@ static int init_exynos_fc_sysfs(void)
 	if (ret) {
 		kobject_put(exynos_fc_kobj);
 		exynos_fc_kobj = NULL;
+	}
+
+	if (superfloppy_mode == 4) {
+		struct exynos_cpufreq_domain *domain1;
+		bool refresh_domain1 = false;
+
+		mutex_lock(&exynos_fc_lock);
+		exynos_fc_power_mode = 1;
+		domain1 = find_domain_by_id(1);
+		update_domain_clamp_locked(domain1, 2112000, &refresh_domain1);
+		mutex_unlock(&exynos_fc_lock);
+
+		if (refresh_domain1)
+			exynos_fc_refresh_domain(domain1);
 	}
 
 	return ret;
@@ -1408,11 +1423,9 @@ init_constraint_table_dt(struct exynos_dm_freq *dm_table, int table_length,
 	signed char superfloppy_mode = get_superfloppy_mode();
 	const char *table_name;
 
-	if (superfloppy_mode == 5) {
-		/* BalancedFloppy */
+	if (superfloppy_mode == 5 || superfloppy_mode == 4) {
+		/* BalancedFloppy or CoolFloppy */
 		table_name = "table";
-	} else if (superfloppy_mode == 4) {
-		table_name = "table_alt4";
 	} else if (superfloppy_mode == 3) {
 		table_name = "table_alt3";
 	} else if (superfloppy_mode == 2) {
@@ -2054,14 +2067,12 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 			max_freq_name = "max-freq";
 		}
 	} else {
-		/* Domain 1 (big cluster) has all alt tables, mode 5 uses stock */
-		if (superfloppy_mode == 4) {
-			max_freq_name = "max-freq_alt4";
-		} else if (superfloppy_mode == 3) {
+		/* Domain 1 (big cluster) has all alt tables, mode 5 and 4 use stock */
+		if (superfloppy_mode == 3) {
 			max_freq_name = "max-freq_alt3";
 		} else if (superfloppy_mode == 2) {
 			max_freq_name = "max-freq_alt2";
-		} else if (superfloppy_mode >= 1 && superfloppy_mode != 5) {
+		} else if (superfloppy_mode >= 1 && superfloppy_mode != 5 && superfloppy_mode != 4) {
 			max_freq_name = "max-freq_alt";
 		} else {
 			max_freq_name = "max-freq";
@@ -2099,14 +2110,12 @@ static int init_domain(struct exynos_cpufreq_domain *domain,
 			table_name = "freq-table";
 		}
 	} else {
-		/* Big cluster: mode 5 uses stock (no OC) */
-		if (superfloppy_mode == 4) {
-			table_name = "freq-table_alt4";
-		} else if (superfloppy_mode == 3) {
+		/* Big cluster: mode 5 and 4 use stock (no OC) */
+		if (superfloppy_mode == 3) {
 			table_name = "freq-table_alt3";
 		} else if (superfloppy_mode == 2) {
 			table_name = "freq-table_alt2";
-		} else if (superfloppy_mode >= 1 && superfloppy_mode != 5) {
+		} else if (superfloppy_mode >= 1 && superfloppy_mode != 5 && superfloppy_mode != 4) {
 			table_name = "freq-table_alt";
 		} else {
 			table_name = "freq-table";
