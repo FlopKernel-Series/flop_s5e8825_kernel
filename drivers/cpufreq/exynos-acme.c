@@ -699,6 +699,85 @@ static void exynos_fc_refresh_domain(struct exynos_cpufreq_domain *domain)
 	cpufreq_cpu_put(policy);
 }
 
+static unsigned int exynos_fc_power_mode = 0;
+
+static void update_domain_clamp_locked(struct exynos_cpufreq_domain *domain, unsigned int freq, bool *refresh)
+{
+	unsigned int old_freq;
+
+	if (!domain)
+		return;
+
+	old_freq = domain->clamp_freq;
+	if (old_freq == freq)
+		return;
+
+	WRITE_ONCE(domain->clamp_freq, freq);
+	WRITE_ONCE(domain->clamp_limit_freq,
+		   freq ? exynos_fc_resolve_clamp_freq(domain, freq) : 0);
+
+	if (!old_freq && freq) {
+		exynos_fc_clamp_count++;
+		if (exynos_fc_clamp_count == 1)
+			static_branch_enable(&exynos_fc_clamp_key);
+	} else if (old_freq && !freq) {
+		exynos_fc_clamp_count--;
+		if (!exynos_fc_clamp_count)
+			static_branch_disable(&exynos_fc_clamp_key);
+	}
+	*refresh = true;
+}
+
+static ssize_t exynos_fc_power_mode_show(struct kobject *kobj,
+					 struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, 30, "%u\n", exynos_fc_power_mode);
+}
+
+static ssize_t exynos_fc_power_mode_store(struct kobject *kobj,
+					  struct kobj_attribute *attr,
+					  const char *buf, size_t count)
+{
+	unsigned int mode;
+	int ret;
+	struct exynos_cpufreq_domain *domain0, *domain1;
+	bool refresh_domain0 = false, refresh_domain1 = false;
+
+	ret = kstrtouint(buf, 0, &mode);
+	if (ret)
+		return ret;
+
+	if (mode > 1)
+		return -EINVAL;
+
+	mutex_lock(&exynos_fc_lock);
+
+	exynos_fc_power_mode = mode;
+
+	domain0 = find_domain_by_id(0);
+	domain1 = find_domain_by_id(1);
+
+	if (mode == 1) {
+		update_domain_clamp_locked(domain0, 0, &refresh_domain0);
+		update_domain_clamp_locked(domain1, 2112000, &refresh_domain1);
+	} else if (mode == 0) {
+		update_domain_clamp_locked(domain0, 0, &refresh_domain0);
+		update_domain_clamp_locked(domain1, 0, &refresh_domain1);
+	}
+
+	mutex_unlock(&exynos_fc_lock);
+
+	if (refresh_domain0)
+		exynos_fc_refresh_domain(domain0);
+	if (refresh_domain1)
+		exynos_fc_refresh_domain(domain1);
+
+	return count;
+}
+
+static struct kobj_attribute exynos_fc_power_mode_attr =
+	__ATTR(power_mode, 0644, exynos_fc_power_mode_show, exynos_fc_power_mode_store);
+
 struct exynos_fc_attr {
 	struct kobj_attribute attr;
 	unsigned int cluster;
@@ -736,6 +815,8 @@ static ssize_t exynos_fc_clamp_store(struct kobject *kobj,
 		return ret;
 
 	mutex_lock(&exynos_fc_lock);
+
+	exynos_fc_power_mode = 0;
 
 	old_freq = domain->clamp_freq;
 	if (old_freq == freq) {
@@ -779,6 +860,7 @@ static struct exynos_fc_attr exynos_fc_cpucl1_clamp_attr = {
 static const struct attribute * const exynos_fc_attrs[] = {
 	&exynos_fc_cpucl0_clamp_attr.attr.attr,
 	&exynos_fc_cpucl1_clamp_attr.attr.attr,
+	&exynos_fc_power_mode_attr.attr,
 	NULL,
 };
 
