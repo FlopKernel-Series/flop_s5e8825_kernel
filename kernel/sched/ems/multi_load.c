@@ -12,8 +12,6 @@
 #include <trace/events/ems.h>
 #include <trace/events/ems_debug.h>
 
-unsigned int sysctl_sched_util_est_clamp = 100;
-
 /******************************************************************************
  *                           MULTI LOAD for TASK                              *
  ******************************************************************************/

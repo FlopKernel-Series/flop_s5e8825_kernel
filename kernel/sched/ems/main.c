@@ -964,6 +964,9 @@ static int ems_probe(struct platform_device *pdev)
 	freqboost_init();
 	frt_init(ems_kobj);
 	ecs_init(ems_kobj);
+#ifdef CONFIG_SCHED_CASS
+	cass_register_ems_hooks(ecs_cpus_allowed, cpus_binding_mask);
+#endif
 	ecs_gov_stage_init(ems_kobj);
 	ecs_gov_dynamic_init(ems_kobj);
 	sysbusy_init(ems_kobj);

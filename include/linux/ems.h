@@ -128,4 +128,10 @@ static inline void register_mhdvfs_miffreq_callback(void (*callback)(int ratio))
 static inline void register_mhdvfs_cpufreq_callback(void (*callback)(int *ratio)) { };
 #endif
 
+#ifdef CONFIG_SCHED_CASS
+extern void cass_register_ems_hooks(
+	const struct cpumask *(*ecs_allowed)(struct task_struct *p),
+	const struct cpumask *(*binding_mask)(struct task_struct *p));
+#endif
+
 #endif	/* ENDIF _LINUX_EMS_H */

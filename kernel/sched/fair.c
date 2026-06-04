@@ -43,6 +43,9 @@ unsigned int sysctl_sched_latency			= 10000000ULL;
 EXPORT_SYMBOL_GPL(sysctl_sched_latency);
 static unsigned int normalized_sysctl_sched_latency	= 10000000ULL;
 
+unsigned int sysctl_sched_util_est_clamp		= 100;
+EXPORT_SYMBOL_GPL(sysctl_sched_util_est_clamp);
+
 /*
  * The initial- and re-scaling of tunables is configurable
  *

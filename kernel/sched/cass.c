@@ -27,6 +27,34 @@
 
 #ifdef CONFIG_SCHED_EMS_CASS_INTEGRATION
 #include <linux/ems.h>
+
+static const struct cpumask *(*cass_ems_ecs_cpus_allowed)(struct task_struct *p);
+static const struct cpumask *(*cass_ems_cpus_binding_mask)(struct task_struct *p);
+
+void cass_register_ems_hooks(
+	const struct cpumask *(*ecs_allowed)(struct task_struct *p),
+	const struct cpumask *(*binding_mask)(struct task_struct *p))
+{
+	WRITE_ONCE(cass_ems_ecs_cpus_allowed, ecs_allowed);
+	WRITE_ONCE(cass_ems_cpus_binding_mask, binding_mask);
+}
+EXPORT_SYMBOL_GPL(cass_register_ems_hooks);
+
+static const struct cpumask *cass_ecs_cpus_allowed(struct task_struct *p)
+{
+	const struct cpumask *(*fn)(struct task_struct *p);
+
+	fn = READ_ONCE(cass_ems_ecs_cpus_allowed);
+	return fn ? fn(p) : cpu_active_mask;
+}
+
+static const struct cpumask *cass_cpus_binding_mask(struct task_struct *p)
+{
+	const struct cpumask *(*fn)(struct task_struct *p);
+
+	fn = READ_ONCE(cass_ems_cpus_binding_mask);
+	return fn ? fn(p) : cpu_active_mask;
+}
 #endif
 
 struct cass_cpu_cand {
@@ -163,10 +191,10 @@ static int cass_best_cpu(struct task_struct *p, int prev_cpu, bool sync, bool rt
 
 #ifdef CONFIG_SCHED_EMS_CASS_INTEGRATION
 	cpumask_and(&allowed, p->cpus_ptr, cpu_active_mask);
-	if (cpumask_intersects(&allowed, ecs_cpus_allowed(p)))
-		cpumask_and(&allowed, &allowed, ecs_cpus_allowed(p));
-	if (cpumask_intersects(&allowed, cpus_binding_mask(p)))
-		cpumask_and(&allowed, &allowed, cpus_binding_mask(p));
+	if (cpumask_intersects(&allowed, cass_ecs_cpus_allowed(p)))
+		cpumask_and(&allowed, &allowed, cass_ecs_cpus_allowed(p));
+	if (cpumask_intersects(&allowed, cass_cpus_binding_mask(p)))
+		cpumask_and(&allowed, &allowed, cass_cpus_binding_mask(p));
 
 	if (unlikely(cpumask_empty(&allowed)))
 		cpumask_and(&allowed, p->cpus_ptr, cpu_active_mask);
