@@ -25,30 +25,14 @@ static ssize_t scrub_pos_show(struct device *dev,
 {
 	struct sec_cmd_data *sec = dev_get_drvdata(dev);
 	struct stm_ts_data *ts = container_of(sec, struct stm_ts_data, sec);
-#if 0
-	char buff[256] = { 0 };
-
-#if IS_ENABLED(CONFIG_SAMSUNG_PRODUCT_SHIP)
-	input_info(true, ts->dev,
-			"%s: id: %d\n", __func__, ts->plat_data->gesture_id);
-#else
-	input_info(true, ts->dev,
-			"%s: id: %d, X:%d, Y:%d\n", __func__,
-			ts->plat_data->gesture_id, ts->plat_data->gesture_x, ts->plat_data->gesture_y);
-#endif
-	snprintf(buff, sizeof(buff), "%d %d %d", ts->plat_data->gesture_id,
-			ts->plat_data->gesture_x, ts->plat_data->gesture_y);
+	int id = ts->plat_data->gesture_id;
+	int x = ts->plat_data->gesture_x;
+	int y = ts->plat_data->gesture_y;
 
 	ts->plat_data->gesture_x = 0;
 	ts->plat_data->gesture_y = 0;
 
-	return snprintf(buf, PAGE_SIZE, "%s", buff);
-#endif
-	input_info(true, ts->dev,
-			"%s: Gesture info (id/x/y) is no longer stored in plat_data. Gestures are reported via uevent.\n", __func__);
-
-	return snprintf(buf, PAGE_SIZE, "NA\n");
-
+	return snprintf(buf, PAGE_SIZE, "%d %d %d\n", id, x, y);
 }
 
 /* read param */

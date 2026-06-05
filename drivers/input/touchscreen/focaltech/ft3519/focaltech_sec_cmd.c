@@ -617,6 +617,21 @@ out:
 }
 
 
+static ssize_t scrub_pos_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct sec_cmd_data *sec = dev_get_drvdata(dev);
+	struct fts_ts_data *ts_data = container_of(sec, struct fts_ts_data, sec);
+	int id = ts_data->pdata->gesture_id;
+	int x = ts_data->pdata->gesture_x;
+	int y = ts_data->pdata->gesture_y;
+
+	ts_data->pdata->gesture_x = 0;
+	ts_data->pdata->gesture_y = 0;
+
+	return snprintf(buf, PAGE_SIZE, "%d %d %d\n", id, x, y);
+}
+
 static DEVICE_ATTR_RW(hw_param);
 static DEVICE_ATTR_RW(sensitivity_mode);
 static DEVICE_ATTR_RW(virtual_prox);
@@ -625,6 +640,7 @@ static DEVICE_ATTR_RO(fod_info);
 static DEVICE_ATTR_RO(get_lp_dump);
 static DEVICE_ATTR_RO(get_scap_rx);
 static DEVICE_ATTR_RO(get_scap_delta);
+static DEVICE_ATTR_RO(scrub_pos);
 
 static struct attribute *cmd_attributes[] = {
 	&dev_attr_hw_param.attr,
@@ -635,6 +651,7 @@ static struct attribute *cmd_attributes[] = {
 	&dev_attr_get_lp_dump.attr,
 	&dev_attr_get_scap_rx.attr,
 	&dev_attr_get_scap_delta.attr,
+	&dev_attr_scrub_pos.attr,
 	NULL,
 };
 
