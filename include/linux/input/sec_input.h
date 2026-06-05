@@ -207,6 +207,7 @@ const struct file_operations ops_name = {				\
 #define KEY_HOT			252
 #define KEY_WAKEUP_UNLOCK	253	/* Wake-up to recent view, ex: AOP */
 #define KEY_RECENT		254
+#define KEY_BLACK_UI_GESTURE	0x1c7	/* 455 */
 
 #define KEY_WATCH		550	/* Premium watch: 2finger double tap */
 
@@ -886,6 +887,10 @@ struct sec_ts_plat_data {
 
 	u32 print_info_cnt_release;
 	u32 print_info_cnt_open;
+
+	int gesture_id;
+	int gesture_x;
+	int gesture_y;
 };
 
 struct sec_ts_external_api_func {

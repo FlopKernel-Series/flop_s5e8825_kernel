@@ -120,6 +120,7 @@ __visible_for_testing void sec_input_set_prop_touch(struct device *dev, struct i
 	set_bit(BTN_TOOL_FINGER, input_dev->keybit);
 	set_bit(BTN_PALM, input_dev->keybit);
 	set_bit(BTN_LARGE_PALM, input_dev->keybit);
+	set_bit(KEY_BLACK_UI_GESTURE, input_dev->keybit);
 	set_bit(KEY_INT_CANCEL, input_dev->keybit);
 
 	set_bit(propbit, input_dev->propbit);
