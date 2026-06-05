@@ -1489,6 +1489,9 @@ static int st21nfc_probe(struct i2c_client *client,
 	else
 		NFC_LOG_INFO("i2c-retry = %d\n", client->adapter->retries);
 
+	client->adapter->retries = 3;
+	NFC_LOG_INFO("i2c-retry overridden = %d\n", client->adapter->retries);
+
 	/* init mutex and queues */
 	init_waitqueue_head(&st21nfc_dev->read_wq);
 	mutex_init(&st21nfc_dev->read_mutex);
