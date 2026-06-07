@@ -19,9 +19,9 @@ product       /product      erofs ro wait,logical,first_stage_mount
 product       /product      f2fs ro wait,logical,first_stage_mount
 product       /product      ext4 ro wait,logical,first_stage_mount
 
-odm       /odm      erofs ro wait,logical,first_stage_mount
-odm       /odm      f2fs ro wait,logical,first_stage_mount
-odm       /odm      ext4 ro wait,logical,first_stage_mount
+odm       /odm      erofs ro wait,logical
+odm       /odm      f2fs ro wait,logical
+odm       /odm      ext4 ro wait,logical
 
 /dev/block/by-name/boot	/boot	emmc	defaults	first_stage_mount,formattable
 /dev/block/by-name/vendor_boot	/vendor_boot	emmc	defaults	first_stage_mount,formattable
