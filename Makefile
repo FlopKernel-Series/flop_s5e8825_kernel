@@ -1027,6 +1027,7 @@ ifdef CONFIG_LTO_CLANG
 ifdef CONFIG_LTO_CLANG_THIN
 CC_FLAGS_LTO	:= -flto=thin -fno-split-lto-unit -funified-lto
 KBUILD_LDFLAGS	+= --thinlto-cache-dir=$(extmod-prefix).thinlto-cache
+KBUIOD_LDFLAGS  += --thinlto-cache-policy,cache_size_bytes=10g:cache_size_files=50000
 else
 CC_FLAGS_LTO	:= -flto
 endif
