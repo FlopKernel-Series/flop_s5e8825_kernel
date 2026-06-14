@@ -1,16 +1,15 @@
+use std::path::PathBuf;
+
 use android_logger::Config;
 use anyhow::{Context, Ok, Result};
 use clap::Parser;
-use std::path::PathBuf;
-
 use log::{LevelFilter, error, info};
 
-use crate::android::susfs;
 use crate::{
     android::{
         debug, dynamic_manager, feature, init_event, ksucalls,
-        module::{self, module_config},
-        profile, sepolicy, su, sulog, umount_config, utils,
+        module::{self, module_config, regenerate_preinit_rc},
+        profile, sepolicy, su, sulog, susfs, umount_config, utils,
     },
     apk_sign, assets,
     boot_patch::{BootPatchArgs, BootRestoreArgs},
@@ -138,13 +137,6 @@ enum Commands {
         command: BootInfo,
     },
 
-    /// KPM module manager
-    #[cfg(all(target_arch = "aarch64", target_os = "android"))]
-    Kpm {
-        #[command(subcommand)]
-        command: kpm_cmd::Kpm,
-    },
-
     /// For developers
     Debug {
         #[command(subcommand)]
@@ -158,6 +150,12 @@ enum Commands {
 
     /// Resetprop - Magisk-compatible system property tool
     Resetprop(crate::android::resetprop::Args),
+
+    /// Manage initrc injection
+    Initrc {
+        #[command(subcommand)]
+        command: Initrc,
+    },
 }
 
 #[derive(clap::Subcommand, Debug)]
@@ -531,31 +529,6 @@ enum UmountOp {
     List,
 }
 
-#[cfg(all(target_arch = "aarch64", target_os = "android"))]
-mod kpm_cmd {
-    use std::path::PathBuf;
-
-    use clap::Subcommand;
-
-    #[derive(Subcommand, Debug)]
-    pub enum Kpm {
-        /// Load a KPM module: load <path> [args]
-        Load { path: PathBuf, args: Option<String> },
-        /// Unload a KPM module: unload <name>
-        Unload { name: String },
-        /// Get number of loaded modules
-        Num,
-        /// List loaded KPM modules
-        List,
-        /// Get info of a KPM module: info <name>
-        Info { name: String },
-        /// Send control command to a KPM module: control <name> <args>
-        Control { name: String, args: String },
-        /// Print KPM Loader version
-        Version,
-    }
-}
-
 #[derive(clap::Subcommand, Debug)]
 enum Susfs {
     /// Get SUSFS Status
@@ -564,6 +537,12 @@ enum Susfs {
     Version,
     /// Get SUSFS enable Features
     Features,
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum Initrc {
+    /// Regenerate preinit rc file
+    Refresh,
 }
 
 pub fn run() -> Result<()> {
@@ -730,17 +709,16 @@ pub fn run() -> Result<()> {
             package_name,
         } => {
             if let Some(port) = magica {
-                return crate::android::magica::run(port, &package_name, allow_shell).map_err(
-                    |e| {
+                return crate::android::late_load::magica::run(port, &package_name, allow_shell)
+                    .map_err(|e| {
                         error!("Error running magica: {e}");
                         e
-                    },
-                );
+                    });
             }
             let result = crate::android::late_load::run(&package_name, kmi, allow_shell);
             if post_magica {
                 info!("Restoring adb properties (post-magica cleanup)...");
-                if let Err(e) = crate::android::magica::disable_adb_root() {
+                if let Err(e) = crate::android::late_load::magica::disable_adb_root() {
                     error!("disable adb root failed: {e}");
                 }
             }
@@ -888,27 +866,9 @@ pub fn run() -> Result<()> {
                 Ok(())
             }
         },
-        #[cfg(all(target_arch = "aarch64", target_os = "android"))]
-        Commands::Kpm { command } => {
-            use kpm_cmd::Kpm;
-
-            use crate::android::kpm;
-            match command {
-                Kpm::Load { path, args } => {
-                    kpm::load_module(path.to_str().unwrap(), args.as_deref())
-                }
-                Kpm::Unload { name } => kpm::unload_module(name),
-                Kpm::Num => kpm::num().map(|_| ()),
-                Kpm::List => kpm::list(),
-                Kpm::Info { name } => kpm::info(name),
-                Kpm::Control { name, args } => {
-                    let ret = kpm::control(name, args)?;
-                    println!("{ret}");
-                    Ok(())
-                }
-                Kpm::Version => kpm::version(),
-            }
-        }
+        Commands::Initrc { command } => match command {
+            Initrc::Refresh => regenerate_preinit_rc(),
+        },
     };
 
     if let Err(e) = &result {

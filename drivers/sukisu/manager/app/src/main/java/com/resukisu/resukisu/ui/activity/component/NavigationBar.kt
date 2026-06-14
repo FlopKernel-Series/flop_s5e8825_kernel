@@ -24,29 +24,27 @@ import androidx.compose.material3.WideNavigationRailColors
 import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.resukisu.resukisu.ui.MainActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.resukisu.resukisu.ksuApp
 import com.resukisu.resukisu.ui.screen.BottomBarDestination
 import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.blurEffect
 import com.resukisu.resukisu.ui.util.LocalHandlePageChange
 import com.resukisu.resukisu.ui.util.LocalSelectedPage
-import com.resukisu.resukisu.ui.util.getKpmModuleCount
 import com.resukisu.resukisu.ui.util.getModuleCount
 import com.resukisu.resukisu.ui.util.getSuperuserCount
+import com.resukisu.resukisu.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 // TODO Add FloatingBottomBar as an choice to user
@@ -57,12 +55,10 @@ fun NavigationBar(
     destinations: List<BottomBarDestination>,
     isBottomBar: Boolean
 ) {
-    val activity = LocalContext.current as MainActivity
-
     // 是否隐藏 badge
-    val isHideOtherInfo by remember(activity.settingsStateFlow) {
-        activity.settingsStateFlow.map { it.isHideOtherInfo }
-    }.collectAsState(initial = false)
+    val homeViewModel = viewModel<HomeViewModel>(viewModelStoreOwner = ksuApp)
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val isHideOtherInfo = uiState.isHideOtherInfo
 
     // 翻页处理
     val page = LocalSelectedPage.current
@@ -71,7 +67,6 @@ fun NavigationBar(
     // 收集计数数据
     var superuserCountSaved by rememberSaveable { mutableIntStateOf(0) }
     var moduleCountSaved by rememberSaveable { mutableIntStateOf(0) }
-    var kpmModuleCountSaved by rememberSaveable { mutableIntStateOf(0) }
 
     val superuserCount by produceState(initialValue = superuserCountSaved) {
         withContext(Dispatchers.IO) {
@@ -83,12 +78,6 @@ fun NavigationBar(
         withContext(Dispatchers.IO) {
             value = getModuleCount()
             moduleCountSaved = value
-        }
-    }
-    val kpmModuleCount by produceState(initialValue = kpmModuleCountSaved) {
-        withContext(Dispatchers.IO) {
-            value = getKpmModuleCount()
-            kpmModuleCountSaved = value
         }
     }
 
@@ -113,7 +102,6 @@ fun NavigationBar(
                     onClick = {
                         handlePageChange(index)
                     },
-                    kpmModuleCount = kpmModuleCount,
                     superuserCount = superuserCount,
                     moduleCount = moduleCount,
                     isHideOtherInfo = isHideOtherInfo,
@@ -146,7 +134,6 @@ fun NavigationBar(
                     onClick = {
                         handlePageChange(index)
                     },
-                    kpmModuleCount = kpmModuleCount,
                     superuserCount = superuserCount,
                     moduleCount = moduleCount,
                     isHideOtherInfo = isHideOtherInfo,
@@ -161,7 +148,6 @@ private fun NavigationRailItem(
     isSelected: Boolean,
     destination: BottomBarDestination,
     onClick: () -> Unit,
-    kpmModuleCount: Int,
     superuserCount: Int,
     moduleCount: Int,
     isHideOtherInfo: Boolean
@@ -177,7 +163,6 @@ private fun NavigationRailItem(
                         dest = destination,
                         superUser = superuserCount,
                         module = moduleCount,
-                        kpm = kpmModuleCount,
                         isHideOtherInfo = isHideOtherInfo,
                     )
                 }
@@ -192,7 +177,8 @@ private fun NavigationRailItem(
         label = {
             Text(
                 stringResource(destination.label),
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1
             )
         },
     )
@@ -203,7 +189,6 @@ private fun RowScope.BottomBarNavigationItem(
     isSelected: Boolean,
     destination: BottomBarDestination,
     onClick: () -> Unit,
-    kpmModuleCount: Int,
     superuserCount: Int,
     moduleCount: Int,
     isHideOtherInfo: Boolean
@@ -218,7 +203,6 @@ private fun RowScope.BottomBarNavigationItem(
                         dest = destination,
                         superUser = superuserCount,
                         module = moduleCount,
-                        kpm = kpmModuleCount,
                         isHideOtherInfo = isHideOtherInfo,
                     )
                 }
@@ -233,7 +217,8 @@ private fun RowScope.BottomBarNavigationItem(
         label = {
             Text(
                 stringResource(destination.label),
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1
             )
         },
         alwaysShowLabel = false
@@ -245,11 +230,9 @@ private fun DestinationBadge(
     dest: BottomBarDestination,
     superUser: Int,
     module: Int,
-    kpm: Int,
-    isHideOtherInfo: Boolean,
+    isHideOtherInfo: Boolean
 ) {
     val count = when (dest) {
-        BottomBarDestination.Kpm -> kpm
         BottomBarDestination.SuperUser -> superUser
         BottomBarDestination.Module -> module
         else -> 0

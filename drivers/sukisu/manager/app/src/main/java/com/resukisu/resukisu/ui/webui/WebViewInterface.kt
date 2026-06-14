@@ -11,9 +11,7 @@ import android.widget.Toast
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.resukisu.resukisu.ui.util.controlKpmModule
 import com.resukisu.resukisu.ui.util.createRootShell
-import com.resukisu.resukisu.ui.util.listKpmModules
 import com.resukisu.resukisu.ui.util.listModules
 import com.resukisu.resukisu.ui.util.withNewRootShell
 import com.resukisu.resukisu.ui.viewmodel.SuperUserViewModel
@@ -214,7 +212,7 @@ class WebViewInterface(private val state: WebUIState) {
 
     @JavascriptInterface
     fun listPackages(type: String): String {
-        val packageNames = SuperUserViewModel.apps
+        val packageNames = SuperUserViewModel.getCachedApps()
             .filter { appInfo ->
                 val flags = appInfo.packageInfo.applicationInfo?.flags ?: 0
                 when (type.lowercase()) {
@@ -237,7 +235,7 @@ class WebViewInterface(private val state: WebUIState) {
     fun getPackagesInfo(packageNamesJson: String): String {
         val packageNames = JSONArray(packageNamesJson)
         val jsonArray = JSONArray()
-        val appMap = SuperUserViewModel.apps.associateBy { it.packageName }
+        val appMap = SuperUserViewModel.getCachedApps().associateBy { it.packageName }
         for (i in 0 until packageNames.length()) {
             val pkgName = packageNames.getString(i)
             val appInfo = appMap[pkgName]
@@ -265,16 +263,6 @@ class WebViewInterface(private val state: WebUIState) {
     @JavascriptInterface
     fun exit() {
         state.requestExit()
-    }
-
-    @JavascriptInterface
-    fun listAllKpm(): String {
-        return listKpmModules()
-    }
-
-    @JavascriptInterface
-    fun controlKpm(name: String, args: String): Int {
-        return controlKpmModule(name, args)
     }
 }
 

@@ -1,5 +1,11 @@
-#[cfg(all(target_arch = "aarch64", target_os = "android"))]
-use crate::android::kpm;
+use std::{path::Path, process::Command};
+
+use anyhow::{Context, Result};
+use libc::_exit;
+use log::{info, warn};
+use prop_rs_android::{resetprop::ResetProp, sys_prop};
+use rustix::process::chdir;
+
 use crate::{
     android::{
         dynamic_manager, ksucalls,
@@ -9,14 +15,6 @@ use crate::{
     },
     assets, defs,
 };
-use anyhow::{Context, Result};
-use libc::_exit;
-use log::{info, warn};
-use prop_rs_android::resetprop::ResetProp;
-use prop_rs_android::sys_prop;
-use rustix::process::chdir;
-use std::path::Path;
-use std::process::Command;
 
 pub fn on_post_data_fs() -> Result<()> {
     ksucalls::report_post_fs_data();
@@ -76,6 +74,13 @@ pub fn on_post_data_fs() -> Result<()> {
         warn!("prune modules failed: {e}");
     }
 
+    // Refresh /metadata/watchdog/ksu/modules.rc so the next boot's kernel hook sees the
+    // current module set. Acts as a safety net when state was changed outside
+    // of ksud's normal mutation commands.
+    if let Err(e) = crate::android::module::regenerate_preinit_rc() {
+        warn!("regenerate preinit rc failed: {e}");
+    }
+
     if let Err(e) = restorecon::restorecon() {
         warn!("restorecon failed: {e}");
     }
@@ -94,11 +99,6 @@ pub fn on_post_data_fs() -> Result<()> {
         warn!("safe mode, skip load feature config");
     } else if let Err(e) = crate::android::feature::init_features() {
         warn!("init features failed: {e}");
-    }
-
-    #[cfg(all(target_arch = "aarch64", target_os = "android"))]
-    if let Err(e) = kpm::booted_load() {
-        warn!("KPM: Failed to start KPM watcher: {e}");
     }
 
     // execute metamodule post-fs-data script first (priority)
