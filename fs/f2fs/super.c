@@ -2494,7 +2494,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
 		} else {
 			err = f2fs_enable_checkpoint(sbi);
 			if (err)
-				goto restore_gc;
+				goto restore_flush;
 		}
 	}
 
