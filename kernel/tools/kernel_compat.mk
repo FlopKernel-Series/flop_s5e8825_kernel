@@ -107,37 +107,6 @@ $(info -- $(REPO_NAME)/compat: policy_mutex found)
 ccflags-y += -DKSU_COMPAT_HAS_POLICY_MUTEX
 endif
 
-# policy rwlock
-# kernel 4.14-
-ifeq ($(shell grep -q "^static DEFINE_RWLOCK(policy_rwlock);" $(srctree)/security/selinux/ss/services.c; echo $$?),0)
-$(info -- $(REPO_NAME)/compat: policy_rwlock found,but not exported.)
-$(info -- $(REPO_NAME)/compat: We recommend you export it to avoid some probably race problem.)
-$(info -- $(REPO_NAME)/compat: See: https://resukisu.github.io/guide/manual-integrate.html#policy-rwlock-export)
-$(info -- $(REPO_NAME)/compat: WARNING: You maybe see kernel panic during system boot or modules stop working.)
-ccflags-y += -DKSU_COMPAT_NON_EXPORTED_POLICY_RWLOCK
-endif
-
-
-ifeq ($(shell grep -q "^DEFINE_RWLOCK(policy_rwlock);" $(srctree)/security/selinux/ss/services.c; echo $$?),0)
-$(info -- $(REPO_NAME)/compat: exported policy_rwlock found!)
-ccflags-y += -DKSU_COMPAT_HAS_EXPORTED_POLICY_RWLOCK
-endif
-
-# sel_mutex
-# kernel 4.14-
-ifeq ($(shell grep -q "^static DEFINE_MUTEX(sel_mutex);" $(srctree)/security/selinux/selinuxfs.c; echo $??),0)
-$(info -- $(REPO_NAME)/compat: sel_mutex found,but not exported.)
-$(info -- $(REPO_NAME)/compat: We recommend you export it to avoid some probably race problem.)
-$(info -- $(REPO_NAME)/compat: See: https://resukisu.github.io/guide/manual-integrate.html#sel-mutex-export)
-$(info -- $(REPO_NAME)/compat: WARNING: You maybe see kernel panic during system boot or modules stop working.)
-ccflags-y += -DKSU_COMPAT_NON_EXPORTED_SEL_MUTEX
-endif
-
-ifeq ($(shell grep -q "^DEFINE_MUTEX(sel_mutex);" $(srctree)/security/selinux/selinuxfs.c; echo $$?),0)
-$(info -- $(REPO_NAME)/compat: exported sel_mutex found!)
-ccflags-y += -DKSU_COMPAT_HAS_EXPORTED_SEL_MUTEX
-endif
-
 # Function ns_get_path check
 # for kernel 3.19-
 # https://github.com/torvalds/linux/commit/e149ed2b805fefdccf7ccdfc19eca22fdd4514ac
@@ -222,19 +191,11 @@ $(info -- $(REPO_NAME)/compat: overflow.h found)
 ccflags-y += -DKSU_COMPAT_HAS_OVERFLOW_H
 endif
 
-
 # for kernel version below 3.14, linux/proc_ns.h maybe not found
 # https://github.com/torvalds/linux/commit/0bb80f240520c4148b623161e7856858c021696d
 ifneq ($(wildcard $(srctree)/include/linux/proc_ns.h),)
 $(info -- $(REPO_NAME)/compat: modern proc ns header file found)
 ccflags-y += -DKSU_HAS_MODERN_PROC_NS
-endif
-
-# Kernel 4.2-
-# have that can avoid scan selinux_ops
-ifeq ($(shell grep -q "^struct security_operations selinux_ops" $(srctree)/security/selinux/hooks.c; echo $$?),0)
-$(info -- $(REPO_NAME)/compat: exported selinux_ops found!)
-ccflags-y += -DKSU_HAS_EXPORTED_SELINUX_OPS
 endif
 
 # Android SPEC Changes
@@ -272,4 +233,39 @@ endif
 ifeq ($(shell grep -F -q "char *lsm_names" $(srctree)/security/security.c; echo $$?),0)
 $(info -- $(REPO_NAME)/compat: found required provide lsm name)
 ccflags-y += -DKSU_COMPAT_REQUIRE_PROVIDE_LSM_NAME
+endif
+
+# https://github.com/torvalds/linux/commit/4b36cb773a8153417a080f8025d522322f915aea
+ifeq ($(shell grep -q "struct mutex status_lock" $(srctree)/security/selinux/include/security.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found selinux status variables in selinux_state)
+ccflags-y += -DKSU_COMPAT_SELINUX_STATUS_VAR_IN_SELINUX_STATE
+endif
+
+ifeq ($(shell grep -q "struct selinux_policy" $(srctree)/security/selinux/ss/services.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found selinux_policy struct)
+ccflags-y += -DKSU_COMPAT_HAS_SELINUX_POLICY_STRUCT
+endif
+
+# https://github.com/torvalds/linux/commit/03414a49ad5f3c56988c36d2070e402ffa17feaf
+ifeq ($(shell grep -q "struct hashtab table" $(srctree)/security/selinux/ss/symtab.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found hashtabs is a struct instead of pointer)
+ccflags-y += -DKSU_COMPAT_HAS_NON_POINTER_SYMTAB_STRUCT
+endif
+
+# https://github.com/torvalds/linux/commit/237389e3015e0f4ceac7cf00c70a59746150561d
+ifeq ($(shell grep -q "symtab_search" $(srctree)/security/selinux/ss/symtab.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found symtab_search function)
+ccflags-y += -DKSU_COMPAT_HAS_SYMTAB_SEARCH
+endif
+
+# https://github.com/torvalds/linux/commit/24def7bb92c19337cee26d506f87dc4eeeba7a19
+ifeq ($(shell grep -q "hashtab_key_params" $(srctree)/security/selinux/ss/hashtab.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found hashtab_key_params function)
+ccflags-y += -DKSU_COMPAT_HAS_HASHTAB_KEY_PARAMS
+endif
+
+# https://github.com/torvalds/linux/commit/c3a276111ea2572399281988b3129683e2a6b60b
+ifeq ($(shell grep -q "filename_trans_key" $(srctree)/security/selinux/ss/policydb.h; echo $$?),0)
+$(info -- $(REPO_NAME)/compat: found filename_trans_key function)
+ccflags-y += -DKSU_COMPAT_HAS_FILENAME_TRANS_KEY
 endif

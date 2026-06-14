@@ -131,6 +131,8 @@
     <string name="module_changelog">更新日志</string>
     <string name="settings_profile_template">App Profile 模版</string>
     <string name="settings_profile_template_summary">管理本地和在线的 App Profile 模版</string>
+    <string name="manage_app_profile">管理 App Profile 模版</string>
+    <string name="recently_installed">最近安装</string>
     <string name="app_profile_template_create">创建模版</string>
     <string name="app_profile_template_edit">编辑模版</string>
     <string name="app_profile_template_id">模版 ID</string>
@@ -669,7 +671,7 @@
     <string name="please_check_network">请检查网络连接情况，然后稍后重试</string>
     <string name="confirm_install_module_title">要安装模块 %1$s 吗?</string>
     <string name="assets_multiple_select_dialog_title">请选择你想安装的附件</string>
-    <string name="assets_multiple_select_dialog_content_description">大小: %s, 下载数: %s</string>
+    <string name="assets_multiple_select_dialog_content_description">大小: %1$s, 下载数: %2$s</string>
     <string name="assets_multiple_select_dialog_warning">没有任何附件被选择</string>
     <string name="installed">已安装</string>
     <string name="open_module_home_page">在浏览器中打开模块主页</string>

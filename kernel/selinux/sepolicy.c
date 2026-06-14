@@ -1,14 +1,16 @@
+#include <linux/gfp.h>
+#include <linux/printk.h>
+#include <linux/slab.h>
+#include <linux/version.h>
+#include <linux/vmalloc.h>
+#include <linux/mutex.h>
+
 #include "ss/avtab.h"
 #include "ss/constraint.h"
 #include "ss/ebitmap.h"
 #include "ss/hashtab.h"
 #include "ss/policydb.h"
 #include "ss/services.h"
-#include <linux/gfp.h>
-#include <linux/printk.h>
-#include <linux/slab.h>
-#include <linux/version.h>
-#include <linux/vmalloc.h>
 
 #include "selinux.h"
 #include "sepolicy.h"
@@ -70,7 +72,7 @@ static bool add_typeattribute(struct policydb *db, const char *type, const char 
 
 // htable is a struct instead of pointer above 5.8.0:
 // https://elixir.bootlin.com/linux/v5.8-rc1/source/security/selinux/ss/symtab.h
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0) || defined(KSU_COMPAT_HAS_NON_POINTER_SYMTAB_STRUCT)
 #define ksu_hashtab_for_each(htab, cur) ksu_hash_for_each(htab.htable, htab.size, cur)
 #else
 #define ksu_hashtab_for_each(htab, cur) ksu_hash_for_each(htab->htable, htab->size, cur)
@@ -78,7 +80,7 @@ static bool add_typeattribute(struct policydb *db, const char *type, const char 
 
 // symtab_search is introduced on 5.9.0:
 // https://elixir.bootlin.com/linux/v5.9-rc1/source/security/selinux/ss/symtab.h
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0) && !defined(KSU_COMPAT_HAS_SYMTAB_SEARCH)
 #define symtab_search(s, name) hashtab_search((s)->table, name)
 #define symtab_insert(s, name, datum) hashtab_insert((s)->table, name, datum)
 #endif
@@ -532,7 +534,7 @@ static bool add_type_rule(struct policydb *db, const char *s, const char *t, con
 // 5.9.0 : static inline int hashtab_insert(struct hashtab *h, void *key, void
 // *datum, struct hashtab_key_params key_params) 5.8.0: int
 // hashtab_insert(struct hashtab *h, void *k, void *d);
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) || defined(KSU_COMPAT_HAS_HASHTAB_KEY_PARAMS)
 static u32 filenametr_hash(const void *k)
 {
     const struct filename_trans_key *ft = k;
@@ -598,7 +600,7 @@ static bool add_filename_trans(struct policydb *db, const char *s, const char *t
         return false;
     }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0) || defined(KSU_COMPAT_HAS_FILENAME_TRANS_KEY)
     struct filename_trans_key key;
     key.ttype = tgt->value;
     key.tclass = cls->value;
@@ -606,7 +608,7 @@ static bool add_filename_trans(struct policydb *db, const char *s, const char *t
 
     struct filename_trans_datum *last = NULL;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) || defined(KSU_COMPAT_HAS_HASHTAB_KEY_PARAMS)
     struct filename_trans_datum *trans = policydb_filenametr_search(db, &key);
 #else
     struct filename_trans_datum *trans = hashtab_search(&db->filename_trans, &key);
@@ -1086,9 +1088,7 @@ void ksu_destroy_policydb(struct policydb *db)
 }
 
 // handle backport
-#ifdef KSU_COMPAT_HAS_EXPORTED_POLICY_RWLOCK
-extern rwlock_t policy_rwlock;
-#endif
+extern rwlock_t *ksu_policy_rwlock_ptr;
 
 static inline void ksu_lock_sepolicy_legacy(void)
 {
@@ -1096,12 +1096,9 @@ static inline void ksu_lock_sepolicy_legacy(void)
 // 4.14 - 5.10
 #if defined(KSU_COMPAT_USE_SELINUX_STATE)
     read_lock(&selinux_state.ss->policy_rwlock);
-// 4.14- with manual export rwlock
-#elif defined(KSU_COMPAT_HAS_EXPORTED_POLICY_RWLOCK)
-    read_lock(&policy_rwlock);
-// 4.14- mostly
+// 4.14-
 #else
-    // do nothing
+    read_lock(ksu_policy_rwlock_ptr);
 #endif
 #endif
 }
@@ -1112,12 +1109,9 @@ static inline void ksu_unlock_sepolicy_legacy(void)
 // 4.14 - 5.10
 #if defined(KSU_COMPAT_USE_SELINUX_STATE)
     read_unlock(&selinux_state.ss->policy_rwlock);
-// 4.14- with manual export rwlock
-#elif defined(KSU_COMPAT_HAS_EXPORTED_POLICY_RWLOCK)
-    read_unlock(&policy_rwlock);
-// 4.14- mostly
+// 4.14-
 #else
-    // do nothing
+    read_unlock(ksu_policy_rwlock_ptr);
 #endif
 #endif
 }
@@ -1186,13 +1180,13 @@ int ksu_dup_policydb(struct policydb *old_db, struct policydb *new_db)
 
     new_db->len = old_db->len;
 
-    kvfree(data);
+    vfree(data);
     ret = len;
 
     return ret;
 
 out_free_data:
-    kvfree(data);
+    vfree(data);
     return ret;
 }
 
