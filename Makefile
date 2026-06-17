@@ -1036,8 +1036,8 @@ CC_FLAGS_LTO	+= -fvisibility=default
 
 # LLVM tunings
 KBUILD_LDFLAGS += -mllvm -import-hot-multiplier=2
-KBUILD_LDFLAGS += -mllvm -inline-threshold=500
-KBUILD_LDFLAGS += -mllvm -import-instr-limit=80
+KBUILD_LDFLAGS += -mllvm -inline-threshold=300
+KBUILD_LDFLAGS += -mllvm -import-instr-limit=30
 KBUILD_CFLAGS  += -mllvm -unroll-threshold=600
 endif
 
