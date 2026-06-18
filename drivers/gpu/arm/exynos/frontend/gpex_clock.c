@@ -367,6 +367,7 @@ int gpex_clock_init(struct device **dev)
 	clk_info.kbdev = container_of(dev, struct kbase_device, dev);
 	clk_info.max_lock = 0;
 	clk_info.min_lock = 0;
+	clk_info.gpu_clamp_input = 0;
 
 	for (i = 0; i < NUMBER_LOCK; i++) {
 		clk_info.user_max_lock[i] = 0;

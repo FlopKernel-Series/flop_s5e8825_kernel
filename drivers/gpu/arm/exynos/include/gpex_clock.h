@@ -37,6 +37,7 @@ typedef enum {
 	CLBOOST_LOCK,
 	INTERACTIVE_LOCK,
 	MM_LOCK,
+	FC_LOCK,
 	NUMBER_LOCK
 } gpex_clock_lock_type_t;
 
