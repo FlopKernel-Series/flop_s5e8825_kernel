@@ -175,7 +175,7 @@ int slsi_change_virtual_intf(struct wiphy *wiphy,
 	SLSI_NET_DBG1(dev, SLSI_CFG80211, "type:%u, iftype:%d\n", type, ndev_vif->iftype);
 
 	if (is_aosp_mode_fast()) {
-		if (ndev_vif->vif_type != FAPI_VIFTYPE_AP && WARN_ON(ndev_vif->activated)) {
+		if (ndev_vif->iftype != NL80211_IFTYPE_AP && WARN_ON(ndev_vif->activated)) {
 			r = -EINVAL;
 			goto exit;
 		}
@@ -1869,7 +1869,7 @@ int slsi_del_station(struct wiphy *wiphy, struct net_device *dev,
 		slsi_clear_cached_ies(&ndev_vif->ap.cache_wpa_ie, &ndev_vif->ap.wpa_ie_len);
 		slsi_clear_cached_ies(&ndev_vif->ap.cache_wmm_ie, &ndev_vif->ap.wmm_ie_len);
 
-		if (is_aosp_mode_fast())
+		if (is_aosp_mode_fast() && ndev_vif->iftype == NL80211_IFTYPE_AP)
 			goto aosp_skip;
 
 		netif_carrier_off(dev);
