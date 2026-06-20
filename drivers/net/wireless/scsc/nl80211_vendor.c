@@ -2541,7 +2541,7 @@ static int slsi_lls_fill(struct slsi_dev *sdev, u8 **src_buf)
 	radio_block_len = (int)((u8 *)radio_stat - (u8 *)radio_stat_temp);
 	buf_len = (int)((u8 *)radio_stat - buf);
 
-	if (!is_aosp && iface_stat->num_peers) {
+	if (iface_stat->num_peers) {
 		num_peers = iface_stat->num_peers;
 		peer_info = iface_stat->peer_info;
 		legacy_peer_info = (struct slsi_lls_peer_info_legacy *)peer_info;
