@@ -1442,6 +1442,7 @@ static void usb_gadget_remove_driver(struct usb_udc *udc)
 
 	udc->driver = NULL;
 	udc->gadget->dev.driver = NULL;
+	udc->gadget->deactivated = false;
 
 	kobject_uevent(&udc->dev.kobj, KOBJ_CHANGE);
 }
@@ -1538,6 +1539,7 @@ err1:
 			udc->driver->function, ret);
 	udc->driver = NULL;
 	udc->gadget->dev.driver = NULL;
+	udc->gadget->deactivated = false;
 	return ret;
 }
 
