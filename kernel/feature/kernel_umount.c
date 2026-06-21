@@ -27,6 +27,7 @@
 #include "policy/feature.h"
 #include "runtime/ksud_boot.h"
 #include "ksu.h"
+#include "feature/sucompat.h"
 
 static bool ksu_kernel_umount_enabled = true;
 
@@ -177,7 +178,9 @@ skip_umount_task:
     // do susfs setuid when susfs enabled
 #ifdef CONFIG_KSU_SUSFS
     schedule_work(&susfs_extra_works);
-    susfs_set_current_proc_umounted();
+#endif
+#ifndef CONFIG_KSU_TRACEPOINT_HOOK
+    ksu_set_current_proc_umounted();
 #endif
 
     return 0;

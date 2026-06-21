@@ -106,8 +106,8 @@ import com.resukisu.resukisu.ui.screen.about.OpenSourceLicenseScreen
 import com.resukisu.resukisu.ui.screen.kernelFlash.KernelFlashScreen
 import com.resukisu.resukisu.ui.screen.moduleRepo.ModuleRepoScreen
 import com.resukisu.resukisu.ui.screen.moduleRepo.OnlineModuleDetailScreen
-import com.resukisu.resukisu.ui.screen.moreSettings.MoreSettingsScreen
-import com.resukisu.resukisu.ui.screen.moreSettings.util.applyLanguage
+import com.resukisu.resukisu.ui.screen.themeSettings.ThemeSettingsScreen
+import com.resukisu.resukisu.ui.screen.themeSettings.util.applyLanguage
 import com.resukisu.resukisu.ui.susfs.SuSFSConfigScreen
 import com.resukisu.resukisu.ui.theme.KernelSUTheme
 import com.resukisu.resukisu.ui.theme.ThemeConfig
@@ -138,8 +138,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
-import top.yukonga.miuix.kmp.blur.isRenderEffectSupported
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
+import top.yukonga.miuix.kmp.shader.isRenderEffectSupported
 import kotlin.coroutines.resume
 
 class MainActivity : ComponentActivity() {
@@ -575,7 +575,7 @@ class MainActivity : ComponentActivity() {
                                     entry<Route.SuperUser> { MainScreen() }
                                     entry<Route.Module> { MainScreen() }
                                     entry<Route.Settings> { MainScreen() }
-                                    entry<Route.MoreSettings> { MoreSettingsScreen() }
+                                    entry<Route.ThemeSettings> { ThemeSettingsScreen() }
                                     entry<Route.SuSFSConfig> { SuSFSConfigScreen() }
                                     entry<Route.UmountManager> { UmountManagerScreen() }
                                     entry<Route.KernelFlash> { key ->
