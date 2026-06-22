@@ -32,6 +32,7 @@
 #include "quirks.h"
 
 #include <linux/usb_notify.h>
+#include <linux/workarounds.h>
 #define DEBUG 1
 
 static const unsigned long USB_LOCK_ID_OUT = 0x4F425355; // ASCII Value : USBO
@@ -956,6 +957,12 @@ int exynos_usb_audio_init(struct device *dev, struct platform_device *pdev)
 	struct device_node *np = dev->of_node;
 	struct device_node *np_abox;
 	struct platform_device *pdev_abox;
+
+	if (is_aosp_mode()) {
+		dev_info(dev, "USB_AUDIO_IPC : %s - AOSP mode, disabling USB audio offloading\n",
+			 __func__);
+		return -ENODEV;
+	}
 
 	if (DEBUG)
 		dev_info(dev, "USB_AUDIO_IPC : %s\n", __func__);
