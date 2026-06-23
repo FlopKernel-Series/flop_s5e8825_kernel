@@ -38,6 +38,7 @@ static inline void print_task_info(struct task_struct *p)
 static int ems_panic_notifier_call(struct notifier_block *nb,
 				   unsigned long l, void *buf)
 {
+#if 0
 	int cpu;
 	struct rq *rq;
 
@@ -95,7 +96,7 @@ static int ems_panic_notifier_call(struct notifier_block *nb,
 
 		pr_info("\n");
 	}
-
+#endif
 	return 0;
 }
 

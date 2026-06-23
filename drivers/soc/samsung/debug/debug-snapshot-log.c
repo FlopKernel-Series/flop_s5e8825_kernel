@@ -722,6 +722,7 @@ void dbg_snapshot_printk(const char *fmt, ...)
 }
 EXPORT_SYMBOL_GPL(dbg_snapshot_printk);
 
+#if 0
 static inline void dbg_snapshot_get_sec(unsigned long long ts,
 					unsigned long *sec,
 					unsigned long *msec)
@@ -904,12 +905,14 @@ static void dbg_snapshot_print_irq(void)
 			i, (int)desc->irq_data.hwirq, irq_stat, name);
 	}
 }
+#endif
 
 void dbg_snapshot_print_log_report(void)
 {
 	if (unlikely(!dbg_snapshot_get_enable()))
 		return;
 
+#if 0
 	pr_info("==========================================================\n");
 	pr_info("Panic Report\n");
 	pr_info("==========================================================\n");
@@ -917,6 +920,7 @@ void dbg_snapshot_print_log_report(void)
 	dbg_snapshot_print_freqinfo();
 	dbg_snapshot_print_irq();
 	pr_info("==========================================================\n");
+#endif
 }
 
 #define _log_item_set_field(log_item, item, dss_log_ptr, log_name)			\

@@ -666,11 +666,13 @@ static void dbg_snapshot_dump_one_task_info(struct task_struct *tsk, bool is_mai
 	if (tsk->on_cpu && tsk->on_rq && tsk->cpu != smp_processor_id())
 		return;
 
+#if 0
 	if (tsk->state == TASK_RUNNING || tsk->state == TASK_WAKING ||
 			task_contributes_to_load(tsk)) {
 		atomic_notifier_call_chain(&dump_task_notifier_list, 0,	(void *)tsk);
 		dump_backtrace(NULL, tsk, KERN_DEFAULT);
 	}
+#endif
 }
 
 static inline struct task_struct *get_next_thread(struct task_struct *tsk)
@@ -1033,9 +1035,11 @@ static void dbg_snapshot_save_context(struct pt_regs *regs, bool stack_dump)
 	} else
 		dev_emerg(dss_desc.dev, "skip context saved(CPU:%d)\n", cpu);
 
+	#if 0
 	if (stack_dump)
 		dump_stack();
 
+	#endif
 	raw_spin_unlock_irqrestore(&dss_desc.ctrl_lock, flags);
 
 	flush_cache_all();
@@ -1108,6 +1112,7 @@ static int dbg_snapshot_post_panic_handler(struct notifier_block *nb,
 	return 0;
 }
 
+#if 0
 static long probe_kernel_addr(void *dst, const void *src, size_t size)
 {
 	long ret;
@@ -1153,9 +1158,11 @@ static void show_data(unsigned long addr, int nbytes, const char *name)
 		pr_cont("\n");
 	}
 }
+#endif
 
 static void show_extra_register_data(struct pt_regs *regs, int nbytes)
 {
+	#if 0
 	unsigned int i;
 	unsigned long flags;
 	mm_segment_t fs;
@@ -1176,6 +1183,7 @@ static void show_extra_register_data(struct pt_regs *regs, int nbytes)
 
 	set_fs(fs);
 	raw_spin_unlock_irqrestore(&dss_desc.ctrl_lock, flags);
+	#endif
 }
 
 static int dbg_snapshot_pre_die_handler(struct notifier_block *nb,
