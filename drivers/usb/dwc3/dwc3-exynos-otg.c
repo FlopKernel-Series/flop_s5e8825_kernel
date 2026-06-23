@@ -55,6 +55,7 @@
 #if IS_ENABLED(CONFIG_USB_NOTIFY_LAYER)
 #include <linux/usb_notify.h>
 #endif
+#include <linux/workarounds.h>
 
 #define OTG_NO_CONNECT		0
 #define OTG_CONNECT_ONLY	1
@@ -568,14 +569,16 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 		}
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-		/* USB audio disconnect progressing */
-		for (i = 0; i < 1000; i += 100) {
-			if (usb_audio_connection) {
-				usleep_range(100000, 110000);
-				pr_info("%s: wait audio	disconnect\n", __func__);
-			} else {
-				pr_info("%s: audio disconnect DONE!!\n",__func__);
-				break;
+		if (!is_aosp_mode()) {
+			/* USB audio disconnect progressing */
+			for (i = 0; i < 1000; i += 100) {
+				if (usb_audio_connection) {
+					usleep_range(100000, 110000);
+					pr_info("%s: wait audio	disconnect\n", __func__);
+				} else {
+					pr_info("%s: audio disconnect DONE!!\n",__func__);
+					break;
+				}
 			}
 		}
 #endif

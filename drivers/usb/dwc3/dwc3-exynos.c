@@ -55,6 +55,7 @@
 #endif
 
 #include <soc/samsung/exynos-cpupm.h>
+#include <linux/workarounds.h>
 
 #if IS_ENABLED(CONFIG_SND_EXYNOS_USB_AUDIO_MODULE)
 #include "../../../sound/usb/exynos_usb_audio.h"
@@ -1128,19 +1129,21 @@ static int dwc3_exynos_host_init(struct dwc3_exynos *exynos)
 	dwc->xhci = xhci;
 
 #if IS_ENABLED(CONFIG_SND_EXYNOS_USB_AUDIO_MODULE)
-	/* In data buf alloc */
-	xhci_data.in_data_addr = dma_alloc_coherent(dev,
-			(PAGE_SIZE * 256), &dma, GFP_KERNEL);
-	xhci_data.in_data_dma = dma;
-	dev_info(dev, "// IN Data address = 0x%llx (DMA), %p (virt)",
-		(unsigned long long)xhci_data.in_data_dma, xhci_data.in_data_addr);
+	if (!is_aosp_mode()) {
+		/* In data buf alloc */
+		xhci_data.in_data_addr = dma_alloc_coherent(dev,
+				(PAGE_SIZE * 256), &dma, GFP_KERNEL);
+		xhci_data.in_data_dma = dma;
+		dev_info(dev, "// IN Data address = 0x%llx (DMA), %p (virt)",
+			(unsigned long long)xhci_data.in_data_dma, xhci_data.in_data_addr);
 
-	/* Out data buf alloc */
-	xhci_data.out_data_addr = dma_alloc_coherent(dev,
-			(PAGE_SIZE * 256), &dma, GFP_KERNEL);
-	xhci_data.out_data_dma = dma;
-	dev_info(dev, "// OUT Data address = 0x%llx (DMA), %p (virt)",
-		(unsigned long long)xhci_data.out_data_dma, xhci_data.out_data_addr);
+		/* Out data buf alloc */
+		xhci_data.out_data_addr = dma_alloc_coherent(dev,
+				(PAGE_SIZE * 256), &dma, GFP_KERNEL);
+		xhci_data.out_data_dma = dma;
+		dev_info(dev, "// OUT Data address = 0x%llx (DMA), %p (virt)",
+			(unsigned long long)xhci_data.out_data_dma, xhci_data.out_data_addr);
+	}
 #endif
 
 	/* pre dma_alloc */
@@ -1750,8 +1753,10 @@ static int dwc3_exynos_resume(struct device *dev)
 	pr_info("exynos RPM Usage Count: %d\n", dev->power.usage_count);
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (exynos->vbus_state || otg_connection)
-		dwc3_exynos_set_sclk_clock(dev);
+	if (!is_aosp_mode()) {
+		if (exynos->vbus_state || otg_connection)
+			dwc3_exynos_set_sclk_clock(dev);
+	}
 #endif
 
 	return 0;

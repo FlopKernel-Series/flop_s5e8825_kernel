@@ -922,17 +922,33 @@ int xhci_exynos_sync_dev_ctx(struct xhci_hcd *xhci, unsigned int slot_id)
 #endif
 
 extern struct usb_xhci_pre_alloc xhci_pre_alloc;
+#ifdef CONFIG_SND_EXYNOS_USB_AUDIO
+static const struct xhci_driver_overrides xhci_exynos_overrides_aosp __initconst = {
+	.extra_priv_size = sizeof(struct xhci_exynos_priv),
+	.reset = xhci_exynos_setup,
+	.start = xhci_exynos_start,
+	.bus_suspend = xhci_exynos_bus_suspend,
+	.bus_resume = xhci_exynos_bus_resume,
+};
+
 static const struct xhci_driver_overrides xhci_exynos_overrides __initconst = {
 	.extra_priv_size = sizeof(struct xhci_exynos_priv),
 	.reset = xhci_exynos_setup,
 	.start = xhci_exynos_start,
-#ifdef CONFIG_SND_EXYNOS_USB_AUDIO
 	.add_endpoint = xhci_exynos_add_endpoint,
 	.address_device = xhci_exynos_address_device,
-#endif
 	.bus_suspend = xhci_exynos_bus_suspend,
 	.bus_resume = xhci_exynos_bus_resume,
 };
+#else
+static const struct xhci_driver_overrides xhci_exynos_overrides __initconst = {
+	.extra_priv_size = sizeof(struct xhci_exynos_priv),
+	.reset = xhci_exynos_setup,
+	.start = xhci_exynos_start,
+	.bus_suspend = xhci_exynos_bus_suspend,
+	.bus_resume = xhci_exynos_bus_resume,
+};
+#endif
 
 int xhci_exynos_bus_suspend(struct usb_hcd *hcd)
 {
@@ -1333,8 +1349,10 @@ static int xhci_exynos_setup(struct usb_hcd *hcd)
 
 	ret = xhci_gen_setup(hcd, xhci_exynos_quirks);
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	pr_debug("%s: alloc_event_ring!\n", __func__);
-	xhci_exynos_alloc_event_ring(xhci, GFP_KERNEL);
+	if (!is_aosp_mode()) {
+		pr_debug("%s: alloc_event_ring!\n", __func__);
+		xhci_exynos_alloc_event_ring(xhci, GFP_KERNEL);
+	}
 #endif
 
 #if 0
@@ -1363,9 +1381,11 @@ static int xhci_exynos_start(struct usb_hcd *hcd)
 	ret = xhci_run(hcd);
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	xhci = hcd_to_xhci(hcd);
-	pr_debug("%s: enable_event_ring!\n", __func__);
-	xhci_exynos_usb_offload_enable_event_ring(xhci);
+	if (!is_aosp_mode()) {
+		xhci = hcd_to_xhci(hcd);
+		pr_debug("%s: enable_event_ring!\n", __func__);
+		xhci_exynos_usb_offload_enable_event_ring(xhci);
+	}
 #endif
 	return ret;
 }
@@ -1601,9 +1621,11 @@ static int xhci_exynos_probe(struct platform_device *pdev)
 	dev_info(&pdev->dev, "XHCI PLAT START\n");
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	xhci_exynos_register_vendor_ops(&ops);
-	pr_info("%s register ops done!\n", __func__);
-	pr_info("%s fix ep ring free!\n", __func__);
+	if (!is_aosp_mode()) {
+		xhci_exynos_register_vendor_ops(&ops);
+		pr_info("%s register ops done!\n", __func__);
+		pr_info("%s fix ep ring free!\n", __func__);
+	}
 #endif
 	main_wakelock = wakeup_source_register(&pdev->dev, dev_name(&pdev->dev));
 	if (main_wakelock)
@@ -1826,39 +1848,39 @@ static int xhci_exynos_probe(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	ret = of_property_read_u32(parent->of_node,
-				"xhci_use_uram_for_audio", &value);
-	if (ret == 0 && value == 1) {
-		/*
-		 * Check URAM address. At least the following address should
-		 * be defined.(Otherwise, URAM feature will be disabled.)
-		 */
-		if (EXYNOS_URAM_DCBAA_ADDR == 0x0 ||
-				EXYNOS_URAM_ABOX_ERST_SEG_ADDR == 0x0 ||
-				EXYNOS_URAM_ABOX_EVT_RING_ADDR == 0x0 ||
-				EXYNOS_URAM_DEVICE_CTX_ADDR == 0x0 ||
-				EXYNOS_URAM_ISOC_OUT_RING_ADDR == 0x0) {
-			dev_info(&pdev->dev,
-				"Some URAM addresses are not defiend!\n");
-			goto skip_uram;
+	if (!is_aosp_mode()) {
+		ret = of_property_read_u32(parent->of_node,
+					"xhci_use_uram_for_audio", &value);
+		if (ret == 0 && value == 1) {
+			/*
+			 * Check URAM address. At least the following address should
+			 * be defined.(Otherwise, URAM feature will be disabled.)
+			 */
+			if (EXYNOS_URAM_DCBAA_ADDR == 0x0 ||
+					EXYNOS_URAM_ABOX_ERST_SEG_ADDR == 0x0 ||
+					EXYNOS_URAM_ABOX_EVT_RING_ADDR == 0x0 ||
+					EXYNOS_URAM_DEVICE_CTX_ADDR == 0x0 ||
+					EXYNOS_URAM_ISOC_OUT_RING_ADDR == 0x0) {
+				dev_info(&pdev->dev,
+					"Some URAM addresses are not defiend!\n");
+				goto skip_uram;
+			}
+
+			dev_info(&pdev->dev, "Support URAM for USB audio.\n");
+			xhci->quirks |= XHCI_USE_URAM_FOR_EXYNOS_AUDIO;
+			/* Initialization Default Value */
+			xhci_exynos->exynos_uram_ctx_alloc = false;
+			xhci_exynos->exynos_uram_isoc_out_alloc = false;
+			xhci_exynos->exynos_uram_isoc_in_alloc = false;
+			xhci_exynos->usb_audio_ctx_addr = NULL;
+			xhci_exynos->usb_audio_isoc_out_addr = NULL;
+			xhci_exynos->usb_audio_isoc_in_addr = NULL;
+		} else {
+			dev_err(&pdev->dev, "URAM is not used.\n");
 		}
-
-		dev_info(&pdev->dev, "Support URAM for USB audio.\n");
-		xhci->quirks |= XHCI_USE_URAM_FOR_EXYNOS_AUDIO;
-		/* Initialization Default Value */
-		xhci_exynos->exynos_uram_ctx_alloc = false;
-		xhci_exynos->exynos_uram_isoc_out_alloc = false;
-		xhci_exynos->exynos_uram_isoc_in_alloc = false;
-		xhci_exynos->usb_audio_ctx_addr = NULL;
-		xhci_exynos->usb_audio_isoc_out_addr = NULL;
-		xhci_exynos->usb_audio_isoc_in_addr = NULL;
-	} else {
-		dev_err(&pdev->dev, "URAM is not used.\n");
-	}
 skip_uram:
-
-	xhci_exynos->xhci_alloc = &xhci_pre_alloc;
-
+		xhci_exynos->xhci_alloc = &xhci_pre_alloc;
+	}
 #endif
 
 	if (main_wakelock)
@@ -2006,8 +2028,10 @@ static int xhci_exynos_remove(struct platform_device *dev)
 	xhci_exynos->port_set_delayed = 0;
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	xhci_exynos->xhci_alloc->offset = 0;
-	dev_info(&dev->dev, "WAKE UNLOCK\n");
+	if (!is_aosp_mode()) {
+		xhci_exynos->xhci_alloc->offset = 0;
+		dev_info(&dev->dev, "WAKE UNLOCK\n");
+	}
 #endif
 
 	__pm_relax(xhci_exynos->main_wakelock);
@@ -2056,11 +2080,13 @@ remove_hcd:
 	 * PHY pointer have to be NULL.
 	 */
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (parent && xhci_exynos->phy_usb2)
-		xhci_exynos->phy_usb2 = NULL;
+	if (!is_aosp_mode()) {
+		if (parent && xhci_exynos->phy_usb2)
+			xhci_exynos->phy_usb2 = NULL;
 
-	if (parent && xhci_exynos->phy_usb3)
-		xhci_exynos->phy_usb3 = NULL;
+		if (parent && xhci_exynos->phy_usb3)
+			xhci_exynos->phy_usb3 = NULL;
+	}
 #endif
 #ifdef CONFIG_USB_DEBUG_DETAILED_LOG
 	dev_info(&dev->dev, "remove hcd (main)\n");
@@ -2194,7 +2220,14 @@ MODULE_ALIAS("platform:xhci-hcd-exynos");
 
 static int __init xhci_exynos_init(void)
 {
+#ifdef CONFIG_SND_EXYNOS_USB_AUDIO
+	if (is_aosp_mode())
+		xhci_init_driver(&xhci_exynos_hc_driver, &xhci_exynos_overrides_aosp);
+	else
+		xhci_init_driver(&xhci_exynos_hc_driver, &xhci_exynos_overrides);
+#else
 	xhci_init_driver(&xhci_exynos_hc_driver, &xhci_exynos_overrides);
+#endif
 	return platform_driver_register(&usb_xhci_driver);
 }
 module_init(xhci_exynos_init);
