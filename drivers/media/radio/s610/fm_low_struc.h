@@ -47,7 +47,7 @@
 
 #define FM_LOW_DRV_DELAY_MS  1
 #define AGGR_RSSI_OFFSET (-114)
-#define RDS_VALID_THRESHOLD (140) /* -104dB */
+#define RDS_VALID_THRESHOLD (0) /* disable RSSI threshold for RDS */
 
 #undef  TRUE
 #define TRUE	(1)
@@ -201,7 +201,7 @@ enum fm_host_rds_errors_enum {
 };
 
 #define RDS_MEM_MAX_THRESH	(48)
-#define RDS_MEM_MAX_THRESH_PARSER	(100)
+#define RDS_MEM_MAX_THRESH_PARSER	(12)
 
 enum fm_host_rds_data_enum {
 	HOST_RDS_DATA_BLKTYPE_POSI	= 0,
