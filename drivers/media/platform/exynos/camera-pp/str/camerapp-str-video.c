@@ -334,10 +334,10 @@ static int str_video_querycap(struct file *file, void *fh, struct v4l2_capabilit
 	strncpy(cap->driver, MODULE_NAME, sizeof(cap->driver) - 1);
 	strncpy(cap->card, MODULE_NAME, sizeof(cap->driver) - 1);
 
-	cap->capabilities = V4L2_CAP_STREAMING
-		| V4L2_CAP_VIDEO_OUTPUT_MPLANE
-		| V4L2_CAP_DEVICE_CAPS;
-	cap->device_caps = cap->capabilities;
+	cap->device_caps = V4L2_CAP_STREAMING
+		| V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+
+    cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
 
 	return 0;
 }

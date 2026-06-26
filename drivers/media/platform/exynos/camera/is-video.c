@@ -2919,15 +2919,15 @@ int is_vidioc_querycap(struct file *file, void *fh,
 	snprintf(cap->card, sizeof(cap->card), "%s", iv->vd.name);
 
 	if (iv->video_type == IS_VIDEO_TYPE_LEADER)
-		cap->capabilities |= V4L2_CAP_STREAMING
+		cap->device_caps |= V4L2_CAP_STREAMING
 			| V4L2_CAP_VIDEO_OUTPUT
 			| V4L2_CAP_VIDEO_OUTPUT_MPLANE;
 	else
-		cap->capabilities |= V4L2_CAP_STREAMING
+		cap->device_caps |= V4L2_CAP_STREAMING
 			| V4L2_CAP_VIDEO_CAPTURE
 			| V4L2_CAP_VIDEO_CAPTURE_MPLANE;
 
-	cap->device_caps |= cap->capabilities;
+	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
 
 	return 0;
 }

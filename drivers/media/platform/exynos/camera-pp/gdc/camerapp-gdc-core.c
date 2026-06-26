@@ -338,10 +338,12 @@ static int gdc_v4l2_querycap(struct file *file, void *fh,
 	strncpy(cap->driver, GDC_MODULE_NAME, sizeof(cap->driver) - 1);
 	strncpy(cap->card, GDC_MODULE_NAME, sizeof(cap->card) - 1);
 
-	cap->capabilities = V4L2_CAP_STREAMING |
-		V4L2_CAP_VIDEO_CAPTURE_MPLANE | V4L2_CAP_VIDEO_OUTPUT_MPLANE;
-	cap->capabilities |= V4L2_CAP_DEVICE_CAPS;
-	cap->device_caps = V4L2_CAP_VIDEO_M2M_MPLANE;
+	cap->device_caps = V4L2_CAP_STREAMING 
+		| V4L2_CAP_VIDEO_CAPTURE_MPLANE 
+	    | V4L2_CAP_VIDEO_OUTPUT_MPLANE 
+		| V4L2_CAP_VIDEO_M2M_MPLANE;
+
+    cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
 
 	return 0;
 }

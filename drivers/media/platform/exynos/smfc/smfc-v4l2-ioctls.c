@@ -437,6 +437,8 @@ static int smfc_v4l2_querycap(struct file *filp, void *fh,
 	cap->device_caps = smfc->devdata->device_caps;
 	cap->device_caps |= V4L2_CAP_EXYNOS_JPEG_DMABUF_OFFSET;
 
+	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+
 	return 0;
 }
 
