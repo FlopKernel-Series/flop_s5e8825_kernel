@@ -2714,7 +2714,15 @@ int is_video_open(struct file *file)
 	}
 
 	if (iv->video_type == IS_VIDEO_TYPE_LEADER) {
-		ivc->group = (struct is_group *)((char *)device + iv->group_ofs);
+		struct is_group *group = (struct is_group *)((char *)device + iv->group_ofs);
+
+		if (iv->device_type == IS_DEVICE_ISCHAIN && !group->device) {
+			mierr("group has not been probed/initialized: %d", instance, -ENODEV);
+			ret = -ENODEV;
+			goto err_ischain_group_open;
+		}
+
+		ivc->group = group;
 
 		if (iv->device_type == IS_DEVICE_ISCHAIN) {
 			ret = is_ischain_group_open(idi, ivc, iv->group_id);
