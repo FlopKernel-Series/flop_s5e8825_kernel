@@ -80,7 +80,7 @@ EXPORT_SYMBOL_GPL(gpu_dvfs_get_min_freq);
 
 int gpu_dvfs_get_max_freq(void)
 {
-	return gpex_clock_get_max_clock();
+	return gpex_clock_get_max_clock_limit();
 }
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_max_freq);
 
