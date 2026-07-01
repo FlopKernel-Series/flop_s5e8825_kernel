@@ -117,7 +117,7 @@ void fm_initialize(struct s610_radio *radio)
 		radio->low->fm_config.soft_muffle_conf_ini.lpf_auto);
 	fmspeedy_set_reg_field(0xFFF2AA, 8, (0x0001 << 8), 1);
 
-	if (!radio->without_elna)
+	if (radio->without_elna)
 		radio->rssi_adjust = RSSI_ADJUST_WITHOUT_ELNA_VALUE;
 
 	fmspeedy_set_reg(0xFFF2C2, radio->low->fm_config.rssi_adj_ini+radio->rssi_adjust);
@@ -376,7 +376,7 @@ void fm_set_freq(struct s610_radio *radio, u32 freq, bool mix_hi)
 	fmspeedy_set_reg(0xFFF2D9, 0x0);
 	fmspeedy_set_reg(0xFFF2DA, 0x0);
 
-	if (!radio->without_elna)
+	if (radio->without_elna)
 		radio->rssi_adjust = RSSI_ADJUST_WITHOUT_ELNA_VALUE;
 
 	fmspeedy_set_reg(0xFFF2C2, radio->low->fm_config.rssi_adj_ini+radio->rssi_adjust);
@@ -2453,9 +2453,9 @@ bool fm_tuner_set_power_state(struct s610_radio *radio, bool fm_on, bool rds_on)
 struct fm_conf_ini_values low_fm_conf_init = {
 		.demod_conf_ini = 0x228C,
 		.rssi_adj_ini = 0x006E,
-		.soft_muffle_conf_ini = { 0x2516, 1, 1, 7 },
+		.soft_muffle_conf_ini = { 0x2516, 0, 0, 7 },
 		.soft_mute_atten_max_ini = 0x0007,
-		.stereo_thres_ini = 0x00C8,
+		.stereo_thres_ini = 0x0040,
 		.narrow_thres_ini = 0x0074,
 		.snr_adj_ini = 0x001C,
 		.snr_smooth_conf_ini = 0x082F,
