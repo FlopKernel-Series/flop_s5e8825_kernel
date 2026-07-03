@@ -132,3 +132,7 @@ type 'struct ipv6_devconf' changed
 type 'struct dev_pm_info' changed
   member 'bool async_in_progress' was added
 
+type 'struct task_struct' changed
+  member 'u64 android_kabi_reserved2' was removed
+  member 'union { struct { unsigned int user_dumpable; }; struct { u64 android_kabi_reserved2; }; union { }; }' was added
+
