@@ -90,6 +90,10 @@ static struct vfsmount *shm_mnt;
 
 #include <linux/uaccess.h>
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs.h>
+#endif
+
 #include "internal.h"
 
 #define BLOCKS_PER_PAGE  (PAGE_SIZE/512)
