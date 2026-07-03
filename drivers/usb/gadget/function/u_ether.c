@@ -495,7 +495,7 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 
 	spin_lock(&dev->req_lock);
 	list_add_tail(&req->list, &dev->tx_reqs);
-	if (dev->port_usb->multi_pkt_xfer)
+	if (dev->port_usb && dev->port_usb->multi_pkt_xfer)
 		req->length = 0;
 	spin_unlock(&dev->req_lock);
 	if (netif_carrier_ok(dev->net))
