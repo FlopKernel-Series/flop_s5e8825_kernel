@@ -1054,7 +1054,6 @@ int snd_usb_endpoint_set_params(struct snd_usb_endpoint *ep,
 				struct snd_usb_endpoint *sync_ep)
 {
 	int err;
-	int frame_bits;
 
 	if (ep->use_count != 0) {
 		bool check = ep->is_implicit_feedback &&
@@ -1099,10 +1098,6 @@ int snd_usb_endpoint_set_params(struct snd_usb_endpoint *ep,
 			      ep->maxpacksize, rate, ep->pps);
 		return -EINVAL;
 	}
-
-	frame_bits = snd_pcm_format_physical_width(pcm_format) * channels;
-	if (frame_bits > 0)
-		ep->maxframesize = ep->maxpacksize * 8 / frame_bits;
 
 	ep->packsize[0] = min(ep->packsize[0], ep->maxframesize);
 	ep->packsize[1] = min(ep->packsize[1], ep->maxframesize);
