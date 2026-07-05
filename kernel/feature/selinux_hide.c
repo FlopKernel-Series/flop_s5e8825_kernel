@@ -515,35 +515,26 @@ static int ksu_selinux_hide_enable()
         return -ENOMEM;
     }
 
-    fake_state.ss->sidtab = kzalloc(sizeof(struct sidtab), GFP_KERNEL);
-    if (!fake_state.ss->sidtab) {
-        kfree(fake_state.ss);
-        return -ENOMEM;
-    }
-
     // In normal android
     // Only set selinux policy once
     // So let's just hardcode to 1 to avoid avdSeqNo detect
     //
-    // fake_state.ss->latest_granting = selinux_state.ss->latest_granting;
-    // ^^ Don't do that, it will cause we may put an abnormal latest_granting to avdSeqNo
+    // We manually reset latest_granting to 1, or will cause we may put an abnormal latest_granting to avdSeqNoeqNo
     // Because there will be called in any time, and i am too lazy move it to before apply_kernelsu_rules :)
     fake_state.ss->latest_granting = 1;
 
-    rwlock_init(&(fake_state.ss->policy_rwlock));
+    // Replace policydb/sidtab with ourselves
     memcpy(&fake_state.ss->policydb, backup_policydb, sizeof(struct policydb));
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0) || defined(KSU_COMPAT_SIDTAB_AS_REFERENCE)
-    memcpy(fake_state.ss->sidtab, backup_sidtab, sizeof(struct sidtab));
+    fake_state.ss->sidtab = backup_sidtab;
 #else
     memcpy(&fake_state.ss->sidtab, backup_sidtab, sizeof(struct sidtab));
-#endif
-
-    kfree(backup_policydb);
     kfree(backup_sidtab);
+    backup_sidtab = NULL;
+#endif
+    kfree(backup_policydb);
 
     backup_policydb = NULL;
-    backup_sidtab = NULL;
-
 #endif // #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0) || defined(KSU_COMPAT_HAS_SELINUX_POLICY_STRUCT)
 
 #endif // #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 6, 0)
@@ -643,11 +634,11 @@ static void ksu_selinux_hide_disable()
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0) && defined(KSU_COMPAT_USE_SELINUX_STATE) &&                          \
     !defined(KSU_COMPAT_HAS_SELINUX_POLICY_STRUCT)
     backup_policydb = kzalloc(sizeof(*backup_policydb), GFP_KERNEL);
-    backup_sidtab = kzalloc(sizeof(*backup_sidtab), GFP_KERNEL);
     memcpy(backup_policydb, &fake_state.ss->policydb, sizeof(struct policydb));
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0) || defined(KSU_COMPAT_SIDTAB_AS_REFERENCE)
-    memcpy(backup_sidtab, fake_state.ss->sidtab, sizeof(struct sidtab));
-#else
+
+    // 5.0+ backup_sidtab share memory with fake_state, so we doesn't replace to NULL in lifetime
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0) && !defined(KSU_COMPAT_SIDTAB_AS_REFERENCE)
+    backup_sidtab = kzalloc(sizeof(*backup_sidtab), GFP_KERNEL);
     memcpy(backup_sidtab, &fake_state.ss->sidtab, sizeof(struct sidtab));
 #endif
 
