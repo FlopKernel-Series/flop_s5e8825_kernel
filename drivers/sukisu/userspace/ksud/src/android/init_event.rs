@@ -17,8 +17,8 @@ use crate::{
 };
 
 pub fn on_post_data_fs() -> Result<()> {
-    if ksucalls::is_uapi_version_mismatch() {
-        error!("Kernel and userspace uapi version mismatch! skip on_post_fs_data");
+    if let Err(e) = ksucalls::ensure_uapi_version_matched() {
+        error!("{e:#}, skip on_post_fs_data");
         return Ok(());
     }
 
@@ -168,8 +168,8 @@ pub fn run_stage(stage: &str, block: bool) {
 }
 
 pub fn on_services() {
-    if ksucalls::is_uapi_version_mismatch() {
-        error!("Kernel and userspace uapi version mismatch! skip on_services");
+    if let Err(e) = ksucalls::ensure_uapi_version_matched() {
+        error!("{e:#}, skip on_services");
         return;
     }
 
@@ -178,8 +178,8 @@ pub fn on_services() {
 }
 
 pub fn on_boot_completed() {
-    if ksucalls::is_uapi_version_mismatch() {
-        error!("Kernel and userspace uapi version mismatch! skip on_boot_completed");
+    if let Err(e) = ksucalls::ensure_uapi_version_matched() {
+        error!("{e:#}, skip on_boot_completed");
         return;
     }
 
@@ -196,6 +196,7 @@ const fn resetprop() -> ResetProp {
         persist_only: false,
         verbose: false,
         show_context: false,
+        rebuild: false,
     }
 }
 
@@ -257,8 +258,8 @@ fn catch_bootlog(logname: &str, command: &[&str]) -> Result<()> {
 
 pub fn soft_reboot() -> Result<()> {
     // check it avoid user click "soft_reboot" in manager when version mismatch
-    if ksucalls::is_uapi_version_mismatch() {
-        error!("Kernel and userspace uapi version mismatch! skip soft_reboot");
+    if let Err(e) = ksucalls::ensure_uapi_version_matched() {
+        error!("{e:#}, skip soft_reboot");
         return Ok(());
     }
 

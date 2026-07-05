@@ -178,9 +178,7 @@ skip_umount_task:
     // do susfs setuid when susfs enabled
 #ifdef CONFIG_KSU_SUSFS
     schedule_work(&susfs_extra_works);
-#endif
-#ifndef CONFIG_KSU_TRACEPOINT_HOOK
-    ksu_set_current_proc_umounted();
+    susfs_set_current_proc_umounted();
 #endif
 
     return 0;

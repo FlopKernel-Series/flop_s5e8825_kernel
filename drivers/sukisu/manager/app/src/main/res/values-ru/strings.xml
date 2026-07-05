@@ -325,9 +325,7 @@
     <string name="appearance_settings">Внешний вид</string>
     <string name="predictive_back_settings">Предиктивное возвращение</string>
     <string name="predictive_back_animation">Предиктивная анимация возвращения</string>
-    <string name="predictive_back_animation_desc">Выбрать анимацию для предиктивного возвращения</string>
     <string name="predictive_back_exit_direction">Направления возвращения</string>
-    <string name="predictive_back_exit_direction_desc">Выберите направление выхода для предиктивного возвращения</string>
     <string name="predictive_back_animation_none">Нет</string>
     <string name="predictive_back_animation_scale">Масштабирование</string>
     <string name="predictive_back_animation_ksu_classic">Классический KernelSU</string>

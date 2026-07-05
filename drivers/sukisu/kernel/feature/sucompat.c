@@ -258,10 +258,16 @@ static inline void ksu_handle_execveat_init(const char *filename, void *envp)
             escape_to_root_for_init();
         }
 #if !defined(CONFIG_KSU_TRACEPOINT_HOOK)
-        else if (likely(strstr(filename, "/app_process") == NULL && strstr(filename, "/adbd") == NULL) &&
-                 !ksu_is_current_proc_umounted()) {
+        else if (likely(strstr(filename, "/app_process") == NULL && strstr(filename, "/adbd") == NULL)) {
             pr_info("mark no sucompat checks for pid: '%d', exec: '%s'\n", current->pid, filename);
-            ksu_set_current_proc_umounted();
+
+            if (!ksu_is_current_proc_unprivillege())
+                ksu_set_current_proc_unprivillege();
+
+#ifdef CONFIG_KSU_SUSFS
+            if (!susfs_is_current_proc_umounted())
+                susfs_set_current_proc_umounted();
+#endif
         }
 #endif
         int ret = ksu_adb_root_handle_execve_manual(filename, (struct user_arg_ptr *)envp);
@@ -276,7 +282,7 @@ int ksu_handle_execve(int *fd, const char *filename, void *argv, void *envp, int
     struct ksu_sulog_pending_event *pending_root_execve = NULL;
 
 #ifndef CONFIG_KSU_TRACEPOINT_HOOK
-    if (ksu_is_current_proc_umounted()) {
+    if (ksu_is_current_proc_unprivillege()) {
         return 0;
     }
 #endif
@@ -340,7 +346,7 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
     char path[sizeof(su_path) + 1] = { 0 };
 
 #ifndef CONFIG_KSU_TRACEPOINT_HOOK
-    if (ksu_is_current_proc_umounted()) {
+    if (ksu_is_current_proc_unprivillege()) {
         return 0;
     }
 #endif
@@ -373,7 +379,7 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0) && defined(CONFIG_KSU_SUSFS)
 int ksu_handle_stat(int *dfd, struct filename **filename, int *flags)
 {
-    if (ksu_is_current_proc_umounted()) {
+    if (ksu_is_current_proc_unprivillege()) {
         return 0;
     }
 
@@ -404,7 +410,7 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
     char path[sizeof(su_path) + 1] = { 0 };
 
 #ifndef CONFIG_KSU_TRACEPOINT_HOOK
-    if (ksu_is_current_proc_umounted()) {
+    if (ksu_is_current_proc_unprivillege()) {
         return 0;
     }
 #endif
