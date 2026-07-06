@@ -26,6 +26,7 @@
 #include <linux/version.h>
 #include <linux/delay.h>
 #include <linux/atomic.h>
+#include <linux/workarounds.h>
 #include "goodix_ts_core.h"
 
 static bool module_initialized;
@@ -304,11 +305,22 @@ static int gsx_gesture_before_suspend(struct goodix_ts_data *ts,
 
 	goodix_set_custom_library(ts);
 
+	if (is_aosp_mode_fast())
+		ts->prox_last_report = 0xFF;
+
 	ret = gsx_set_lowpowermode(ts, TO_LOWPOWER_MODE);
 	if (ret < 0)
 		ts_err("failed to enter lowpowermode");
 
+	if (is_aosp_mode_fast()) {
+		ret = hw_ops->ed_enable(ts, ts->plat_data->ed_enable ? ts->plat_data->ed_enable : 3);
+		if (ret < 0)
+			ts_err("failed to re-enable proximity in lowpowermode");
+	}
+
 	ts->lpm_coord_event_cnt = 0;
+	if (is_aosp_mode_fast())
+		ts->prox_resume_time = ktime_get();
 	hw_ops->irq_enable(ts, true);
 	enable_irq_wake(ts->irq);
 
@@ -323,6 +335,11 @@ static int gsx_gesture_before_resume(struct goodix_ts_data *ts,
 {
 	disable_irq_wake(ts->irq);
 	gsx_set_lowpowermode(ts, TO_TOUCH_MODE);
+
+	if (is_aosp_mode_fast() && ts->plat_data->ed_enable) {
+		ts->prox_last_report = 0xFF;
+		ts->prox_resume_time = ktime_get();
+	}
 
 	sec_input_set_grip_type(ts->bus->dev, ONLY_EDGE_HANDLER);
 

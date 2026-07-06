@@ -32,6 +32,7 @@
 /*****************************************************************************
 * 1.Included header files
 *****************************************************************************/
+#include <linux/workarounds.h>
 #include "focaltech_core.h"
 
 /******************************************************************************
@@ -302,6 +303,11 @@ int fts_gesture_suspend(struct fts_ts_data *ts_data)
 	int i = 0;
 	u8 state = 0xFF;
 
+	if (is_aosp_mode_fast()) {
+		ts_data->prox_last_report = 0xFF;
+		ts_data->prox_resume_time = ktime_get();
+	}
+
 	if (enable_irq_wake(ts_data->irq)) {
 		FTS_DEBUG("enable_irq_wake(irq:%d) fail", ts_data->irq);
 	}
@@ -331,6 +337,9 @@ int fts_gesture_suspend(struct fts_ts_data *ts_data)
 	else
 		FTS_INFO("Enter into gesture(suspend) successfully");
 
+	if (is_aosp_mode_fast())
+		fts_write_reg(FTS_REG_PROXIMITY_MODE, ts_data->pdata->ed_enable ? ts_data->pdata->ed_enable : 3);
+
 	return 0;
 }
 
@@ -355,6 +364,11 @@ int fts_gesture_resume(struct fts_ts_data *ts_data)
 		FTS_ERROR("make IC exit gesture(resume) fail, state:0x%02X", state);
 	else
 		FTS_INFO("resume from gesture successfully");
+
+	if (is_aosp_mode_fast() && ts_data->pdata->ed_enable) {
+		ts_data->prox_last_report = 0xFF;
+		ts_data->prox_resume_time = ktime_get();
+	}
 
 	return 0;
 }

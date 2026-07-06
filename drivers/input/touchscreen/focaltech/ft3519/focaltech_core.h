@@ -48,6 +48,7 @@
 #include <linux/regulator/consumer.h>
 #include <linux/uaccess.h>
 #include <linux/firmware.h>
+#include <linux/ktime.h>
 #include <linux/debugfs.h>
 #include <linux/mutex.h>
 #include <linux/workqueue.h>
@@ -295,6 +296,9 @@ struct fts_ts_data {
 	bool support_high_report;
 
 	bool legacy_mode;
+
+	u8 prox_last_report;
+	ktime_t prox_resume_time;
 };
 
 enum _FTS_BUS_TYPE {

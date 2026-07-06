@@ -27,6 +27,7 @@
 #endif
 
 #include "goodix_ts_core.h"
+#include <linux/workarounds.h>
 
 #if IS_ENABLED(CONFIG_SAMSUNG_TUI)
 #include <linux/input/stui_inf.h>
@@ -1578,6 +1579,7 @@ static int goodix_ts_probe(struct platform_device *pdev)
 	/* touch core layer is a platform driver */
 	ts->pdev = pdev;
 	ts->bus = bus_interface;
+	ts->prox_last_report = 0xFF;
 
 	if (IS_ENABLED(CONFIG_OF) && bus_interface->dev->of_node) {
 		/* parse devicetree property */

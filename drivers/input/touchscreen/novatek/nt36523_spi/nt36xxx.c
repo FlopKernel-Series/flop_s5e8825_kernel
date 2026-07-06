@@ -2400,18 +2400,32 @@ void nvt_ts_proximity_report(uint8_t *data)
 
 	status = p_event_proximity->status;
 
-	if (is_aosp_mode_fast() && ts->power_status != LP_MODE_STATUS && ts->touch_count)
+	if (is_aosp_mode_fast() && ts->power_status != LP_MODE_STATUS && ts->touch_count && !ts->ear_detect_mode)
 		return;
 
-	if (is_aosp_mode_fast())
-		status = !status;
+	if (is_aosp_mode_fast()) {
+		if (status == 5)
+			status = 1;
+		else
+			status = !status;
 
-	input_info(true, &ts->client->dev,"proximity->status = %d\n", status);
+		/* Debounce first far event after LPM entry */
+		if (ktime_ms_delta(ktime_get(), ts->prox_resume_time) < 200 &&
+		    status == 1 &&
+		    ts->prox_last_report == 0xFF)
+			return;
+	}
 
-	input_info(true, &ts->client->dev, "%s hover : %d\n", __func__, status);
-	ts->hover_event = status;
-	input_report_abs(ts->input_dev_proximity, ABS_MT_CUSTOM, status);
-	input_sync(ts->input_dev_proximity);
+	if (ts->prox_last_report != status) {
+		ts->prox_last_report = status;
+
+		input_info(true, &ts->client->dev,"proximity->status = %d\n", status);
+
+		input_info(true, &ts->client->dev, "%s hover : %d\n", __func__, status);
+		ts->hover_event = status;
+		input_report_abs(ts->input_dev_proximity, ABS_MT_CUSTOM, status);
+		input_sync(ts->input_dev_proximity);
+	}
 
 #if 0
 	switch (p_event_proximity->status) {
@@ -3732,6 +3746,11 @@ int32_t nvt_ts_suspend(struct device *dev)
 	if ((!ts->prox_power_off && ts->ear_detect_mode) && ts->prox_in_aot)
 		enter_force_ed_mode = 0;	// for prox in aot feature
 
+	if (is_aosp_mode_fast()) {
+		ts->prox_last_report = 0xFF;
+		ts->prox_resume_time = ktime_get();
+	}
+
 	if ((ts->lowpower_mode || ts->lcdoff_test) && enter_force_ed_mode == 0) {
 		nvt_ts_set_lp_mode(ts);
 	} else if (ts->ear_detect_mode) {
@@ -3739,6 +3758,9 @@ int32_t nvt_ts_suspend(struct device *dev)
 	} else {
 		nvt_ts_set_icoff_mode(ts);
 	}
+
+	if (is_aosp_mode_fast())
+		set_ear_detect(ts, ts->ear_detect_mode ? ts->ear_detect_mode : 3, false);
 
 #if SEC_LPWG_DUMP
 	if (ts->power_status == LP_MODE_STATUS) {
@@ -3787,6 +3809,11 @@ void nvt_ts_early_resume(struct device *dev)
 		ts->power_status = LP_MODE_EXIT;
 		nvt_ts_lcd_reset_ctrl(false);
 		mutex_unlock(&ts->lock);
+	}
+
+	if (is_aosp_mode_fast() && ts->ear_detect_mode) {
+		ts->prox_last_report = 0xFF;
+		ts->prox_resume_time = ktime_get();
 	}
 }
 

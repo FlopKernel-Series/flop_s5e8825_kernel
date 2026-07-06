@@ -1415,12 +1415,27 @@ static void goodix_ts_report_status(struct goodix_ts_data *ts, struct goodix_ts_
 	} else if (ts_event->status_type == TYPE_STATUS_EVENT_VENDOR_INFO) {
 		if (ts_event->status_id == STATUS_EVENT_VENDOR_PROXIMITY) {
 			ts->ts_event.hover_event = ts_event->status_data[0];
-			if (is_aosp_mode_fast())
-				ts_event->status_data[0] = !ts_event->status_data[0];
+			if (is_aosp_mode_fast()) {
+				if (ts_event->status_data[0] == 5)
+					ts_event->status_data[0] = 1;
+				else
+					ts_event->status_data[0] = !ts_event->status_data[0];
+
+				/* Debounce first far event after LPM entry */
+				if (ktime_ms_delta(ktime_get(), ts->prox_resume_time) < 200 &&
+				    ts_event->status_data[0] == 1 &&
+				    ts->prox_last_report == 0xFF)
+					return;
+			}
 			if (!is_aosp_mode_fast() ||
 			    atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM ||
-			    !ts->plat_data->touch_count)
-				sec_input_proximity_report(ts->bus->dev, ts_event->status_data[0]);
+			    !ts->plat_data->touch_count ||
+			    (ts->plat_data->support_ear_detect && ts->plat_data->ed_enable)) {
+				if (ts->prox_last_report != ts_event->status_data[0]) {
+					ts->prox_last_report = ts_event->status_data[0];
+					sec_input_proximity_report(ts->bus->dev, ts_event->status_data[0]);
+				}
+			}
 		} else if (ts_event->status_id == STATUS_EVENT_VENDOR_STATE_CHANGED) {
 			if (ts_event->status_data[0] == 2 && ts_event->status_data[1] == 2)
 				ts_info("Normal changed");

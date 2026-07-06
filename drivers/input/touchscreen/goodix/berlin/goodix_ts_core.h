@@ -10,6 +10,7 @@
 #define _GOODIX_TS_CORE_H_
 
 #include <linux/input/sec_input.h>
+#include <linux/ktime.h>
 
 extern struct device *ptsp;
 
@@ -614,6 +615,10 @@ struct goodix_ts_data {
 
 	u32 refresh_rate;
 	u8 glove_enable;
+
+	u8 prox_last_report;
+	ktime_t prox_resume_time;
+
 
 	bool sponge_inf_dump;
 	u8 sponge_dump_format;

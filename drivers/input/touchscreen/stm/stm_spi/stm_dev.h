@@ -8,6 +8,7 @@
 #include <linux/firmware.h>
 #include <linux/gpio.h>
 #include <linux/hrtimer.h>
+#include <linux/ktime.h>
 #include <linux/spi/spi.h>
 #include <linux/input.h>
 #include <linux/input/mt.h>
@@ -524,6 +525,8 @@ struct stm_ts_data {
 	bool rear_selfie_mode;
 
 	u8 hover_event;
+	u8 prox_last_report;
+	ktime_t prox_resume_time;
 	
 	bool tsp_dump_lock;
 

@@ -820,15 +820,23 @@ static int fts_read_pocket_result(struct fts_ts_data *ts_data)
 		ts_data->hover_event = IN_POCKET;
 	}
 
-	if (is_aosp_mode_fast())
+	if (is_aosp_mode_fast()) {
 		ts_data->hover_event = !ts_data->hover_event;
 
-	if (!ts_data->legacy_mode)
-		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
-	else {
-		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
-		input_sync(ts_data->pdata->input_dev_proximity);
-		FTS_INFO("proximity: %d", ts_data->hover_event);
+		if (ktime_ms_delta(ktime_get(), ts_data->prox_resume_time) < 200)
+			return 0;
+	}
+
+	if (ts_data->prox_last_report != ts_data->hover_event) {
+		ts_data->prox_last_report = ts_data->hover_event;
+
+		if (!ts_data->legacy_mode)
+			sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
+		else {
+			input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
+			input_sync(ts_data->pdata->input_dev_proximity);
+			FTS_INFO("proximity: %d", ts_data->hover_event);
+		}
 	}
 
 	return 0;
@@ -852,18 +860,33 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 
 	if (is_aosp_mode_fast() &&
 	    atomic_read(&ts_data->pdata->power_state) != SEC_INPUT_STATE_LPM &&
-	    ts_data->pdata->touch_count)
+	    ts_data->pdata->touch_count &&
+	    !(ts_data->pdata->support_ear_detect && ts_data->pdata->ed_enable))
 		return 0;
 
-	if (is_aosp_mode_fast())
-		ts_data->hover_event = !ts_data->hover_event;
+	if (is_aosp_mode_fast()) {
+		if (ts_data->hover_event == 5)
+			ts_data->hover_event = 1;
+		else
+			ts_data->hover_event = !ts_data->hover_event;
 
-	if (!ts_data->legacy_mode)
-		sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
-	else {
-		input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
-		input_sync(ts_data->pdata->input_dev_proximity);
-		FTS_INFO("proximity: %d", ts_data->hover_event);
+		/* Debounce first far event after LPM entry */
+		if (ktime_ms_delta(ktime_get(), ts_data->prox_resume_time) < 200 &&
+		    ts_data->hover_event == 1 &&
+		    ts_data->prox_last_report == 0xFF)
+			return 0;
+	}
+
+	if (ts_data->prox_last_report != ts_data->hover_event) {
+		ts_data->prox_last_report = ts_data->hover_event;
+
+		if (!ts_data->legacy_mode)
+			sec_input_proximity_report(ts_data->dev, ts_data->hover_event);
+		else {
+			input_report_abs(ts_data->pdata->input_dev_proximity, ABS_MT_CUSTOM, ts_data->hover_event);
+			input_sync(ts_data->pdata->input_dev_proximity);
+			FTS_INFO("proximity: %d", ts_data->hover_event);
+		}
 	}
 
 	return 0;

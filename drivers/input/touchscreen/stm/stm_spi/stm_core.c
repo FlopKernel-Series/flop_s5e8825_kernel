@@ -11,6 +11,7 @@
 
 #include "stm_dev.h"
 #include "stm_reg.h"
+#include <linux/workarounds.h>
 
 struct stm_ts_data *g_ts;
 
@@ -856,10 +857,28 @@ static void stm_ts_status_event(struct stm_ts_data *ts, u8 *event_buff)
 	} else if (p_event_status->stype == STM_TS_EVENT_STATUSTYPE_VENDORINFO) {
 		if (ts->plat_data->support_ear_detect) {
 			if (p_event_status->status_id == 0x6A) {
-				ts->hover_event = p_event_status->status_data_1;
-				input_report_abs(ts->plat_data->input_dev_proximity, ABS_MT_CUSTOM, p_event_status->status_data_1);
-				input_sync(ts->plat_data->input_dev_proximity);
-				input_info(true, &ts->client->dev, "%s: proximity: %d\n", __func__, p_event_status->status_data_1);
+				u8 prox_val = p_event_status->status_data_1;
+
+				if (is_aosp_mode_fast()) {
+					if (prox_val == 5)
+						prox_val = 1;
+					else
+						prox_val = !prox_val;
+
+					/* Debounce first far event after LPM entry */
+					if (ktime_ms_delta(ktime_get(), ts->prox_resume_time) < 200 &&
+					    prox_val == 1 &&
+					    ts->prox_last_report == 0xFF)
+						return;
+				}
+
+				if (ts->prox_last_report != prox_val) {
+					ts->prox_last_report = prox_val;
+					ts->hover_event = prox_val;
+					input_report_abs(ts->plat_data->input_dev_proximity, ABS_MT_CUSTOM, prox_val);
+					input_sync(ts->plat_data->input_dev_proximity);
+					input_info(true, &ts->client->dev, "%s: proximity: %d\n", __func__, prox_val);
+				}
 			}
 		}
 	}
@@ -1114,6 +1133,11 @@ int stm_ts_input_open(struct input_dev *dev)
 	if (ts->plat_data->power_state == SEC_INPUT_STATE_LPM) {
 		ts->plat_data->lpmode(ts, TO_TOUCH_MODE);
 		sec_input_set_grip_type(&ts->client->dev, ONLY_EDGE_HANDLER);
+
+		if (is_aosp_mode_fast() && ts->plat_data->ed_enable) {
+			ts->prox_last_report = 0xFF;
+			ts->prox_resume_time = ktime_get();
+		}
 	} else {
 		ret = ts->plat_data->start_device(ts);
 		if (ret < 0)
@@ -1186,6 +1210,11 @@ void stm_ts_input_close(struct input_dev *dev)
 #endif
 	mutex_lock(&ts->switching_mutex);
 
+	if (is_aosp_mode_fast()) {
+		ts->prox_last_report = 0xFF;
+		ts->prox_resume_time = ktime_get();
+	}
+
 #if IS_ENABLED(CONFIG_TOUCHSCREEN_DUAL_FOLDABLE)
 	if (ts->plat_data->support_dual_foldable == MAIN_TOUCH && ts->flip_status_current == STM_TS_STATUS_FOLDING) {
 		ts->plat_data->stop_device(ts);
@@ -1198,6 +1227,9 @@ void stm_ts_input_close(struct input_dev *dev)
 #if IS_ENABLED(CONFIG_TOUCHSCREEN_DUAL_FOLDABLE)
 	}
 #endif
+
+	if (is_aosp_mode_fast())
+		stm_ts_ear_detect_enable(ts, ts->plat_data->ed_enable ? ts->plat_data->ed_enable : 3);
 
 	mutex_unlock(&ts->switching_mutex);
 	mutex_unlock(&ts->modechange);

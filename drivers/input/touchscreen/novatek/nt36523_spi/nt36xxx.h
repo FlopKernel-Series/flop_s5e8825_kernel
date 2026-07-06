@@ -25,6 +25,7 @@
 #include <linux/uaccess.h>
 #include <linux/regulator/consumer.h>
 #include <linux/delay.h>
+#include <linux/ktime.h>
 #include "../../../sec_input_legacy/sec_input.h"
 #include "nt36xxx_mem_map.h"
 #if IS_ENABLED(CONFIG_INPUT_SEC_SECURE_TOUCH)
@@ -325,6 +326,8 @@ struct nvt_ts_data {
 	bool ed_reset_flag;
 	long prox_power_off;
 	u8 hover_event;	//virtual_prox
+	u8 prox_last_report;
+	ktime_t prox_resume_time;
 	bool lcdoff_test;
 
 	u16 landscape_deadzone[2];
