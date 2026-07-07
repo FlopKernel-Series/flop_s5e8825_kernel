@@ -1,11 +1,9 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 /*
- * Suppress EXPORT_SYMBOL in non-default Mali KMD modules (r32p1, r44p1)
- * to avoid duplicate exports at build time, only r38p1 defines the
- * internal kbase symbols. External consumers go through the built-in
- * mali_redirect instead.
- * Must include <linux/export.h> first so the include guard is set
- * before the empty macros are defined.
+ * Suppress EXPORT_SYMBOL in non-selected Mali KMD modules.
+ * Only the version selected by mali.version= cmdline should
+ * export symbols to avoid duplicate definitions.
+ * Must include <linux/export.h> first.
  */
 
 #include <linux/export.h>

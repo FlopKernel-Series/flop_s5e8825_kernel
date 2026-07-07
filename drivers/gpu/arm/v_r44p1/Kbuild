@@ -136,15 +136,21 @@ ccflags-y += \
     -I$(src) \
     -I$(src)/../$(MALI_PLATFORM_DIR) \
     -I$(src)/../../../base \
-    -I$(src)/../../../../include
+    -I$(src)/../../../../include \
+    -I$(src)/..
 
 subdir-ccflags-y += $(ccflags-y)
 
-# Override EXPORT_SYMBOL to avoid duplicate exports with other Mali versions.
-# The default version (r38p1) handles all symbol exports so that other
-# modules (e.g. exynos-migov) can resolve them regardless of which version
-# is active.
+# Suppress all EXPORT_SYMBOL from this version module. The redirector
+# (mali_redirect) provides the generic exported symbols and forwards to
+# the version selected via mali.version= cmdline.
 ccflags-y += -include $(srctree)/drivers/gpu/arm/mali_no_export.h
+
+# Version-specific namespace for exported symbols to avoid conflicts
+# across Mali versions. The redirector (mali_redirect) provides generic
+# names and routes calls to the version selected via mali.version= cmdline.
+ccflags-y += -DMALI_VER_SUFFIX=_r44p1
+ccflags-y += -include $(srctree)/drivers/gpu/arm/mali_exports.h
 
 #
 # Kernel Modules

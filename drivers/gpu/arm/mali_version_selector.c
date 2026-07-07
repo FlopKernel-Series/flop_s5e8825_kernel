@@ -10,7 +10,7 @@
 #include <linux/module.h>
 #include <linux/string.h>
 
-char mali_selected_version[8] = {0};
+char mali_selected_version[8] = "r38p1";
 EXPORT_SYMBOL(mali_selected_version);
 
 static int __init mali_version_setup(char *str)
