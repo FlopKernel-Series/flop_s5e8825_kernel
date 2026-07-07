@@ -524,7 +524,7 @@ CONFIG_RANDOMIZE_BASE=y
 #
 # Boot options
 #
-CONFIG_CMDLINE="cgroup.memory=nokmem aosp_mode=0 superfloppy=0 force_perm=0 ems_efficient=0"
+CONFIG_CMDLINE="cgroup.memory=nokmem aosp_mode=0 superfloppy=0 force_perm=0 ems_efficient=0 mali.version=r38p1"
 # CONFIG_CMDLINE_FROM_BOOTLOADER is not set
 CONFIG_CMDLINE_EXTEND=y
 # CONFIG_CMDLINE_FORCE is not set
@@ -4121,13 +4121,16 @@ CONFIG_VIDEO_IR_I2C=y
 #
 # ARM GPU Configuration
 #
-# CONFIG_MALI_DDK_NONE is not set
-# CONFIG_MALI_DDK_VALHALL_R32P1 is not set
-CONFIG_MALI_DDK_VALHALL_R38P1=y
-# CONFIG_MALI_DDK_VALHALL_R44P1 is not set
+CONFIG_MALI_MIDGARD_R32P1=m
+CONFIG_MALI_MIDGARD_R38P1=m
+CONFIG_MALI_MIDGARD_R44P1=m
 CONFIG_MALI_MIDGARD=m
 CONFIG_MALI_PLATFORM_NAME="exynos"
 CONFIG_MALI_REAL_HW=y
+
+#
+# Platform specific options
+#
 CONFIG_MALI_EXYNOS_CLOCK=y
 CONFIG_MALI_EXYNOS_DVFS=y
 CONFIG_MALI_DVFS=y
@@ -4156,6 +4159,8 @@ CONFIG_EXYNOS_SOC_NAME="exynos"
 # CONFIG_MALI_EXYNOS_UNIT_TESTS is not set
 # CONFIG_MALI_EXYNOS_DEBUG_FAULT_DUMP is not set
 CONFIG_MALI_EXYNOS_GPU_MEM_DUMP=y
+# end of Platform specific options
+
 # CONFIG_MALI_CSF_SUPPORT is not set
 # CONFIG_MALI_DEVFREQ is not set
 # CONFIG_MALI_MIDGARD_DVFS is not set
@@ -4169,39 +4174,33 @@ CONFIG_MALI_EXPERT=y
 # CONFIG_MALI_2MB_ALLOC is not set
 # CONFIG_MALI_MEMORY_FULLY_BACKED is not set
 # CONFIG_MALI_CORESTACK is not set
-# CONFIG_MALI_NO_MALI is not set
-# CONFIG_MALI_GEM5_BUILD is not set
-# CONFIG_MALI_DEBUG is not set
-# CONFIG_MALI_FENCE_DEBUG is not set
-# CONFIG_MALI_SYSTEM_TRACE is not set
-CONFIG_MALI_PRFCNT_SET_PRIMARY=y
-# CONFIG_MALI_PRFCNT_SET_SECONDARY is not set
-# CONFIG_MALI_PRFCNT_SET_TERTIARY is not set
-# CONFIG_MALI_JOB_DUMP is not set
-# CONFIG_MALI_PWRSOFT_765 is not set
-CONFIG_MALI_HW_ERRATA_1485982_NOT_AFFECTED=y
-# CONFIG_MALI_ARBITRATION is not set
-
-#
-# Platform specific options
-#
-# end of Platform specific options
 
 #
 # Platform options
 #
+# CONFIG_MALI_NO_MALI is not set
+# CONFIG_MALI_GEM5_BUILD is not set
 
 #
 # Debug options
 #
+# CONFIG_MALI_DEBUG is not set
+# CONFIG_MALI_FENCE_DEBUG is not set
+# CONFIG_MALI_SYSTEM_TRACE is not set
 
 #
 # Instrumentation options
 #
-
-#
-# Workarounds
-#
+CONFIG_MALI_PRFCNT_SET_PRIMARY=y
+# CONFIG_MALI_PRFCNT_SET_SECONDARY is not set
+# CONFIG_MALI_PRFCNT_SET_TERTIARY is not set
+# CONFIG_MALI_PRFCNT_SET_SELECT_VIA_DEBUG_FS is not set
+# CONFIG_MALI_HWCNT_WATCHDOG is not set
+# CONFIG_MALI_TRACE_POWER_GPU_WORK_PERIOD is not set
+# CONFIG_MALI_MEM_MIGRATE is not set
+# CONFIG_MALI_REFCOUNT_DEBUG is not set
+# CONFIG_MALI_KUTF is not set
+CONFIG_MALI_VERSION_SELECTOR=y
 # end of ARM GPU Configuration
 
 # CONFIG_VGA_ARB is not set
