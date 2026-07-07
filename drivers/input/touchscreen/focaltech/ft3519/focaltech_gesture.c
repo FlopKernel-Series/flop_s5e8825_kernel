@@ -337,8 +337,8 @@ int fts_gesture_suspend(struct fts_ts_data *ts_data)
 	else
 		FTS_INFO("Enter into gesture(suspend) successfully");
 
-	if (is_aosp_mode_fast())
-		fts_write_reg(FTS_REG_PROXIMITY_MODE, ts_data->pdata->ed_enable ? ts_data->pdata->ed_enable : 3);
+	if (is_aosp_mode_fast() && ts_data->pdata->ed_enable)
+		fts_write_reg(FTS_REG_PROXIMITY_MODE, ts_data->pdata->ed_enable);
 
 	return 0;
 }
@@ -365,9 +365,13 @@ int fts_gesture_resume(struct fts_ts_data *ts_data)
 	else
 		FTS_INFO("resume from gesture successfully");
 
-	if (is_aosp_mode_fast() && ts_data->pdata->ed_enable) {
-		ts_data->prox_last_report = 0xFF;
-		ts_data->prox_resume_time = ktime_get();
+	if (is_aosp_mode_fast()) {
+		if (ts_data->pdata->ed_enable) {
+			ts_data->prox_last_report = 0xFF;
+			ts_data->prox_resume_time = ktime_get();
+		} else {
+			fts_write_reg(FTS_REG_PROXIMITY_MODE, 0);
+		}
 	}
 
 	return 0;

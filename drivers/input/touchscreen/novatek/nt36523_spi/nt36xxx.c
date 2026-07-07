@@ -3759,8 +3759,8 @@ int32_t nvt_ts_suspend(struct device *dev)
 		nvt_ts_set_icoff_mode(ts);
 	}
 
-	if (is_aosp_mode_fast())
-		set_ear_detect(ts, ts->ear_detect_mode ? ts->ear_detect_mode : 3, false);
+	if (is_aosp_mode_fast() && ts->ear_detect_mode)
+		set_ear_detect(ts, ts->ear_detect_mode, false);
 
 #if SEC_LPWG_DUMP
 	if (ts->power_status == LP_MODE_STATUS) {
@@ -3811,9 +3811,13 @@ void nvt_ts_early_resume(struct device *dev)
 		mutex_unlock(&ts->lock);
 	}
 
-	if (is_aosp_mode_fast() && ts->ear_detect_mode) {
-		ts->prox_last_report = 0xFF;
-		ts->prox_resume_time = ktime_get();
+	if (is_aosp_mode_fast()) {
+		if (ts->ear_detect_mode) {
+			ts->prox_last_report = 0xFF;
+			ts->prox_resume_time = ktime_get();
+		} else {
+			set_ear_detect(ts, 0, false);
+		}
 	}
 }
 

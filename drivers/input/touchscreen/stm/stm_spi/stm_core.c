@@ -1134,9 +1134,13 @@ int stm_ts_input_open(struct input_dev *dev)
 		ts->plat_data->lpmode(ts, TO_TOUCH_MODE);
 		sec_input_set_grip_type(&ts->client->dev, ONLY_EDGE_HANDLER);
 
-		if (is_aosp_mode_fast() && ts->plat_data->ed_enable) {
-			ts->prox_last_report = 0xFF;
-			ts->prox_resume_time = ktime_get();
+		if (is_aosp_mode_fast()) {
+			if (ts->plat_data->ed_enable) {
+				ts->prox_last_report = 0xFF;
+				ts->prox_resume_time = ktime_get();
+			} else {
+				stm_ts_ear_detect_enable(ts, 0);
+			}
 		}
 	} else {
 		ret = ts->plat_data->start_device(ts);
@@ -1228,8 +1232,8 @@ void stm_ts_input_close(struct input_dev *dev)
 	}
 #endif
 
-	if (is_aosp_mode_fast())
-		stm_ts_ear_detect_enable(ts, ts->plat_data->ed_enable ? ts->plat_data->ed_enable : 3);
+	if (is_aosp_mode_fast() && ts->plat_data->ed_enable)
+		stm_ts_ear_detect_enable(ts, ts->plat_data->ed_enable);
 
 	mutex_unlock(&ts->switching_mutex);
 	mutex_unlock(&ts->modechange);
