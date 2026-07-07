@@ -20,37 +20,363 @@
 
 menu "ARM GPU Configuration"
 
-choice
-	prompt "Mali Version Configuration"
-	default MALI_DDK_VALHALL_R32P1 if $(PLATFORM_VERSION_FOR_GPU) = 12
-	default MALI_DDK_VALHALL_R32P1 if $(PLATFORM_VERSION_FOR_GPU) >= 13
+config MALI_MIDGARD_R32P1
+	tristate "Mali Valhall r32p1 driver"
+	default n
 	help
-	  Select Mali GPU driver version.
+	  Build the Mali Valhall r32p1 kernel-mode driver as a module.
+	  This produces mali_kbase_r32p1.ko.
 
-config MALI_DDK_NONE
-	bool "None"
+config MALI_MIDGARD_R38P1
+	tristate "Mali Valhall r38p1 driver"
+	default n
+	help
+	  Build the Mali Valhall r38p1 kernel-mode driver as a module.
+	  This produces mali_kbase_r38p1.ko.
 
-config MALI_DDK_VALHALL_R32P1
-	bool "Valhall r32p1 driver"
+config MALI_MIDGARD_R44P1
+	tristate "Mali Valhall r44p1 driver"
+	default n
+	help
+	  Build the Mali Valhall r44p1 kernel-mode driver as a module.
+	  This produces mali_kbase_r44p1.ko.
 
-config MALI_DDK_VALHALL_R38P1
-	bool "Valhall r38p1 driver"
+if MALI_MIDGARD_R32P1 || MALI_MIDGARD_R38P1 || MALI_MIDGARD_R44P1
 
-config MALI_DDK_VALHALL_R44P1
-	bool "Valhall r44p1 driver"
+config MALI_MIDGARD
+	tristate
+	default m if MALI_MIDGARD_R32P1
+	default m if MALI_MIDGARD_R38P1
+	default m if MALI_MIDGARD_R44P1
 
-endchoice
+config MALI_PLATFORM_NAME
+	depends on MALI_MIDGARD
+	string "Platform name"
+	default "exynos"
+	help
+	  Enter the name of the desired platform configuration directory to
+	  include in the build. 'platform/$(MALI_PLATFORM_NAME)/Makefile' must
+	  exist.
 
-if MALI_DDK_VALHALL_R32P1
-source "drivers/gpu/arm/bv_r32p1/Kconfig"
-endif
+config MALI_REAL_HW
+	depends on MALI_MIDGARD
+	def_bool !MALI_NO_MALI
 
-if MALI_DDK_VALHALL_R38P1
-source "drivers/gpu/arm/v_r38p1/Kconfig"
-endif
+menu "Platform specific options"
+source "drivers/gpu/arm/exynos/Kconfig"
+endmenu
 
-if MALI_DDK_VALHALL_R44P1
-source "drivers/gpu/arm/v_r44p1/Kconfig"
-endif
+config MALI_CSF_SUPPORT
+	bool "Enable Mali CSF based GPU support"
+	depends on MALI_MIDGARD=m
+	default n
+	help
+	  Enables support for CSF based GPUs.
+
+config MALI_DEVFREQ
+	bool "Enable devfreq support for Mali"
+	depends on MALI_MIDGARD && PM_DEVFREQ
+	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+	default n if SOC_EXYNOS2100
+	default n if SOC_EXYNOS9830
+	default y
+	help
+	  Support devfreq for Mali.
+
+	  Using the devfreq framework and, by default, the simple on-demand
+	  governor, the frequency of Mali will be dynamically selected from the
+	  available OPPs.
+
+config MALI_MIDGARD_DVFS
+	bool "Enable legacy DVFS"
+	depends on MALI_MIDGARD && !MALI_DEVFREQ
+	default n
+	help
+	  Choose this option to enable legacy DVFS in the Mali Midgard DDK.
+
+config MALI_GATOR_SUPPORT
+	bool "Enable Streamline tracing support"
+	depends on MALI_MIDGARD
+	default y
+	help
+	  Enables kbase tracing used by the Arm Streamline Performance Analyzer.
+	  The tracepoints are used to derive GPU activity charts in Streamline.
+
+config MALI_MIDGARD_ENABLE_TRACE
+	bool "Enable kbase tracing"
+	depends on MALI_MIDGARD
+	default y if MALI_DEBUG
+	default n
+	help
+	  Enables tracing in kbase. Trace log available through
+	  the "mali_trace" debugfs file, when the CONFIG_DEBUG_FS is enabled
+
+config MALI_DMA_FENCE
+	bool "Enable DMA_BUF fence support for Mali"
+	depends on MALI_MIDGARD
+	default n
+	help
+	  Support DMA_BUF fences for Mali.
+
+	  This option should only be enabled if the Linux Kernel has built in
+	  support for DMA_BUF fences.
+
+config MALI_ARBITER_SUPPORT
+	bool "Enable arbiter support for Mali"
+	depends on MALI_MIDGARD && !MALI_CSF_SUPPORT
+	default n
+	help
+	  Enable support for the arbiter interface in the driver.
+	  This allows an external arbiter to manage driver access
+	  to GPU hardware in a virtualized environment
+
+	  If unsure, say N.
+
+config MALI_DMA_BUF_MAP_ON_DEMAND
+	bool "Enable map imported dma-bufs on demand"
+	depends on MALI_MIDGARD
+	default n
+	help
+	  This option caused kbase to set up the GPU mapping of imported
+	  dma-buf when needed to run atoms. This is the legacy behavior.
+
+	  This is intended for testing and the option will get removed in the
+	  future.
+
+config MALI_DMA_BUF_LEGACY_COMPAT
+	bool "Enable legacy compatibility cache flush on dma-buf map"
+	depends on MALI_MIDGARD && !MALI_DMA_BUF_MAP_ON_DEMAND
+	default n
+	help
+	  This option enables compatibility with legacy dma-buf mapping
+	  behavior, then the dma-buf is mapped on import, by adding cache
+	  maintenance where MALI_DMA_BUF_MAP_ON_DEMAND would do the mapping,
+	  including a cache flush.
+
+	  This option might work-around issues related to missing cache
+	  flushes in other drivers. This only has an effect for clients using
+	  UK 11.18 or older. For later UK versions it is not possible.
+
+menuconfig MALI_EXPERT
+	depends on MALI_MIDGARD
+	bool "Enable Expert Settings"
+	default y if SOC_EXYNOS2100
+	default y if SOC_EXYNOS9830
+	default n
+	help
+	  Enabling this option and modifying the default settings may produce
+	  a driver with performance or other limitations.
+
+if MALI_EXPERT
+
+config MALI_2MB_ALLOC
+	bool "Attempt to allocate 2MB pages"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Rather than allocating all GPU memory page-by-page, attempt to
+	  allocate 2MB pages from the kernel. This reduces TLB pressure and
+	  helps to prevent memory fragmentation.
+
+	  If in doubt, say N
+
+config MALI_MEMORY_FULLY_BACKED
+	bool "Enable memory fully physically-backed"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  This option enables full physical backing of all virtual
+	  memory allocations in the kernel. Notice that this build
+	  option only affects allocations of grow-on-GPU-page-fault
+	  memory.
+
+config MALI_CORESTACK
+	bool "Enable support of GPU core stack power control"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Enabling this feature on supported GPUs will let the driver powering
+	  on/off the GPU core stack independently without involving the Power
+	  Domain Controller. This should only be enabled on platforms which
+	  integration of the PDC to the Mali GPU is known to be problematic.
+	  This feature is currently only supported on t-Six and t-HEx GPUs.
+
+	  If unsure, say N.
+
+comment "Platform options"
+	depends on MALI_MIDGARD && MALI_EXPERT
+
+config MALI_NO_MALI
+	bool "Enable No Mali"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  This can be used to test the driver in a simulated environment
+	  whereby the hardware is not physically present. If the hardware is physically
+	  present it will not be used. This can be used to test the majority of the
+	  driver without needing actual hardware or for software benchmarking.
+	  All calls to the simulated hardware will complete immediately as if the hardware
+	  completed the task.
+
+config MALI_ERROR_INJECT
+	bool "Enable No Mali error injection"
+	depends on MALI_MIDGARD && MALI_EXPERT && MALI_NO_MALI
+	default n
+	help
+	  Enables insertion of errors to test module failure and recovery mechanisms.
+
+config MALI_GEM5_BUILD
+	bool "Enable build of Mali kernel driver for GEM5"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  This option is to do a Mali GEM5 build.
+	  If unsure, say N.
+
+comment "Debug options"
+	depends on MALI_MIDGARD && MALI_EXPERT
+
+config MALI_DEBUG
+	bool "Enable debug build"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Select this option for increased checking and reporting of errors.
+
+config MALI_FENCE_DEBUG
+	bool "Enable debug sync fence usage"
+	depends on MALI_MIDGARD && MALI_EXPERT && (SYNC || SYNC_FILE)
+	default y if MALI_DEBUG
+	help
+	  Select this option to enable additional checking and reporting on the
+	  use of sync fences in the Mali driver.
+
+config MALI_SYSTEM_TRACE
+	bool "Enable system event tracing support"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default y if MALI_DEBUG
+	default n
+	help
+	  Choose this option to enable system trace events for each
+	  kbase event. This is typically used for debugging but has
+	  minimal overhead when not in use. Enable only if you know what
+	  you are doing.
+
+comment "Instrumentation options"
+	depends on MALI_MIDGARD && MALI_EXPERT
+
+config MALI_PRFCNT_SET_PRIMARY
+	bool "Primary"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default y
+	help
+	  Select this option to use primary set of performance counters.
+
+config MALI_PRFCNT_SET_SECONDARY
+	bool "Secondary"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Select this option to use secondary set of performance counters. Kernel
+	  features that depend on an access to the primary set of counters may
+	  become unavailable. Enabling this option will prevent power management
+	  from working optimally and may cause instrumentation tools to return
+	  bogus results.
+
+	  If unsure, use MALI_PRFCNT_SET_PRIMARY.
+
+config MALI_PRFCNT_SET_TERTIARY
+	bool "Tertiary"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Select this option to use tertiary set of performance counters. Kernel
+	  features that depend on an access to the primary set of counters may
+	  become unavailable. Enabling this option will prevent power management
+	  from working optimally and may cause instrumentation tools to return
+	  bogus results.
+
+	  If unsure, use MALI_PRFCNT_SET_PRIMARY.
+
+config MALI_PRFCNT_SET_SELECT_VIA_DEBUG_FS
+	bool "Enable runtime selection of performance counters set via debugfs"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Enable selection of performance counters set via debugfs node.
+	  This option disables the default performance counters set.
+
+config MALI_HWCNT_WATCHDOG
+	bool "Enable watchdog for hardware counter backends"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Enable a hardware counter watchdog that will be used to
+	  safely handle the case where the backend is not called within
+	  a reasonable time frame.
+
+config MALI_TRACE_POWER_GPU_WORK_PERIOD
+	bool "Enable trace events for GPU work period"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Enables trace events that record the start and end of GPU
+	  work periods, used for power analysis.
+
+config MALI_MEM_MIGRATE
+	bool "Enable memory migration support"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Enable support for migrating Mali memory pages between
+	  different memory tiers.
+
+config MALI_REFCOUNT_DEBUG
+	bool "Enable refcount debug"
+	depends on MALI_MIDGARD && MALI_EXPERT
+	default n
+	help
+	  Enable debug checking for kref/kref_struct reference counting.
+
+endif # MALI_EXPERT
+
+menuconfig MALI_KUTF
+	bool "Mali Kernel Unit Test Framework"
+	depends on MALI_MIDGARD
+	default n
+	help
+	  Enable the Mali Kernel Unit Test Framework for testing
+	  Mali driver components at the kernel level.
+
+if MALI_KUTF
+
+config MALI_KUTF_IRQ_TEST
+	bool "IRQ test"
+	depends on MALI_KUTF
+	default n
+
+config MALI_KUTF_CLK_RATE_TRACE
+	bool "CLK rate trace test"
+	depends on MALI_KUTF
+	default n
+
+config MALI_KUTF_MGM_INTEGRATION_TEST
+	bool "MGM integration test"
+	depends on MALI_KUTF
+	default n
+
+endif # MALI_KUTF
+
+config MALI_VERSION_SELECTOR
+	bool
+	depends on MALI_MIDGARD_R32P1 || MALI_MIDGARD_R38P1 || MALI_MIDGARD_R44P1
+	default y
+	help
+	  Build the Mali version selector — a small helper that parses
+	  "mali.version=r32p1|r38p1|r44p1" from the kernel cmdline and
+	  exports the selected version. Each Mali KMD module checks this
+	  in its probe and only binds if the version matches.
+
+endif # MALI_MIDGARD_R32P1 || MALI_MIDGARD_R38P1 || MALI_MIDGARD_R44P1
 
 endmenu

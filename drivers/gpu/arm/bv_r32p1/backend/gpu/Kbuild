@@ -18,7 +18,7 @@
 #
 #
 
-mali_kbase-y += \
+mali_kbase_r32p1-y += \
     backend/gpu/mali_kbase_cache_policy_backend.o \
     backend/gpu/mali_kbase_gpuprops_backend.o \
     backend/gpu/mali_kbase_irq_linux.o \
@@ -35,7 +35,7 @@ mali_kbase-y += \
     backend/gpu/mali_kbase_clk_rate_trace_mgr.o
 
 ifeq ($(MALI_USE_CSF),0)
-    mali_kbase-y += \
+    mali_kbase_r32p1-y += \
         backend/gpu/mali_kbase_instr_backend.o \
         backend/gpu/mali_kbase_jm_as.o \
         backend/gpu/mali_kbase_debug_job_fault_backend.o \
@@ -44,6 +44,6 @@ ifeq ($(MALI_USE_CSF),0)
 endif
 
 
-mali_kbase-$(CONFIG_MALI_DEVFREQ) += \
+mali_kbase_r32p1-$(CONFIG_MALI_DEVFREQ) += \
     backend/gpu/mali_kbase_devfreq.o
 

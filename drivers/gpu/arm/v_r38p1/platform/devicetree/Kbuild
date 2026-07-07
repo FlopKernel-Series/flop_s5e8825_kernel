@@ -18,7 +18,7 @@
 #
 #
 
-mali_kbase-y += \
+mali_kbase_r38p1-y += \
     platform/$(MALI_PLATFORM_DIR)/mali_kbase_config_devicetree.o \
     platform/$(MALI_PLATFORM_DIR)/mali_kbase_config_platform.o \
     platform/$(MALI_PLATFORM_DIR)/mali_kbase_runtime_pm.o \

@@ -18,6 +18,6 @@
 #
 #
 
-mali_kbase-y += \
+mali_kbase_r38p1-y += \
     arbiter/mali_kbase_arbif.o \
     arbiter/mali_kbase_arbiter_pm.o

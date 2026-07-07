@@ -18,5 +18,5 @@
 #
 #
 
-mali_kbase-y += \
+mali_kbase_r38p1-y += \
     csf/ipa_control/mali_kbase_csf_ipa_control.o

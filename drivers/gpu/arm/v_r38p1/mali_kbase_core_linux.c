@@ -5754,6 +5754,15 @@ module_platform_driver(kbase_platform_driver);
 static int __init kbase_driver_init(void)
 {
 	int ret;
+	extern char mali_selected_version[];
+
+	/* Skip if another version was selected via mali.version= */
+	if (mali_selected_version[0] &&
+	    strcmp(mali_selected_version, "r38p1") != 0) {
+		pr_info("mali_kbase_r38p1: not selected (requested=%s), skipping\n",
+			mali_selected_version);
+		return 0;
+	}
 
 #if (KERNEL_VERSION(5, 3, 0) <= LINUX_VERSION_CODE)
 	mutex_init(&kbase_probe_mutex);

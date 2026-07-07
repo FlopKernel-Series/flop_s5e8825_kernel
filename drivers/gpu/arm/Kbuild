@@ -18,14 +18,9 @@
 #
 #
 
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R32P1),y)
-	obj-$(CONFIG_MALI_MIDGARD) += bv_r32p1/
-endif
+# Mali runtime version + redirect
+obj-$(CONFIG_MALI_VERSION_SELECTOR) += mali_version_selector.o mali_redirect.o
 
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R38P1),y)
-	obj-$(CONFIG_MALI_MIDGARD) += v_r38p1/
-endif
-
-ifeq ($(CONFIG_MALI_DDK_VALHALL_R44P1),y)
-	obj-$(CONFIG_MALI_MIDGARD) += v_r44p1/
-endif
+obj-$(CONFIG_MALI_MIDGARD_R32P1) += bv_r32p1/
+obj-$(CONFIG_MALI_MIDGARD_R38P1) += v_r38p1/
+obj-$(CONFIG_MALI_MIDGARD_R44P1) += v_r44p1/
