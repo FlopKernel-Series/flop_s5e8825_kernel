@@ -860,8 +860,7 @@ static int fts_read_proximity_result(struct fts_ts_data *ts_data)
 
 	if (is_aosp_mode_fast() &&
 	    atomic_read(&ts_data->pdata->power_state) != SEC_INPUT_STATE_LPM &&
-	    ts_data->pdata->touch_count &&
-	    !(ts_data->pdata->support_ear_detect && ts_data->pdata->ed_enable))
+	    ts_data->pdata->touch_count)
 		return 0;
 
 	if (is_aosp_mode_fast()) {

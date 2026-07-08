@@ -1429,8 +1429,7 @@ static void goodix_ts_report_status(struct goodix_ts_data *ts, struct goodix_ts_
 			}
 			if (!is_aosp_mode_fast() ||
 			    atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM ||
-			    !ts->plat_data->touch_count ||
-			    (ts->plat_data->support_ear_detect && ts->plat_data->ed_enable)) {
+			    !ts->plat_data->touch_count) {
 				if (ts->prox_last_report != ts_event->status_data[0]) {
 					ts->prox_last_report = ts_event->status_data[0];
 					sec_input_proximity_report(ts->bus->dev, ts_event->status_data[0]);

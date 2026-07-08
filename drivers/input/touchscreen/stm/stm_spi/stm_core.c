@@ -870,6 +870,11 @@ static void stm_ts_status_event(struct stm_ts_data *ts, u8 *event_buff)
 					    prox_val == 1 &&
 					    ts->prox_last_report == 0xFF)
 						return;
+
+					/* Block proximity when screen is on and touch is active */
+					if (ts->plat_data->power_state != SEC_INPUT_STATE_LPM &&
+					    ts->plat_data->touch_count)
+						return;
 				}
 
 				if (ts->prox_last_report != prox_val) {
@@ -1138,6 +1143,9 @@ int stm_ts_input_open(struct input_dev *dev)
 			if (ts->plat_data->ed_enable) {
 				ts->prox_last_report = 0xFF;
 				ts->prox_resume_time = ktime_get();
+				/* Force far on resume to clear stale proximity state */
+				input_report_abs(ts->plat_data->input_dev_proximity, ABS_MT_CUSTOM, 1);
+				input_sync(ts->plat_data->input_dev_proximity);
 			} else {
 				stm_ts_ear_detect_enable(ts, 0);
 			}

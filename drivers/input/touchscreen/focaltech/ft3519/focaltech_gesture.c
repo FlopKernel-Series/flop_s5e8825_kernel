@@ -369,6 +369,8 @@ int fts_gesture_resume(struct fts_ts_data *ts_data)
 		if (ts_data->pdata->ed_enable) {
 			ts_data->prox_last_report = 0xFF;
 			ts_data->prox_resume_time = ktime_get();
+			/* Force far on resume to clear stale proximity state */
+			sec_input_proximity_report(ts_data->dev, 1);
 		} else {
 			fts_write_reg(FTS_REG_PROXIMITY_MODE, 0);
 		}

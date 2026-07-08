@@ -2400,7 +2400,7 @@ void nvt_ts_proximity_report(uint8_t *data)
 
 	status = p_event_proximity->status;
 
-	if (is_aosp_mode_fast() && ts->power_status != LP_MODE_STATUS && ts->touch_count && !ts->ear_detect_mode)
+	if (is_aosp_mode_fast() && ts->power_status != LP_MODE_STATUS && ts->touch_count)
 		return;
 
 	if (is_aosp_mode_fast()) {
@@ -3815,6 +3815,10 @@ void nvt_ts_early_resume(struct device *dev)
 		if (ts->ear_detect_mode) {
 			ts->prox_last_report = 0xFF;
 			ts->prox_resume_time = ktime_get();
+			/* Force far on resume to clear stale proximity state */
+			ts->hover_event = 1;
+			input_report_abs(ts->input_dev_proximity, ABS_MT_CUSTOM, 1);
+			input_sync(ts->input_dev_proximity);
 		} else {
 			set_ear_detect(ts, 0, false);
 		}

@@ -340,6 +340,8 @@ static int gsx_gesture_before_resume(struct goodix_ts_data *ts,
 		if (ts->plat_data->ed_enable) {
 			ts->prox_last_report = 0xFF;
 			ts->prox_resume_time = ktime_get();
+			/* Force far on resume to clear stale proximity state */
+			sec_input_proximity_report(ts->bus->dev, 1);
 		} else {
 			ts->hw_ops->ed_enable(ts, 0);
 		}
