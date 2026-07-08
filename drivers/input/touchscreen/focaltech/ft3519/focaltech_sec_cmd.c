@@ -3053,11 +3053,7 @@ static int ear_detect_enable_save(void *device_data)
 			sec->cmd_param[0] = 1;
 	}
 
-	if (is_aosp_mode() &&
-	    atomic_read(&ts_data->pdata->power_state) != SEC_INPUT_STATE_LPM)
-		ts_data->pdata->ed_enable = sec->cmd_param[0] ? 3 : 0;
-	else
-		ts_data->pdata->ed_enable = sec->cmd_param[0];
+	ts_data->pdata->ed_enable = sec->cmd_param[0];
 
 	if (ts_data->pdata->ed_enable)
 		ts_data->power_mode |= FTS_POWER_MODE_EAR_DETECT;

@@ -5818,10 +5818,7 @@ static ssize_t protos_event_store(struct device *dev,
 		return count;
 	}
 
-	if (is_aosp_mode() && ts->power_status != LP_MODE_STATUS)
-		ts->ear_detect_mode = data ? 3 : 0;
-	else
-		ts->ear_detect_mode = data;
+	ts->ear_detect_mode = data;
 
 	ret = set_ear_detect(ts, ts->ear_detect_mode, true);
 	if (ret) {

@@ -1760,14 +1760,7 @@ static int ear_detect_enable_save(void *device_data)
 			sec->cmd_param[0] = 1;
 	}
 
-	if (is_aosp_mode()) {
-		if (atomic_read(&ts->plat_data->power_state) == SEC_INPUT_STATE_LPM)
-			ts->plat_data->ed_enable = sec->cmd_param[0];
-		else
-			ts->plat_data->ed_enable = sec->cmd_param[0] ? 3 : 0;
-	} else {
-		ts->plat_data->ed_enable = sec->cmd_param[0];
-	}
+	ts->plat_data->ed_enable = sec->cmd_param[0];
 	ts_info("ear detect mode(%d), block_ed3=%d", ts->plat_data->ed_enable, sec->block_ed3);
 
 	sec->cmd_state = SEC_CMD_STATUS_OK;
