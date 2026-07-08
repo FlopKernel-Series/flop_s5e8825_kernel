@@ -314,10 +314,26 @@ static bool __mptcp_move_skb(struct mptcp_sock *msk, struct sock *ssk,
 		return false;
 	}
 
-	/* old data, keep it simple and drop the whole pkt, sender
-	 * will retransmit as needed, if needed.
+	/* Completely old data? */
+	if (!after64(MPTCP_SKB_CB(skb)->end_seq, msk->ack_seq)) {
+		MPTCP_INC_STATS(sock_net(sk), MPTCP_MIB_DUPDATA);
+		mptcp_drop(sk, skb);
+		return false;
+	}
+
+	/* Partial packet: map_seq < ack_seq < end_seq.
+	 * Skip the already-acked bytes and enqueue the new data.
 	 */
-	MPTCP_INC_STATS(sock_net(sk), MPTCP_MIB_DUPDATA);
+	copy_len = MPTCP_SKB_CB(skb)->end_seq - msk->ack_seq;
+	MPTCP_SKB_CB(skb)->offset += msk->ack_seq - MPTCP_SKB_CB(skb)->map_seq;
+	MPTCP_SKB_CB(skb)->map_seq += msk->ack_seq -
+				      MPTCP_SKB_CB(skb)->map_seq;
+	WRITE_ONCE(msk->ack_seq, msk->ack_seq + copy_len);
+
+	skb_set_owner_r(skb, sk);
+	__skb_queue_tail(&sk->sk_receive_queue, skb);
+	return true;
+
 drop:
 	mptcp_drop(sk, skb);
 	return false;
@@ -1555,6 +1571,14 @@ static bool __mptcp_move_skbs(struct mptcp_sock *msk)
 
 	if (mptcp_ofo_queue(msk) || moved > 0) {
 		mptcp_check_data_fin((struct sock *)msk);
+
+		/* When multiple threads read from the same socket, the caller
+		 * filling the receive queue does not try to wake up any other
+		 * listener, which can stall it. Flag the data as ready and
+		 * issue the missing wakeup here.
+		 */
+		set_bit(MPTCP_DATA_READY, &msk->flags);
+		((struct sock *)msk)->sk_data_ready((struct sock *)msk);
 		return true;
 	}
 	return false;
