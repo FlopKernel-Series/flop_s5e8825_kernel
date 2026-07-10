@@ -548,8 +548,15 @@ static void kauditd_printk_skb(struct sk_buff *skb)
 	struct nlmsghdr *nlh = nlmsg_hdr(skb);
 	char *data = nlmsg_data(nlh);
 
+// [ SEC_SELINUX_PORTING_COMMON
+#ifdef CONFIG_PROC_AVC
+	if (nlh->nlmsg_type != AUDIT_EOE && nlh->nlmsg_type != AUDIT_NETFILTER_CFG)
+		sec_avc_log("%s\n", data);
+#else
 	if (nlh->nlmsg_type != AUDIT_EOE && printk_ratelimit())
 		pr_notice("type=%d %s\n", nlh->nlmsg_type, data);
+#endif
+// ] SEC_SELINUX_PORTING_COMMON
 }
 
 /**
@@ -791,6 +798,15 @@ retry:
 			} else
 				goto retry;
 		} else {
+// [ SEC_SELINUX_PORTING_COMMON
+#ifdef CONFIG_PROC_AVC
+			struct nlmsghdr *nlh = nlmsg_hdr(skb);
+			char *data = nlmsg_data(nlh);
+
+			if (nlh->nlmsg_type != AUDIT_EOE && nlh->nlmsg_type != AUDIT_NETFILTER_CFG)
+				sec_avc_log("%s\n", data);
+#endif
+// ] SEC_SELINUX_PORTING_COMMON
 			/* skb sent - drop the extra reference and continue */
 			consume_skb(skb);
 			failed = 0;
