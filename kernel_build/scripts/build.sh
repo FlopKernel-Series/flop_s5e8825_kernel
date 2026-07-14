@@ -64,6 +64,10 @@ build() {
 
     if [ "$VERSION_NOAUTO" = "1" ]; then
         scripts/config --file "$KDIR/out/.config" --disable LOCALVERSION_AUTO
+        scripts/config --file "$KDIR/out/.config" --disable MODULE_SCMVERSION
+    else
+        scripts/config --file "$KDIR/out/.config" --enable LOCALVERSION_AUTO
+        scripts/config --file "$KDIR/out/.config" --enable MODULE_SCMVERSION
     fi
 
     if [ "$DO_MENUCONFIG" = "1" ]; then
