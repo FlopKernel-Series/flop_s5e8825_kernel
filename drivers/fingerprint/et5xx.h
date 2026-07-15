@@ -25,6 +25,10 @@
 #endif
 #include "fingerprint_common.h"
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+#include <linux/sec_panel_notifier_v2.h>
+#endif
+
 /*
  * This feature is temporary for exynos AP only.
  * It's for control GPIO config on enabled TZ before enable GPIO protection.
@@ -91,9 +95,9 @@
 #define FP_CPU_SPEEDUP					0x11
 #define FP_SET_SENSOR_TYPE				0x14
 /* Do not use ioctl number 0x15 */
+#endif
 #define FP_SET_LOCKSCREEN				0x16
 #define FP_SET_WAKE_UP_SIGNAL				0x17
-#endif
 #define FP_POWER_CONTROL_ET5XX			0x18
 #define FP_SENSOR_ORIENT				0x19
 #define FP_SPI_VALUE					0x1a
@@ -204,6 +208,9 @@ struct et5xx_data {
 	struct boosting_config *boosting;
 	struct debug_logger *logger;
 	int lockscreen_state;
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	struct notifier_block panel_nb;
+#endif
 };
 
 int et5xx_io_burst_read_register(struct et5xx_data *etspi,

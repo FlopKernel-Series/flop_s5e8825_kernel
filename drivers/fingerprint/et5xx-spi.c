@@ -144,6 +144,31 @@ unsigned int et5xx_fps_interrupt_poll(
 
 /*-------------------------------------------------------------------------*/
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+static int et5xx_panel_notifier_cb(struct notifier_block *nb,
+	unsigned long event, void *data)
+{
+	struct et5xx_data *etspi = container_of(nb,
+		struct et5xx_data, panel_nb);
+	struct panel_notifier_evt_data *evtdata = data;
+
+	if (event == PANEL_EVENT_PANEL_STATE_CHANGED) {
+		switch (evtdata->state) {
+		case PANEL_EVENT_PANEL_STATE_OFF:
+			pr_info("Panel OFF\n");
+			break;
+		case PANEL_EVENT_PANEL_STATE_ON:
+			pr_info("Panel ON\n");
+			break;
+		case PANEL_EVENT_PANEL_STATE_LPM:
+			pr_info("Panel LPM (AOD)\n");
+			break;
+		}
+	}
+	return 0;
+}
+#endif
+
 static void et5xx_reset(struct et5xx_data *etspi)
 {
 	pr_info("Entry\n");
@@ -1191,6 +1216,14 @@ static int et5xx_probe_common(struct device *dev, struct et5xx_data *etspi)
 	if (retval)
 		goto et5xx_sysfs_failed;
 	enable_fp_debug_timer(etspi->logger);
+
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	etspi->panel_nb.notifier_call = et5xx_panel_notifier_cb;
+	etspi->panel_nb.priority = 1;
+	panel_notifier_register(&etspi->panel_nb);
+	pr_info("Panel notifier registered\n");
+#endif
+
 	pr_info("is successful\n");
 
 	return retval;
@@ -1284,6 +1317,10 @@ static int et5xx_remove_common(struct device *dev)
 
 	pr_info("Entry\n");
 	if (etspi != NULL) {
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+		panel_notifier_unregister(&etspi->panel_nb);
+		pr_info("Panel notifier unregistered\n");
+#endif
 		disable_fp_debug_timer(etspi->logger);
 		et5xx_platformUninit(etspi);
 		spi_clk_unregister(etspi->clk_setting);

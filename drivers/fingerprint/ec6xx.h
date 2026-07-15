@@ -24,6 +24,9 @@
 #include <linux/of_dma.h>
 #endif
 #include "fingerprint_common.h"
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+#include <linux/sec_panel_notifier_v2.h>
+#endif
 
 /*
  * This feature is temporary for exynos AP only.
@@ -100,9 +103,9 @@
 #define FP_CPU_SPEEDUP					0x11
 #define FP_SET_SENSOR_TYPE				0x14
 /* Do not use ioctl number 0x15 */
+#endif
 #define FP_SET_LOCKSCREEN				0x16
 #define FP_SET_WAKE_UP_SIGNAL				0x17
-#endif
 #define FP_POWER_CONTROL_EC6XX			0x18
 #define FP_SENSOR_ORIENT				0x19
 #define FP_SPI_VALUE					0x1a
@@ -213,6 +216,9 @@ struct ec6xx_data {
 	struct boosting_config *boosting;
 	struct debug_logger *logger;
 	int lockscreen_state;
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	struct notifier_block panel_nb;
+#endif
 };
 
 #ifndef ENABLE_SENSORS_FPRINT_SECURE

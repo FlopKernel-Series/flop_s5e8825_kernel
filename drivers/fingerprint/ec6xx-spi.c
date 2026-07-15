@@ -1098,6 +1098,26 @@ static struct ec6xx_data *alloc_platformdata(struct device *dev)
 
 static struct class *ec6xx_class;
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+static int ec6xx_panel_notifier_cb(struct notifier_block *nb,
+	unsigned long event, void *data)
+{
+	struct ec6xx_data *etspi = container_of(nb, struct ec6xx_data, panel_nb);
+	struct panel_notifier_event_data *evtdata = data;
+
+	if (event == PANEL_EVENT_PANEL_STATE_CHANGED) {
+		if (evtdata->state == PANEL_EVENT_PANEL_STATE_OFF)
+			pr_info("Panel OFF\n");
+		else if (evtdata->state == PANEL_EVENT_PANEL_STATE_ON)
+			pr_info("Panel ON\n");
+		else if (evtdata->state == PANEL_EVENT_PANEL_STATE_LPM)
+			pr_info("Panel LPM (AOD)\n");
+	}
+
+	return 0;
+}
+#endif
+
 /*-------------------------------------------------------------------------*/
 
 static int ec6xx_probe_common(struct device *dev, struct ec6xx_data *etspi)
@@ -1194,6 +1214,12 @@ static int ec6xx_probe_common(struct device *dev, struct ec6xx_data *etspi)
 	if (retval)
 		goto ec6xx_sysfs_failed;
 	enable_fp_debug_timer(etspi->logger);
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	etspi->panel_nb.notifier_call = ec6xx_panel_notifier_cb;
+	etspi->panel_nb.priority = 1;
+	panel_notifier_register(&etspi->panel_nb);
+	pr_info("Panel notifier registered\n");
+#endif
 	pr_info("is successful\n");
 
 	return retval;
@@ -1295,6 +1321,10 @@ static int ec6xx_remove_common(struct device *dev)
 	struct ec6xx_data *etspi = dev_get_drvdata(dev);
 
 	pr_info("Entry\n");
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	panel_notifier_unregister(&etspi->panel_nb);
+	pr_info("Panel notifier unregistered\n");
+#endif
 	if (etspi != NULL) {
 		disable_fp_debug_timer(etspi->logger);
 		ec6xx_platformUninit(etspi);

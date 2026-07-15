@@ -30,6 +30,9 @@
 #include <linux/pinctrl/consumer.h>
 #include "../pinctrl/core.h"
 #include "fingerprint_common.h"
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+#include <linux/sec_panel_notifier_v2.h>
+#endif
 
 #define VENDOR						"EGISTEC"
 #define CHIP_ID						"EL7XX"
@@ -159,6 +162,9 @@ struct el7xx_data {
 	struct debug_logger *logger;
 	struct wakeup_source *fp_signal_lock;
 	int lockscreen_state;
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	struct notifier_block panel_nb;
+#endif
 };
 
 #ifndef ENABLE_SENSORS_FPRINT_SECURE

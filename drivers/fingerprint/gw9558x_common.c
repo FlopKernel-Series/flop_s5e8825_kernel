@@ -618,6 +618,26 @@ static struct gf_device *alloc_platformdata(struct device *dev)
 	return gf_dev;
 }
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+static int gw9558x_panel_notifier_cb(struct notifier_block *nb,
+		unsigned long event, void *data)
+{
+	struct gf_device *gf_dev = container_of(nb, struct gf_device, panel_nb);
+	struct panel_notifier_event_data *evtdata = data;
+
+	if (event == PANEL_EVENT_PANEL_STATE_CHANGED) {
+		if (evtdata->state == PANEL_EVENT_PANEL_STATE_OFF)
+			pr_info("Panel OFF\n");
+		else if (evtdata->state == PANEL_EVENT_PANEL_STATE_ON)
+			pr_info("Panel ON\n");
+		else if (evtdata->state == PANEL_EVENT_PANEL_STATE_LPM)
+			pr_info("Panel LPM (AOD)\n");
+	}
+
+	return 0;
+}
+#endif
+
 static int gw9558_probe_common(struct device *dev, struct gf_device *gf_dev)
 {
 	int retval = -EINVAL;
@@ -739,6 +759,13 @@ static int gw9558_probe_common(struct device *dev, struct gf_device *gf_dev)
 		goto gw9558_probe_debug_timer;
 	enable_fp_debug_timer(gf_dev->logger);
 
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	gf_dev->panel_nb.notifier_call = gw9558x_panel_notifier_cb;
+	gf_dev->panel_nb.priority = 1;
+	panel_notifier_register(&gf_dev->panel_nb);
+	pr_info("Panel notifier registered\n");
+#endif
+
 	pr_info("probe finished\n");
 	return 0;
 
@@ -850,6 +877,11 @@ static int gw9558_remove_common(struct device *dev)
 	struct gf_device *gf_dev = dev_get_drvdata(dev);
 
 	pr_info("Entry\n");
+
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	panel_notifier_unregister(&gf_dev->panel_nb);
+	pr_info("Panel notifier unregistered\n");
+#endif
 
 	gw9558_hw_power_enable(gf_dev, 0);
 	spi_clk_unregister(gf_dev->clk_setting);

@@ -34,6 +34,9 @@
 #include <linux/compat.h>
 #endif
 #include "fingerprint_common.h"
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+#include <linux/sec_panel_notifier_v2.h>
+#endif
 
 #define GF_IOC_MAGIC	'g'
 
@@ -132,6 +135,9 @@ struct gf_device {
 	struct debug_logger *logger;
 	struct wakeup_source *fp_signal_lock;
 	int lockscreen_state;
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	struct notifier_block panel_nb;
+#endif
 };
 
 int gw9558_get_gpio_dts_info(struct device *dev, struct gf_device *gf_dev);

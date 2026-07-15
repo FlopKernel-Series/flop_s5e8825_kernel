@@ -903,6 +903,12 @@ static int el7xx_probe_common(struct device *dev, struct el7xx_data *etspi)
 	if (retval)
 		goto el7xx_sysfs_failed;
 	enable_fp_debug_timer(etspi->logger);
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+	etspi->panel_nb.notifier_call = el7xx_panel_notifier_cb;
+	etspi->panel_nb.priority = 1;
+	panel_notifier_register(&etspi->panel_nb);
+	pr_info("Panel notifier registered\n");
+#endif
 	pr_info("is successful\n");
 	return retval;
 
@@ -921,6 +927,26 @@ el7xx_probe_parse_dt_failed:
 
 	return retval;
 }
+
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+static int el7xx_panel_notifier_cb(struct notifier_block *nb,
+			unsigned long event, void *data)
+{
+	struct el7xx_data *etspi = container_of(nb, struct el7xx_data, panel_nb);
+	struct panel_notifier_event_data *evtdata = data;
+
+	if (event == PANEL_EVENT_PANEL_STATE_CHANGED) {
+		if (evtdata->state == PANEL_EVENT_PANEL_STATE_OFF)
+			pr_info("Panel OFF\n");
+		else if (evtdata->state == PANEL_EVENT_PANEL_STATE_ON)
+			pr_info("Panel ON\n");
+		else if (evtdata->state == PANEL_EVENT_PANEL_STATE_LPM)
+			pr_info("Panel LPM (AOD)\n");
+	}
+
+	return 0;
+}
+#endif
 
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
 static int el7xx_probe(struct platform_device *pdev)
@@ -1007,6 +1033,10 @@ static int el7xx_remove_common(struct device *dev)
 
 	pr_info("Entry\n");
 	if (etspi != NULL) {
+#if IS_ENABLED(CONFIG_SEC_PANEL_NOTIFIER_V2)
+		panel_notifier_unregister(&etspi->panel_nb);
+		pr_info("Panel notifier unregistered\n");
+#endif
 		disable_fp_debug_timer(etspi->logger);
 		el7xx_platformUninit(etspi);
 		spi_clk_unregister(etspi->clk_setting);
