@@ -258,8 +258,14 @@ static long gw9558_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case GF_IOC_RESERVED03:
 	case GF_IOC_RESERVED04:
 	case GF_IOC_RESERVED05:
-	case GF_IOC_RESERVED06:
-	case GF_IOC_RESERVED07:
+		break;
+	case GF_IOC_SET_LOCKSCREEN:
+		gf_dev->lockscreen_state = (int)arg;
+		pr_info("GF_IOC_SET_LOCKSCREEN state=%d\n", gf_dev->lockscreen_state);
+		break;
+	case GF_IOC_SET_WAKE_UP_SIGNAL:
+		pr_info("GF_IOC_SET_WAKE_UP_SIGNAL\n");
+		__pm_wakeup_event(gf_dev->fp_signal_lock, 5 * HZ);
 		break;
 
 	default:
@@ -725,6 +731,7 @@ static int gw9558_probe_common(struct device *dev, struct gf_device *gf_dev)
 	/* 5.4 R */
 	gf_dev->clk_setting->spi_wake_lock = wakeup_source_register(gf_dev->dev, "gw9558_wake_lock");
 #endif
+	gf_dev->fp_signal_lock = wakeup_source_register(gf_dev->dev, "gw9558_fp_signal_lock");
 
 	g_logger = gf_dev->logger;
 	retval = set_fp_debug_timer(gf_dev->logger, gw9558_work_func_debug);
@@ -848,6 +855,7 @@ static int gw9558_remove_common(struct device *dev)
 	spi_clk_unregister(gf_dev->clk_setting);
 	disable_fp_debug_timer(gf_dev->logger);
 	wakeup_source_unregister(gf_dev->clk_setting->spi_wake_lock);
+	wakeup_source_unregister(gf_dev->fp_signal_lock);
 	gw9558_cleanup_info(gf_dev);
 	fingerprint_unregister(gf_dev->fp_device, fp_attrs);
 	cdev_del(&gf_dev->cdev);

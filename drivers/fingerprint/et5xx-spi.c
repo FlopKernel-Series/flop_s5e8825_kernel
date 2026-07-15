@@ -533,10 +533,12 @@ static long et5xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		set_sensor_type((int)ioc->len, &etspi->sensortype);
 		break;
 	case FP_SET_LOCKSCREEN:
-		pr_info("FP_SET_LOCKSCREEN\n");
+		etspi->lockscreen_state = (int)ioc->len;
+		pr_info("FP_SET_LOCKSCREEN state=%d\n", etspi->lockscreen_state);
 		break;
 	case FP_SET_WAKE_UP_SIGNAL:
 		pr_info("FP_SET_WAKE_UP_SIGNAL\n");
+		__pm_wakeup_event(etspi->fp_signal_lock, 5 * HZ);
 		break;
 #endif
 	case FP_SENSOR_ORIENT:

@@ -341,8 +341,14 @@ static long el7xx_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case FP_IOCTL_RESERVED_03:
 	case FP_IOCTL_RESERVED_04:
 	case FP_IOCTL_RESERVED_05:
-	case FP_IOCTL_RESERVED_06:
-	case FP_IOCTL_RESERVED_07:
+		break;
+	case FP_SET_LOCKSCREEN:
+		etspi->lockscreen_state = (int)ioc->len;
+		pr_info("FP_SET_LOCKSCREEN state=%d\n", etspi->lockscreen_state);
+		break;
+	case FP_SET_WAKE_UP_SIGNAL:
+		pr_info("FP_SET_WAKE_UP_SIGNAL\n");
+		__pm_wakeup_event(etspi->fp_signal_lock, 5 * HZ);
 		break;
 
 	default:
@@ -487,6 +493,7 @@ int el7xx_platformInit(struct el7xx_data *etspi)
 		etspi->clk_setting->spi_wake_lock = wakeup_source_register(etspi->dev, "el7xx_wake_lock");
 #endif
 #endif
+		etspi->fp_signal_lock = wakeup_source_register(etspi->dev, "el7xx_fp_signal_lock");
 	} else {
 		retval = -EFAULT;
 	}
@@ -519,6 +526,7 @@ void el7xx_platformUninit(struct el7xx_data *etspi)
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
 		wakeup_source_unregister(etspi->clk_setting->spi_wake_lock);
 #endif
+		wakeup_source_unregister(etspi->fp_signal_lock);
 	}
 }
 

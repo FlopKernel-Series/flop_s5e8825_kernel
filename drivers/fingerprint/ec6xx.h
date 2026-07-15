@@ -212,6 +212,7 @@ struct ec6xx_data {
 	struct spi_clk_setting *clk_setting;
 	struct boosting_config *boosting;
 	struct debug_logger *logger;
+	int lockscreen_state;
 };
 
 #ifndef ENABLE_SENSORS_FPRINT_SECURE

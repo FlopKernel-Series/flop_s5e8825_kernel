@@ -88,8 +88,8 @@ struct gf_ioc_transfer_raw {
 #define GF_IOC_RESERVED03               _IO(GF_IOC_MAGIC, 4)
 #define GF_IOC_RESERVED04               _IO(GF_IOC_MAGIC, 10)
 #define GF_IOC_RESERVED05               _IO(GF_IOC_MAGIC, 12)
-#define GF_IOC_RESERVED06               _IOW(GF_IOC_MAGIC, 21, unsigned int)
-#define GF_IOC_RESERVED07               _IOR(GF_IOC_MAGIC, 22, unsigned int)
+#define GF_IOC_SET_LOCKSCREEN               _IOW(GF_IOC_MAGIC, 21, unsigned int)
+#define GF_IOC_SET_WAKE_UP_SIGNAL           _IOR(GF_IOC_MAGIC, 22, unsigned int)
 
 #define GF_IOC_MAXNR                    24 /* THIS MACRO IS NOT USED NOW... */
 
@@ -130,6 +130,8 @@ struct gf_device {
 	struct spi_clk_setting *clk_setting;
 	struct boosting_config *boosting;
 	struct debug_logger *logger;
+	struct wakeup_source *fp_signal_lock;
+	int lockscreen_state;
 };
 
 int gw9558_get_gpio_dts_info(struct device *dev, struct gf_device *gf_dev);

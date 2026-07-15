@@ -203,6 +203,7 @@ struct et5xx_data {
 	struct spi_clk_setting *clk_setting;
 	struct boosting_config *boosting;
 	struct debug_logger *logger;
+	int lockscreen_state;
 };
 
 int et5xx_io_burst_read_register(struct et5xx_data *etspi,

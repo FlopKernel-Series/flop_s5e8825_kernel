@@ -98,8 +98,8 @@ static unsigned int bufsiz = 256 * 1024;
 #define FP_IOCTL_RESERVED_03				0xa4
 #define FP_IOCTL_RESERVED_04				0xa5
 #define FP_IOCTL_RESERVED_05				0xa8
-#define FP_IOCTL_RESERVED_06				0x16
-#define FP_IOCTL_RESERVED_07				0x17
+#define FP_SET_LOCKSCREEN				0x16
+#define FP_SET_WAKE_UP_SIGNAL				0x17
 
 #define SLOW_BAUD_RATE					20000000
 #define DETECT_ADM 1
@@ -157,6 +157,8 @@ struct el7xx_data {
 	struct spi_clk_setting *clk_setting;
 	struct boosting_config *boosting;
 	struct debug_logger *logger;
+	struct wakeup_source *fp_signal_lock;
+	int lockscreen_state;
 };
 
 #ifndef ENABLE_SENSORS_FPRINT_SECURE
