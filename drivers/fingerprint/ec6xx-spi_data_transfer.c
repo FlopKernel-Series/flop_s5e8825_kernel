@@ -343,8 +343,7 @@ int ec6xx_io_nvm_write(struct ec6xx_data *etspi, struct egis_ioc_transfer *ioc)
 	if ((buf[0] + (ioc->len - 1)) > MAX_NVM_LEN)
 		return -EINVAL;
 	if ((buf[0] % 2) || ((ioc->len - 1) % 2)) {
-		/* TODO: add non alignment handling */
-		pr_err("can't handle address alignment issue. %d %d\n",
+		pr_err("NVM write requires 2-byte aligned addr(%d) len(%d)\n",
 				buf[0], ioc->len);
 		return -EINVAL;
 	}
