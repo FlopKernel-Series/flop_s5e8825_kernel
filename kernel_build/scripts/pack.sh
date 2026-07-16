@@ -3,6 +3,7 @@ packing() {
     cd "$AK3_DIR"
     cp -f "$OUT_VENDORBOOTIMG" vendor_boot.img
     cp -f "$OUT_DTBIMAGE" dtb
+    cp -f "$OUT_DTBOIMG" dtbo.img
     cp -f "$OUT_KERNEL" .
     zip -r9 -q "$ZIP_PATH" * -x .git .github README.md
     cd "$KDIR"
@@ -20,8 +21,9 @@ packing() {
         rm -f "$TAR_PATH_ONEUI"
         lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG_ONEUI" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
-        tar -cf "$TAR_PATH_ONEUI" boot.img.lz4 vendor_boot.img.lz4
-        rm -f boot.img.lz4 vendor_boot.img.lz4
+        lz4 -c -12 -B6 --content-size "$OUT_DTBOIMG" > dtbo.img.lz4 2>/dev/null
+        tar -cf "$TAR_PATH_ONEUI" boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
+        rm -f boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
         echo -e "$(log_info "Output: $TAR_PATH_ONEUI")"
 
         # Create AOSP TAR
@@ -29,8 +31,9 @@ packing() {
         rm -f "$TAR_PATH_AOSP"
         lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG_AOSP" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
-        tar -cf "$TAR_PATH_AOSP" boot.img.lz4 vendor_boot.img.lz4
-        rm -f boot.img.lz4 vendor_boot.img.lz4
+        lz4 -c -12 -B6 --content-size "$OUT_DTBOIMG" > dtbo.img.lz4 2>/dev/null
+        tar -cf "$TAR_PATH_AOSP" boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
+        rm -f boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
         echo -e "$(log_info "Output: $TAR_PATH_AOSP")"
 
         # Create OneUI Permissive TAR (if requested)
@@ -57,8 +60,9 @@ packing() {
             rm -f "$TAR_PATH_ONEUI_PERM"
             lz4 -c -12 -B6 --content-size "$ONEUI_PERM_BOOTIMG" > boot.img.lz4 2>/dev/null
             lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
-            tar -cf "$TAR_PATH_ONEUI_PERM" boot.img.lz4 vendor_boot.img.lz4
-            rm -f boot.img.lz4 vendor_boot.img.lz4
+            lz4 -c -12 -B6 --content-size "$OUT_DTBOIMG" > dtbo.img.lz4 2>/dev/null
+            tar -cf "$TAR_PATH_ONEUI_PERM" boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
+            rm -f boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
             rm -f "$ONEUI_PERM_KERNEL" "$ONEUI_PERM_BOOTIMG"
             echo -e "$(log_info "Output: $TAR_PATH_ONEUI_PERM")"
 
@@ -90,8 +94,9 @@ packing() {
             rm -f "$TAR_PATH_AOSP_PERM"
             lz4 -c -12 -B6 --content-size "$AOSP_PERM_BOOTIMG" > boot.img.lz4 2>/dev/null
             lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
-            tar -cf "$TAR_PATH_AOSP_PERM" boot.img.lz4 vendor_boot.img.lz4
-            rm -f boot.img.lz4 vendor_boot.img.lz4
+            lz4 -c -12 -B6 --content-size "$OUT_DTBOIMG" > dtbo.img.lz4 2>/dev/null
+            tar -cf "$TAR_PATH_AOSP_PERM" boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
+            rm -f boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
             rm -f "$AOSP_PERM_KERNEL" "$AOSP_PERM_BOOTIMG"
             echo -e "$(log_info "Output: $TAR_PATH_AOSP_PERM")"
         fi
@@ -119,8 +124,9 @@ packing() {
         rm -f "$TAR_PATH_ONEUI_UNLOCKED"
         lz4 -c -12 -B6 --content-size "$ONEUI_UNLOCKED_BOOTIMG" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
-        tar -cf "$TAR_PATH_ONEUI_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
-        rm -f boot.img.lz4 vendor_boot.img.lz4
+        lz4 -c -12 -B6 --content-size "$OUT_DTBOIMG" > dtbo.img.lz4 2>/dev/null
+        tar -cf "$TAR_PATH_ONEUI_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
+        rm -f boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
         rm -f "$ONEUI_UNLOCKED_KERNEL" "$ONEUI_UNLOCKED_BOOTIMG"
         echo -e "$(log_info "Output: $TAR_PATH_ONEUI_UNLOCKED")"
 
@@ -152,8 +158,9 @@ packing() {
         rm -f "$TAR_PATH_AOSP_UNLOCKED"
         lz4 -c -12 -B6 --content-size "$AOSP_UNLOCKED_BOOTIMG" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
-        tar -cf "$TAR_PATH_AOSP_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
-        rm -f boot.img.lz4 vendor_boot.img.lz4
+        lz4 -c -12 -B6 --content-size "$OUT_DTBOIMG" > dtbo.img.lz4 2>/dev/null
+        tar -cf "$TAR_PATH_AOSP_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
+        rm -f boot.img.lz4 vendor_boot.img.lz4 dtbo.img.lz4
         rm -f "$AOSP_UNLOCKED_KERNEL" "$AOSP_UNLOCKED_BOOTIMG"
         echo -e "$(log_info "Output: $TAR_PATH_AOSP_UNLOCKED")"
 

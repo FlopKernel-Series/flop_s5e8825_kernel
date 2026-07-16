@@ -76,6 +76,8 @@ OUT_BOOTIMG_ONEUI="$IMAGES_DIR/boot_oneui.img"
 OUT_BOOTIMG_AOSP="$IMAGES_DIR/boot_aosp.img"
 OUT_VENDORBOOTIMG="$IMAGES_DIR/vendor_boot.img"
 OUT_DTBIMAGE="$IMAGES_DIR/dtb.img"
+OUT_DTBOIMG="$IMAGES_DIR/dtbo.img"
+IN_DTBO="$OUTDIR/arch/arm64/boot/dts/exynos/samsung"
 
 # Tools
 MKBOOTIMG="$(pwd)/kernel_build/mkbootimg/mkbootimg.py"

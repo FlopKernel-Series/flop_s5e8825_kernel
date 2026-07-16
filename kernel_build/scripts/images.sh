@@ -4,6 +4,10 @@ build_images() {
     echo -e "\n$(log_info "Building dtb image...")"
     python "$MKDTBOIMG" create "$OUT_DTBIMAGE" --custom0=0x00000000 --custom1=0xff000000 --version=0 --page_size=2048 "$IN_DTB" || exit 1
 
+    echo -e "\n$(log_info "Building dtbo image...")"
+    find "$IN_DTBO" -name '*.dtbo' -print0 | sort -z | xargs -0 python "$MKDTBOIMG" create "$OUT_DTBOIMG" --page_size=2048 || exit 1
+    echo -e "$(log_info "dtbo.img created!")"
+
     # Build OneUI boot image (original kernel with aosp_mode=0)
     "$MKBOOTIMG" --header_version 4 \
         --kernel "$OUT_KERNEL" \
