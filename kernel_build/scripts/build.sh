@@ -14,8 +14,8 @@ build() {
         export CC="clang"
     fi
 
-    export PLATFORM_VERSION="12"
-    export ANDROID_MAJOR_VERSION="s"
+    export PLATFORM_VERSION="15"
+    export ANDROID_MAJOR_VERSION="v"
     export TARGET_SOC="s5e8825"
 
     export LLVM=1
@@ -32,7 +32,7 @@ build() {
     [ "$DROIDSPACES" = "1" ] && [ "$DO_REGEN" != "1" ] && FRAGMENTS="$FRAGMENTS droidspaces.config"
 
     if [ "$DO_QUIET" = "1" ]; then
-        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS > /dev/null | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS 2>&1 | tee -a log.txt
     else
         make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS 2>&1 | tee log.txt
     fi
@@ -83,13 +83,13 @@ build() {
     echo -e "\n$(log_info "Starting compilation...")\n"
 
     if [ "$DO_QUIET" = "1" ]; then
-        make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs > /dev/null | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs 2>&1 | tee -a log.txt
 
-        make -j$(nproc --all) O=$OUTDIR CC="$CC" >/dev/null | tee log.txt
+        make -j$(nproc --all) O=$OUTDIR CC="$CC" 2>&1 | tee -a log.txt
 
         make -j$(nproc --all) O=$OUTDIR CC="$CC" \
             INSTALL_MOD_STRIP="--strip-debug --keep-section=.ARM.attributes" \
-            INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install >/dev/null | tee log.txt
+            INSTALL_MOD_PATH="$MOD_OUTDIR" modules_install 2>&1 | tee -a log.txt
     else
         make -j$(nproc --all) O=$OUTDIR CC="$CC" dtbs 2>&1 | tee -a log.txt
 

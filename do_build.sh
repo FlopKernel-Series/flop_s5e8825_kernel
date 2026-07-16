@@ -35,9 +35,8 @@ if $contains_u && $contains_d; then
         # Remove only "d" from arguments
         filtered_args="${args//d/}"
         ./kernel_build/ckbuild.sh $filtered_args
-        # Remove "u" and "c" from arguments
+        # Remove "u" from arguments
         filtered_args="${filtered_args//u/}"
-        filtered_args="${filtered_args//c/}"
         ./kernel_build/ckbuild.sh $filtered_args
     fi
 elif $contains_d; then

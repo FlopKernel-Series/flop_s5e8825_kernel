@@ -3,7 +3,7 @@
 #sudo apt install flex bc device-tree-compiler -y
 # Change to your own, this is only for Gitpod.
 #WP=/workspace
-DEFCONFIG=s5e8825-a25xdxx_defconfig
+DEFCONFIG=s5e8825-unified_defconfig
 AIKDIR=$WP/AIK-Linux
 if [ ! -d drivers ]; then
     printf "\nPlease run inside the top-level kernel tree.\n"
@@ -19,8 +19,8 @@ export PATH=$WP/toolchain/build/build-tools/path/linux-x86:$WP/toolchain/prebuil
 #export PATH=/workspace/proton-clang/bin:$PATH
 
 # Platform vars
-export PLATFORM_VERSION=12
-export ANDROID_MAJOR_VERSION=s
+export PLATFORM_VERSION=15
+export ANDROID_MAJOR_VERSION=v
 export TARGET_SOC=s5e8825
 
 make LLVM=1 LLVM_IAS=1 ARCH=arm64 O=out CROSS_COMPILE="aarch64-linux-gnu-" $DEFCONFIG
