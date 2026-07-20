@@ -1,1 +1,0 @@
-# KernelSU installer/uninstaller script
