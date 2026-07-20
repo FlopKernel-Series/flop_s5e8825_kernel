@@ -20,19 +20,19 @@ config KSU_SUKI
 	  Enable SukiSU Ultra with SUSFS support.
 	  This is a KernelSU fork with additional features.
 
-config KSU_MAMBO
-	bool "MamboSU"
+config KSU_XXKSU
+	bool "XXKSU"
 	select OVERLAY_FS
 	help
-	  Enable MamboSU.
-	  This is a KernelSU fork with additional features.
+	  Enable XXKSU.
+	  Backslashxx's KernelSU fork with additional features.
 
 endchoice
 
 choice
 	prompt "Hook method"
 	optional
-	depends on KSU_NEXT || KSU_SUKI || KSU_MAMBO
+	depends on KSU_NEXT || KSU_SUKI || KSU_XXKSU
 	help
 	  Select which hook method to use.
 
@@ -125,4 +125,4 @@ config KSU_ALLOWLIST_WORKAROUND
 # Load variant-specific configs
 source "drivers/kernelsu/kernel/Kconfig"
 source "drivers/sukisu/kernel/Kconfig"
-source "drivers/mambosu/kernel/Kconfig"
+source "drivers/xxksu/kernel/Kconfig"

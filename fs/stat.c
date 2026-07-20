@@ -170,9 +170,9 @@ EXPORT_SYMBOL(vfs_getattr);
  */
 
 
-#if defined(CONFIG_KSU_SUSFS) && (defined(CONFIG_KSU_SUKI) || defined(CONFIG_KSU_MAMBO))
+#if defined(CONFIG_KSU_SUSFS) && defined(CONFIG_KSU_SUKI)
 extern void ksu_handle_vfs_fstat(int fd, loff_t *kstat_size_ptr);
-#endif // defined(CONFIG_KSU_SUSFS) && (defined(CONFIG_KSU_SUKI) || defined(CONFIG_KSU_MAMBO))
+#endif // defined(CONFIG_KSU_SUSFS) && defined(CONFIG_KSU_SUKI)
 
 int vfs_fstat(int fd, struct kstat *stat)
 {
@@ -183,10 +183,10 @@ int vfs_fstat(int fd, struct kstat *stat)
 	if (!f.file)
 		return -EBADF;
 	error = vfs_getattr(&f.file->f_path, stat, STATX_BASIC_STATS, 0);
-#if defined(CONFIG_KSU_SUSFS) && (defined(CONFIG_KSU_SUKI) || defined(CONFIG_KSU_MAMBO))
+#if defined(CONFIG_KSU_SUSFS) && defined(CONFIG_KSU_SUKI)
 	if (ksu_init_rc_hook_active())
 		ksu_handle_vfs_fstat(fd, &stat->size);
-#endif // defined(CONFIG_KSU_SUSFS) && (defined(CONFIG_KSU_SUKI) || defined(CONFIG_KSU_MAMBO))
+#endif // defined(CONFIG_KSU_SUSFS) && defined(CONFIG_KSU_SUKI)
 	fdput(f);
 	return error;
 }

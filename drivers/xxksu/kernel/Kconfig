@@ -2,10 +2,11 @@ menu "KernelSU"
 
 config KSU
 	tristate "KernelSU function support"
+	depends on KSU_XXKSU
 	depends on !CPU_BIG_ENDIAN
 	depends on SECURITY_SELINUX
 	select SECCOMP
-	default y
+	default y if KSU_XXKSU
 	help
 	  Enable kernel-level root privileges on Android System.
 
