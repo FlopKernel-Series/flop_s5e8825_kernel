@@ -73,6 +73,11 @@ packing() {
                 616f73705f6d6f64653d30 \
                 616f73705f6d6f64653d31 >/dev/null 2>&1 || exit 1
 
+            # Patch kernel: usb_aoffload_disable=0 -> usb_aoffload_disable=1
+            "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_PERM_KERNEL" \
+                7573625f616f66666c6f61645f64697361626c653d30 \
+                7573625f616f66666c6f61645f64697361626c653d31 >/dev/null 2>&1 || exit 1
+
             # Patch kernel: force_perm=0 -> force_perm=1
             "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_PERM_KERNEL" \
                 666f7263655f7065726d3d30 \
@@ -134,6 +139,11 @@ packing() {
         "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_UNLOCKED_KERNEL" \
             616f73705f6d6f64653d30 \
             616f73705f6d6f64653d31 >/dev/null 2>&1 || exit 1
+
+        # Patch kernel: usb_aoffload_disable=0 -> usb_aoffload_disable=1
+        "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_UNLOCKED_KERNEL" \
+            7573625f616f66666c6f61645f64697361626c653d30 \
+            7573625f616f66666c6f61645f64697361626c653d31 >/dev/null 2>&1 || exit 1
 
         # Patch kernel: superfloppy=0 -> superfloppy=1
         "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_UNLOCKED_KERNEL" \

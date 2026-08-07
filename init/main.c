@@ -311,6 +311,37 @@ bool is_ems_efficient(void)
 }
 EXPORT_SYMBOL(is_ems_efficient);
 
+static bool usb_aoffload_disable = false;
+DEFINE_STATIC_KEY_FALSE(usb_aoffload_disable_key);
+EXPORT_SYMBOL(usb_aoffload_disable_key);
+
+static int __init set_usb_aoffload_disable(char *val)
+{
+	int tmp = usb_aoffload_disable;
+
+	if (get_option(&val, &tmp)) {
+		usb_aoffload_disable = tmp != 0;
+	}
+
+	// Update static branch for hot path optimization
+	if (usb_aoffload_disable)
+		static_branch_enable(&usb_aoffload_disable_key);
+	else
+		static_branch_disable(&usb_aoffload_disable_key);
+
+	pr_info("Workaround: usb_aoffload_disable=%s\n",
+			usb_aoffload_disable ? "enabled" : "disabled");
+
+	return 0;
+}
+__setup("usb_aoffload_disable=", set_usb_aoffload_disable);
+
+bool is_usb_aoffload_disabled(void)
+{
+	return usb_aoffload_disable;
+}
+EXPORT_SYMBOL(is_usb_aoffload_disabled);
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.

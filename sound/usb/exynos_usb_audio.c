@@ -958,8 +958,8 @@ int exynos_usb_audio_init(struct device *dev, struct platform_device *pdev)
 	struct device_node *np_abox;
 	struct platform_device *pdev_abox;
 
-	if (is_aosp_mode()) {
-		dev_info(dev, "USB_AUDIO_IPC : %s - AOSP mode, disabling USB audio offloading\n",
+	if (is_usb_aoffload_disabled_fast()) {
+		dev_info(dev, "USB_AUDIO_IPC : %s - USB audio offloading disabled via cmdline\n",
 			 __func__);
 		return -ENODEV;
 	}

@@ -1129,7 +1129,7 @@ static int dwc3_exynos_host_init(struct dwc3_exynos *exynos)
 	dwc->xhci = xhci;
 
 #if IS_ENABLED(CONFIG_SND_EXYNOS_USB_AUDIO_MODULE)
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		/* In data buf alloc */
 		xhci_data.in_data_addr = dma_alloc_coherent(dev,
 				(PAGE_SIZE * 256), &dma, GFP_KERNEL);
@@ -1753,7 +1753,7 @@ static int dwc3_exynos_resume(struct device *dev)
 	pr_info("exynos RPM Usage Count: %d\n", dev->power.usage_count);
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		if (exynos->vbus_state || otg_connection)
 			dwc3_exynos_set_sclk_clock(dev);
 	}

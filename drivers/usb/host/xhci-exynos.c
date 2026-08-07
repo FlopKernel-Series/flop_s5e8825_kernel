@@ -1349,7 +1349,7 @@ static int xhci_exynos_setup(struct usb_hcd *hcd)
 
 	ret = xhci_gen_setup(hcd, xhci_exynos_quirks);
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		pr_debug("%s: alloc_event_ring!\n", __func__);
 		xhci_exynos_alloc_event_ring(xhci, GFP_KERNEL);
 	}
@@ -1381,7 +1381,7 @@ static int xhci_exynos_start(struct usb_hcd *hcd)
 	ret = xhci_run(hcd);
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		xhci = hcd_to_xhci(hcd);
 		pr_debug("%s: enable_event_ring!\n", __func__);
 		xhci_exynos_usb_offload_enable_event_ring(xhci);
@@ -1621,7 +1621,7 @@ static int xhci_exynos_probe(struct platform_device *pdev)
 	dev_info(&pdev->dev, "XHCI PLAT START\n");
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		xhci_exynos_register_vendor_ops(&ops);
 		pr_info("%s register ops done!\n", __func__);
 		pr_info("%s fix ep ring free!\n", __func__);
@@ -1848,7 +1848,7 @@ static int xhci_exynos_probe(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		ret = of_property_read_u32(parent->of_node,
 					"xhci_use_uram_for_audio", &value);
 		if (ret == 0 && value == 1) {
@@ -1916,8 +1916,8 @@ skip_uram:
 	}
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (is_aosp_mode()) {
-		dev_info(&pdev->dev, "AOSP mode: disable USB Audio offloading\n");
+	if (is_usb_aoffload_disabled_fast()) {
+		dev_info(&pdev->dev, "usb_aoffload_disable=1: disable USB Audio offloading\n");
 	} else {
 		ret = of_property_read_u32(parent->of_node,
 				"usb_audio_offloading", &value);
@@ -2028,7 +2028,7 @@ static int xhci_exynos_remove(struct platform_device *dev)
 	xhci_exynos->port_set_delayed = 0;
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		xhci_exynos->xhci_alloc->offset = 0;
 		dev_info(&dev->dev, "WAKE UNLOCK\n");
 	}
@@ -2080,7 +2080,7 @@ remove_hcd:
 	 * PHY pointer have to be NULL.
 	 */
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (!is_aosp_mode()) {
+	if (!is_usb_aoffload_disabled_fast()) {
 		if (parent && xhci_exynos->phy_usb2)
 			xhci_exynos->phy_usb2 = NULL;
 
@@ -2221,7 +2221,7 @@ MODULE_ALIAS("platform:xhci-hcd-exynos");
 static int __init xhci_exynos_init(void)
 {
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-	if (is_aosp_mode())
+	if (is_usb_aoffload_disabled_fast())
 		xhci_init_driver(&xhci_exynos_hc_driver, &xhci_exynos_overrides_aosp);
 	else
 		xhci_init_driver(&xhci_exynos_hc_driver, &xhci_exynos_overrides);

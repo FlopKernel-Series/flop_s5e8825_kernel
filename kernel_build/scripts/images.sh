@@ -22,6 +22,11 @@ build_images() {
         616f73705f6d6f64653d30 \
         616f73705f6d6f64653d31 || exit 1
 
+    # Patch kernel: usb_aoffload_disable=0 -> usb_aoffload_disable=1
+    "$KDIR/kernel_build/bin/magiskboot" hexpatch "$AOSP_KERNEL" \
+        7573625f616f66666c6f61645f64697361626c653d30 \
+        7573625f616f66666c6f61645f64697361626c653d31 || exit 1
+
     "$MKBOOTIMG" --header_version 4 \
         --kernel "$AOSP_KERNEL" \
         --output "$OUT_BOOTIMG_AOSP" \

@@ -569,7 +569,7 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 		}
 
 #ifdef CONFIG_SND_EXYNOS_USB_AUDIO
-		if (!is_aosp_mode()) {
+		if (!is_usb_aoffload_disabled_fast()) {
 			/* USB audio disconnect progressing */
 			for (i = 0; i < 1000; i += 100) {
 				if (usb_audio_connection) {

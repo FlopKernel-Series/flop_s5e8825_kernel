@@ -55,4 +55,13 @@ static inline bool is_ems_efficient_fast(void)
 	return static_branch_unlikely(&ems_efficient_mode_key);
 }
 
+bool is_usb_aoffload_disabled(void);
+
+// Optimized hot path version using static branch
+extern struct static_key_false usb_aoffload_disable_key;
+static inline bool is_usb_aoffload_disabled_fast(void)
+{
+	return static_branch_unlikely(&usb_aoffload_disable_key);
+}
+
 #endif /* _WORKAROUNDS_H */
