@@ -92,7 +92,7 @@ static __always_inline void ksu_handle_setresuid_cred(struct cred *new, const st
 do_umount:
     // Handle kernel umount
 #ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
-    return ksu_handle_umount(new, old);
+    ksu_handle_umount(new, old);
 #else
     susfs_try_umount(new_uid);
 #endif // #ifndef CONFIG_KSU_SUSFS_TRY_UMOUNT
