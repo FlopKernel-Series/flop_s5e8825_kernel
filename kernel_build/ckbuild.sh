@@ -212,7 +212,7 @@ elif [ "$DO_SUKI" == "1" ]; then
     FK_TYPE="ReSukiSU-SUSFS"
     FK_TYPE_SHORT="RESKS"
 elif [ "$DO_XXKSU" == "1" ]; then
-    FK_TYPE="XXKSU"
+    FK_TYPE="XXKSU-SUSFS"
     FK_TYPE_SHORT="XXK"
 else
     FK_TYPE="Vanilla"
