@@ -632,7 +632,7 @@ SYSCALL_DEFINE1(setuid, uid_t, uid)
 	return __sys_setuid(uid);
 }
 
-#ifdef CONFIG_KSU_SUSFS
+#ifdef CONFIG_KSU_MANUAL_HOOK
 extern int ksu_handle_setresuid(uid_t ruid, uid_t euid, uid_t suid);
 #endif
 
@@ -649,7 +649,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
 	kuid_t kruid, keuid, ksuid;
 	bool ruid_new, euid_new, suid_new;
 
-#ifdef CONFIG_KSU_SUSFS
+#ifdef CONFIG_KSU_MANUAL_HOOK
 	(void)ksu_handle_setresuid(ruid, euid, suid);
 #endif
 

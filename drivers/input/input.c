@@ -23,7 +23,7 @@
 #include <linux/device.h>
 #include <linux/mutex.h>
 #include <linux/rcupdate.h>
-#if defined(CONFIG_KSU_SUSFS) || defined(CONFIG_KSU_MANUAL_HOOK)
+#ifdef CONFIG_KSU_MANUAL_HOOK
 #include <linux/ksu_hook_compat.h>
 #endif
 #include "input-compat.h"
@@ -378,7 +378,7 @@ static int input_get_disposition(struct input_dev *dev,
 	return disposition;
 }
 
-#ifdef CONFIG_KSU_SUSFS
+#ifdef CONFIG_KSU_MANUAL_HOOK
 extern __attribute__((cold)) int ksu_handle_input_handle_event(
 			unsigned int *type, unsigned int *code, int *value);
 #endif
@@ -388,7 +388,7 @@ static void input_handle_event(struct input_dev *dev,
 {
 	int disposition = input_get_disposition(dev, type, code, &value);
 
-#ifdef CONFIG_KSU_SUSFS
+#ifdef CONFIG_KSU_MANUAL_HOOK
 	if (ksu_input_hook_active())
 		ksu_handle_input_handle_event(&type, &code, &value);
 #endif
