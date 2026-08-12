@@ -138,7 +138,7 @@ static int apply_kernelsu_rules_fn(void *ptr)
 
 void apply_kernelsu_rules()
 {
-	struct policydb *db;
+	struct policydb *db = NULL;
 
 	if (!getenforce()) {
 		pr_info("SELinux permissive or disabled, apply rules!\n");
@@ -202,11 +202,13 @@ out_flush:
 #endif
 #ifdef CONFIG_KSU_SUSFS
     // Allow umount in zygote process without installing zygisk
-    ksu_allow(db, "zygote", "labeledfs", "filesystem", "unmount");
-    susfs_set_priv_app_sid();
-    susfs_set_init_sid();
-    susfs_set_ksu_sid();
-    susfs_set_zygote_sid();
+    if (db) {
+        ksu_allow(db, "zygote", "labeledfs", "filesystem", "unmount");
+        susfs_set_priv_app_sid();
+        susfs_set_init_sid();
+        susfs_set_ksu_sid();
+        susfs_set_zygote_sid();
+    }
 #endif // #ifdef CONFIG_KSU_SUSFS
 }
 
