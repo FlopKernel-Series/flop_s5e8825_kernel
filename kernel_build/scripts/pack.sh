@@ -1,8 +1,18 @@
 packing() {
+    local VENDOR_BOOT_REPACK_SRC="$SCRIPTS_DIR/vendor_boot_repack.c"
+    local VENDOR_BOOT_REPACK_BIN="$TMPDIR/vendor_boot_repack"
+
     echo -e "\n$(log_info "Building zip...")"
+
+    log_info "Building vendor_boot v4 repacker..."
+    clang --target=aarch64-linux-gnu -std=c11 -D_FILE_OFFSET_BITS=64 \
+        -Os -static -s -o "$VENDOR_BOOT_REPACK_BIN" "$VENDOR_BOOT_REPACK_SRC" || exit 1
+
     cd "$AK3_DIR"
-    cp -f "$OUT_VENDORBOOTIMG" vendor_boot.img
-    cp -f "$OUT_DTBIMAGE" dtb
+    rm -f vendor_boot.img dtb vendor_ramdisk_dlkm.lz4
+    rm -rf vendor_modules
+    cp -f "$TMPDIR/ramdisk_dlkm.lz4" vendor_ramdisk_dlkm.lz4
+    cp -f "$VENDOR_BOOT_REPACK_BIN" tools/vendor_boot_repack
     cp -f "$OUT_KERNEL" .
     zip -r9 -q "$ZIP_PATH" * -x .git .github README.md
     cd "$KDIR"
