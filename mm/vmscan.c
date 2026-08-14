@@ -2529,7 +2529,7 @@ static int notify_app_launch_started(void)
 	atomic_notifier_call_chain(&am_app_launch_notifier, 1, NULL);
 #if IS_ENABLED(CONFIG_ZRAM)
 	if (zram_oem_fn)
-		zram_oem_fn(ZRAM_APP_LAUNCH_NOTIFY, NULL, 1);
+		zram_oem_fn_nocfi(ZRAM_APP_LAUNCH_NOTIFY, NULL, 1);
 #endif
 	return 0;
 }
@@ -2540,7 +2540,7 @@ static int notify_app_launch_finished(void)
 	atomic_notifier_call_chain(&am_app_launch_notifier, 0, NULL);
 #if IS_ENABLED(CONFIG_ZRAM)
 	if (zram_oem_fn)
-		zram_oem_fn(ZRAM_APP_LAUNCH_NOTIFY, NULL, 0);
+		zram_oem_fn_nocfi(ZRAM_APP_LAUNCH_NOTIFY, NULL, 0);
 #endif
 	return 0;
 }

@@ -3213,6 +3213,10 @@ static bool swap_discardable(struct swap_info_struct *si)
 
 #if IS_ENABLED(CONFIG_ZRAM)
 zram_oem_func zram_oem_fn;
+unsigned long __nocfi zram_oem_fn_nocfi(int cmd, void *priv, unsigned long param)
+{
+	return zram_oem_fn(cmd, priv, param);
+}
 #endif
 
 SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)

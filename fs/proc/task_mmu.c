@@ -844,7 +844,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
 			}
 #if IS_ENABLED(CONFIG_ZRAM)
 			if (zram_oem_fn) {
-				int type = zram_oem_fn(ZRAM_GET_ENTRY_TYPE,
+				int type = zram_oem_fn_nocfi(ZRAM_GET_ENTRY_TYPE,
 							NULL, swp_offset(swpent));
 				if (type == ZRAM_WB_TYPE || type == ZRAM_WB_HUGE_TYPE)
 					mss->writeback += PAGE_SIZE;

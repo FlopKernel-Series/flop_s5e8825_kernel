@@ -653,7 +653,7 @@ static int madvise_writeback_pte_range(pmd_t *pmd, unsigned long addr,
 			continue;
 		if (swp_swapcount(entry) > 1)
 			continue;
-		zram_oem_fn(ZRAM_ADD_TO_WRITEBACK_LIST, list, swp_offset(entry));
+		zram_oem_fn_nocfi(ZRAM_ADD_TO_WRITEBACK_LIST, list, swp_offset(entry));
 	}
 	pte_unmap_unlock(orig_pte, ptl);
 	cond_resched();
@@ -726,7 +726,7 @@ static int madvise_prefetch_pte_range(pmd_t *pmd, unsigned long start,
 		if (unlikely(non_swap_entry(entry)))
 			continue;
 
-		zram_oem_fn(ZRAM_PREFETCH_ENTRY, NULL, swp_offset(entry));
+		zram_oem_fn_nocfi(ZRAM_PREFETCH_ENTRY, NULL, swp_offset(entry));
 	}
 	return 0;
 }
@@ -1539,7 +1539,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
 	if (behavior == MADV_WRITEBACK) {
 		if (ret == 0) {
 			blk_start_plug(&plug);
-			ret = zram_oem_fn(ZRAM_WRITEBACK_LIST, &list, 0);
+			ret = zram_oem_fn_nocfi(ZRAM_WRITEBACK_LIST, &list, 0);
 			blk_finish_plug(&plug);
 		}
 		zram_oem_fn(ZRAM_FLUSH_WRITEBACK_BUFFER, &list, 0);
