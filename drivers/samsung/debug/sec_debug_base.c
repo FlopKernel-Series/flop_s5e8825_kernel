@@ -145,10 +145,10 @@ static struct notifier_block nb_die_block = {
 #define UBSAN_TRAP_OOB_BRK_IMM		0x5512
 #define UBSAN_TRAP_OOBPTR_BRK_IMM	0x1
 
-static int ubsan_trap_handler(struct pt_regs *regs, unsigned int esr)
+static int ubsan_trap_handler(struct pt_regs *regs, unsigned long esr)
 {
 	if (IS_ENABLED(CONFIG_SEC_DEBUG_FAULT_MSG_ADV))
-		pr_auto(ASL1, "UBSAN Trap: Out-of-bounds (0x%x)\n", esr);
+		pr_auto(ASL1, "UBSAN Trap: Out-of-bounds (0x%lx)\n", esr);
 
 	/* make kernel panic */
 	return DBG_HOOK_ERROR;
