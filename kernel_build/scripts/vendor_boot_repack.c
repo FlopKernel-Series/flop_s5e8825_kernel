@@ -1,10 +1,11 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * Rebuild an Android vendor_boot header v4 image while replacing one DLKM
- * vendor ramdisk fragment.  This deliberately preserves every other fragment
- * (including the platform ramdisk/fstab), the DTB and bootconfig verbatim.
+ * vendor ramdisk fragment and optionally the DTB section.  This deliberately
+ * preserves every other fragment (including the platform ramdisk/fstab) and
+ * the bootconfig verbatim.
  *
- * Usage: vendor_boot_repack <original> <new-dlkm-fragment> <output>
+ * Usage: vendor_boot_repack <original> <new-dlkm-fragment> [new-dtb] <output>
  */
 #define _POSIX_C_SOURCE 200809L
 
@@ -124,37 +125,53 @@ static int file_size(FILE *file, uint64_t *size, const char *name) {
 int main(int argc, char *argv[]) {
     const char *input_name;
     const char *replacement_name;
+    const char *dtb_name = NULL;
     const char *output_name;
-    FILE *input = NULL, *replacement = NULL, *output = NULL;
+    FILE *input = NULL, *replacement = NULL, *replacement_dtb = NULL;
+    FILE *output = NULL;
     unsigned char *header = NULL, *table = NULL;
     struct fragment *fragments = NULL;
-    uint64_t input_size, replacement_size, header_span, ramdisk_offset;
-    uint64_t dtb_offset, table_offset, bootconfig_offset, old_image_end;
+    uint64_t input_size, replacement_size, replacement_dtb_size = 0;
+    uint64_t header_span, ramdisk_offset, dtb_offset, table_offset;
+    uint64_t bootconfig_offset, old_image_end;
     uint64_t new_ramdisk_size = 0;
+    uint64_t new_dtb_offset, new_table_offset, new_bootconfig_offset;
     uint32_t page_size, header_version, header_size, old_ramdisk_size;
-    uint32_t dtb_size, table_size, table_entries, entry_size, bootconfig_size;
+    uint32_t dtb_size, new_dtb_size, table_size, table_entries;
+    uint32_t entry_size, bootconfig_size;
     uint32_t dlkm_index = UINT32_MAX;
     int result = 1;
 
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <original> <new-dlkm-fragment> <output>\n", argv[0]);
+    if (argc != 4 && argc != 5) {
+        fprintf(stderr, "Usage: %s <original> <new-dlkm-fragment> [new-dtb] <output>\n",
+                argv[0]);
         return 2;
     }
     input_name = argv[1];
     replacement_name = argv[2];
-    output_name = argv[3];
+    output_name = argv[argc - 1];
+    if (argc == 5)
+        dtb_name = argv[3];
 
     input = fopen(input_name, "rb");
     replacement = fopen(replacement_name, "rb");
     output = fopen(output_name, "wb");
-    if (!input || !replacement || !output) {
+    if (dtb_name)
+        replacement_dtb = fopen(dtb_name, "rb");
+    if (!input || !replacement || !output || (dtb_name && !replacement_dtb)) {
         fprintf(stderr, "Unable to open image files: %s\n", strerror(errno));
         goto out;
     }
     if (file_size(input, &input_size, input_name) != 0 ||
         file_size(replacement, &replacement_size, replacement_name) != 0 ||
-        replacement_size > UINT32_MAX)
+        replacement_size > UINT32_MAX ||
+        (replacement_dtb &&
+         (file_size(replacement_dtb, &replacement_dtb_size, dtb_name) != 0 ||
+          replacement_dtb_size == 0 || replacement_dtb_size > UINT32_MAX))) {
+        if (replacement_dtb && replacement_dtb_size == 0)
+            fprintf(stderr, "DTB replacement is empty\n");
         goto out;
+    }
 
     header = calloc(1, 4096);
     if (!header || fread(header, 1, 2128, input) != 2128) {
@@ -203,6 +220,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "vendor_boot sections exceed the input image\n");
         goto out;
     }
+    new_dtb_size = replacement_dtb ? (uint32_t)replacement_dtb_size : dtb_size;
 
     table = malloc(table_size);
     fragments = calloc(table_entries, sizeof(*fragments));
@@ -256,6 +274,11 @@ int main(int argc, char *argv[]) {
         write_u32(entry + 4, fragments[i].new_offset);
     }
     write_u32(header + VENDOR_BOOT_RAMDISK_SIZE_OFFSET, (uint32_t)new_ramdisk_size);
+    write_u32(header + VENDOR_BOOT_DTB_SIZE_OFFSET, new_dtb_size);
+
+    new_dtb_offset = align_up(ramdisk_offset + new_ramdisk_size, page_size);
+    new_table_offset = align_up(new_dtb_offset + new_dtb_size, page_size);
+    new_bootconfig_offset = align_up(new_table_offset + table_size, page_size);
 
     if (fwrite(header, 1, (size_t)header_span, output) != header_span) {
         fprintf(stderr, "Unable to write vendor_boot header\n");
@@ -272,13 +295,20 @@ int main(int argc, char *argv[]) {
             goto out;
         }
     }
-    if (write_padding(output, new_ramdisk_size, page_size) != 0 ||
-        copy_range(input, output, dtb_offset, dtb_size, input_name) != 0 ||
-        write_padding(output, dtb_size, page_size) != 0 ||
+    if (write_padding(output, ramdisk_offset + new_ramdisk_size, page_size) != 0)
+        goto out;
+    if (replacement_dtb) {
+        if (seek_file(replacement_dtb, 0, dtb_name) != 0 ||
+            copy_file(replacement_dtb, output, new_dtb_size, dtb_name) != 0)
+            goto out;
+    } else if (copy_range(input, output, dtb_offset, dtb_size, input_name) != 0) {
+        goto out;
+    }
+    if (write_padding(output, new_dtb_offset + new_dtb_size, page_size) != 0 ||
         fwrite(table, 1, table_size, output) != table_size ||
-        write_padding(output, table_size, page_size) != 0 ||
+        write_padding(output, new_table_offset + table_size, page_size) != 0 ||
         copy_range(input, output, bootconfig_offset, bootconfig_size, input_name) != 0 ||
-        write_padding(output, bootconfig_size, page_size) != 0) {
+        write_padding(output, new_bootconfig_offset + bootconfig_size, page_size) != 0) {
         fprintf(stderr, "Unable to rebuild vendor_boot image\n");
         goto out;
     }
@@ -289,6 +319,8 @@ out:
         fclose(input);
     if (replacement)
         fclose(replacement);
+    if (replacement_dtb)
+        fclose(replacement_dtb);
     if (output && fclose(output) != 0 && result == 0) {
         fprintf(stderr, "Unable to finalize output: %s\n", strerror(errno));
         result = 1;

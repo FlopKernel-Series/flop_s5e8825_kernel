@@ -9,9 +9,10 @@ packing() {
         -Os -static -s -o "$VENDOR_BOOT_REPACK_BIN" "$VENDOR_BOOT_REPACK_SRC" || exit 1
 
     cd "$AK3_DIR"
-    rm -f vendor_boot.img dtb vendor_ramdisk_dlkm.lz4
+    rm -f vendor_boot.img dtb platform.dtb vendor_ramdisk_dlkm.lz4
     rm -rf vendor_modules
     cp -f "$TMPDIR/ramdisk_dlkm.lz4" vendor_ramdisk_dlkm.lz4
+    cp -f "$OUT_DTBIMAGE" platform.dtb
     cp -f "$VENDOR_BOOT_REPACK_BIN" tools/vendor_boot_repack
     cp -f "$OUT_KERNEL" .
     zip -r9 -q "$ZIP_PATH" * -x .git .github README.md
