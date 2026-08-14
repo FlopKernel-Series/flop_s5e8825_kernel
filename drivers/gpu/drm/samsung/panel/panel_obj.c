@@ -143,13 +143,8 @@ struct pnobj *pnobj_find_by_pnobj(struct list_head *head, struct pnobj *_pnobj)
 }
 
 /* Compare two pnobj items. */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-static int pnobj_type_compare(void *priv,
-		struct list_head *a, struct list_head *b)
-#else
 static int pnobj_type_compare(void *priv,
 		const struct list_head *a, const struct list_head *b)
-#endif
 {
 	struct pnobj *pnobj_a;
 	struct pnobj *pnobj_b;
@@ -169,13 +164,8 @@ static int pnobj_type_compare(void *priv,
 	return type_a - type_b;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-static int pnobj_name_compare(void *priv,
-		struct list_head *a, struct list_head *b)
-#else
 static int pnobj_name_compare(void *priv,
 		const struct list_head *a, const struct list_head *b)
-#endif
 {
 	struct pnobj *pnobj_a;
 	struct pnobj *pnobj_b;
@@ -191,13 +181,8 @@ static int pnobj_name_compare(void *priv,
 }
 
 /* Compare two pnobj items. */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-int pnobj_compare(void *priv,
-		struct list_head *a, struct list_head *b)
-#else
 int pnobj_compare(void *priv,
 		const struct list_head *a, const struct list_head *b)
-#endif
 {
 	int diff;
 
@@ -208,13 +193,8 @@ int pnobj_compare(void *priv,
 	return pnobj_name_compare(priv, a, b);
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-int pnobj_ref_compare(void *priv,
-		struct list_head *a, struct list_head *b)
-#else
 int pnobj_ref_compare(void *priv,
 		const struct list_head *a, const struct list_head *b)
-#endif
 {
 	struct pnobj_ref *ref_a;
 	struct pnobj_ref *ref_b;

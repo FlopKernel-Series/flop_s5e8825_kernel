@@ -125,20 +125,10 @@ unsigned int cmd_type_to_pnobj_type(unsigned int cmd_type);
 struct pnobj *pnobj_find_by_name(struct list_head *head, char *name);
 struct pnobj *pnobj_find_by_substr(struct list_head *head, char *substr);
 struct pnobj *pnobj_find_by_pnobj(struct list_head *head, struct pnobj *pnobj);
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-int pnobj_compare(void *priv,
-		struct list_head *a, struct list_head *b);
-#else
 int pnobj_compare(void *priv,
 		const struct list_head *a, const struct list_head *b);
-#endif
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0))
-int pnobj_ref_compare(void *priv,
-		struct list_head *a, struct list_head *b);
-#else
 int pnobj_ref_compare(void *priv,
 		const struct list_head *a, const struct list_head *b);
-#endif
 struct pnobj_refs *create_pnobj_refs(void);
 int add_pnobj_ref(struct pnobj_refs *pnobj_refs, struct pnobj *pnobj);
 int get_count_of_pnobj_ref(struct pnobj_refs *pnobj_refs);
