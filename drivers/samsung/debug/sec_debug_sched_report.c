@@ -338,11 +338,8 @@ static struct list_head *__create_busy_info(struct task_log *task, unsigned long
 	return &data->node;
 }
 
-#ifdef SEC_DEBUG_LISTSORT_CONST
 static int __residency_cmp(void *priv, const struct list_head *a, const struct list_head *b)
-#else
-static int __residency_cmp(void *priv, struct list_head *a, struct list_head *b)
-#endif
+
 {
 	struct busy_data *busy_data_a;
 	struct busy_data *busy_data_b;
