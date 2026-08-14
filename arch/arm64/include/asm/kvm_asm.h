@@ -173,7 +173,7 @@ struct kvm_nvhe_init_params {
 			val = lm_alias((ptr));				\
 		val;							\
 	 })
-#define kvm_ksym_ref_nvhe(sym)	kvm_ksym_ref(__va_function(kvm_nvhe_sym(sym)))
+#define kvm_ksym_ref_nvhe(sym)	kvm_ksym_ref(kvm_nvhe_sym(sym))
 
 struct kvm;
 struct kvm_vcpu;
