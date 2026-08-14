@@ -64,10 +64,7 @@ SECTIONS {
 
 	.text : ALIGN(PAGE_SIZE) {
 		*(.text.._start)
-		*(.text .text.[0-9a-zA-Z_]*)
-		__cfi_jt_start = .;
-		*(.text..L.cfi.jumptable .text..L.cfi.jumptable.*)
-		__cfi_jt_end = .;
+		*(.text .text.[0-9a-zA-Z_]* .text..L.cfi*)
 		*(.text.._end)
 		*(.text.._fips140_unchecked)
 	}
