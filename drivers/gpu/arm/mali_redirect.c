@@ -95,7 +95,7 @@ int gpu_dvfs_get_min_locked_freq(void)
 }
 EXPORT_SYMBOL(gpu_dvfs_get_min_locked_freq);
 
-int *gpu_dvfs_get_freq_table(void)
+uint32_t *gpu_dvfs_get_freq_table(void)
 {
 	if (mali_exp && mali_exp->gpu_dvfs_get_freq_table)
 		return mali_exp->gpu_dvfs_get_freq_table();

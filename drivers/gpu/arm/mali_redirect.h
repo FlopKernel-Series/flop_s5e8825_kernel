@@ -31,7 +31,7 @@ struct mali_exports {
 	int (*gpu_dvfs_get_min_freq)(void);
 	int (*gpu_dvfs_get_max_locked_freq)(void);
 	int (*gpu_dvfs_get_min_locked_freq)(void);
-	int *(*gpu_dvfs_get_freq_table)(void);
+	uint32_t *(*gpu_dvfs_get_freq_table)(void);
 	ktime_t *(*gpu_dvfs_get_time_in_state)(void);
 	ktime_t (*gpu_dvfs_get_tis_last_update)(void);
 	ktime_t *(*gpu_dvfs_get_job_queue_count)(void);
