@@ -30,6 +30,7 @@ build() {
     [ "$DO_SUKI" = "1" ] && FRAGMENTS="$FRAGMENTS sukisu.config"
     [ "$DO_XXKSU" = "1" ] && FRAGMENTS="$FRAGMENTS xxksu.config"
     [ "$DROIDSPACES" = "1" ] && [ "$DO_REGEN" != "1" ] && FRAGMENTS="$FRAGMENTS droidspaces.config"
+    [ "$KCFI" = "1" ] && [ "$DO_REGEN" != "1" ] && FRAGMENTS="$FRAGMENTS kcfi.config"
 
     if [ "$DO_QUIET" = "1" ]; then
         make -j$(nproc --all) O=$OUTDIR CC="$CC" "$DEFCONFIG" $FRAGMENTS > /dev/null | tee log.txt
