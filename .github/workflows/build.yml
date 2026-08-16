@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt update
           DEBIAN_FRONTEND=noninteractive sudo apt install -yq \
-            brotli zip zstd tar lz4 cpio xz-utils flex bc kmod ccache binutils-aarch64-linux-gnu
+            brotli zip zstd tar lz4 cpio xz-utils flex bc kmod ccache binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu
           echo "${{ secrets.CHAT_ID }}" >> "../chat_ci"
           echo "${{ secrets.TOKEN }}" >> "../bot_token"
 
