@@ -1542,7 +1542,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
 			ret = zram_oem_fn_nocfi(ZRAM_WRITEBACK_LIST, &list, 0);
 			blk_finish_plug(&plug);
 		}
-		zram_oem_fn(ZRAM_FLUSH_WRITEBACK_BUFFER, &list, 0);
+		zram_oem_fn_nocfi(ZRAM_FLUSH_WRITEBACK_BUFFER, &list, 0);
 		if (ret < 0)
 			goto release_mm;
 	}
