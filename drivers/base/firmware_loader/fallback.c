@@ -10,7 +10,6 @@
 #include <linux/sysctl.h>
 #include <linux/vmalloc.h>
 #include <linux/module.h>
-#include <linux/suspend.h>
 
 #include "fallback.h"
 #include "firmware.h"
@@ -107,7 +106,7 @@ static void fw_load_abort(struct fw_sysfs *fw_sysfs)
 
 static LIST_HEAD(pending_fw_head);
 
-void kill_pending_fw_fallback_reqs(bool kill_all, bool abort_future)
+void kill_pending_fw_fallback_reqs(bool kill_all)
 {
 	struct fw_priv *fw_priv;
 	struct fw_priv *next;
@@ -119,7 +118,7 @@ void kill_pending_fw_fallback_reqs(bool kill_all, bool abort_future)
 			 __fw_load_abort(fw_priv);
 	}
 
-	if (abort_future)
+	if (kill_all)
 		fw_load_abort_all = true;
 
 	mutex_unlock(&fw_lock);
@@ -202,40 +201,13 @@ static struct class firmware_class = {
 	.dev_release	= fw_dev_release,
 };
 
-static int fw_fallback_pm_notify(struct notifier_block *nb, unsigned long mode,
-				 void *data)
-{
-	switch (mode) {
-	case PM_HIBERNATION_PREPARE:
-	case PM_SUSPEND_PREPARE:
-	case PM_RESTORE_PREPARE:
-		pr_info("firmware: aborting pending sysfs fallback requests (%s)\n",
-			mode == PM_SUSPEND_PREPARE ? "suspend" : "hibernate");
-		kill_pending_fw_fallback_reqs(true, false);
-		break;
-	}
-
-	return NOTIFY_OK;
-}
-
-static struct notifier_block fw_fallback_pm_nb = {
-	.notifier_call = fw_fallback_pm_notify,
-};
-
 int register_sysfs_loader(void)
 {
-	int ret;
-
-	ret = class_register(&firmware_class);
-	if (ret)
-		return ret;
-
-	return register_pm_notifier(&fw_fallback_pm_nb);
+	return class_register(&firmware_class);
 }
 
 void unregister_sysfs_loader(void)
 {
-	unregister_pm_notifier(&fw_fallback_pm_nb);
 	class_unregister(&firmware_class);
 }
 
