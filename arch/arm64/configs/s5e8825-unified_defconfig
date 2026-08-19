@@ -1810,28 +1810,6 @@ CONFIG_GNSS=y
 # CONFIG_GNSS_SIRF_SERIAL is not set
 # CONFIG_GNSS_UBX_SERIAL is not set
 # CONFIG_GNSS_CMDLINE_SERIAL is not set
-
-#
-# KernelSU
-#
-
-#
-# KernelSU - SUSFS
-#
-# CONFIG_KSU_SUSFS is not set
-# end of KernelSU - SUSFS
-# end of KernelSU
-
-#
-# KernelSU
-#
-# end of KernelSU
-
-#
-# KernelSU
-#
-# end of KernelSU
-
 # CONFIG_MTD is not set
 CONFIG_DTC=y
 CONFIG_OF=y
