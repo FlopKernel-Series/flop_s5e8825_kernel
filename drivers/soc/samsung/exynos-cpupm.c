@@ -939,7 +939,6 @@ static void enter_power_mode(int cpu, struct power_mode *mode, ktime_t now)
 	}
 
 	cpupm_debug(cpu, -1, mode->type, 1);
-	dbg_snapshot_cpuidle(mode->name, 0, 0, DSS_FLAG_IN);
 	set_state_idle(mode);
 
 	cpupm_profile_begin(&mode->stat, now);
@@ -955,7 +954,6 @@ exit_power_mode(int cpu, struct power_mode *mode, int cancel, ktime_t now)
 	 * first cpu exiting from power mode.
 	 */
 	set_state_busy(mode);
-	dbg_snapshot_cpuidle(mode->name, 0, 0, DSS_FLAG_OUT);
 	cpupm_debug(cpu, -1, mode->type, 0);
 
 	switch (mode->type) {
@@ -1345,8 +1343,6 @@ static void android_vh_cpu_idle_enter(void *data, int *state,
 {
 	struct exynos_cpupm *pm = per_cpu_ptr(cpupm, dev->cpu);
 	int cpu = smp_processor_id();
-	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
-	struct cpuidle_state *target_state;
 	ktime_t now = ktime_get();
 
 	if (pm->hotplug) {
@@ -1363,10 +1359,6 @@ static void android_vh_cpu_idle_enter(void *data, int *state,
 	pm->entered_state = *state;
 	cpupm_profile_begin(&pm->stat[pm->entered_state], now);
 
-	target_state = &drv->states[pm->entered_state];
-	dbg_snapshot_cpuidle(target_state->desc, 0, 0, DSS_FLAG_IN);
-	pm->entered_time = ns_to_ktime(local_clock());
-
 	/* Only handle requests except C1 */
 	if (pm->entered_state > 0) {
 		*per_cpu_ptr(cpu_next_event, dev->cpu) = dev->next_hrtimer;
@@ -1380,10 +1372,6 @@ static void android_vh_cpu_idle_exit(void *data, int state,
 	struct exynos_cpupm *pm = per_cpu_ptr(cpupm, dev->cpu);
 	int cancel = (state < 0);
 	int cpu = smp_processor_id();
-	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
-	struct cpuidle_state *target_state;
-	ktime_t time_start = pm->entered_time, time_end;
-	int residency;
 	ktime_t now = ktime_get();
 
 	cpupm_profile_end(&pm->stat[pm->entered_state], cancel, now);
@@ -1396,11 +1384,6 @@ static void android_vh_cpu_idle_exit(void *data, int state,
 	/* Only handle requests except C1 */
 	if (pm->entered_state > 0)
 		exynos_cpupm_exit(cpu, cancel, now);
-
-	target_state = &drv->states[pm->entered_state];
-	time_end = ns_to_ktime(local_clock());
-	residency = (int)ktime_to_us(ktime_sub(time_end, time_start));
-	dbg_snapshot_cpuidle(target_state->desc, 0, residency, cancel ? state : DSS_FLAG_OUT);
 }
 
 static void ipi_raise(void *data, const struct cpumask *target,
