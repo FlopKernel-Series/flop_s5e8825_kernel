@@ -346,26 +346,6 @@ static bool dbg_snapshot_get_enable_log_item(const char *name)
 	return false;
 }
 
-static void dbg_snapshot_task(int cpu, struct task_struct *task)
-{
-	unsigned long idx;
-	struct dbg_snapshot_log_item *log_item = &dss_log_items[DSS_LOG_TASK_ID];
-	struct task_log *entry = (struct task_log *)log_item->entry.vaddr;
-
-	idx = (atomic_fetch_inc(&dss_log_misc.task_log_idx[cpu]) % log_item->log_num) +
-								(cpu * log_item->log_num);
-	entry[idx].time = local_clock();
-	entry[idx].task = task;
-	entry[idx].pid = task_pid_nr(task);
-	strncpy(entry[idx].task_comm, task->comm, TASK_COMM_LEN - 1);
-}
-
-static void dbg_snapshot_sched_switch(void *ignore, bool preempt,
-				      struct task_struct *prev,
-				      struct task_struct *next)
-{
-	dbg_snapshot_task(raw_smp_processor_id(), next);
-}
 
 static void dbg_snapshot_work(work_func_t fn, int en)
 {
@@ -1015,8 +995,6 @@ void dbg_snapshot_init_log(void)
 	}
 	dbg_snapshot_set_log_item_field();
 
-	if (dbg_snapshot_get_enable_log_item(DSS_LOG_TASK))
-		register_trace_sched_switch(dbg_snapshot_sched_switch, NULL);
 
 	if (dbg_snapshot_get_enable_log_item(DSS_LOG_WORK)) {
 		register_trace_workqueue_execute_start(dbg_snapshot_wq_start, NULL);
