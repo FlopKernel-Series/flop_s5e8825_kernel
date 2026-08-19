@@ -26,6 +26,7 @@
 #include <linux/types.h> /* uint8_t, int8_t, uint16_t, int16_t,
 uint32_t, int32_t, uint64_t, int64_t */
 #include <linux/stddef.h>
+#include <asm/unaligned.h>
 
 typedef uint64_t uint_fast32_t;
 typedef int64_t int_fast32_t;
@@ -105,16 +106,24 @@ inline static void m_set(void *dst, uint8_t value, size_t total)
 
 inline static uint32_t read4_at(const void *p)
 {
+#if defined(__KERNEL__)
+	return get_unaligned((const uint32_t *)p);
+#else
 	uint32_t result;
 	m_copy(&result, p, sizeof(result));
 	return result;
+#endif
 }
 
 inline static uint64_t read8_at(const void *p)
 {
+#if defined(__KERNEL__)
+	return get_unaligned((const uint64_t *)p);
+#else
 	uint64_t result;
 	m_copy(&result, p, sizeof(result));
 	return result;
+#endif
 }
 
 inline static bool equal4(const uint8_t *const q, const uint8_t *const r)
