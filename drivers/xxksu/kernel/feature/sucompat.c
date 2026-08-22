@@ -96,6 +96,10 @@ static __always_inline bool is_su_allowed(const void **ptr_to_check)
 #endif // KSU_CAN_USE_JUMP_LABEL
 #endif
 
+	// Do not intercept Samsung performance daemons
+	if (unlikely(!strcmp(current->comm, "epic") || !strcmp(current->comm, "epicd")))
+		return false;
+
 	// put ret hot on insn pipeline
 	if (likely(ksu_is_seccomp_enabled()))
 		return false;
