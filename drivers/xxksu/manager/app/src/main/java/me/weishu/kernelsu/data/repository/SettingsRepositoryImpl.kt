@@ -18,6 +18,14 @@ import me.weishu.kernelsu.ui.util.getFeaturePersistValue
 import me.weishu.kernelsu.ui.util.getFeatureStatus
 import java.security.SecureRandom
 
+private const val SETTINGS_PREFS = "settings"
+private const val KEY_USE_SOFT_REBOOT = "soft_reboot"
+
+/** Prefer soft reboot: always in jailbreak mode, or when the setting is enabled. */
+fun isSoftRebootPreferred(): Boolean =
+    Natives.isLateLoadMode || ksuApp.getSharedPreferences(SETTINGS_PREFS, Context.MODE_PRIVATE)
+        .getBoolean(KEY_USE_SOFT_REBOOT, false)
+
 class SettingsRepositoryImpl : SettingsRepository {
 
     private companion object {
@@ -26,7 +34,7 @@ class SettingsRepositoryImpl : SettingsRepository {
     }
 
     private val prefs by lazy {
-        ksuApp.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        ksuApp.getSharedPreferences(SETTINGS_PREFS, Context.MODE_PRIVATE)
     }
 
     override var uiMode: String
@@ -134,6 +142,10 @@ class SettingsRepositoryImpl : SettingsRepository {
             }
         }
 
+    override var useSoftReboot: Boolean
+        get() = prefs.getBoolean(KEY_USE_SOFT_REBOOT, false)
+        set(value) = prefs.edit { putBoolean(KEY_USE_SOFT_REBOOT, value) }
+
     override val intentToken: String
         get() {
         val existing = prefs.getString(INTENT_TOKEN_KEY, null)
@@ -161,6 +173,13 @@ class SettingsRepositoryImpl : SettingsRepository {
     override fun isKernelUmountEnabled(): Boolean = Natives.isKernelUmountEnabled()
 
     override fun setKernelUmountEnabled(enabled: Boolean): Boolean = Natives.setKernelUmountEnabled(enabled)
+
+    override suspend fun getWebViewZygoteUmountStatus(): String = getFeatureStatus("webview_zygote_umount")
+
+    override fun isWebViewZygoteUmountEnabled(): Boolean = Natives.isWebViewZygoteUmountEnabled()
+
+    override fun setWebViewZygoteUmountEnabled(enabled: Boolean): Boolean =
+        Natives.setWebViewZygoteUmountEnabled(enabled)
 
     override suspend fun getSelinuxHideStatus(): String = getFeatureStatus("selinux_hide")
 

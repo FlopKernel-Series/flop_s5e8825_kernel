@@ -11,6 +11,9 @@
  *
  */
 
+#ifndef __KSU_H_TINY_SULOG
+#define __KSU_H_TINY_SULOG
+
 // half assed ringbuffer
 // 8 bytes
 struct sulog_entry {
@@ -32,7 +35,7 @@ static void tiny_sulog_init_heap()
 	if (!sulog_buf_ptr)
 		return;
 	
-	pr_info("sulog_init: allocated %lu bytes on 0x%p \n", SULOG_BUFSIZ, sulog_buf_ptr);
+	pr_info("sulog_init: allocated %lu bytes on 0x%lx \n", SULOG_BUFSIZ, (uintptr_t)sulog_buf_ptr);
 }
 
 /**
@@ -61,7 +64,7 @@ static inline uint32_t boottime_s_get()
 	return (uint32_t)boottime_s;
 }
 
-static void write_sulog(uint8_t sym)
+static noinline void write_sulog(uint8_t sym)
 {
 	if (!sulog_buf_ptr)
 		return;
@@ -80,11 +83,7 @@ static void write_sulog(uint8_t sym)
 
 	unsigned int offset = sulog_index_next * sizeof(struct sulog_entry);
 
-#ifdef CONFIG_64BIT
-	*(volatile uint64_t *)(sulog_buf_ptr + offset) = *(uint64_t *)&entry;
-#else
-	__builtin_memcpy(sulog_buf_ptr + offset, &entry, sizeof(entry));
-#endif
+	memcpy_inline(sulog_buf_ptr + offset, &entry, sizeof(entry));
 
 	// move ptr for next iteration
 	sulog_index_next = sulog_index_next + 1;
@@ -103,7 +102,7 @@ struct sulog_entry_rcv_ptr {
 	uint64_t uptime_ptr; // uptime
 };
 
-static int send_sulog_dump(void __user *uptr)
+static noinline int send_sulog_dump(void __user *uptr)
 {
 	if (!sulog_buf_ptr)
 		return 1;
@@ -141,3 +140,5 @@ static int send_sulog_dump(void __user *uptr)
 
 	return 0;
 }
+
+#endif // __KSU_H_TINY_SULOG

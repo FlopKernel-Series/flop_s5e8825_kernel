@@ -60,7 +60,7 @@ static void ksu_mnt_ns_global(void)
 		pwd_path = NULL;
 	}
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 19, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 try_setns:
 
 	rcu_read_lock();
@@ -80,7 +80,7 @@ try_setns:
 		goto out;
 	}
 	struct path ns_path;
-	long ret = (long)ns_get_path(&ns_path, pid1_task, &mntns_operations);
+	long ret = ns_get_path(&ns_path, pid1_task, &mntns_operations);
 	put_task_struct(pid1_task);
 	if (ret) {
 		pr_warn("failed get path for init mount namespace: %ld\n", ret);

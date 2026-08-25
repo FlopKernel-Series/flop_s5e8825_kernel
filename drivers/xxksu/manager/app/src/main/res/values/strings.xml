@@ -79,6 +79,7 @@
     <string name="jailbreak_mode">Jailbreak mode</string>
     <string name="home_jailbreak">Jailbreak</string>
     <string name="jailbreak_timeout">Jailbreak may have failed, please check logs</string>
+    <string name="jailbreak_reboot_warning">You are in Jailbreak mode. Rebooting will lose root access, and you will have to jailbreak again after the device starts up. Reboot anyway?</string>
     <string name="safe_mode_module_disabled">Module installation is disabled in safe mode</string>
     <string name="reboot_to_apply">Reboot to take effect</string>
     <string name="module_magisk_conflict">Modules are unavailable due to a conflict with Magisk!</string>
@@ -158,7 +159,12 @@
     <string name="enable_web_debugging">WebView debugging</string>
     <string name="enable_web_debugging_summary">Can be used to debug WebUI. Please enable only when needed.</string>
     <string name="direct_install">Direct install (Recommended)</string>
-    <string name="select_file">Select a file</string>
+    <string name="select_file">Select a file and patch</string>
+    <string name="download_file">Download a file and patch</string>
+    <string name="download_dialog_title">Enter URL</string>
+    <string name="download_dialog_msg">Full OTA image or factory image</string>
+    <string name="download_no_boot_partition">No boot, init_boot or vendor_boot partition found in the image</string>
+    <string name="download_probe_failed">Failed to probe the image: %1$s</string>
     <string name="install_inactive_slot">Install to inactive slot (After OTA)</string>
     <string name="install_inactive_slot_warning">Your device will be **FORCED** to boot to the current inactive slot after a reboot!\nOnly use this option after OTA is done.\nContinue?</string>
     <string name="jailbreak_flash_warning">You are in **Jailbreak mode**. Flashing a partition on a device with a **locked bootloader** will break AVB (Android Verified Boot) and may cause the device to **fail to boot**.\n\nMake sure your bootloader is unlocked before proceeding!</string>
@@ -188,6 +194,8 @@
     <string name="settings_sucompat_summary">Allow Root access via /system/bin/su, in new processes</string>
     <string name="settings_kernel_umount">Kernel umount</string>
     <string name="settings_kernel_umount_summary">Unmount modules from kernel in App Profile</string>
+    <string name="settings_webview_zygote_umount">Unmount for WebView</string>
+    <string name="settings_webview_zygote_umount_summary">Prevent information leaks from WebView process but may break modules. Reboot to apply</string>
     <string name="settings_selinux_hide">Hide SELinux modification</string>
     <string name="settings_selinux_hide_summary">Prevent applications from detecting SELinux modifications</string>
     <string name="settings_selinux_hide_reboot_required">Reboot to take effect</string>
@@ -266,6 +274,8 @@
     <string name="show_only_primary_user_apps">Show only primary user apps</string>
     <string name="settings_auto_jailbreak">Auto jailbreak</string>
     <string name="settings_auto_jailbreak_summary">Automatically use Magica to escalate privileges when Permissive SELinux is detected at boot. Requires granting autostart permission to this app.</string>
+    <string name="settings_soft_reboot">Soft restart instead of reboot</string>
+    <string name="settings_soft_reboot_summary">Use soft restart instead of a full reboot when installing, updating, or toggling modules.</string>
     <string name="allow_shell">Always grant Root to Shell</string>
     <string name="allow_shell_summary">Always allow adb shell to call SU command. Do not enable this unless absolutely necessary.</string>
     <string name="enable_adb">Force enable adb on boot</string>
@@ -294,6 +304,6 @@
     <string name="module_shortcut_scheme_copied">URL scheme copied</string>
     <string name="nav_rail_expand">Expand navigation rail</string>
     <string name="nav_rail_collapse">Collapse navigation rail</string>
-    <string name="settings_navigation_badge">Module badge</string>
-    <string name="settings_navigation_badge_summary">Show the enabled module count on the navigation bar, or the pending update count in red</string>
+    <string name="settings_navigation_badge">Navigation badge</string>
+    <string name="settings_navigation_badge_summary">Show granted app and enabled module counts on the navigation bar</string>
 </resources>

@@ -11,8 +11,8 @@ MDIR := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 $(info -- KDIR: $(KDIR))
 $(info -- MDIR: $(MDIR))
 
-# compliant to last upstream kernel change as of e9e5b61
-CFLAGS_ksu.o += -DKSU_VERSION=32558
+# compliant to last upstream kernel change as of 4521784
+CFLAGS_ksu.o += -DKSU_VERSION=32595
 
 ifndef KSU_EXPECTED_SIZE
 KSU_EXPECTED_SIZE := 0x033b
@@ -96,6 +96,7 @@ endif
 
 CFLAGS_ksu.o += $(call cc-option, -Wno-declaration-after-statement)
 CFLAGS_ksu.o += $(call cc-option, -Wno-implicit-function-declaration)
+CFLAGS_ksu.o += $(call cc-option, -Wno-missing-prototypes)
 CFLAGS_ksu.o += $(call cc-option, -Wno-strict-prototypes)
 CFLAGS_ksu.o += $(call cc-option, -Wno-int-conversion)
 CFLAGS_ksu.o += $(call cc-option, -Wno-int-to-pointer-cast)
@@ -117,12 +118,20 @@ CFLAGS_ksu.o += $(call cc-option, -Wframe-larger-than=1024)
 # to make sure we can use builtins
 CFLAGS_REMOVE_ksu.o += -fno-builtin
 
+# Os to O2, we dont care for anything else. O3 vs O2 codegen on hotptah is same.
+ifeq ($(CONFIG_CC_OPTIMIZE_FOR_SIZE),y)
+CFLAGS_REMOVE_ksu.o += -Oz
+CFLAGS_REMOVE_ksu.o += -Os
+CFLAGS_ksu.o += -O2
+endif
+
 ifneq ($(CONFIG_KSU_DEBUG),y)
 # strip, remove tracing / profiling
 # comment out if proper backtrace is needed
-CFLAGS_ksu.o += -O3
 CFLAGS_ksu.o += -g0 -fno-unwind-tables -fno-asynchronous-unwind-tables -fomit-frame-pointer
 CFLAGS_ksu.o += $(call cc-option, -momit-leaf-frame-pointer)
+
+# no profiling
 CFLAGS_REMOVE_ksu.o = $(CC_FLAGS_FTRACE)
 CFLAGS_REMOVE_ksu.o += -pg
 

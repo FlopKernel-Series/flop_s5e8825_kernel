@@ -13,7 +13,7 @@
 
 // selinux_ops (LSM), security_operations struct tampering for ultra legacy
 
-static uintptr_t selinux_ops_addr = NULL;
+static uintptr_t selinux_ops_addr = 0x0;
 
 static int (*orig_setprocattr) (struct task_struct *p, char *name, void *value, size_t size) __read_mostly = NULL;
 static int hook_setprocattr(struct task_struct *p, char *name, void *value, size_t size)
@@ -191,7 +191,7 @@ static inline bool check_candidate(uintptr_t addr)
 	if (!candidate->cred_free)
 		return false;
 
-#ifdef CONFIG_KALLSYMS // not always available, can also fail, but it wont hurt to try.
+#if 0 //def CONFIG_KALLSYMS // not always available, can also fail, but it wont hurt to try.
 	uintptr_t ksym_ptr = (uintptr_t)kallsyms_lookup_name("selinux_cred_free");
 	if (unlikely(ksym_ptr != (uintptr_t)candidate->cred_free))
 		goto test_fn;
@@ -202,6 +202,7 @@ static inline bool check_candidate(uintptr_t addr)
 test_fn:
 #endif
 
+	// oh yeah I am so confident that this is it
 	pr_info("%s: candidate selinux_cred_free at 0x%lx\n", __func__, (long)candidate->cred_free);
 	return verify_selinux_cred_free((void *)candidate->cred_free);
 }
@@ -305,7 +306,7 @@ static inline void set_selinux_ops()
 }
 
 // stop_machine
-static int ksu_unregister_lsm_hook(void *data)
+static int ksu_restore_file_permission_stop_machine(void *data)
 {
 	struct security_operations *ops = (struct security_operations *)selinux_ops_addr;
 
@@ -317,7 +318,7 @@ static int ksu_unregister_lsm_hook(void *data)
 	return 0;
 }
 
-static int ksu_lsm_hook_restore(void *data)
+static int ksu_restore_file_permission(void *data)
 {
 	struct security_operations *ops = (struct security_operations *)selinux_ops_addr;
 	if (!ops)
@@ -333,9 +334,8 @@ loop_start:
 	if (*(volatile bool *)&ksu_vfs_read_hook)
 		goto loop_start;
 
-	pr_info("%s: selinux_ops: 0x%lx .name = %s\n", __func__, (long)ops, (const char *)ops );
-
-	stop_machine(ksu_unregister_lsm_hook, NULL, NULL);
+	// pr_info("%s: selinux_ops: 0x%lx .name = %s\n", __func__, (long)ops, (const char *)ops );
+	stop_machine(ksu_restore_file_permission_stop_machine, NULL, NULL);
 
 	return 0;
 }
@@ -362,7 +362,7 @@ static int ksu_register_lsm_hook(void *data)
 	ops->bprm_check_security = hook_bprm_check_security;
 #endif
 
-#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE)
+#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE) && !defined(CONFIG_KSU_HACK_ARM64_BRANCH_LINK)
 	orig_file_permission = ops->file_permission;
 	ops->file_permission = hook_file_permission;
 #endif
@@ -385,7 +385,7 @@ static void ksu_lsm_hook_init(void)
 
 	stop_machine(ksu_register_lsm_hook, NULL, NULL);
 	
-	kthread_run(ksu_lsm_hook_restore, NULL, "unhook");
+	kthread_run(ksu_restore_file_permission, NULL, "unhook");
 	return;
 }
 
