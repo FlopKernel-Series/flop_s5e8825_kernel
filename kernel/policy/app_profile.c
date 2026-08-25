@@ -48,63 +48,28 @@ static void setup_groups(struct root_profile *profile, struct cred *cred)
 	put_group_info(group_info);
 }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
-static void disable_seccomp(void)
-{
-	struct task_struct *fake;
-
-	fake = kmalloc(sizeof(*fake), GFP_KERNEL);
-	if (!fake) {
-		pr_warn("failed to alloc fake task_struct\n");
-		return;
-	}
-
-	// Refer to kernel/seccomp.c: seccomp_set_mode_strict
-	// When disabling Seccomp, ensure that current->sighand->siglock is held during the operation.
-	spin_lock_irq(&current->sighand->siglock);
-	// disable seccomp
-#if defined(CONFIG_GENERIC_ENTRY) && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-	clear_syscall_work(SECCOMP);
-#else
-	clear_thread_flag(TIF_SECCOMP);
-#endif
-
-	memcpy(fake, current, sizeof(*fake));
-
-	current->seccomp.mode = 0;
-	current->seccomp.filter = NULL;
-	atomic_set(&current->seccomp.filter_count, 0);
-	spin_unlock_irq(&current->sighand->siglock);
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0)
-	// https://github.com/torvalds/linux/commit/bfafe5efa9754ebc991750da0bcca2a6694f3ed3#diff-45eb79a57536d8eccfc1436932f093eb5c0b60d9361c39edb46581ad313e8987R576-R577
-	fake->flags |= PF_EXITING;
-#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-	// https://github.com/torvalds/linux/commit/0d8315dddd2899f519fe1ca3d4d5cdaf44ea421e#diff-45eb79a57536d8eccfc1436932f093eb5c0b60d9361c39edb46581ad313e8987R556-R558
-	fake->sighand = NULL;
-#endif
-
-	seccomp_filter_release(fake);
-	kfree(fake);
-}
-#else /* ! LINUX_VERSION_CODE < 5.9 */
-/*
- * for < 5.9 lets have free_task do it for us (put_seccomp_filter)
- * we risk a double free / double decrement which isn't safe on old kernels
- * I'm not even sure if this thing is needed on newer kernels
+/**
+ * lets just have kernel do cleanup for us (put_seccomp_filter/seccomp_filter_release)
+ * this is how the kernel does it and we dont have to do all this refcounting shit that
+ * upstream does due to 'current->seccomp.filter = NULL;' which is unnecessary
  *
+ * see: seccomp_assign_mode, secure_computing
+ * - if this has repercussions, then we just restore all those refcounting shit
  */
 static void disable_seccomp(void)
 {
 	spin_lock_irq(&current->sighand->siglock);
 
-	clear_thread_flag(TIF_SECCOMP);
 	current->seccomp.mode = 0;
-	current->seccomp.filter = NULL;
+	smp_mb();
 
+#if defined(CONFIG_GENERIC_ENTRY) && LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
+	clear_syscall_work(SECCOMP);
+#else
+	clear_thread_flag(TIF_SECCOMP);
+#endif
 	spin_unlock_irq(&current->sighand->siglock);
 }
-#endif // 5.9
 
 static int escape_to_root(bool is_forced)
 {
@@ -182,7 +147,7 @@ static int escape_to_root(bool is_forced)
 
 	commit_creds(cred);
 
-	if (test_thread_flag(TIF_SECCOMP))
+	if (ksu_is_seccomp_enabled())
 		disable_seccomp();
 
 	if (profile->flags & FLAG_KSU_NO_NEW_PRIVS) {
@@ -212,3 +177,5 @@ void escape_to_root_forced(void)
 	// which we likely already have on contexts where this will be used.
 	escape_to_root(true);
 }
+
+void __init ksu_app_profile_init(void) { }

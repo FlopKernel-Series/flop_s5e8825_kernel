@@ -5,7 +5,29 @@ on:
     branches: [ "main", "dev", "ci", "test", "staging" ]
     paths:
       - '.github/workflows/build-manager.yml'
+      - '.github/workflows/build-lkm.yml'
+      - '.github/workflows/ddk-lkm.yml'
+      - '.github/workflows/ksud.yml'
+      - '.github/workflows/ksud-extra.yml'
+      - '.github/scripts/setup-rust-build.sh'
+      - 'repack_apk.py'
       - 'manager/**'
+      - 'kernel/**'
+      - 'userspace/**'
+      - 'Cargo.lock'
+      - 'Cargo.toml'
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - '.github/workflows/build-manager.yml'
+      - '.github/workflows/build-lkm.yml'
+      - '.github/workflows/ddk-lkm.yml'
+      - '.github/workflows/ksud.yml'
+      - '.github/workflows/ksud-extra.yml'
+      - '.github/scripts/setup-rust-build.sh'
+      - 'repack_apk.py'
+      - 'manager/**'
+      - 'kernel/**'
       - 'userspace/**'
       - 'Cargo.lock'
       - 'Cargo.toml'
@@ -85,11 +107,12 @@ jobs:
       matrix:
         include:
           - target: aarch64-linux-android
-            os: ubuntu-latest
             pack_lkm: true
             pack_ksuinit: true
           - target: armv7-linux-androideabi
-            os: ubuntu-latest
+            pack_lkm: false
+            pack_ksuinit: false
+          - target: x86_64-linux-android
             pack_lkm: false
             pack_ksuinit: false
 
@@ -98,6 +121,22 @@ jobs:
       target: ${{ matrix.target }}
       pack_lkm: ${{ matrix.pack_lkm }}
       pack_ksuinit: ${{ matrix.pack_ksuinit }}
+  
+  build-ksud-extra:
+    needs: [build-lkm, build-ksuinit]
+    strategy:
+      matrix:
+        include:
+          - target: aarch64-unknown-linux-musl # arm64 Linux
+            os: ubuntu-latest
+          - target: x86_64-unknown-linux-musl # x86 Linux
+            os: ubuntu-latest
+    uses: ./.github/workflows/ksud-extra.yml
+    with:
+      target: ${{ matrix.target }}
+      os: ${{ matrix.os }}
+      pack_lkm: false
+      pack_ksuinit: false
 
   build-manager:
     needs: [generate-key]
@@ -114,7 +153,7 @@ jobs:
           fetch-depth: 0
 
       - name: Write key
-        if: ${{ ( github.event_name != 'pull_request' ) || github.ref_type == 'tag' }}
+        if: ${{ ( github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )) || github.ref_type == 'tag' }}
         run: |
             {
               echo KEYSTORE_PASSWORD='password'
@@ -159,7 +198,6 @@ jobs:
           fi
 
       - name: Upload build artifact
-        if: ${{ ( github.event_name != 'pull_request' ) || github.ref_type == 'tag' }}
         uses: actions/upload-artifact@v7
         with:
           name: manager-gradle
@@ -167,7 +205,7 @@ jobs:
 
       - name: Upload mappings
         uses: actions/upload-artifact@v7
-        if: ${{ ( github.event_name != 'pull_request' ) || github.ref_type == 'tag' }}
+        if: ${{ ( github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' )) || github.ref_type == 'tag' }}
         with:
           name: "mappings"
           path: "manager/app/build/outputs/mapping/release/"
@@ -213,6 +251,12 @@ jobs:
           name: ksud-armv7-linux-androideabi
           path: artifacts/ksud-armv7-linux-androideabi
 
+      - name: Download x86_64 ksud
+        uses: actions/download-artifact@v8
+        with:
+          name: ksud-x86_64-linux-android
+          path: artifacts/ksud-x86_64-linux-android
+
       - name: Place manager apk and ksud artifacts
         run: |
           mkdir -p manager/app/build/outputs/apk/release
@@ -222,15 +266,18 @@ jobs:
 
           mkdir -p target/aarch64-linux-android/release
           mkdir -p target/armv7-linux-androideabi/release
+          mkdir -p target/x86_64-linux-android/release
           ARM64_KSUD=$(find artifacts/ksud-aarch64-linux-android -type f -name ksud | head -n 1)
           ARM_KSUD=$(find artifacts/ksud-armv7-linux-androideabi -type f -name ksud | head -n 1)
+          X86_64_KSUD=$(find artifacts/ksud-x86_64-linux-android -type f -name ksud | head -n 1)
           test -n "$ARM64_KSUD"
           test -n "$ARM_KSUD"
+          test -n "$X86_64_KSUD"
           cp -f "$ARM64_KSUD" target/aarch64-linux-android/release/ksud
           cp -f "$ARM_KSUD" target/armv7-linux-androideabi/release/ksud
+          cp -f "$X86_64_KSUD" target/x86_64-linux-android/release/ksud
 
       - name: Prepare signing inputs
-        if: ${{ ( github.event_name != 'pull_request' ) || github.ref_type == 'tag' }}
         run: |
           echo "SIGN_KEYSTORE_FILE=manager/dummy.keystore" >> $GITHUB_ENV
           echo "SIGN_KEY_ALIAS=alias" >> $GITHUB_ENV
@@ -238,13 +285,13 @@ jobs:
           echo "SIGN_KEY_PASSWORD=password" >> $GITHUB_ENV
 
       - name: Repack and resign
-        if: ${{ ( github.event_name != 'pull_request' ) || github.ref_type == 'tag' }}
         run: |
           python3 repack_apk.py repack \
             -b release \
             -t release \
             -a arm64-v8a \
             -a armeabi-v7a \
+            -a x86_64 \
             -K "$SIGN_KEYSTORE_FILE" \
             -A "$SIGN_KEY_ALIAS" \
             -P "$SIGN_KEYSTORE_PASSWORD" \
@@ -252,7 +299,6 @@ jobs:
             --strip
 
       - name: Upload build artifact
-        if: ${{ ( github.event_name != 'pull_request' ) || github.ref_type == 'tag' }}
         uses: actions/upload-artifact@v7
         with:
           name: manager

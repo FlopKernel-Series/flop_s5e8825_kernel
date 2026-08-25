@@ -20,43 +20,7 @@
 #endif
 
 // security.c hijack for 6.8+
-// however this requires kallsyms
-// TODO: refine, try to lessen kallsyms dependence further
 
-/*
-
-https://godbolt.org/z/Eh8vfrdns
-
-__attribute__((noinline)) 
-void target_fn() {
-    volatile int x = 0;
-}
-
-int main() {
-    target_fn();
-    return 0;
-}
-
-target_fn:
-        sub     sp, sp, #16
-        str     wzr, [sp, 12]
-        nop
-        add     sp, sp, 16
-        ret
-main:
-        stp     x29, x30, [sp, -16]!
-        mov     x29, sp
-        bl      target_fn   << hunt for this!
-        mov     w0, 0
-        ldp     x29, x30, [sp], 16
-        ret
-*/
-
-// bl is 94 ~ 97
-// so we can do this like on x86 where 74 xx to 74 yy
-// bl is call+ret equivalent on x86 though
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0) 
 extern int vfs_rename(struct renamedata *rd);
 static int ksu_vfs_rename(struct renamedata *rd)
 {
@@ -66,7 +30,6 @@ static int ksu_vfs_rename(struct renamedata *rd)
 
 	return ret;
 }
-#endif
 
 extern int security_inode_rename(struct inode *old_dir, struct dentry *old_dentry, struct inode *new_dir, struct dentry *new_dentry, unsigned int flags);
 static int ksu_inode_rename(struct inode *old_dir, struct dentry *old_dentry, struct inode *new_dir, struct dentry *new_dentry, unsigned int flags)
@@ -100,15 +63,8 @@ static int ksu_bprm_check(struct linux_binprm *bprm)
 extern ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos);
 static ssize_t ksu_vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 {
-#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE)
-#ifdef KSU_CAN_USE_JUMP_LABEL
 	if (static_branch_likely(&ksud_vfs_read_key))
 		ksu_install_rc_hook(file);
-#else
-	if (unlikely(ksu_vfs_read_hook))
-		ksu_install_rc_hook(file);
-#endif
-#endif
 
 	return vfs_read(file, buf, count, pos);
 }
@@ -116,33 +72,18 @@ static ssize_t ksu_vfs_read(struct file *file, char __user *buf, size_t count, l
 extern int security_file_permission(struct file *file, int mask);
 static int ksu_security_file_permission(struct file *file, int mask)
 {
-#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE)
-#ifdef KSU_CAN_USE_JUMP_LABEL
 	if (static_branch_likely(&ksud_vfs_read_key))
 		ksu_install_rc_hook(file);
-#else
-	if (unlikely(ksu_vfs_read_hook))
-		ksu_install_rc_hook(file);
-#endif
-#endif
+
 	return security_file_permission(file, mask);
 }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 8, 0) // setprocattr
 extern int security_setprocattr(int lsmid, const char *name, void *value, size_t size);
 static int ksu_setprocattr(int lsmid, const char *name, void *value, size_t size)
 {
 	ksu_hide_setprocattr_inline(name, value, size);
 	return security_setprocattr(lsmid, name, value, size);
 }
-#else
-extern int security_setprocattr(const char *lsm, const char *name, void *value, size_t size);
-static int ksu_setprocattr(const char *lsm, const char *name, void *value, size_t size)
-{
-	ksu_hide_setprocattr_inline(name, value, size);
-	return security_setprocattr(lsm, name, value, size);
-}
-#endif
 
 static void __init ksu_core_init(void)
 {
@@ -150,67 +91,92 @@ static void __init ksu_core_init(void)
 	uintptr_t target_callsite;
 	uintptr_t symbol_addr;
 
-#ifdef CONFIG_KPROBES
-#define ksu_kallsyms_lookup_name kp_cfi_kallsyms_lookup_name
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 0, 0) 
+	target_callsite = kallsyms_lookup_retry("filename_renameat2");
 #else
-#define ksu_kallsyms_lookup_name kallsyms_lookup_name
+	target_callsite = kallsyms_lookup_retry("do_renameat2");
 #endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
-	target_callsite = ksu_kallsyms_lookup_name("do_renameat2");
-	symbol_addr = ksu_kallsyms_lookup_name("vfs_rename");
-	ret = arm64_bl_patch(target_callsite, 256 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_vfs_rename);
+	symbol_addr = kallsyms_lookup_retry("vfs_rename");
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 256 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_vfs_rename);
 	pr_info("lsm_hijack: vfs_rename: ret %d \n", ret);
 	if (!ret)
 		goto rename_hook_done;
-#endif
 
-	target_callsite = ksu_kallsyms_lookup_name("vfs_rename2"); // 4.19 sdcardfs workaround
-	if (!target_callsite)
-		target_callsite = ksu_kallsyms_lookup_name("vfs_rename");
-	symbol_addr = ksu_kallsyms_lookup_name("security_inode_rename");
-	ret = arm64_bl_patch(target_callsite, 256 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_inode_rename);
+	target_callsite = kallsyms_lookup_retry("vfs_rename");
+	symbol_addr = kallsyms_lookup_retry("security_inode_rename");
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 256 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_inode_rename);
 	pr_info("lsm_hijack: security_inode_rename: ret %d \n", ret);
 
 rename_hook_done:
 	;
 
-	target_callsite = ksu_kallsyms_lookup_name("__sys_setresuid");
-	symbol_addr = ksu_kallsyms_lookup_name("security_task_fix_setuid");
-	ret = arm64_bl_patch(target_callsite, 128 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_task_fix_setuid);
+	target_callsite = kallsyms_lookup_retry("__sys_setresuid");
+	if (!target_callsite)
+		target_callsite = kallsyms_lookup_retry("__arm64_sys_setresuid");
+	symbol_addr = kallsyms_lookup_retry("security_task_fix_setuid");
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 256 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_task_fix_setuid);
 	pr_info("lsm_hijack: security_task_fix_setuid: ret %d \n", ret);
 
 #ifdef CONFIG_KSU_FEATURE_SULOG
-	symbol_addr = ksu_kallsyms_lookup_name("security_bprm_check");
-	ret = arm64_bl_patch(ksu_kallsyms_lookup_name("bprm_execve"), 256 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_bprm_check);
-	if (ret)
-		ret = arm64_bl_patch(ksu_kallsyms_lookup_name("search_binary_handler"), 256 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_bprm_check);
-	if (ret)
-		ret = arm64_bl_patch(ksu_kallsyms_lookup_name("exec_binprm"), 256 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_bprm_check);
+	symbol_addr = kallsyms_lookup_retry("security_bprm_check");
+	target_callsite = kallsyms_lookup_retry("bprm_execve");
+	if (!target_callsite)
+		goto skip_bprm1;
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 256 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_bprm_check);
+	if (!ret)
+		goto bprm_done;
+skip_bprm1:
+	target_callsite = kallsyms_lookup_retry("search_binary_handler");
+	if (!target_callsite)
+		goto skip_bprm2;
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 256 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_bprm_check);
+	if (!ret)
+		goto bprm_done;
+skip_bprm2:
+	ret = -ENXIO;
+	target_callsite = kallsyms_lookup_retry("exec_binprm");
+	if (!target_callsite)
+		goto bprm_done;
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 256 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_bprm_check);
+bprm_done:
 	pr_info("lsm_hijack: security_bprm_check: ret %d \n", ret);
 #endif
 
-#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE)
-	symbol_addr = ksu_kallsyms_lookup_name("vfs_read");
-	ret = arm64_bl_patch(ksu_kallsyms_lookup_name("ksys_read"), 64 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_vfs_read);
-	if (ret)
-		ret = arm64_bl_patch(ksu_kallsyms_lookup_name("__arm64_sys_read"), 64 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_vfs_read);
-	pr_info("lsm_hijack: ksys_read: ret %d \n", ret);
+#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE) && !defined(CONFIG_KSU_HACK_ARM64_BRANCH_LINK)
+	symbol_addr = kallsyms_lookup_retry("vfs_read");
+	if (!symbol_addr)
+		goto skip_read2;
+	target_callsite = kallsyms_lookup_retry("__arm64_sys_read");
+	if (!target_callsite)
+		goto skip_read1;
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 128 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_vfs_read);
 	if (!ret)
 		goto read_hook_done;
-
-	symbol_addr = ksu_kallsyms_lookup_name("security_file_permission");
-	ret = arm64_bl_patch(ksu_kallsyms_lookup_name("rw_verify_area"), 64 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_security_file_permission);
-	pr_info("lsm_hijack: rw_verify_area: ret %d \n", ret);
+skip_read1:
+	target_callsite = kallsyms_lookup_retry("ksys_read");
+	if (!target_callsite)
+		goto skip_read2;
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 128 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_vfs_read);
+	if (!ret)
+		goto read_hook_done;
+skip_read2:
+	ret = -ENXIO;
+	symbol_addr = kallsyms_lookup_retry("security_file_permission");
+	if (!symbol_addr)
+		goto read_hook_done;
+	target_callsite = kallsyms_lookup_retry("rw_verify_area");
+	if (!target_callsite)
+		goto read_hook_done;
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 128 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_security_file_permission);
 
 read_hook_done:
+	pr_info("lsm_hijack: security_file_permission: ret %d \n", ret);
 	;
 #endif
 
-	target_callsite = ksu_kallsyms_lookup_name("proc_pid_attr_write");
-	symbol_addr = ksu_kallsyms_lookup_name("security_setprocattr");
-	ret = arm64_bl_patch(target_callsite, 64 * sizeof(void *), symbol_addr, (uintptr_t)&ksu_setprocattr);
+	target_callsite = kallsyms_lookup_retry("proc_pid_attr_write");
+	symbol_addr = kallsyms_lookup_retry("security_setprocattr");
+	ret = arm64_bl_patch(target_callsite, ksu_get_ksym_size(target_callsite, 128 * sizeof(uint32_t)), symbol_addr, (uintptr_t)&ksu_setprocattr);
 	pr_info("lsm_hijack: security_setprocattr: ret %d \n", ret);
 
-#undef ksu_kallsyms_lookup_name
 }

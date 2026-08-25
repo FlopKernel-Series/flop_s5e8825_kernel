@@ -21,10 +21,12 @@ import androidx.compose.material.icons.filled.DeveloperMode
 import androidx.compose.material.icons.filled.ElectricalServices
 import androidx.compose.material.icons.filled.Fence
 import androidx.compose.material.icons.filled.FolderDelete
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.RemoveModerator
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.UploadFile
@@ -211,6 +213,21 @@ fun SettingPagerMaterial(
                             )
                         },
                         {
+                            val webViewUmountSummary = when (uiState.webViewZygoteUmountStatus) {
+                                "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
+                                "managed" -> stringResource(id = R.string.feature_status_managed_summary)
+                                else -> stringResource(id = R.string.settings_webview_zygote_umount_summary)
+                            }
+                            SegmentedSwitchItem(
+                                icon = Icons.Filled.Language,
+                                title = stringResource(id = R.string.settings_webview_zygote_umount),
+                                summary = webViewUmountSummary,
+                                enabled = uiState.webViewZygoteUmountStatus == "supported",
+                                checked = uiState.isWebViewZygoteUmountEnabled,
+                                onCheckedChange = actions.onSetWebViewZygoteUmountEnabled
+                            )
+                        },
+                        {
                             val selinuxHideSummary = when (uiState.selinuxHideStatus) {
                                 "unsupported" -> stringResource(id = R.string.feature_status_unsupported_summary)
                                 "managed" -> stringResource(id = R.string.feature_status_managed_summary)
@@ -255,6 +272,16 @@ fun SettingPagerMaterial(
                                 onCheckedChange = actions.onSetAdbRootEnabled
                             )
                         },
+                        {
+                            SegmentedSwitchItem(
+                                icon = Icons.Filled.RestartAlt,
+                                title = stringResource(id = R.string.settings_soft_reboot),
+                                summary = stringResource(id = R.string.settings_soft_reboot_summary),
+                                enabled = !uiState.isLateLoadMode,
+                                checked = uiState.isLateLoadMode || uiState.useSoftReboot,
+                                onCheckedChange = actions.onSetUseSoftReboot
+                            )
+                        },
                     )
                 )
 
@@ -284,7 +311,7 @@ fun SettingPagerMaterial(
                                 icon = Icons.Filled.ElectricalServices,
                                 title = stringResource(id = R.string.settings_auto_jailbreak),
                                 summary = stringResource(id = R.string.settings_auto_jailbreak_summary),
-                                enabled = false,
+                                enabled = uiState.isLateLoadMode,
                                 checked = uiState.autoJailbreak,
                                 onCheckedChange = actions.onSetAutoJailbreak
                             )

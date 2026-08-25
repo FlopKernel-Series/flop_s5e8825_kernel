@@ -24,6 +24,7 @@ interface SettingsRepository {
     var superuserSortOption: Int
     var suLogFilters: Set<String>?
     var autoJailbreak: Boolean
+    var useSoftReboot: Boolean
     val intentToken: String
 
     suspend fun getSuCompatStatus(): String
@@ -36,6 +37,10 @@ interface SettingsRepository {
     suspend fun getKernelUmountStatus(): String
     fun isKernelUmountEnabled(): Boolean
     fun setKernelUmountEnabled(enabled: Boolean): Boolean
+
+    suspend fun getWebViewZygoteUmountStatus(): String
+    fun isWebViewZygoteUmountEnabled(): Boolean
+    fun setWebViewZygoteUmountEnabled(enabled: Boolean): Boolean
 
     suspend fun getSelinuxHideStatus(): String
     fun isSelinuxHideEnabled(): Boolean

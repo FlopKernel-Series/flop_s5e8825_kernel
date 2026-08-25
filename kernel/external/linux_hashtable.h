@@ -3,6 +3,8 @@
  * (C) 2012  Sasha Levin <levinsasha928@gmail.com>
  */
 
+// ref: https://github.com/torvalds/linux/commit/b67bfe0d42cac56c512dd5da4b1b347a23f4b70a
+
 #ifndef _LINUX_HASHTABLE_H
 #define _LINUX_HASHTABLE_H
 

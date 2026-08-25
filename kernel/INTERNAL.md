@@ -1,18 +1,35 @@
 # Quirks / Adaptations
+## C-style
+- closest to GNU11, theres hacks to make it work on gnu89 / gnu99 compilers.
+- w/ 'C23 declaration after label' - like bypasses
+- pointer-centric. pointer-heavy. cast-heavy. addresses first, types are suggestions.
+- assumes little endian on everything.
+- some metaprogramming is actually happening (redefines, compat hacks, backports)
+- plethora of compiler autism and builtins, this is by design. compiler output is king.
+- minimum is gcc 4.9 / clang 10
 
 ## hooking
 - prefer syscalls and LSM always
 - syscall table hooking is implemented
+- theres partial kprobe/kretprobe support on boot-time hooks
 - on legacy theres no kprobes/kretprobes and syscall tracepoint guarantees
 - theres no guarantee for kallsyms even!
 - lots have random backports left and right, theres no abi stability guarantee at all!
-- theres partial kp/rp support on boot-time hooks
-- theres also experimental ARM64 bl insn inline hooking support. Recommended for GKI.
+- theres also ARM64 'branch-link' inline hooking support.
+- real-deal-but-brittle kallsyms bruteforcer to hunt ksyms.
+- manual hooking is still supported and will be kept forever.
 
 ## sucompat
 - tweaked for downstream
 - simd-like, last word first, per word compare
 - sucompat gate is tweaked too
+
+## LSM framework
+- pure function pointer on sub 6.8
+- 3.x LSM scans the whole kernel to hunt for selinux_ops.
+- 4.2 ~ 6.8 relies on first list member hijack.
+- 6.8+ LSM relies on branch link hooking. ARM64 only.
+- manual hooking also available.
 
 ## task_fix_setuid LSM
 - upstream was on this before
@@ -38,7 +55,8 @@
 - we also use this for "second stage apply" instead of execve_ksud
 - we also grab init_session_keyring here
 
-## security_bprm_check LSM
+## bprm LSM
+- defferent hooks for different kernels
 - think of this as "after sys_execve"
 - lockless argv pullouts for sulog
 - might be used for something later
@@ -61,14 +79,6 @@
 - stack safety is disabled
 - redefines str/mem fn's to builtins
 
-## compat handling
-- always redefine/override if possible
-- avoid heavy metaprogramming on macros
-- if easy, backport newer kernel fn/macro's as is, then redefine.
-- if hard, mimic what it does then redefine. as long as it works it is good enough.
-- lots of casting hacks / type punning / void* / void** abuse are used
-- kernel_compat.h holds most compat handling / hacks
-
 ## kthreads
 - theres a lot of these on the codebase even for mundane tasks
 - fearless concurrency
@@ -77,18 +87,6 @@
 #### sleeping on spinlocks
 - on apply_kernelsu_rules and handle_sepolicy
 - pin task to x cpu, hold rwlock, enable preempt, apply rules, do the reverse.
-#### pointers
-- this is C, theres tons of pointer hacks around.
-- im not pinpointing everything
-#### little endian hacks
-- unused MSB reuse for tiny_sulog
-- long to int dereferences
-#### envp pullouts for adb root
-- on execveat (kernel) hook, we pull this on envp since
-- struct user_arg_ptr envp = { .ptr.native = __envp };
-- __envp is const char __user *const __user * envp
-- so this becomes void * const char __user *const __user * envp
-- this is also used on the execve hook
 #### toolkit's uname hax
 - since we pass arg as reference of arg on sys_reboot
 - this is actually void * const char __user * const char __user *
@@ -96,6 +94,5 @@
 ## log / reminders
 - some kernels reads 'cold + noinline' as __init, which evicts our fn. avoid this combination.
 - some kernels have autistic inlining which also fucks up if we ever wanted to \__\attribute__((flatten)) (e.g. sultan and other 'optimization')
-- c99 restrict is usable, however, we only use this on hot paths where it makes sense.
 
 

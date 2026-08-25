@@ -141,6 +141,54 @@ out_unlock:
 	mutex_unlock(&selinux_hide_list_mutex);
 }
 
+static bool ksu_should_destroy_context(char *str)
+{
+	if (!str)
+		return false;
+
+	bool status = false;
+
+	mutex_lock(&selinux_hide_list_mutex);
+
+	size_t offset = 0;
+	while (offset < ksu_hide_type_len) {
+		const char *current_entry = ksu_hide_type_list + offset;
+		
+		if (strstr(str, current_entry)) {
+			status = true;
+			goto out_unlock;
+		}
+
+		offset = offset + strlen(current_entry) + 1;
+	}
+
+	// double strstr
+	char *str2 = strchr(str, ' ');
+	if (!str2)
+		goto out_unlock;
+
+	offset = 0;
+	while (offset < ksu_hide_rule_len) {
+		const char *src_rule = ksu_hide_rule_list + offset;
+		size_t src_sz = strlen(src_rule) + 1;
+			
+		const char *tgt_rule = src_rule + src_sz;
+		size_t tgt_sz = strlen(tgt_rule) + 1;
+
+		if (strstr(str, src_rule) && strstr(str2, tgt_rule)) {
+			status = true;
+			goto out_unlock;
+		}
+
+		offset = offset + src_sz + tgt_sz;
+	}
+
+out_unlock:
+	mutex_unlock(&selinux_hide_list_mutex);
+	return status;
+
+}
+
 #if 0
 // /selinux/rules.c, linked list
 LIST_HEAD(ksu_hide_type_list);
@@ -248,6 +296,40 @@ static void ksu_add_shit_to_list(u32 cmd, const char *args[])
 
 out_unlock:
 	up_write(&ksu_sepolicy_shitlist_lock);
+}
+
+static bool ksu_should_destroy_context(char *str)
+{
+	if (!str)
+		return false;
+
+	down_read(&ksu_sepolicy_shitlist_lock);
+
+	struct ksu_type_node *t_node;
+	list_for_each_entry(t_node, &ksu_hide_type_list, list) {
+		if (strstr(str, t_node->padded_name)) {
+			up_read(&ksu_sepolicy_shitlist_lock);
+			return true;
+		}
+	}
+
+	// double strstr
+	char *str2 = strchr(str, ' ');
+	if (!str2) {
+		up_read(&ksu_sepolicy_shitlist_lock);
+		return false;
+	}		
+
+	struct ksu_rule_node *r_node;
+	list_for_each_entry(r_node, &ksu_hide_rule_list, list) {
+		if (strstr(str, r_node->src) && strstr(str2, r_node->tgt)) {
+			up_read(&ksu_sepolicy_shitlist_lock);
+			return true;
+		}
+	}
+
+	up_read(&ksu_sepolicy_shitlist_lock);
+	return false;
 }
 #endif
 

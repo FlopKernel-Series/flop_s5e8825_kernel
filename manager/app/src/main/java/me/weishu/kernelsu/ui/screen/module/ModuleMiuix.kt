@@ -111,6 +111,7 @@ import kotlinx.coroutines.launch
 import me.weishu.kernelsu.R
 import me.weishu.kernelsu.data.model.Module
 import me.weishu.kernelsu.data.model.ModuleUpdateInfo
+import me.weishu.kernelsu.data.repository.isSoftRebootPreferred
 import me.weishu.kernelsu.ui.component.ListPopupDefaults
 import me.weishu.kernelsu.ui.component.ObserveAsEvents
 import me.weishu.kernelsu.ui.component.ScrollToTopOnChange
@@ -237,14 +238,17 @@ fun ModulePagerMiuix(
             is ModuleEffect.SnackBar -> {
                 // Cancel the previous reboot snackbar so a new one replaces it instead of queueing
                 snackbarJob.value?.cancel()
+                snackbarHostState.newestSnackbarData()?.dismiss()
+                // Soft reboot keeps the jailbreak and still applies module changes
+                val softReboot = isSoftRebootPreferred()
                 snackbarJob.value = scope.launch {
                     val result = snackbarHostState.showSnackbar(
                         message = event.message,
-                        actionLabel = context.getString(R.string.reboot),
+                        actionLabel = context.getString(if (softReboot) R.string.reboot_soft else R.string.reboot),
                         duration = SnackbarDuration.Long,
                     )
                     if (result == SnackbarResult.ActionPerformed) {
-                        reboot()
+                        reboot(if (softReboot) "soft_reboot" else "")
                     }
                 }
             }

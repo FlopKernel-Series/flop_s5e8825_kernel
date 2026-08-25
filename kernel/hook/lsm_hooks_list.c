@@ -89,49 +89,6 @@ static __nocfi int ksu_setprocattr(struct task_struct *p, char *name, void *valu
 }
 #endif
 
-struct lsm_patch_param {
-	void **target_slot;	// pptr to writable vmapped lsm slot
-	void *fn_ptr;		// fn_ptr to write on that slot
-};
-
-static int patch_lsm_slot_stop_machine(void *data)
-{
-	struct lsm_patch_param *param = (struct lsm_patch_param *)data;
-
-	// write on the actual lsm slot
-	*(param->target_slot) = param->fn_ptr;
-
-	return 0;
-}
-
-static inline int ksu_write_to_readonly_slot(uintptr_t slot_ptr, uintptr_t new_ptr)
-{
-	uintptr_t addr = (uintptr_t)slot_ptr;
-	uintptr_t base = addr & PAGE_MASK;
-	uintptr_t offset = addr & ~PAGE_MASK;
-
-	struct page *page = phys_to_page(__pa(base));
-	if (!page)
-		return -EFAULT;
-
-	void *writable_addr = vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-	if (!writable_addr)
-		return -ENOMEM;
-
-	void **target_slot = (void **)((unsigned long)writable_addr + offset);
-
-	struct lsm_patch_param param;
-	param.target_slot = target_slot;
-	param.fn_ptr = new_ptr;
-
-	stop_machine(patch_lsm_slot_stop_machine, (void *)&param, NULL);
-
-	vunmap(writable_addr);
-	smp_mb();
-
-	return 0;
-}
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 17, 0) || defined(KSU_COMPAT_SECURITY_DELETE_HOOKS_HLIST)
 static void ksu_hack_lsm_slot(struct hlist_head *hook_head, uintptr_t *old_ptr, uintptr_t new_ptr)
 {
@@ -253,7 +210,7 @@ static __init void ksu_lsm_hook_init(void)
 	LSM_HACK_INIT(bprm_committing_creds, ksu_bprm_committing_creds);
 #endif
 
-#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE)
+#if !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE) && !defined(CONFIG_KSU_HACK_ARM64_BRANCH_LINK)
 	LSM_HACK_INIT(file_permission, ksu_file_permission);
 	kthread_run(ksu_restore_file_permission, NULL, "kthread");
 #endif

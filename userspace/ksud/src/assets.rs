@@ -35,14 +35,25 @@ mod android {
 #[cfg(target_os = "android")]
 pub use android::*;
 
-#[cfg(all(target_arch = "arm", target_os = "android"))]
+#[cfg(all(target_arch = "x86_64", target_os = "android"))]
 #[derive(RustEmbed)]
-#[folder = "bin/arm"]
+#[folder = "bin/x86_64"]
 struct Asset;
 
 #[cfg(all(target_arch = "aarch64", target_os = "android"))]
 #[derive(RustEmbed)]
 #[folder = "bin/aarch64"]
+struct Asset;
+
+#[cfg(all(target_arch = "arm", target_os = "android"))]
+#[derive(RustEmbed)]
+#[folder = "bin/arm"]
+struct Asset;
+
+// If not Android, ie. macos, linux, windows, include both
+#[cfg(not(target_os = "android"))]
+#[derive(RustEmbed)]
+#[folder = "bin"]
 struct Asset;
 
 #[allow(unused)]

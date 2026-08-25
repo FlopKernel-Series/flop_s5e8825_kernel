@@ -134,6 +134,7 @@ import kotlinx.coroutines.launch
 import me.weishu.kernelsu.R
 import me.weishu.kernelsu.data.model.Module
 import me.weishu.kernelsu.data.model.ModuleUpdateInfo
+import me.weishu.kernelsu.data.repository.isSoftRebootPreferred
 import me.weishu.kernelsu.ui.component.ObserveAsEvents
 import me.weishu.kernelsu.ui.component.ScrollToTopOnChange
 import me.weishu.kernelsu.ui.component.dialog.rememberConfirmDialog
@@ -255,14 +256,17 @@ fun ModulePagerMaterial(
             is ModuleEffect.SnackBar -> {
                 // Cancel the previous reboot snackbar so a new one replaces it instead of queueing
                 snackbarJob.value?.cancel()
+                snackBarHost.currentSnackbarData?.dismiss()
+                // Soft reboot keeps the jailbreak and still applies module changes
+                val softReboot = isSoftRebootPreferred()
                 snackbarJob.value = scope.launch {
                     val result = snackBarHost.showSnackbar(
                         message = event.message,
-                        actionLabel = resource.getString(R.string.reboot),
+                        actionLabel = resource.getString(if (softReboot) R.string.reboot_soft else R.string.reboot),
                         duration = SnackbarDuration.Long
                     )
                     if (result == SnackbarResult.ActionPerformed) {
-                        reboot()
+                        reboot(if (softReboot) "soft_reboot" else "")
                     }
                 }
             }
