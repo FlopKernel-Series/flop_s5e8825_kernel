@@ -136,3 +136,10 @@ type 'struct task_struct' changed
   member 'u64 android_kabi_reserved2' was removed
   member 'union { struct { unsigned int user_dumpable; }; struct { u64 android_kabi_reserved2; }; union { }; }' was added
 
+type 'struct fscrypt_master_key' changed
+  byte size changed from 832 to 840
+  member changed from 'struct key* mk_users' to 'struct list_head mk_users'
+    type changed from 'struct key*' to 'struct list_head'
+  7 members ('struct list_head mk_decrypted_inodes' .. 'bool mk_ino_hash_key_initialized') changed
+    offset changed by 64
+
