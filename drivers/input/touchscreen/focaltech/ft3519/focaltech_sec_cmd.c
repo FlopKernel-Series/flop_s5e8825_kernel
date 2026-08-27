@@ -1750,11 +1750,12 @@ static void run_cs_delta_read_all(void *device_data)
 	int byte_num = 0;
 	char *buff;
 	char temp[SEC_CMD_STR_LEN] = { 0 };
+	int buff_len = ts_data->tx_num * ts_data->rx_num * CMD_RESULT_WORD_LEN;
 	int i, j;
 
 	FTS_FUNC_ENTER();
 
-	buff = kzalloc(ts_data->tx_num * ts_data->rx_num * CMD_RESULT_WORD_LEN, GFP_KERNEL);
+	buff = kzalloc(buff_len, GFP_KERNEL);
 
 	if (!buff) {
 		FTS_ERROR("failed to alloc allnode buff");
@@ -1798,7 +1799,7 @@ static void run_cs_delta_read_all(void *device_data)
 	for (i = 0; i < ts_data->rx_num; i++) {
 		for (j = 0; j < ts_data->tx_num; j++) {
 			snprintf(temp, CMD_RESULT_WORD_LEN, "%d,", ts_data->pFrame[i + (j * ts_data->rx_num)]);
-			strlcat(buff, temp, ts_data->tx_num * ts_data->rx_num * CMD_RESULT_WORD_LEN);
+			strlcat(buff, temp, buff_len);
 		}
 	}
 
@@ -1811,11 +1812,11 @@ out_testmode:
 out:
 	if (ret < 0) {
 		sec->cmd_state = SEC_CMD_STATUS_FAIL;
-		snprintf(buff, sizeof(buff), "NG");
+		snprintf(buff, buff_len, "NG");
 	} else
 		sec->cmd_state = SEC_CMD_STATUS_OK;
 
-	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
+	sec_cmd_set_cmd_result(sec, buff, strnlen(buff, buff_len));
 	FTS_INFO("%s", buff);
 
 	enter_work_mode();
