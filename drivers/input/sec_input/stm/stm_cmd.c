@@ -1405,18 +1405,18 @@ int stm_ts_panel_test_result(struct stm_ts_data *ts, int type)
 	stm_ts_read_nonsync_frame(ts, &temp_min, &temp_max);
 
 	if (type == OPEN_TEST && result == -ITO_FAIL_OPEN) {
-		snprintf(result_buff, sizeof(result_buff), "NG");
-		sec_cmd_set_cmd_result(sec, result_buff, strnlen(result_buff, sizeof(result_buff)));
+		snprintf(result_buff, size, "NG");
+		sec_cmd_set_cmd_result(sec, result_buff, strnlen(result_buff, size));
 		sec->cmd_state = SEC_CMD_STATUS_FAIL;
 
 	} else if (type == SHORT_TEST && result == -ITO_FAIL_SHORT) {
-		snprintf(result_buff, sizeof(result_buff), "NG");
-		sec_cmd_set_cmd_result(sec, result_buff, strnlen(result_buff, sizeof(result_buff)));
+		snprintf(result_buff, size, "NG");
+		sec_cmd_set_cmd_result(sec, result_buff, strnlen(result_buff, size));
 		sec->cmd_state = SEC_CMD_STATUS_FAIL;
 
 	} else {
-		snprintf(result_buff, sizeof(result_buff), "OK");
-		sec_cmd_set_cmd_result(sec, result_buff, strnlen(result_buff, sizeof(result_buff)));
+		snprintf(result_buff, size, "OK");
+		sec_cmd_set_cmd_result(sec, result_buff, strnlen(result_buff, size));
 		sec->cmd_state = SEC_CMD_STATUS_OK;
 	}
 
