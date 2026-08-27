@@ -41,6 +41,52 @@ else
     log_info "Overriding default toolchain"
 fi
 
+download_file() {
+    local url="$1"
+    local dest_dir="$2"
+    local dest_file="$3"
+    local target="$dest_dir/$dest_file"
+
+    if ! command -v aria2c &>/dev/null; then
+        log_err "aria2c is required for downloading toolchains but was not found in PATH! Aborting..."
+        return 1
+    fi
+
+    mkdir -p "$dest_dir"
+    rm -f "$target" "${target}.aria2"
+
+    if ! aria2c -x 16 -s 16 -k 1M --allow-overwrite=true --auto-file-renaming=false \
+                --max-tries=5 --retry-wait=2 --connect-timeout=30 --timeout=60 \
+                -d "$dest_dir" -o "$dest_file" "$url"; then
+        log_err "Download failed from $url! Aborting..."
+        rm -f "$target" "${target}.aria2"
+        return 1
+    fi
+
+    if [ ! -f "$target" ]; then
+        log_err "Downloaded file $target was not found after download! Aborting..."
+        rm -f "${target}.aria2"
+        return 1
+    fi
+
+    return 0
+}
+
+extract_tar() {
+    local archive="$1"
+    local target_dir="$2"
+
+    mkdir -p "$target_dir"
+    if ! tar -xf "$archive" -C "$target_dir"; then
+        log_err "Extraction of $(basename "$archive") failed! Aborting..."
+        rm -f "$archive" "${archive}.aria2"
+        rm -rf "$target_dir"
+        return 1
+    fi
+    rm -f "$archive" "${archive}.aria2"
+    return 0
+}
+
 get_toolchain() {
     local toolchain_type="$1"
     local toolchain_dir=""
@@ -49,7 +95,7 @@ get_toolchain() {
         aosp)
             toolchain_dir="$AC_DIR"
             if [ ! -d "$toolchain_dir" ]; then
-                log_info "AOSP Clang not found! Cloning to $toolchain_dir..."
+                log_info "AOSP Clang not found! Downloading to $toolchain_dir..."
                 # scrape the HTML directory listing on the mirror‑GOOG branch
                 HTML=$(curl -s "$AOSP_LIST")
                 CURRENT_CLANG=$(
@@ -66,11 +112,16 @@ get_toolchain() {
                 fi
 
                 log_info "Latest AOSP Clang is $CURRENT_CLANG, downloading…"
-                if ! wget -nv --show-progress -O "${CURRENT_CLANG}.tar.gz" "${AOSP_ARCHIVE}/${CURRENT_CLANG}.tar.gz"; then
+                local archive_name="${CURRENT_CLANG}.tar.gz"
+                if ! download_file "${AOSP_ARCHIVE}/${archive_name}" "$TC_DIR" "$archive_name"; then
                     log_err "Download failed! Aborting..."
                     exit 1
                 fi
-                mkdir -p "$toolchain_dir" && tar -xf ./*.tar.gz -C "$toolchain_dir" && rm ./*.tar.gz
+                if ! extract_tar "$TC_DIR/$archive_name" "$toolchain_dir"; then
+                    log_err "Extraction failed! Aborting..."
+                    exit 1
+                fi
+                mkdir -p "$toolchain_dir/bin"
                 touch "$toolchain_dir/bin/aarch64-linux-gnu-elfedit" && chmod +x "$toolchain_dir/bin/aarch64-linux-gnu-elfedit"
                 touch "$toolchain_dir/bin/arm-linux-gnueabi-elfedit" && chmod +x "$toolchain_dir/bin/arm-linux-gnueabi-elfedit"
             fi
@@ -98,37 +149,45 @@ get_toolchain() {
         slim)
             toolchain_dir="$SL_DIR"
             if [ ! -d "$toolchain_dir" ]; then
-                log_info "Slim LLVM not found! Cloning to $toolchain_dir..."
+                log_info "Slim LLVM not found! Downloading to $toolchain_dir..."
                 FILENAMES=$(curl -s "$SL_REPO" | grep -oP 'llvm-[\d.]+-x86_64\.tar\.xz')
                 LATEST_FILE=$(echo "$FILENAMES" | sort -V | tail -n 1)
-                if ! wget -q --show-progress -O "$WP/${LATEST_FILE}" "${SL_REPO}${LATEST_FILE}"; then
+                if [ -z "$LATEST_FILE" ]; then
+                    log_err "Failed to find latest Slim LLVM archive! Aborting..."
+                    exit 1
+                fi
+                if ! download_file "${SL_REPO}${LATEST_FILE}" "$TC_DIR" "${LATEST_FILE}"; then
                     log_err "Download failed! Aborting..."
                     exit 1
                 fi
-                mkdir -p "$toolchain_dir"
                 EXTRACTED_FOLDER=$(basename "$LATEST_FILE" .tar.xz)
-                tar -xf "$WP/${LATEST_FILE}" -C "$toolchain_dir"
-                mv "$toolchain_dir/$EXTRACTED_FOLDER"/* "$toolchain_dir"
-                rmdir "$toolchain_dir/$EXTRACTED_FOLDER"
-                rm "$WP/${LATEST_FILE}"
+                if ! extract_tar "$TC_DIR/${LATEST_FILE}" "$toolchain_dir"; then
+                    log_err "Extraction failed! Aborting..."
+                    exit 1
+                fi
+                if [ -d "$toolchain_dir/$EXTRACTED_FOLDER" ]; then
+                    mv "$toolchain_dir/$EXTRACTED_FOLDER"/* "$toolchain_dir"
+                    rmdir "$toolchain_dir/$EXTRACTED_FOLDER"
+                fi
             fi
             ;;
         greenforce)
             toolchain_dir="$GC_DIR"
             if [ ! -d "$toolchain_dir" ]; then
-                log_info "Greenforce Clang not found! Cloning to $toolchain_dir..."
+                log_info "Greenforce Clang not found! Downloading to $toolchain_dir..."
                 LATEST_RELEASE=$(curl -s $GC_REPO | grep "browser_download_url" | grep ".tar.gz" | cut -d '"' -f 4)
                 if [ -z "$LATEST_RELEASE" ]; then
                     log_err "Failed to fetch the latest Greenforce Clang release! Aborting..."
                     exit 1
                 fi
-                if ! wget -q --show-progress -O "$WP/greenforce-clang.tar.gz" "$LATEST_RELEASE"; then
+                if ! download_file "$LATEST_RELEASE" "$TC_DIR" "greenforce-clang.tar.gz"; then
                     log_err "Download failed! Aborting..."
                     exit 1
                 fi
-                mkdir -p "$toolchain_dir"
-                tar -xf "$WP/greenforce-clang.tar.gz" -C "$toolchain_dir"
-                rm "$WP/greenforce-clang.tar.gz"
+                if ! extract_tar "$TC_DIR/greenforce-clang.tar.gz" "$toolchain_dir"; then
+                    log_err "Extraction failed! Aborting..."
+                    exit 1
+                fi
             fi
             ;;
         custom)
@@ -142,7 +201,7 @@ get_toolchain() {
         zyc)
             toolchain_dir="$ZC_DIR"
             if [ ! -d "$toolchain_dir" ]; then
-                log_info "ZyC Clang not found! Cloning to $toolchain_dir..."
+                log_info "ZyC Clang not found! Downloading to $toolchain_dir..."
             fi
 
             ZYC_VERSION_FILE="$WP/zyc-clang-version.txt"
@@ -169,18 +228,16 @@ get_toolchain() {
                     log_err "Failed to fetch the latest ZyC Clang release! Aborting..."
                     exit 1
                 fi
-                if ! wget -q --show-progress -O "$WP/zyc-clang.tar.gz" "$LATEST_VERSION"; then
+                if ! download_file "$LATEST_VERSION" "$TC_DIR" "zyc-clang.tar.gz"; then
                     log_err "Download failed! Aborting..."
                     rm -f "$ZYC_VERSION_FILE"
                     exit 1
                 fi
-                mkdir -p "$toolchain_dir"
-                if ! tar -xf "$WP/zyc-clang.tar.gz" -C "$toolchain_dir"; then
+                if ! extract_tar "$TC_DIR/zyc-clang.tar.gz" "$toolchain_dir"; then
                     log_err "Extraction failed! Aborting..."
                     rm -f "$WP/zyc-clang.tar.gz" "$ZYC_VERSION_FILE"
                     exit 1
                 fi
-                rm "$WP/zyc-clang.tar.gz"
             fi
             ;;
         rv)
@@ -192,17 +249,14 @@ get_toolchain() {
                     log_err "Failed to fetch the latest RvClang release! Aborting..."
                     exit 1
                 fi
-                if ! wget -q --show-progress -O "$WP/rvclang.tar.gz" "$LATEST_RELEASE"; then
+                if ! download_file "$LATEST_RELEASE" "$TC_DIR" "rvclang.tar.gz"; then
                     log_err "Download failed! Aborting..."
                     exit 1
                 fi
-                mkdir -p "$toolchain_dir"
-                if ! tar -xf "$WP/rvclang.tar.gz" -C "$toolchain_dir"; then
+                if ! extract_tar "$TC_DIR/rvclang.tar.gz" "$toolchain_dir"; then
                     log_err "Extraction failed! Aborting..."
-                    rm -f "$WP/rvclang.tar.gz"
                     exit 1
                 fi
-                rm "$WP/rvclang.tar.gz"
                 if [ -d "$toolchain_dir/RvClang" ]; then
                     mv "$toolchain_dir/RvClang"/* "$toolchain_dir/"
                     rmdir "$toolchain_dir/RvClang"
@@ -258,6 +312,11 @@ prep_toolchain() {
               exit 1
               ;;
       esac
+
+    if [ ! -f "$toolchain_dir/bin/clang" ]; then
+        log_err "Clang executable not found at $toolchain_dir/bin/clang! Aborting..."
+        exit 1
+    fi
 
     export PATH="${toolchain_dir}/bin:${PATH}"
     KBUILD_COMPILER_STRING=$("$toolchain_dir/bin/clang" -v 2>&1 | head -n 1 | sed 's/(https..*//' | sed 's/ version//')

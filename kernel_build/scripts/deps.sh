@@ -9,16 +9,17 @@ else
 	  return 1
 fi
 
-DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache )
+DEPS=( lz4 brotli flex bc cpio kmod zip binutils-aarch64-linux-gnu ccache aria2 )
 
 UBUNTU() {
-    local DEPS=( lz4 brotli flex bc cpio kmod zip ccache binutils-aarch64-linux-gnu )
+    local CMDS=( lz4 brotli flex bc cpio kmod zip ccache aarch64-linux-gnu-ld aria2c )
+    local PKGS=( lz4 brotli flex bc cpio kmod zip ccache binutils-aarch64-linux-gnu aria2 )
     local MISSING=()
 
     # Check command presence
-    for d in "${DEPS[@]}"; do
-        if ! command -v "$d" >/dev/null 2>&1; then
-            MISSING+=("$d")
+    for i in "${!CMDS[@]}"; do
+        if ! command -v "${CMDS[i]}" >/dev/null 2>&1; then
+            MISSING+=("${PKGS[i]}")
         fi
     done
 
@@ -29,8 +30,9 @@ UBUNTU() {
 }
 
 ARCH(){
-    local DEPS=( lz4 brotli flex bc cpio kmod zip aarch64-linux-gnu-binutils ccache )
-    local MISSING=$(pacman -T "${DEPS[@]}" 2>/dev/null)
+    local DEPS=( lz4 brotli flex bc cpio kmod zip aarch64-linux-gnu-binutils ccache aria2 )
+    local MISSING
+    MISSING=$(pacman -T "${DEPS[@]}" 2>/dev/null || true)
 
     if [ -n "$MISSING" ]; then
 		    $ROOT pacman -Syyuu --needed --noconfirm $MISSING
@@ -38,8 +40,8 @@ ARCH(){
 }
 
 GENTOO() {
-    local DEPS=( lz4 brotli flex bc cpio kmod ccache zip )
-    local PKGS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip )
+    local DEPS=( lz4 brotli flex bc cpio kmod ccache zip aria2c )
+    local PKGS=( app-arch/lz4 app-arch/brotli sys-devel/flex sys-devel/bc app-arch/cpio sys-apps/kmod dev-util/ccache app-arch/zip net-misc/aria2 )
     local MISSING=()
 
     for i in "${!DEPS[@]}"; do
