@@ -854,6 +854,10 @@ struct task_struct {
 	unsigned			in_memstall:1;
 #endif
 
+#ifdef CONFIG_CFI_STUBS
+	u8				__gki_task_pad[0xc8];
+#endif
+
 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
 
 	struct restart_block		restart_block;

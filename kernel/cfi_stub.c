@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * Stub symbols for legacy Clang CFI LKMs.
+ * Stub symbols for legacy Clang CFI and GKI LKMs.
  */
 
 #include <linux/export.h>
 #include <linux/types.h>
+#include <linux/jump_label.h>
 
 void __cfi_slowpath(u64 id, void *ptr)
 {
@@ -30,3 +31,8 @@ void __ubsan_handle_cfi_check_fail_abort(void *data, void *ptr, void *vtable)
 {
 }
 EXPORT_SYMBOL(__ubsan_handle_cfi_check_fail_abort);
+
+#ifndef CONFIG_KASAN_HW_TAGS
+DEFINE_STATIC_KEY_FALSE(kasan_flag_enabled);
+EXPORT_SYMBOL(kasan_flag_enabled);
+#endif
