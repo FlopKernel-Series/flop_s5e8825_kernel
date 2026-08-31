@@ -750,6 +750,17 @@ config CFI_PERMISSIVE
 
 	  If unsure, say N.
 
+config CFI_STUBS
+	bool "Provide stub symbols for legacy Clang CFI LKMs"
+	depends on MODULES
+	default y
+	help
+	  Provides dummy symbols for legacy Clang CFI runtime functions
+	  (__cfi_slowpath, __cfi_check, etc.) so that generic LKMs compiled
+	  against ACK with legacy Clang CFI can load and execute.
+
+	  If unsure, say Y.
+
 config HAVE_ARCH_WITHIN_STACK_FRAMES
 	bool
 	help
