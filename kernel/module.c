@@ -2417,6 +2417,16 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
 				break;
 			}
 
+#ifdef CONFIG_KALLSYMS
+			if (!ksym) {
+				unsigned long addr = kallsyms_lookup_name(name);
+				if (addr) {
+					sym[i].st_value = addr;
+					break;
+				}
+			}
+#endif
+
 			/* Ok if weak or ignored.  */
 			if (!ksym &&
 			    (ELF_ST_BIND(sym[i].st_info) == STB_WEAK ||
