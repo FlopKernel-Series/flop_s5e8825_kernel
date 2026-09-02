@@ -14,7 +14,8 @@ void ksu_sucompat_init(void);
 void ksu_sucompat_exit(void);
 
 // Handler functions exported for hook_manager
-#ifdef CONFIG_KSU_SUSFS
+// kernels < 6.1 pass a raw const char __user **, not struct filename **
+#if defined(CONFIG_KSU_SUSFS) && LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 int ksu_handle_faccessat(int *dfd, struct filename **filename, int *mode, int *__unused_flags);
 int ksu_handle_stat(int *dfd, struct filename **filename, int *flags);
 #else
