@@ -64,4 +64,6 @@ static inline bool is_usb_aoffload_disabled_fast(void)
 	return static_branch_unlikely(&usb_aoffload_disable_key);
 }
 
+bool is_init_debug_enabled(void);
+
 #endif /* _WORKAROUNDS_H */

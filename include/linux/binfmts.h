@@ -149,6 +149,7 @@ int kernel_execve(const char *filename,
 bool freq_control_blocking_enabled(void);
 int freq_control_register_enable_hook(void (*hook)(void));
 void freq_control_unregister_enable_hook(void (*hook)(void));
+bool is_init_debug_enabled(void);
 
 static inline bool task_has_exec_prefix(struct task_struct *tsk, const char *prefix)
 {

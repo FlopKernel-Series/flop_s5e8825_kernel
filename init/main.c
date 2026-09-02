@@ -342,6 +342,28 @@ bool is_usb_aoffload_disabled(void)
 }
 EXPORT_SYMBOL(is_usb_aoffload_disabled);
 
+static bool init_debug;
+
+static int __init set_init_debug(char *val)
+{
+	int tmp = init_debug;
+
+	if (get_option(&val, &tmp))
+		init_debug = !!tmp;
+
+	pr_info("Workaround: init_debug=%s\n",
+		init_debug ? "enabled" : "disabled");
+
+	return 0;
+}
+__setup("init_debug=", set_init_debug);
+
+bool is_init_debug_enabled(void)
+{
+	return init_debug;
+}
+EXPORT_SYMBOL_GPL(is_init_debug_enabled);
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.
