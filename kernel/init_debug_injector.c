@@ -188,6 +188,7 @@ static int sys_fstat_handler_pre(struct kretprobe_instance *ri, struct pt_regs *
 
     if (is_target_init_rc(file)) {
         *(void **)&ri->data = statbuf;
+        apply_proxy(file);
         fput(file);
         return 0;
     }
