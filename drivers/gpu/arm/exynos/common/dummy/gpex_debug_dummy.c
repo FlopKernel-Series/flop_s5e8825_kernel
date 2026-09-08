@@ -19,6 +19,7 @@
  */
 
 /* Implements */
+#include <linux/export.h>
 #include <gpex_debug.h>
 
 int gpex_debug_init(struct device **dev)
@@ -30,6 +31,7 @@ void gpex_debug_dump_hist(enum hist_type ht)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpex_debug_dump_hist);
 
 void gpex_debug_new_record(enum hist_type ht)
 {

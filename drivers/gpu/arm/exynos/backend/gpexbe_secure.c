@@ -19,51 +19,26 @@
  */
 
 /* Implements */
+#include <linux/export.h>
+#include <linux/errno.h>
 #include <gpexbe_secure.h>
-
-/* Uses */
-#include <mali_kbase.h>
-#include <linux/protected_mode_switcher.h>
-
-#include <gpex_utils.h>
 #include <gpexbe_smc.h>
 
-static int exynos_secure_mode_enable(struct protected_mode_device *pdev)
+int gpexbe_secure_protection_enable(void)
 {
-	int ret = 0;
-
-	if (!pdev)
-		return -EINVAL;
-
-	ret = kbase_pm_protected_mode_enable(pdev->data);
-	if (ret != 0)
-		return ret;
-
 	return gpexbe_smc_protection_enable();
 }
+EXPORT_SYMBOL_GPL(gpexbe_secure_protection_enable);
 
-static int exynos_secure_mode_disable(struct protected_mode_device *pdev)
+int gpexbe_secure_protection_disable(void)
 {
-	int ret = 0;
-
-	if (!pdev)
-		return -EINVAL;
-
-	ret = kbase_pm_protected_mode_disable(pdev->data);
-	if (ret != 0)
-		return ret;
-
 	return gpexbe_smc_protection_disable();
 }
+EXPORT_SYMBOL_GPL(gpexbe_secure_protection_disable);
 
 struct protected_mode_ops *gpexbe_secure_get_protected_mode_ops(void)
 {
-	static struct protected_mode_ops exynos_protected_ops = {
-		.protected_mode_enable = &exynos_secure_mode_enable,
-		.protected_mode_disable = &exynos_secure_mode_disable
-	};
-
-	return &exynos_protected_ops;
+	return NULL;
 }
 
 int gpexbe_secure_legacy_jm_enter_protected_mode(struct kbase_device *kbdev)

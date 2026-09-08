@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <linux/version.h>
 #include <linux/device.h>
 #include <linux/spinlock.h>
@@ -299,3 +300,4 @@ int gpex_qos_set_from_clock(int gpu_clock)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_qos_set_from_clock);

@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <gpex_qos.h>
 
 int gpex_qos_init(void)
@@ -44,6 +45,7 @@ int gpex_qos_set_from_clock(int clk)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_qos_set_from_clock);
 
 int gpex_qos_set_bts_mo(int gpu_clock)
 {

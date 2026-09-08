@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <linux/ktime.h>
 #include <gpex_utils.h>
 #include <gpex_tsg.h>
@@ -63,7 +64,9 @@ uint32_t *gpu_dvfs_get_freq_table(void)
 
 	return freqs;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_freq_table);
+#endif
 
 uint32_t volts[DVFS_TABLE_ROW_MAX];
 uint32_t *exynos_stats_get_gpu_volt_table(void)
@@ -78,25 +81,33 @@ ktime_t *gpu_dvfs_get_time_in_state(void)
 {
 	return time_in_state;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_time_in_state);
+#endif
 
 ktime_t gpu_dvfs_get_tis_last_update(void)
 {
 	return tis_last_update;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_tis_last_update);
+#endif
 
 int gpu_dvfs_get_max_freq(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_max_freq);
+#endif
 
 int gpu_dvfs_get_min_freq(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_min_freq);
+#endif
 
 int exynos_stats_set_queued_threshold_0(unsigned int threshold)
 {
@@ -116,13 +127,17 @@ ktime_t *gpu_dvfs_get_job_queue_count(void)
 {
 	return NULL;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_job_queue_count);
+#endif
 
 ktime_t gpu_dvfs_get_job_queue_last_updated(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_job_queue_last_updated);
+#endif
 
 void exynos_stats_set_gpu_polling_speed(int polling_speed)
 {
@@ -140,19 +155,25 @@ void gpu_dvfs_set_amigo_governor(int mode)
 {
 	CSTD_UNUSED(mode);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_set_amigo_governor);
+#endif
 
 void gpu_dvfs_set_freq_margin(int margin)
 {
 	CSTD_UNUSED(margin);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_set_freq_margin);
+#endif
 
 void exynos_stats_get_run_times(u64 *times)
 {
 	CSTD_UNUSED(times);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_get_run_times);
+#endif
 
 void exynos_stats_get_pid_list(u16 *pidlist)
 {
@@ -164,13 +185,17 @@ void exynos_stats_set_vsync(ktime_t timestamp)
 {
 	CSTD_UNUSED(timestamp);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_set_vsync);
+#endif
 
 void exynos_migov_set_targetframetime(int us)
 {
 	CSTD_UNUSED(us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_targetframetime);
+#endif
 
 void exynos_sdp_set_powertable(int id, int cnt, struct freq_table *table)
 {
@@ -178,43 +203,57 @@ void exynos_sdp_set_powertable(int id, int cnt, struct freq_table *table)
 	CSTD_UNUSED(cnt);
 	CSTD_UNUSED(table);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_sdp_set_powertable);
+#endif
 
 void exynos_sdp_set_busy_domain(int id)
 {
 	CSTD_UNUSED(id);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_sdp_set_busy_domain);
+#endif
 
 void exynos_sdp_set_cur_freqlv(int id, int idx)
 {
 	CSTD_UNUSED(idx);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_sdp_set_cur_freqlv);
+#endif
 
 void exynos_migov_set_targettime_margin(int us)
 {
 	CSTD_UNUSED(us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_targettime_margin);
+#endif
 
 void exynos_migov_set_util_margin(int percentage)
 {
 	CSTD_UNUSED(percentage);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_util_margin);
+#endif
 
 void exynos_migov_set_decon_time(int us)
 {
 	CSTD_UNUSED(us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_decon_time);
+#endif
 
 void exynos_migov_set_comb_ctrl(int enable)
 {
 	CSTD_UNUSED(enable);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_comb_ctrl);
+#endif
 
 int exynos_gpu_stc_config_show(int page_size, char *buf)
 {
@@ -222,28 +261,36 @@ int exynos_gpu_stc_config_show(int page_size, char *buf)
 	CSTD_UNUSED(buf);
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_gpu_stc_config_show);
+#endif
 
 int exynos_gpu_stc_config_store(const char *buf)
 {
 	CSTD_UNUSED(buf);
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_gpu_stc_config_store);
+#endif
 
 int gpu_dvfs_register_utilization_notifier(struct notifier_block *nb)
 {
 	CSTD_UNUSED(nb);
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_register_utilization_notifier);
+#endif
 
 int gpu_dvfs_unregister_utilization_notifier(struct notifier_block *nb)
 {
 	CSTD_UNUSED(nb);
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_unregister_utilization_notifier);
+#endif
 
 void gpex_tsg_set_migov_mode(int mode)
 {
@@ -397,6 +444,7 @@ int gpex_tsg_get_amigo_flags(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_get_amigo_flags);
 
 uint32_t gpex_tsg_get_queued_threshold(int idx)
 {
@@ -462,24 +510,29 @@ int gpex_tsg_set_count(u32 status, bool stop)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_set_count);
 
 void gpex_tsg_update_firstjob_time(void)
 {
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_firstjob_time);
 
 void gpex_tsg_update_lastjob_time(int slot_nr)
 {
 	CSTD_UNUSED(slot_nr);
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_lastjob_time);
 
 void gpex_tsg_update_jobsubmit_time(void)
 {
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_jobsubmit_time);
 
 void gpex_tsg_sum_jobs_time(int slot_nr)
 {
 	CSTD_UNUSED(slot_nr);
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_sum_jobs_time);
 
 int gpex_tsg_amigo_interframe_sw_update(ktime_t start, ktime_t end)
 {
@@ -488,16 +541,19 @@ int gpex_tsg_amigo_interframe_sw_update(ktime_t start, ktime_t end)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_sw_update);
 
 int gpex_tsg_amigo_interframe_hw_update_eof(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_hw_update_eof);
 
 int gpex_tsg_amigo_interframe_hw_update(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_hw_update);
 
 int gpex_tsg_init(struct device **dev)
 {
@@ -525,4 +581,6 @@ void exynos_stats_get_frame_info(s32 *nrframe, u64 *nrvsync, u64 *delta_ms)
 	CSTD_UNUSED(nrvsync);
 	CSTD_UNUSED(delta_ms);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_get_frame_info);
+#endif

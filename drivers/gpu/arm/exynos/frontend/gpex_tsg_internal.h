@@ -23,7 +23,7 @@
 #include <linux/ktime.h>
 
 struct _tsg_info {
-	struct kbase_device *kbdev;
+	struct device *dev;
 	struct {
 		int util_history[2][WINDOW];
 		int freq_history[WINDOW];

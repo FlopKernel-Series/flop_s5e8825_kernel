@@ -19,11 +19,11 @@
  */
 
 /* Implements */
+#include <linux/export.h>
 #include <gpex_debug.h>
 
 /* Uses */
 #include <gpex_utils.h>
-#include <mali_kbase.h>
 #include <linux/ktime.h>
 
 struct record {
@@ -101,6 +101,7 @@ void gpex_debug_dump_hist(enum hist_type ht)
 			idx = hist_size[ht]  - 1;
 	}
 }
+EXPORT_SYMBOL_GPL(gpex_debug_dump_hist);
 
 static inline struct record *get_record(enum hist_type ht)
 {

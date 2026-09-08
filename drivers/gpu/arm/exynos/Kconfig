@@ -19,9 +19,17 @@
 #
 # /* SPDX-License-Identifier: GPL-2.0 */
 
+config EXYNOS_GPEX
+    tristate "Samsung Exynos GPU Platform Extension (GPEX)"
+    default m
+    help
+      Platform power management, DVFS, interconnect QoS, and clock scaling
+      framework for Exynos GPUs (Mali and Panfrost).
+
 config MALI_EXYNOS_CLOCK
     bool "Enable EXYNOS CLOCK"
     depends on MALI_MIDGARD && CAL_IF
+    depends on EXYNOS_GPEX && CAL_IF
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
     default n
@@ -31,6 +39,7 @@ config MALI_EXYNOS_CLOCK
 config MALI_EXYNOS_DVFS
     bool "Enable EXYNOS DVFS"
     depends on MALI_MIDGARD && MALI_EXYNOS_CLOCK
+    depends on EXYNOS_GPEX && MALI_EXYNOS_CLOCK
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
     default n
@@ -40,6 +49,7 @@ config MALI_EXYNOS_DVFS
 config MALI_DVFS
     bool "Enable EXYNOS DVFS"
     depends on MALI_MIDGARD && MALI_EXYNOS_DVFS
+    depends on EXYNOS_GPEX && MALI_EXYNOS_DVFS
     default y
     help
       Choose this option to enable DVFS in the Mali Midgard DDK.
@@ -47,6 +57,7 @@ config MALI_DVFS
 config MALI_EXYNOS_PM
     bool "Enable EXYNOS Power Management"
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     depends on PM
     depends on EXYNOS_PD
     default y if SOC_EXYNOS9830
@@ -67,6 +78,7 @@ config MALI_EXYNOS_RTPM
 config MALI_EXYNOS_IFPO
     bool "Enable IFPO(Inter-Frame Power Off)"
     depends on MALI_MIDGARD && MALI_EXYNOS_PM && REGULATOR
+    depends on EXYNOS_GPEX && MALI_EXYNOS_PM && REGULATOR
     default n
     help
       choose this option to enable IFPO Option in the Mali tBEx DDK.
@@ -74,6 +86,7 @@ config MALI_EXYNOS_IFPO
 config MALI_DEBUG_SYS
     bool "Enable sysfs for the Mali Midgard DDK "
     depends on MALI_MIDGARD && SYSFS
+    depends on EXYNOS_GPEX && SYSFS
     default y
     help
       Enables sysfs for the Mali Midgard DDK. Set/Monitor the Mali Midgard DDK
@@ -81,6 +94,7 @@ config MALI_DEBUG_SYS
 config MALI_DEBUG_KERNEL_SYSFS
     bool "Support Kernel Group Debug SysFS"
     depends on MALI_MIDGARD && MALI_DEBUG_SYS
+    depends on EXYNOS_GPEX && MALI_DEBUG_SYS
     default y
     help
       Support Support Kernel Group Debug SysFS on /sys/kernel/gpu
@@ -88,6 +102,7 @@ config MALI_DEBUG_KERNEL_SYSFS
 config MALI_EXYNOS_QOS
     bool "Enable CPU & MIF PMQOS from Mali"
     depends on MALI_MIDGARD && PM_DEVFREQ && CPU_FREQ
+    depends on EXYNOS_GPEX && PM_DEVFREQ && CPU_FREQ
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
     default n
@@ -97,6 +112,7 @@ config MALI_EXYNOS_QOS
 config MALI_EXYNOS_THERMAL
     bool "Enable Mali thermal throttling"
     depends on MALI_MIDGARD && MALI_EXYNOS_CLOCK && GPU_THERMAL
+    depends on EXYNOS_GPEX && MALI_EXYNOS_CLOCK && GPU_THERMAL
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
     default n
@@ -115,6 +131,7 @@ config MALI_EXYNOS_BTS_MO
 config MALI_EXYNOS_SECURE_RENDERING_ARM
     bool "Enable Secure Rendering support"
     depends on MALI_MIDGARD && EXYNOS_CONTENT_PATH_PROTECTION
+    depends on EXYNOS_GPEX && EXYNOS_CONTENT_PATH_PROTECTION
     default y if SOC_EXYNOS2100
     default n
     help
@@ -123,6 +140,7 @@ config MALI_EXYNOS_SECURE_RENDERING_ARM
 config MALI_EXYNOS_SECURE_RENDERING_LEGACY
     bool "Enable Secure Rendering support (Legacy mode)"
     depends on MALI_MIDGARD && EXYNOS_CONTENT_PATH_PROTECTION
+    depends on EXYNOS_GPEX && EXYNOS_CONTENT_PATH_PROTECTION
     default y if SOC_EXYNOS9830
     default n
     help
@@ -131,6 +149,7 @@ config MALI_EXYNOS_SECURE_RENDERING_LEGACY
 config MALI_EXYNOS_DEBUG
     bool "Enable Mali Exynos integration debug features"
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     depends on !KUNIT && !SEC_KUNIT
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
@@ -141,6 +160,7 @@ config MALI_EXYNOS_DEBUG
 config MALI_EXYNOS_DEVICETREE
     bool "Read GPU information from OF device tree"
     depends on MALI_MIDGARD && OF
+    depends on EXYNOS_GPEX && OF
     default y
     help
       Read GPU info from device tree
@@ -148,12 +168,14 @@ config MALI_EXYNOS_DEVICETREE
 config MALI_EXYNOS_LLC
     bool "Allocate Last Level Cache for Mali"
     depends on MALI_MIDGARD && MALI_EXYNOS_QOS
+    depends on EXYNOS_GPEX && MALI_EXYNOS_QOS
     default y if SOC_EXYNOS2100
     default n
 
 config MALI_EXYNOS_CL_BOOST
     bool "Frequency boost for compute only jobs"
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
     default n
@@ -161,6 +183,7 @@ config MALI_EXYNOS_CL_BOOST
 config MALI_NOTIFY_UTILISATION
     bool "Added frag utilisation notifier"
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     depends on !KUNIT && !SEC_KUNIT
     default y if SOC_EXYNOS2100
     default n
@@ -170,6 +193,7 @@ config MALI_NOTIFY_UTILISATION
 config MALI_EXYNOS_GTS
     bool "Exynos GPU Task Scheduler support"
     depends on MALI_MIDGARD && MALI_NOTIFY_UTILISATION
+    depends on EXYNOS_GPEX && MALI_NOTIFY_UTILISATION
     default y if SOC_EXYNOS2100
     default n
     help
@@ -178,6 +202,7 @@ config MALI_EXYNOS_GTS
 config MALI_TSG
     bool "Enable Sustainable optimize"
     depends on MALI_MIDGARD && MALI_EXYNOS_RTPM && MALI_EXYNOS_DVFS
+    depends on EXYNOS_GPEX && MALI_EXYNOS_RTPM && MALI_EXYNOS_DVFS
     default y if SOC_EXYNOS9830
     default y if SOC_EXYNOS2100
     default n
@@ -187,6 +212,7 @@ config MALI_TSG
 config MALI_EXYNOS_SECURE_SMC_NOTIFY_GPU
     bool "Enable SMC Notify calls when GPU is Power up and down"
     depends on MALI_MIDGARD && EXYNOS_CONTENT_PATH_PROTECTION
+    depends on EXYNOS_GPEX && EXYNOS_CONTENT_PATH_PROTECTION
     default n
     help
       Support SMC Notify calls when GPU is power up and down
@@ -194,6 +220,7 @@ config MALI_EXYNOS_SECURE_SMC_NOTIFY_GPU
 config MALI_EXYNOS_WAKEUP_CLOCK_WA
     bool "Enable wakeup clock wa"
     depends on MALI_MIDGARD && MALI_EXYNOS_CLOCK
+    depends on EXYNOS_GPEX && MALI_EXYNOS_CLOCK
     default y if SOC_EXYNOS9830
     default n
     help
@@ -227,6 +254,7 @@ config MALI_EXYNOS_INTERACTIVE_BOOST
 # place to put this.
 config EXYNOS_SOC_NAME
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     string "Third party soc name"
     help
       soc name.
@@ -240,6 +268,7 @@ config MALI_EXYNOS_UNIT_TESTS
 config MALI_EXYNOS_DEBUG_FAULT_DUMP
     bool "dump mali trace data on gpu fault"
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     default n
     help
       MALI_MIDGARD_ENABLE_TRACE must be enabled for more detailed logs
@@ -247,6 +276,7 @@ config MALI_EXYNOS_DEBUG_FAULT_DUMP
 config MALI_EXYNOS_GPU_MEM_DUMP
     bool "Enable GPU MEM DUMP Option"
     depends on MALI_MIDGARD
+    depends on EXYNOS_GPEX
     default n
     help
       Choose this option to enable checking GPU_MEM in the Mali tTRx DDK.

@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <linux/ktime.h>
 #include <gpex_utils.h>
 #include <gpex_tsg.h>
@@ -305,6 +306,7 @@ int gpex_tsg_get_amigo_flags(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_get_amigo_flags);
 
 uint32_t gpex_tsg_get_queued_threshold(int idx)
 {
@@ -370,6 +372,7 @@ int gpex_tsg_set_count(u32 status, bool stop)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_set_count);
 
 int gpex_tsg_init(struct device **dev)
 {
@@ -394,20 +397,24 @@ void gpex_tsg_reset_acc_count(void)
 void gpex_tsg_update_firstjob_time(void)
 {
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_firstjob_time);
 
 void gpex_tsg_update_lastjob_time(int slot_nr)
 {
 	CSTD_UNUSED(slot_nr);
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_lastjob_time);
 
 void gpex_tsg_update_jobsubmit_time(void)
 {
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_jobsubmit_time);
 
 void gpex_tsg_sum_jobs_time(int slot_nr)
 {
 	CSTD_UNUSED(slot_nr);
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_sum_jobs_time);
 
 int gpex_tsg_amigo_interframe_sw_update(ktime_t start, ktime_t end)
 {
@@ -416,13 +423,16 @@ int gpex_tsg_amigo_interframe_sw_update(ktime_t start, ktime_t end)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_sw_update);
 
 int gpex_tsg_amigo_interframe_hw_update_eof(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_hw_update_eof);
 
 int gpex_tsg_amigo_interframe_hw_update(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_hw_update);

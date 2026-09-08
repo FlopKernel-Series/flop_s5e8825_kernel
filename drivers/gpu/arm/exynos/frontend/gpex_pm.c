@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <linux/suspend.h>
 #include <linux/pm_runtime.h>
 
@@ -72,6 +73,7 @@ int gpex_pm_set_state(int state)
 		"gpex_pm: Attempted to set gpex_pm state with invalid value 0x%x", state);
 	return -1;
 }
+EXPORT_SYMBOL_GPL(gpex_pm_set_state);
 
 int gpex_pm_get_state(int *state)
 {
@@ -169,6 +171,7 @@ int gpex_pm_power_on(struct device *dev)
 
 	return ret;
 }
+EXPORT_SYMBOL_GPL(gpex_pm_power_on);
 
 void gpex_pm_power_autosuspend(struct device *dev)
 {
@@ -184,6 +187,7 @@ void gpex_pm_power_autosuspend(struct device *dev)
 	GPU_LOG_DETAILED(MALI_EXYNOS_INFO, LSI_GPU_RPM_SUSPEND_API, ret, 0u,
 			 "power autosuspend prepare\n");
 }
+EXPORT_SYMBOL_GPL(gpex_pm_power_autosuspend);
 
 void gpex_pm_suspend(struct device *dev)
 {
@@ -201,6 +205,7 @@ void gpex_pm_suspend(struct device *dev)
 
 	GPU_LOG_DETAILED(MALI_EXYNOS_INFO, LSI_SUSPEND_CALLBACK, ret, 0u, "power suspend\n");
 }
+EXPORT_SYMBOL_GPL(gpex_pm_suspend);
 
 static struct delayed_work gpu_poweroff_delay_set_work;
 
@@ -308,6 +313,7 @@ int gpex_pm_runtime_init(struct device *dev)
 
 	return ret;
 }
+EXPORT_SYMBOL_GPL(gpex_pm_runtime_init);
 
 void gpex_pm_runtime_term(struct device *dev)
 {
@@ -315,6 +321,7 @@ void gpex_pm_runtime_term(struct device *dev)
 
 	gpu_poweroff_delay_wq_deinit();
 }
+EXPORT_SYMBOL_GPL(gpex_pm_runtime_term);
 
 int gpex_pm_runtime_on_prepare(struct device *dev)
 {
@@ -328,6 +335,7 @@ int gpex_pm_runtime_on_prepare(struct device *dev)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_pm_runtime_on_prepare);
 
 /* TODO: 9830 need to store and restore clock before and after power off/on */
 #if 0
@@ -371,6 +379,7 @@ void gpex_pm_runtime_off_prepare(struct device *dev)
 
 	pm.power_status = false;
 }
+EXPORT_SYMBOL_GPL(gpex_pm_runtime_off_prepare);
 
 int gpex_pm_init(void)
 {

@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <linux/slab.h>
 
 #include <gpex_clock.h>
@@ -66,6 +67,7 @@ int gpex_clock_get_cur_clock(void)
 {
 	return clk_info.cur_clock;
 }
+EXPORT_SYMBOL_GPL(gpex_clock_get_cur_clock);
 int gpex_clock_get_max_lock(void)
 {
 	return clk_info.max_lock;
@@ -364,7 +366,7 @@ int gpex_clock_init(struct device **dev)
 	int i = 0;
 
 	mutex_init(&clk_info.clock_lock);
-	clk_info.kbdev = container_of(dev, struct kbase_device, dev);
+	clk_info.dev = dev ? *dev : NULL;
 	clk_info.max_lock = 0;
 	clk_info.min_lock = 0;
 	clk_info.gpu_clamp_input = 0;
@@ -387,7 +389,7 @@ int gpex_clock_init(struct device **dev)
 void gpex_clock_term(void)
 {
 	/* TODO: reset other clk_info variables too */
-	clk_info.kbdev = NULL;
+	clk_info.dev = NULL;
 }
 
 int gpex_clock_get_table_idx(int clock)

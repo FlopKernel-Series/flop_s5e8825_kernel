@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <gpex_clock.h>
 #include <gpex_tsg.h>
 #include <gpex_gts.h>
@@ -96,6 +97,7 @@ int gpex_gts_get_ioctl_gts_info(struct mali_exynos_ioctl_gts_info *info)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_get_ioctl_gts_info);
 
 static int calculate_jobslot_util(void)
 {
@@ -208,11 +210,13 @@ void gpex_gts_update_jobslot_util(bool gpu_active, u32 ns_time)
 	else
 		gts_info.idle_js += ns_time;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_update_jobslot_util);
 
 void gpex_gts_set_jobslot_status(bool is_active)
 {
 	gts_info.jobslot_active = is_active;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_set_jobslot_status);
 
 void gpex_gts_clear(void)
 {
@@ -224,11 +228,13 @@ void gpex_gts_set_hcm_mode(int hcm_mode_val)
 {
 	gts_info.heavy_compute_mode = hcm_mode_val;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_set_hcm_mode);
 
 int gpex_gts_get_hcm_mode(void)
 {
 	return gts_info.heavy_compute_mode;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_get_hcm_mode);
 
 int gpex_gts_init(struct device **dev)
 {

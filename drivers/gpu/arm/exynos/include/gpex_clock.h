@@ -21,7 +21,7 @@
 #ifndef _MALI_EXYNOS_CLOCK_H_
 #define _MALI_EXYNOS_CLOCK_H_
 
-#include <mali_kbase.h>
+#include <linux/types.h>
 #include <linux/device.h>
 typedef enum {
 	GPU_CLOCK_MAX_LOCK = 0,

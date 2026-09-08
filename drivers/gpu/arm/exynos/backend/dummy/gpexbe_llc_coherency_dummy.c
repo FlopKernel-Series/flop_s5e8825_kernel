@@ -18,32 +18,38 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <gpexbe_llc_coherency.h>
 
 void gpexbe_llc_coherency_reg_map(void)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_reg_map);
 
 void gpexbe_llc_coherency_reg_unmap(void)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_reg_unmap);
 
 void gpexbe_llc_coherency_set_coherency_feature(void)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_set_coherency_feature);
 
 void gpexbe_llc_coherency_set_aruser(void)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_set_aruser);
 
 void gpexbe_llc_coherency_set_awuser(void)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_set_awuser);
 
 int gpexbe_llc_coherency_init(struct device **dev)
 {

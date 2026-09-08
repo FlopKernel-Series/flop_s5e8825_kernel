@@ -133,6 +133,8 @@ else
 endif
 
 ccflags-y += \
+    -I$(srctree)/drivers/gpu/arm/exynos/include \
+    -I$(srctree)/include/uapi/gpu/arm/exynos \
     -I$(srctree)/include/linux \
     -I$(srctree)/drivers/staging/android \
     -I$(src) \
@@ -200,7 +202,8 @@ mali_kbase_r38p1-y := \
     mali_kbase_dvfs_debugfs.o \
     mali_power_gpu_frequency_trace.o \
     mali_kbase_trace_gpu_mem.o \
-    mali_kbase_pbha.o
+    mali_kbase_pbha.o \
+    exynos/mali_exynos_kbase_entrypoint.o
 
 mali_kbase_r38p1-$(CONFIG_DEBUG_FS) += mali_kbase_pbha_debugfs.o
 
@@ -252,8 +255,7 @@ INCLUDE_SUBDIR = \
     $(src)/mmu/Kbuild \
     $(src)/tl/Kbuild \
     $(src)/gpu/Kbuild \
-    $(src)/thirdparty/Kbuild \
-    $(src)/../$(MALI_PLATFORM_DIR)/Kbuild
+    $(src)/thirdparty/Kbuild
 
 ifeq ($(CONFIG_MALI_CSF_SUPPORT),y)
     INCLUDE_SUBDIR += $(src)/csf/Kbuild

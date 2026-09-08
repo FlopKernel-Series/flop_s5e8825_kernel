@@ -18,6 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <gpex_tsg.h>
 
 #include <gpex_utils.h>
@@ -282,6 +283,7 @@ int gpex_tsg_get_amigo_flags(void)
 {
 	return tsg.amigo_flags;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_get_amigo_flags);
 
 uint32_t gpex_tsg_get_queued_threshold(int idx)
 {
@@ -443,11 +445,13 @@ int gpex_tsg_set_count(u32 status, bool stop)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_set_count);
 
 void gpex_tsg_update_firstjob_time(void)
 {
 	tsg.first_job_timestamp = ktime_get_real() / 1000UL;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_firstjob_time);
 
 void gpex_tsg_update_lastjob_time(int slot_nr)
 {
@@ -455,6 +459,7 @@ void gpex_tsg_update_lastjob_time(int slot_nr)
 		tsg.lastjob_starttimestamp = ktime_get_real() / 1000UL;
 	tsg.js_occupy |= 1 << slot_nr;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_lastjob_time);
 
 void gpex_tsg_update_jobsubmit_time(void)
 {
@@ -462,6 +467,7 @@ void gpex_tsg_update_jobsubmit_time(void)
 	tsg.lastjob_starttimestamp = 0UL;
 	tsg.sum_jobs_time = 0UL;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_update_jobsubmit_time);
 
 void gpex_tsg_sum_jobs_time(int slot_nr)
 {
@@ -477,6 +483,7 @@ void gpex_tsg_sum_jobs_time(int slot_nr)
 		tsg.lastjob_starttimestamp = 0UL;
 	}
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_sum_jobs_time);
 
 void gpex_tsg_stats_get_run_times(u64 *times)
 {
@@ -648,6 +655,7 @@ int gpex_tsg_amigo_interframe_sw_update(ktime_t start, ktime_t end)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_sw_update);
 
 int gpex_tsg_amigo_interframe_hw_update_eof(void)
 {
@@ -674,6 +682,7 @@ int gpex_tsg_amigo_interframe_hw_update_eof(void)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_hw_update_eof);
 
 int gpex_tsg_amigo_interframe_hw_update(void)
 {
@@ -692,6 +701,7 @@ int gpex_tsg_amigo_interframe_hw_update(void)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_tsg_amigo_interframe_hw_update);
 
 void gpex_tsg_stats_set_vsync(ktime_t ktime_us)
 {
@@ -1061,7 +1071,7 @@ int gpex_tsg_stc_config_store(const char *buf)
 int gpex_tsg_init(struct device **dev)
 {
 	raw_spin_lock_init(&tsg.spinlock);
-	tsg.kbdev = container_of(dev, struct kbase_device, dev);
+	tsg.dev = dev ? *dev : NULL;
 
 	gpex_tsg_context_init();
 	gpex_tsg_external_init(&tsg);
@@ -1074,7 +1084,7 @@ int gpex_tsg_term(void)
 {
 	gpex_tsg_sysfs_term();
 	gpex_tsg_external_term();
-	tsg.kbdev = NULL;
+	tsg.dev = NULL;
 
 	return 0;
 }

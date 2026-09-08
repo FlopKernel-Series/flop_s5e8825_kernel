@@ -18,7 +18,7 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
-#include <mali_kbase_config.h>
+struct kbase_platform_config;
 
 static struct kbase_platform_config dummy_platform_config;
 

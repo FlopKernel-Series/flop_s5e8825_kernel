@@ -21,10 +21,20 @@
 #ifndef _GPEXBE_MEM_USAGE_H_
 #define _GPEXBE_MEM_USAGE_H_
 
+#include <linux/types.h>
+
+struct gpex_mem_usage_ops {
+	ssize_t (*show_gpu_memory)(char *buf, size_t max_size);
+	int (*get_total_used_pages)(bool print_all);
+};
+
+void gpexbe_mem_usage_set_ops(const struct gpex_mem_usage_ops *ops);
+
 /**
  * gpexbe_mem_usage_init() - initializes mem usage monitoring module
  *
  * Return: 0 on successs
+ * Return: 0 on success
  */
 int gpexbe_mem_usage_init(void);
 

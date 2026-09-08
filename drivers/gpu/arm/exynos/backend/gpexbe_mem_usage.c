@@ -19,74 +19,40 @@
  */
 
 /* Implements */
+#include <linux/export.h>
 #include <gpexbe_mem_usage.h>
 #include <trace/hooks/mm.h>
 /* Uses */
 #include <gpex_utils.h>
-#include <device/mali_kbase_device.h>
 #include <linux/oom.h>
+#include <linux/seq_file.h>
 
-static struct kbase_device *kbdev;
+static const struct gpex_mem_usage_ops *mem_usage_ops;
+
+void gpexbe_mem_usage_set_ops(const struct gpex_mem_usage_ops *ops)
+{
+	mem_usage_ops = ops;
+}
+EXPORT_SYMBOL_GPL(gpexbe_mem_usage_set_ops);
 
 static ssize_t show_kernel_sysfs_gpu_memory(char *buf)
 {
-	ssize_t ret = 0;
-	uint64_t gpu_mem_used = 0;
-	bool buffer_full = false;
-	const ssize_t buf_size = PAGE_SIZE;
-	const int padding = 100;
-	struct kbase_context *kctx;
+	if (!buf)
+		return 0;
 
-	if (buf == NULL)
-		return ret;
+	if (mem_usage_ops && mem_usage_ops->show_gpu_memory)
+		return mem_usage_ops->show_gpu_memory(buf, PAGE_SIZE);
 
-	ret += scnprintf(buf + ret, buf_size - ret, "%9s %9s %12s\n", "tgid", "pid",
-			 "bytes_used");
-
-	mutex_lock(&kbdev->kctx_list_lock);
-	list_for_each_entry (kctx, &kbdev->kctx_list, kctx_list_link) {
-		if (ret + padding > buf_size) {
-			buffer_full = true;
-			break;
-		}
-
-		gpu_mem_used = atomic_read(&(kctx->used_pages)) * PAGE_SIZE;
-		ret += snprintf(buf + ret, buf_size - ret, "%9d %9d %12llu\n", kctx->tgid,
-				kctx->pid, gpu_mem_used);
-	}
-	mutex_unlock(&kbdev->kctx_list_lock);
-
-	if (buffer_full)
-		ret += scnprintf(buf + ret, buf_size - ret, "error: buffer is full\n");
-
-	return ret;
+	return scnprintf(buf, PAGE_SIZE, "%9s %9s %12s\n", "tgid", "pid", "bytes_used");
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(show_kernel_sysfs_gpu_memory);
 
 static int gpu_memory_status_dump(bool print_all_buffers)
 {
-	struct kbase_context *kctx = NULL;
-	struct device *dev = NULL;
-	int total_used_pages = 0;
+	if (mem_usage_ops && mem_usage_ops->get_total_used_pages)
+		return mem_usage_ops->get_total_used_pages(print_all_buffers);
 
-	dev = kbdev->dev;
-	total_used_pages += atomic_read(&(kbdev->memdev.used_pages));
-
-	if (print_all_buffers) {
-		dev_warn(dev, "%-16s  %10u\n", kbdev->devname, total_used_pages);
-		if (mutex_trylock(&kbdev->kctx_list_lock)) {
-			list_for_each_entry (kctx, &kbdev->kctx_list, kctx_list_link) {
-				dev_warn(dev, "%10u | tgid=%10d | pid=%10d  | name=%20s\n",
-						atomic_read(&(kctx->used_pages)),
-						kctx->tgid,
-						kctx->pid,
-						((struct platform_context *)kctx->platform_data)->name);
-			}
-		}
-		mutex_unlock(&kbdev->kctx_list_lock);
-	}
-
-	return total_used_pages;
+	return 0;
 }
 
 static int mali_used_size_notifier(struct notifier_block *nb,
@@ -179,8 +145,6 @@ static void register_mali_used_mem_notifier(void) {
 
 int gpexbe_mem_usage_init(void)
 {
-	kbdev = gpex_utils_get_kbase_device();
-
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD_RO(gpu_memory, show_kernel_sysfs_gpu_memory);
 
 	register_mali_used_mem_notifier();
@@ -190,5 +154,5 @@ int gpexbe_mem_usage_init(void)
 
 void gpexbe_mem_usage_term(void)
 {
-	return;
+	mem_usage_ops = NULL;
 }

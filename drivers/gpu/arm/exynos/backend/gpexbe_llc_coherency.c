@@ -18,9 +18,9 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/export.h>
 #include <linux/io.h>
 #include <linux/device.h>
-#include <mali_kbase.h>
 #include <gpex_utils.h>
 #include <gpex_debug.h>
 #include <gpexbe_llc_coherency.h>
@@ -54,6 +54,7 @@ static struct _llc_coh_info {
 	void __iomem *user_reg4;
 
 	int cur_llc_ways;
+	u32 system_coherency;
 	spinlock_t llc_spinlock;
 } llc_coh_info;
 
@@ -73,6 +74,7 @@ void gpexbe_llc_coherency_reg_map()
 			llc_coh_info.awuser_hint, llc_coh_info.user_reg4);
 	}
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_reg_map);
 
 static void iounmap_if_valid_addr(void __iomem *addr)
 {
@@ -87,24 +89,29 @@ void gpexbe_llc_coherency_reg_unmap()
 	iounmap_if_valid_addr(llc_coh_info.awuser_hint);
 	iounmap_if_valid_addr(llc_coh_info.user_reg4);
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_reg_unmap);
 
 void gpexbe_llc_coherency_set_coherency_feature()
 {
 	if (llc_coh_info.g3d_coherency_features) {
 		__raw_writel(ACELITE | ACE, llc_coh_info.g3d_coherency_features);
+		llc_coh_info.system_coherency = COHERENCY_MODE_FULL;
 	}
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_set_coherency_feature);
 
 void gpexbe_llc_coherency_set_aruser()
 {
 	__raw_writel(ARUSER_VALUE, llc_coh_info.aruser_hint);
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_set_aruser);
 
 void gpexbe_llc_coherency_set_awuser()
 {
 	__raw_writel(AWUSER_VALUE & AWUSER_HINT_MASK, llc_coh_info.awuser_hint);
 	__raw_writel((AWUSER_VALUE & LLC_USER_REG4_WRITE_MASK) >> 22, llc_coh_info.user_reg4);
 }
+EXPORT_SYMBOL_GPL(gpexbe_llc_coherency_set_awuser);
 
 static ssize_t show_awuser_hint(char *buf)
 {
@@ -141,11 +148,7 @@ CREATE_SYSFS_DEVICE_READ_FUNCTION(show_aruser_hint);
 static ssize_t show_coherency_mode(char *buf)
 {
 	ssize_t ret = 0;
-	struct kbase_device *kbdev =
-		(struct kbase_device *)container_of(llc_coh_info.dev, struct kbase_device, dev);
-	u32 coh_mode;
-
-	coh_mode = kbdev->system_coherency;
+	u32 coh_mode = llc_coh_info.system_coherency;
 
 	if (coh_mode == COHERENCY_MODE_NONE)
 		ret += scnprintf(buf + ret, PAGE_SIZE - ret,

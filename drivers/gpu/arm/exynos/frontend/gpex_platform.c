@@ -18,6 +18,8 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
+#include <linux/module.h>
+#include <soc/samsung/exynos_gpex.h>
 #include <gpex_platform.h>
 #include <gpex_utils.h>
 #include <gpex_debug.h>
@@ -193,6 +195,7 @@ int gpex_platform_init(struct device **dev)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_platform_init);
 
 void gpex_platform_term(void)
 {
@@ -232,3 +235,92 @@ void gpex_platform_term(void)
 	gpexbe_utilization_term();
 	gpex_utils_term();
 }
+EXPORT_SYMBOL_GPL(gpex_platform_term);
+
+/*
+ * Public GPEX registration and control interface for GPU drivers
+ */
+static const struct exynos_gpex_gpu_ops *active_gpu_ops;
+static struct device *active_gpu_dev;
+
+int exynos_gpex_register_gpu(struct device *dev, const struct exynos_gpex_gpu_ops *ops)
+{
+	int ret;
+
+	active_gpu_dev = dev;
+	active_gpu_ops = ops;
+
+	ret = gpex_platform_init(&dev);
+	if (ret) {
+		active_gpu_dev = NULL;
+		active_gpu_ops = NULL;
+		return ret;
+	}
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_register_gpu);
+
+void exynos_gpex_unregister_gpu(struct device *dev)
+{
+	gpex_platform_term();
+	active_gpu_dev = NULL;
+	active_gpu_ops = NULL;
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_unregister_gpu);
+
+struct device *exynos_gpex_get_gpu_device(void)
+{
+	return active_gpu_dev;
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_get_gpu_device);
+
+bool exynos_gpex_is_attached(void)
+{
+	return (active_gpu_dev != NULL);
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_is_attached);
+
+const struct exynos_gpex_gpu_ops *exynos_gpex_get_gpu_ops(void)
+{
+	return active_gpu_ops;
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_get_gpu_ops);
+
+int exynos_gpex_set_frequency(unsigned long freq_hz)
+{
+	return gpex_clock_set((int)freq_hz);
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_set_frequency);
+
+unsigned long exynos_gpex_get_frequency(void)
+{
+	return (unsigned long)gpex_clock_get_cur_clock();
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_get_frequency);
+
+int exynos_gpex_pm_resume(struct device *dev)
+{
+	return gpex_pm_power_on(dev);
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_pm_resume);
+
+int exynos_gpex_pm_suspend(struct device *dev)
+{
+	gpex_pm_suspend(dev);
+	return 0;
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_pm_suspend);
+
+void exynos_gpex_setup_coherency(void)
+{
+	gpexbe_llc_coherency_set_coherency_feature();
+	gpexbe_llc_coherency_set_aruser();
+	gpexbe_llc_coherency_set_awuser();
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_setup_coherency);
+
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("Samsung Exynos GPU Platform Extension (GPEX)");
+MODULE_AUTHOR("Samsung Electronics Co., Ltd.");
+MODULE_SOFTDEP("pre: exynos-acme");

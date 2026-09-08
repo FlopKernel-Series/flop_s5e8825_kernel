@@ -20,6 +20,8 @@
 
 menu "ARM GPU Configuration"
 
+source "drivers/gpu/arm/exynos/Kconfig"
+
 config MALI_MIDGARD_R32P1
 	tristate "Mali Valhall r32p1 driver"
 	default n

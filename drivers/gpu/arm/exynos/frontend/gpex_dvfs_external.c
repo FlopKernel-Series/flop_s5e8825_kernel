@@ -22,7 +22,7 @@
 #include <gpex_clock.h>
 #include <gpex_pm.h>
 
-#include <mali_exynos_if.h>
+#include <linux/mali_exynos_if.h>
 
 #include "gpex_dvfs_internal.h"
 static struct dvfs_info *dvfs;
@@ -34,19 +34,25 @@ int gpu_dvfs_get_clock(int level)
 
 	return dvfs->table[level].clock;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_clock);
+#endif
 
 int gpu_dvfs_get_voltage(int clock)
 {
 	return gpex_clock_get_voltage(clock);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_voltage);
+#endif
 
 int gpu_dvfs_get_step(void)
 {
 	return dvfs->table_size;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_step);
+#endif
 
 int gpu_dvfs_get_cur_clock(void)
 {
@@ -59,7 +65,9 @@ int gpu_dvfs_get_cur_clock(void)
 
 	return clock;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_cur_clock);
+#endif
 
 int gpu_dvfs_get_utilization(void)
 {
@@ -70,19 +78,25 @@ int gpu_dvfs_get_utilization(void)
 
 	return util;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_utilization);
+#endif
 
 int gpu_dvfs_get_min_freq(void)
 {
 	return gpex_clock_get_min_clock();
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_min_freq);
+#endif
 
 int gpu_dvfs_get_max_freq(void)
 {
 	return gpex_clock_get_max_clock_limit();
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_max_freq);
+#endif
 
 int gpu_dvfs_get_max_locked_freq(void)
 {
@@ -97,7 +111,9 @@ int gpu_dvfs_get_max_locked_freq(void)
 
 	return locked_clock;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_max_locked_freq);
+#endif
 
 int gpu_dvfs_get_min_locked_freq(void)
 {
@@ -112,7 +128,9 @@ int gpu_dvfs_get_min_locked_freq(void)
 
 	return locked_clock;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_min_locked_freq);
+#endif
 
 /* TODO: make a stub version for when dvfs is disabled */
 /* Needed by 9830 as SUSTAINABLE_OPT feature */

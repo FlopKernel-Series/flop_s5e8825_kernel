@@ -19,6 +19,7 @@
  */
 
 /* Implements */
+#include <linux/export.h>
 #include <gpex_cmar_boost.h>
 
 /* Uses */
@@ -54,6 +55,7 @@ int gpex_cmar_boost_set_flag(struct platform_context *pctx, int request)
 
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_cmar_boost_set_flag);
 
 static bool current_priority_is_rt(void)
 {
@@ -102,3 +104,4 @@ void gpex_cmar_boost_set_thread_priority(struct platform_context *pctx)
 		}
 	}
 }
+EXPORT_SYMBOL_GPL(gpex_cmar_boost_set_thread_priority);

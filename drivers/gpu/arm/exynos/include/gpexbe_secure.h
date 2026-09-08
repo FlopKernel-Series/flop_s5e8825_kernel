@@ -26,6 +26,7 @@ struct kbase_device;
 
 /**
  * gpexbe_secure_get_protected_mode_ops() - get protected mode enable and disable callback function pointers
+ * gpexbe_secure_protection_enable() - enable SMC protection for secure rendering
  *
  * mali_kbase uses these callback functions while enter/exiting protected mode
  *
@@ -39,13 +40,16 @@ struct protected_mode_ops *gpexbe_secure_get_protected_mode_ops(void);
  * Return: 0 on success
  */
 int gpexbe_secure_legacy_jm_enter_protected_mode(struct kbase_device *kbdev);
+int gpexbe_secure_protection_enable(void);
 
 /**
  * gpexbe_secure_legacy_jm_exit_protected_mode() - exit legacy protected mode (from mali_kbase_jm_rb)
+ * gpexbe_secure_protection_disable() - disable SMC protection for secure rendering
  *
  * Return: 0 on success
  */
 int gpexbe_secure_legacy_jm_exit_protected_mode(struct kbase_device *kbdev);
+int gpexbe_secure_protection_disable(void);
 
 /**
  * gpexbe_secure_legacy_pm_exit_protected_mode() - exit legacy protected mode (from mali_kbase_pm_driver)

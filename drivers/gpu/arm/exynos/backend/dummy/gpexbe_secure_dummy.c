@@ -19,16 +19,27 @@
  */
 
 /* Implements */
+#include <linux/export.h>
+#include <linux/errno.h>
 #include <gpexbe_secure.h>
-
-/* Uses */
-#include <errno.h>
 #include <linux/types.h>
 
 struct protected_mode_ops *gpexbe_secure_get_protected_mode_ops(void)
 {
 	return NULL;
 }
+
+int gpexbe_secure_protection_enable(void)
+{
+	return 0;
+}
+EXPORT_SYMBOL_GPL(gpexbe_secure_protection_enable);
+
+int gpexbe_secure_protection_disable(void)
+{
+	return 0;
+}
+EXPORT_SYMBOL_GPL(gpexbe_secure_protection_disable);
 
 int gpexbe_secure_legacy_jm_enter_protected_mode(struct kbase_device *kbdev)
 {

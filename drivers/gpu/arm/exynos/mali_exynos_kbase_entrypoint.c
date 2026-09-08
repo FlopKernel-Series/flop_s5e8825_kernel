@@ -23,6 +23,7 @@
 
 /* Uses */
 #include <mali_kbase.h>
+#include <linux/protected_mode_switcher.h>
 #include <debug/mali_kbase_debug_ktrace.h>
 
 #include <gpex_platform.h>
@@ -38,6 +39,7 @@
 
 #include <gpexbe_llc_coherency.h>
 #include <gpexbe_utilization.h>
+#include <gpexbe_mem_usage.h>
 #include <gpexbe_pm.h>
 #include <gpexbe_secure.h>
 #include <gpexbe_dmabuf.h>
@@ -278,7 +280,10 @@ int mali_exynos_set_pm_state_resume_end(void)
 void mali_exynos_set_jobslot_status(int slot, bool is_active)
 {
 	if (slot == 0)
+	if (slot == 0) {
 		gpex_gts_set_jobslot_status(is_active);
+		gpexbe_utilization_set_gpu_active(is_active);
+	}
 }
 
 void mali_exynos_update_jobslot_util(int slot, bool gpu_active, u32 ns_time)
@@ -289,8 +294,19 @@ void mali_exynos_update_jobslot_util(int slot, bool gpu_active, u32 ns_time)
 
 void mali_exynos_update_job_load(struct kbase_jd_atom *katom, ktime_t *end_timestamp)
 {
-	if (katom && end_timestamp)
-		gpexbe_utilization_update_job_load(katom, end_timestamp);
+	if (katom && end_timestamp) {
+		u64 ns_spent = ktime_to_ns(ktime_sub(*end_timestamp, katom->start_timestamp));
+		enum gpex_job_type type = GPEX_JOB_TYPE_OTHER;
+
+		if (katom->core_req & BASE_JD_REQ_ONLY_COMPUTE)
+			type = GPEX_JOB_TYPE_COMPUTE;
+		else if (katom->core_req & BASE_JD_REQ_FS)
+			type = GPEX_JOB_TYPE_FRAGMENT;
+		else if (katom->core_req & BASE_JD_REQ_CS)
+			type = GPEX_JOB_TYPE_VERTEX;
+
+		gpexbe_utilization_update_job_load(type, ns_spent);
+	}
 }
 
 int mali_exynos_set_count(struct kbase_jd_atom *katom, u32 status, bool stop)
@@ -376,22 +392,55 @@ static int pm_callback_runtime_on(struct kbase_device *kbdev)
 /* Secure Rendering functions Start */
 int mali_exynos_legacy_jm_enter_protected_mode(struct kbase_device *kbdev)
 {
-	return gpexbe_secure_legacy_jm_enter_protected_mode(kbdev);
+	return -ENOSYS;
 }
 
 int mali_exynos_legacy_jm_exit_protected_mode(struct kbase_device *kbdev)
 {
-	return gpexbe_secure_legacy_jm_exit_protected_mode(kbdev);
+	return -ENOSYS;
 }
 
 int mali_exynos_legacy_pm_exit_protected_mode(struct kbase_device *kbdev)
 {
-	return gpexbe_secure_legacy_pm_exit_protected_mode(kbdev);
+	return -ENOSYS;
+}
+
+static int mali_exynos_secure_mode_enable(struct protected_mode_device *pdev)
+{
+	int ret;
+
+	if (!pdev)
+		return -EINVAL;
+
+	ret = kbase_pm_protected_mode_enable(pdev->data);
+	if (ret != 0)
+		return ret;
+
+	return gpexbe_secure_protection_enable();
+}
+
+static int mali_exynos_secure_mode_disable(struct protected_mode_device *pdev)
+{
+	int ret;
+
+	if (!pdev)
+		return -EINVAL;
+
+	ret = kbase_pm_protected_mode_disable(pdev->data);
+	if (ret != 0)
+		return ret;
+
+	return gpexbe_secure_protection_disable();
 }
 
 struct protected_mode_ops *mali_exynos_get_protected_ops(void)
 {
-	return gpexbe_secure_get_protected_mode_ops();
+	static struct protected_mode_ops exynos_protected_ops = {
+		.protected_mode_enable = &mali_exynos_secure_mode_enable,
+		.protected_mode_disable = &mali_exynos_secure_mode_disable
+	};
+
+	return &exynos_protected_ops;
 }
 /* Secure Rendering functions End */
 
@@ -431,8 +480,78 @@ void mali_exynos_debug_print_info(struct kbase_device *kbdev)
 	}
 }
 
+static struct kbase_device *mali_kbdev;
+
+static ssize_t mali_show_gpu_memory(char *buf, size_t max_size)
+{
+	ssize_t ret = 0;
+	uint64_t gpu_mem_used = 0;
+	bool buffer_full = false;
+	const int padding = 100;
+	struct kbase_context *kctx;
+
+	if (!buf || !mali_kbdev)
+		return 0;
+
+	ret += scnprintf(buf + ret, max_size - ret, "%9s %9s %12s\n", "tgid", "pid", "bytes_used");
+
+	mutex_lock(&mali_kbdev->kctx_list_lock);
+	list_for_each_entry (kctx, &mali_kbdev->kctx_list, kctx_list_link) {
+		if (ret + padding > max_size) {
+			buffer_full = true;
+			break;
+		}
+
+		gpu_mem_used = atomic_read(&(kctx->used_pages)) * PAGE_SIZE;
+		ret += snprintf(buf + ret, max_size - ret, "%9d %9d %12llu\n", kctx->tgid,
+				kctx->pid, gpu_mem_used);
+	}
+	mutex_unlock(&mali_kbdev->kctx_list_lock);
+
+	if (buffer_full)
+		ret += scnprintf(buf + ret, max_size - ret, "error: buffer is full\n");
+
+	return ret;
+}
+
+static int mali_get_total_used_pages(bool print_all_buffers)
+{
+	struct kbase_context *kctx = NULL;
+	struct device *dev = NULL;
+	int total_used_pages = 0;
+
+	if (!mali_kbdev)
+		return 0;
+
+	dev = mali_kbdev->dev;
+	total_used_pages += atomic_read(&(mali_kbdev->memdev.used_pages));
+
+	if (print_all_buffers) {
+		dev_warn(dev, "%-16s  %10u\n", mali_kbdev->devname, total_used_pages);
+		if (mutex_trylock(&mali_kbdev->kctx_list_lock)) {
+			list_for_each_entry (kctx, &mali_kbdev->kctx_list, kctx_list_link) {
+				dev_warn(dev, "%10u | tgid=%10d | pid=%10d  | name=%20s\n",
+						atomic_read(&(kctx->used_pages)),
+						kctx->tgid,
+						kctx->pid,
+						((struct platform_context *)kctx->platform_data)->name);
+			}
+			mutex_unlock(&mali_kbdev->kctx_list_lock);
+		}
+	}
+
+	return total_used_pages;
+}
+
+static const struct gpex_mem_usage_ops mali_mem_ops = {
+	.show_gpu_memory = mali_show_gpu_memory,
+	.get_total_used_pages = mali_get_total_used_pages,
+};
+
 static int mali_exynos_kbase_entrypoint_init(struct kbase_device *kbdev)
 {
+	mali_kbdev = kbdev;
+	gpexbe_mem_usage_set_ops(&mali_mem_ops);
 	gpex_platform_init(&kbdev->dev);
 	kbdev->platform_context = (void *)gpex_utils_get_exynos_context();
 
@@ -441,6 +560,8 @@ static int mali_exynos_kbase_entrypoint_init(struct kbase_device *kbdev)
 
 static void mali_exynos_kbase_entrypoint_term(struct kbase_device *kbdev)
 {
+	gpexbe_mem_usage_set_ops(NULL);
+	mali_kbdev = NULL;
 	gpex_platform_term();
 	kbdev->platform_context = NULL;
 }

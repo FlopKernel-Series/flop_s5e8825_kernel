@@ -19,6 +19,7 @@
  */
 
 /* Implements */
+#include <linux/export.h>
 #include <gpexbe_dmabuf.h>
 
 /* Uses */
@@ -28,3 +29,4 @@ bool gpexbe_dmabuf_is_cached(struct dma_buf *dmabuf)
 {
 	return ion_cached_dmabuf(dmabuf);
 }
+EXPORT_SYMBOL_GPL(gpexbe_dmabuf_is_cached);

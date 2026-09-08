@@ -25,15 +25,18 @@ int gpex_gts_get_ioctl_gts_info(struct mali_exynos_ioctl_gts_info *info)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_get_ioctl_gts_info);
 void gpex_gts_update_jobslot_util(bool gpu_active, u32 ns_time)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_update_jobslot_util);
 
 void gpex_gts_set_jobslot_status(bool is_active)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_set_jobslot_status);
 
 void gpex_gts_clear(void)
 {
@@ -44,11 +47,13 @@ void gpex_gts_set_hcm_mode(int hcm_mode_val)
 {
 	return;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_set_hcm_mode);
 
 int gpex_gts_get_hcm_mode(void)
 {
 	return 0;
 }
+EXPORT_SYMBOL_GPL(gpex_gts_get_hcm_mode);
 
 int gpex_gts_init(struct device **dev)
 {

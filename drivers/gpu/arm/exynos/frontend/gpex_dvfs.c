@@ -43,7 +43,7 @@ static void gpex_dvfs_context_init(struct device **dev)
 	int i;
 	const char *of_string;
 	gpu_dt *dt = gpexbe_devicetree_get_gpu_dt();
-	dvfs.kbdev = container_of(dev, struct kbase_device, dev);
+	dvfs.dev = dev ? *dev : NULL;
 	dvfs.table_size = dt->gpu_dvfs_table_size.row;
 	dvfs.table = kcalloc(dvfs.table_size, sizeof(*dvfs.table), GFP_KERNEL);
 
@@ -300,7 +300,7 @@ void gpex_dvfs_term(void)
 	/* DVFS stuff */
 	gpu_pm_metrics_term();
 	gpu_dvfs_handler_deinit();
-	dvfs.kbdev = NULL;
+	dvfs.dev = NULL;
 }
 
 int gpex_dvfs_get_status(void)

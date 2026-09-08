@@ -97,55 +97,73 @@ int gpu_dvfs_get_clock(int level)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_clock);
+#endif
 
 int gpu_dvfs_get_voltage(int clock)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_voltage);
+#endif
 
 int gpu_dvfs_get_step(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_step);
+#endif
 
 int gpu_dvfs_get_cur_clock(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_cur_clock);
+#endif
 
 int gpu_dvfs_get_utilization(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_utilization);
+#endif
 
 int gpu_dvfs_get_min_freq(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_min_freq);
+#endif
 
 int gpu_dvfs_get_max_freq(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_max_freq);
+#endif
 
 int gpu_dvfs_get_min_locked_freq(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_min_locked_freq);
+#endif
 
 int gpu_dvfs_get_max_locked_freq(void)
 {
 	return 0;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_max_locked_freq);
+#endif
 
 int gpu_dvfs_get_sustainable_info_array(int index)
 {

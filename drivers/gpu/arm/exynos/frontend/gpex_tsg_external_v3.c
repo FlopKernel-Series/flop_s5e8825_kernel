@@ -43,7 +43,9 @@ unsigned long exynos_stats_get_job_state_cnt(void)
 {
 	return tsg_info->input_job_nr_acc;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_get_job_state_cnt);
+#endif
 
 int exynos_stats_get_gpu_cur_idx(void)
 {
@@ -131,7 +133,9 @@ uint32_t *gpu_dvfs_get_freq_table(void)
 
 	return freqs;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_freq_table);
+#endif
 
 static uint32_t volts[DVFS_TABLE_ROW_MAX];
 uint32_t *exynos_stats_get_gpu_volt_table(void)
@@ -180,13 +184,17 @@ ktime_t *gpu_dvfs_get_time_in_state(void)
 
 	return time_in_state;
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_time_in_state);
+#endif
 
 ktime_t gpu_dvfs_get_tis_last_update(void)
 {
 	return (ktime_t)(gpex_clock_get_time_in_state_last_update());
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_tis_last_update);
+#endif
 
 int exynos_stats_set_queued_threshold_0(uint32_t threshold)
 {
@@ -211,13 +219,17 @@ ktime_t *gpu_dvfs_get_job_queue_count(void)
 	}
 	return gpex_tsg_get_queued_time_array();
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_job_queue_count);
+#endif
 
 ktime_t gpu_dvfs_get_job_queue_last_updated(void)
 {
 	return gpex_tsg_get_queued_last_updated();
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_get_job_queue_last_updated);
+#endif
 
 void exynos_stats_set_gpu_polling_speed(int polling_speed)
 {
@@ -240,19 +252,25 @@ void gpu_dvfs_set_amigo_governor(int mode)
 	else
 		gpex_cmar_sched_set_forced_sched(0);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_set_amigo_governor);
+#endif
 
 void gpu_dvfs_set_freq_margin(int margin)
 {
 	gpex_tsg_set_freq_margin(margin);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_set_freq_margin);
+#endif
 
 void exynos_stats_get_run_times(u64 *times)
 {
 	gpex_tsg_stats_get_run_times(times);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_get_run_times);
+#endif
 
 void exynos_stats_get_pid_list(u16 *pidlist)
 {
@@ -264,85 +282,113 @@ void exynos_stats_set_vsync(ktime_t ktime_us)
 {
 	gpex_tsg_stats_set_vsync(ktime_us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_set_vsync);
+#endif
 
 void exynos_stats_get_frame_info(s32 *nrframe, u64 *nrvsync, u64 *delta_ms)
 {
 	gpex_tsg_stats_get_frame_info(nrframe, nrvsync, delta_ms);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_stats_get_frame_info);
+#endif
 
 void exynos_migov_set_targetframetime(int us)
 {
 	gpex_tsg_migov_set_targetframetime(us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_targetframetime);
+#endif
 
 void exynos_migov_set_targettime_margin(int us)
 {
 	gpex_tsg_migov_set_targettime_margin(us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_targettime_margin);
+#endif
 
 void exynos_migov_set_util_margin(int percentage)
 {
 	gpex_tsg_migov_set_util_margin(percentage);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_util_margin);
+#endif
 
 void exynos_migov_set_decon_time(int us)
 {
 	gpex_tsg_migov_set_decon_time(us);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_decon_time);
+#endif
 
 void exynos_migov_set_comb_ctrl(int val)
 {
 	gpex_tsg_migov_set_comb_ctrl(val);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_migov_set_comb_ctrl);
+#endif
 
 void exynos_sdp_set_powertable(int id, int cnt, struct freq_table *table)
 {
 	gpex_tsg_sdp_set_powertable(id, cnt, table);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_sdp_set_powertable);
+#endif
 
 void exynos_sdp_set_busy_domain(int id)
 {
 	gpex_tsg_sdp_set_busy_domain(id);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_sdp_set_busy_domain);
+#endif
 
 void exynos_sdp_set_cur_freqlv(int id, int idx)
 {
 	gpex_tsg_sdp_set_cur_freqlv(id, idx);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_sdp_set_cur_freqlv);
+#endif
 
 int exynos_gpu_stc_config_show(int page_size, char *buf)
 {
 	return gpex_tsg_stc_config_show(page_size, buf);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_gpu_stc_config_show);
+#endif
 
 int exynos_gpu_stc_config_store(const char *buf)
 {
 	return gpex_tsg_stc_config_store(buf);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(exynos_gpu_stc_config_store);
+#endif
 
 int gpu_dvfs_register_utilization_notifier(struct notifier_block *nb)
 {
 	return blocking_notifier_chain_register(gpex_tsg_get_frag_utils_change_notifier_list(), nb);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_register_utilization_notifier);
+#endif
 
 int gpu_dvfs_unregister_utilization_notifier(struct notifier_block *nb)
 {
 	return blocking_notifier_chain_unregister(gpex_tsg_get_frag_utils_change_notifier_list(), nb);
 }
+#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL(gpu_dvfs_unregister_utilization_notifier);
+#endif
 
 /* TODO: this sysfs function use external fucntion. */
 /* Actually, Using external function in internal module is not ideal with the Refactoring rules */

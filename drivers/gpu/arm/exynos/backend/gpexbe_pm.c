@@ -18,7 +18,8 @@
  * http://www.gnu.org/licenses/gpl-2.0.html.
  */
 
-#include <errno.h>
+#include <linux/export.h>
+#include <linux/errno.h>
 
 /* TODO: separate cal-if and pmu-if dependent stuff */
 #include <soc/samsung/cal-if.h>
@@ -76,6 +77,7 @@ int gpexbe_pm_get_status(void)
 
 	return ret;
 }
+EXPORT_SYMBOL_GPL(gpexbe_pm_get_status);
 struct exynos_pm_domain *gpexbe_pm_get_exynos_pm_domain(void)
 {
 	return exynos_pm_domain;
