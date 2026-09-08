@@ -66,9 +66,7 @@ int gpu_tmu_notifier(struct notifier_block *notifier, unsigned long event, void 
 {
 	return tmu_notifier(notifier, event, freqp);
 }
-#if !IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
 EXPORT_SYMBOL_GPL(gpu_tmu_notifier);
-#endif
 
 static int gpu_pmqos_min_notifier(struct notifier_block *nb, unsigned long val, void *v)
 {

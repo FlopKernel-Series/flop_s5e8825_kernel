@@ -19,7 +19,8 @@
 #
 
 # Mali runtime version + redirect
-obj-$(CONFIG_MALI_VERSION_SELECTOR) += mali_version_selector.o mali_redirect.o
+# Mali runtime version chooser
+obj-$(CONFIG_MALI_VERSION_SELECTOR) += mali_version_selector.o
 
 # Compatibility stub: provides /sys/module/mali_kbase/ for userspace tools
 obj-$(CONFIG_MALI_MIDGARD) += mali_kbase.o

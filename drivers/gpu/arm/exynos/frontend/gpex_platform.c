@@ -48,104 +48,6 @@
 #include <gpexwa_interactive_boost.h>
 
 #include <runtime_test_runner.h>
-#include <mali_redirect.h>
-
-/*
- * Extern declarations for version-renamed functions.
- * mali_exports.h renames each with the version suffix.
- * Unavailable functions are set to NULL below.
- */
-extern int gpu_dvfs_get_cur_clock(void);
-extern int gpu_dvfs_get_clock(int level);
-extern int gpu_dvfs_get_voltage(int clock);
-extern int gpu_dvfs_get_step(void);
-extern int gpu_dvfs_get_utilization(void);
-extern int gpu_dvfs_get_max_freq(void);
-extern int gpu_dvfs_get_min_freq(void);
-extern int gpu_dvfs_get_max_locked_freq(void);
-extern int gpu_dvfs_get_min_locked_freq(void);
-extern uint32_t *gpu_dvfs_get_freq_table(void);
-extern ktime_t *gpu_dvfs_get_time_in_state(void);
-extern ktime_t gpu_dvfs_get_tis_last_update(void);
-extern ktime_t *gpu_dvfs_get_job_queue_count(void);
-extern ktime_t gpu_dvfs_get_job_queue_last_updated(void);
-extern void gpu_dvfs_set_amigo_governor(int mode);
-extern void gpu_dvfs_set_freq_margin(int margin);
-extern int gpu_dvfs_register_utilization_notifier(struct notifier_block *nb);
-extern int gpu_dvfs_unregister_utilization_notifier(struct notifier_block *nb);
-extern int gpu_tmu_notifier(struct notifier_block *notifier,
-			    unsigned long event, void *v);
-
-/*
- * TSG / GPU stats API (external consumers)
- */
-extern unsigned long exynos_stats_get_job_state_cnt(void);
-extern void exynos_stats_get_run_times(u64 *times);
-extern void exynos_stats_set_vsync(ktime_t timestamp);
-extern void exynos_stats_get_frame_info(s32 *nrframe, u64 *nrvsync, u64 *delta_ms);
-
-/*
- * Migov helpers
- */
-extern void exynos_migov_set_targetframetime(int us);
-extern void exynos_migov_set_targettime_margin(int us);
-extern void exynos_migov_set_util_margin(int percentage);
-extern void exynos_migov_set_decon_time(int us);
-extern void exynos_migov_set_comb_ctrl(int enable);
-
-/*
- * SDP
- */
-extern void exynos_sdp_set_powertable(int id, int cnt, struct freq_table *table);
-extern void exynos_sdp_set_busy_domain(int id);
-extern void exynos_sdp_set_cur_freqlv(int id, int idx);
-
-/*
- * STC config
- */
-extern int exynos_gpu_stc_config_show(int page_size, char *buf);
-extern int exynos_gpu_stc_config_store(const char *buf);
-
-/*
- * Mali export table. Registered with redirector after probe init.
- */
-static const struct mali_exports mali_exports_table = {
-	.gpu_dvfs_get_cur_clock = gpu_dvfs_get_cur_clock,
-	.gpu_dvfs_get_clock = gpu_dvfs_get_clock,
-	.gpu_dvfs_get_voltage = gpu_dvfs_get_voltage,
-	.gpu_dvfs_get_step = gpu_dvfs_get_step,
-	.gpu_dvfs_get_utilization = gpu_dvfs_get_utilization,
-	.gpu_dvfs_get_max_freq = gpu_dvfs_get_max_freq,
-	.gpu_dvfs_get_min_freq = gpu_dvfs_get_min_freq,
-	.gpu_dvfs_get_max_locked_freq = gpu_dvfs_get_max_locked_freq,
-	.gpu_dvfs_get_min_locked_freq = gpu_dvfs_get_min_locked_freq,
-	.gpu_dvfs_get_freq_table = gpu_dvfs_get_freq_table,
-	.gpu_dvfs_get_time_in_state = gpu_dvfs_get_time_in_state,
-	.gpu_dvfs_get_tis_last_update = gpu_dvfs_get_tis_last_update,
-	.gpu_dvfs_get_job_queue_count = gpu_dvfs_get_job_queue_count,
-	.gpu_dvfs_get_job_queue_last_updated = gpu_dvfs_get_job_queue_last_updated,
-	.gpu_dvfs_set_amigo_governor = gpu_dvfs_set_amigo_governor,
-	.gpu_dvfs_set_freq_margin = gpu_dvfs_set_freq_margin,
-	.gpu_dvfs_register_utilization_notifier = gpu_dvfs_register_utilization_notifier,
-	.gpu_dvfs_unregister_utilization_notifier = gpu_dvfs_unregister_utilization_notifier,
-	.gpu_tmu_get_notifier = NULL,
-	.gpu_tmu_notifier = gpu_tmu_notifier,
-	.exynos_stats_get_job_state_cnt = exynos_stats_get_job_state_cnt,
-	.exynos_stats_get_run_times = exynos_stats_get_run_times,
-	.exynos_stats_set_vsync = exynos_stats_set_vsync,
-	.exynos_stats_get_frame_info = exynos_stats_get_frame_info,
-	.exynos_migov_set_targetframetime = exynos_migov_set_targetframetime,
-	.exynos_migov_set_targettime_margin = exynos_migov_set_targettime_margin,
-	.exynos_migov_set_util_margin = exynos_migov_set_util_margin,
-	.exynos_migov_set_decon_time = exynos_migov_set_decon_time,
-	.exynos_migov_set_comb_ctrl = exynos_migov_set_comb_ctrl,
-	.exynos_sdp_set_powertable = exynos_sdp_set_powertable,
-	.exynos_sdp_set_busy_domain = exynos_sdp_set_busy_domain,
-	.exynos_sdp_set_cur_freqlv = exynos_sdp_set_cur_freqlv,
-	.exynos_gpu_stc_config_show = exynos_gpu_stc_config_show,
-	.exynos_gpu_stc_config_store = exynos_gpu_stc_config_store,
-	.kbase_get_create_info = NULL,
-};
 
 int gpex_platform_init(struct device **dev)
 {
@@ -191,7 +93,6 @@ int gpex_platform_init(struct device **dev)
 	gpex_utils_sysfs_kobject_files_create();
 	gpex_utils_sysfs_device_files_create();
 
-	mali_register_exports(&mali_exports_table);
 
 	return 0;
 }

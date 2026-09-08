@@ -145,16 +145,9 @@ ccflags-y += \
 
 subdir-ccflags-y += $(ccflags-y)
 
-# Suppress all EXPORT_SYMBOL from this version module. The redirector
-# (mali_redirect) provides the generic exported symbols and forwards to
-# the version selected via mali.version= cmdline.
+# Suppress all EXPORT_SYMBOL from this version module. This prevents non-selected modules from defining conflicting symbols.
 ccflags-y += -include $(srctree)/drivers/gpu/arm/mali_no_export.h
 
-# Version-specific namespace for exported symbols to avoid conflicts
-# across Mali versions. The redirector (mali_redirect) provides generic
-# names and routes calls to the version selected via mali.version= cmdline.
-ccflags-y += -DMALI_VER_SUFFIX=_r38p1
-ccflags-y += -include $(srctree)/drivers/gpu/arm/mali_exports.h
 
 #
 # Kernel Modules

@@ -406,7 +406,6 @@ void migov_set_tunable_data(void)
 /******************************************************************************/
 /*                              Profile functions                             */
 /******************************************************************************/
-extern void kbase_get_create_info(u64 *cnt, ktime_t *us);
 static void control_llc(int value);
 
 void migov_update_profile(void)
