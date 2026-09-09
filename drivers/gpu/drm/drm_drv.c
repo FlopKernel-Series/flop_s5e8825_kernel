@@ -629,9 +629,11 @@ static int drm_dev_init(struct drm_device *dev,
 			goto err;
 	}
 
-	ret = drm_minor_alloc(dev, DRM_MINOR_PRIMARY);
-	if (ret)
-		goto err;
+	if (drm_core_check_feature(dev, DRIVER_MODESET)) {
+		ret = drm_minor_alloc(dev, DRM_MINOR_PRIMARY);
+		if (ret)
+			goto err;
+	}
 
 	ret = drm_legacy_create_map_hash(dev);
 	if (ret)
@@ -904,7 +906,7 @@ int drm_dev_register(struct drm_device *dev, unsigned long flags)
 		 driver->name, driver->major, driver->minor,
 		 driver->patchlevel, driver->date,
 		 dev->dev ? dev_name(dev->dev) : "virtual device",
-		 dev->primary->index);
+		 dev->primary ? dev->primary->index : (dev->render ? dev->render->index : -1));
 
 	goto out_unlock;
 
