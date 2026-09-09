@@ -17,6 +17,8 @@
 #include <drm/drm_syncobj.h>
 #include <drm/drm_utils.h>
 
+#include <soc/samsung/exynos_gpex.h>
+
 #include "panfrost_device.h"
 #include "panfrost_gem.h"
 #include "panfrost_mmu.h"
@@ -700,6 +702,9 @@ panfrost_open(struct drm_device *dev, struct drm_file *file)
 	if (ret)
 		goto err_job;
 
+	if (exynos_gpex_is_attached())
+		exynos_gpex_set_frequency(897000);
+
 	return 0;
 
 err_job:
@@ -827,11 +832,12 @@ static int panfrost_probe(struct platform_device *pdev)
 		goto err_out0;
 	}
 
+	pm_runtime_set_autosuspend_delay(pfdev->dev, 50); /* ~3 frames */
+	pm_runtime_use_autosuspend(pfdev->dev);
 	pm_runtime_set_active(pfdev->dev);
 	pm_runtime_mark_last_busy(pfdev->dev);
 	pm_runtime_enable(pfdev->dev);
-	pm_runtime_set_autosuspend_delay(pfdev->dev, 50); /* ~3 frames */
-	pm_runtime_use_autosuspend(pfdev->dev);
+	pm_runtime_get_noresume(pfdev->dev);
 
 	/*
 	 * Register the DRM device with the core and the connectors with
@@ -843,9 +849,13 @@ static int panfrost_probe(struct platform_device *pdev)
 
 	panfrost_gem_shrinker_init(ddev);
 
+	pm_runtime_mark_last_busy(pfdev->dev);
+	pm_runtime_put_autosuspend(pfdev->dev);
+
 	return 0;
 
 err_out1:
+	pm_runtime_put_noidle(pfdev->dev);
 	pm_runtime_disable(pfdev->dev);
 	panfrost_device_fini(pfdev);
 	pm_runtime_set_suspended(pfdev->dev);
@@ -925,4 +935,4 @@ module_platform_driver(panfrost_driver);
 MODULE_AUTHOR("Panfrost Project Developers");
 MODULE_DESCRIPTION("Panfrost DRM Driver");
 MODULE_LICENSE("GPL v2");
-MODULE_SOFTDEP("pre: governor_simpleondemand");
+MODULE_SOFTDEP("pre: governor_simpleondemand exynos_gpex");

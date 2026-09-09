@@ -242,7 +242,7 @@ static const struct panfrost_model gpu_models[] = {
 		GPU_REV(g57, 0, 0)),
 
 
-	/* Mali-G68 (Valhall v7 JM, Samsung Exynos 1280 / s5e8825) */
+	/* Mali-G68 (Valhall v9 JM, Samsung Exynos 1280 / s5e8825) */
 	GPU_MODEL(g68, 0x9004,
 		GPU_REV(g68, 0, 0),
 		GPU_REV(g68, 1, 0)),

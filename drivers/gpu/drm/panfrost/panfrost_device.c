@@ -8,6 +8,8 @@
 #include <linux/pm_domain.h>
 #include <linux/regulator/consumer.h>
 
+#include <soc/samsung/exynos_gpex.h>
+
 #include "panfrost_device.h"
 #include "panfrost_devfreq.h"
 #include "panfrost_features.h"
@@ -16,6 +18,20 @@
 #include "panfrost_job.h"
 #include "panfrost_mmu.h"
 #include "panfrost_perfcnt.h"
+
+static int panfrost_gpex_get_utilization(void)
+{
+	return -1;
+}
+
+static void panfrost_gpex_clean_caches(void)
+{
+}
+
+static const struct exynos_gpex_gpu_ops panfrost_gpex_ops = {
+	.get_utilization = panfrost_gpex_get_utilization,
+	.clean_caches = panfrost_gpex_clean_caches,
+};
 
 static int panfrost_reset_init(struct panfrost_device *pfdev)
 {
@@ -212,6 +228,16 @@ int panfrost_device_init(struct panfrost_device *pfdev)
 		return err;
 	}
 
+	if (of_property_read_bool(pfdev->dev->of_node, "g3d_cmu_cal_id")) {
+		err = exynos_gpex_register_gpu(pfdev->dev, &panfrost_gpex_ops);
+		if (err)
+			dev_warn(pfdev->dev, "failed to register with exynos_gpex: %d\n", err);
+		else {
+			exynos_gpex_setup_coherency();
+			exynos_gpex_set_frequency(897000);
+		}
+	}
+
 	err = panfrost_devfreq_init(pfdev);
 	if (err) {
 		if (err != -EPROBE_DEFER)
@@ -274,12 +300,17 @@ out_regulator:
 out_devfreq:
 	panfrost_devfreq_fini(pfdev);
 out_clk:
+	if (exynos_gpex_is_attached())
+		exynos_gpex_unregister_gpu(pfdev->dev);
 	panfrost_clk_fini(pfdev);
 	return err;
 }
 
 void panfrost_device_fini(struct panfrost_device *pfdev)
 {
+	if (exynos_gpex_is_attached())
+		exynos_gpex_unregister_gpu(pfdev->dev);
+
 	panfrost_perfcnt_fini(pfdev);
 	panfrost_job_fini(pfdev);
 	panfrost_mmu_fini(pfdev);
@@ -408,6 +439,9 @@ int panfrost_device_resume(struct device *dev)
 {
 	struct panfrost_device *pfdev = dev_get_drvdata(dev);
 
+	if (exynos_gpex_is_attached())
+		exynos_gpex_pm_resume(dev);
+
 	panfrost_device_reset(pfdev, true);
 	panfrost_devfreq_resume(pfdev);
 
@@ -426,6 +460,9 @@ int panfrost_device_suspend(struct device *dev)
 	panfrost_mmu_suspend_irq(pfdev);
 	panfrost_gpu_suspend_irq(pfdev);
 	panfrost_gpu_power_off(pfdev);
+
+	if (exynos_gpex_is_attached())
+		exynos_gpex_pm_suspend(dev);
 
 	return 0;
 }
