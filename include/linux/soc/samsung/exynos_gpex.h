@@ -41,7 +41,9 @@ int exynos_gpex_pm_resume(struct device *dev);
 int exynos_gpex_pm_suspend(struct device *dev);
 void exynos_gpex_setup_coherency(void);
 int exynos_gpex_init_opp_table(struct device *dev);
+void exynos_gpex_term_opp_table(struct device *dev);
 void exynos_gpex_sync_opp_table(int max_khz);
+void exynos_gpex_notify_qos_change(void);
 #else
 static inline int exynos_gpex_register_gpu(struct device *dev, const struct exynos_gpex_gpu_ops *ops) { return 0; }
 static inline void exynos_gpex_unregister_gpu(struct device *dev) {}
@@ -54,7 +56,9 @@ static inline int exynos_gpex_pm_resume(struct device *dev) { return 0; }
 static inline int exynos_gpex_pm_suspend(struct device *dev) { return 0; }
 static inline void exynos_gpex_setup_coherency(void) {}
 static inline int exynos_gpex_init_opp_table(struct device *dev) { return -ENODEV; }
+static inline void exynos_gpex_term_opp_table(struct device *dev) {}
 static inline void exynos_gpex_sync_opp_table(int max_khz) {}
+static inline void exynos_gpex_notify_qos_change(void) {}
 #endif
 
 #endif /* _LINUX_SOC_SAMSUNG_EXYNOS_GPEX_H_ */

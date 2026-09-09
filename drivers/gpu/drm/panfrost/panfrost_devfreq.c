@@ -221,6 +221,8 @@ void panfrost_devfreq_fini(struct panfrost_device *pfdev)
 	}
 
 	if (pfdevfreq->opp_of_table_added) {
+		if (exynos_gpex_is_attached())
+			exynos_gpex_term_opp_table(&pfdev->pdev->dev);
 		dev_pm_opp_of_remove_table(&pfdev->pdev->dev);
 		dev_pm_opp_remove_table(&pfdev->pdev->dev);
 		pfdevfreq->opp_of_table_added = false;

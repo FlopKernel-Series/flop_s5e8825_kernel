@@ -20,6 +20,7 @@
 
 #include <linux/module.h>
 #include <linux/pm_opp.h>
+#include <linux/pm_qos.h>
 #include <linux/mali_exynos_if.h>
 #include <soc/samsung/exynos_gpex.h>
 #include <gpex_platform.h>
@@ -50,6 +51,9 @@
 #include <gpexwa_interactive_boost.h>
 
 #include <runtime_test_runner.h>
+
+static const struct exynos_gpex_gpu_ops *active_gpu_ops;
+static struct device *active_gpu_dev;
 
 int gpex_platform_init(struct device **dev)
 {
@@ -102,6 +106,8 @@ EXPORT_SYMBOL_GPL(gpex_platform_init);
 
 void gpex_platform_term(void)
 {
+	exynos_gpex_term_opp_table(active_gpu_dev);
+
 	runtime_test_runner_term();
 
 	gpexbe_mem_usage_term();
@@ -143,9 +149,6 @@ EXPORT_SYMBOL_GPL(gpex_platform_term);
 /*
  * Public GPEX registration and control interface for GPU drivers
  */
-static const struct exynos_gpex_gpu_ops *active_gpu_ops;
-static struct device *active_gpu_dev;
-
 int exynos_gpex_register_gpu(struct device *dev, const struct exynos_gpex_gpu_ops *ops)
 {
 	int ret;
@@ -225,6 +228,33 @@ void exynos_gpex_setup_coherency(void)
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_setup_coherency);
 
+static struct dev_pm_qos_request gpex_qos_min_req;
+static struct dev_pm_qos_request gpex_qos_max_req;
+static bool gpex_qos_req_active;
+static struct work_struct gpex_qos_work;
+
+static void gpex_qos_work_func(struct work_struct *work)
+{
+	int min_lock, max_lock;
+
+	if (!gpex_qos_req_active || !active_gpu_dev)
+		return;
+
+	min_lock = gpex_clock_get_min_lock();
+	max_lock = gpex_clock_get_max_lock();
+
+	dev_pm_qos_update_request(&gpex_qos_min_req, min_lock > 0 ? min_lock : 0);
+	dev_pm_qos_update_request(&gpex_qos_max_req,
+				  max_lock > 0 ? max_lock : PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
+}
+
+void exynos_gpex_notify_qos_change(void)
+{
+	if (gpex_qos_req_active)
+		schedule_work(&gpex_qos_work);
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_notify_qos_change);
+
 int exynos_gpex_init_opp_table(struct device *dev)
 {
 	int count = gpu_dvfs_get_step();
@@ -250,9 +280,39 @@ int exynos_gpex_init_opp_table(struct device *dev)
 
 	gpex_dvfs_stop();
 
+	if (!gpex_qos_req_active) {
+		INIT_WORK(&gpex_qos_work, gpex_qos_work_func);
+		ret = dev_pm_qos_add_request(dev, &gpex_qos_min_req,
+					     DEV_PM_QOS_MIN_FREQUENCY, 0);
+		if (ret >= 0) {
+			ret = dev_pm_qos_add_request(dev, &gpex_qos_max_req,
+						     DEV_PM_QOS_MAX_FREQUENCY,
+						     PM_QOS_MAX_FREQUENCY_DEFAULT_VALUE);
+			if (ret >= 0) {
+				gpex_qos_req_active = true;
+				schedule_work(&gpex_qos_work);
+			} else {
+				dev_pm_qos_remove_request(&gpex_qos_min_req);
+			}
+		}
+	}
+
 	return 0;
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_init_opp_table);
+
+void exynos_gpex_term_opp_table(struct device *dev)
+{
+	if (gpex_qos_req_active) {
+		gpex_qos_req_active = false;
+		cancel_work_sync(&gpex_qos_work);
+		if (dev_pm_qos_request_active(&gpex_qos_max_req))
+			dev_pm_qos_remove_request(&gpex_qos_max_req);
+		if (dev_pm_qos_request_active(&gpex_qos_min_req))
+			dev_pm_qos_remove_request(&gpex_qos_min_req);
+	}
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_term_opp_table);
 
 void exynos_gpex_sync_opp_table(int max_khz)
 {

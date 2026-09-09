@@ -340,7 +340,7 @@ static int gpu_check_target_clock(int clock)
 	if (target_clock > gpex_clock_get_max_clock())
 		target_clock = gpex_clock_get_max_clock();
 
-	if (!gpex_dvfs_get_status())
+	if (!gpex_dvfs_get_status() && !exynos_gpex_is_attached())
 		return target_clock;
 
 	GPU_LOG(MALI_EXYNOS_DEBUG, "clock: %d, min: %d, max: %d\n", clock, clk_info.min_lock,
@@ -506,6 +506,8 @@ int gpex_clock_set_runtime_max_clock(int clk)
 	mutex_unlock(&clk_info.clock_lock);
 
 	exynos_gpex_sync_opp_table(clk);
+	if (exynos_gpex_is_attached())
+		exynos_gpex_notify_qos_change();
 
 	if (update_clock && gpex_pm_get_status(true))
 		return gpex_clock_set(target_clk);
@@ -638,6 +640,9 @@ int gpex_clock_lock_clock(gpex_clock_lock_cmd_t lock_command, gpex_clock_lock_ty
 	default:
 		break;
 	}
+
+	if (exynos_gpex_is_attached())
+		exynos_gpex_notify_qos_change();
 
 	return 0;
 }
