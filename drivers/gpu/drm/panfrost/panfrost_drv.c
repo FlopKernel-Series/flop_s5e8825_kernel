@@ -29,6 +29,10 @@
 static bool unstable_ioctls;
 module_param_unsafe(unstable_ioctls, bool, 0600);
 
+static bool panfrost_force;
+module_param_named(force, panfrost_force, bool, 0444);
+MODULE_PARM_DESC(force, "Force probe even if not selected by mali_version_selector");
+
 static int panfrost_ioctl_query_timestamp(struct panfrost_device *pfdev,
 					  u64 *arg)
 {
@@ -778,6 +782,17 @@ static int panfrost_probe(struct platform_device *pdev)
 	struct panfrost_device *pfdev;
 	struct drm_device *ddev;
 	int err;
+
+#if IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
+	extern char mali_selected_version[];
+
+	if (!panfrost_force && mali_selected_version[0] &&
+	    strncmp(mali_selected_version, "pan", 3) != 0) {
+		dev_info(&pdev->dev, "panfrost: not selected (requested=%s), skipping\n",
+			 mali_selected_version);
+		return -ENODEV;
+	}
+#endif
 
 	pfdev = devm_kzalloc(&pdev->dev, sizeof(*pfdev), GFP_KERNEL);
 	if (!pfdev)
