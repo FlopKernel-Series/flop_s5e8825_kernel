@@ -218,7 +218,10 @@ struct panel_display_mode *exynos_panel_find_panel_mode(
 		if (ret < 0)
 			continue;
 
-		if (!strcmp(t_pmode.name, pmode->name)) {
+		if (!strcmp(t_pmode.name, pmode->name) ||
+		    (t_pmode.hdisplay == pmode->hdisplay &&
+		     t_pmode.vdisplay == pmode->vdisplay &&
+		     drm_mode_vrefresh(&t_pmode) == drm_mode_vrefresh(pmode))) {
 			pdm = pdms->modes[i];
 			break;
 		}
