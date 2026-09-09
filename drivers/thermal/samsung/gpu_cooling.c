@@ -978,8 +978,8 @@ static int gpu_cooling_table_init(void)
 	num_level = gpu_dvfs_get_step();
 
 	if (num_level == 0) {
-		pr_err("Faile to get gpu_dvfs_get_step()\n");
-		return -EINVAL;
+		pr_warn("[GPU cooling] gpu_dvfs_get_step() == 0, cooling disabled\n");
+		return 0;
 	}
 
 	/* Table size can be num_of_range + 1 since last row has the value of TABLE_END */
@@ -1026,6 +1026,9 @@ int exynos_gpu_cooling_init(void)
 		pr_err("Fail to initialize gpu_cooling_table\n");
 		return ret;
 	}
+
+	if (!gpu_freq_table)
+		return 0;
 #if defined(CONFIG_MALI_DVFS)
 	np = of_find_node_by_name(NULL, "mali");
 #elif defined(CONFIG_DRM_SGPU_EXYNOS)
