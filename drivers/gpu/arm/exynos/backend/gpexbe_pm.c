@@ -71,6 +71,9 @@ int gpexbe_pm_get_status(void)
 	int ret = 0;
 	unsigned int val = 0xf;
 
+	if (!exynos_pm_domain)
+		return 0;
+
 	exynos_pmu_read(gpu_pmu_status_reg_offset, &val);
 
 	ret = ((val & gpu_pmu_status_local_pwr_mask) == gpu_pmu_status_local_pwr_mask) ? 1 : 0;
@@ -85,19 +88,24 @@ struct exynos_pm_domain *gpexbe_pm_get_exynos_pm_domain(void)
 
 void gpexbe_pm_access_lock(void)
 {
-	//DEBUG_ASSERT(exynos_pm_domain)
+	if (!exynos_pm_domain)
+		return;
 	mutex_lock(&exynos_pm_domain->access_lock);
 }
 
 void gpexbe_pm_access_unlock(void)
 {
-	//DEBUG_ASSERT(exynos_pm_domain)
+	if (!exynos_pm_domain)
+		return;
 	mutex_unlock(&exynos_pm_domain->access_lock);
 }
 
 static int gpexbe_pm_pd_control(int target_status)
 {
 	int status;
+
+	if (!exynos_pm_domain)
+		return -ENODEV;
 
 	gpexbe_pm_access_lock();
 
