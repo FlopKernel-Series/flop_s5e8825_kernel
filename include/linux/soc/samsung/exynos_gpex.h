@@ -22,6 +22,7 @@ struct exynos_gpex_gpu_ops {
 	void (*update_job_load)(u32 job_type, u64 ns_spent);
 };
 
+#if IS_REACHABLE(CONFIG_EXYNOS_GPEX)
 /*
  * GPU Driver Registration API
  * Called by the active GPU KMD (Mali or Panfrost) during device probe.
@@ -39,5 +40,17 @@ unsigned long exynos_gpex_get_frequency(void);
 int exynos_gpex_pm_resume(struct device *dev);
 int exynos_gpex_pm_suspend(struct device *dev);
 void exynos_gpex_setup_coherency(void);
+#else
+static inline int exynos_gpex_register_gpu(struct device *dev, const struct exynos_gpex_gpu_ops *ops) { return 0; }
+static inline void exynos_gpex_unregister_gpu(struct device *dev) {}
+static inline struct device *exynos_gpex_get_gpu_device(void) { return NULL; }
+static inline bool exynos_gpex_is_attached(void) { return false; }
+
+static inline int exynos_gpex_set_frequency(unsigned long freq_hz) { return 0; }
+static inline unsigned long exynos_gpex_get_frequency(void) { return 0; }
+static inline int exynos_gpex_pm_resume(struct device *dev) { return 0; }
+static inline int exynos_gpex_pm_suspend(struct device *dev) { return 0; }
+static inline void exynos_gpex_setup_coherency(void) {}
+#endif
 
 #endif /* _LINUX_SOC_SAMSUNG_EXYNOS_GPEX_H_ */

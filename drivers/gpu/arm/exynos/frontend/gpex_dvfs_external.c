@@ -29,6 +29,8 @@ static struct dvfs_info *dvfs;
 
 int gpu_dvfs_get_clock(int level)
 {
+	if (!dvfs)
+		return -1;
 	if ((level < 0) || (level >= dvfs->table_size))
 		return -1;
 
@@ -44,6 +46,8 @@ EXPORT_SYMBOL_GPL(gpu_dvfs_get_voltage);
 
 int gpu_dvfs_get_step(void)
 {
+	if (!dvfs)
+		return 0;
 	return dvfs->table_size;
 }
 EXPORT_SYMBOL_GPL(gpu_dvfs_get_step);
@@ -64,6 +68,9 @@ EXPORT_SYMBOL_GPL(gpu_dvfs_get_cur_clock);
 int gpu_dvfs_get_utilization(void)
 {
 	int util = 0;
+
+	if (!dvfs)
+		return 0;
 
 	if (gpex_pm_get_status(true) == 1)
 		util = dvfs->env_data.utilization;

@@ -190,6 +190,8 @@ EXPORT_SYMBOL_GPL(exynos_gpex_get_gpu_ops);
 
 int exynos_gpex_set_frequency(unsigned long freq_hz)
 {
+	if (freq_hz > 10000000)
+		freq_hz /= 1000;
 	return gpex_clock_set((int)freq_hz);
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_set_frequency);
@@ -202,13 +204,13 @@ EXPORT_SYMBOL_GPL(exynos_gpex_get_frequency);
 
 int exynos_gpex_pm_resume(struct device *dev)
 {
-	return gpex_pm_power_on(dev);
+	return gpex_pm_runtime_on_prepare(dev);
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_pm_resume);
 
 int exynos_gpex_pm_suspend(struct device *dev)
 {
-	gpex_pm_suspend(dev);
+	gpex_pm_runtime_off_prepare(dev);
 	return 0;
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_pm_suspend);
