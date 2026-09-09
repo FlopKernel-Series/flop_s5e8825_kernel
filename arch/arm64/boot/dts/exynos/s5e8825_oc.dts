@@ -4475,11 +4475,11 @@
 	};
 
 	mali@10300000 {
-		compatible = "arm,mali";
+		compatible = "arm,mali-valhall-jm", "arm,mali";
 		reg = <0x00 0x10300000 0x5000>;
 		sysreg_g3d = <0x10220000>;
 		interrupts = <0x00 0x107 0x04 0x00 0x108 0x04 0x00 0x106 0x04>;
-		interrupt-names = "JOB", "MMU", "GPU";
+		interrupt-names = "job", "mmu", "gpu";
 		g3d_cmu_cal_id = <0xb040008>;
 		power-domains = <0xa1>;
 		g3d_genpd_name = "pd-g3d";
