@@ -19,6 +19,8 @@
  */
 
 #include <linux/module.h>
+#include <linux/pm_opp.h>
+#include <linux/mali_exynos_if.h>
 #include <soc/samsung/exynos_gpex.h>
 #include <gpex_platform.h>
 #include <gpex_utils.h>
@@ -222,6 +224,35 @@ void exynos_gpex_setup_coherency(void)
 	gpexbe_llc_coherency_set_awuser();
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_setup_coherency);
+
+int exynos_gpex_init_opp_table(struct device *dev)
+{
+	int count = gpu_dvfs_get_step();
+	int i, ret = 0;
+
+	if (count <= 0)
+		return -ENODEV;
+
+	for (i = 0; i < count; i++) {
+		int freq_khz = gpu_dvfs_get_clock(i);
+		int volt_uv = gpu_dvfs_get_voltage(freq_khz);
+
+		if (freq_khz <= 0)
+			continue;
+
+		ret = dev_pm_opp_add(dev, (unsigned long)freq_khz * 1000,
+				     volt_uv > 0 ? (unsigned long)volt_uv : 0);
+		if (ret) {
+			dev_warn(dev, "failed to add OPP %d kHz: %d\n", freq_khz, ret);
+			continue;
+		}
+	}
+
+	gpex_dvfs_stop();
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_init_opp_table);
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Samsung Exynos GPU Platform Extension (GPEX)");

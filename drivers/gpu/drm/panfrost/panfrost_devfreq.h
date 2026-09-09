@@ -20,6 +20,7 @@ struct panfrost_devfreq {
 	struct thermal_cooling_device *cooling;
 	struct devfreq_simple_ondemand_data gov_data;
 	bool opp_of_table_added;
+	unsigned int last_utilization;
 
 	ktime_t busy_time;
 	ktime_t idle_time;

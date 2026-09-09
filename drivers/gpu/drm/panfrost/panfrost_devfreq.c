@@ -7,6 +7,8 @@
 #include <linux/platform_device.h>
 #include <linux/pm_opp.h>
 
+#include <soc/samsung/exynos_gpex.h>
+
 #include "panfrost_device.h"
 #include "panfrost_devfreq.h"
 
@@ -35,6 +37,9 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
 		return PTR_ERR(opp);
 	dev_pm_opp_put(opp);
 
+	if (exynos_gpex_is_attached())
+		return exynos_gpex_set_frequency(*freq);
+
 	return dev_pm_opp_set_rate(dev, *freq);
 }
 
@@ -52,7 +57,10 @@ static int panfrost_devfreq_get_dev_status(struct device *dev,
 	struct panfrost_devfreq *pfdevfreq = &pfdev->pfdevfreq;
 	unsigned long irqflags;
 
-	status->current_frequency = clk_get_rate(pfdev->clock);
+	if (exynos_gpex_is_attached())
+		status->current_frequency = exynos_gpex_get_frequency() * 1000;
+	else
+		status->current_frequency = clk_get_rate(pfdev->clock);
 
 	spin_lock_irqsave(&pfdevfreq->lock, irqflags);
 
@@ -62,6 +70,11 @@ static int panfrost_devfreq_get_dev_status(struct device *dev,
 						   pfdevfreq->idle_time));
 
 	status->busy_time = ktime_to_ns(pfdevfreq->busy_time);
+
+	if (status->total_time > 0)
+		pfdevfreq->last_utilization = (status->busy_time * 100) / status->total_time;
+	else
+		pfdevfreq->last_utilization = 0;
 
 	panfrost_devfreq_reset(pfdevfreq);
 
@@ -109,10 +122,16 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
 
 	ret = dev_pm_opp_of_add_table(dev);
 	if (ret) {
-		/* Optional, continue without devfreq */
-		if (ret == -ENODEV)
-			ret = 0;
-		goto err_fini;
+		if (ret == -ENODEV && exynos_gpex_is_attached()) {
+			ret = exynos_gpex_init_opp_table(dev);
+			if (ret)
+				goto err_fini;
+		} else {
+			/* Optional, continue without devfreq */
+			if (ret == -ENODEV)
+				ret = 0;
+			goto err_fini;
+		}
 	}
 	pfdevfreq->opp_of_table_added = true;
 
@@ -120,7 +139,10 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
 
 	panfrost_devfreq_reset(pfdevfreq);
 
-	cur_freq = clk_get_rate(pfdev->clock);
+	if (exynos_gpex_is_attached())
+		cur_freq = exynos_gpex_get_frequency() * 1000;
+	else
+		cur_freq = clk_get_rate(pfdev->clock);
 
 	opp = devfreq_recommended_opp(dev, &cur_freq, 0);
 	if (IS_ERR(opp)) {
@@ -134,7 +156,10 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
 	 * Set the recommend OPP this will enable and configure the regulator
 	 * if any and will avoid a switch off by regulator_late_cleanup()
 	 */
-	ret = dev_pm_opp_set_opp(dev, opp);
+	if (exynos_gpex_is_attached())
+		ret = exynos_gpex_set_frequency(cur_freq);
+	else
+		ret = dev_pm_opp_set_opp(dev, opp);
 	if (ret) {
 		DRM_DEV_ERROR(dev, "Couldn't set recommended OPP\n");
 		return ret;
@@ -183,6 +208,7 @@ void panfrost_devfreq_fini(struct panfrost_device *pfdev)
 
 	if (pfdevfreq->opp_of_table_added) {
 		dev_pm_opp_of_remove_table(&pfdev->pdev->dev);
+		dev_pm_opp_remove_table(&pfdev->pdev->dev);
 		pfdevfreq->opp_of_table_added = false;
 	}
 

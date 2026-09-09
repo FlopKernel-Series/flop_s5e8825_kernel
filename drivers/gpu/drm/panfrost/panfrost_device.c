@@ -21,7 +21,17 @@
 
 static int panfrost_gpex_get_utilization(void)
 {
-	return -1;
+	struct device *dev = exynos_gpex_get_gpu_device();
+	struct panfrost_device *pfdev;
+
+	if (!dev)
+		return -1;
+
+	pfdev = dev_get_drvdata(dev);
+	if (!pfdev)
+		return -1;
+
+	return (int)pfdev->pfdevfreq.last_utilization;
 }
 
 static void panfrost_gpex_clean_caches(void)
@@ -54,18 +64,20 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
 	int err;
 	unsigned long rate;
 
-	pfdev->clock = devm_clk_get(pfdev->dev, NULL);
+	pfdev->clock = devm_clk_get_optional(pfdev->dev, NULL);
 	if (IS_ERR(pfdev->clock)) {
 		dev_err(pfdev->dev, "get clock failed %ld\n", PTR_ERR(pfdev->clock));
 		return PTR_ERR(pfdev->clock);
 	}
 
-	rate = clk_get_rate(pfdev->clock);
-	dev_info(pfdev->dev, "clock rate = %lu\n", rate);
+	if (pfdev->clock) {
+		rate = clk_get_rate(pfdev->clock);
+		dev_info(pfdev->dev, "clock rate = %lu\n", rate);
 
-	err = clk_prepare_enable(pfdev->clock);
-	if (err)
-		return err;
+		err = clk_prepare_enable(pfdev->clock);
+		if (err)
+			return err;
+	}
 
 	pfdev->bus_clock = devm_clk_get_optional(pfdev->dev, "bus");
 	if (IS_ERR(pfdev->bus_clock)) {
@@ -87,7 +99,8 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
 	return 0;
 
 disable_clock:
-	clk_disable_unprepare(pfdev->clock);
+	if (pfdev->clock)
+		clk_disable_unprepare(pfdev->clock);
 
 	return err;
 }
@@ -95,7 +108,8 @@ disable_clock:
 static void panfrost_clk_fini(struct panfrost_device *pfdev)
 {
 	clk_disable_unprepare(pfdev->bus_clock);
-	clk_disable_unprepare(pfdev->clock);
+	if (pfdev->clock)
+		clk_disable_unprepare(pfdev->clock);
 }
 
 static int panfrost_regulator_init(struct panfrost_device *pfdev)
