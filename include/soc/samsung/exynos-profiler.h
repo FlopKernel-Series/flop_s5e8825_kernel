@@ -648,6 +648,9 @@ static inline struct freq_table *init_freq_table (u32 *freq_table, u32 table_cnt
 	unsigned long *cal_ftable;
 	int cal_idx, idx = 0;
 
+	if (!table_cnt)
+		return NULL;
+
 	/* alloc table */
 	table = kzalloc(sizeof(struct freq_table) * table_cnt, GFP_KERNEL);
 	if (!table) {

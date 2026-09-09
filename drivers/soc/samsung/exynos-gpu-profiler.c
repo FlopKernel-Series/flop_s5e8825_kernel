@@ -409,6 +409,9 @@ static int exynos_gpu_profiler_probe(struct platform_device *pdev)
 
 	register_export_fn(&org_max_freq, &org_min_freq, &cur_freq);
 
+	if (!profiler.table_cnt)
+		return -EPROBE_DEFER;
+
 	/* init freq table */
 	profiler.table = init_freq_table(
 			(u32 *)gpu_dvfs_get_freq_table(), profiler.table_cnt,
