@@ -37,8 +37,13 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
 		return PTR_ERR(opp);
 	dev_pm_opp_put(opp);
 
-	if (exynos_gpex_is_attached())
-		return exynos_gpex_set_frequency(*freq);
+	if (exynos_gpex_is_attached()) {
+		int ret = exynos_gpex_set_frequency(*freq);
+		if (ret)
+			return ret;
+		*freq = exynos_gpex_get_frequency() * 1000;
+		return 0;
+	}
 
 	return dev_pm_opp_set_rate(dev, *freq);
 }
@@ -184,11 +189,20 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
 	}
 	pfdevfreq->devfreq = devfreq;
 
+	ret = devm_devfreq_register_opp_notifier(dev, devfreq);
+	if (ret) {
+		DRM_DEV_ERROR(dev, "Couldn't register OPP notifier\n");
+		goto err_fini;
+	}
+
 	cooling = of_devfreq_cooling_register(dev->of_node, devfreq);
 	if (IS_ERR(cooling))
 		DRM_DEV_INFO(dev, "Failed to register cooling device\n");
 	else
 		pfdevfreq->cooling = cooling;
+
+	if (exynos_gpex_is_attached())
+		exynos_gpex_sync_opp_table(0);
 
 	return 0;
 

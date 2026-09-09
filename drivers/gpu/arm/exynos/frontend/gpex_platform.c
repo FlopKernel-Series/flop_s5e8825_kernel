@@ -254,6 +254,32 @@ int exynos_gpex_init_opp_table(struct device *dev)
 }
 EXPORT_SYMBOL_GPL(exynos_gpex_init_opp_table);
 
+void exynos_gpex_sync_opp_table(int max_khz)
+{
+	struct device *dev = active_gpu_dev;
+	int count = gpu_dvfs_get_step();
+	int i;
+
+	if (!dev || count <= 0)
+		return;
+
+	if (max_khz <= 0)
+		max_khz = gpex_clock_get_max_clock();
+
+	for (i = 0; i < count; i++) {
+		int freq_khz = gpu_dvfs_get_clock(i);
+
+		if (freq_khz <= 0)
+			continue;
+
+		if (freq_khz > max_khz)
+			dev_pm_opp_disable(dev, (unsigned long)freq_khz * 1000);
+		else
+			dev_pm_opp_enable(dev, (unsigned long)freq_khz * 1000);
+	}
+}
+EXPORT_SYMBOL_GPL(exynos_gpex_sync_opp_table);
+
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Samsung Exynos GPU Platform Extension (GPEX)");
 MODULE_AUTHOR("Samsung Electronics Co., Ltd.");

@@ -34,6 +34,7 @@
 
 #include "gpex_clock_internal.h"
 #include <linux/exynos/s5e8825_clk_gpu.h>
+#include <soc/samsung/exynos_gpex.h>
 
 #define CPU_MAX INT_MAX
 
@@ -473,6 +474,7 @@ int gpex_clock_set_runtime_max_clock(int clk)
 
 	if (clk_info.gpu_max_clock == clk) {
 		mutex_unlock(&clk_info.clock_lock);
+		exynos_gpex_sync_opp_table(clk);
 		return 0;
 	}
 
@@ -502,6 +504,8 @@ int gpex_clock_set_runtime_max_clock(int clk)
 
 	gpex_dvfs_spin_unlock(&flags);
 	mutex_unlock(&clk_info.clock_lock);
+
+	exynos_gpex_sync_opp_table(clk);
 
 	if (update_clock && gpex_pm_get_status(true))
 		return gpex_clock_set(target_clk);

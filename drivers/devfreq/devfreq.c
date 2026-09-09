@@ -1628,9 +1628,19 @@ static ssize_t available_frequencies_show(struct device *d,
 
 	mutex_lock(&df->lock);
 
-	for (i = 0; i < df->profile->max_state; i++)
+	for (i = 0; i < df->profile->max_state; i++) {
+		struct dev_pm_opp *opp;
+
+		opp = dev_pm_opp_find_freq_exact(df->dev.parent,
+						 df->profile->freq_table[i],
+						 true);
+		if (IS_ERR(opp))
+			continue;
+		dev_pm_opp_put(opp);
+
 		count += scnprintf(&buf[count], (PAGE_SIZE - count - 2),
 				"%lu ", df->profile->freq_table[i]);
+	}
 
 	mutex_unlock(&df->lock);
 	/* Truncate the trailing space */
