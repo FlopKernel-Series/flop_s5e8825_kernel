@@ -280,12 +280,15 @@ static void dpp_test_fixed_config_params(struct dpp_params_info *config, u32 w,
 } while (0)
 static uint64_t *dpp_get_modifiers(struct dpp_device *dpp)
 {
-	int i = 2; /* default modifier count */
-	static uint64_t modifiers[DPP_MAX_MODIFIERS] = {
-		DRM_FORMAT_MOD_SAMSUNG_COLORMAP,
-		DRM_FORMAT_MOD_PROTECTION,
-		//DRM_FORMAT_MOD_SAMSUNG_VOTF(0),
-	};
+	int i = 0;
+	uint64_t *modifiers = devm_kzalloc(dpp->dev, sizeof(uint64_t) * DPP_MAX_MODIFIERS,
+					   GFP_KERNEL);
+	if (!modifiers)
+		return NULL;
+
+	add_modifier(DRM_FORMAT_MOD_LINEAR, modifiers, dpp, i);
+	add_modifier(DRM_FORMAT_MOD_SAMSUNG_COLORMAP, modifiers, dpp, i);
+	add_modifier(DRM_FORMAT_MOD_PROTECTION, modifiers, dpp, i);
 
 	if (test_bit(DPP_ATTR_AFBC, &dpp->attr))
 		add_modifier(DRM_FORMAT_MOD_ARM_AFBC(0), modifiers, dpp, i);
@@ -314,7 +317,8 @@ static void dpp_convert_plane_state_to_config(struct dpp_params_info *config,
 	config->src.y = state->base.src.y1 >> 16;
 	config->src.w = drm_rect_width(&state->base.src) >> 16;
 	config->src.h = drm_rect_height(&state->base.src) >> 16;
-	config->src.f_w = fb->width;
+	config->src.f_w = (fb->pitches[0] && fb->format->cpp[0]) ?
+			(fb->pitches[0] / fb->format->cpp[0]) : fb->width;
 	config->src.f_h = fb->height;
 
 	config->dst.x = state->base.dst.x1;
@@ -334,9 +338,11 @@ static void dpp_convert_plane_state_to_config(struct dpp_params_info *config,
 	if (simplified_rot & DRM_MODE_REFLECT_Y)
 		config->rot |= DPP_Y_FLIP;
 
-	if (has_all_bits(DRM_FORMAT_MOD_ARM_AFBC(0), fb->modifier)) {
+	if (!exynos_is_panfrost_active() &&
+	    has_all_bits(DRM_FORMAT_MOD_ARM_AFBC(0), fb->modifier)) {
 		config->comp_type = COMP_TYPE_AFBC;
-	} else if (has_all_bits(DRM_FORMAT_MOD_SAMSUNG_SAJC(0), fb->modifier)) {
+	} else
+	if (has_all_bits(DRM_FORMAT_MOD_SAMSUNG_SAJC(0), fb->modifier)) {
 		config->comp_type = COMP_TYPE_SAJC;
 		config->blk_size = SAJC_BLK_SIZE_GET(fb->modifier);
 	} else if (has_all_bits(DRM_FORMAT_MOD_SAMSUNG_SBWC(0,
@@ -851,6 +857,9 @@ static int exynos_dpp_parse_dt(struct dpp_device *dpp, struct device_node *np)
 		goto fail;
 
 	of_property_read_u32(np, "attr", (u32 *)&dpp->attr);
+	/* Advertise AFBC capability when Panfrost is active so HWC assigns DPP */
+	if (exynos_is_panfrost_active())
+		dpp->attr |= (1 << DPP_ATTR_AFBC);
 	of_property_read_u32(np, "port", &dpp->port);
 
 	if (dpp->id == 0) {

@@ -278,7 +278,8 @@ static void plane_state_to_win_config(struct dpu_bts_win_config *win_config,
 	win_config->src_y = plane_state->src.y1 >> 16;
 	win_config->src_w = drm_rect_width(&plane_state->src) >> 16;
 	win_config->src_h = drm_rect_height(&plane_state->src) >> 16;
-	win_config->src_f_w = fb->width;
+	win_config->src_f_w = (fb->pitches[0] && fb->format->cpp[0]) ?
+			(fb->pitches[0] / fb->format->cpp[0]) : fb->width;
 	win_config->src_f_h = fb->height;
 
 	win_config->dst_x = plane_state->dst.x1;
@@ -289,7 +290,8 @@ static void plane_state_to_win_config(struct dpu_bts_win_config *win_config,
 	win_config->dbg_dma_addr = exynos_drm_fb_dma_addr(plane_state->fb, 0);
 
 	if (has_all_bits(DRM_FORMAT_MOD_SAMSUNG_SAJC(0), fb->modifier) ||
-		has_all_bits(DRM_FORMAT_MOD_ARM_AFBC(0), fb->modifier) ||
+		(!exynos_is_panfrost_active() &&
+		 has_all_bits(DRM_FORMAT_MOD_ARM_AFBC(0), fb->modifier)) ||
 			has_all_bits(DRM_FORMAT_MOD_SAMSUNG_SBWC(0, 0),
 				fb->modifier))
 		win_config->is_comp = true;
@@ -305,7 +307,8 @@ static void plane_state_to_win_config(struct dpu_bts_win_config *win_config,
 	win_config->dpp_ch = plane_state->plane->index;
 
 	win_config->comp_src = 0;
-	if (has_all_bits(DRM_FORMAT_MOD_ARM_AFBC(0), fb->modifier))
+	if (!exynos_is_panfrost_active() &&
+	    has_all_bits(DRM_FORMAT_MOD_ARM_AFBC(0), fb->modifier))
 		win_config->comp_src =
 			(fb->modifier & AFBC_FORMAT_MOD_SOURCE_MASK);
 

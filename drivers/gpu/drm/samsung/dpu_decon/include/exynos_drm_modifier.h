@@ -13,6 +13,21 @@
 #define EXYNOS_DRM_MODIFIER_H
 
 #include <uapi/drm/drm_fourcc.h>
+#include <linux/types.h>
+#include <linux/string.h>
+
+#if IS_ENABLED(CONFIG_MALI_VERSION_SELECTOR)
+extern char mali_selected_version[];
+static inline bool exynos_is_panfrost_active(void)
+{
+	return strncmp(mali_selected_version, "pan", 3) == 0;
+}
+#else
+static inline bool exynos_is_panfrost_active(void)
+{
+	return false;
+}
+#endif
 
 /*
  * Set to access the secure buffer
