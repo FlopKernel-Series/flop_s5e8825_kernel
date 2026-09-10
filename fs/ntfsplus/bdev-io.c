@@ -104,7 +104,7 @@ int ntfs_dev_read(struct super_block *sb, void *buf, loff_t start, size_t size)
 		to = min_t(u32, end - offset, PAGE_SIZE);
 		len = to - from;
 
-		memcpy_from_folio(buf + buf_off, folio, from, len);
+		memcpy_from_folio((char *)buf + buf_off, folio, from, len);
 		buf_off += len;
 		folio_put(folio);
 	}
@@ -142,7 +142,7 @@ int ntfs_dev_read(struct super_block *sb, void *buf, loff_t start, size_t size)
 		to = min_t(u32, end - offset, PAGE_SIZE);
 		len = to - from;
 
-		memcpy(buf + buf_off, kaddr + from, len);
+		memcpy((char *)buf + buf_off, kaddr + from, len);
 		buf_off += len;
 		kunmap_atomic(kaddr);
 		put_page(page);

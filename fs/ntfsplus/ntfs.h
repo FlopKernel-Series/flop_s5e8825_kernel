@@ -25,6 +25,7 @@
 #include <linux/blk_types.h>
 #include <linux/uidgid.h>
 
+#include "compat.h"
 #include "volume.h"
 #include "layout.h"
 #include "inode.h"

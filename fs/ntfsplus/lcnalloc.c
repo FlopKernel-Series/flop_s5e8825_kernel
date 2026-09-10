@@ -1051,9 +1051,15 @@ s64 __ntfs_cluster_free(struct ntfs_inode *ni, const s64 start_vcn, s64 count,
 							rl->lcn + rl_off + to_discard),
 							gran) >> SECTOR_SHIFT;
 				if (start_sector < end_sector) {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 0)
 					ret = blkdev_issue_discard(vol->sb->s_bdev, start_sector,
 								   end_sector - start_sector,
 								   GFP_NOFS);
+#else
+					ret = blkdev_issue_discard(vol->sb->s_bdev, start_sector,
+								   end_sector - start_sector,
+								   GFP_NOFS, 0);
+#endif
 					if (ret)
 						break;
 				}

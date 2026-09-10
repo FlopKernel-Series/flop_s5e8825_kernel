@@ -32,6 +32,9 @@ static struct ctl_table ntfs_sysctls[] = {
 		.mode		= 0644,			/* Mode, proc handler. */
 		.proc_handler	= proc_dointvec
 	},
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 6, 0)
+	{}
+#endif
 };
 
 /* Storage for the sysctls header. */

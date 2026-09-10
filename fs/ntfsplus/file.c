@@ -342,9 +342,11 @@ static int ntfs_setattr_size(struct inode *vi, struct iattr *attr)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 int ntfs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
 		 struct iattr *attr)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 int ntfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
 		 struct iattr *attr)
+#else
+int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
 #endif
 {
 	struct inode *vi = d_inode(dentry);
@@ -358,8 +360,10 @@ int ntfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	err = setattr_prepare(idmap, dentry, attr);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	err = setattr_prepare(mnt_userns, dentry, attr);
+#else
+	err = setattr_prepare(dentry, attr);
 #endif
 	if (err)
 		goto out;
@@ -384,15 +388,19 @@ int ntfs_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	setattr_copy(idmap, vi, attr);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	setattr_copy(mnt_userns, vi, attr);
+#else
+	setattr_copy(vi, attr);
 #endif
 
 	if (vol->sb->s_flags & SB_POSIXACL && !S_ISLNK(vi->i_mode)) {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 		err = posix_acl_chmod(idmap, dentry, vi->i_mode);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 		err = posix_acl_chmod(mnt_userns, vi, vi->i_mode);
+#else
+		err = posix_acl_chmod(vi, vi->i_mode);
 #endif
 		if (err)
 			goto out;
@@ -430,8 +438,12 @@ out:
 int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 int ntfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+		struct kstat *stat, unsigned int request_mask,
+		unsigned int query_flags)
+#else
+int ntfs_getattr(const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags)
 #endif
@@ -445,8 +457,10 @@ int ntfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
 #else
 	generic_fillattr(idmap, inode, stat);
 #endif
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	generic_fillattr(mnt_userns, inode, stat);
+#else
+	generic_fillattr(inode, stat);
 #endif
 
 	stat->blksize = NTFS_SB(inode->i_sb)->cluster_size;
@@ -475,6 +489,7 @@ int ntfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
 	 * does not support DIO. For normal files, we report the bdev
 	 * logical block size.
 	 */
+#ifdef STATX_DIOALIGN
 	if (request_mask & STATX_DIOALIGN && S_ISREG(inode->i_mode)) {
 		unsigned int align =
 			bdev_logical_block_size(inode->i_sb->s_bdev);
@@ -486,6 +501,7 @@ int ntfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
 			stat->dio_offset_align = align;
 		}
 	}
+#endif
 
 	return 0;
 }
@@ -1418,11 +1434,9 @@ const struct file_operations ntfs_file_ops = {
 	.splice_read	= generic_file_splice_read,
 #endif
 	.splice_write	= iter_file_splice_write,
-#if LINUX_VERSION_CODE > KERNEL_VERSION(5, 16, 0)
 	.unlocked_ioctl	= ntfs_ioctl,
 #ifdef CONFIG_COMPAT
 	.compat_ioctl	= ntfs_compat_ioctl,
-#endif
 #endif
 	.fallocate	= ntfs_fallocate,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 0, 0)

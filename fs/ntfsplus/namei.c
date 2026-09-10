@@ -395,8 +395,12 @@ static int ntfs_sd_add_everyone(struct ntfs_inode *ni)
 static struct ntfs_inode *__ntfs_create(struct mnt_idmap *idmap, struct inode *dir,
 		__le16 *name, u8 name_len, mode_t mode, dev_t dev,
 		const char *target, int target_len)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 static struct ntfs_inode *__ntfs_create(struct user_namespace *mnt_userns, struct inode *dir,
+		__le16 *name, u8 name_len, mode_t mode, dev_t dev,
+		const char *target, int target_len)
+#else
+static struct ntfs_inode *__ntfs_create(struct inode *dir,
 		__le16 *name, u8 name_len, mode_t mode, dev_t dev,
 		const char *target, int target_len)
 #endif
@@ -450,8 +454,10 @@ static struct ntfs_inode *__ntfs_create(struct user_namespace *mnt_userns, struc
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	inode_init_owner(idmap, vi, dir, mode);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	inode_init_owner(mnt_userns, vi, dir, mode);
+#else
+	inode_init_owner(vi, dir, mode);
 #endif
 	mode = vi->i_mode;
 
@@ -459,8 +465,10 @@ static struct ntfs_inode *__ntfs_create(struct user_namespace *mnt_userns, struc
 	if (!S_ISLNK(mode) && (sb->s_flags & SB_POSIXACL)) {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 		err = ntfs_init_acl(idmap, vi, dir);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 		err = ntfs_init_acl(mnt_userns, vi, dir);
+#else
+		err = ntfs_init_acl(vi, dir);
 #endif
 		if (err)
 			goto err_out;
@@ -773,14 +781,15 @@ err_out:
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0)
 static int ntfs_create(struct mnt_idmap *idmap, struct inode *dir,
 		struct dentry *dentry, umode_t mode)
-#else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 static int ntfs_create(struct mnt_idmap *idmap, struct inode *dir,
 		struct dentry *dentry, umode_t mode, bool excl)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 static int ntfs_create(struct user_namespace *mnt_userns, struct inode *dir,
 		struct dentry *dentry, umode_t mode, bool excl)
-#endif
+#else
+static int ntfs_create(struct inode *dir,
+		struct dentry *dentry, umode_t mode, bool excl)
 #endif
 {
 	struct ntfs_volume *vol = NTFS_SB(dir->i_sb);
@@ -810,8 +819,10 @@ static int ntfs_create(struct user_namespace *mnt_userns, struct inode *dir,
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	ni = __ntfs_create(idmap, dir, uname, uname_len, S_IFREG | mode, 0, NULL, 0);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	ni = __ntfs_create(mnt_userns, dir, uname, uname_len, S_IFREG | mode, 0, NULL, 0);
+#else
+	ni = __ntfs_create(dir, uname, uname_len, S_IFREG | mode, 0, NULL, 0);
 #endif
 	kmem_cache_free(ntfs_name_cache, uname);
 	if (IS_ERR(ni))
@@ -1116,14 +1127,15 @@ out:
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
 static struct dentry *ntfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
 		struct dentry *dentry, umode_t mode)
-#else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 static int ntfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
 		struct dentry *dentry, umode_t mode)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 static int ntfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
 		struct dentry *dentry, umode_t mode)
-#endif
+#else
+static int ntfs_mkdir(struct inode *dir,
+		struct dentry *dentry, umode_t mode)
 #endif
 {
 	struct super_block *sb = dir->i_sb;
@@ -1167,8 +1179,10 @@ static int ntfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	ni = __ntfs_create(idmap, dir, uname, uname_len, S_IFDIR | mode, 0, NULL, 0);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	ni = __ntfs_create(mnt_userns, dir, uname, uname_len, S_IFDIR | mode, 0, NULL, 0);
+#else
+	ni = __ntfs_create(dir, uname, uname_len, S_IFDIR | mode, 0, NULL, 0);
 #endif
 	kmem_cache_free(ntfs_name_cache, uname);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
@@ -1376,8 +1390,12 @@ err_out:
 static int ntfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
 		struct dentry *old_dentry, struct inode *new_dir,
 		struct dentry *new_dentry, unsigned int flags)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 static int ntfs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+		struct dentry *old_dentry, struct inode *new_dir,
+		struct dentry *new_dentry, unsigned int flags)
+#else
+static int ntfs_rename(struct inode *old_dir,
 		struct dentry *old_dentry, struct inode *new_dir,
 		struct dentry *new_dentry, unsigned int flags)
 #endif
@@ -1550,8 +1568,11 @@ err_out:
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 static int ntfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
 		struct dentry *dentry, const char *symname)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 static int ntfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+		struct dentry *dentry, const char *symname)
+#else
+static int ntfs_symlink(struct inode *dir,
 		struct dentry *dentry, const char *symname)
 #endif
 {
@@ -1588,8 +1609,11 @@ static int ntfs_symlink(struct user_namespace *mnt_userns, struct inode *dir,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 	ni = __ntfs_create(idmap, dir, usrc, usrc_len, S_IFLNK | 0777, 0,
 			   symname, symlen);
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	ni = __ntfs_create(mnt_userns, dir, usrc, usrc_len, S_IFLNK | 0777, 0,
+			   symname, symlen);
+#else
+	ni = __ntfs_create(dir, usrc, usrc_len, S_IFLNK | 0777, 0,
 			   symname, symlen);
 #endif
 	kmem_cache_free(ntfs_name_cache, usrc);
@@ -1608,8 +1632,11 @@ out:
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 static int ntfs_mknod(struct mnt_idmap *idmap, struct inode *dir,
 		struct dentry *dentry, umode_t mode, dev_t rdev)
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 static int ntfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+		struct dentry *dentry, umode_t mode, dev_t rdev)
+#else
+static int ntfs_mknod(struct inode *dir,
 		struct dentry *dentry, umode_t mode, dev_t rdev)
 #endif
 {
@@ -1645,16 +1672,20 @@ static int ntfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
 	case S_IFBLK:
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 		ni = __ntfs_create(idmap, dir, uname, uname_len,
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 		ni = __ntfs_create(mnt_userns, dir, uname, uname_len,
+#else
+		ni = __ntfs_create(dir, uname, uname_len,
 #endif
 				mode, rdev, NULL, 0);
 		break;
 	default:
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
 		ni = __ntfs_create(idmap, dir, uname, uname_len,
-#else
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 		ni = __ntfs_create(mnt_userns, dir, uname, uname_len,
+#else
+		ni = __ntfs_create(dir, uname, uname_len,
 #endif
 				mode, 0, NULL, 0);
 	}

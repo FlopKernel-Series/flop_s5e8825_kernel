@@ -96,6 +96,7 @@ enum {
 	Opt_symlink,
 };
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 static const struct fs_parameter_spec ntfs_parameters[] = {
 	fsparam_u32("uid",			Opt_uid),
 	fsparam_u32("gid",			Opt_gid),
@@ -123,6 +124,52 @@ static const struct fs_parameter_spec ntfs_parameters[] = {
 	fsparam_enum("symlink",			Opt_symlink, ntfs_symlink_enums),
 	{}
 };
+#else
+static const struct fs_parameter_enum ntfs_param_enums_54[] = {
+	{ Opt_errors, "panic",			ON_ERRORS_PANIC },
+	{ Opt_errors, "remount-ro",		ON_ERRORS_REMOUNT_RO },
+	{ Opt_errors, "continue",		ON_ERRORS_CONTINUE },
+	{ Opt_native_symlink, "raw",		NATIVE_SYMLINK_RAW },
+	{ Opt_native_symlink, "rel",		NATIVE_SYMLINK_REL },
+	{ Opt_symlink, "wsl",			SYMLINK_WSL },
+	{ Opt_symlink, "native",		SYMLINK_NATIVE },
+	{}
+};
+
+static const struct fs_parameter_spec ntfs_parameters_54[] = {
+	fsparam_u32("uid",			Opt_uid),
+	fsparam_u32("gid",			Opt_gid),
+	fsparam_u32oct("umask",			Opt_umask),
+	fsparam_u32oct("dmask",			Opt_dmask),
+	fsparam_u32oct("fmask",			Opt_fmask),
+	fsparam_string("nls",			Opt_nls),
+	fsparam_string("iocharset",		Opt_charset),
+	fsparam_enum("errors",			Opt_errors),
+	fsparam_flag("show_sys_files",		Opt_show_sys_files),
+	fsparam_flag("showmeta",		Opt_show_meta),
+	fsparam_flag("case_sensitive",		Opt_case_sensitive),
+	fsparam_flag("disable_sparse",		Opt_disable_sparse),
+	fsparam_s32("mft_zone_multiplier",	Opt_mft_zone_multiplier),
+	fsparam_u64("preallocated_size",	Opt_preallocated_size),
+	fsparam_flag("sys_immutable",		Opt_sys_immutable),
+	fsparam_flag("nohidden",		Opt_nohidden),
+	fsparam_flag("hide_dot_files",		Opt_hide_dot_files),
+	fsparam_flag("windows_names",		Opt_check_windows_names),
+	fsparam_flag("acl",			Opt_acl),
+	fsparam_flag("discard",			Opt_discard),
+	fsparam_flag("sparse",			Opt_sparse),
+	fsparam_flag("nocase",			Opt_nocase),
+	fsparam_enum("native_symlink",		Opt_native_symlink),
+	fsparam_enum("symlink",			Opt_symlink),
+	{}
+};
+
+static const struct fs_parameter_description ntfs_fs_parameters = {
+	.name		= "ntfs",
+	.specs		= ntfs_parameters_54,
+	.enums		= ntfs_param_enums_54,
+};
+#endif
 
 static int ntfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
 {
@@ -130,7 +177,11 @@ static int ntfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
 	struct fs_parse_result result;
 	int opt;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 	opt = fs_parse(fc, ntfs_parameters, param, &result);
+#else
+	opt = fs_parse(fc, &ntfs_fs_parameters, param, &result);
+#endif
 	if (opt < 0)
 		return opt;
 
@@ -1918,7 +1969,13 @@ static void ntfs_put_super(struct super_block *sb)
 
 	iput(vol->mft_ino);
 	vol->mft_ino = NULL;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	blkdev_issue_flush(sb->s_bdev);
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+	blkdev_issue_flush(sb->s_bdev, GFP_KERNEL);
+#else
+	blkdev_issue_flush(sb->s_bdev, GFP_KERNEL, NULL);
+#endif
 
 	ntfs_volume_free(vol);
 }
@@ -1981,7 +2038,13 @@ static int ntfs_sync_fs(struct super_block *sb, int wait)
 	}
 	sync_inodes_sb(sb);
 	sync_blockdev(sb->s_bdev);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	blkdev_issue_flush(sb->s_bdev);
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+	blkdev_issue_flush(sb->s_bdev, GFP_KERNEL);
+#else
+	blkdev_issue_flush(sb->s_bdev, GFP_KERNEL, NULL);
+#endif
 	return err;
 }
 
@@ -2381,7 +2444,9 @@ static void precalc_free_clusters(struct work_struct *work)
 			nr_free);
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 static struct lock_class_key ntfs_mft_inval_lock_key;
+#endif
 
 /*
  * ntfs_fill_super - mount an ntfs filesystem
@@ -2553,8 +2618,10 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
 			ntfs_error(sb, "Failed to load essential metadata.");
 		goto iput_tmp_ino_err_out_now;
 	}
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 	lockdep_set_class(&tmp_ino->i_mapping->invalidate_lock,
 			  &ntfs_mft_inval_lock_key);
+#endif
 
 	mutex_lock(&ntfs_lock);
 
@@ -2785,9 +2852,17 @@ static struct file_system_type ntfs_fs_type = {
 	.owner                  = THIS_MODULE,
 	.name                   = "ntfs",
 	.init_fs_context        = ntfs_init_fs_context,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
 	.parameters             = ntfs_parameters,
+#else
+	.parameters             = &ntfs_fs_parameters,
+#endif
 	.kill_sb                = kill_block_super,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 	.fs_flags               = FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+#else
+	.fs_flags               = FS_REQUIRES_DEV,
+#endif
 };
 MODULE_ALIAS_FS("ntfs");
 
@@ -2820,10 +2895,14 @@ static int __init init_ntfs_fs(void)
 {
 	int err = 0;
 
+	err = ntfs_compat_iomap_init();
+	if (err)
+		return err;
+
 	err = ntfs_workqueue_init();
 	if (err) {
 		pr_crit("Failed to register workqueue!\n");
-		return err;
+		goto iomap_err_out;
 	}
 
 	ntfs_index_ctx_cache = kmem_cache_create(ntfs_index_ctx_cache_name,
@@ -2906,6 +2985,9 @@ name_err_out:
 actx_err_out:
 	kmem_cache_destroy(ntfs_index_ctx_cache);
 ictx_err_out:
+	ntfs_workqueue_destroy();
+iomap_err_out:
+	ntfs_compat_iomap_exit();
 	if (!err) {
 		pr_crit("Aborting NTFS filesystem driver registration...\n");
 		err = -ENOMEM;
@@ -2935,6 +3017,7 @@ static void __exit exit_ntfs_fs(void)
 	ntfs_workqueue_destroy();
 	/* Unregister the ntfs sysctls. */
 	ntfs_sysctl(0);
+	ntfs_compat_iomap_exit();
 }
 
 module_init(init_ntfs_fs);

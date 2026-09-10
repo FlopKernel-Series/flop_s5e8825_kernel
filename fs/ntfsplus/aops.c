@@ -468,6 +468,7 @@ hole:
 	return block;
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
 static void ntfs_readahead(struct readahead_control *rac)
 {
 	struct address_space *mapping = rac->mapping;
@@ -498,6 +499,20 @@ static void ntfs_readahead(struct readahead_control *rac)
 #endif
 #endif
 }
+#else
+static int ntfs_readpages(struct file *file, struct address_space *mapping,
+		struct list_head *pages, unsigned nr_pages)
+{
+	struct inode *inode = mapping->host;
+	struct ntfs_inode *ni = NTFS_I(inode);
+
+	if (!NInoNonResident(ni) || NInoCompressed(ni) ||
+	    NInoWofCompressed(ni))
+		return 0;
+
+	return iomap_readpages(mapping, pages, nr_pages, &ntfs_read_iomap_ops);
+}
+#endif
 
 static int ntfs_writepages(struct address_space *mapping,
 		struct writeback_control *wbc)
@@ -567,7 +582,11 @@ const struct address_space_operations ntfs_aops = {
 #else
 	.readpage		= ntfs_readpage,
 #endif
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
 	.readahead		= ntfs_readahead,
+#else
+	.readpages		= ntfs_readpages,
+#endif
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
 	.writepage		= ntfs_writepage,
 #endif
@@ -616,7 +635,11 @@ const struct address_space_operations ntfs_mft_aops = {
 #else
 	.readpage		= ntfs_readpage,
 #endif
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
 	.readahead		= ntfs_readahead,
+#else
+	.readpages		= ntfs_readpages,
+#endif
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
 	.writepage		= ntfs_writepage,
 #endif

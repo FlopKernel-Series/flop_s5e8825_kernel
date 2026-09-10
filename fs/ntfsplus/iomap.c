@@ -90,9 +90,14 @@ const struct iomap_folio_ops ntfs_iomap_folio_ops = {
 	.put_folio = ntfs_iomap_put_folio,
 };
 #endif
-#else
+#else /* LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0) */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
 static void ntfs_zero_range_page_done(struct inode *inode, loff_t pos, unsigned int len,
 				      struct page *page)
+#else
+static void ntfs_zero_range_page_done(struct inode *inode, loff_t pos, unsigned int len,
+				      struct page *page, struct iomap *iomap)
+#endif
 {
 	struct ntfs_inode *ni = NTFS_I(inode);
 	unsigned long sector_size = 1UL << inode->i_blkbits;
@@ -201,6 +206,10 @@ static const struct iomap_folio_ops ntfs_zero_iomap_folio_ops = {
 static const struct iomap_page_ops ntfs_zero_iomap_page_ops = {
 	.page_done = ntfs_zero_range_page_done,
 	.iomap_valid = ntfs_iomap_valid,
+};
+#else
+static const struct iomap_page_ops ntfs_zero_iomap_page_ops = {
+	.page_done = ntfs_zero_range_page_done,
 };
 #endif
 #endif
@@ -483,7 +492,7 @@ static const struct iomap_ops ntfs_zero_read_iomap_ops = {
 	.iomap_end = ntfs_zero_read_iomap_end,
 };
 #else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
 static int ntfs_zero_read_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
 		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
 {
@@ -502,6 +511,32 @@ static int ntfs_seek_iomap_begin(struct inode *inode, loff_t offset, loff_t leng
 		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
 {
 	return __ntfs_read_iomap_begin(inode, offset, length, flags, iomap, srcmap,
+				       false, false);
+}
+
+static const struct iomap_ops ntfs_zero_read_iomap_ops = {
+	.iomap_begin = ntfs_zero_read_iomap_begin,
+	.iomap_end = ntfs_zero_read_iomap_end,
+};
+#else /* LINUX_VERSION_CODE < KERNEL_VERSION(5, 5, 0) */
+static int ntfs_zero_read_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+		unsigned int flags, struct iomap *iomap)
+{
+	return __ntfs_read_iomap_begin(inode, offset, length, flags, iomap, NULL,
+				       true, false);
+}
+
+static int ntfs_read_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+		unsigned int flags, struct iomap *iomap)
+{
+	return __ntfs_read_iomap_begin(inode, offset, length, flags, iomap, NULL,
+				       false, true);
+}
+
+static int ntfs_seek_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+		unsigned int flags, struct iomap *iomap)
+{
+	return __ntfs_read_iomap_begin(inode, offset, length, flags, iomap, NULL,
 				       false, false);
 }
 
@@ -917,9 +952,15 @@ static int __ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
 						    iomap, ntfs_iomap_flags);
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
 static int ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
 				  loff_t length, unsigned int flags,
 				  struct iomap *iomap, struct iomap *srcmap)
+#else
+static int ntfs_write_iomap_begin(struct inode *inode, loff_t offset,
+				  loff_t length, unsigned int flags,
+				  struct iomap *iomap)
+#endif
 {
 	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
 			NTFS_IOMAP_FLAGS_BEGIN);
@@ -984,9 +1025,15 @@ const struct iomap_ops ntfs_write_iomap_ops = {
 	.iomap_end		= ntfs_write_iomap_end,
 };
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
 static int ntfs_page_mkwrite_iomap_begin(struct inode *inode, loff_t offset,
 				  loff_t length, unsigned int flags,
 				  struct iomap *iomap, struct iomap *srcmap)
+#else
+static int ntfs_page_mkwrite_iomap_begin(struct inode *inode, loff_t offset,
+				  loff_t length, unsigned int flags,
+				  struct iomap *iomap)
+#endif
 {
 	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
 			NTFS_IOMAP_FLAGS_MKWRITE);
@@ -997,9 +1044,15 @@ const struct iomap_ops ntfs_page_mkwrite_iomap_ops = {
 	.iomap_end		= ntfs_write_iomap_end,
 };
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
 static int ntfs_dio_iomap_begin(struct inode *inode, loff_t offset,
 				  loff_t length, unsigned int flags,
 				  struct iomap *iomap, struct iomap *srcmap)
+#else
+static int ntfs_dio_iomap_begin(struct inode *inode, loff_t offset,
+				  loff_t length, unsigned int flags,
+				  struct iomap *iomap)
+#endif
 {
 	return __ntfs_write_iomap_begin(inode, offset, length, flags, iomap,
 			NTFS_IOMAP_FLAGS_DIO);

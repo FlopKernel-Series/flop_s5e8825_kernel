@@ -1227,11 +1227,9 @@ const struct file_operations ntfs_dir_ops = {
 	.fsync		= ntfs_dir_fsync,	/* Sync a directory to disk. */
 	.open		= ntfs_dir_open,	/* Open directory. */
 	.release	= ntfs_dir_release,
-#if LINUX_VERSION_CODE > KERNEL_VERSION(5, 16, 0)
 	.unlocked_ioctl	= ntfs_ioctl,
 #ifdef CONFIG_COMPAT
 	.compat_ioctl	= ntfs_compat_ioctl,
-#endif
 #endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 0, 0)
 	.setlease	= generic_setlease,

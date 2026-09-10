@@ -1334,7 +1334,7 @@ static void ntfs_copy_cb(struct page **pages, int pages_per_cb,
 
 	for (i = 0; i < pages_per_cb && copied < bytes; i++) {
 		unsigned int offset = i ? 0 : page_offset;
-		unsigned int len = min(bytes - copied, PAGE_SIZE - offset);
+		unsigned int len = min_t(unsigned int, bytes - copied, PAGE_SIZE - offset);
 		void *addr = kmap_local_page(pages[i]);
 
 		memcpy(ws->outbuf + copied, addr + offset, len);
@@ -1444,8 +1444,18 @@ static int ntfs_write_cb(struct ntfs_inode *ni, loff_t pos, struct page **pages,
 
 	bio_lcn = rlc->lcn;
 	bio_pos = ntfs_cluster_to_bytes(vol, bio_lcn);
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
 	bio = bio_alloc(vol->sb->s_bdev, DIV_ROUND_UP(bio_size, PAGE_SIZE),
 			REQ_OP_WRITE, GFP_NOIO);
+#else
+	bio = bio_alloc(GFP_NOIO, DIV_ROUND_UP(bio_size, PAGE_SIZE));
+	if (!bio) {
+		err = -ENOMEM;
+		goto free_rlc;
+	}
+	bio_set_dev(bio, vol->sb->s_bdev);
+	bio->bi_opf = REQ_OP_WRITE;
+#endif
 	bio->bi_iter.bi_sector = ntfs_bytes_to_bio_sector(bio_pos);
 
 	for (i = 0; bio_size; i++) {

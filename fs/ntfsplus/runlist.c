@@ -739,7 +739,7 @@ struct runlist_element *ntfs_mapping_pairs_decompress(const struct ntfs_volume *
 	s64 vcn;		/* Current vcn. */
 	s64 lcn;		/* Current lcn. */
 	s64 deltaxcn;		/* Change in [vl]cn. */
-	struct runlist_element *rl, *new_rl;	/* The output runlist. */
+	struct runlist_element *rl = NULL, *new_rl;	/* The output runlist. */
 	u8 *buf;		/* Current position in mapping pairs array. */
 	u8 *attr_end;		/* End of attribute. */
 	int rlsize;		/* Size of runlist buffer. */
@@ -766,10 +766,11 @@ struct runlist_element *ntfs_mapping_pairs_decompress(const struct ntfs_volume *
 	/* Start at vcn = lowest_vcn and lcn 0. */
 	vcn = lowest_vcn;
 #else
+	vcn = (s64)le64_to_cpu(attr->data.non_resident.lowest_vcn);
 	/* Validate lowest_vcn from on-disk metadata to ensure it is sane. */
 	if (unlikely(vcn < 0)) {
 		ntfs_error(vol->sb, "Invalid lowest_vcn in mapping pairs.");
-		goto err_out;
+		return ERR_PTR(-EIO);
 	}
 #endif
 	lcn = 0;

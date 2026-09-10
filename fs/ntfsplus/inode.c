@@ -655,7 +655,9 @@ err_corrupt_attr:
 	return 0;	/* NO, it is not an extended system file. */
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 static struct lock_class_key ntfs_dir_inval_lock_key;
+#endif
 
 void ntfs_set_vfs_operations(struct inode *inode, mode_t mode, dev_t dev)
 {
@@ -665,8 +667,10 @@ void ntfs_set_vfs_operations(struct inode *inode, mode_t mode, dev_t dev)
 			inode->i_fop = &ntfs_dir_ops;
 		}
 		inode->i_mapping->a_ops = &ntfs_aops;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 		lockdep_set_class(&inode->i_mapping->invalidate_lock,
 				  &ntfs_dir_inval_lock_key);
+#endif
 	} else if (S_ISLNK(mode)) {
 		inode->i_op = &ntfs_symlink_inode_operations;
 		inode->i_mapping->a_ops = &ntfs_aops;
