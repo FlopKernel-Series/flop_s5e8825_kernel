@@ -94,6 +94,8 @@ enum {
 	Opt_nocase,
 	Opt_native_symlink,
 	Opt_symlink,
+	Opt_force,
+	Opt_utf8,
 };
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0)
@@ -122,6 +124,8 @@ static const struct fs_parameter_spec ntfs_parameters[] = {
 	fsparam_flag("nocase",			Opt_nocase),
 	fsparam_enum("native_symlink",		Opt_native_symlink, ntfs_native_symlink_enums),
 	fsparam_enum("symlink",			Opt_symlink, ntfs_symlink_enums),
+	fsparam_flag("force",			Opt_force),
+	fsparam_flag_no("utf8",			Opt_utf8),
 	{}
 };
 #else
@@ -161,6 +165,8 @@ static const struct fs_parameter_spec ntfs_parameters_54[] = {
 	fsparam_flag("nocase",			Opt_nocase),
 	fsparam_enum("native_symlink",		Opt_native_symlink),
 	fsparam_enum("symlink",			Opt_symlink),
+	fsparam_flag("force",			Opt_force),
+	fsparam_flag_no("utf8",			Opt_utf8),
 	{}
 };
 
@@ -309,6 +315,19 @@ static int ntfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
 			NVolClearSymlinkNative(vol);
 		break;
 	case Opt_sparse:
+		break;
+	case Opt_force:
+		break;
+	case Opt_utf8:
+		if (result.boolean) {
+			if (vol->nls_map)
+				unload_nls(vol->nls_map);
+			vol->nls_map = load_nls("utf8");
+			if (!vol->nls_map) {
+				ntfs_error(vol->sb, "Failed to load NLS table 'utf8'.");
+				return -EINVAL;
+			}
+		}
 		break;
 	default:
 		return -EINVAL;
