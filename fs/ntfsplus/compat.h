@@ -240,6 +240,18 @@ static inline void *kmap_local_page(struct page *page)
 }
 #endif
 
+/*
+ * memzero_page helper (upstream in 5.13).
+ */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 13, 0)
+static inline void memzero_page(struct page *page, size_t offset, size_t len)
+{
+	char *addr = kmap_atomic(page);
+	memset(addr + offset, 0, len);
+	kunmap_atomic(addr);
+}
+#endif
+
 static inline size_t folio_size(struct folio *folio)
 {
 	return PAGE_SIZE;
