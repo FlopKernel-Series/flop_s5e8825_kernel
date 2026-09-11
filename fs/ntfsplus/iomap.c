@@ -91,7 +91,8 @@ const struct iomap_folio_ops ntfs_iomap_folio_ops = {
 };
 #endif
 #else /* LINUX_VERSION_CODE < KERNEL_VERSION(6, 3, 0) */
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+/* The iomap argument to page_done was only dropped in 5.15. */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 static void ntfs_zero_range_page_done(struct inode *inode, loff_t pos, unsigned int len,
 				      struct page *page)
 #else
