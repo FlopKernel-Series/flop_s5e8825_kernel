@@ -7,14 +7,14 @@
 #define NTFS_EA_GID	BIT(2)
 #define NTFS_EA_MODE	BIT(3)
 
-extern const struct xattr_handler *const ntfs_xattr_handlers[];
+extern const struct xattr_handler *const ntfsplus_xattr_handlers[];
 
 int ntfs_ea_set_wsl_not_symlink(struct ntfs_inode *ni, mode_t mode, dev_t dev);
 int ntfs_ea_get_wsl_inode(struct inode *inode, dev_t *rdevp, unsigned int flags,
 			  bool *has_lxmod);
 int ntfs_ea_set_wsl_inode(struct inode *inode, dev_t rdev, __le16 *ea_size,
 		unsigned int flags);
-ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size);
+ssize_t ntfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size);
 
 #ifdef CONFIG_NTFS_FS_POSIX_ACL
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)

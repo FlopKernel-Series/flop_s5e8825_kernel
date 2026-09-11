@@ -1006,7 +1006,7 @@ static bool load_and_init_mft_mirror(struct ntfs_volume *vol)
 	tmp_ino->i_op = &ntfs_empty_inode_ops;
 	tmp_ino->i_fop = &ntfs_empty_file_ops;
 	/* Put in our special address space operations. */
-	tmp_ino->i_mapping->a_ops = &ntfs_aops;
+	tmp_ino->i_mapping->a_ops = &ntfsplus_aops;
 	tmp_ni = NTFS_I(tmp_ino);
 	/* The $MFTMirr, like the $MFT is multi sector transfer protected. */
 	NInoSetMstProtected(tmp_ni);
@@ -2611,9 +2611,9 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
 	sb->s_time_gran = 100;
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
-	sb->s_xattr = ntfs_xattr_handlers;
+	sb->s_xattr = ntfsplus_xattr_handlers;
 #else
-	sb->s_xattr = (const struct xattr_handler **)ntfs_xattr_handlers;
+	sb->s_xattr = (const struct xattr_handler **)ntfsplus_xattr_handlers;
 #endif
 	/*
 	 * Now load the metadata required for the page cache and our address

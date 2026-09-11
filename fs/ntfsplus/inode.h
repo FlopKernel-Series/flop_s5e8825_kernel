@@ -350,16 +350,16 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr);
 #endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
-int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+int ntfsplus_getattr(struct mnt_idmap *idmap, const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags);
 #else
-int ntfs_getattr(struct user_namespace *mnt_uerns, const struct path *path,
+int ntfsplus_getattr(struct user_namespace *mnt_uerns, const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags);
 #endif
 #else
-int ntfs_getattr(const struct path *path, struct kstat *stat,
+int ntfsplus_getattr(const struct path *path, struct kstat *stat,
 		unsigned int request_mask, unsigned int query_flags);
 #endif
 

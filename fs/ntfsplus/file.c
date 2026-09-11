@@ -435,15 +435,15 @@ out:
 }
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
-int ntfs_getattr(struct mnt_idmap *idmap, const struct path *path,
+int ntfsplus_getattr(struct mnt_idmap *idmap, const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags)
 #elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
-int ntfs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+int ntfsplus_getattr(struct user_namespace *mnt_userns, const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags)
 #else
-int ntfs_getattr(const struct path *path,
+int ntfsplus_getattr(const struct path *path,
 		struct kstat *stat, unsigned int request_mask,
 		unsigned int query_flags)
 #endif
@@ -1035,7 +1035,7 @@ static int ntfs_ioctl_fitrim(struct ntfs_volume *vol, unsigned long arg)
 
 	range.minlen = max_t(u32, range.minlen, bdev_discard_granularity(dev));
 
-	err = ntfs_trim_fs(vol, &range);
+	err = ntfsplus_trim_fs(vol, &range);
 	if (err < 0)
 		return err;
 
@@ -1449,8 +1449,8 @@ const struct file_operations ntfs_file_ops = {
 
 const struct inode_operations ntfs_file_inode_ops = {
 	.setattr	= ntfs_setattr,
-	.getattr	= ntfs_getattr,
-	.listxattr	= ntfs_listxattr,
+	.getattr	= ntfsplus_getattr,
+	.listxattr	= ntfsplus_listxattr,
 	.get_acl	= ntfs_get_acl,
 	.set_acl	= ntfs_set_acl,
 	.fiemap		= ntfs_fiemap,
@@ -1459,13 +1459,13 @@ const struct inode_operations ntfs_file_inode_ops = {
 const struct inode_operations ntfs_symlink_inode_operations = {
 	.get_link	= ntfs_get_link,
 	.setattr	= ntfs_setattr,
-	.listxattr	= ntfs_listxattr,
+	.listxattr	= ntfsplus_listxattr,
 };
 
-const struct inode_operations ntfs_special_inode_operations = {
+const struct inode_operations ntfsplus_special_inode_operations = {
 	.setattr	= ntfs_setattr,
-	.getattr	= ntfs_getattr,
-	.listxattr	= ntfs_listxattr,
+	.getattr	= ntfsplus_getattr,
+	.listxattr	= ntfsplus_listxattr,
 	.get_acl	= ntfs_get_acl,
 	.set_acl	= ntfs_set_acl,
 };

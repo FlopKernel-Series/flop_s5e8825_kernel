@@ -520,7 +520,7 @@ int ntfs_ea_set_wsl_inode(struct inode *inode, dev_t rdev, __le16 *ea_size,
 	return err;
 }
 
-ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ssize_t ntfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
 {
 	struct inode *inode = d_inode(dentry);
 	struct ntfs_inode *ni = NTFS_I(inode);
@@ -983,7 +983,7 @@ static const struct xattr_handler ntfs_other_xattr_handler = {
 	.list	= ntfs_xattr_user_list,
 };
 
-const struct xattr_handler * const ntfs_xattr_handlers[] = {
+const struct xattr_handler * const ntfsplus_xattr_handlers[] = {
 	&ntfs_other_xattr_handler,
 	NULL,
 };

@@ -666,16 +666,16 @@ void ntfs_set_vfs_operations(struct inode *inode, mode_t mode, dev_t dev)
 			inode->i_op = &ntfs_dir_inode_ops;
 			inode->i_fop = &ntfs_dir_ops;
 		}
-		inode->i_mapping->a_ops = &ntfs_aops;
+		inode->i_mapping->a_ops = &ntfsplus_aops;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 		lockdep_set_class(&inode->i_mapping->invalidate_lock,
 				  &ntfs_dir_inval_lock_key);
 #endif
 	} else if (S_ISLNK(mode)) {
 		inode->i_op = &ntfs_symlink_inode_operations;
-		inode->i_mapping->a_ops = &ntfs_aops;
+		inode->i_mapping->a_ops = &ntfsplus_aops;
 	} else if (S_ISCHR(mode) || S_ISBLK(mode) || S_ISFIFO(mode) || S_ISSOCK(mode)) {
-		inode->i_op = &ntfs_special_inode_operations;
+		inode->i_op = &ntfsplus_special_inode_operations;
 		init_special_inode(inode, inode->i_mode, dev);
 	} else {
 		if (!NInoAttr(NTFS_I(inode))) {
@@ -685,7 +685,7 @@ void ntfs_set_vfs_operations(struct inode *inode, mode_t mode, dev_t dev)
 		if (inode->i_ino == FILE_MFT)
 			inode->i_mapping->a_ops = &ntfs_mft_aops;
 		else
-			inode->i_mapping->a_ops = &ntfs_aops;
+			inode->i_mapping->a_ops = &ntfsplus_aops;
 	}
 }
 
@@ -1497,7 +1497,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
 		ni->initialized_size = le64_to_cpu(a->data.non_resident.initialized_size);
 		ni->allocated_size = le64_to_cpu(a->data.non_resident.allocated_size);
 	}
-	vi->i_mapping->a_ops = &ntfs_aops;
+	vi->i_mapping->a_ops = &ntfsplus_aops;
 	if ((NInoCompressed(ni) || NInoSparse(ni)) && ni->type != AT_INDEX_ROOT)
 		vi->i_blocks = ni->itype.compressed.size >> 9;
 	else

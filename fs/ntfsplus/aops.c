@@ -576,7 +576,7 @@ static int ntfs_swap_activate(struct swap_info_struct *sis,
 			&ntfs_read_iomap_ops);
 }
 
-const struct address_space_operations ntfs_aops = {
+const struct address_space_operations ntfsplus_aops = {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 0)
 	.read_folio		= ntfs_read_folio,
 #else

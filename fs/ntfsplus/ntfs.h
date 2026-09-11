@@ -173,13 +173,13 @@ extern struct kmem_cache *ntfs_attr_ctx_cache;
 extern struct kmem_cache *ntfs_index_ctx_cache;
 
 /* The various operations structs defined throughout the driver files. */
-extern const struct address_space_operations ntfs_aops;
+extern const struct address_space_operations ntfsplus_aops;
 extern const struct address_space_operations ntfs_mft_aops;
 
 extern const struct  file_operations ntfs_file_ops;
 extern const struct inode_operations ntfs_file_inode_ops;
 extern const  struct inode_operations ntfs_symlink_inode_operations;
-extern const struct inode_operations ntfs_special_inode_operations;
+extern const struct inode_operations ntfsplus_special_inode_operations;
 
 extern const struct  file_operations ntfs_dir_ops;
 extern const struct inode_operations ntfs_dir_inode_ops;
