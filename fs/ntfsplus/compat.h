@@ -62,8 +62,9 @@ static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
 
 
 /*
- * u64_to_fsid helper.
+ * u64_to_fsid helper (upstream in 5.9).
  */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
 static inline __kernel_fsid_t u64_to_fsid(u64 val)
 {
 	__kernel_fsid_t fsid;
@@ -71,6 +72,7 @@ static inline __kernel_fsid_t u64_to_fsid(u64 val)
 	fsid.val[1] = (u32)(val >> 32);
 	return fsid;
 }
+#endif
 
 /*
  * kvrealloc with 4 parameters: p, oldsize, newsize, flags.
