@@ -561,13 +561,15 @@ static ssize_t ntfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
 		file_accessed(iocb->ki_filp);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL, 0,
-				NULL, 0);
-#else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
-		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL, 0, 0);
+				NULL, is_sync_kiocb(iocb));
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0)
+		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL, 0,
+				is_sync_kiocb(iocb));
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
+		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL,
+				is_sync_kiocb(iocb));
 #else
 		ret = iomap_dio_rw(iocb, to, &ntfs_read_iomap_ops, NULL);
-#endif
 #endif
 	} else {
 		ret = generic_file_read_iter(iocb, to);
@@ -607,15 +609,16 @@ static ssize_t ntfs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 	ret = iomap_dio_rw(iocb, from, &ntfs_dio_iomap_ops,
-			&ntfs_write_dio_ops, 0, NULL, 0);
-#else
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
+			&ntfs_write_dio_ops, 0, NULL, is_sync_kiocb(iocb));
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0)
 	ret = iomap_dio_rw(iocb, from, &ntfs_dio_iomap_ops,
-			&ntfs_write_dio_ops, 0, 0);
+			&ntfs_write_dio_ops, 0, is_sync_kiocb(iocb));
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
+	ret = iomap_dio_rw(iocb, from, &ntfs_dio_iomap_ops,
+			&ntfs_write_dio_ops, is_sync_kiocb(iocb));
 #else
 	ret = iomap_dio_rw(iocb, from, &ntfs_dio_iomap_ops,
 			&ntfs_write_dio_ops);
-#endif
 #endif
 	if (ret == -ENOTBLK)
 		ret = 0;
