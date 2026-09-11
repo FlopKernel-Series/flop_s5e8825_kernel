@@ -613,7 +613,8 @@ out:
 #define SYSTEM_NTFS_ATTRIB_BE "system.ntfs_attrib_be"
 // clang-format on
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 5, 0)
+/* GKI 5.4/5.10 carry the Android get-flags patch, dropped by GKI 5.15. */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
 static int ntfs_getxattr(const struct xattr_handler *handler,
 		struct dentry *unused, struct inode *inode, const char *name,
 		void *buffer, size_t size)
