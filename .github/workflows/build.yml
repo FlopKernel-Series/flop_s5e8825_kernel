@@ -8,6 +8,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # ckbuild.sh sets USE_CCACHE=1 and build.sh exports CC="ccache clang",
+      # so ccache is already in the compile path. What was missing is a cache
+      # directory that survives the job, plus the settings that let a restored
+      # cache actually hit.
+      # NOTE: CCACHE_DIR is deliberately NOT set here. Job-level env cannot use
+      # the runner context; it is exported from the Configure ccache step below.
+      # Required. The default compilercheck is "mtime", and a fresh checkout
+      # gives the vendored clang a new mtime on every run, so every object would
+      # miss and the restored cache would be dead weight. Hash the contents.
+      CCACHE_COMPILERCHECK: content
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_MAXSIZE: 2G
+      CCACHE_SLOPPINESS: time_macros,include_file_mtime,include_file_ctime,file_stat_matches
     steps:
 
       - name: Checkout repo
@@ -26,12 +41,35 @@ jobs:
           echo "${{ secrets.CHAT_ID }}" >> "../chat_ci"
           echo "${{ secrets.TOKEN }}" >> "../bot_token"
 
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/ccache
+          # Save a fresh entry every run, restore the most recent previous one.
+          # ccache is content-addressed, so a cache from an older commit is still
+          # almost entirely valid: a one-file change recompiles one object.
+          key: ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ runner.os }}-
+
+      - name: Configure ccache
+        run: |
+          # RUNNER_TEMP is available to the shell; ${{ runner.temp }} is not
+          # usable in job-level env, so publish CCACHE_DIR for later steps here.
+          echo "CCACHE_DIR=$RUNNER_TEMP/ccache" >> "$GITHUB_ENV"
+          export CCACHE_DIR="$RUNNER_TEMP/ccache"
+          mkdir -p "$CCACHE_DIR"
+          ccache -M 2G
+          ccache -z
+          ccache -s
+
       - name: Build (KernelSU Next)
         run: |
           rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
           rm -rf kernel_build/images || true
           mkdir -p kernel_build/images
           ./do_build.sh tkq
+          ccache -s
 
       - name: Prepare artifacts (KernelSU Next)
         id: artifacts_tk
@@ -94,6 +132,7 @@ jobs:
           rm -rf kernel_build/images || true
           mkdir -p kernel_build/images
           ./do_build.sh tsq
+          ccache -s
 
       - name: Prepare artifacts (SukiSU Ultra)
         id: artifacts_ts
@@ -156,6 +195,7 @@ jobs:
           rm -rf kernel_build/images || true
           mkdir -p kernel_build/images
           ./do_build.sh tuq
+          ccache -s
 
       - name: Prepare artifacts (MamboSU)
         id: artifacts_tu
@@ -218,6 +258,7 @@ jobs:
           rm -rf kernel_build/images || true
           mkdir -p kernel_build/images
           ./do_build.sh tq
+          ccache -s
 
       - name: Prepare artifacts (Vanilla)
         id: artifacts_t
