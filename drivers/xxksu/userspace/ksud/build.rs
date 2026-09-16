@@ -20,7 +20,7 @@ fn get_git_version() -> Result<(u32, String), std::io::Error> {
         .trim()
         .parse()
         .map_err(|_| std::io::Error::other("Failed to parse git count"))?;
-    let version_code = 30000 + version_code - 96;
+    let version_code = 30000 + version_code - 80;
 
     let version_name = String::from_utf8(
         Command::new("git")
@@ -236,5 +236,6 @@ fn main() {
     let target_os = env::var("CARGO_CFG_TARGET_OS").expect("CARGO_CFG_TARGET_OS not set");
     if target_os == "android" {
         configure_bindgen();
+	cc::Build::new() .file("src/compat.c") .compile("compat");
     }
 }

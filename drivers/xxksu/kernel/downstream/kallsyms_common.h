@@ -27,7 +27,7 @@ struct symbol_hash_entry {
 	uintptr_t addr;
 };
 
-static void *kallsyms_hash_array = NULL;
+static void *kallsyms_hash_array = nullptr;
 static size_t kallsyms_hash_array_entry_count = 0;
 static size_t kallsyms_hash_array_capacity = 0;
 
@@ -45,7 +45,7 @@ static inline void *old_kvrealloc(const void *p, size_t oldsize, size_t newsize,
 		return (void *)p;
 	newp = kvmalloc(newsize, flags);
 	if (!newp)
-		return NULL;
+		return nullptr;
 	__builtin_memcpy(newp, p, oldsize);
 	kvfree(p);
 	return newp;
@@ -68,9 +68,7 @@ static inline void insert_to_kallsyms_array(const char *str, uintptr_t addr)
 			return;
 	}
 
-skip_anti_dup:
-	;
-
+skip_anti_dup:;
 	if (kallsyms_hash_array_entry_count < kallsyms_hash_array_capacity)
 		goto size_is_sufficient;
 
@@ -108,19 +106,19 @@ __weak int sprint_symbol_no_offset(char *buffer, unsigned long address) { return
 #ifdef MODULE // https://elixir.bootlin.com/linux/v7.2-rc4/source/kernel/kprobes.c#L1506
 static noinline __nocfi void ksu_kallsyms_lookup_size_offset(uintptr_t symaddr, unsigned long *sym_size, unsigned long *offset)
 {
-	static typeof(kallsyms_lookup_size_offset) *fn = NULL;
-	static bool already_resolved = false;
+	static typeof(kallsyms_lookup_size_offset) *fn __read_mostly;
+	static void *state = &&bootstrap;
+	goto *state;
 
-	if (already_resolved)
-		goto skip_resolve;
-	
-	*(void **)&fn = kallsyms_lookup_name("kallsyms_lookup_size_offset");
-	already_resolved = true;
+bootstrap:
+	*(void **)&fn = (void *)kallsyms_lookup_name("kallsyms_lookup_size_offset");
+	if (!!fn)
+		state = &&fn_ok;
+	else
+		state = &&no_fn;
 
-skip_resolve:
-	if (!fn)
-		goto no_fn;
-
+	goto *state;
+fn_ok:
 	fn(symaddr, sym_size, offset);
 	return;
 
@@ -192,9 +190,7 @@ scan_start:
 
 	insert_to_kallsyms_array(symbol_buf, curr);
 
-step_up:
-	;
-
+step_up:;
 	unsigned long sym_size = 0;
 	unsigned long offset = 0;
 	kallsyms_lookup_size_offset(curr, &sym_size, &offset);
@@ -245,17 +241,11 @@ collision_found:
 	return 0x0;
 }
 
-#if 0 // ksu says this isnt always available so lets use an fn ptr to try use it on LKM
+// ksu says this isnt always available so lets use an fn ptr when using it on LKM
 struct lookup_args {
 	const char *target_name;
 	uintptr_t target_addr;
 };
-
-#ifdef MODULE
-typeof(kallsyms_on_each_symbol) *kallsyms_on_each_symbol_fn __read_mostly = NULL;
-#else
-#define kallsyms_on_each_symbol_fn kallsyms_on_each_symbol
-#endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
 static int kallsyms_on_each_symbol_cb(void *data, const char *name, unsigned long addr)
@@ -293,6 +283,25 @@ static int kallsyms_on_each_symbol_cb(void *data, const char *name, struct modul
 
 static noinline __nocfi uintptr_t try_kallsyms_on_each_symbol(const char *name)
 {
+#ifdef MODULE // lazy init
+	static typeof(kallsyms_on_each_symbol) *kallsyms_on_each_symbol_fn __read_mostly;
+	static void *state = &&bootstrap;
+	goto *state;
+
+bootstrap:
+	*(void **)&kallsyms_on_each_symbol_fn = (void *)kallsyms_lookup_name("kallsyms_on_each_symbol");
+	if (!!kallsyms_on_each_symbol_fn)
+		state = &&fn_ok;
+	else
+		state = &&no_fn;
+	goto *state;
+no_fn:
+	return 0x0;
+
+fn_ok:;
+#else
+#define kallsyms_on_each_symbol_fn kallsyms_on_each_symbol
+#endif
 	struct lookup_args args;
 	args.target_name = name;
 	args.target_addr = 0x0;
@@ -303,7 +312,6 @@ static noinline __nocfi uintptr_t try_kallsyms_on_each_symbol(const char *name)
 
 	return args.target_addr;
 }
-#endif
 
 #ifdef CONFIG_KPROBES // kprobes based symbol resolver.
 static inline uintptr_t kp_kallsyms_lookup_name(const char *name)
@@ -340,20 +348,9 @@ static noinline uintptr_t kallsyms_lookup_retry(const char *name)
 		goto found;
 #endif
 
-#if 0
-#ifdef MODULE
-	if (!kallsyms_on_each_symbol_fn)
-		*(uintptr_t *)&kallsyms_on_each_symbol_fn = (uintptr_t)kallsyms_lookup_name("kallsyms_on_each_symbol");
-
-	if (!kallsyms_on_each_symbol_fn)
-		goto skip_on_each_symbol;
-#endif
 	addr = try_kallsyms_on_each_symbol(name);
 	if (addr)
 		goto found;
-
-skip_on_each_symbol:
-#endif
 
 	smp_mb();
 	if (kallsyms_hash_array_ready)
@@ -363,18 +360,15 @@ skip_on_each_symbol:
 	if (!(current->flags & PF_KTHREAD))
 		return 0x0;
 
-	mutex_lock(&kallsyms_hash_array_mutex);
-	if (!kallsyms_hash_array_ready) {
+	if (guarded_mutex_lock(&kallsyms_hash_array_mutex) && !kallsyms_hash_array_ready) {
 		dotted_kallsyms_build_hash_array();
 		kallsyms_hash_array_ready = true;
 		smp_mb();
 	}
-	mutex_unlock(&kallsyms_hash_array_mutex);
 
 	return kallsyms_lookup_hashed_name(name);
 	
-found:
-	;
+found:;
 	char namebuf[KSYM_NAME_LEN];
 	sprint_symbol_no_offset(namebuf, addr);
 	pr_info("%s: %s addr: 0x%lx \n", __func__, namebuf, addr);
@@ -382,10 +376,11 @@ found:
 }
 
 // ksu_get_ksym_size, return symbol size, return retfail if fail.
-static noinline size_t ksu_get_ksym_size(uintptr_t symbol_addr, ptrdiff_t retfail)
+static noinline size_t ksu_get_ksym_size(uintptr_t symbol_addr, size_t retfail)
 {
-	size_t offset = 0;
-	size_t symbolsize = 0;
+	// https://github.com/backslashxx/KernelSU/pull/35
+	unsigned long offset = 0;
+	unsigned long symbolsize = 0;
 
 	kallsyms_lookup_size_offset(symbol_addr, &symbolsize, &offset);
 
@@ -424,16 +419,16 @@ static noinline size_t ksu_get_ksym_size(uintptr_t symbol_addr, ptrdiff_t retfai
 
 static noinline void dotted_kallsyms_destroy_hash_array(void)
 {
-	mutex_lock(&kallsyms_hash_array_mutex);
+	guarded_mutex_lock(&kallsyms_hash_array_mutex);
 
 	static volatile int entry_count = 0;
-	
+
 	entry_count++;
 	if (entry_count != TOTAL_HASH_ARRAY_USERS)
-		goto bail;
+		return;
 
 	if (!kallsyms_hash_array)
-		goto bail;
+		return;
 
 	pr_info("%s: addr: 0x%lx entries: %u capacity: %u\n", __func__, (uintptr_t)kallsyms_hash_array, kallsyms_hash_array_entry_count, kallsyms_hash_array_capacity);
 
@@ -441,15 +436,13 @@ static noinline void dotted_kallsyms_destroy_hash_array(void)
 
 	kvfree(kallsyms_hash_array);
 
-	kallsyms_hash_array = NULL;
+	kallsyms_hash_array = nullptr;
 	kallsyms_hash_array_entry_count = 0;
 	kallsyms_hash_array_capacity = 0;
 
 	const char *hw = "Hello, world!";
-	pr_info("chibihash64: '%s' #: 0x%llx \n", hw, chibihash64_wrapper(hw) );
+	pr_info("chibihash64: '%s' #: 0x%llx \n", hw, chibihash64_wrapper(hw));
 
-bail:
-	mutex_unlock(&kallsyms_hash_array_mutex);
 }
 
 #undef HASH_ARRAY_USER1

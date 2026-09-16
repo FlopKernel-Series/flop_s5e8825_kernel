@@ -14,6 +14,7 @@ interface SettingsRepository {
     var enableFloatingBottomBar: Boolean
     var enableFloatingBottomBarBlur: Boolean
     var enableNavigationBadge: Boolean
+    var navigationRailExpanded: Boolean
     var pageScale: Float
     var enableWebDebugging: Boolean
     var moduleSortEnabledFirst: Boolean
@@ -37,10 +38,6 @@ interface SettingsRepository {
     suspend fun getKernelUmountStatus(): String
     fun isKernelUmountEnabled(): Boolean
     fun setKernelUmountEnabled(enabled: Boolean): Boolean
-
-    suspend fun getWebViewZygoteUmountStatus(): String
-    fun isWebViewZygoteUmountEnabled(): Boolean
-    fun setWebViewZygoteUmountEnabled(enabled: Boolean): Boolean
 
     suspend fun getSelinuxHideStatus(): String
     fun isSelinuxHideEnabled(): Boolean
