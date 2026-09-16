@@ -3660,7 +3660,7 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
 		if (fake_filename && !IS_ERR(fake_filename)) {
 			path_put(&path);
 			restore_nameidata();
-			set_nameidata(nd, old_dfd, fake_filename, NULL);
+			set_nameidata(nd, old_dfd, fake_filename);
 			error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
 			if (unlikely(error)) {
 				putname(fake_filename);
@@ -3715,7 +3715,7 @@ static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
 			if (fake_filename && !IS_ERR(fake_filename)) {
 				path_put(&path);
 				restore_nameidata();
-				set_nameidata(nd, old_dfd, fake_filename, NULL);
+				set_nameidata(nd, old_dfd, fake_filename);
 				error = path_lookupat(nd, flags, &path);
 				if (unlikely(error)) {
 					putname(fake_filename);
@@ -3767,7 +3767,7 @@ static struct file *path_openat(struct nameidata *nd,
 				const char *new_s = NULL;
 				terminate_walk(nd);
 				restore_nameidata();
-				set_nameidata(nd, old_dfd, fake_filename, NULL);
+				set_nameidata(nd, old_dfd, fake_filename);
 				new_s = path_init(nd, flags);
 				while (!(error = link_path_walk(new_s, nd)) &&
 				       (new_s = open_last_lookups(nd, file, op)) != NULL)
