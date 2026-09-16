@@ -6,8 +6,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -133,8 +137,8 @@ fun SettingsTextFieldWidget(
 
     val currentOnTextLayout by rememberUpdatedState(onTextLayout)
 
-    val showTitle = if (useLabelAsPlaceholder) state.text.isNotEmpty() else true
-    val showPlaceholder = useLabelAsPlaceholder && state.text.isEmpty()
+    val showFloatingTitle = useLabelAsPlaceholder && (focused || state.text.isNotEmpty())
+    val showPlaceholder = useLabelAsPlaceholder && !showFloatingTitle
 
     fun onClickInternal() {
         if (onClick != null) {
@@ -149,13 +153,39 @@ fun SettingsTextFieldWidget(
 
     SettingsBaseWidget(
         modifier = modifier,
-        title = if (showTitle) title else null,
+        title = if (useLabelAsPlaceholder) null else title,
         icon = null,
         iconPlaceholder = false,
-        renderBackgroundBlur = renderBackgroundBlur,
+        isOnBackground = renderBackgroundBlur,
         leadingContent = leadingContent,
-        onClick = {
-            onClickInternal()
+        onClick = if (isClickableMode) {
+            { onClickInternal() }
+        } else {
+            null
+        },
+        foreContent = {
+            if (useLabelAsPlaceholder) {
+                AnimatedVisibility(
+                    visible = showFloatingTitle,
+                    enter = slideInVertically(
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        initialOffsetY = { it },
+                    ) + fadeIn(
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                    ),
+                    exit = slideOutVertically(
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                        targetOffsetY = { it },
+                    ) + fadeOut(
+                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                    ),
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+            }
         },
         descriptionColumnContent = {
             BasicTextField(
@@ -191,14 +221,31 @@ fun SettingsTextFieldWidget(
                 scrollState = scrollState,
                 decorator = { innerTextField ->
                     Column {
+                        val placeholderAnimationScope = this
                         Box(
-                            modifier = Modifier.clickable(
-                                enabled = onClick != null || !focused
-                            ) {
-                                onClickInternal()
+                            modifier = if (isClickableMode) {
+                                Modifier.clickable {
+                                    onClickInternal()
+                                }
+                            } else {
+                                Modifier
                             }
                         ) {
-                            if (showPlaceholder) {
+                            placeholderAnimationScope.AnimatedVisibility(
+                                visible = showPlaceholder,
+                                enter = slideInVertically(
+                                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                    initialOffsetY = { -it },
+                                ) + fadeIn(
+                                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                ),
+                                exit = slideOutVertically(
+                                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                    targetOffsetY = { -it },
+                                ) + fadeOut(
+                                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                ),
+                            ) {
                                 Text(
                                     text = title,
                                     style = textStyle,
@@ -274,8 +321,10 @@ fun SettingsTextFieldWidget(
                 )
             }
         },
-        trailingContent = {
-            trailingContent?.invoke()
-        }
+        trailingContent = if (trailingContent != null) {
+            {
+                trailingContent()
+            }
+        } else null
     )
 }

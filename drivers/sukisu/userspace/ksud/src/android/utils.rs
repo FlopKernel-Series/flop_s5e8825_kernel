@@ -1,10 +1,11 @@
 #[cfg(unix)]
 use std::os::unix::prelude::PermissionsExt;
 use std::{
+    ffi::{CStr, CString, c_char, c_void},
     fs::{File, OpenOptions, Permissions, create_dir_all, remove_file, set_permissions, write},
     io::{
         ErrorKind::{AlreadyExists, NotFound},
-        Write,
+        Read, Seek, Write,
     },
     path::{Path, PathBuf},
     process::Command,
@@ -25,6 +26,17 @@ use crate::{
     boot_patch::BootRestoreArgs,
     defs,
 };
+
+type PropertyReadCallback = unsafe extern "C" fn(*mut c_void, *const c_char, *const c_char, u32);
+
+unsafe extern "C" {
+    fn __system_property_find(name: *const c_char) -> *const c_void;
+    fn __system_property_read_callback(
+        property_info: *const c_void,
+        callback: PropertyReadCallback,
+        cookie: *mut c_void,
+    );
+}
 
 #[macro_export]
 macro_rules! debug_select {
@@ -102,8 +114,37 @@ pub fn ensure_binary<T: AsRef<Path>>(
     Ok(())
 }
 
-pub fn getprop(prop: &str) -> Option<String> {
-    android_properties::getprop(prop).value()
+unsafe extern "C" fn property_read_callback(
+    cookie: *mut c_void,
+    _name: *const c_char,
+    value: *const c_char,
+    _serial: u32,
+) {
+    if cookie.is_null() || value.is_null() {
+        return;
+    }
+
+    let result = unsafe { &mut *cookie.cast::<Option<String>>() };
+    let value = unsafe { CStr::from_ptr(value) };
+    *result = Some(value.to_string_lossy().into_owned());
+}
+
+pub fn getprop(name: &str) -> Option<String> {
+    let name = CString::new(name).ok()?;
+    let property_info = unsafe { __system_property_find(name.as_ptr()) };
+    if property_info.is_null() {
+        return None;
+    }
+
+    let mut value = None;
+    unsafe {
+        __system_property_read_callback(
+            property_info,
+            property_read_callback,
+            std::ptr::addr_of_mut!(value).cast(),
+        );
+    }
+    value
 }
 
 pub fn is_safe_mode() -> bool {
@@ -122,11 +163,14 @@ pub fn is_safe_mode() -> bool {
     safemode
 }
 
-pub fn get_zip_uncompressed_size(zip_path: &str) -> Result<u64> {
-    let mut zip = zip::ZipArchive::new(std::fs::File::open(zip_path)?)?;
-    let total: u64 = (0..zip.len())
-        .map(|i| zip.by_index(i).unwrap().size())
-        .sum();
+/// Calculate the total uncompressed size of all entries in an open archive.
+pub fn get_zip_uncompressed_size<R>(zip: &mut zip::ZipArchive<R>) -> Result<u64>
+where
+    R: Read + Seek,
+{
+    let total = (0..zip.len())
+        .map(|i| zip.by_index(i).map(|f| f.size()))
+        .sum::<zip::result::ZipResult<u64>>()?;
     Ok(total)
 }
 
@@ -195,7 +239,7 @@ pub fn install(libadbroot: Option<PathBuf>) -> Result<()> {
         std::env::current_exe().with_context(|| "Failed to get self exe path")?,
         defs::DAEMON_PATH,
     )?;
-    restorecon::lsetfilecon(defs::DAEMON_PATH, restorecon::ADB_CON)?;
+    restorecon::lsetfilecon(defs::DAEMON_PATH, restorecon::KSU_CON)?;
     // install binary assets
     assets::ensure_binaries(false).with_context(|| "Failed to extract assets")?;
 

@@ -8,11 +8,18 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -21,50 +28,44 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavEntryDecorator
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberDecoratedNavEntries
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.scene.SceneInfo
-import androidx.navigation3.scene.SinglePaneSceneStrategy
-import androidx.navigation3.scene.rememberSceneState
-import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
-import androidx.navigationevent.compose.NavigationEventState
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.resukisu.resukisu.ui.activity.PermissionRequestInterface
-import com.resukisu.resukisu.ui.animation.predictiveback.AOSPCrossActivityAnimation
-import com.resukisu.resukisu.ui.animation.predictiveback.KernelSUClassicPredictiveBackAnimation
-import com.resukisu.resukisu.ui.animation.predictiveback.MiuixPredictiveBackAnimation
-import com.resukisu.resukisu.ui.animation.predictiveback.NoPredictiveBackAnimation
-import com.resukisu.resukisu.ui.animation.predictiveback.ScalePredictiveBackAnimation
+import com.resukisu.resukisu.ui.animation.predictiveback.installerNavTransition
 import com.resukisu.resukisu.ui.component.InstallConfirmationDialog
 import com.resukisu.resukisu.ui.component.ZipFileDetector
 import com.resukisu.resukisu.ui.component.ZipFileInfo
 import com.resukisu.resukisu.ui.component.ZipType
 import com.resukisu.resukisu.ui.navigation.HandleDeepLink
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
+import com.resukisu.resukisu.ui.navigation.Navigator
 import com.resukisu.resukisu.ui.navigation.Route
-import com.resukisu.resukisu.ui.navigation.rememberNavigator
+import com.resukisu.resukisu.ui.overscroll.StretchOverscrollCompensationState
+import com.resukisu.resukisu.ui.overscroll.rememberCustomOverscrollFactory
 import com.resukisu.resukisu.ui.screen.AppProfileScreen
 import com.resukisu.resukisu.ui.screen.AppProfileTemplateScreen
 import com.resukisu.resukisu.ui.screen.DynamicManagerScreen
@@ -81,15 +82,19 @@ import com.resukisu.resukisu.ui.screen.kernelFlash.KernelFlashScreen
 import com.resukisu.resukisu.ui.screen.main.MainScreen
 import com.resukisu.resukisu.ui.screen.moduleRepo.ModuleRepoScreen
 import com.resukisu.resukisu.ui.screen.moduleRepo.OnlineModuleDetailScreen
+import com.resukisu.resukisu.ui.screen.susfs.SuSFSConfigScreen
 import com.resukisu.resukisu.ui.screen.themeSettings.ThemeSettingsScreen
-import com.resukisu.resukisu.ui.susfs.SuSFSConfigScreen
+import com.resukisu.resukisu.ui.theme.BackgroundRenderState
+import com.resukisu.resukisu.ui.theme.LocalBackgroundRenderState
 import com.resukisu.resukisu.ui.theme.ThemeConfig
-import com.resukisu.resukisu.ui.theme.backgroundImagePainter
 import com.resukisu.resukisu.ui.util.LocalBackgroundBlurAnchor
 import com.resukisu.resukisu.ui.util.LocalBlurState
 import com.resukisu.resukisu.ui.util.LocalPermissionRequestInterface
+import com.resukisu.resukisu.ui.util.LocalPortraitState
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
-import com.resukisu.resukisu.ui.util.rootAvailable
+import com.resukisu.resukisu.ui.util.LocalStretchOverscrollCompensationState
+import com.resukisu.resukisu.ui.util.rememberDeviceCornerRadius
+import com.resukisu.resukisu.ui.viewmodel.MainIntentViewModel
 import com.resukisu.resukisu.ui.viewmodel.PredictiveBackAnimation
 import com.resukisu.resukisu.ui.viewmodel.SettingsViewModel
 import com.resukisu.resukisu.ui.webui.WebUIActivity
@@ -100,10 +105,18 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
+import top.yukonga.miuix.kmp.nav.core.NavCornerClipMode
+import top.yukonga.miuix.kmp.nav.core.NavDisplay
+import top.yukonga.miuix.kmp.nav.core.NavDisplayEffects
+import top.yukonga.miuix.kmp.nav.core.rememberNavBackStack
+import top.yukonga.miuix.kmp.nav.transition.NavSwipeDirection
 import top.yukonga.miuix.kmp.shader.isRenderEffectSupported
 import kotlin.coroutines.resume
+
 
 @Composable
 fun NavContainer(
@@ -113,15 +126,20 @@ fun NavContainer(
     showConfirmationDialog: MutableState<Boolean>,
     pendingZipFiles: MutableState<List<ZipFileInfo>>,
 ) {
+    val themeConfig: ThemeConfig = koinInject()
+    val backgroundRenderState = LocalBackgroundRenderState.current
+    val zipFileDetector = koinInject<ZipFileDetector>()
     val activity = LocalActivity.current as MainActivity
     val context = LocalContext.current
+    val mainIntentViewModel = koinViewModel<MainIntentViewModel>()
+    val mainIntentState by mainIntentViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(zipUri) {
         if (zipUri.isNullOrEmpty()) return@LaunchedEffect
 
         activity.lifecycleScope.launch(Dispatchers.IO) {
             val zipFileInfos = zipUri.map { uri ->
-                ZipFileDetector.parseZipFile(context, uri)
+                zipFileDetector.parseZipFile(context, uri)
             }.filter { it.type != ZipType.UNKNOWN }
 
             withContext(Dispatchers.Main) {
@@ -137,6 +155,12 @@ fun NavContainer(
 
     val settings by settingsViewModel.uiState.collectAsStateWithLifecycle()
     val systemDensity = LocalDensity.current
+    val stretchOverscrollCompensationState = remember {
+        StretchOverscrollCompensationState()
+    }
+    val overscrollFactory = rememberCustomOverscrollFactory(
+        compensationState = stretchOverscrollCompensationState,
+    )
 
     val density = remember(systemDensity, settings.dpi) {
         if (settings.dpi <= 0f) {
@@ -147,7 +171,24 @@ fun NavContainer(
         }
     }
 
-    val navigator = rememberNavigator(Route.Main)
+    val backStack = rememberNavBackStack<Route>(Route.Main)
+    val navigator = remember(backStack) { Navigator(backStack) }
+    val onBack = remember(navigator) {
+        {
+            when (val top = navigator.current()) {
+                is Route.TemplateEditor -> {
+                    if (!top.readOnly) {
+                        navigator.setResult("template_edit", true)
+                    } else {
+                        navigator.pop()
+                    }
+                }
+
+                else -> navigator.pop()
+            }
+        }
+    }
+    val useBlur = themeConfig.isEnableBlur
 
     lateinit var permissionRequestHandler: ManagedActivityResultLauncher<Array<String>, Map<String, @JvmSuppressWildcards Boolean>>
 
@@ -250,6 +291,8 @@ fun NavContainer(
     )
 
     CompositionLocalProvider(
+        LocalOverscrollFactory provides overscrollFactory,
+        LocalStretchOverscrollCompensationState provides stretchOverscrollCompensationState,
         LocalPermissionRequestInterface provides permissionRequestInterface,
         LocalNavigator provides navigator,
         LocalDensity provides density
@@ -277,7 +320,7 @@ fun NavContainer(
 
                     when {
                         kernelUris.isNotEmpty() && moduleUris.isEmpty() -> {
-                            if (kernelUris.size == 1 && rootAvailable()) {
+                            if (kernelUris.size == 1 && mainIntentState.rootAvailable) {
                                 withContext(Dispatchers.Main) {
                                     navigator.push(
                                         Route.Install(
@@ -292,9 +335,7 @@ fun NavContainer(
                         moduleUris.isNotEmpty() -> {
                             withContext(Dispatchers.Main) {
                                 navigator.push(
-                                    Route.Flash(
-                                        FlashIt.FlashModules(ArrayList(moduleUris))
-                                    )
+                                    Route.Flash.modules(moduleUris.map(Uri::toString))
                                 )
                             }
                         }
@@ -308,224 +349,383 @@ fun NavContainer(
             }
         )
 
-        val predictiveBackAnimationHandler = remember(
+        val navCornerRadius = rememberDeviceCornerRadius(defaultRadius = 0.dp)
+        val roundAllCorners =
+            settings.predictiveBackAnimation == PredictiveBackAnimation.AOSP ||
+                settings.predictiveBackAnimation == PredictiveBackAnimation.Scale ||
+                settings.predictiveBackAnimation == PredictiveBackAnimation.KernelSUClassic
+        val backdropColor = MaterialTheme.colorScheme.surfaceContainer
+        val effects = remember(navCornerRadius, roundAllCorners, backdropColor) {
+            NavDisplayEffects(
+                enableCornerClip = true,
+                cornerClipRadius = if (roundAllCorners && navCornerRadius <= 0.dp) 32.dp else navCornerRadius,
+                cornerClipMode = if (roundAllCorners) NavCornerClipMode.All else NavCornerClipMode.Leading,
+                dimAmount = 0.5f,
+                backdropColor = backdropColor,
+                blockInputDuringTransition = false,
+            )
+        }
+        val transition = remember(
             settings.predictiveBackAnimation,
             settings.predictiveBackExitDirection
         ) {
-            when (settings.predictiveBackAnimation) {
-                PredictiveBackAnimation.None -> NoPredictiveBackAnimation()
-                PredictiveBackAnimation.AOSP -> AOSPCrossActivityAnimation(settings.predictiveBackExitDirection)
-                PredictiveBackAnimation.Scale -> ScalePredictiveBackAnimation(
-                    settings.predictiveBackExitDirection
-                )
-
-                PredictiveBackAnimation.KernelSUClassic -> KernelSUClassicPredictiveBackAnimation()
-                PredictiveBackAnimation.MIUIX -> MiuixPredictiveBackAnimation()
-            }
-        }
-
-        var gestureState: NavigationEventState<SceneInfo<NavKey>>? = null
-        val navigationScope = rememberCoroutineScope()
-        val onBack: (() -> Unit) -> Unit = { callBack ->
-            navigationScope.launch {
-                predictiveBackAnimationHandler.onBackPressed(
-                    transitionState = gestureState?.transitionState,
-                    currentPageKey = navigator.current()
-                )
-
-                callBack()
-
-                when (val top = navigator.current()) {
-                    is Route.TemplateEditor -> {
-                        if (!top.readOnly) {
-                            navigator.setResult("template_edit", true)
-                        } else {
-                            navigator.pop()
-                        }
-                    }
-
-                    else -> navigator.pop()
-                }
-            }
-        }
-
-        val entries =
-            rememberDecoratedNavEntries(
-                backStack = navigator.backStack,
-                entryDecorators = listOf(
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    rememberViewModelStoreNavEntryDecorator(),
-                    NavEntryDecorator(
-                        onPop = { key ->
-                            predictiveBackAnimationHandler.onPagePop(
-                                contentPageKey = key,
-                                animationScope = navigationScope
-                            )
-                        }
-                    ) { content ->
-                        val snackBarHostState = remember { SnackbarHostState() }
-                        var backgroundBlurAnchorCoordinates by remember {
-                            mutableStateOf<LayoutCoordinates?>(null)
-                        }
-
-                        LaunchedEffect(backgroundImagePainter) {
-                            if (backgroundImagePainter == null) {
-                                backgroundBlurAnchorCoordinates = null
-                            }
-                        }
-
-                        with(predictiveBackAnimationHandler) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .predictiveBackAnimationDecorator(
-                                        gestureState?.transitionState,
-                                        content.contentKey,
-                                        navigator.current()
-                                    )
-                                    .then(
-                                        if (!ThemeConfig.backgroundImageLoaded) Modifier.background(
-                                            MaterialTheme.colorScheme.surfaceContainer
-                                        ) else Modifier
-                                    )
-                            ) {
-                                val surfaceContainer =
-                                    MaterialTheme.colorScheme.surfaceContainer
-
-                                CompositionLocalProvider(
-                                    LocalBlurState provides rememberMaterial3BlurBackdrop(
-                                        ThemeConfig.isEnableBlur
-                                    ),
-                                    LocalSnackbarHost provides snackBarHostState,
-                                    LocalBackgroundBlurAnchor provides backgroundBlurAnchorCoordinates,
-                                ) {
-                                    backgroundImagePainter?.let {
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .zIndex(-1f)
-                                                .onGloballyPositioned { newCoordinates ->
-                                                    backgroundBlurAnchorCoordinates =
-                                                        newCoordinates.takeIf { coordinates ->
-                                                            coordinates.isAttached
-                                                        }
-                                                }
-                                                .paint(
-                                                    painter = it,
-                                                    contentScale = ContentScale.Crop,
-                                                )
-                                                .drawWithContent {
-                                                    drawContent()
-                                                    drawRect(
-                                                        color = surfaceContainer.copy(
-                                                            alpha = ThemeConfig.backgroundDim
-                                                        )
-                                                    )
-                                                }
-                                        )
-                                    }
-                                    content.Content()
-                                }
-                            }
-                        }
-                    }
-                ),
-                entryProvider = entryProvider {
-                    entry<Route.About> { AboutScreen() }
-                    entry<Route.OpenSourceLicense> { OpenSourceLicenseScreen() }
-                    entry<Route.Sulog> { SulogScreen() }
-                    entry<Route.Main> { MainScreen() }
-                    entry<Route.AppProfileTemplate> { AppProfileTemplateScreen() }
-                    entry<Route.TemplateEditor> { key ->
-                        TemplateEditorScreen(
-                            key.template,
-                            key.readOnly
-                        )
-                    }
-                    entry<Route.AppProfile> { key -> AppProfileScreen(key.appGroup) }
-                    entry<Route.ModuleRepo> { ModuleRepoScreen() }
-                    entry<Route.ModuleRepoDetail> { key ->
-                        OnlineModuleDetailScreen(
-                            key.module
-                        )
-                    }
-                    entry<Route.Install> { key -> InstallScreen(key.preselectedKernelUri) }
-                    entry<Route.Flash> { key -> FlashScreen(key.flashIt) }
-                    entry<Route.ExecuteModuleAction> { key ->
-                        ExecuteModuleActionScreen(
-                            key.moduleId
-                        )
-                    }
-                    entry<Route.Home> { MainScreen() }
-                    entry<Route.SuperUser> { MainScreen() }
-                    entry<Route.Module> { MainScreen() }
-                    entry<Route.Settings> { MainScreen() }
-                    entry<Route.ThemeSettings> { ThemeSettingsScreen() }
-                    entry<Route.SuSFSConfig> { SuSFSConfigScreen() }
-                    entry<Route.UmountManager> { UmountManagerScreen() }
-                    entry<Route.DynamicManager> { DynamicManagerScreen() }
-                    entry<Route.KernelFlash> { key ->
-                        KernelFlashScreen(
-                            key.kernelUri,
-                            key.selectedSlot
-                        )
-                    }
-                },
+            installerNavTransition(
+                animation = settings.predictiveBackAnimation,
+                exitDirection = settings.predictiveBackExitDirection,
             )
-
-        val sceneState =
-            rememberSceneState(
-                entries = entries,
-                sceneStrategies = listOf(SinglePaneSceneStrategy()),
-                sceneDecoratorStrategies = emptyList(),
-                sharedTransitionScope = null,
-                onBack = {
-                    onBack {}
-                },
-            )
-        val scene = sceneState.currentScene
-
-        // Predictive Back Handling
-        val currentInfo = SceneInfo(scene)
-        val previousSceneInfos = sceneState.previousScenes.map { SceneInfo(it) }
-        gestureState = rememberNavigationEventState(
-            currentInfo = currentInfo,
-            backInfo = previousSceneInfos
-        )
-
-        NavigationBackHandler(
-            state = gestureState,
-            isBackEnabled = scene.previousEntries.isNotEmpty(),
-            onBackCompleted = { callBack ->
-                onBack(callBack)
-            },
-            onBackCancelled = { callBack ->
-                callBack()
-            }
-        )
+        }
+        val swipeBackDirection = when (LocalLayoutDirection.current) {
+            LayoutDirection.Rtl -> NavSwipeDirection.RightToLeft
+            LayoutDirection.Ltr -> NavSwipeDirection.LeftToRight
+        }
+        val interceptPredictiveBack =
+            settings.predictiveBackAnimation == PredictiveBackAnimation.None && backStack.size > 1
 
         NavDisplay(
-            sceneState = sceneState,
-            navigationEventState = gestureState,
-            contentAlignment = Alignment.TopStart,
-            sizeTransform = null,
-            predictivePopTransitionSpec = { swipeEdge ->
-                with(predictiveBackAnimationHandler) {
-                    onPredictivePopTransitionSpec(swipeEdge = swipeEdge)
+            backStack = backStack,
+            onBack = onBack,
+            transition = transition,
+            effects = effects,
+        ) {
+            entry<Route.About>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    AboutScreen()
                 }
-            },
-            popTransitionSpec = {
-                with(predictiveBackAnimationHandler) {
-                    onPopTransitionSpec()
+            }
+            entry<Route.OpenSourceLicense>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    OpenSourceLicenseScreen()
                 }
-            },
-            transitionSpec = {
-                with(predictiveBackAnimationHandler) {
-                    onTransitionSpec()
+            }
+            entry<Route.Sulog>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    SulogScreen()
                 }
-            },
-        )
+            }
+            entry<Route.Main>(swipeDismiss = NavSwipeDirection.None) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    MainScreen()
+                }
+            }
+            entry<Route.AppProfileTemplate>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    AppProfileTemplateScreen()
+                }
+            }
+            entry<Route.TemplateEditor>(swipeDismiss = NavSwipeDirection.None) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    TemplateEditorScreen(
+                        templateId = key.templateId,
+                        readOnly = key.readOnly,
+                        isCreation = key.isCreation,
+                    )
+                }
+            }
+            entry<Route.AppProfile>(swipeDismiss = swipeBackDirection) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    AppProfileScreen(key.uid, key.packageName)
+                }
+            }
+            entry<Route.ModuleRepo>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    ModuleRepoScreen()
+                }
+            }
+            entry<Route.ModuleRepoDetail>(swipeDismiss = swipeBackDirection) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    OnlineModuleDetailScreen(key.moduleId)
+                }
+            }
+            entry<Route.Install>(swipeDismiss = NavSwipeDirection.None) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    InstallScreen(key.preselectedKernelUri)
+                }
+            }
+            entry<Route.Flash>(swipeDismiss = swipeBackDirection) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    FlashScreen(key.toFlashIt())
+                }
+            }
+            entry<Route.ExecuteModuleAction>(swipeDismiss = swipeBackDirection) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    ExecuteModuleActionScreen(key.moduleId)
+                }
+            }
+            entry<Route.Home>(swipeDismiss = NavSwipeDirection.None) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    MainScreen()
+                }
+            }
+            entry<Route.SuperUser>(swipeDismiss = NavSwipeDirection.None) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    MainScreen()
+                }
+            }
+            entry<Route.Module>(swipeDismiss = NavSwipeDirection.None) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    MainScreen()
+                }
+            }
+            entry<Route.Settings>(swipeDismiss = NavSwipeDirection.None) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    MainScreen()
+                }
+            }
+            entry<Route.ThemeSettings>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    ThemeSettingsScreen(settingsViewModel = settingsViewModel)
+                }
+            }
+            entry<Route.SuSFSConfig>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    SuSFSConfigScreen()
+                }
+            }
+            entry<Route.UmountManager>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    UmountManagerScreen()
+                }
+            }
+            entry<Route.DynamicManager>(swipeDismiss = swipeBackDirection) {
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    DynamicManagerScreen()
+                }
+            }
+            entry<Route.KernelFlash>(swipeDismiss = NavSwipeDirection.None) { key ->
+                ManagerNavEntry(
+                    interceptPredictiveBack = interceptPredictiveBack,
+                    onBack = onBack,
+                    themeConfig = themeConfig,
+                    backgroundRenderState = backgroundRenderState,
+                    useBlur = useBlur,
+                ) {
+                    KernelFlashScreen(key.kernelUri, key.selectedSlot)
+                }
+            }
+        }
     }
+}
+
+@Composable
+private fun ManagerNavEntry(
+    interceptPredictiveBack: Boolean,
+    onBack: () -> Unit,
+    themeConfig: ThemeConfig,
+    backgroundRenderState: BackgroundRenderState,
+    useBlur: Boolean,
+    content: @Composable () -> Unit,
+) {
+    val navigationEventState = rememberNavigationEventState(NavigationEventInfo.None)
+    NavigationBackHandler(
+        state = navigationEventState,
+        isBackEnabled = interceptPredictiveBack,
+        onBackCompleted = onBack,
+    )
+    val snackBarHostState = remember { androidx.compose.material3.SnackbarHostState() }
+    var backgroundBlurAnchorCoordinates by remember {
+        mutableStateOf<LayoutCoordinates?>(null)
+    }
+
+    LaunchedEffect(backgroundRenderState.imagePainter) {
+        if (backgroundRenderState.imagePainter == null) {
+            backgroundBlurAnchorCoordinates = null
+        }
+    }
+
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .then(
+                if (!themeConfig.backgroundImageLoaded) Modifier.background(
+                    MaterialTheme.colorScheme.surfaceContainer
+                ) else Modifier
+            )
+    ) {
+        val isPortrait = maxWidth < maxHeight || (maxHeight / maxWidth > 1.4f)
+        val surfaceContainer =
+            MaterialTheme.colorScheme.surfaceContainer
+
+        CompositionLocalProvider(
+            LocalPortraitState provides isPortrait,
+            LocalBlurState provides rememberMaterial3BlurBackdrop(
+                enableBlur = useBlur
+            ),
+            LocalSnackbarHost provides snackBarHostState,
+            LocalBackgroundBlurAnchor provides backgroundBlurAnchorCoordinates,
+        ) {
+            backgroundRenderState.imagePainter?.let {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .zIndex(-1f)
+                        .onGloballyPositioned { newCoordinates ->
+                            backgroundBlurAnchorCoordinates =
+                                newCoordinates.takeIf { coordinates ->
+                                    coordinates.isAttached
+                                }
+                        }
+                        .paint(
+                            painter = it,
+                            contentScale = ContentScale.Crop,
+                        )
+                        .drawWithContent {
+                            drawContent()
+                            drawRect(
+                                color = surfaceContainer.copy(
+                                    alpha = themeConfig.backgroundDim
+                                )
+                            )
+                        }
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+                    )
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+private fun Route.Flash.toFlashIt(): FlashIt = when (type) {
+    Route.Flash.TYPE_BOOT -> FlashIt.FlashBoot(
+        boot = bootUri,
+        lkmUri = lkmUri,
+        kmi = kmi,
+        ota = ota,
+        partition = partition,
+    )
+
+    Route.Flash.TYPE_MODULE -> FlashIt.FlashModule(uris.firstOrNull().orEmpty())
+    Route.Flash.TYPE_MODULES -> FlashIt.FlashModules(uris, currentIndex)
+    Route.Flash.TYPE_MODULE_UPDATE -> FlashIt.FlashModuleUpdate(uris.firstOrNull().orEmpty())
+    Route.Flash.TYPE_RESTORE -> FlashIt.FlashRestore
+    Route.Flash.TYPE_UNINSTALL -> FlashIt.FlashUninstall
+    else -> FlashIt.FlashModule(uris.firstOrNull().orEmpty())
 }
 
 /**
@@ -536,17 +736,98 @@ fun NavContainer(
  * @return A LayerBackdrop instance if supported and enabled, null otherwise.
  */
 @Composable
-fun rememberMaterial3BlurBackdrop(enableBlur: Boolean): LayerBackdrop? {
+fun rememberMaterial3BlurBackdrop(
+    enableBlur: Boolean,
+    pagerState: PagerState? = null,
+    pagerPage: Int? = null,
+): LayerBackdrop? {
+    val themeConfig: ThemeConfig = koinInject()
+    val backgroundRenderState = LocalBackgroundRenderState.current
     if (!enableBlur || !isRenderEffectSupported()) return null
 
     val backgroundColor =
         MaterialTheme.colorScheme.surfaceContainer
+    val layoutDirection = LocalLayoutDirection.current
+    val backgroundAnchor = LocalBackgroundBlurAnchor.current
 
     return rememberLayerBackdrop {
-        if (ThemeConfig.isEnableBlurExp) {
-            backgroundImagePainter?.let { painter ->
-                with(painter) {
-                    draw(size = drawContext.size)
+        if (themeConfig.isEnableBlurExp) {
+            backgroundRenderState.imagePainter?.let { painter ->
+                val backgroundViewportSize = backgroundAnchor
+                    ?.takeIf { it.isAttached && it.size.width > 0 && it.size.height > 0 }
+                    ?.size
+                    ?: backgroundRenderState.blurViewportSize
+                val backgroundWidth = backgroundViewportSize.width
+                    .takeIf { it > 0 }
+                    ?.toFloat()
+                    ?: size.width
+                val backgroundHeight = backgroundViewportSize.height
+                    .takeIf { it > 0 }
+                    ?.toFloat()
+                    ?: size.height
+                val pagerViewportWidth = pagerState
+                    ?.layoutInfo
+                    ?.viewportSize
+                    ?.width
+                    ?.takeIf { it > 0 }
+                    ?.toFloat()
+                    ?: size.width
+                val leadingNavigationWidth =
+                    (backgroundWidth - pagerViewportWidth).coerceAtLeast(0f)
+                val pagerViewportLeft = if (layoutDirection == LayoutDirection.Ltr) {
+                    leadingNavigationWidth
+                } else {
+                    0f
+                }
+                val pageOffset = if (
+                    pagerState != null &&
+                    pagerPage != null &&
+                    pagerPage in 0 until pagerState.pageCount
+                ) {
+                    pagerState.getOffsetDistanceInPages(pagerPage)
+                } else {
+                    0f
+                }
+                val physicalPageOffset = pageOffset * pagerViewportWidth *
+                    if (layoutDirection == LayoutDirection.Ltr) 1f else -1f
+                val backgroundOffset = pagerViewportLeft + physicalPageOffset
+                val backgroundBitmap = backgroundRenderState.imageBitmap
+
+                if (
+                    backgroundBitmap != null &&
+                    backgroundBitmap.width > 0 &&
+                    backgroundBitmap.height > 0
+                ) {
+                    val backgroundScale = maxOf(
+                        backgroundWidth / backgroundBitmap.width,
+                        backgroundHeight / backgroundBitmap.height,
+                    )
+                    val renderedLeft =
+                        (backgroundWidth - backgroundBitmap.width * backgroundScale) / 2f
+                    val renderedTop =
+                        (backgroundHeight - backgroundBitmap.height * backgroundScale) / 2f
+
+                    translate(
+                        left = -backgroundOffset + renderedLeft,
+                        top = renderedTop,
+                    ) {
+                        scale(
+                            scaleX = backgroundScale,
+                            scaleY = backgroundScale,
+                            pivot = Offset.Zero,
+                        ) {
+                            drawImage(
+                                image = backgroundBitmap,
+                                filterQuality = FilterQuality.Low,
+                            )
+                        }
+                    }
+                } else {
+                    translate(left = -backgroundOffset) {
+                        with(painter) {
+                            draw(size = Size(backgroundWidth, backgroundHeight))
+                        }
+                    }
                 }
             }
         } else {
@@ -554,7 +835,7 @@ fun rememberMaterial3BlurBackdrop(enableBlur: Boolean): LayerBackdrop? {
         }
 
         drawRect(
-            color = backgroundColor.copy(alpha = ThemeConfig.backgroundDim)
+            color = backgroundColor.copy(alpha = themeConfig.backgroundDim)
         )
 
         drawContent()
@@ -589,7 +870,7 @@ private fun ShortcutIntentHandler(
                     .putExtra("from_webui_shortcut", true)
                     .addFlags(
                         Intent.FLAG_ACTIVITY_NEW_TASK or
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK
                     )
                 context.startActivity(webIntent)
             }

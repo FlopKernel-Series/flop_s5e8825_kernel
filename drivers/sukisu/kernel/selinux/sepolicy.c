@@ -166,7 +166,7 @@ static bool remove_avtab_node(struct policydb *db, struct avtab_node *node)
     for (i = 0; i < db->te_avtab.nslot; i++) {
         prev = NULL;
         // https://github.com/torvalds/linux/commit/acdf52d97f824019888422842757013b37441dd1   <- 5.1
-        //https://github.com/torvalds/linux/commit/ba39db6e0519aa8362dbda6523ceb69349a18dc3    <- 4.1
+        // https://github.com/torvalds/linux/commit/ba39db6e0519aa8362dbda6523ceb69349a18dc3   <- 4.1
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) || LINUX_VERSION_CODE < KERNEL_VERSION(4, 1, 0) ||                   \
     defined(KSU_COMPAT_HAS_MODERN_POLICYDB)
         for (n = db->te_avtab.htable[i]; n; prev = n, n = n->next) {
@@ -627,9 +627,24 @@ static bool add_filename_trans(struct policydb *db, const char *s, const char *t
 
     if (trans == NULL) {
         trans = (struct filename_trans_datum *)kcalloc(1, sizeof(*trans), GFP_KERNEL);
+        if (!trans) {
+            pr_err("add_filename_trans: Failed to alloc datum\n");
+            return false;
+        }
         struct filename_trans_key *new_key = (struct filename_trans_key *)kzalloc(sizeof(*new_key), GFP_KERNEL);
+        if (!new_key) {
+            pr_err("add_filename_trans: Failed to alloc new_key\n");
+            kfree(trans);
+            return false;
+        }
         *new_key = key;
         new_key->name = kstrdup(key.name, GFP_KERNEL);
+        if (!new_key->name) {
+            pr_err("add_filename_trans: Failed to dup name\n");
+            kfree(new_key);
+            kfree(trans);
+            return false;
+        }
         trans->next = last;
         trans->otype = def->value;
         hashtab_insert(&db->filename_trans, new_key, trans, filenametr_key_params);
@@ -710,7 +725,8 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
         return false;
     }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) || defined(KSU_COMPAT_HAS_MODERN_POLICYDB)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) ||                                                                   \
+    (defined(KSU_COMPAT_HAS_MODERN_POLICYDB) && !defined(KSU_COMPAT_TYPE_ATTR_MAP_ARRAY_NOT_FOUND))
     struct ebitmap *new_type_attr_map_array =
         ksu_kvrealloc(db->type_attr_map_array, value * sizeof(struct ebitmap), (value - 1) * sizeof(struct ebitmap));
 
@@ -751,7 +767,8 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
 
     return true;
 
-#elif defined(KSU_COMPAT_IS_HISI_LEGACY)
+    // safe? because only huawei do this fucking things
+#elif defined(KSU_COMPAT_TYPE_ATTR_MAP_ARRAY_NOT_FOUND)
     /*
    * Huawei use type_attr_map and type_val_to_struct.
    * And use ebitmap not flex_array.
@@ -780,7 +797,11 @@ static bool add_type(struct policydb *db, const char *type_name, bool attr)
     }
 
     db->type_attr_map = new_type_attr_map;
+#ifdef HISI_SELINUX_EBITMAP_RO
     ebitmap_init(&db->type_attr_map[value - 1], HISI_SELINUX_EBITMAP_RO);
+#else
+    ebitmap_init(&db->type_attr_map[value - 1], HKIP_SELINUX_EBITMAP_RO);
+#endif
     ebitmap_set_bit(&db->type_attr_map[value - 1], value - 1, 1);
 
     db->type_val_to_struct = new_type_val_to_struct;
@@ -929,18 +950,23 @@ static bool set_type_state(struct policydb *db, const char *type_name, bool perm
 
 static void add_typeattribute_raw(struct policydb *db, struct type_datum *type, struct type_datum *attr)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) || defined(KSU_COMPAT_HAS_MODERN_POLICYDB)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) ||                                                                   \
+    (defined(KSU_COMPAT_HAS_MODERN_POLICYDB) && !defined(KSU_COMPAT_TYPE_ATTR_MAP_ARRAY_NOT_FOUND))
     struct ebitmap *sattr = &db->type_attr_map_array[type->value - 1];
+#elif defined(KSU_COMPAT_TYPE_ATTR_MAP_ARRAY_NOT_FOUND)
+    /*
+    *  HISI_SELINUX_EBITMAP_RO is Huawei's unique features.
+    *  HKIP_SELINUX_EBITMAP_RO is Honor's rename
+    */
+#ifdef HISI_SELINUX_EBITMAP_RO
+    struct ebitmap *sattr = &db->type_attr_map[type->value - 1], HISI_SELINUX_EBITMAP_RO;
+#else
+    struct ebitmap *sattr = &db->type_attr_map[type->value - 1], HKIP_SELINUX_EBITMAP_RO;
+#endif // #ifndef HISI_SELINUX_EBITMAP_RO
 
 #elif defined(KSU_COMPAT_IS_HISI_LEGACY_HM2)
     /* EMUI 10+ / HM2 dedicated branch (HKIP is closed, use the original flex_array_get) */
     struct ebitmap *sattr = flex_array_get(db->type_attr_map_array, type->value - 1);
-
-#elif defined(KSU_COMPAT_IS_HISI_LEGACY)
-    /*
-    *  HISI_SELINUX_EBITMAP_RO is Huawei's unique features.
-    */
-    struct ebitmap *sattr = &db->type_attr_map[type->value - 1], HISI_SELINUX_EBITMAP_RO;
 #else
     struct ebitmap *sattr = flex_array_get(db->type_attr_map_array, type->value - 1);
 #endif
@@ -1125,12 +1151,17 @@ int ksu_dup_policydb(struct policydb *old_db, struct policydb *new_db)
     int len = 0;
 
     ksu_lock_sepolicy_legacy();
-    len = old_db->len;
+
+    // Some device policy db seems not marking type itself in type_attr_map_array
+    // policydb_read() adds each type to its own attribute map, so old_db->policydb.len may be smaller
+    // preserve one ebitmap entry for this condition to avoid trigger -EINVAL
+    len = old_db->len + (size_t)old_db->p_types.nprim * (sizeof(u32) + sizeof(u64));
+
     ksu_unlock_sepolicy_legacy();
 
     data = vmalloc(len);
     if (!data) {
-        pr_err("alloc policy len %d\n", len);
+        pr_err("alloc policy buffer len %d\n", len);
         ret = -ENOMEM;
         goto out_free_data;
     }
@@ -1145,6 +1176,7 @@ int ksu_dup_policydb(struct policydb *old_db, struct policydb *new_db)
         ksu_unlock_sepolicy_legacy();
         goto out_free_data;
     }
+    len -= fp.len;
     ksu_unlock_sepolicy_legacy();
 
     // https://android-review.googlesource.com/c/kernel/common/+/3009995
@@ -1178,7 +1210,7 @@ int ksu_dup_policydb(struct policydb *old_db, struct policydb *new_db)
         goto out_free_data;
     }
 
-    new_db->len = old_db->len;
+    new_db->len = len;
 
     vfree(data);
     ret = len;

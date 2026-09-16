@@ -4,11 +4,17 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -16,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FlexibleBottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -25,74 +32,122 @@ import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.WideNavigationRailItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.resukisu.resukisu.ksuApp
+import com.resukisu.resukisu.ui.component.FloatingBottomBar
+import com.resukisu.resukisu.ui.component.FloatingBottomBarItem
 import com.resukisu.resukisu.ui.screen.BottomBarDestination
+import com.resukisu.resukisu.ui.theme.BottomBarStyle
 import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.blurEffect
+import com.resukisu.resukisu.ui.util.LocalBlurState
 import com.resukisu.resukisu.ui.util.LocalHandlePageChange
+import com.resukisu.resukisu.ui.util.LocalPagerState
 import com.resukisu.resukisu.ui.util.LocalSelectedPage
-import com.resukisu.resukisu.ui.util.getModuleCount
-import com.resukisu.resukisu.ui.util.getSuperuserCount
 import com.resukisu.resukisu.ui.viewmodel.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
 
-// TODO Add FloatingBottomBar as an choice to user
+
 @SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavigationBar(
+    modifier: Modifier = Modifier,
     destinations: List<BottomBarDestination>,
     isBottomBar: Boolean
 ) {
-    // 是否隐藏 badge
-    val homeViewModel = viewModel<HomeViewModel>(viewModelStoreOwner = ksuApp)
+    val themeConfig: ThemeConfig = koinInject()
+    val cardConfig: CardConfig = koinInject()
+    val homeViewModel = koinViewModel<HomeViewModel>()
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
-    val isHideOtherInfo = uiState.isHideOtherInfo
-
-    // 翻页处理
+    val superuserCount = uiState.systemInfo.superuserCount
+    val moduleCount = uiState.systemInfo.moduleCount
+    val showNavigationBarBadge = uiState.showNavigationBarBadge
     val page = LocalSelectedPage.current
     val handlePageChange = LocalHandlePageChange.current
+    val pagerState = LocalPagerState.current
 
-    // 收集计数数据
-    var superuserCountSaved by rememberSaveable { mutableIntStateOf(0) }
-    var moduleCountSaved by rememberSaveable { mutableIntStateOf(0) }
-
-    val superuserCount by produceState(initialValue = superuserCountSaved) {
-        withContext(Dispatchers.IO) {
-            value = getSuperuserCount()
-            superuserCountSaved = value
-        }
-    }
-    val moduleCount by produceState(initialValue = moduleCountSaved) {
-        withContext(Dispatchers.IO) {
-            value = getModuleCount()
-            moduleCountSaved = value
-        }
-    }
-
-    if (isBottomBar) {
-        FlexibleBottomAppBar(
+    if (isBottomBar && themeConfig.bottomBarStyle == BottomBarStyle.FLOATING) {
+        Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .windowInsetsPadding(
                     WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
                 )
-                .blurEffect(),
+                .padding(
+                    bottom = 12.dp + WindowInsets.navigationBars.asPaddingValues()
+                        .calculateBottomPadding()
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            FloatingBottomBar(
+                selectedIndex = pagerState.targetPage,
+                onSelected = { handlePageChange(it) },
+                tabsCount = destinations.size,
+                isBlurEnabled = LocalBlurState.current != null,
+            ) { activateTab ->
+                destinations.forEachIndexed { index, destination ->
+                    FloatingBottomBarItem(
+                        selected = index == pagerState.targetPage,
+                        onClick = { activateTab(index) },
+                        modifier = Modifier.defaultMinSize(minWidth = 76.dp)
+                    ) {
+                        val contentColor = LocalContentColor.current
+                        val count = when (destination) {
+                            BottomBarDestination.SuperUser -> superuserCount
+                            BottomBarDestination.Module -> moduleCount
+                            else -> 0
+                        }
+                        val icon: @Composable () -> Unit = {
+                            Icon(
+                                imageVector = destination.iconSelected,
+                                contentDescription = stringResource(destination.label),
+                                tint = contentColor
+                            )
+                        }
+                        if (count > 0) {
+                            BadgedBox(badge = { Badge { Text(count.toString()) } }) { icon() }
+                        } else {
+                            icon()
+                        }
+                        Text(
+                            text = stringResource(destination.label),
+                            color = contentColor,
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Visible
+                        )
+                    }
+                }
+            }
+        }
+    } else if (isBottomBar) {
+        FlexibleBottomAppBar(
+            modifier = modifier
+                .windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
+                )
+                .blurEffect(
+                    compensateHorizontalOverscroll = true,
+                    compensateVerticalOverscroll = true,
+                    useFixedSurfaceBoundsForOverscroll = true,
+                ),
             containerColor =
-                if (ThemeConfig.isEnableBlur)
+                if (themeConfig.isEnableBlur)
                     Color.Transparent
                 else
-                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(CardConfig.cardAlpha),
+                    MaterialTheme.colorScheme.surfaceContainer.copy(cardConfig.cardAlpha),
             contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             destinations.forEachIndexed { index, destination ->
@@ -104,23 +159,27 @@ fun NavigationBar(
                     },
                     superuserCount = superuserCount,
                     moduleCount = moduleCount,
-                    isHideOtherInfo = isHideOtherInfo,
+                    showNavigationBarBadge = showNavigationBarBadge,
                 )
             }
         }
     } else {
         WideNavigationRail(
-            modifier = Modifier
+            modifier = modifier
                 .windowInsetsPadding(
-                    WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
                 )
-                .blurEffect(),
+                .blurEffect(
+                    compensateHorizontalOverscroll = true,
+                    compensateVerticalOverscroll = false,
+                    useFixedSurfaceBoundsForOverscroll = true,
+                ),
             colors = WideNavigationRailColors(
                 containerColor =
-                    if (ThemeConfig.isEnableBlur)
+                    if (themeConfig.isEnableBlur)
                         Color.Transparent
                     else
-                        MaterialTheme.colorScheme.surfaceContainerHigh.copy(CardConfig.cardAlpha),
+                        MaterialTheme.colorScheme.surfaceContainer.copy(cardConfig.cardAlpha),
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 modalContainerColor = WideNavigationRailDefaults.colors().modalContainerColor,
                 modalScrimColor = WideNavigationRailDefaults.colors().modalScrimColor,
@@ -136,7 +195,7 @@ fun NavigationBar(
                     },
                     superuserCount = superuserCount,
                     moduleCount = moduleCount,
-                    isHideOtherInfo = isHideOtherInfo,
+                    showNavigationBarBadge = showNavigationBarBadge,
                 )
             }
         }
@@ -150,7 +209,7 @@ private fun NavigationRailItem(
     onClick: () -> Unit,
     superuserCount: Int,
     moduleCount: Int,
-    isHideOtherInfo: Boolean
+    showNavigationBarBadge: Boolean,
 ) {
     WideNavigationRailItem(
         railExpanded = false,
@@ -163,7 +222,7 @@ private fun NavigationRailItem(
                         dest = destination,
                         superUser = superuserCount,
                         module = moduleCount,
-                        isHideOtherInfo = isHideOtherInfo,
+                        show = showNavigationBarBadge,
                     )
                 }
             ) {
@@ -178,7 +237,9 @@ private fun NavigationRailItem(
             Text(
                 stringResource(destination.label),
                 style = MaterialTheme.typography.labelMedium,
-                maxLines = 1
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Visible
             )
         },
     )
@@ -191,7 +252,7 @@ private fun RowScope.BottomBarNavigationItem(
     onClick: () -> Unit,
     superuserCount: Int,
     moduleCount: Int,
-    isHideOtherInfo: Boolean
+    showNavigationBarBadge: Boolean,
 ) {
     NavigationBarItem(
         selected = isSelected,
@@ -203,7 +264,7 @@ private fun RowScope.BottomBarNavigationItem(
                         dest = destination,
                         superUser = superuserCount,
                         module = moduleCount,
-                        isHideOtherInfo = isHideOtherInfo,
+                        show = showNavigationBarBadge,
                     )
                 }
             ) {
@@ -218,7 +279,9 @@ private fun RowScope.BottomBarNavigationItem(
             Text(
                 stringResource(destination.label),
                 style = MaterialTheme.typography.labelMedium,
-                maxLines = 1
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Visible
             )
         },
         alwaysShowLabel = false
@@ -230,7 +293,7 @@ private fun DestinationBadge(
     dest: BottomBarDestination,
     superUser: Int,
     module: Int,
-    isHideOtherInfo: Boolean
+    show: Boolean,
 ) {
     val count = when (dest) {
         BottomBarDestination.SuperUser -> superUser
@@ -239,7 +302,7 @@ private fun DestinationBadge(
     }
 
     AnimatedVisibility(
-        visible = count > 0 && !isHideOtherInfo,
+        visible = count > 0 && show,
         enter = fadeIn(),
         exit = fadeOut()
     ) {

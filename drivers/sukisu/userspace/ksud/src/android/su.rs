@@ -4,11 +4,12 @@ use std::{
     cmp::Ordering,
     env,
     ffi::{CStr, CString},
+    io,
     path::PathBuf,
     process::Command,
 };
 
-use anyhow::{Context, Ok, Result, bail};
+use anyhow::{Context, Ok, Result, anyhow, bail};
 use getopts::Options;
 use libc::c_int;
 use log::error;
@@ -19,6 +20,7 @@ use rustix::{
 
 use crate::{
     android::{
+        ksucalls,
         ksucalls::{get_wrapped_fd, set_ksu_no_new_privs},
         utils::{self, umask},
     },
@@ -47,7 +49,7 @@ fn print_usage(program: &str, opts: &Options) {
     print!("{}", opts.usage(&brief));
 }
 
-fn set_identity(uid: u32, gid: u32, groups: &[u32]) {
+fn set_identity(uid: u32, gid: u32, groups: &[u32]) -> Result<()> {
     rustix::thread::set_thread_groups(
         groups
             .iter()
@@ -55,25 +57,54 @@ fn set_identity(uid: u32, gid: u32, groups: &[u32]) {
             .collect::<Vec<_>>()
             .as_ref(),
     )
-    .ok();
+    .with_context(|| format!("setgroups {groups:?}"))?;
     let gid = Gid::from_raw(gid);
     let uid = Uid::from_raw(uid);
-    set_thread_res_gid(gid, gid, gid).ok();
-    set_thread_res_uid(uid, uid, uid).ok();
+    set_thread_res_gid(gid, gid, gid).with_context(|| format!("setresgid {gid}"))?;
+    set_thread_res_uid(uid, uid, uid).with_context(|| format!("setresuid {uid}"))?;
+    Ok(())
+}
+
+fn resolve_uid(user: &str) -> Result<u32> {
+    let c_user = CString::new(user).with_context(|| format!("Invalid user: {user}"))?;
+    let pw = unsafe { libc::getpwnam(c_user.as_ptr()).as_ref() };
+
+    if let Some(pw) = pw {
+        return Ok(pw.pw_uid);
+    }
+
+    user.parse::<u32>()
+        .map_err(|_| anyhow::anyhow!("Unknown user: {user}"))
+}
+
+fn set_selinux_context(context: &str) -> Result<()> {
+    std::fs::write("/proc/thread-self/attr/current", context)?;
+    Ok(())
 }
 
 fn wrap_tty(fd: c_int) {
     let inner_fn = move || -> Result<()> {
-        if unsafe { libc::isatty(fd) != 1 } {
+        if unsafe { libc::isatty(fd) != 1 }
+            && io::Error::last_os_error().raw_os_error() != Some(libc::EACCES)
+        {
             return Ok(());
         }
+
+        // The root profile is already active here, so its SELinux domain may
+        // return EACCES while querying the original terminal. In that case,
+        // check the wrapped fd instead, since that descriptor is intended to
+        // bypass this restriction.
         let new_fd = get_wrapped_fd(fd).context("get_wrapped_fd")?;
-        if unsafe { libc::dup2(new_fd, fd) } == -1 {
-            bail!("dup {new_fd} -> {fd} errno: {}", unsafe {
-                *libc::__errno()
-            });
+        if unsafe { libc::isatty(new_fd) != 1 } {
+            unsafe { libc::close(new_fd) };
+            return Ok(());
         }
+        let dup_result = unsafe { libc::dup2(new_fd, fd) };
+        let dup_errno = unsafe { *libc::__errno() };
         unsafe { libc::close(new_fd) };
+        if dup_result == -1 {
+            bail!("dup {new_fd} -> {fd} errno: {dup_errno}");
+        }
         Ok(())
     };
 
@@ -84,9 +115,13 @@ fn wrap_tty(fd: c_int) {
 
 #[allow(clippy::similar_names)]
 pub fn root_shell() -> Result<()> {
-    // we are root now, this was set in kernel!
+    // The kernel has already applied the selected root profile.
 
-    use anyhow::anyhow;
+    // A su-session driver fd deliberately survives the exec into ksud. Claim
+    // it before handling any arguments and restore FD_CLOEXEC so it cannot
+    // leak into the target shell, including when fd wrapping is disabled.
+    ksucalls::claim_inherited_driver_fd().context("claim inherited KernelSU driver fd")?;
+
     let env_args: Vec<String> = env::args().collect();
     let program = env_args[0].clone();
     let mut executable: Option<String> = None;
@@ -103,9 +138,11 @@ pub fn root_shell() -> Result<()> {
                 && !(arg[0].starts_with("-g")
                     || arg[0].starts_with("-G")
                     || arg[0].starts_with("-s")
+                    || arg[0].starts_with("-Z")
                     || arg[0] == "--group"
                     || arg[0] == "--supp-group="
-                    || arg[0] == "--shell=")
+                    || arg[0] == "--shell="
+                    || arg[0] == "--context=")
         })
         .map_or(usize::MAX, |idx| idx + 1);
     let args = match first_non_option.cmp(&first_option_c) {
@@ -166,6 +203,7 @@ pub fn root_shell() -> Result<()> {
         "ksu-no-new-privs",
         "Prevent this process (and its children) from privilege re-escalation via KernelSU",
     );
+    opts.optopt("Z", "context", "Specify the SELinux context", "CONTEXT");
 
     // Replace -cn with -z, -mm with -M for supporting getopt_long
     let args = args
@@ -213,6 +251,7 @@ pub fn root_shell() -> Result<()> {
     let mount_master = matches.opt_present("M");
     let use_fd_wrapper = !matches.opt_present("W");
     let ksu_no_new_privs = matches.opt_present("ksu-no-new-privs");
+    let selinux_context = matches.opt_str("Z");
 
     let groups = matches
         .opt_strs("G")
@@ -245,18 +284,14 @@ pub fn root_shell() -> Result<()> {
         free_idx += 1;
     }
 
-    // use current uid if no user specified, these has been done in kernel!
-    let mut uid = getuid().as_raw();
-    if free_idx < matches.free.len() {
-        let name = &matches.free[free_idx];
-        uid = unsafe {
-            let pw = CString::new(name.as_str())
-                .ok()
-                .and_then(|c_name| libc::getpwnam(c_name.as_ptr()).as_ref());
+    let identity_requested = free_idx < matches.free.len() || gid.is_some() || !groups.is_empty();
 
-            pw.map_or_else(|| name.parse::<u32>().unwrap_or(0), |pw| pw.pw_uid)
-        }
-    }
+    // use current uid if no user specified, these has been done in kernel!
+    let uid = if free_idx < matches.free.len() {
+        resolve_uid(&matches.free[free_idx])?
+    } else {
+        getuid().as_raw()
+    };
 
     // if there is no gid provided, use uid.
     let gid = gid.unwrap_or(uid);
@@ -302,29 +337,28 @@ pub fn root_shell() -> Result<()> {
     // escape from the current cgroup and become session leader
     // WARNING!!! This cause some root shell hang forever!
     // command = command.process_group(0);
-    unsafe {
-        command.pre_exec(move || {
-            umask(0o22);
-            utils::switch_cgroups();
-
-            // switch to global mount namespace
-            if mount_master {
-                let _ = utils::switch_mnt_ns(1);
-            }
-
-            if use_fd_wrapper {
-                wrap_tty(0);
-                wrap_tty(1);
-                wrap_tty(2);
-            }
-
-            set_identity(uid, gid, &groups);
-
-            Result::Ok(())
-        })
-    };
 
     command.args(args).arg0(arg0);
+    umask(0o22);
+    utils::switch_cgroups();
+
+    // switch to global mount namespace
+    if mount_master {
+        let _ = utils::switch_mnt_ns(1);
+    }
+
+    if use_fd_wrapper {
+        wrap_tty(0);
+        wrap_tty(1);
+        wrap_tty(2);
+    }
+
+    if identity_requested {
+        set_identity(uid, gid, &groups)?;
+    }
+    if let Some(context) = selinux_context.as_deref() {
+        set_selinux_context(context).with_context(|| format!("setcontext {context}"))?;
+    }
     Err(command.exec().into())
 }
 

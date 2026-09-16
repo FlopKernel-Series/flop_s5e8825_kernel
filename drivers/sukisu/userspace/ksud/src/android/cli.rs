@@ -11,9 +11,11 @@ use crate::{
         module::{self, module_config, regenerate_preinit_rc},
         profile, sepolicy, su, sulog, susfs, uapi, umount_config, utils,
     },
+    anykernel3::{self, Slot},
     apk_sign, assets,
     boot_patch::{BootPatchArgs, BootRestoreArgs},
     defs,
+    lkm_image::BootPatchV2Args,
 };
 
 /// KernelSU userspace cli
@@ -26,6 +28,17 @@ struct Args {
 
 #[derive(clap::Subcommand, Debug)]
 enum Commands {
+    /// Flash an AnyKernel3 ZIP
+    #[command(name = "anykernel3")]
+    AnyKernel3 {
+        /// AnyKernel3 ZIP file path
+        zip: PathBuf,
+
+        /// Select A/B slot for flashing
+        #[arg(long, value_enum)]
+        slot: Option<Slot>,
+    },
+
     /// Manage KernelSU modules
     Module {
         #[command(subcommand)]
@@ -66,12 +79,6 @@ enum Commands {
         /// manager package name
         #[arg(long, default_value_t = String::from("com.resukisu.resukisu"))]
         package_name: String,
-    },
-
-    /// Manage susfs component
-    Susfs {
-        #[command(subcommand)]
-        command: Susfs,
     },
 
     /// Manage auto apply user custom umount configs
@@ -131,6 +138,11 @@ enum Commands {
     /// Restore boot or init_boot images patched by KernelSU
     BootRestore(BootRestoreArgs),
 
+    /// Patch KernelSU into a boot image
+    ///
+    /// Always operates on a boot image; never selects init_boot or vendor_boot.
+    BootPatchV2(BootPatchV2Args),
+
     /// Show boot information
     BootInfo {
         #[command(subcommand)]
@@ -150,6 +162,9 @@ enum Commands {
 
     /// Resetprop - Magisk-compatible system property tool
     Resetprop(crate::android::resetprop::Args),
+
+    /// Manage susfs component
+    Susfs(susfs::cli::SusfsArgs),
 
     /// Manage initrc injection
     Initrc {
@@ -431,7 +446,15 @@ enum Profile {
     },
 
     /// list all templates
-    ListTemplates,
+    ListTemplates {
+        /// print template names instead of ids
+        #[arg(short, long)]
+        name: bool,
+
+        /// locale used to resolve localized template names (for example, zh_CN)
+        #[arg(long, requires = "name")]
+        locale: Option<String>,
+    },
 }
 
 #[derive(clap::Subcommand, Debug)]
@@ -536,21 +559,12 @@ enum UmountOp {
 }
 
 #[derive(clap::Subcommand, Debug)]
-enum Susfs {
-    /// Get SUSFS Status
-    Status,
-    /// Get SUSFS Version
-    Version,
-    /// Get SUSFS enable Features
-    Features,
-}
-
-#[derive(clap::Subcommand, Debug)]
 enum Initrc {
     /// Regenerate preinit rc file
     Refresh,
 }
 
+#[allow(clippy::similar_names)]
 pub fn run() -> Result<()> {
     android_logger::init_once(
         Config::default()
@@ -558,9 +572,11 @@ pub fn run() -> Result<()> {
             .with_tag("KernelSU"),
     );
 
+    ksucalls::setup_sigsys_handler();
+
     // the kernel executes su with argv[0] = "su" and replace it with us
     let arg0 = std::env::args().next().unwrap_or_default();
-    if arg0 == "su" || arg0 == "/system/bin/su" {
+    if arg0 == "su" || arg0.ends_with("/su") {
         return su::root_shell();
     }
 
@@ -569,24 +585,21 @@ pub fn run() -> Result<()> {
         return crate::android::resetprop::run_from_args(&all_args);
     }
 
+    if arg0.ends_with("ksu_susfs") {
+        let all_args: Vec<String> = std::env::args().collect();
+        return crate::android::susfs::cli::run_from_args(&all_args);
+    }
+
     let cli = Args::parse();
 
     log::info!("command: {:?}", cli.command);
 
     let result = match cli.command {
+        Commands::AnyKernel3 { zip, slot } => anykernel3::flash(&zip, slot),
+        Commands::Susfs(args) => crate::android::susfs::cli::run_main(args),
         Commands::PostFsData => init_event::on_post_data_fs(),
         Commands::BootCompleted => {
             init_event::on_boot_completed();
-            Ok(())
-        }
-        Commands::Susfs { command } => {
-            match command {
-                Susfs::Version => println!("{}", susfs::get_susfs_version()),
-
-                Susfs::Status => println!("{}", susfs::get_susfs_status()),
-
-                Susfs::Features => println!("{}", susfs::get_susfs_features()),
-            }
             Ok(())
         }
         Commands::UmountConfig { command } => match command {
@@ -745,7 +758,9 @@ pub fn run() -> Result<()> {
             Profile::GetTemplate { id } => profile::get_template(id),
             Profile::SetTemplate { id, template } => profile::set_template(id, template),
             Profile::DeleteTemplate { id } => profile::delete_template(id),
-            Profile::ListTemplates => profile::list_templates(),
+            Profile::ListTemplates { name, locale } => {
+                profile::list_templates(name, locale.as_deref())
+            }
         },
 
         Commands::Feature { command } => match command {
@@ -798,6 +813,10 @@ pub fn run() -> Result<()> {
                 println!("uapi_version: {}", info.uapi_version);
                 println!("features: 0x{:x}", info.features);
                 println!("lkm: {}", ksucalls::is_lkm());
+                println!(
+                    "bundled: {}",
+                    (info.flags & uapi::KSU_GET_INFO_FLAG_BUNDLED) != 0
+                );
                 println!("late_load: {}", ksucalls::is_late_load());
                 println!("runtime_mode: {}", ksucalls::runtime_mode());
                 println!(
@@ -852,12 +871,13 @@ pub fn run() -> Result<()> {
         },
         Commands::BootRestore(boot_restore) => crate::boot_patch::restore(boot_restore),
         Commands::Resetprop(resetprop_args) => crate::android::resetprop::run(&resetprop_args),
+        Commands::BootPatchV2(patch) => crate::lkm_image::patch_boot(&patch),
         Commands::Kernel { command } => match command {
             Kernel::NukeExt4Sysfs { mnt } => ksucalls::nuke_ext4_sysfs(&mnt),
             Kernel::Umount { command } => match command {
                 UmountOp::Add { mnt, flags } => ksucalls::umount_list_add(&mnt, flags),
                 UmountOp::Del { mnt } => ksucalls::umount_list_del(&mnt),
-                UmountOp::Wipe => ksucalls::umount_list_wipe().map_err(Into::into),
+                UmountOp::Wipe => ksucalls::umount_list_wipe(),
                 UmountOp::List => {
                     let list = ksucalls::umount_list_list()?;
                     println!("{}", serde_json::to_string(&list)?);

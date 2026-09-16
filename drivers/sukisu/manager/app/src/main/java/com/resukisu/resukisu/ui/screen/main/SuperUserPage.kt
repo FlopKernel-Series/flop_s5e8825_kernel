@@ -1,11 +1,8 @@
 package com.resukisu.resukisu.ui.screen.main
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,55 +10,37 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.Article
 import androidx.compose.material.icons.twotone.Archive
 import androidx.compose.material.icons.twotone.ChevronRight
 import androidx.compose.material.icons.twotone.MoreVert
-import androidx.compose.material.icons.twotone.Refresh
-import androidx.compose.material.icons.twotone.RestoreFromTrash
-import androidx.compose.material.icons.twotone.Save
 import androidx.compose.material.icons.twotone.SearchOff
-import androidx.compose.material.icons.twotone.Visibility
-import androidx.compose.material.icons.twotone.VisibilityOff
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SelectableDropdownMenuItem
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,28 +51,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.R
-import com.resukisu.resukisu.ksuApp
+import com.resukisu.resukisu.domain.model.AllowlistOperationResult
+import com.resukisu.resukisu.domain.model.InstalledAppGroup
+import com.resukisu.resukisu.ui.component.ConfirmResult
+import com.resukisu.resukisu.ui.component.PackageIcon
 import com.resukisu.resukisu.ui.component.SearchAppBar
 import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
+import com.resukisu.resukisu.ui.component.rememberConfirmDialog
+import com.resukisu.resukisu.ui.component.rememberSearchAppBarScrollBehavior
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.lazySegmentColumn
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
@@ -101,56 +75,108 @@ import com.resukisu.resukisu.ui.navigation.Route
 import com.resukisu.resukisu.ui.screen.LabelText
 import com.resukisu.resukisu.ui.theme.blurSource
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
-import com.resukisu.resukisu.ui.util.module.ModuleModify
-import com.resukisu.resukisu.ui.viewmodel.AppCategory
+import com.resukisu.resukisu.ui.util.adaptiveScaffoldWindowInsets
+import com.resukisu.resukisu.ui.util.showReplacingSnackbar
 import com.resukisu.resukisu.ui.viewmodel.SortType
+import com.resukisu.resukisu.ui.viewmodel.SuperUserUiAction
+import com.resukisu.resukisu.ui.viewmodel.SuperUserUiEvent
 import com.resukisu.resukisu.ui.viewmodel.SuperUserUiState
 import com.resukisu.resukisu.ui.viewmodel.SuperUserViewModel
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-data class BottomSheetMenuItem(
-    val icon: ImageVector,
+private data class SuperUserMenuItem(
+    val checked: Boolean = false,
     val titleRes: Int,
-    val onClick: () -> Unit
+    val onClick: () -> Unit,
+    val closeOnClick: Boolean = true,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SuperUserPage(bottomPadding: Dp) {
     val context = LocalContext.current
-    val viewModel = viewModel<SuperUserViewModel>(
-        viewModelStoreOwner = ksuApp
-    )
+    val viewModel = koinViewModel<SuperUserViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
+    val scrollBehavior = rememberSearchAppBarScrollBehavior(
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
+    )
     val listState = rememberLazyListState()
     val snackBarHostState = LocalSnackbarHost.current
 
-    val bottomSheetState = rememberBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
-    )
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showDropdown by remember { mutableStateOf(false) }
+    val restoreConfirmDialog = rememberConfirmDialog()
+    val restoreConfirmTitle = stringResource(R.string.allowlist_restore_confirm_title)
+    val restoreConfirmMessage = stringResource(R.string.allowlist_restore_confirm_message)
+    val confirmText = stringResource(R.string.confirm)
+    val cancelText = stringResource(R.string.cancel)
 
-    val backupLauncher = ModuleModify.rememberAllowlistBackupLauncher(context, snackBarHostState)
-    val restoreLauncher = ModuleModify.rememberAllowlistRestoreLauncher(context, snackBarHostState)
+    LaunchedEffect(viewModel) {
+        viewModel.events.collectLatest { event ->
+            when (event) {
+                is SuperUserUiEvent.Error -> if (event.message.isNotBlank()) {
+                    snackBarHostState.showReplacingSnackbar(event.message)
+                }
+
+                is SuperUserUiEvent.AllowlistOperationFinished -> {
+                    val successMessage = if (event.restore) {
+                        R.string.allowlist_restore_success
+                    } else {
+                        R.string.allowlist_backup_success
+                    }
+                    val failureMessage = if (event.restore) {
+                        R.string.allowlist_restore_failed
+                    } else {
+                        R.string.allowlist_backup_failed
+                    }
+                    snackBarHostState.showReplacingSnackbar(
+                        message = context.allowlistOperationMessage(
+                            result = event.result,
+                            successMessage = successMessage,
+                            failureMessage = failureMessage,
+                        ),
+                        duration = SnackbarDuration.Long,
+                    )
+                }
+            }
+        }
+    }
+
+    val backupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/octet-stream")
+    ) { uri ->
+        if (uri != null) {
+            viewModel.dispatch(SuperUserUiAction.BackupAllowlist(uri.toString()))
+        }
+    }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            scope.launch {
+                val confirmed = restoreConfirmDialog.awaitConfirm(
+                    title = restoreConfirmTitle,
+                    content = restoreConfirmMessage,
+                    confirm = confirmText,
+                    dismiss = cancelText,
+                )
+                if (confirmed != ConfirmResult.Confirmed) return@launch
+
+                viewModel.dispatch(SuperUserUiAction.RestoreAllowlist(uri.toString()))
+            }
+        }
+    }
 
     val navigator = LocalNavigator.current
 
     LaunchedEffect(Unit) {
-        viewModel.updateSearch("")
-    }
-
-    val appCounts = remember(uiState.appGroupList, uiState.showSystemApps) {
-        mapOf(
-            AppCategory.ALL to uiState.appGroupList.size,
-            AppCategory.ROOT to uiState.appGroupList.count { it.allowSu },
-            AppCategory.CUSTOM to uiState.appGroupList.count { !it.allowSu && it.hasCustomProfile },
-            AppCategory.DEFAULT to uiState.appGroupList.count { !it.allowSu && !it.hasCustomProfile }
-        )
+        viewModel.dispatch(SuperUserUiAction.Search(""))
     }
 
     Scaffold(
@@ -158,12 +184,25 @@ fun SuperUserPage(bottomPadding: Dp) {
             SearchAppBar(
                 title = stringResource(R.string.superuser),
                 searchText = uiState.search,
-                onSearchTextChange = viewModel::updateSearch,
+                onSearchTextChange = { viewModel.dispatch(SuperUserUiAction.Search(it)) },
                 dropdownContent = {
-                    IconButton(onClick = { showBottomSheet = true }) {
+                    IconButton(onClick = { showDropdown = true }) {
                         Icon(
                             imageVector = Icons.TwoTone.MoreVert,
                             contentDescription = stringResource(id = R.string.settings),
+                        )
+
+                        SuperUserDropdown(
+                            expanded = showDropdown,
+                            onDismissRequest = { showDropdown = false },
+                            viewModel = viewModel,
+                            uiState = uiState,
+                            onBackupAllowlist = {
+                                backupLauncher.launch(createAllowlistBackupFileName())
+                            },
+                            onRestoreAllowlist = {
+                                restoreLauncher.launch(arrayOf("application/octet-stream"))
+                            },
                         )
                     }
                 },
@@ -184,9 +223,12 @@ fun SuperUserPage(bottomPadding: Dp) {
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface,
         snackbarHost = {
-            SwipeableSnackbarHost(hostState = snackBarHostState)
+            SwipeableSnackbarHost(
+                modifier = Modifier.padding(bottom = bottomPadding),
+                hostState = snackBarHostState
+            )
         },
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        contentWindowInsets = adaptiveScaffoldWindowInsets(includeBottom = false),
     ) { innerPadding ->
         SuperUserContent(
             innerPadding = innerPadding,
@@ -194,22 +236,43 @@ fun SuperUserPage(bottomPadding: Dp) {
             uiState = uiState,
             listState = listState,
             scrollBehavior = scrollBehavior,
-            scope = scope,
             bottomPadding = bottomPadding,
         )
-
-        if (showBottomSheet) {
-            SuperUserBottomSheet(
-                bottomSheetState = bottomSheetState,
-                onDismiss = { showBottomSheet = false },
-                viewModel = viewModel,
-                uiState = uiState,
-                appCounts = appCounts,
-                backupLauncher = backupLauncher,
-                restoreLauncher = restoreLauncher
-            )
-        }
     }
+}
+
+private fun Context.allowlistOperationMessage(
+    result: AllowlistOperationResult,
+    successMessage: Int,
+    failureMessage: Int,
+): String {
+    return when (result) {
+        AllowlistOperationResult.Success ->
+            getString(successMessage)
+
+        AllowlistOperationResult.InvalidFile ->
+            getString(failureMessage, getString(R.string.unknown_file))
+
+        AllowlistOperationResult.UnsupportedVersion ->
+            getString(failureMessage, getString(R.string.home_unsupported))
+
+        is AllowlistOperationResult.ProfileUpdateFailed ->
+            getString(
+                failureMessage,
+                getString(R.string.failed_to_update_app_profile, result.uid.toString()),
+            )
+
+        is AllowlistOperationResult.Failed ->
+            getString(
+                failureMessage,
+                result.cause?.localizedMessage ?: getString(R.string.unknown),
+            )
+    }
+}
+
+private fun createAllowlistBackupFileName(): String {
+    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    return "ksu_allowlist_backup_$timestamp.dat"
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -220,7 +283,6 @@ private fun SuperUserContent(
     uiState: SuperUserUiState,
     listState: androidx.compose.foundation.lazy.LazyListState,
     scrollBehavior: TopAppBarScrollBehavior,
-    scope: CoroutineScope,
     bottomPadding: Dp,
 ) {
     val navigator = LocalNavigator.current
@@ -228,42 +290,36 @@ private fun SuperUserContent(
 
     if (uiState.appGroupList.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .blurSource(),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                if ((uiState.isRefreshing || uiState.appGroupList.isEmpty()) && uiState.search.isEmpty()) {
-                    LoadingIndicator()
-                }
-                else {
-                    val selectedCategory = uiState.selectedCategory
-                    val isSearchEmpty = uiState.search.isNotEmpty()
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Icon(
-                            imageVector = if (isSearchEmpty) Icons.TwoTone.SearchOff else Icons.TwoTone.Archive,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .size(96.dp)
-                                .padding(bottom = 16.dp)
-                        )
-                        Text(
-                            text = if (isSearchEmpty || selectedCategory == AppCategory.ALL) {
-                                stringResource(R.string.no_apps_found)
-                            } else {
-                                stringResource(R.string.no_apps_in_category)
-                            },
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
+            if (uiState.isRefreshing && uiState.search.isEmpty()) {
+                LoadingIndicator()
+            } else {
+                val isSearchEmpty = uiState.search.isNotEmpty()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        imageVector = if (isSearchEmpty) Icons.TwoTone.SearchOff else Icons.TwoTone.Archive,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .size(96.dp)
+                            .padding(bottom = 16.dp)
+                    )
+                    Text(
+                        text = if (isSearchEmpty) {
+                            stringResource(R.string.no_apps_found)
+                        } else {
+                            stringResource(R.string.no_apps_in_category)
+                        },
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
         }
@@ -272,7 +328,7 @@ private fun SuperUserContent(
 
     PullToRefreshBox(
         state = pullRefreshState,
-        onRefresh = { scope.launch { viewModel.fetchAppList() } },
+        onRefresh = { viewModel.dispatch(SuperUserUiAction.Refresh) },
         isRefreshing = uiState.isRefreshing,
         modifier = Modifier
             .fillMaxSize()
@@ -298,13 +354,14 @@ private fun SuperUserContent(
             }
             lazySegmentColumn(
                 items = uiState.appGroupList,
-                key = { _, appGroup -> "${appGroup.uid}-${appGroup.mainApp.packageName}" },
-                contentType = { _, _ -> "AppGroupItem" }
+                key = { _, appGroup -> "${appGroup.uid}-${appGroup.profileKey}" },
+                contentType = { _, appGroup -> "${appGroup.uid}-${appGroup.profileKey}" },
             ) { _, appGroup ->
                 AppGroupItem(
-                    appGroup = appGroup
+                    appGroup = appGroup,
+                    isManager = appGroup.uid in uiState.managerUids,
                 ) {
-                    navigator.push(Route.AppProfile(appGroup))
+                    navigator.push(Route.AppProfile(appGroup.uid, appGroup.profileKey))
                 }
             }
 
@@ -315,296 +372,103 @@ private fun SuperUserContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SuperUserBottomSheet(
-    bottomSheetState: SheetState,
-    onDismiss: () -> Unit,
+private fun SuperUserDropdown(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
     viewModel: SuperUserViewModel,
     uiState: SuperUserUiState,
-    appCounts: Map<AppCategory, Int>,
-    backupLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>,
-    restoreLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>
+    onBackupAllowlist: () -> Unit,
+    onRestoreAllowlist: () -> Unit,
 ) {
-    val bottomSheetMenuItems = remember(uiState.showSystemApps) {
+    val menuItems = remember(
+        uiState.showSystemApps,
+        uiState.reverseOrder,
+        onBackupAllowlist,
+        onRestoreAllowlist,
+    ) {
         listOf(
-            BottomSheetMenuItem(
-                icon = Icons.TwoTone.Refresh,
-                titleRes = R.string.refresh,
+            SuperUserMenuItem(
+                checked = uiState.reverseOrder,
+                titleRes = R.string.reverse_order,
+                closeOnClick = false,
                 onClick = {
-                    viewModel.viewModelScope.launch { viewModel.fetchAppList() }
+                    viewModel.dispatch(SuperUserUiAction.SetReverseOrder(!uiState.reverseOrder))
                 }
             ),
-            BottomSheetMenuItem(
-                icon = if (uiState.showSystemApps) Icons.TwoTone.VisibilityOff else Icons.TwoTone.Visibility,
-                titleRes = if (uiState.showSystemApps) R.string.hide_system_apps else R.string.show_system_apps,
+            SuperUserMenuItem(
+                checked = uiState.showSystemApps,
+                titleRes = R.string.show_system_apps,
+                closeOnClick = false,
                 onClick = {
-                    viewModel.updateShowSystemApps(!uiState.showSystemApps)
+                    viewModel.dispatch(SuperUserUiAction.SetShowSystemApps(!uiState.showSystemApps))
                 }
             ),
-            BottomSheetMenuItem(
-                icon = Icons.TwoTone.Save,
+            SuperUserMenuItem(
                 titleRes = R.string.backup_allowlist,
-                onClick = {
-                    backupLauncher.launch(ModuleModify.createAllowlistBackupIntent())
-                }
+                onClick = onBackupAllowlist,
             ),
-            BottomSheetMenuItem(
-                icon = Icons.TwoTone.RestoreFromTrash,
+            SuperUserMenuItem(
                 titleRes = R.string.restore_allowlist,
-                onClick = {
-                    restoreLauncher.launch(ModuleModify.createAllowlistRestoreIntent())
-                }
+                onClick = onRestoreAllowlist,
             )
         )
     }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = bottomSheetState,
-        dragHandle = {
-            Surface(
-                modifier = Modifier.padding(vertical = 11.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Box(Modifier.size(width = 32.dp, height = 4.dp))
-            }
-        }
+    DropdownMenuPopup(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
     ) {
-        BottomSheetContent(
-            menuItems = bottomSheetMenuItems,
-            currentSortType = uiState.currentSortType,
-            onSortTypeChanged = { newSortType ->
-                viewModel.updateCurrentSortType(newSortType)
-            },
-            selectedCategory = uiState.selectedCategory,
-            onCategorySelected = { newCategory ->
-                viewModel.updateSelectedCategory(newCategory)
-            },
-            appCounts = appCounts
-        )
-    }
-}
-
-@Composable
-private fun BottomSheetContent(
-    menuItems: List<BottomSheetMenuItem>,
-    currentSortType: SortType,
-    onSortTypeChanged: (SortType) -> Unit,
-    selectedCategory: AppCategory,
-    onCategorySelected: (AppCategory) -> Unit,
-    appCounts: Map<AppCategory, Int>
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 24.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.menu_options),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShapes(),
         ) {
-            items(menuItems) { menuItem ->
-                BottomSheetMenuItemView(menuItem = menuItem)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-
-        Text(
-            text = stringResource(R.string.sort_options),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-        )
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(SortType.entries.toTypedArray()) { sortType ->
-                FilterChip(
-                    onClick = { onSortTypeChanged(sortType) },
-                    label = { Text(stringResource(sortType.displayNameRes)) },
-                    selected = currentSortType == sortType
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-
-        Text(
-            text = stringResource(R.string.app_categories),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(AppCategory.entries.toTypedArray()) { category ->
-                CategoryChip(
-                    category = category,
-                    isSelected = selectedCategory == category,
-                    onClick = { onCategorySelected(category) },
-                    appCount = appCounts[category] ?: 0
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    category: AppCategory,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    appCount: Int,
-    modifier: Modifier = Modifier
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1.0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessHigh
-        ),
-        label = "categoryChipScale"
-    )
-
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .scale(scale)
-            .clickable(interactionSource = interactionSource, indication = null) { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        color = if (isSelected) {
-            MaterialTheme.colorScheme.primaryContainer
-        } else {
-            MaterialTheme.colorScheme.surfaceBright
-        },
-        tonalElevation = if (isSelected) 4.dp else 0.dp
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = stringResource(category.displayNameRes),
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                    ),
-                    color = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+            SortType.entries.forEachIndexed { index, sortType ->
+                SelectableDropdownMenuItem(
+                    selected = uiState.currentSortType == sortType,
+                    onClick = {
+                        viewModel.dispatch(SuperUserUiAction.SetSort(sortType))
                     },
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    text = { Text(stringResource(sortType.displayNameRes)) },
+                    shapes = MenuDefaults.itemShape(
+                        index = index,
+                        count = SortType.entries.size,
+                    ),
                 )
             }
-
-            Text(
-                text = "$appCount apps",
-                style = MaterialTheme.typography.labelSmall,
-                color = if (isSelected) {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                }
-            )
         }
-    }
-}
 
-@Composable
-private fun BottomSheetMenuItemView(menuItem: BottomSheetMenuItem) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
+        Spacer(modifier = Modifier.height(4.dp))
 
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.95f else 1.0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessHigh
-        ),
-        label = "menuItemScale"
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(scale)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { menuItem.onClick() }
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Surface(
-            modifier = Modifier.size(48.dp),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShapes(),
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = menuItem.icon,
-                    contentDescription = stringResource(menuItem.titleRes),
-                    modifier = Modifier.size(24.dp)
+            menuItems.forEachIndexed { index, menuItem ->
+                SelectableDropdownMenuItem(
+                    selected = menuItem.checked,
+                    onClick = {
+                        if (menuItem.closeOnClick) onDismissRequest()
+                        menuItem.onClick()
+                    },
+                    text = { Text(stringResource(menuItem.titleRes)) },
+                    shapes = MenuDefaults.itemShape(
+                        index = index,
+                        count = menuItems.size,
+                    ),
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(menuItem.titleRes),
-            style = MaterialTheme.typography.labelSmall,
-            textAlign = TextAlign.Center,
-            maxLines = 2
-        )
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun AppGroupItem(
-    appGroup: SuperUserViewModel.AppGroup,
+    appGroup: InstalledAppGroup,
+    isManager: Boolean,
     onClick: () -> Unit,
 ) {
     val mainApp = appGroup.mainApp
-
     SettingsBaseWidget(
         onClick = {
             onClick()
@@ -613,7 +477,7 @@ private fun AppGroupItem(
         description = if (appGroup.apps.size > 1) {
             stringResource(R.string.group_contains_apps, appGroup.apps.size)
         } else {
-            mainApp.packageName
+            mainApp.displayIdentifier
         },
         descriptionColumnContent = {
             Spacer(modifier = Modifier.height(5.dp))
@@ -625,7 +489,7 @@ private fun AppGroupItem(
                 if (appGroup.allowSu) {
                     LabelText(label = "ROOT")
                 } else {
-                    if (Natives.uidShouldUmount(appGroup.uid)) {
+                    if (appGroup.shouldUmount) {
                         LabelText(
                             label = "UMOUNT",
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -641,6 +505,12 @@ private fun AppGroupItem(
                     LabelText(
                         label = "DEFAULT",
                         containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                }
+                if (isManager) {
+                    LabelText(
+                        label = "MANAGER",
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
                     )
                 }
                 if (appGroup.apps.size > 1) {
@@ -660,16 +530,12 @@ private fun AppGroupItem(
             }
         },
         leadingContent = {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(mainApp.packageInfo)
-                    .crossfade(true)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
+            PackageIcon(
+                packageName = if (appGroup.isWebViewZygote) "android" else mainApp.packageName,
                 contentDescription = mainApp.label,
                 modifier = Modifier
                     .padding(4.dp)
-                    .size(48.dp)
+                    .size(48.dp),
             )
         },
         iconPlaceholder = false,

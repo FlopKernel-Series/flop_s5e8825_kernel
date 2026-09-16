@@ -275,6 +275,8 @@ static ssize_t my_write_access(struct file *file, char *buf, size_t size)
     ksu_security_compute_av_user(ssid, tsid, tclass, &avd);
 #endif
 
+    // stock reads 1; a loader load_policy may have bumped the backup before we load
+    avd.seqno = 1;
     length = scnprintf(buf, SIMPLE_TRANSACTION_LIMIT, "%x %x %x %x %u %x", avd.allowed, 0xffffffff, avd.auditallow,
                        avd.auditdeny, avd.seqno, avd.flags);
 out:
@@ -514,6 +516,8 @@ static int ksu_selinux_hide_enable()
         pr_err("selinux_hide: failed alloc selinux_ss!\n");
         return -ENOMEM;
     }
+
+    rwlock_init(&fake_state.ss->policy_rwlock);
 
     // In normal android
     // Only set selinux policy once
@@ -836,12 +840,21 @@ __maybe_static void initialize_fake_status()
 
     struct selinux_kernel_status *new_status = page_address(new_page);
     memcpy(new_status, status, sizeof(*status));
-    if (ksu_late_loaded && !new_status->enforcing) {
-        // In late_load mode, we may be loaded when selinux was set to permissive
-        // So we need to modify the sequence value
-        // We assume that setenforce 0 is just called once
-        new_status->enforcing = 1;
-        new_status->sequence = new_status->policyload ? 4 : 0;
+    if (ksu_late_loaded) {
+        // In late_load mode the loader may have reloaded sepolicy before us,
+        // so the captured page is not stock. Serve what a stock boot ends
+        // with instead: creation sentinel below 6.10, one load plus one
+        // setenforce above.
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 10, 0)
+        new_status->sequence = 4;
+        new_status->policyload = 1;
+#else
+        new_status->sequence = 0;
+        new_status->policyload = 0;
+#endif
+        if (!new_status->enforcing) {
+            new_status->enforcing = 1;
+        }
     }
 
     fake_status = new_page;
@@ -1717,6 +1730,17 @@ static void type_attribute_bounds_av(struct context *scontext, struct context *t
     struct type_datum *target;
     u32 masked = 0;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) || defined(KSU_COMPAT_HAS_MODERN_POLICYDB)
+    // mostly never happen, except Huawei
+    source = backup_policydb->type_val_to_struct[scontext->type - 1];
+    BUG_ON(!source);
+
+    if (!source->bounds)
+        return;
+
+    target = backup_policydb->type_val_to_struct[tcontext->type - 1];
+    BUG_ON(!target);
+#else
     source = flex_array_get_ptr(backup_policydb->type_val_to_struct_array, scontext->type - 1);
     BUG_ON(!source);
 
@@ -1725,6 +1749,8 @@ static void type_attribute_bounds_av(struct context *scontext, struct context *t
 
     target = flex_array_get_ptr(backup_policydb->type_val_to_struct_array, tcontext->type - 1);
     BUG_ON(!target);
+
+#endif
 
     memset(&lo_avd, 0, sizeof(lo_avd));
 
@@ -1767,6 +1793,7 @@ static void avd_init(struct av_decision *avd)
     avd->flags = 0;
 }
 
+#ifndef KSU_COMPAT_HAS_CURRENT_SID
 /*
  * get the subjective security ID of the current task
  */
@@ -1776,6 +1803,7 @@ static inline u32 current_sid(void)
 
     return tsec->sid;
 }
+#endif
 
 /*
  * Compute access vectors and extended permissions based on a context
@@ -1815,10 +1843,21 @@ static void context_struct_compute_av(struct context *scontext, struct context *
 	 */
     avkey.target_class = tclass;
     avkey.specified = AVTAB_AV | AVTAB_XPERMS;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) ||                                                                   \
+    (defined(KSU_COMPAT_HAS_MODERN_POLICYDB) && !defined(KSU_COMPAT_TYPE_ATTR_MAP_ARRAY_NOT_FOUND))
+    // mostly never happen
+    sattr = &backup_policydb->type_attr_map_array[scontext->type - 1];
+    tattr = &backup_policydb->type_attr_map_array[tcontext->type - 1];
+#elif defined(KSU_COMPAT_TYPE_ATTR_MAP_ARRAY_NOT_FOUND)
+    // huawei! why rename??!
+    sattr = &backup_policydb->type_attr_map[scontext->type - 1];
+    tattr = &backup_policydb->type_attr_map[tcontext->type - 1];
+#else
     sattr = flex_array_get(backup_policydb->type_attr_map_array, scontext->type - 1);
     BUG_ON(!sattr);
     tattr = flex_array_get(backup_policydb->type_attr_map_array, tcontext->type - 1);
     BUG_ON(!tattr);
+#endif
     ebitmap_for_each_positive_bit(sattr, snode, i)
     {
         ebitmap_for_each_positive_bit(tattr, tnode, j)

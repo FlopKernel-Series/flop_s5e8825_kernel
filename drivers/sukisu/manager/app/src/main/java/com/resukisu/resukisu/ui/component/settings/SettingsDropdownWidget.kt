@@ -3,11 +3,11 @@ package com.resukisu.resukisu.ui.component.settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.DropdownMenuGroup
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +29,7 @@ fun SettingsDropdownWidget(
     description: String? = null,
     iconPlaceholder: Boolean = true,
     enabled: Boolean = true,
+    renderBackgroundBlur: Boolean = true,
     isError: Boolean = false,
     choice: Int,
     data: List<String>,
@@ -52,6 +53,7 @@ fun SettingsDropdownWidget(
             title = title,
             description = description,
             enabled = enabled,
+            isOnBackground = renderBackgroundBlur,
             isError = isError,
             onClick = { offest ->
                 touchPoint = offest
@@ -79,9 +81,7 @@ fun SettingsDropdownWidget(
                     data.forEachIndexed { index, item ->
                         val isSelected = index == choice
 
-                        // Utilize the selectable variation of DropdownMenuItem
-                        // MenuDefaults.itemShape(index, count) automatically handles the shapes
-                        DropdownMenuItem(
+                        SelectableDropdownMenuItem(
                             selected = isSelected,
                             onClick = {
                                 onChoiceChange(index)
@@ -91,7 +91,7 @@ fun SettingsDropdownWidget(
                             shapes = MenuDefaults.itemShape(
                                 index = index,
                                 count = data.size
-                            )
+                            ),
                         )
                     }
                 }

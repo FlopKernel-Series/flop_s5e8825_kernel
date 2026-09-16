@@ -53,8 +53,8 @@ pub struct Args {
     wait: bool,
 
     /// Timeout in seconds for --wait (default: wait forever).
-    #[arg(long = "timeout")]
-    timeout: Option<f64>,
+    #[arg(long = "timeout", value_parser = parse_timeout)]
+    timeout: Option<Duration>,
 
     /// Load and set properties from FILE.
     #[arg(short = 'f', long = "file")]
@@ -79,6 +79,11 @@ pub struct Args {
         hide = true,
     )]
     arguments: Vec<String>,
+}
+
+fn parse_timeout(s: &str) -> Result<Duration> {
+    let timeout: f64 = s.parse()?;
+    Ok(Duration::try_from_secs_f64(timeout)?)
 }
 
 impl Args {
@@ -162,9 +167,12 @@ fn execute(cli: &Args) -> Result<()> {
     // -w: wait mode
     if cli.wait {
         let name = cli.name().context("--wait requires a property name")?;
-        let timeout = cli.timeout.map(Duration::from_secs_f64);
         let ok = rp
-            .wait(name, cli.value().map(std::string::String::as_str), timeout)
+            .wait(
+                name,
+                cli.value().map(std::string::String::as_str),
+                cli.timeout,
+            )
             .context("wait failed")?;
         if !ok {
             return Err(WaitTimeoutError {
@@ -179,8 +187,12 @@ fn execute(cli: &Args) -> Result<()> {
     if let Some(path) = &cli.file {
         let file = File::open(path).with_context(|| format!("Failed to open {path}"))?;
         let reader = BufReader::new(file);
-        rp.load_props(reader.lines())
-            .context("Failed to load properties from file")?;
+        if rp
+            .load_props(reader.lines())
+            .context("Failed to load properties from file")?
+        {
+            eprintln!("resetprop: warning: rebuild is needed!");
+        }
         return Ok(());
     }
 
@@ -217,8 +229,12 @@ fn execute(cli: &Args) -> Result<()> {
     match (name, value) {
         // resetprop name value (set)
         (Some(name), Some(value)) => {
-            rp.set(name, value)
-                .with_context(|| format!("Failed to set {name}"))?;
+            if rp
+                .set(name, value)
+                .with_context(|| format!("Failed to set {name}"))?
+            {
+                eprintln!("resetprop: warning: rebuild is needed!");
+            }
         }
 
         // resetprop name (get)
@@ -244,6 +260,30 @@ fn execute(cli: &Args) -> Result<()> {
     Ok(())
 }
 
+fn direct_resetprop() -> ResetProp {
+    ResetProp {
+        skip_svc: true,
+        persistent: false,
+        persist_only: false,
+        verbose: false,
+        show_context: false,
+        rebuild: false,
+    }
+}
+
+pub(crate) fn get_property_direct(name: &str) -> Result<Option<String>> {
+    sys_prop::init().context("Failed to initialize system property API")?;
+    Ok(direct_resetprop().get(name))
+}
+
+pub(crate) fn set_property_direct(name: &str, value: &str) -> Result<()> {
+    sys_prop::init().context("Failed to initialize system property API")?;
+    direct_resetprop()
+        .set(name, value)
+        .with_context(|| format!("Failed to set {name}"))?;
+    Ok(())
+}
+
 /// Load system.prop file using internal resetprop API.
 ///
 /// Equivalent to `resetprop -n --file <path>`.
@@ -261,8 +301,15 @@ pub fn load_system_prop_file(path: &Path) -> Result<()> {
 
     let file = File::open(path).with_context(|| format!("Failed to open {}", path.display()))?;
     let reader = BufReader::new(file);
-    rp.load_props(reader.lines())
-        .with_context(|| format!("Failed to load properties from {}", path.display()))?;
+    if rp
+        .load_props(reader.lines())
+        .with_context(|| format!("Failed to load properties from {}", path.display()))?
+    {
+        log::warn!(
+            "warning: after loaded prop file from {}, rebuild is needed!",
+            path.display()
+        );
+    }
 
     info!("Loaded system.prop from {}", path.display());
     Ok(())

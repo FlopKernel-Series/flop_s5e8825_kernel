@@ -19,8 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -30,11 +29,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ListItemShapes
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocal
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.compositionLocalOf
@@ -48,7 +49,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -60,12 +63,15 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.resukisu.resukisu.ui.component.settings.material3internal.rememberAnimatedShape
 import com.resukisu.resukisu.ui.theme.CardConfig
 import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.renderBackgroundBlur
+import org.koin.compose.koinInject
 
 /**
  * A [CompositionLocal] that provides the dynamically calculated [Shape] for items
@@ -94,7 +100,7 @@ val LocalSegmentedItemShape = compositionLocalOf<Shape> { RoundedCornerShape(16.
  * If [onClick] is not null, this also controls clickability.
  * @param isError If true, applies the error color to the description text.
  * @param selected If true, highlights the widget with a primary container background.
- * @param renderBackgroundBlur If true, this composable will renderBackgroundBlur.
+ * @param isOnBackground If true, this composable will renderBackgroundBlur, and will process cardAlpha.
  * @param fillMaxWidth If true, this composable will fill max width.
  * @param onClick Callback to be invoked when the widget is clicked. If null, the widget is not clickable.
  * @param onLongClick Callback to be invoked when the widget is LONG CLICKED. If null, the widget is not clickable.
@@ -104,6 +110,7 @@ val LocalSegmentedItemShape = compositionLocalOf<Shape> { RoundedCornerShape(16.
  * @param trailingContent A composable slot for trailing content, e.g. switches, checkboxes, or arrows.
  * @param containerColor Custom container color, if provided, selected/isError will be ignored.
  */
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsBaseWidget(
@@ -120,7 +127,7 @@ fun SettingsBaseWidget(
     enabled: Boolean = true,
     isError: Boolean = false,
     selected: Boolean = false,
-    renderBackgroundBlur: Boolean = true,
+    isOnBackground: Boolean = true,
     fillMaxWidth: Boolean = true,
     onClick: ((Offset) -> Unit)? = null,
     onLongClick: ((Offset) -> Unit)? = null,
@@ -131,27 +138,39 @@ fun SettingsBaseWidget(
     containerColor: Color? = null,
     trailingContent: (@Composable BoxScope.(interactionSource: MutableInteractionSource) -> Unit)? = null,
 ) {
+    val themeConfig: ThemeConfig = koinInject()
+    val cardConfig: CardConfig = koinInject()
     val hapticFeedback = LocalHapticFeedback.current
     val alpha = if (enabled) 1f else 0.38f
 
     val interactionSource = remember { MutableInteractionSource() }
 
-    val density = LocalDensity.current
-    val dynamicInternalPadding = (4 * density.fontScale).dp
+    /*
+     * Material 3 ListItem uses fixed 56dp/72dp minimum heights that do not shrink with fontScale,
+     * leaving excessive vertical space at smaller system font sizes. Recheck this workaround when
+     * updating Material 3 in case ListItem starts adapting its minimum height internally.
+     */
+    val fontScale = LocalDensity.current.fontScale
+    val defaultMinHeight = if (description == null) 56.dp else 72.dp
+    val adaptiveMinHeight = (defaultMinHeight * fontScale).coerceAtLeast(48.dp)
 
     val baseShape = LocalSegmentedItemShape.current
 
-    val finalContainerColor = containerColor
+    val finalContainerColor = (containerColor
         ?: if (selected) {
             MaterialTheme.colorScheme.primaryContainer
         } else {
             MaterialTheme.colorScheme.surfaceBright
-        }.copy(
-            alpha = CardConfig.cardAlpha
-        )
+        }).run {
+        if (isOnBackground) {
+            copy(
+                alpha = cardConfig.cardAlpha
+            )
+        } else this
+    }
 
     val backgroundColor = run {
-        if (renderBackgroundBlur && ThemeConfig.isEnableBlurExp)
+        if (isOnBackground && themeConfig.isEnableBlurExp)
             Color.Transparent
         else finalContainerColor
     }
@@ -234,6 +253,32 @@ fun SettingsBaseWidget(
         )
     } else RectangleShape
 
+    val safeClickShape = if (onClick != null || onLongClick != null) {
+        remember(clickShape) {
+            object : Shape {
+                override fun createOutline(
+                    size: Size,
+                    layoutDirection: LayoutDirection,
+                    density: Density,
+                ): Outline = clickShape.createOutline(size, layoutDirection, density)
+            }
+        }
+    } else {
+        RectangleShape
+    }
+    val listItemShapes = if (onClick != null || onLongClick != null) {
+        ListItemDefaults.shapes(
+            shape = safeClickShape,
+            selectedShape = safeClickShape,
+            pressedShape = safeClickShape,
+            focusedShape = safeClickShape,
+            hoveredShape = safeClickShape,
+            draggedShape = safeClickShape,
+        )
+    } else {
+        shapes
+    }
+
     val clipShape = if (onClick != null || onLongClick != null) {
         clickShape
     } else {
@@ -241,7 +286,8 @@ fun SettingsBaseWidget(
     }
 
     var itemModifier = (if (fillMaxWidth) modifier.fillMaxWidth() else modifier)
-    if (renderBackgroundBlur && ThemeConfig.isEnableBlurExp)
+        .heightIn(min = adaptiveMinHeight)
+    if (isOnBackground && themeConfig.isEnableBlurExp)
         itemModifier = itemModifier
             .clip(clipShape)
             .renderBackgroundBlur(finalContainerColor)
@@ -287,10 +333,6 @@ fun SettingsBaseWidget(
             }
 
             descriptionColumnContent?.invoke(this)
-
-            if (description != null || descriptionColumnContent != null) {
-                Spacer(Modifier.height(dynamicInternalPadding))
-            }
         }
     }
 
@@ -309,10 +351,6 @@ fun SettingsBaseWidget(
         Box(
             modifier = Modifier
                 .alpha(alpha)
-                .padding(
-                    top = dynamicInternalPadding,
-                    bottom = if (description == null && descriptionColumnContent == null) dynamicInternalPadding else 0.dp
-                )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -325,6 +363,26 @@ fun SettingsBaseWidget(
                 }
 
                 foreContent()
+            }
+        }
+    }
+
+    // M3E ListItem has bug, supportingContent will cause RectList broken
+    // and cause application crash.
+
+    // We use headlineContent + Column + supportingContent for workaround,
+    // Hope Google fix this problem in their new version....
+    val expressiveContent: @Composable () -> Unit = {
+        Column {
+            headline()
+            CompositionLocalProvider(
+                LocalContentColor provides colors.supportingContentColor(
+                    enabled = enabled,
+                    selected = selected,
+                    dragged = false,
+                ),
+            ) {
+                supportingContent()
             }
         }
     }
@@ -359,13 +417,12 @@ fun SettingsBaseWidget(
             } else null,
             enabled = enabled,
             colors = colors,
-            shapes = shapes,
+            shapes = listItemShapes,
             verticalAlignment = Alignment.CenterVertically,
             leadingContent = finalLeadingContent,
-            supportingContent = supportingContent,
             trailingContent = trailing,
             interactionSource = interactionSource,
-            content = headline
+            content = expressiveContent
         )
     } else {
         /*
@@ -376,7 +433,6 @@ fun SettingsBaseWidget(
          * which incorrectly exposes the item as disabled and changes its visual state.
          */
         ListItem(
-            headlineContent = headline,
             modifier = itemModifier
                 .clip(baseShape)
                 .then(
@@ -386,10 +442,14 @@ fun SettingsBaseWidget(
                         Modifier
                     }
                 ),
+            enabled = enabled,
+            verticalAlignment = Alignment.CenterVertically,
+            shapes = shapes,
             colors = colors,
             leadingContent = finalLeadingContent,
-            supportingContent = supportingContent,
-            trailingContent = trailing
+            trailingContent = trailing,
+            contentPadding = ListItemDefaults.ContentPadding,
+            content = expressiveContent,
         )
     }
 }

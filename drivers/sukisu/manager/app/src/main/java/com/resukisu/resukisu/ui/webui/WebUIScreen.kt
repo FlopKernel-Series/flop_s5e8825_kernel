@@ -229,7 +229,8 @@ private fun HandleWebUIEvent(webUIState: WebUIState) {
                                 state = state,
                                 title = event.message,
                                 lineLimits = TextFieldLineLimits.SingleLine,
-                                useLabelAsPlaceholder = true
+                                useLabelAsPlaceholder = true,
+                                renderBackgroundBlur = false,
                             )
                         }
                     },
