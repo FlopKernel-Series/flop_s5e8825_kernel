@@ -89,6 +89,10 @@ class SettingsRepositoryImpl : SettingsRepository {
         get() = prefs.getBoolean("enable_navigation_badge", true)
         set(value) = prefs.edit { putBoolean("enable_navigation_badge", value) }
 
+    override var navigationRailExpanded: Boolean
+        get() = prefs.getBoolean("nav_rail_expanded", false)
+        set(value) = prefs.edit { putBoolean("nav_rail_expanded", value) }
+
     override var pageScale: Float
         get() = prefs.getFloat("page_scale", 1.0f)
         set(value) = prefs.edit { putFloat("page_scale", value) }
@@ -173,13 +177,6 @@ class SettingsRepositoryImpl : SettingsRepository {
     override fun isKernelUmountEnabled(): Boolean = Natives.isKernelUmountEnabled()
 
     override fun setKernelUmountEnabled(enabled: Boolean): Boolean = Natives.setKernelUmountEnabled(enabled)
-
-    override suspend fun getWebViewZygoteUmountStatus(): String = getFeatureStatus("webview_zygote_umount")
-
-    override fun isWebViewZygoteUmountEnabled(): Boolean = Natives.isWebViewZygoteUmountEnabled()
-
-    override fun setWebViewZygoteUmountEnabled(enabled: Boolean): Boolean =
-        Natives.setWebViewZygoteUmountEnabled(enabled)
 
     override suspend fun getSelinuxHideStatus(): String = getFeatureStatus("selinux_hide")
 

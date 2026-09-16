@@ -106,7 +106,7 @@ fun AppProfileScreenMiuix(
         topBar = {
             TopBar(
                 onBack = actions.onBack,
-                showActions = !state.isUidGroup,
+                showActions = !state.isUidGroup && !state.appGroup.primary.isWebViewZygote,
                 packageName = state.packageName,
                 userId = state.uid / 100000,
                 onLaunchApp = actions.onLaunchApp,
@@ -133,7 +133,11 @@ fun AppProfileScreenMiuix(
             ) {
                 item {
                     AppProfileInner(
-                        packageName = if (state.isUidGroup) "" else state.appGroup.primary.packageName,
+                        packageName = if (state.isUidGroup) {
+                            ""
+                        } else {
+                            state.appGroup.primary.displayIdentifier
+                        },
                         appLabel = if (state.isUidGroup) ownerNameForUid(state.appGroup.primary.uid) else state.appGroup.primary.label,
                         appIcon = {
                             AppIconImage(
@@ -153,6 +157,7 @@ fun AppProfileScreenMiuix(
                         },
                         profile = state.profile,
                         isUidGroup = state.isUidGroup,
+                        isSpecialApp = state.appGroup.primary.special,
                         affectedApps = state.appGroup.apps,
                         onViewTemplate = actions.onViewTemplate,
                         onManageTemplate = actions.onManageTemplate,
@@ -182,12 +187,13 @@ private fun AppProfileInner(
     appVersionCode: Long,
     profile: Natives.Profile,
     isUidGroup: Boolean = false,
+    isSpecialApp: Boolean = false,
     affectedApps: List<SuperUserViewModel.AppInfo> = emptyList(),
     onViewTemplate: (id: String) -> Unit = {},
     onManageTemplate: () -> Unit = {},
     onProfileChange: (Natives.Profile) -> Unit,
 ) {
-    val isRootGranted = profile.allowSu
+    val isRootGranted = !isSpecialApp && profile.allowSu
     val userId = appUid / 100000
     val appId = appUid % 100000
     val templates = remember { listAppProfileTemplates() }
@@ -220,7 +226,17 @@ private fun AppProfileInner(
                         maxLines = 1,
                         softWrap = false
                     )
-                    if (!isUidGroup) {
+                    if (isSpecialApp) {
+                        Text(
+                            text = packageName,
+                            fontSize = 12.sp,
+                            color = colorScheme.onSurfaceVariantSummary,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.basicMarquee(),
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    } else if (!isUidGroup) {
                         Text(
                             text = "$appVersionName ($appVersionCode)",
                             fontSize = 12.sp,
@@ -293,25 +309,27 @@ private fun AppProfileInner(
             }
         }
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .padding(bottom = 12.dp),
-        ) {
-            SwitchPreference(
-                startAction = {
-                    Icon(
-                        imageVector = Icons.Rounded.Security,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 6.dp),
-                        tint = colorScheme.onBackground
-                    )
-                },
-                title = stringResource(id = R.string.superuser),
-                checked = isRootGranted,
-                onCheckedChange = { onProfileChange(profile.copy(allowSu = it)) },
-            )
+        if (!isSpecialApp) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp),
+            ) {
+                SwitchPreference(
+                    startAction = {
+                        Icon(
+                            imageVector = Icons.Rounded.Security,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 6.dp),
+                            tint = colorScheme.onBackground
+                        )
+                    },
+                    title = stringResource(id = R.string.superuser),
+                    checked = isRootGranted,
+                    onCheckedChange = { onProfileChange(profile.copy(allowSu = it)) },
+                )
+            }
         }
 
         val initialRootMode = if (profile.rootUseDefault) {
@@ -461,7 +479,7 @@ private fun AppProfileInner(
                             )
                         },
                         title = app.label,
-                        summary = app.packageName,
+                        summary = app.displayIdentifier,
                         insideMargin = PaddingValues(start = 11.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
                     )
                 }
