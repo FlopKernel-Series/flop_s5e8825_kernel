@@ -34,6 +34,7 @@ static inline int __must_check ksu_kref_get_unless_zero(struct kref *kref)
 
 #include "klog.h" // IWYU pragma: keep
 #include "ksu.h"
+#include "feature/kernel_umount.h"
 #include "runtime/ksud_boot.h"
 #include "selinux/selinux.h"
 #include "policy/allowlist.h"
@@ -315,10 +316,6 @@ bool ksu_uid_should_umount(uid_t uid)
         // we should not umount on manager!
         return false;
     }
-    if (unlikely(uid == WEBVIEW_ZYGOTE_UID)) {
-        // we should not umount for webview zygote
-        return false;
-    }
 #ifdef CONFIG_KSU_DISABLE_POLICY
     return !__ksu_is_allow_uid(uid);
 #else
@@ -468,6 +465,7 @@ void do_persistent_allow_list(void *unused)
     fp = filp_open(KERNEL_SU_ALLOWLIST, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (IS_ERR(fp)) {
         pr_err("save_allow_list create file failed: %ld\n", PTR_ERR(fp));
+        revert_creds(saved);
         return;
     }
 

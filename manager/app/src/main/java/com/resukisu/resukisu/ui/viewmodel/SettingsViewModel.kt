@@ -1,47 +1,32 @@
 package com.resukisu.resukisu.ui.viewmodel
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.pm.PackageManager
-import android.content.res.Configuration
-import android.net.Uri
-import android.system.OsConstants
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
-import com.resukisu.resukisu.Natives
 import com.resukisu.resukisu.R
-import com.resukisu.resukisu.data.appPreferences
-import com.resukisu.resukisu.ksuApp
-import com.resukisu.resukisu.magica.BootCompletedReceiver
-import com.resukisu.resukisu.ui.screen.themeSettings.util.getCurrentAppLocale
-import com.resukisu.resukisu.ui.screen.themeSettings.util.toggleLauncherIcon
-import com.resukisu.resukisu.ui.theme.BackgroundManager
-import com.resukisu.resukisu.ui.theme.CardConfig
-import com.resukisu.resukisu.ui.theme.ThemeConfig
-import com.resukisu.resukisu.ui.theme.saveAndApplyCustomBackground
-import com.resukisu.resukisu.ui.theme.saveCustomBackground
-import com.resukisu.resukisu.ui.theme.saveDynamicColorSpec
-import com.resukisu.resukisu.ui.theme.saveDynamicColorState
-import com.resukisu.resukisu.ui.theme.saveDynamicPaletteStyle
-import com.resukisu.resukisu.ui.theme.saveThemeMode
-import com.resukisu.resukisu.ui.theme.saveThemeSeedColor
-import com.resukisu.resukisu.ui.util.execKsud
-import com.resukisu.resukisu.ui.util.getFeaturePersistValue
-import com.resukisu.resukisu.ui.util.getFeatureStatus
-import com.topjohnwu.superuser.ShellUtils
-import kotlinx.coroutines.Dispatchers
+import com.resukisu.resukisu.domain.model.AppearanceSetting
+import com.resukisu.resukisu.domain.model.PlatformSetting
+import com.resukisu.resukisu.domain.model.SettingsPlatformSnapshot
+import com.resukisu.resukisu.domain.model.coerceCompatibleWith
+import com.resukisu.resukisu.domain.usecase.ConfigureSuLogUseCase
+import com.resukisu.resukisu.domain.usecase.GetKernelFeatureSettingsUseCase
+import com.resukisu.resukisu.domain.usecase.GetPlatformFeatureStatusUseCase
+import com.resukisu.resukisu.domain.usecase.LoadSettingsPlatformUseCase
+import com.resukisu.resukisu.domain.usecase.SetDefaultUmountModulesUseCase
+import com.resukisu.resukisu.domain.usecase.SetKernelUmountEnabledUseCase
+import com.resukisu.resukisu.domain.usecase.SetSelinuxHideEnabledUseCase
+import com.resukisu.resukisu.domain.usecase.SetSuEnabledUseCase
+import com.resukisu.resukisu.domain.usecase.UpdateAppearanceUseCase
+import com.resukisu.resukisu.domain.usecase.UpdatePlatformSettingUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 
 enum class PredictiveBackAnimation(val value: String) {
@@ -52,8 +37,7 @@ enum class PredictiveBackAnimation(val value: String) {
     KernelSUClassic("ksu_classic");
 
     companion object {
-        fun fromValueOrDefault(value: String) =
-            entries.find { it.value == value } ?: Scale
+        fun fromValueOrDefault(value: String) = entries.find { it.value == value } ?: Scale
     }
 }
 
@@ -68,34 +52,39 @@ enum class PredictiveBackExitDirection(val value: String) {
     }
 }
 
+fun dpiFriendlyNameRes(dpi: Int): Int = when (dpi) {
+    240 -> R.string.dpi_size_small
+    320 -> R.string.dpi_size_medium
+    420 -> R.string.dpi_size_large
+    560 -> R.string.dpi_size_extra_large
+    else -> R.string.dpi_size_custom
+}
+
 data class SettingsUiState(
     val dpi: Int = 0,
     val predictiveBackAnimation: PredictiveBackAnimation = PredictiveBackAnimation.Scale,
-    val predictiveBackExitDirection: PredictiveBackExitDirection = PredictiveBackExitDirection.FOLLOW_GESTURE,
-
+    val predictiveBackExitDirection: PredictiveBackExitDirection =
+        PredictiveBackExitDirection.FOLLOW_GESTURE,
     val themeMode: Int = 0,
-    val themeOptions: List<String> = emptyList(),
+    val themeOptions: List<Int> = emptyList(),
     val useDynamicColor: Boolean = false,
     val dynamicColorSpec: ColorSpec.SpecVersion = ColorSpec.SpecVersion.SPEC_2021,
     val dynamicPaletteStyle: PaletteStyle = PaletteStyle.TonalSpot,
     val showLanguageDialog: Boolean = false,
     val currentAppLocale: Locale? = null,
     val showThemeColorDialog: Boolean = false,
-
     val useAltIcon: Boolean = false,
-
     val cardAlpha: Float = 1f,
     val backgroundDim: Float = 0f,
     val isCustomBackgroundEnabled: Boolean = false,
-
     val systemDpi: Int = 0,
     val currentDpi: Int = 0,
     val tempDpi: Int = 0,
     val isDpiCustom: Boolean = true,
-    val dpiPresets: Map<String, Int> = emptyMap(),
-
-    val checkUpdate: Boolean = true,
+    val dpiPresets: Map<Int, Int> = emptyMap(),
+    val checkManagerUpdate: Boolean = true,
     val checkBetaUpdate: Boolean = true,
+    val checkModuleUpdate: Boolean = true,
     val suCompatMode: Int = 0,
     val suStatus: String = "",
     val kernelUmountStatus: String = "",
@@ -108,495 +97,422 @@ data class SettingsUiState(
     val selinuxHideStatus: String = "",
     val isSelinuxHideEnabled: Boolean = false,
     val defaultUmountModules: Boolean = false,
+    val useBuiltinMonoFont: Boolean = false,
 )
 
-class SettingsViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(SettingsUiState())
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+sealed interface SettingsUiAction {
+    data object Initialize : SettingsUiAction
+    data object InitializeFirstRun : SettingsUiAction
+    data object LoadFeatureSettings : SettingsUiAction
+    data class SetThemeMode(val index: Int) : SettingsUiAction
+    data class SetThemeColor(val color: Int) : SettingsUiAction
+    data class SetThemeColorDialogVisible(val visible: Boolean) : SettingsUiAction
+    data class SetPredictiveBackAnimation(val animation: PredictiveBackAnimation) : SettingsUiAction
+    data class SetPredictiveBackExitDirection(
+        val direction: PredictiveBackExitDirection,
+    ) : SettingsUiAction
 
-    fun initialize(context: Context, systemIsDark: Boolean = isSystemDark(context)) {
-        val prefs = context.appPreferences
-        val systemDpi = context.resources.displayMetrics.densityDpi
-        val currentDpi = prefs.getInt("app_dpi", systemDpi)
+    data class SetDynamicColor(val enabled: Boolean) : SettingsUiAction
+    data class SetDynamicColorSpec(val spec: ColorSpec.SpecVersion) : SettingsUiAction
+    data class SetDynamicPaletteStyle(val style: PaletteStyle) : SettingsUiAction
+    data class SetCustomBackground(val uri: String) : SettingsUiAction
+    data object RemoveCustomBackground : SettingsUiAction
+    data class SetCardAlpha(val value: Float) : SettingsUiAction
+    data class SetBackgroundDim(val value: Float) : SettingsUiAction
+    data object SaveCardConfig : SettingsUiAction
+    data class SetLanguageDialogVisible(val visible: Boolean) : SettingsUiAction
+    data class SetLanguage(val localeTag: String) : SettingsUiAction
+    data object RestartActivity : SettingsUiAction
+    data object ApplyDpi : SettingsUiAction
+    data class SetTempDpi(val dpi: Int) : SettingsUiAction
+    data class SetAlternateIcon(val enabled: Boolean) : SettingsUiAction
+    data class SetManagerUpdateCheck(val enabled: Boolean) : SettingsUiAction
+    data class SetBetaUpdateCheck(val enabled: Boolean) : SettingsUiAction
+    data class SetModuleUpdateCheck(val enabled: Boolean) : SettingsUiAction
+    data class SetSuCompatMode(val index: Int) : SettingsUiAction
+    data class SetKernelUmount(val enabled: Boolean) : SettingsUiAction
+    data class SetAutoJailbreak(val enabled: Boolean) : SettingsUiAction
+    data class SetSelinuxHide(val enabled: Boolean) : SettingsUiAction
+    data class SetAdbRoot(val enabled: Boolean) : SettingsUiAction
+    data class SetSuLog(val enabled: Boolean) : SettingsUiAction
+    data class SetDefaultUmountModules(val enabled: Boolean) : SettingsUiAction
+}
 
-        CardConfig.load(context)
+sealed interface SettingsUiEvent {
+    data class Error(val message: String) : SettingsUiEvent
+    data class Message(val stringResource: Int, val formatArg: Int? = null) : SettingsUiEvent
+    data object RestartActivity : SettingsUiEvent
+}
 
-        _uiState.update {
-            it.copy(
-                dpi = prefs.getInt("app_dpi", 0),
-                predictiveBackAnimation = PredictiveBackAnimation.fromValueOrDefault(
-                    prefs.getString("predictive_back_animation", "") ?: ""
-                ),
-                predictiveBackExitDirection = PredictiveBackExitDirection.fromValueOrDefault(
-                    prefs.getString("predictive_back_exit_direction", "") ?: ""
-                ),
-                themeMode = when (ThemeConfig.forceDarkMode) {
-                    true -> 2
-                    false -> 1
-                    null -> 0
-                },
-                themeOptions = listOf(
-                    context.getString(R.string.theme_follow_system),
-                    context.getString(R.string.theme_light),
-                    context.getString(R.string.theme_dark)
-                ),
-                useDynamicColor = ThemeConfig.useDynamicColor,
-                dynamicColorSpec = ThemeConfig.dynamicColorSpec,
-                dynamicPaletteStyle = ThemeConfig.dynamicPaletteStyle,
-                currentAppLocale = getCurrentAppLocale(context),
-                useAltIcon = prefs.getBoolean("use_alt_icon", false),
-                cardAlpha = CardConfig.cardAlpha,
-                backgroundDim = ThemeConfig.backgroundDim,
-                isCustomBackgroundEnabled = ThemeConfig.customBackgroundUri != null,
-                systemDpi = systemDpi,
-                currentDpi = currentDpi,
-                tempDpi = currentDpi,
-                isDpiCustom = !dpiPresetValues().contains(currentDpi),
-                dpiPresets = dpiPresets(context),
-                checkUpdate = prefs.getBoolean("check_update", true),
-                checkBetaUpdate = prefs.getBoolean("check_beta_update", true),
-                autoJailbreakEnabled = prefs.getBoolean("auto_jailbreak", false),
-            )
-        }
+class SettingsViewModel(
+    private val loadSettings: LoadSettingsPlatformUseCase,
+    private val updateAppearance: UpdateAppearanceUseCase,
+    private val updatePlatform: UpdatePlatformSettingUseCase,
+    private val getPlatformFeatureStatus: GetPlatformFeatureStatusUseCase,
+    private val getKernelFeatureSettings: GetKernelFeatureSettingsUseCase,
+    private val setSuEnabled: SetSuEnabledUseCase,
+    private val setKernelUmountEnabled: SetKernelUmountEnabledUseCase,
+    private val setSuLogEnabled: ConfigureSuLogUseCase,
+    private val setSelinuxHideEnabled: SetSelinuxHideEnabledUseCase,
+    private val setDefaultUmountModules: SetDefaultUmountModulesUseCase,
+) : ViewModel() {
+    private val mutableState = MutableStateFlow(SettingsUiState())
+    val state: StateFlow<SettingsUiState> = mutableState.asStateFlow()
+    val uiState: StateFlow<SettingsUiState> = state
+    private val mutableEvents = MutableSharedFlow<SettingsUiEvent>(extraBufferCapacity = 2)
+    val events: SharedFlow<SettingsUiEvent> = mutableEvents.asSharedFlow()
 
-        when (_uiState.value.themeMode) {
-            2 -> {
-                CardConfig.isUserDarkModeEnabled = true
-                CardConfig.isUserLightModeEnabled = false
-            }
-
-            1 -> {
-                CardConfig.isUserDarkModeEnabled = false
-                CardConfig.isUserLightModeEnabled = true
-            }
-
-            0 -> {
-                CardConfig.isUserDarkModeEnabled = false
-                CardConfig.isUserLightModeEnabled = false
-            }
-        }
-
-        if (_uiState.value.themeMode == 0 && systemIsDark) {
-            CardConfig.setThemeDefaults(true)
-        }
-
-        CardConfig.save(context)
-        loadFeatureSettings(context)
+    init {
+        dispatch(SettingsUiAction.Initialize)
     }
 
-    fun initializeFirstRunSettings(context: Context) {
-        val prefs = context.appPreferences
-        if (prefs.getBoolean("is_first_run", true)) {
-            ThemeConfig.preventBackgroundRefresh = false
-            prefs.putBoolean("prevent_background_refresh", false)
-            prefs.putBoolean("is_first_run", false)
-        }
+fun initialize() {
+        applySnapshot(loadSettings(), resetTempDpi = true)
+        loadFeatureSettings()
     }
 
-    fun loadFeatureSettings(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val prefs = context.appPreferences
-            val currentSuEnabled = runCatching { Natives.isSuEnabled() }.getOrDefault(false)
-            val suPersistValue = runCatching { getFeaturePersistValue("su_compat") }.getOrNull()
-            val suCompatMode = suPersistValue?.let { value ->
-                if (value == 0L) 2 else if (!currentSuEnabled) 1 else 0
-            } ?: if (!currentSuEnabled) 1 else 0
+    fun initializeFirstRunSettings() {
+        updatePlatformAsync(PlatformSetting.InitializeFirstRun)
+    }
 
-            _uiState.update {
+    fun loadFeatureSettings() {
+        viewModelScope.launch {
+            val features = getKernelFeatureSettings()
+            val platform = getPlatformFeatureStatus()
+            val suCompatMode = platform.suCompatPersistValue?.let { value ->
+                if (value == 0L) 2 else if (!features.suEnabled) 1 else 0
+            } ?: if (!features.suEnabled) 1 else 0
+            mutableState.update {
                 it.copy(
-                    checkUpdate = prefs.getBoolean("check_update", true),
-                    checkBetaUpdate = prefs.getBoolean("check_beta_update", true),
                     suCompatMode = suCompatMode,
-                    suStatus = runCatching { getFeatureStatus("su_compat") }.getOrDefault(""),
-                    kernelUmountStatus = runCatching { getFeatureStatus("kernel_umount") }.getOrDefault(
-                        ""
-                    ),
-                    isKernelUmountEnabled = runCatching { Natives.isKernelUmountEnabled() }.getOrDefault(
-                        false
-                    ),
-                    autoJailbreakEnabled = prefs.getBoolean("auto_jailbreak", false),
-                    adbRootStatus = runCatching { getFeatureStatus("adb_root") }.getOrDefault(""),
-                    isAdbRootEnabled = runCatching { getFeaturePersistValue("adb_root") == 1L }.getOrDefault(
-                        false
-                    ),
-                    sulogStatus = runCatching { getFeatureStatus("sulog") }.getOrDefault(""),
-                    isSuLogEnabled = runCatching { Natives.isSuLogEnabled() }.getOrDefault(false),
-                    selinuxHideStatus = runCatching { getFeatureStatus("selinux_hide") }.getOrDefault(
-                        ""
-                    ),
-                    isSelinuxHideEnabled = runCatching { Natives.isSelinuxHideEnabled() }.getOrDefault(
-                        false
-                    ),
-                    defaultUmountModules = runCatching { Natives.isDefaultUmountModules() }.getOrDefault(
-                        false
-                    ),
+                    suStatus = platform.suStatus,
+                    kernelUmountStatus = platform.kernelUmountStatus,
+                    isKernelUmountEnabled = features.kernelUmountEnabled,
+                    adbRootStatus = platform.adbRootStatus,
+                    isAdbRootEnabled = platform.adbRootEnabled,
+                    sulogStatus = platform.sulogStatus,
+                    isSuLogEnabled = features.suLogEnabled,
+                    selinuxHideStatus = platform.selinuxHideStatus,
+                    isSelinuxHideEnabled = features.selinuxHideEnabled,
+                    defaultUmountModules = features.defaultUmountModules,
                 )
             }
         }
     }
 
-    fun setPredictiveBackAnimation(context: Context, animation: PredictiveBackAnimation) {
-        context.appPreferences.putString("predictive_back_animation", animation.value)
-        _uiState.update { it.copy(predictiveBackAnimation = animation) }
+    fun setPredictiveBackAnimation(animation: PredictiveBackAnimation) {
+        mutableState.update { it.copy(predictiveBackAnimation = animation) }
+        updatePlatformAsync(PlatformSetting.PredictiveBackAnimation(animation.value))
     }
 
-    fun setPredictiveBackExitDirection(context: Context, direction: PredictiveBackExitDirection) {
-        context.appPreferences.putString("predictive_back_exit_direction", direction.value)
-        _uiState.update { it.copy(predictiveBackExitDirection = direction) }
+    fun setPredictiveBackExitDirection(direction: PredictiveBackExitDirection) {
+        mutableState.update { it.copy(predictiveBackExitDirection = direction) }
+        updatePlatformAsync(PlatformSetting.PredictiveBackExitDirection(direction.value))
     }
 
-    fun setThemeColorDialogVisible(visible: Boolean) {
-        _uiState.update { it.copy(showThemeColorDialog = visible) }
+    fun setThemeColorDialogVisible(visible: Boolean) =
+        mutableState.update { it.copy(showThemeColorDialog = visible) }
+
+    fun setLanguageDialogVisible(visible: Boolean) =
+        mutableState.update { it.copy(showLanguageDialog = visible) }
+    fun handleLanguageChange(localeTag: String) {
+        updatePlatformAsync(PlatformSetting.Locale(localeTag))
     }
 
-    fun setLanguageDialogVisible(visible: Boolean) {
-        _uiState.update { it.copy(showLanguageDialog = visible) }
+    fun restartActivityForLanguage() {
+        mutableEvents.tryEmit(SettingsUiEvent.RestartActivity)
     }
 
-    fun refreshCurrentLocale(context: Context) {
-        _uiState.update { it.copy(currentAppLocale = getCurrentAppLocale(context)) }
+    fun handleThemeModeChange(index: Int) {
+        mutableState.update { it.copy(themeMode = index) }
+        updateAppearanceAsync(AppearanceSetting.ThemeMode(index))
     }
 
-    fun handleThemeModeChange(context: Context, index: Int) {
-        val newThemeMode = when (index) {
-            0 -> null
-            1 -> false
-            2 -> true
-            else -> null
-        }
-        context.saveThemeMode(newThemeMode)
-        ThemeConfig.updateTheme(darkMode = newThemeMode)
+    fun handleThemeColorChange(seedColor: Int) =
+        updateAppearanceAsync(AppearanceSetting.SeedColor(seedColor))
 
-        when (index) {
-            2 -> {
-                ThemeConfig.updateTheme(darkMode = true)
-                CardConfig.updateThemePreference(darkMode = true, lightMode = false)
-                CardConfig.setThemeDefaults(true)
-            }
+    fun handleDynamicColorChange(enabled: Boolean) {
+        mutableState.update { it.copy(useDynamicColor = enabled) }
+        updateAppearanceAsync(AppearanceSetting.DynamicColor(enabled))
+    }
 
-            1 -> {
-                ThemeConfig.updateTheme(darkMode = false)
-                CardConfig.updateThemePreference(darkMode = false, lightMode = true)
-                CardConfig.setThemeDefaults(false)
-            }
-
-            0 -> {
-                ThemeConfig.updateTheme(darkMode = null)
-                CardConfig.updateThemePreference(darkMode = null, lightMode = null)
-                CardConfig.setThemeDefaults(isSystemDark(context))
-            }
-        }
-        CardConfig.save(context)
-        _uiState.update {
+    fun handleDynamicColorSpecChange(spec: ColorSpec.SpecVersion) {
+        mutableState.update {
             it.copy(
-                themeMode = index,
-                cardAlpha = CardConfig.cardAlpha,
-                backgroundDim = ThemeConfig.backgroundDim,
+                dynamicColorSpec = spec,
+                dynamicPaletteStyle = it.dynamicPaletteStyle.coerceCompatibleWith(spec),
             )
         }
+        updateAppearanceAsync(AppearanceSetting.DynamicColorSpec(spec))
     }
 
-    fun handleThemeColorChange(context: Context, seedColor: Int) {
-        context.saveThemeSeedColor(seedColor)
-        ThemeConfig.updateTheme(seedColor = seedColor)
+    fun handleDynamicPaletteStyleChange(style: PaletteStyle) {
+        mutableState.update { it.copy(dynamicPaletteStyle = style) }
+        updateAppearanceAsync(AppearanceSetting.DynamicPaletteStyle(style))
     }
-
-    fun handleDynamicColorChange(context: Context, enabled: Boolean) {
-        context.saveDynamicColorState(enabled)
-        ThemeConfig.updateTheme(dynamicColor = enabled)
-        _uiState.update { it.copy(useDynamicColor = enabled) }
-    }
-
-    fun handleDynamicColorSpecChange(context: Context, spec: ColorSpec.SpecVersion) {
-        context.saveDynamicColorSpec(spec)
-        _uiState.update { it.copy(dynamicColorSpec = spec) }
-    }
-
-    fun handleDynamicPaletteStyleChange(context: Context, style: PaletteStyle) {
-        context.saveDynamicPaletteStyle(style)
-        _uiState.update { it.copy(dynamicPaletteStyle = style) }
-    }
-
-    fun getDpiFriendlyName(context: Context, dpi: Int): String {
-        return when (dpi) {
-            240 -> context.getString(R.string.dpi_size_small)
-            320 -> context.getString(R.string.dpi_size_medium)
-            420 -> context.getString(R.string.dpi_size_large)
-            560 -> context.getString(R.string.dpi_size_extra_large)
-            else -> context.getString(R.string.dpi_size_custom)
-        }
-    }
-
     fun updateTempDpi(dpi: Int) {
-        _uiState.update {
+        mutableState.update { it.copy(tempDpi = dpi, isDpiCustom = dpi !in DPI_PRESETS) }
+    }
+
+    fun handleDpiApply() {
+        val current = state.value
+        if (current.tempDpi == current.currentDpi) return
+        viewModelScope.launch {
+            updatePlatform(PlatformSetting.Dpi(current.tempDpi))
+                .onSuccess {
+                    applySnapshot(it, resetTempDpi = true)
+                    mutableEvents.tryEmit(
+                        SettingsUiEvent.Message(R.string.dpi_applied_success, current.tempDpi)
+                    )
+                }
+                .onFailure(::emitError)
+        }
+    }
+
+    fun handleCustomBackground(uri: String) {
+        viewModelScope.launch {
+            updateAppearance(AppearanceSetting.CustomBackground(uri))
+                .onSuccess {
+                    applySnapshot(it, resetTempDpi = false)
+                    mutableEvents.tryEmit(SettingsUiEvent.Message(R.string.background_set_success))
+                }
+                .onFailure {
+                    mutableEvents.tryEmit(SettingsUiEvent.Message(R.string.background_crop_failed))
+                }
+        }
+    }
+
+    fun handleRemoveCustomBackground() {
+        viewModelScope.launch {
+            updateAppearance(AppearanceSetting.RemoveCustomBackground)
+                .onSuccess {
+                    applySnapshot(it, resetTempDpi = false)
+                    mutableEvents.tryEmit(SettingsUiEvent.Message(R.string.background_removed))
+                }
+                .onFailure(::emitError)
+        }
+    }
+
+    fun handleCardAlphaChange(value: Float) {
+        mutableState.update { it.copy(cardAlpha = value) }
+        updateAppearanceAsync(AppearanceSetting.CardAlpha(value))
+    }
+
+    fun handleBackgroundDimChange(value: Float) {
+        mutableState.update { it.copy(backgroundDim = value) }
+        updateAppearanceAsync(AppearanceSetting.BackgroundDim(value))
+    }
+
+    fun saveCardConfig() = updateAppearanceAsync(AppearanceSetting.SaveCardConfig)
+
+    fun handleIconChange(enabled: Boolean) {
+        mutableState.update { it.copy(useAltIcon = enabled) }
+        viewModelScope.launch {
+            updatePlatform(PlatformSetting.AlternateIcon(enabled))
+                .onSuccess {
+                    applySnapshot(it, resetTempDpi = false)
+                    mutableEvents.tryEmit(SettingsUiEvent.Message(R.string.icon_switched))
+                }
+                .onFailure(::emitError)
+        }
+    }
+
+    fun handleCheckManagerUpdateChange(enabled: Boolean) {
+        mutableState.update {
             it.copy(
-                tempDpi = dpi,
-                isDpiCustom = !dpiPresetValues().contains(dpi),
+                checkManagerUpdate = enabled,
+                checkBetaUpdate = if (enabled) it.checkBetaUpdate else false,
             )
         }
+        updatePlatformAsync(PlatformSetting.ManagerUpdateCheck(enabled))
     }
 
-    fun handleDpiApply(context: Context) {
-        val state = _uiState.value
-        if (state.tempDpi == state.currentDpi) return
-        context.appPreferences.putInt("app_dpi", state.tempDpi)
-        _uiState.update {
-            it.copy(
-                currentDpi = state.tempDpi,
-                dpi = state.tempDpi,
-            )
-        }
-        Toast.makeText(
-            context,
-            context.getString(R.string.dpi_applied_success, state.tempDpi),
-            Toast.LENGTH_SHORT
-        ).show()
+    fun handleCheckBetaUpdateChange(enabled: Boolean) {
+        mutableState.update { it.copy(checkBetaUpdate = enabled) }
+        updatePlatformAsync(PlatformSetting.BetaUpdateCheck(enabled))
     }
 
-    fun handleCustomBackground(context: Context, transformedUri: Uri) {
-        context.saveAndApplyCustomBackground(transformedUri)
-        CardConfig.cardAlpha = 0.55f
-        BackgroundManager.saveBackgroundDim(context, 0.3f)
-        BackgroundManager.saveEnableBlur(context, true)
-        BackgroundManager.saveEnableBlurExp(context, false)
-        BackgroundManager.saveUseBackgroundSeedColor(context, true)
-        BackgroundManager.saveEnableHighContrastMode(context, false)
-        CardConfig.cardElevation = 0.dp
-        CardConfig.isCustomBackgroundEnabled = true
-        CardConfig.save(context)
-
-        _uiState.update {
-            it.copy(
-                isCustomBackgroundEnabled = true,
-                cardAlpha = CardConfig.cardAlpha,
-                backgroundDim = ThemeConfig.backgroundDim,
-            )
-        }
-
-        Toast.makeText(
-            context,
-            context.getString(R.string.background_set_success),
-            Toast.LENGTH_SHORT
-        ).show()
+    fun handleCheckModuleUpdateChange(enabled: Boolean) {
+        mutableState.update { it.copy(checkModuleUpdate = enabled) }
+        updatePlatformAsync(PlatformSetting.ModuleUpdateCheck(enabled))
     }
 
-    fun handleRemoveCustomBackground(context: Context) {
-        context.saveCustomBackground(null)
-        CardConfig.cardAlpha = 1f
-        CardConfig.isCustomAlphaSet = false
-        CardConfig.isCustomBackgroundEnabled = false
-        CardConfig.save(context)
-        ThemeConfig.preventBackgroundRefresh = false
-
-        BackgroundManager.saveBackgroundDim(context, 0f)
-        BackgroundManager.saveEnableBlur(context, false)
-        BackgroundManager.saveEnableBlurExp(context, false)
-        BackgroundManager.saveUseBackgroundSeedColor(context, false)
-        BackgroundManager.saveEnableHighContrastMode(context, false)
-
-        context.appPreferences.putBoolean("prevent_background_refresh", false)
-
-        _uiState.update {
-            it.copy(
-                isCustomBackgroundEnabled = false,
-                cardAlpha = CardConfig.cardAlpha,
-                backgroundDim = ThemeConfig.backgroundDim,
-            )
-        }
-
-        Toast.makeText(
-            context,
-            context.getString(R.string.background_removed),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    fun handleCardAlphaChange(context: Context, newValue: Float) {
-        CardConfig.cardAlpha = newValue
-        CardConfig.isCustomAlphaSet = true
-        context.appPreferences.putBoolean("is_custom_alpha_set", true)
-        context.appPreferences.putFloat("card_alpha", newValue)
-        _uiState.update { it.copy(cardAlpha = newValue) }
-    }
-
-    fun handleBackgroundDimChange(context: Context, newValue: Float) {
-        BackgroundManager.saveBackgroundDim(context, newValue)
-        _uiState.update { it.copy(backgroundDim = newValue) }
-    }
-
-    fun saveCardConfig(context: Context) {
-        CardConfig.save(context)
-    }
-
-    fun handleIconChange(context: Context, newValue: Boolean) {
-        context.appPreferences.putBoolean("use_alt_icon", newValue)
-        toggleLauncherIcon(context, newValue)
-        _uiState.update { it.copy(useAltIcon = newValue) }
-        Toast.makeText(context, context.getString(R.string.icon_switched), Toast.LENGTH_SHORT)
-            .show()
-    }
-
-    fun handleCheckUpdateChange(context: Context, enabled: Boolean) {
-        updateBooleanPref(context, "check_update", enabled) { it.copy(checkUpdate = enabled) }
-        if (!enabled) {
-            updateBooleanPref(context, "check_beta_update", false) {
-                it.copy(checkBetaUpdate = false)
-            }
-        }
-        refreshHomeData(context)
-    }
-
-    fun handleCheckBetaUpdateChange(context: Context, enabled: Boolean) {
-        updateBooleanPref(
-            context,
-            "check_beta_update",
-            enabled
-        ) { it.copy(checkBetaUpdate = enabled) }
-        refreshHomeData(context)
-    }
-
-    private fun refreshHomeData(context: Context) {
-        ViewModelProvider(ksuApp)[HomeViewModel::class.java]
-            .refreshData(context, refreshUI = true)
-    }
-
-    fun handleSuCompatModeChange(context: Context, index: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val prefs = context.appPreferences
+    fun handleSuCompatModeChange(index: Int) {
+        viewModelScope.launch {
             val changed = when (index) {
-                0 -> if (Natives.setSuEnabled(true)) {
-                    execKsud("feature save", true)
-                    prefs.putInt("su_compat_mode", 0)
-                    true
-                } else false
-
-                1 -> if (Natives.setSuEnabled(true)) {
-                    execKsud("feature save", true)
-                    if (Natives.setSuEnabled(false)) {
-                        prefs.putInt("su_compat_mode", 0)
-                        true
-                    } else false
-                } else false
-
-                2 -> if (Natives.setSuEnabled(false)) {
-                    execKsud("feature save", true)
-                    prefs.putInt("su_compat_mode", 2)
-                    true
-                } else false
-
+                0 -> setSuEnabled(true)
+                1 -> setSuEnabled(true) && setSuEnabled(false)
+                2 -> setSuEnabled(false)
                 else -> false
             }
             if (changed) {
-                _uiState.update { it.copy(suCompatMode = index) }
+                updatePlatform(PlatformSetting.SuCompatMode(if (index == 2) 2 else 0))
+                mutableState.update { it.copy(suCompatMode = index) }
             }
         }
     }
 
     fun handleKernelUmountChange(checked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (Natives.setKernelUmountEnabled(checked)) {
-                execKsud("feature save", true)
-                _uiState.update { it.copy(isKernelUmountEnabled = checked) }
+        viewModelScope.launch {
+            if (setKernelUmountEnabled(checked)) {
+                mutableState.update { it.copy(isKernelUmountEnabled = checked) }
             }
         }
     }
 
-    fun handleAutoJailbreakChange(context: Context, value: Boolean) {
-        runCatching {
-            ksuApp.packageManager.setComponentEnabledSetting(
-                ComponentName(ksuApp, BootCompletedReceiver::class.java),
-                if (value) {
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                } else {
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                },
-                PackageManager.DONT_KILL_APP
-            )
-        }.onFailure {
-            Log.e("Settings", "failed to change boot receiver state to $value", it)
-        }
-        context.appPreferences.putBoolean("auto_jailbreak", value)
-        _uiState.update { it.copy(autoJailbreakEnabled = value) }
+    fun handleAutoJailbreakChange(enabled: Boolean) {
+        mutableState.update { it.copy(autoJailbreakEnabled = enabled) }
+        updatePlatformAsync(PlatformSetting.AutoJailbreak(enabled))
     }
 
     fun handleAdbRootChange(checked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (execKsud("feature set adb_root ${if (checked) 1 else 0}", true)) {
-                ShellUtils.fastCmd("setprop ctl.restart adbd")
-                execKsud("feature save", true)
-            }
-            _uiState.update { it.copy(isAdbRootEnabled = checked) }
-        }
+        mutableState.update { it.copy(isAdbRootEnabled = checked) }
+        updatePlatformAsync(PlatformSetting.AdbRoot(checked))
     }
 
     fun handleSuLogChange(checked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (Natives.setSuLogEnabled(checked)) {
-                execKsud("feature save", true)
-                _uiState.update { it.copy(isSuLogEnabled = checked) }
-            }
+        viewModelScope.launch {
+            if (setSuLogEnabled(checked)) mutableState.update { it.copy(isSuLogEnabled = checked) }
         }
     }
 
-    fun handleSelinuxHideChange(context: Context, checked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val status = Natives.setSelinuxHideEnabled(checked)
-            execKsud("feature save", true)
-            _uiState.update { it.copy(isSelinuxHideEnabled = checked) }
-            withContext(Dispatchers.Main) {
-                when (status) {
-                    0 -> Unit
-                    -OsConstants.EAGAIN -> {
-                        Toast.makeText(
-                            context,
-                            R.string.settings_selinux_hide_reboot_required,
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+    fun handleSelinuxHideChange(checked: Boolean) {
+        viewModelScope.launch {
+            val status = setSelinuxHideEnabled(checked)
+            mutableState.update { it.copy(isSelinuxHideEnabled = checked) }
+            when (status) {
+                0 -> Unit
+                -11 -> mutableEvents.emit(
+                    SettingsUiEvent.Message(R.string.settings_selinux_hide_reboot_required)
+                )
 
-                    else -> {
-                        Toast.makeText(
-                            context,
-                            ksuApp.getString(R.string.settings_selinux_hide_failed, status),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
+                else -> mutableEvents.emit(
+                    SettingsUiEvent.Message(R.string.settings_selinux_hide_failed, status)
+                )
             }
         }
     }
 
     fun handleDefaultUmountModulesChange(checked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (Natives.setDefaultUmountModules(checked)) {
-                _uiState.update { it.copy(defaultUmountModules = checked) }
+        viewModelScope.launch {
+            if (setDefaultUmountModules(checked)) {
+                mutableState.update { it.copy(defaultUmountModules = checked) }
             }
         }
     }
 
-    private fun updateBooleanPref(
-        context: Context,
-        key: String,
-        value: Boolean,
-        reducer: (SettingsUiState) -> SettingsUiState,
-    ) {
-        context.appPreferences.putBoolean(key, value)
-        _uiState.update(reducer)
+fun dispatch(action: SettingsUiAction) {
+        when (action) {
+            SettingsUiAction.Initialize -> initialize()
+            SettingsUiAction.InitializeFirstRun -> initializeFirstRunSettings()
+            SettingsUiAction.LoadFeatureSettings -> loadFeatureSettings()
+            is SettingsUiAction.SetThemeMode -> handleThemeModeChange(action.index)
+            is SettingsUiAction.SetThemeColor -> handleThemeColorChange(action.color)
+            is SettingsUiAction.SetThemeColorDialogVisible ->
+                setThemeColorDialogVisible(action.visible)
+
+            is SettingsUiAction.SetPredictiveBackAnimation ->
+                setPredictiveBackAnimation(action.animation)
+
+            is SettingsUiAction.SetPredictiveBackExitDirection ->
+                setPredictiveBackExitDirection(action.direction)
+
+            is SettingsUiAction.SetDynamicColor -> handleDynamicColorChange(action.enabled)
+            is SettingsUiAction.SetDynamicColorSpec -> handleDynamicColorSpecChange(action.spec)
+            is SettingsUiAction.SetDynamicPaletteStyle -> handleDynamicPaletteStyleChange(action.style)
+            is SettingsUiAction.SetCustomBackground -> handleCustomBackground(action.uri)
+            SettingsUiAction.RemoveCustomBackground -> handleRemoveCustomBackground()
+            is SettingsUiAction.SetCardAlpha -> handleCardAlphaChange(action.value)
+            is SettingsUiAction.SetBackgroundDim -> handleBackgroundDimChange(action.value)
+            SettingsUiAction.SaveCardConfig -> saveCardConfig()
+            is SettingsUiAction.SetLanguageDialogVisible -> setLanguageDialogVisible(action.visible)
+            is SettingsUiAction.SetLanguage -> handleLanguageChange(action.localeTag)
+            SettingsUiAction.RestartActivity -> restartActivityForLanguage()
+            SettingsUiAction.ApplyDpi -> handleDpiApply()
+            is SettingsUiAction.SetTempDpi -> updateTempDpi(action.dpi)
+            is SettingsUiAction.SetAlternateIcon -> handleIconChange(action.enabled)
+            is SettingsUiAction.SetManagerUpdateCheck -> handleCheckManagerUpdateChange(action.enabled)
+            is SettingsUiAction.SetBetaUpdateCheck -> handleCheckBetaUpdateChange(action.enabled)
+            is SettingsUiAction.SetModuleUpdateCheck -> handleCheckModuleUpdateChange(action.enabled)
+            is SettingsUiAction.SetSuCompatMode -> handleSuCompatModeChange(action.index)
+            is SettingsUiAction.SetKernelUmount -> handleKernelUmountChange(action.enabled)
+            is SettingsUiAction.SetAutoJailbreak -> handleAutoJailbreakChange(action.enabled)
+            is SettingsUiAction.SetSelinuxHide -> handleSelinuxHideChange(action.enabled)
+            is SettingsUiAction.SetAdbRoot -> handleAdbRootChange(action.enabled)
+            is SettingsUiAction.SetSuLog -> handleSuLogChange(action.enabled)
+            is SettingsUiAction.SetDefaultUmountModules ->
+                handleDefaultUmountModulesChange(action.enabled)
+        }
     }
 
-    private fun dpiPresets(context: Context): Map<String, Int> {
-        return mapOf(
-            context.getString(R.string.dpi_size_small) to 240,
-            context.getString(R.string.dpi_size_medium) to 320,
-            context.getString(R.string.dpi_size_large) to 420,
-            context.getString(R.string.dpi_size_extra_large) to 560
+    fun handleBuiltinMonospaceFontChange(checked: Boolean) {
+        updatePlatformAsync(PlatformSetting.BuiltinMonospaceFont(checked))
+    }
+
+    private fun updateAppearanceAsync(setting: AppearanceSetting) {
+        viewModelScope.launch {
+            updateAppearance(setting)
+                .onSuccess { applySnapshot(it, resetTempDpi = false) }
+                .onFailure(::emitError)
+        }
+    }
+
+    private fun updatePlatformAsync(setting: PlatformSetting) {
+        viewModelScope.launch {
+            updatePlatform(setting)
+                .onSuccess { applySnapshot(it, resetTempDpi = false) }
+                .onFailure(::emitError)
+        }
+    }
+
+    private fun applySnapshot(snapshot: SettingsPlatformSnapshot, resetTempDpi: Boolean) {
+        mutableState.update { current ->
+            current.copy(
+                dpi = snapshot.dpi,
+                predictiveBackAnimation =
+                    PredictiveBackAnimation.fromValueOrDefault(snapshot.predictiveBackAnimation),
+                predictiveBackExitDirection =
+                    PredictiveBackExitDirection.fromValueOrDefault(snapshot.predictiveBackExitDirection),
+                themeMode = snapshot.themeMode,
+                themeOptions = THEME_OPTIONS,
+                useDynamicColor = snapshot.useDynamicColor,
+                dynamicColorSpec = snapshot.dynamicColorSpec,
+                dynamicPaletteStyle = snapshot.dynamicPaletteStyle,
+                currentAppLocale = snapshot.currentLocaleTag?.let(Locale::forLanguageTag),
+                useAltIcon = snapshot.useAltIcon,
+                cardAlpha = snapshot.cardAlpha,
+                backgroundDim = snapshot.backgroundDim,
+                isCustomBackgroundEnabled = snapshot.customBackgroundEnabled,
+                systemDpi = snapshot.systemDpi,
+                currentDpi = snapshot.currentDpi,
+                tempDpi = if (resetTempDpi) snapshot.currentDpi else current.tempDpi,
+                isDpiCustom = (if (resetTempDpi) snapshot.currentDpi else current.tempDpi) !in DPI_PRESETS,
+                dpiPresets = DPI_PRESET_RESOURCES,
+                checkManagerUpdate = snapshot.checkManagerUpdate,
+                checkBetaUpdate = snapshot.checkBetaUpdate,
+                checkModuleUpdate = snapshot.checkModuleUpdate,
+                autoJailbreakEnabled = snapshot.autoJailbreakEnabled,
+                useBuiltinMonoFont = snapshot.useBuiltinMonoFont,
+            )
+        }
+    }
+
+    private fun emitError(error: Throwable) {
+        mutableEvents.tryEmit(SettingsUiEvent.Error(error.message.orEmpty()))
+    }
+
+    private companion object {
+        val THEME_OPTIONS = listOf(
+            R.string.theme_follow_system,
+            R.string.theme_light,
+            R.string.theme_dark,
         )
-    }
-
-    private fun dpiPresetValues(): Set<Int> = setOf(240, 320, 420, 560)
-
-    private fun isSystemDark(context: Context): Boolean {
-        return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
+        val DPI_PRESET_RESOURCES = mapOf(
+            R.string.dpi_size_small to 240,
+            R.string.dpi_size_medium to 320,
+            R.string.dpi_size_large to 420,
+            R.string.dpi_size_extra_large to 560,
+        )
+        val DPI_PRESETS = DPI_PRESET_RESOURCES.values.toSet()
     }
 }

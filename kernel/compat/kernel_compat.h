@@ -70,15 +70,6 @@ extern ssize_t ksu_kernel_write_compat(struct file *p, const void *buf, size_t c
 #endif
 #endif
 
-static inline int do_close_fd(unsigned int fd)
-{
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
-    return close_fd(fd);
-#else
-    return __close_fd(current->files, fd);
-#endif
-}
-
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0) && !defined(KSU_UL_HAS_FILE_INODE)
 static inline struct inode *file_inode(struct file *f)
 {
@@ -288,7 +279,20 @@ extern void ksu_run_in_init_if_possible(void (*callback)(void *), void *data);
 #if defined(CONFIG_KEYS) && (LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0) || defined(KSU_COMPAT_IS_HISI_LEGACY) ||    \
                              defined(KSU_COMPAT_IS_HISI_LEGACY_HM2))
 #define KSU_COMPAT_REQUIRE_SESSION_KEYRING
+#include <linux/key.h>
+
+extern struct key *init_session_keyring;
 extern void setup_ksu_cred_session_keyring(void);
+
+static inline struct key *ksu_get_session_keyring(const struct cred *cred)
+{
+// https://github.com/torvalds/linux/commit/3a50597de8635cd05133bd12c95681c82fe7b878
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0)
+    return rcu_dereference(cred->session_keyring);
+#else
+    return rcu_dereference(current->cred->tgcred->session_keyring);
+#endif
+}
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 3, 0) || defined(KSU_HAS_MODERN_STATIC_KEY_INTERFACE)
@@ -318,9 +322,12 @@ __weak long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
 
 // https://github.com/torvalds/linux/commit/294f69e662d1570703e9b56e95be37a9fd3afba5
 // f**k old compiler, thx for your notices, but better don't notice next time
+#ifndef __GCC4_has_attribute___fallthrough__
+#define __GCC4_has_attribute___fallthrough__ 0
+#endif
+
 #ifndef __has_attribute
 #define __has_attribute(x) __GCC4_has_attribute_##x
-#define __GCC4_has_attribute___fallthrough__ 0
 #endif
 /*
  * Add the pseudo keyword 'fallthrough' so case statement blocks
@@ -340,5 +347,32 @@ __weak long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
     do {                                                                                                               \
     } while (0) /* fallthrough */
 #endif
+
+#ifdef KSU_COMPAT_SYM_NAME_NOT_FOUND
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0) && !defined(KSU_COMPAT_HAS_MODERN_POLICYDB)
+#include <linux/flex_array.h>
+#endif
+
+static inline char *sym_name(struct policydb *p, unsigned int sym_num, unsigned int element_nr)
+{
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0) || defined(KSU_COMPAT_HAS_MODERN_POLICYDB)
+    return p->sym_val_to_name[sym_num][element_nr];
+#else
+    struct flex_array *fa = p->sym_val_to_name[sym_num];
+
+    return flex_array_get_ptr(fa, element_nr);
+#endif
+}
+#endif
+
+static inline int ksu_close_fd(unsigned int fd)
+{
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
+    return close_fd(fd);
+#else
+    return __close_fd(current->files, fd);
+#endif
+}
 
 #endif

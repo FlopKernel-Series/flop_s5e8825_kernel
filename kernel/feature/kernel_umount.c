@@ -52,10 +52,6 @@ static const struct ksu_feature_handler kernel_umount_handler = {
     .set_handler = kernel_umount_feature_set,
 };
 
-#ifdef CONFIG_KSU_SUSFS
-extern bool susfs_is_log_enabled;
-#endif // #ifdef CONFIG_KSU_SUSFS
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) || defined(KSU_HAS_PATH_UMOUNT)
 extern int path_umount(struct path *path, int flags);
 static void ksu_umount_mnt(const char *mnt, struct path *path, int flags)
@@ -129,18 +125,14 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
     const struct cred *saved;
     struct mount_entry *entry;
 
-    if (!ksu_cred) {
-        return 0;
-    }
-
     // There are 6 scenarios:
     // 1. Normal app: zygote -> appuid
     // 2. Isolated process forked from zygote: zygote -> isolated_process
     // 3. App zygote forked from zygote: zygote -> appuid
-    // 4. Webview zygote forked from zygote: zygote -> WEBVIEW_ZYGOTE_UID (no need to handle, app cannot run custom code)
+    // 4. Webview zygote forked from zygote: zygote -> webview_zygote
     // 5. Isolated process forked from app zygote: appuid -> isolated_process (already handled by 3)
-    // 6. Isolated process forked from webview zygote (no need to handle, app cannot run custom code)
-    if (!is_appuid(new_uid) && !is_isolated_process(new_uid)) {
+    // 6. Isolated process forked from webview zygote (already handled by 4)
+    if (!is_appuid(new_uid) && new_uid != WEBVIEW_ZYGOTE_UID && !is_isolated_process(new_uid)) {
         return 0;
     }
 
@@ -177,7 +169,8 @@ int ksu_handle_umount(uid_t old_uid, uid_t new_uid)
 skip_umount_task:
     // do susfs setuid when susfs enabled
 #ifdef CONFIG_KSU_SUSFS
-    schedule_work(&susfs_extra_works);
+    if (!work_pending(&susfs_extra_works))
+        schedule_work(&susfs_extra_works);
     susfs_set_current_proc_umounted();
 #endif
 

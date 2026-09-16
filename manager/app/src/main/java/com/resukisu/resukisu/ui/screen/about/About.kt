@@ -30,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -63,14 +64,25 @@ import com.resukisu.resukisu.ui.theme.ThemeConfig
 import com.resukisu.resukisu.ui.theme.blurEffect
 import com.resukisu.resukisu.ui.theme.blurSource
 import com.resukisu.resukisu.ui.theme.renderBackgroundBlur
+import com.resukisu.resukisu.ui.util.adaptiveScaffoldWindowInsets
+import org.koin.compose.koinInject
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutScreen() {
+    val themeConfig: ThemeConfig = koinInject()
+    val cardConfig: CardConfig = koinInject()
     val navigator = LocalNavigator.current
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        rememberTopAppBarState(
+            initialHeightOffset = -154f,
+            initialHeightOffsetLimit = -154f // from debugger
+        )
+    )
 
     Scaffold(
+        contentWindowInsets = adaptiveScaffoldWindowInsets(),
         topBar = {
             LargeFlexibleTopAppBar(
                 modifier = Modifier.blurEffect(
@@ -87,15 +99,15 @@ fun AboutScreen() {
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor =
-                        if (ThemeConfig.isEnableBlur)
+                        if (themeConfig.isEnableBlur)
                             Color.Transparent
                         else
-                            MaterialTheme.colorScheme.surfaceContainer.copy(CardConfig.cardAlpha),
+                            MaterialTheme.colorScheme.surfaceContainer.copy(cardConfig.cardAlpha),
                     scrolledContainerColor =
-                        if (ThemeConfig.isEnableBlur)
+                        if (themeConfig.isEnableBlur)
                             Color.Transparent
                         else
-                            MaterialTheme.colorScheme.surfaceContainer.copy(CardConfig.cardAlpha),
+                            MaterialTheme.colorScheme.surfaceContainer.copy(cardConfig.cardAlpha),
                 ),
             )
         },
@@ -130,14 +142,11 @@ fun AboutScreen() {
                         .padding(horizontal = 16.dp)
                         .padding(top = 8.dp, bottom = 12.dp),
                     color = MaterialTheme.colorScheme.outlineVariant.copy(
-                        alpha = CardConfig.cardAlpha
+                        alpha = cardConfig.cardAlpha
                     ),
                     message = AnnotatedString.fromHtml(
                         htmlString = stringResource(
-                            id = R.string.about_anime_character_sticker,
-                            "<b>怡子曰曰</b>",
-                            "<b>明风 OuO</b>",
-                            "<b><a href=\"https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.txt\">CC BY-NC-SA 4.0</a></b>"
+                            id = R.string.about_anime_character_sticker
                         ),
                         linkStyles = TextLinkStyles(
                             style = SpanStyle(
@@ -217,15 +226,17 @@ fun AboutScreenPreview() {
 
 @Composable
 private fun StatusCard() {
+    val themeConfig: ThemeConfig = koinInject()
+    val cardConfig: CardConfig = koinInject()
     Surface(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
             .renderBackgroundBlur(),
         color =
-            if (ThemeConfig.isEnableBlurExp)
+            if (themeConfig.isEnableBlurExp)
                 Color.Transparent
             else
-                MaterialTheme.colorScheme.primaryContainer.copy(CardConfig.cardAlpha),
+                MaterialTheme.colorScheme.primaryContainer.copy(cardConfig.cardAlpha),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(

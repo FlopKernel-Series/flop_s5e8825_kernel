@@ -2,6 +2,7 @@
 
 plugins {
     alias(libs.plugins.agp.app)
+    alias(libs.plugins.androidx.baselineprofile)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.lsplugin.apksign)
@@ -9,15 +10,15 @@ plugins {
     id("kotlin-parcelize")
 }
 
-val androidCompileSdkVersion: Int by rootProject.extra
-val androidCompileNdkVersion: String by rootProject.extra
-val androidBuildToolsVersion: String by rootProject.extra
-val androidMinSdkVersion: Int by rootProject.extra
-val androidTargetSdkVersion: Int by rootProject.extra
-val androidSourceCompatibility: JavaVersion by rootProject.extra
-val androidTargetCompatibility: JavaVersion by rootProject.extra
-val managerVersionCode: Int by rootProject.extra
-val managerVersionName: String by rootProject.extra
+val androidCompileSdkVersion = rootProject.extra["androidCompileSdkVersion"] as Int
+val androidCompileNdkVersion = rootProject.extra["androidCompileNdkVersion"] as String
+val androidBuildToolsVersion = rootProject.extra["androidBuildToolsVersion"] as String
+val androidMinSdkVersion = rootProject.extra["androidMinSdkVersion"] as Int
+val androidTargetSdkVersion = rootProject.extra["androidTargetSdkVersion"] as Int
+val androidSourceCompatibility = rootProject.extra["androidSourceCompatibility"] as JavaVersion
+val androidTargetCompatibility = rootProject.extra["androidTargetCompatibility"] as JavaVersion
+val managerVersionCode = rootProject.extra["managerVersionCode"] as Int
+val managerVersionName = rootProject.extra["managerVersionName"] as String
 
 apksign {
     storeFileProperty = "KEYSTORE_FILE"
@@ -159,14 +160,16 @@ android {
     }
 }
 
+baselineProfile {
+    mergeIntoMain = true
+    saveInSrc = true
+    automaticGenerationDuringBuild = false
+}
+
 base {
     archivesName.set(
         "ReSukiSU_${managerVersionName}_${managerVersionCode}"
     )
-}
-
-configurations.all {
-    exclude(group = "androidx.navigationevent", module = "navigationevent-compose")
 }
 
 aboutLibraries {
@@ -180,10 +183,18 @@ aboutLibraries {
 
 dependencies {
     lintChecks(project(":lint-rules"))
+    baselineProfile(project(":baselineprofile"))
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.compose.viewmodel)
 
     implementation(libs.gson)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.profileinstaller)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material.icons.extended)
@@ -202,14 +213,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
-    implementation(libs.androidx.navigation3.runtime)
     implementation(libs.miuix.blur)
-    implementation(libs.miuix.navigation)
-    implementation(libs.androidx.navigationevent) {
-        exclude(group = "androidx.navigation", module = "navigationevent-compose")
-    }
+    implementation(libs.miuix.nav)
 
     implementation(libs.aboutlibraries.core)
     implementation(libs.aboutlibraries.compose.m3)
@@ -231,15 +237,14 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
 
+    implementation(libs.me.zhanghai.android.appiconloader)
     implementation(libs.me.zhanghai.android.appiconloader.coil)
+    implementation(libs.org.lsposed.hiddenapibypass)
 
     implementation(libs.markdown)
     implementation(libs.androidx.webkit)
 
     implementation(libs.lsposed.cxx)
 
-    implementation(libs.com.github.topjohnwu.libsu.core)
-
     implementation(libs.accompanist.drawablepainter)
-
 }

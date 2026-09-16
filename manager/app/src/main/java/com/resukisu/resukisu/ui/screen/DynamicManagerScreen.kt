@@ -33,49 +33,60 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.resukisu.resukisu.R
+import com.resukisu.resukisu.domain.model.DynamicManagerConfig
 import com.resukisu.resukisu.ui.component.ConfirmResult
 import com.resukisu.resukisu.ui.component.DialogHandle
+import com.resukisu.resukisu.ui.component.PackageIcon
 import com.resukisu.resukisu.ui.component.SearchAppBar
 import com.resukisu.resukisu.ui.component.SwipeableSnackbarHost
 import com.resukisu.resukisu.ui.component.rememberConfirmDialog
 import com.resukisu.resukisu.ui.component.rememberCustomDialog
+import com.resukisu.resukisu.ui.component.rememberSearchAppBarScrollBehavior
 import com.resukisu.resukisu.ui.component.settings.SegmentedColumn
 import com.resukisu.resukisu.ui.component.settings.SettingsBaseWidget
 import com.resukisu.resukisu.ui.component.settings.SettingsTextFieldWidget
 import com.resukisu.resukisu.ui.component.settings.lazySegmentColumn
 import com.resukisu.resukisu.ui.navigation.LocalNavigator
 import com.resukisu.resukisu.ui.theme.blurSource
+import com.resukisu.resukisu.ui.util.ActivityResumeEffect
 import com.resukisu.resukisu.ui.util.LocalSnackbarHost
+import com.resukisu.resukisu.ui.util.adaptiveScaffoldWindowInsets
+import com.resukisu.resukisu.ui.util.showReplacingSnackbar
 import com.resukisu.resukisu.ui.viewmodel.DynamicManagerAppItem
+import com.resukisu.resukisu.ui.viewmodel.DynamicManagerOperation
+import com.resukisu.resukisu.ui.viewmodel.DynamicManagerUiAction
+import com.resukisu.resukisu.ui.viewmodel.DynamicManagerUiEvent
 import com.resukisu.resukisu.ui.viewmodel.DynamicManagerViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DynamicManagerScreen() {
     val navigator = LocalNavigator.current
-    val viewModel = viewModel<DynamicManagerViewModel>()
+    val viewModel = koinViewModel<DynamicManagerViewModel>()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val scrollBehavior =
+    val scrollBehavior = rememberSearchAppBarScrollBehavior(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    )
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHost = LocalSnackbarHost.current
     val scope = rememberCoroutineScope()
+    var isUserRefreshing by remember { mutableStateOf(false) }
     val confirmDialog = rememberConfirmDialog()
 
     val grantConfirmTitle = stringResource(R.string.dynamic_manager_grant_confirm_title)
@@ -98,12 +109,10 @@ fun DynamicManagerScreen() {
         return first == ConfirmResult.Confirmed
     }
 
-    fun runGrantOperation(operation: suspend () -> Boolean) {
+    fun runGrantOperation(action: DynamicManagerUiAction) {
         scope.launch {
             if (!confirmPrivilegeGrant()) return@launch
-            val success = operation()
-            if (success) viewModel.refresh()
-            snackbarHost.showSnackbar(if (success) setSuccess else setFailed)
+            viewModel.dispatch(action)
         }
     }
 
@@ -115,27 +124,40 @@ fun DynamicManagerScreen() {
                 confirm = confirmText
             )
             if (confirmed != ConfirmResult.Confirmed) return@launch
-            val success = viewModel.clearConfig()
-            if (success) viewModel.refresh()
-            snackbarHost.showSnackbar(if (success) clearSuccess else clearFailed)
+            viewModel.dispatch(DynamicManagerUiAction.Clear)
         }
     }
 
     val manualDialog = rememberDynamicManagerManualDialog { size, hash ->
-        runGrantOperation { viewModel.setManualConfig(size, hash) }
+        runGrantOperation(DynamicManagerUiAction.SetManual(size, hash))
     }
 
     LaunchedEffect(Unit) {
         scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffsetLimit
-        viewModel.refresh()
+        viewModel.events.collectLatest { event ->
+            when (event) {
+                is DynamicManagerUiEvent.OperationCompleted -> {
+                    val message = when (event.operation) {
+                        DynamicManagerOperation.Set -> if (event.success) setSuccess else setFailed
+                        DynamicManagerOperation.Clear -> if (event.success) clearSuccess else clearFailed
+                    }
+                    snackbarHost.showReplacingSnackbar(message)
+                }
+            }
+        }
+    }
+
+    ActivityResumeEffect {
+        viewModel.dispatch(DynamicManagerUiAction.Refresh)
     }
 
     Scaffold(
+        contentWindowInsets = adaptiveScaffoldWindowInsets(),
         topBar = {
             SearchAppBar(
                 title = stringResource(R.string.dynamic_manager_title),
                 searchText = uiState.search,
-                onSearchTextChange = viewModel::updateSearch,
+                onSearchTextChange = { viewModel.dispatch(DynamicManagerUiAction.Search(it)) },
                 onBackClick = { navigator.pop() },
                 scrollBehavior = scrollBehavior,
                 searchBarPlaceHolderText = stringResource(R.string.search_apps),
@@ -157,14 +179,21 @@ fun DynamicManagerScreen() {
         } else {
             PullToRefreshBox(
                 state = pullToRefreshState,
-                isRefreshing = uiState.isRefreshing,
+                isRefreshing = isUserRefreshing,
                 onRefresh = {
-                    scope.launch { viewModel.refresh() }
+                    scope.launch {
+                        isUserRefreshing = true
+                        try {
+                            viewModel.refresh()
+                        } finally {
+                            isUserRefreshing = false
+                        }
+                    }
                 },
                 indicator = {
                     PullToRefreshDefaults.LoadingIndicator(
                         state = pullToRefreshState,
-                        isRefreshing = uiState.isRefreshing,
+                        isRefreshing = isUserRefreshing,
                         modifier = Modifier
                             .align(Alignment.TopCenter)
                             .padding(top = paddingValues.calculateTopPadding()),
@@ -187,7 +216,7 @@ fun DynamicManagerScreen() {
                 ) {
                     item {
                         DynamicManagerStatusSection(
-                            viewModel = viewModel,
+                            config = uiState.config,
                             enabled = !uiState.isSubmitting,
                             onManualConfig = {
                                 manualDialog.show()
@@ -226,7 +255,7 @@ fun DynamicManagerScreen() {
                                     if (app.isSelected) {
                                         runClearOperation()
                                     } else {
-                                        runGrantOperation { viewModel.setManagerApp(app) }
+                                        runGrantOperation(DynamicManagerUiAction.SelectApp(app))
                                     }
                                 },
                             )
@@ -255,14 +284,12 @@ private fun rememberDynamicManagerManualDialog(
 
 @Composable
 private fun DynamicManagerStatusSection(
-    viewModel: DynamicManagerViewModel,
+    config: DynamicManagerConfig?,
     enabled: Boolean,
     onManualConfig: () -> Unit,
     onClearConfig: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val config = uiState.config
-    val currentStatus = if (config?.isValid() == true) {
+    val currentStatus = if (config?.isValid == true) {
         stringResource(R.string.dynamic_manager_enabled_summary, config.size.toString())
     } else {
         stringResource(R.string.dynamic_manager_disabled)
@@ -280,7 +307,7 @@ private fun DynamicManagerStatusSection(
             )
         }
 
-        item(visible = config?.isValid() == true) {
+        item(visible = config?.isValid == true) {
             SettingsBaseWidget(
                 icon = Icons.TwoTone.Security,
                 title = stringResource(R.string.signature_hash),
@@ -316,8 +343,6 @@ private fun DynamicManagerAppItem(
     app: DynamicManagerAppItem,
     onClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-
     SettingsBaseWidget(
         enabled = app.isChangeable,
         onClick = {
@@ -339,16 +364,12 @@ private fun DynamicManagerAppItem(
             app.packageName
         },
         leadingContent = {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(app.packageInfo)
-                    .crossfade(true)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
+            PackageIcon(
+                packageName = app.packageName,
                 contentDescription = app.label,
                 modifier = Modifier
                     .padding(4.dp)
-                    .size(48.dp)
+                    .size(48.dp),
             )
         },
         iconPlaceholder = false,

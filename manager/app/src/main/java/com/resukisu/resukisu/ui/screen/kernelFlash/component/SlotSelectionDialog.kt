@@ -43,26 +43,20 @@ import com.resukisu.resukisu.R
 @Composable
 fun SlotSelectionDialog(
     show: Boolean,
+    currentSlot: String?,
     onDismiss: () -> Unit,
     onSlotSelected: (String) -> Unit
 ) {
-    var currentSlot by remember { mutableStateOf<String?>(null) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
     var selectedSlot by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(Unit) {
-        try {
-            currentSlot = getCurrentSlot()
+    LaunchedEffect(show, currentSlot) {
+        if (show) {
             // 设置默认选择为当前槽位
             selectedSlot = when (currentSlot) {
                 "a" -> "a"
                 "b" -> "b"
                 else -> null
             }
-            errorMessage = null
-        } catch (e: Exception) {
-            errorMessage = e.message
-            currentSlot = null
         }
     }
 
@@ -83,24 +77,15 @@ fun SlotSelectionDialog(
                     modifier = Modifier.padding(vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (errorMessage != null) {
-                        Text(
-                            text = "Error: $errorMessage",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            textAlign = TextAlign.Center
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(
-                                id = R.string.current_slot,
-                                currentSlot ?: "Unknown"
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    Text(
+                        text = stringResource(
+                            id = R.string.current_slot,
+                            currentSlot ?: "Unknown"
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -253,26 +238,3 @@ data class ListOption(
     val subtitleText: String?,
     val icon: ImageVector
 )
-
-// Utility function to get current slot
-private fun getCurrentSlot(): String? {
-    return runCommandGetOutput(true, "getprop ro.boot.slot_suffix")?.let {
-        if (it.startsWith("_")) it.substring(1) else it
-    }
-}
-
-private fun runCommandGetOutput(su: Boolean, cmd: String): String? {
-    return try {
-        val process = ProcessBuilder(if (su) "su" else "sh").start()
-        process.outputStream.bufferedWriter().use { writer ->
-            writer.write("$cmd\n")
-            writer.write("exit\n")
-            writer.flush()
-        }
-        process.inputStream.bufferedReader().use { reader ->
-            reader.readText().trim()
-        }
-    } catch (_: Exception) {
-        null
-    }
-}
