@@ -5,3 +5,4 @@
 [submodule "kernel_build/nh/firmware"]
 	url = https://gitlab.com/kernel-firmware/linux-firmware
 	path = kernel_build/nh/firmware
+	shallow = true
