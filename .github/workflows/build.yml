@@ -17,6 +17,14 @@ jobs:
       - name: Clean
         uses: rokibhasansagar/slimhub_actions@main
 
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: /workspace/.ccache
+          key: ccache-exynos1280
+          restore-keys: |
+            ccache-exynos1280-
+
       - name: Prepare enviroment
         run: |
           sudo apt update
