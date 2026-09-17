@@ -2,8 +2,7 @@ name: Build FloppyKernel
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 16 * * *'
+  push:
 
 jobs:
   build:
