@@ -2,3 +2,6 @@
 	path = kernel_build/mkbootimg
 	url = https://android.googlesource.com/platform/system/tools/mkbootimg/
 	branch = main
+[submodule "kernel_build/nh/firmware"]
+	url = https://gitlab.com/kernel-firmware/linux-firmware
+	path = kernel_build/nh/firmware

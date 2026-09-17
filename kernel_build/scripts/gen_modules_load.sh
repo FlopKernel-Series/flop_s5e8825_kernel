@@ -47,9 +47,14 @@ declare -A LOAD_AFTER=(
     ["goodix_ts_berlin.ko"]="focaltech_ts_ft3519.ko"
 )
 
-# Modules to exclude
-EXCLUDE_MODULES=(
-)
+if [ -f "${SCRIPT_DIR}/../lib/nethunter_modules.sh" ]; then
+    # shellcheck source=../lib/nethunter_modules.sh
+    source "${SCRIPT_DIR}/../lib/nethunter_modules.sh"
+else
+    log_err "NetHunter module list not found: ${SCRIPT_DIR}/../lib/nethunter_modules.sh"
+    exit 1
+fi
+EXCLUDE_MODULES=("${NETHUNTER_MODULES[@]}")
 
 # Run depmod to generate dependency information
 DEPMOD_BASE=$(dirname "$(dirname "$(dirname "$MODULES_DIR")")")

@@ -125,6 +125,7 @@ DO_TG=0
 DO_REGEN=0
 DO_FLTO=0
 DO_QUIET=0
+DO_NHMOD=0
 DO_PERM=0
 DEFCONFIG=$DEFAULT_DEFCONFIG
 
@@ -179,6 +180,10 @@ for arg in "$@"; do
         log_warn "Only errors and warnings will be shown"
         DO_QUIET=1
     fi
+    if [[ "$arg" == *n* ]]; then
+        log_info "NetHunter module package argument passed"
+        DO_NHMOD=1
+    fi
     if [[ "$arg" == *p* ]]; then
         log_info "Permissive argument passed"
         DO_PERM=1
@@ -231,6 +236,8 @@ fi
 ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
 TAR_PATH_ONEUI="$KDIR/kernel_build/FloppyOneUI_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
 TAR_PATH_AOSP="$KDIR/kernel_build/FloppyAOSP_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
+NH_MODULE_PATH=""
+export NH_MODULE_PATH
 
 echo -e "\n$(log_info "Build info:")
 - Device: $DEVICE ($CODENAME)
@@ -242,6 +249,7 @@ echo -e "\n$(log_info "Build info:")
 - Build type: $BUILD_TYPE
 - Clean build: $([ "$DO_CLEAN" -eq 1 ] && echo "Yes" || echo "No")
 - Permissive: $([ "$DO_PERM" -eq 1 ] && echo "Yes" || echo "No")
+- Package NetHunter module: $([ "$DO_NHMOD" -eq 1 ] && echo "Yes" || echo "No")
 "
 
 # Clean images dir

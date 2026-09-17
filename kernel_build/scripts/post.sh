@@ -58,6 +58,20 @@ kernel_modules() {
     cp -f "$TMPDIR/modules.load" "$MODULES_DIR/0.0/modules.load"
     mv "$MODULES_DIR/0.0"/* "$MODULES_DIR/"
     rm -rf "$MODULES_DIR/0.0"
+
+    if [ "${DO_NHMOD:-0}" = "1" ]; then
+        echo
+        log_info "Packaging Nethunter Extras zip..."
+        if ! bash "$SCRIPTS_DIR/gen_nh_module.sh" \
+            "$kmod_dir" \
+            "$KDIR" \
+            "$FK_VER" \
+            "$KDIR/kernel_build/nh/firmware"; then
+            log_warn "Failed to generate NetHunter module package, continuing build"
+        else
+            NH_MODULE_PATH=$(ls -t "$KDIR"/kernel_build/nh/out/floppy1280_nethunter-extras-*.zip 2>/dev/null | head -n 1)
+        fi
+    fi
 }
 
 clean_tmp() {
