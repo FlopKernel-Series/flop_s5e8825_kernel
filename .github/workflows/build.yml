@@ -337,6 +337,28 @@ jobs:
           if-no-files-found: error
           path: ${{ steps.artifacts_nh.outputs.nh_path }}
 
+      - name: Upload NetHunter extras to Telegram
+        env:
+          TELEGRAM_CHAT_ID: ${{ secrets.CHAT_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          set -e
+          if [ -z "$TELEGRAM_CHAT_ID" ] || [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+            echo "Telegram secrets not set, skipping NetHunter Telegram upload"
+            exit 0
+          fi
+          source kernel_build/lib/log.sh
+          source kernel_build/scripts/upload.sh
+          FK_VER="$(grep -oP '^FK_VER="\K[^"]+' kernel_build/ckbuild.sh | head -n 1)"
+          FK_TYPE="Vanilla"
+          CODENAME="$(grep -oP '^CODENAME="\K[^"]+' kernel_build/ckbuild.sh | head -n 1)"
+          VANILLA_ZIP="${{ steps.artifacts_t.outputs.zip_path }}"
+          DATE="$(basename "$VANILLA_ZIP" | grep -oP '[0-9]{8}-[0-9]{4}(?=\.zip$)' || true)"
+          [ -n "$DATE" ] || DATE="$(date -u '+%Y%m%d-%H%M')"
+          ZIP_PATH="$(pwd)/$VANILLA_ZIP"
+          log_info "Uploading Nethunter Extras to Telegram"
+          tgs_nhmod "${{ steps.artifacts_nh.outputs.nh_path }}"
+
   release:
     needs: build
     runs-on: ubuntu-latest
