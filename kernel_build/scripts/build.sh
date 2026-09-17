@@ -29,6 +29,7 @@ build() {
     [ "$DO_KSU" = "1" ] && FRAGMENTS="$FRAGMENTS ksu.config"
     [ "$DO_SUKI" = "1" ] && FRAGMENTS="$FRAGMENTS sukisu.config"
     [ "$DO_XXKSU" = "1" ] && FRAGMENTS="$FRAGMENTS xxksu.config"
+    [ "$DO_NHMOD" = "1" ] && [ "$DO_REGEN" != "1" ] && FRAGMENTS="$FRAGMENTS nethunter.config"
     [ "$DROIDSPACES" = "1" ] && [ "$DO_REGEN" != "1" ] && FRAGMENTS="$FRAGMENTS droidspaces.config"
     [ "$KCFI" = "1" ] && [ "$DO_REGEN" != "1" ] && FRAGMENTS="$FRAGMENTS kcfi.config"
 
@@ -48,8 +49,8 @@ build() {
     rm -f "$OUT_KERNEL"
 
     if [ "$DO_REGEN" = "1" ]; then
-        if [ "$DO_KSU" = "1" ] || [ "$DO_SUKI" = "1" ] || [ "$DO_XXKSU" = "1" ]; then
-            log_err "Can't regenerate with KSU variant argument"
+        if [ "$DO_KSU" = "1" ] || [ "$DO_SUKI" = "1" ] || [ "$DO_XXKSU" = "1" ] || [ "$DO_NHMOD" = "1" ]; then
+            log_err "Can't regenerate with KSU variant or NetHunter argument"
             exit 1
         fi
         if [ "$DO_PERM" = "1" ]; then
