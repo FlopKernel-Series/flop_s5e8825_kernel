@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_MAXSIZE: 5G
     steps:
 
       - name: Checkout repo
@@ -20,10 +23,11 @@ jobs:
       - name: Restore ccache
         uses: actions/cache@v4
         with:
-          path: /workspace/.ccache
+          path: ${{ github.workspace }}/.ccache
           key: ccache-exynos1280
           restore-keys: |
             ccache-exynos1280-
+          save-always: true
 
       - name: Prepare enviroment
         run: |
