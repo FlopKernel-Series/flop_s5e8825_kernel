@@ -37,6 +37,26 @@ jobs:
           echo "${{ secrets.CHAT_ID }}" >> "../chat_ci"
           echo "${{ secrets.TOKEN }}" >> "../bot_token"
 
+      - name: Restore toolchains
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/../toolchains
+          key: toolchains-aosp
+          save-always: true
+
+      - name: Setup AOSP Clang toolchain
+        run: |
+          tc_dir="${{ github.workspace }}/../toolchains/aospclang"
+          list_url="$(grep -oP '^AOSP_LIST="\K[^"]+' kernel_build/scripts/tc.sh | head -n 1)"
+          want="$(curl -s "$list_url" | grep -oP 'href="[^"]*clang-r[0-9]+/' | grep -oP 'clang-r[0-9]+' | sort -V | tail -n1)"
+          if [ -n "$want" ] && [ -d "$tc_dir" ]; then
+            have="clang-$("$tc_dir/bin/clang" --version 2>/dev/null | grep -oP 'based on \Kr[0-9]+' | head -n1)"
+            if [ "$have" != "$want" ]; then
+              echo "Cached toolchain $have does not match $want, evicting"
+              rm -rf "$tc_dir"
+            fi
+          fi
+
       - name: Build (KernelSU Next)
         run: |
           rm -f kernel_build/*.zip kernel_build/*.tar kernel_build/TARs_*.zip log.txt || true
