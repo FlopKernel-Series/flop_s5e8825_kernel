@@ -383,6 +383,9 @@ jobs:
           log_info "Uploading Nethunter Extras to Telegram"
           tgs_nhmod "${{ steps.artifacts_nh.outputs.nh_path }}"
 
+      - name: Show ccache stats
+        run: ccache -s || true
+
   release:
     needs: build
     runs-on: ubuntu-latest
