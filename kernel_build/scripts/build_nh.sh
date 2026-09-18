@@ -68,8 +68,13 @@ fi
 
 LOCALVERSION_SAVED="$(sed -n 's/^CONFIG_LOCALVERSION=\(.*\)/\1/p' "$OUTDIR/.config" | head -n 1)"
 
+: "${DROIDSPACES:=1}"
+NH_FRAGMENTS="nethunter.config"
+[ "$DROIDSPACES" = "1" ] && NH_FRAGMENTS="$NH_FRAGMENTS droidspaces.config"
+[ "$KCFI" = "1" ] && NH_FRAGMENTS="$NH_FRAGMENTS kcfi.config"
+
 log_info "Merging nethunter.config onto existing build tree..."
-make -j"$(nproc --all)" O="$OUTDIR" CC="$CC" "$DEFCONFIG" nethunter.config
+make -j"$(nproc --all)" O="$OUTDIR" CC="$CC" "$DEFCONFIG" $NH_FRAGMENTS
 
 if [ -n "$LOCALVERSION_SAVED" ]; then
     scripts/config --file "$OUTDIR/.config" --set-val LOCALVERSION "$LOCALVERSION_SAVED"
