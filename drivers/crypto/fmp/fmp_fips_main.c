@@ -40,8 +40,8 @@ static enum fips_state fmp_fips_state = FMP_FIPS_INIT_STATE;
 
 bool in_fmp_fips_err(void)
 {
-	if (fmp_fips_state == FMP_FIPS_INIT_STATE ||
-	    fmp_fips_state == FMP_FIPS_ERR_STATE)
+	// Allow I/O before the KAT runs
+	if (fmp_fips_state == FMP_FIPS_ERR_STATE)
 		return true;
 	return false;
 }
