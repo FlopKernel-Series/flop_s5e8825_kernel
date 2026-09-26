@@ -24,6 +24,10 @@
 #include "xfrm.h"
 #include "compat/kernel_compat.h"
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
+#define SELINUX_POLICY_INSTEAD_SELINUX_SS
+#endif
+
 #define ALL NULL
 
 static DEFINE_MUTEX(ksu_rules);
