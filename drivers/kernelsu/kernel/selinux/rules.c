@@ -166,6 +166,18 @@ static int apply_kernelsu_rules_fn(void *ptr)
     ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "read");
     ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "open");
     ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "getattr");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "read");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "write");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "connectto");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "getopt");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "getattr");
+
+    // use memfd created by su domain
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "execute");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "getattr");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "map");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "read");
+    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "write");
 
     // bootctl
     ksu_allow(db, "hwservicemanager", KERNEL_SU_DOMAIN, "dir", "search");
@@ -196,9 +208,23 @@ void apply_kernelsu_rules()
 	}
 
 #ifdef SELINUX_POLICY_INSTEAD_SELINUX_SS
-	struct selinux_policy *pol, *old_pol = selinux_state.policy;
+	struct selinux_policy *pol, *old_pol;
 	mutex_lock(&selinux_state.policy_mutex);
-	pol = ksu_dup_sepolicy(rcu_dereference_protected(old_pol, lockdep_is_held(&selinux_state.policy_mutex)));
+	/*
+	 * Read the RCU-protected pointer *inside* the critical section.
+	 * Loading it before the lock and then "protecting" the local copy
+	 * with rcu_dereference_protected() protects nothing: the load itself
+	 * is still a racy sparse read, and the peer that publishes a new
+	 * policy frees the old one right after dropping the mutex.
+	 * See dev branch c6f3978e.
+	 */
+	old_pol = rcu_dereference_protected(selinux_state.policy,
+					    lockdep_is_held(&selinux_state.policy_mutex));
+	if (!old_pol) {
+		pr_err("selinux policy is NULL, skipping rules application\n");
+		goto out_unlock;
+	}
+	pol = ksu_dup_sepolicy(old_pol);
 	if (!pol) {
 		pr_err("failed to dup selinux_policy\n");
 		goto out_unlock;
@@ -266,14 +292,6 @@ do_stop_machine:
 out_flush:
 	smp_mb();
 	reset_avc_cache();
-#ifdef CONFIG_KSU_SUSFS
-    // Allow umount in zygote process without installing zygisk
-    //ksu_allow(db, "zygote", "labeledfs", "filesystem", "unmount");
-    susfs_set_priv_app_sid();
-    susfs_set_init_sid();
-    susfs_set_ksu_sid();
-    susfs_set_zygote_sid();
-#endif // #ifdef CONFIG_KSU_SUSFS
 #endif
 }
 
@@ -584,9 +602,14 @@ int handle_sepolicy(void __user *user_data, u64 data_len)
 
 	mutex_lock(&selinux_state.policy_mutex);
 
-	old_pol = selinux_state.policy;
-	pol = ksu_dup_sepolicy(rcu_dereference_protected(
-		old_pol, lockdep_is_held(&selinux_state.policy_mutex)));
+	/* Read the RCU-protected pointer inside the lock, see apply_kernelsu_rules(). */
+	old_pol = rcu_dereference_protected(selinux_state.policy,
+					    lockdep_is_held(&selinux_state.policy_mutex));
+	if (!old_pol) {
+		ret = -ENOMEM;
+		goto out_unlock;
+	}
+	pol = ksu_dup_sepolicy(old_pol);
 	if (!pol) {
 		ret = -ENOMEM;
 		goto out_unlock;
