@@ -3202,6 +3202,25 @@ static ssize_t single_driving_store(struct device *dev,
 	return count;
 }
 
+static ssize_t scrub_pos_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct sec_cmd_data *sec = dev_get_drvdata(dev);
+	struct goodix_ts_data *ts = container_of(sec, struct goodix_ts_data, sec);
+	char buff[256] = { 0 };
+
+	ts_info("%s: %d %d %d", __func__, ts->plat_data->gesture_id,
+			ts->plat_data->gesture_x, ts->plat_data->gesture_y);
+	snprintf(buff, sizeof(buff), "%d %d %d", ts->plat_data->gesture_id,
+			ts->plat_data->gesture_x, ts->plat_data->gesture_y);
+
+	ts->plat_data->gesture_id = 0;
+	ts->plat_data->gesture_x = 0;
+	ts->plat_data->gesture_y = 0;
+
+	return snprintf(buf, PAGE_SIZE, "%s", buff);
+}
+
 static ssize_t fod_pos_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -3393,6 +3412,7 @@ static DEVICE_ATTR_RW(hw_param);
 static DEVICE_ATTR_RW(virtual_prox);
 static DEVICE_ATTR_RW(sensitivity_mode);
 static DEVICE_ATTR_WO(single_driving);
+static DEVICE_ATTR_RO(scrub_pos);
 static DEVICE_ATTR_RO(fod_pos);
 static DEVICE_ATTR_RO(fod_info);
 static DEVICE_ATTR_RO(get_lp_dump);
@@ -3403,6 +3423,7 @@ static struct attribute *cmd_attributes[] = {
 	&dev_attr_single_driving.attr,
 	&dev_attr_get_lp_dump.attr,
 	&dev_attr_virtual_prox.attr,
+	&dev_attr_scrub_pos.attr,
 	&dev_attr_fod_pos.attr,
 	&dev_attr_fod_info.attr,
 	NULL,

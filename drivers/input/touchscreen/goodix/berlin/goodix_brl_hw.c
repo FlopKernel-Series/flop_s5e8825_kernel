@@ -1493,11 +1493,17 @@ static void goodix_ts_report_gesture(struct goodix_ts_data *ts, struct goodix_ts
 		// #0 : long press, #1 : press, #2 : release, #3 : out of area
 		if (ts_event->gesture_id == 0 || ts_event->gesture_id == 1) {
 			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_FOD_PRESS, x, y);
+			if (ts->sec.fac_dev)
+				sysfs_notify(&ts->sec.fac_dev->kobj, NULL, "scrub_pos");
 			ts_info("FOD %sPRESS", ts_event->gesture_id ? "" : "LONG");
 		} else if (ts_event->gesture_id == 2) {
 			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_FOD_RELEASE, x, y);
+			if (ts->sec.fac_dev)
+				sysfs_notify(&ts->sec.fac_dev->kobj, NULL, "scrub_pos");
 		} else if (ts_event->gesture_id == 3) {
 			sec_cmd_send_gesture_uevent(&ts->sec, SPONGE_EVENT_TYPE_FOD_OUT, x, y);
+			if (ts->sec.fac_dev)
+				sysfs_notify(&ts->sec.fac_dev->kobj, NULL, "scrub_pos");
 		} else if (ts_event->gesture_id == 4) {
 			ts_info("FOD VI");
 		}
