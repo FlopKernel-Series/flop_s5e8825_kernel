@@ -208,23 +208,9 @@ void apply_kernelsu_rules()
 	}
 
 #ifdef SELINUX_POLICY_INSTEAD_SELINUX_SS
-	struct selinux_policy *pol, *old_pol;
+	struct selinux_policy *pol, *old_pol = selinux_state.policy;
 	mutex_lock(&selinux_state.policy_mutex);
-	/*
-	 * Read the RCU-protected pointer *inside* the critical section.
-	 * Loading it before the lock and then "protecting" the local copy
-	 * with rcu_dereference_protected() protects nothing: the load itself
-	 * is still a racy sparse read, and the peer that publishes a new
-	 * policy frees the old one right after dropping the mutex.
-	 * See dev branch c6f3978e.
-	 */
-	old_pol = rcu_dereference_protected(selinux_state.policy,
-					    lockdep_is_held(&selinux_state.policy_mutex));
-	if (!old_pol) {
-		pr_err("selinux policy is NULL, skipping rules application\n");
-		goto out_unlock;
-	}
-	pol = ksu_dup_sepolicy(old_pol);
+	pol = ksu_dup_sepolicy(rcu_dereference_protected(old_pol, lockdep_is_held(&selinux_state.policy_mutex)));
 	if (!pol) {
 		pr_err("failed to dup selinux_policy\n");
 		goto out_unlock;
@@ -290,6 +276,12 @@ do_stop_machine:
 	stop_machine(apply_kernelsu_rules_fn, (void *)db, NULL);
 
 out_flush:
+	// Return value ignored: the policy is published either way. Kept here
+	// rather than inside apply_kernelsu_rules_fn(), because that one runs
+	// as a stop_machine() callback with local IRQs disabled, and the
+	// measurement allocates.
+	ksu_policydb_fixup_len(db, "apply_kernelsu_rules");
+
 	smp_mb();
 	reset_avc_cache();
 #endif
@@ -368,7 +360,7 @@ static int sepol_require_not_all(const char *value, const char *name)
     return -EINVAL;
 }
 
-static int sepol_expected_argc(u32 cmd)
+int sepol_expected_argc(u32 cmd)
 {
     switch (cmd) {
     case KSU_SEPOLICY_CMD_NORMAL_PERM:
@@ -602,14 +594,9 @@ int handle_sepolicy(void __user *user_data, u64 data_len)
 
 	mutex_lock(&selinux_state.policy_mutex);
 
-	/* Read the RCU-protected pointer inside the lock, see apply_kernelsu_rules(). */
-	old_pol = rcu_dereference_protected(selinux_state.policy,
-					    lockdep_is_held(&selinux_state.policy_mutex));
-	if (!old_pol) {
-		ret = -ENOMEM;
-		goto out_unlock;
-	}
-	pol = ksu_dup_sepolicy(old_pol);
+	old_pol = selinux_state.policy;
+	pol = ksu_dup_sepolicy(rcu_dereference_protected(
+		old_pol, lockdep_is_held(&selinux_state.policy_mutex)));
 	if (!pol) {
 		ret = -ENOMEM;
 		goto out_unlock;
@@ -814,6 +801,12 @@ do_stop_machine:
 	ret = stop_machine(handle_sepolicy_fn, (void *)&ctx, NULL);
 
 out_done:
+	// Return value ignored: the policy is published either way. Outside the
+	// stop_machine() callback for the same reason as in
+	// apply_kernelsu_rules(). get_policydb() is a plain accessor, so call
+	// it here rather than lifting a variable into this branch.
+	ksu_policydb_fixup_len(get_policydb(), "handle_sepolicy");
+
 	if (ret)
 		goto out_free;
 
