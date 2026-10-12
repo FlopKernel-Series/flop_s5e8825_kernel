@@ -42,6 +42,7 @@
 #include <linux/anon_inodes.h>
 #include <linux/atomic.h>
 #include <linux/binfmts.h>
+#include <linux/bitmap.h>
 #include <linux/cache.h>
 #include <linux/capability.h>
 #include <linux/compat.h>
@@ -85,6 +86,7 @@
 #include <linux/percpu.h>
 #include <linux/pid.h>
 #include <linux/poll.h>
+#include <linux/prctl.h>
 #include <linux/printk.h>
 #include <linux/ptrace.h>
 #include <linux/rculist.h>
@@ -234,24 +236,38 @@
  *	- do NOT use constexpr as array size on C11, it will likely become a VLA
  */
 #if !defined(KSU_HAS_C23)
-
 #define nullptr ((void *)0)
 typedef typeof(nullptr) nullptr_t;
-
 #define constexpr const
 #define auto __auto_type
-
 #define alignas _Alignas
 #define alignof _Alignof
-
-// note: requires clang
-// #define typeof_unqual(a) typeof(0, (a))
-
 #endif // KSU_HAS_C23
 
 // NOTE: clang < 19 has issues on constexpr even with -std=gnu23
 #if defined (KSU_HAS_C23) && defined(__clang__) && (__clang_major__ < 19)
 #define constexpr const
+#endif
+
+/**
+ * typeof_unqual requires C23, we import kernel's typeof_unqual for !C23
+ * https://elixir.bootlin.com/linux/v7.3-rc4/source/include/linux/compiler_types.h#L616
+ *
+ */
+#if !defined(KSU_HAS_C23)
+#define __scalar_type_to_expr_cases(type)	\
+	unsigned type:	(unsigned type)0,	\
+	signed type:	(signed type)0
+
+#define typeof_unqual(x) typeof(				\
+	_Generic((x),						\
+		char:	(char)0,				\
+		__scalar_type_to_expr_cases(char),		\
+		__scalar_type_to_expr_cases(short),		\
+		__scalar_type_to_expr_cases(int),		\
+		__scalar_type_to_expr_cases(long),		\
+		__scalar_type_to_expr_cases(long long),		\
+		default: (x)))
 #endif
 
 /**
@@ -262,38 +278,22 @@ typedef typeof(nullptr) nullptr_t;
  * static_assert(condition); - condition becomes the comment
  * static_assert(condition, "comment");
  */
-#ifndef static_assert
+#if !defined(KSU_HAS_C23) && !defined(static_assert)
 #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
 #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
 #endif
-
-/**
- * hardcode assumptions for micro-opt
- * - not used so much for now
- */
-#if defined(__clang__)
-#define assume(expr) __builtin_assume(expr)
-#elif defined(__GNUC__) && (__GNUC__ >= 13)
-#define assume(expr) __attribute__((assume(expr)))
-#else
-#define assume(expr) do {			\
-	if (unlikely(!(expr)))			\
-		__builtin_unreachable();	\
-} while (0)
+#if defined(KSU_HAS_C23) && defined(static_assert)
+#undef static_assert
 #endif
 
 /**
- * we do NOT have memset_explicit on the linux kernel
- *
- * from: OPENSSL_cleanse, volatile function pointer prevents memset optimization
- * https://github.com/openssl/openssl/blob/master/crypto/mem_clr.c
- * 
+ * nodiscard is C23, we can fallback to __must_check
  */
-static __nocfi __always_inline void *memset_explicit(void *s, int c, size_t count)
-{
-	static typeof(memset) *volatile memset_fnptr = memset;
-	return memset_fnptr(s, c, count);
-}
+#if __has_c_attribute(nodiscard)
+#define nodiscard [[nodiscard]]
+#else
+#define nodiscard __attribute__((__warn_unused_result__))
+#endif
 
 /**
  * old compilers does NOT know fallthrough, this is GNU/C23
@@ -309,6 +309,51 @@ static __nocfi __always_inline void *memset_explicit(void *s, int c, size_t coun
 #define fallthrough do {} while (0) /* fallthrough */
 #endif
 #endif
+
+/**
+ * expr assumptions for micro-optimizations
+ */
+#if defined(__clang__)
+#define assume(expr) __builtin_assume(expr)
+#elif defined(__GNUC__) && (__GNUC__ >= 13)
+#define assume(expr) __attribute__((assume(expr)))
+#else
+#define assume(expr) do {			\
+	if (unlikely(!(expr)))			\
+		__builtin_unreachable();	\
+} while (0)
+#endif
+
+/**
+ * *ptr + sizeof(*ptr) assumptions for micro-optimizations
+ */
+#if defined(__clang__) && __has_builtin(__builtin_assume_dereferenceable)
+#define assume_dereferenceable(ptr, size) __builtin_assume_dereferenceable(ptr, size)
+#else
+#define assume_dereferenceable(ptr, size) do { } while (0)
+#endif
+
+/**
+ * restriction assumptions for micro-optimizations
+ */
+#if defined(__clang__) && __has_builtin(__builtin_assume_separate_storage)
+#define assume_restricted(ptr1, ptr2) __builtin_assume_separate_storage(ptr1, ptr2)
+#else
+#define assume_restricted(ptr1, ptr2) do { } while (0)
+#endif
+
+/**
+ * we do NOT have memset_explicit on the linux kernel
+ *
+ * from: OPENSSL_cleanse, volatile function pointer prevents memset optimization
+ * https://github.com/openssl/openssl/blob/master/crypto/mem_clr.c
+ * 
+ */
+static __nocfi __always_inline void *memset_explicit(void *s, int c, size_t count)
+{
+	static typeof(memset) *volatile memset_fnptr = memset;
+	return memset_fnptr(s, c, count);
+}
 
 /**
  * C2y's countof
@@ -376,9 +421,7 @@ typedef unsigned __int128 uint128_t;
  * __may_alias to workaround "optimizations" even on -fno-strict-aliasing
  *
  */
-#ifndef __may_alias
 #define __may_alias __attribute__((__may_alias__))
-#endif
 
 /**
  * __attribute__((__cleanup__()))

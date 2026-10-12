@@ -30,6 +30,19 @@
 #define WRITE_ONCE(x, y) (*(volatile typeof(x) __may_alias *)&(x) = (typeof(x) __may_alias)(y))
 #endif
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 14, 0) && !defined(smp_store_release)
+#define smp_store_release(p, v) do { smp_mb(); WRITE_ONCE(*p, v); } while (0)
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 5, 0)
+static noinline void ksu_do_nothing(void *unused) { };
+__weak void kick_all_cpus_sync(void)
+{
+	smp_mb();
+	smp_call_function(ksu_do_nothing, NULL, 1);
+}
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
 static void *ksu_kvmalloc(size_t size, gfp_t flags)
 {
@@ -319,15 +332,27 @@ no_null_term:
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 2, 0) && !defined(strscpy_pad)
+// https://elixir.bootlin.com/linux/v5.2-rc1/source/lib/string.c#L259
 static ssize_t ksu_strscpy_pad(char *dest, const char *src, size_t count)
 {
-	if (!count)
-		return -E2BIG;
-
-	__builtin_memset(dest, 0, count);
-	return strscpy(dest, src, count);
+	ssize_t written = strscpy(dest, src, count);
+	if (written < 0 || written == count - 1)
+		return written;
+	memset(dest + written + 1, 0, count - written - 1);
+	return written;
 }
 #define strscpy_pad ksu_strscpy_pad
+#endif
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 16, 0)
+// https://elixir.bootlin.com/linux/v3.16/source/lib/string.c#L305
+static char *ksu_strchrnul(const char *s, int c)
+{
+	while (*s && *s != (char)c)
+		s++;
+	return (char *)s;
+}
+#define strchrnul ksu_strchrnul
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 0, 0)

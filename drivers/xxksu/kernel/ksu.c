@@ -60,6 +60,7 @@
 #include "feature/adb_root.h"
 #include "feature/kernel_umount.h"
 #include "feature/selinux_hide.h"
+#include "feature/shell_su_adb_only.h"
 #include "feature/sucompat.h"
 #include "feature/sulog.h"
 #include "runtime/ksud.h"
@@ -107,9 +108,16 @@
 #include "infra/file_wrapper.c"
 #include "infra/event_queue.c"
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 8, 0) && defined(CONFIG_KALLSYMS_ALL) && defined(CONFIG_MODULES)
+#define KSU_CAN_USE_MODULE_BLACKLIST
+#include "feature/module_blacklist.h"
+#include "feature/module_blacklist.c"
+#endif
+
 #include "feature/adb_root.c"
 #include "feature/kernel_umount.c"
 #include "feature/selinux_hide.c"
+#include "feature/shell_su_adb_only.c"
 #include "feature/sucompat.c"
 #include "feature/sulog.c"
 #include "runtime/ksud.c"
@@ -206,7 +214,8 @@
 
 static inline void ksu_print_build_info(void)
 {
-	pr_info("Initialized on: %s (%s) with ksuver: %s%s\n", UTS_RELEASE, UTS_MACHINE, __stringify(KSU_VERSION), EXTRA_FEATURES);
+	pr_info("welcome to KernelSU version " __stringify(KERNEL_SU_VERSION) ", package name " KSU_PACKAGE_NAME "\n");
+	pr_info("Initialized on: %s (%s)%s\n", UTS_RELEASE, UTS_MACHINE, EXTRA_FEATURES);
 
 #if defined(__VERSION__) && defined(__STDC_VERSION__)
 #if defined(__clang_version__)
@@ -240,15 +249,15 @@ static int __init kernelsu_init(void)
 		return -ENOSYS;
 	}
 
+#ifdef KSU_CAN_USE_MODULE_BLACKLIST
+	ksu_module_blacklist_init(); // Block modules early, before vendor modules are loaded in second stage.
+#endif
+	// register features
 	ksu_feature_init();
-
-	ksu_supercalls_init();
-
-	ksu_sucompat_init(); // so the feature is registered
-
-	ksu_kernel_umount_init(); // so the feature is registered
-
-	ksu_selinux_hide_init(); // so the feature is registered
+	ksu_sucompat_init();
+	ksu_kernel_umount_init();
+	ksu_selinux_hide_init();
+	ksu_shell_su_adb_only_init();
 
 #ifdef CONFIG_KSU_FEATURE_SULOG	
 	ksu_sulog_init(); // so the feature is registered
@@ -259,13 +268,13 @@ static int __init kernelsu_init(void)
 #endif
 
 	ksu_core_init();
+	ksu_supercalls_init();
 
 #if defined(CONFIG_KSU_KPROBES_KSUD) && !defined(CONFIG_KSU_TAMPER_SYSCALL_TABLE) && !defined(CONFIG_KSU_HACK_ARM64_BRANCH_LINK)
 	kp_ksud_init();
 #endif
 
 	ksu_allowlist_init();
-
 	ksu_throne_tracker_init();
 
 #ifdef CONFIG_KSU_SUSFS
@@ -273,7 +282,6 @@ static int __init kernelsu_init(void)
 #endif // #ifdef CONFIG_KSU_SUSFS
 
 	ksu_ksud_init();
-
 	ksu_file_wrapper_init();
 
 #ifdef CONFIG_KSU_TAMPER_SYSCALL_TABLE
@@ -291,14 +299,6 @@ static int __init kernelsu_init(void)
 device_initcall(kernelsu_init);
 #else
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 19, 0)
-char ksu_block_modules[256];
-module_param_string(block_modules, ksu_block_modules, sizeof(ksu_block_modules), 0);
-#include "downstream/module_blacklist.h"
-#else
-#define ksu_extend_module_blacklist() do { } while (0)
-#endif
-
 #ifndef CONFIG_KSU_SHELL_HAS_SU_ALWAYS
 /**
  * as per tiann/KernelSU ca2799c, lkm is allowed to flip this param post-compile.
@@ -313,7 +313,7 @@ static int __init kernelsu_lkm_init(void)
 {
 	kernelsu_init();
 
-	ksu_extend_module_blacklist();
+	// list_del(&THIS_MODULE->list);
 	kobject_del(&THIS_MODULE->mkobj.kobj); // tiann/KernelSU fefb02e
 
 	if (current->pid == 1)
@@ -332,7 +332,9 @@ static int __init kernelsu_lkm_init(void)
 
 	on_post_fs_data();
 	on_boot_completed();
-	
+
+	ksu_feature_apply_forced();
+
 	if (!!getenforce())
 		return 0;
 	

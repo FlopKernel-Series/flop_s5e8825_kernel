@@ -98,8 +98,8 @@ jobs:
     needs: generate-key
     uses: ./.github/workflows/build-lkm.yml
     with:
-      expected_size2: ${{ needs.generate-key.outputs.expected_size || '' }}
-      expected_hash2: ${{ needs.generate-key.outputs.expected_hash || '' }}
+      expected_size: ${{ needs.generate-key.outputs.expected_size || '' }}
+      expected_hash: ${{ needs.generate-key.outputs.expected_hash || '' }}
     secrets: inherit
 
   build-ksuinit:
@@ -115,7 +115,7 @@ jobs:
             pack_ksuinit: true
           - target: armv7-linux-androideabi
             pack_lkm: false
-            pack_ksuinit: false
+            pack_ksuinit: true
           - target: x86_64-linux-android
             pack_lkm: false
             pack_ksuinit: false
