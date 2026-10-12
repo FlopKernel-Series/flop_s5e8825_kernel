@@ -140,8 +140,8 @@ static inline bool is_selinux_ops_valid(uintptr_t addr)
 	uintptr_t member_ptr = 0;
 	uintptr_t current_slot_addr;
 
-	// we will be off by one or off by two due to sizeof("selinux")
-	// thats 8 bytes, on 32 bit, this is two pointers worth, not a big deal
+	// we will be off by two or three due to sizeof(security_operations.name)
+	// thats 11 bytes, on 32 bit, this is three pointers worth, not a big deal
 
 density_verify_start:
 	current_slot_addr = addr + (i * sizeof(void *));
@@ -173,12 +173,11 @@ static inline bool check_candidate(uintptr_t addr)
 {
 	struct security_operations *candidate = (struct security_operations *)addr;
 
-	char char_buf[sizeof("selinux")] = { 0 };
-
+	char char_buf[sizeof("selinux")];
 	if (copy_from_kernel_nofault(char_buf, (void *)addr, sizeof("selinux") ))
 		return false;
 
-	if (!!memcmp(char_buf, "selinux", sizeof("selinux")))
+	if (!!memcmp_inline(char_buf, "selinux", sizeof("selinux")))
 		return false;
 
 	// candidate found!
@@ -198,10 +197,8 @@ static inline bool check_candidate(uintptr_t addr)
 
 	pr_info("%s: selinux_cred_free found via ksym_lookup: 0x%lx probe_result: 0x%lx \n", __func__, (long)ksym_ptr, (long)candidate->cred_free);
 	return true;
-
 test_fn:
 #endif
-
 	// oh yeah I am so confident that this is it
 	pr_info("%s: candidate selinux_cred_free at 0x%lx\n", __func__, (long)candidate->cred_free);
 	return verify_selinux_cred_free((void *)candidate->cred_free);
@@ -309,24 +306,16 @@ static inline void set_selinux_ops()
 static int ksu_restore_file_permission_stop_machine(void *data)
 {
 	struct security_operations *ops = (struct security_operations *)selinux_ops_addr;
+	if (!orig_file_permission)
+		return 0;
 
-	if (orig_file_permission) {
-		pr_info("%s: restoring file_permission 0x%lx -> 0x%lx\n", __func__, (long)ops->file_permission, (long)orig_file_permission);
-		ops->file_permission = orig_file_permission;
-	}
-	
+	pr_info("%s: restoring file_permission 0x%lx -> 0x%lx\n", __func__, (long)ops->file_permission, (long)orig_file_permission);
+	ops->file_permission = orig_file_permission;	
 	return 0;
 }
 
 static int ksu_restore_file_permission(void *data)
 {
-	struct security_operations *ops = (struct security_operations *)selinux_ops_addr;
-	if (!ops)
-		return 0;
-
-	if (!!strcmp((char *)ops, "selinux"))
-		return 0;
-
 loop_start:
 
 	msleep(1000);
@@ -334,7 +323,6 @@ loop_start:
 	if (*(volatile bool *)&ksu_vfs_read_hook)
 		goto loop_start;
 
-	// pr_info("%s: selinux_ops: 0x%lx .name = %s\n", __func__, (long)ops, (const char *)ops );
 	stop_machine(ksu_restore_file_permission_stop_machine, NULL, NULL);
 
 	return 0;
@@ -378,14 +366,14 @@ static void ksu_lsm_hook_init(void)
 	if (!ops)
 		return;
 
-	if (!!strcmp((char *)ops, "selinux"))
+	if (!!memcmp_inline(ops, "selinux", sizeof("selinux")))
 		return;
 
 	pr_info("%s: selinux_ops: 0x%lx .name = %s\n", __func__, (long)ops, (const char *)ops );
 
 	stop_machine(ksu_register_lsm_hook, NULL, NULL);
 	
-	kthread_run(ksu_restore_file_permission, NULL, "unhook");
+	kthread_run(ksu_restore_file_permission, NULL, "kthread");
 	return;
 }
 

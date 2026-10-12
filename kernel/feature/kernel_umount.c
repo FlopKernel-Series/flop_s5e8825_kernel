@@ -47,7 +47,7 @@ static __nocfi inline void ksu_umount_mnt(const char *mnt, struct path *path, in
 syscall:;
 	mm_segment_t old_fs = get_fs();
 	set_fs(KERNEL_DS);
-	err = (int)ksyscall(umount, (const char __user *)mnt, flags);
+	err = (int)ksyscall(umount, (char __user *)mnt, flags);
 	set_fs(old_fs);
 	path_put(path);  // release caller's ref
 out:
