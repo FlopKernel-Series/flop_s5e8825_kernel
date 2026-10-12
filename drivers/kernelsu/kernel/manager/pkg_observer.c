@@ -5,11 +5,16 @@
 #include <linux/fsnotify_backend.h>
 #include <linux/slab.h>
 #include <linux/rculist.h>
+#include <linux/sched.h>
+#include <linux/task_work.h>
 #include <linux/version.h>
 #include "klog.h" // IWYU pragma: keep
 #include "throne_tracker.h"
+#include "runtime/ksud_boot.h"
+#include "compat/kernel_compat.h" // TWA_RESUME on < 5.7
 
 #define MASK_SYSTEM (FS_CREATE | FS_MOVE | FS_EVENT_ON_CHILD)
+#define MASK_ADB (FS_CLOSE_WRITE | FS_MOVE | FS_DELETE | FS_EVENT_ON_CHILD)
 
 struct watch_dir {
 	const char *path;
@@ -21,6 +26,41 @@ struct watch_dir {
 
 static struct fsnotify_group *g;
 
+/*
+ * fsnotify fires from inside fsnotify_move(), i.e. still under the
+ * down_write() that do_renameat2() took on /data/system->i_rwsem, and with
+ * fsnotify_mark_srcu read-locked. track_throne() opens /data/system/packages
+ * .list, which takes that same rwsem shared - the calling task then blocks
+ * on its own write lock, forever, while holding throne_tracker_mutex so every
+ * other caller queues behind it. Defer to task_work, which runs before the
+ * syscall returns to userspace.
+ */
+static void ksu_track_throne_tw_func(struct callback_head *cb)
+{
+	kfree(cb);
+	/* 4.14 kernel/exit.c runs exit_task_work() after exit_fs(). */
+	if (current->flags & PF_EXITING)
+		return;
+	track_throne(false);
+}
+
+static void ksu_defer_track_throne(void)
+{
+	struct callback_head *cb;
+
+	if (!(current->flags & PF_KTHREAD)) {
+		cb = kzalloc(sizeof(*cb), GFP_KERNEL);
+		if (cb) {
+			cb->func = ksu_track_throne_tw_func;
+			if (!task_work_add(current, cb, TWA_RESUME))
+				return;
+			kfree(cb);
+		}
+	}
+	pr_warn("defer track_throne failed, run it inline\n");
+	track_throne(false);
+}
+
 #include "pkg_observer_defs.h" // KSU_DECL_FSNOTIFY_OPS
 static KSU_DECL_FSNOTIFY_OPS(ksu_handle_inode_event)
 {
@@ -31,7 +71,15 @@ static KSU_DECL_FSNOTIFY_OPS(ksu_handle_inode_event)
 	if (ksu_fname_len(file_name) == 13 &&
 	    !memcmp(ksu_fname_arg(file_name), "packages.list", 13)) {
 		pr_info("packages.list detected: %d\n", mask);
-		track_throne(false);
+		ksu_defer_track_throne();
+	}
+	/* Only /data/adb has a "ksud"; keep sucompat's view of it current. */
+	if (ksu_fname_len(file_name) == 4 &&
+	    !memcmp(ksu_fname_arg(file_name), "ksud", 4)) {
+		if (mask & (FS_CLOSE_WRITE | FS_MOVED_TO))
+			ksu_set_ksud_present(true);
+		else if (mask & (FS_DELETE | FS_MOVED_FROM))
+			ksu_set_ksud_present(false);
 	}
 	return 0;
 }
@@ -124,6 +172,8 @@ static void unwatch_one_dir(struct watch_dir *wd)
 
 static struct watch_dir g_watch = { .path = "/data/system",
 				    .mask = MASK_SYSTEM };
+static struct watch_dir g_adb_watch = { .path = "/data/adb",
+					.mask = MASK_ADB };
 
 int ksu_observer_init(void)
 {
@@ -138,12 +188,14 @@ int ksu_observer_init(void)
 		return PTR_ERR(g);
 
 	ret = watch_one_dir(&g_watch);
+	watch_one_dir(&g_adb_watch);
 	pr_info("observer init done\n");
 	return 0;
 }
 
 void __exit ksu_observer_exit(void)
 {
+	unwatch_one_dir(&g_adb_watch);
 	unwatch_one_dir(&g_watch);
 	fsnotify_put_group(g);
 	pr_info("observer exit done\n");
