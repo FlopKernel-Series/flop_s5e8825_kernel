@@ -508,8 +508,7 @@ static void panfrost_job_handle_err(struct panfrost_device *pfdev,
 	pm_runtime_put_autosuspend(pfdev->dev);
 
 	if (panfrost_exception_needs_reset(pfdev, js_status)) {
-		atomic_set(&pfdev->reset.pending, 1);
-		drm_sched_fault(&pfdev->js->queue[js].sched);
+		panfrost_device_schedule_reset(pfdev);
 	}
 }
 
@@ -672,8 +671,11 @@ panfrost_reset(struct panfrost_device *pfdev,
 	bool cookie;
 	int ret;
 
-	if (!atomic_read(&pfdev->reset.pending))
+	mutex_lock(&pfdev->reset.lock);
+	if (!atomic_read(&pfdev->reset.pending)) {
+		mutex_unlock(&pfdev->reset.lock);
 		return;
+	}
 
 	/* Stop the schedulers.
 	 *
@@ -742,6 +744,7 @@ panfrost_reset(struct panfrost_device *pfdev,
 
 	/* GPU has been reset, we can clear the reset pending bit. */
 	atomic_set(&pfdev->reset.pending, 0);
+	mutex_unlock(&pfdev->reset.lock);
 
 	/* Now resubmit jobs that were previously queued but didn't have a
 	 * chance to finish.

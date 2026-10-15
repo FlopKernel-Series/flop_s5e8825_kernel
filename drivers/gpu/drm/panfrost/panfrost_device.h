@@ -128,6 +128,7 @@ struct panfrost_device {
 		struct workqueue_struct *wq;
 		struct work_struct work;
 		atomic_t pending;
+		struct mutex lock;
 	} reset;
 
 	struct mutex shrinker_lock;
