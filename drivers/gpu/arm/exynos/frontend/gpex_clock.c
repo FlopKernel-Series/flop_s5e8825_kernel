@@ -421,7 +421,7 @@ int gpex_clock_set(int clk)
 	if (!gpex_pm_get_status(true)) {
 		GPU_LOG(MALI_EXYNOS_INFO,
 			"%s: can't set clock and voltage in the power-off state!\n", __func__);
-		return -1;
+		return 0;
 	}
 
 	mutex_lock(&clk_info.clock_lock);
