@@ -55,7 +55,13 @@ extern int avc_ss_reset(struct selinux_avc *avc, u32 seqno);
 static void reset_avc_cache()
 {
 	#if defined(KSU_COMPAT_USE_SELINUX_STATE)
-	u32 seqno = selinux_state.ss ? ++selinux_state.ss->latest_granting : 1;
+	#ifdef SELINUX_POLICY_INSTEAD_SELINUX_SS
+	struct selinux_policy *policy = selinux_state.policy;
+	u32 seqno = policy ? ++policy->latest_granting : 1;
+	#else
+	struct selinux_ss *ss = selinux_state.ss;
+	u32 seqno = ss ? ++ss->latest_granting : 1;
+	#endif
 	#else
 	/* 4.9: no selinux_state; use a monotonic local seqno for AVC/policyload notifications */
 	static u32 ksu_avc_seqno = 1;
