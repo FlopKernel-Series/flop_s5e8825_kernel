@@ -672,7 +672,11 @@ panfrost_reset(struct panfrost_device *pfdev,
 	int ret;
 
 	mutex_lock(&pfdev->reset.lock);
-	if (!atomic_read(&pfdev->reset.pending)) {
+	/*
+	 * bad was already unlinked by drm_sched_job_timedout() and only the
+	 * reset below puts it back, so run it whenever there is a job.
+	 */
+	if (!atomic_read(&pfdev->reset.pending) && !bad) {
 		mutex_unlock(&pfdev->reset.lock);
 		return;
 	}
