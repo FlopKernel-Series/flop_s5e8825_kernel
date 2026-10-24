@@ -736,6 +736,7 @@ panfrost_reset(struct panfrost_device *pfdev,
 			if (pfdev->jobs[i][j]->requirements & PANFROST_JD_REQ_CYCLE_COUNT)
 				panfrost_cycle_counter_put(pfdev->jobs[i][j]->pfdev);
 
+			panfrost_mmu_as_put(pfdev, pfdev->jobs[i][j]->mmu);
 			pm_runtime_put_noidle(pfdev->dev);
 			panfrost_devfreq_record_idle(&pfdev->pfdevfreq);
 		}
