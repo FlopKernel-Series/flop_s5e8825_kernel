@@ -747,9 +747,11 @@ panfrost_reset(struct panfrost_device *pfdev,
 	/* Proceed with reset now. */
 	panfrost_device_reset(pfdev, false);
 
-	/* GPU has been reset, we can clear the reset pending bit. */
+	/*
+	 * GPU has been reset, we can clear the reset pending bit. Do it
+	 * before resubmitting, panfrost_job_hw_submit() needs it cleared.
+	 */
 	atomic_set(&pfdev->reset.pending, 0);
-	mutex_unlock(&pfdev->reset.lock);
 
 	/* Now resubmit jobs that were previously queued but didn't have a
 	 * chance to finish.
@@ -771,6 +773,7 @@ panfrost_reset(struct panfrost_device *pfdev,
 	panfrost_job_enable_interrupts(pfdev);
 
 	dma_fence_end_signalling(cookie);
+	mutex_unlock(&pfdev->reset.lock);
 }
 
 static void panfrost_job_timedout(struct drm_sched_job *sched_job)
