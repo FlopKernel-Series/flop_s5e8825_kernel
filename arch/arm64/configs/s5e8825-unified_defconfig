@@ -8215,3 +8215,5 @@ CONFIG_CC_HAS_SANCOV_TRACE_PC=y
 #
 # CONFIG_SEC_KUNIT is not set
 # end of KUnit support
+
+CONFIG_NTSYNC=y

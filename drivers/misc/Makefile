@@ -68,3 +68,4 @@ obj-$(CONFIG_SAMSUNG_TUI)	+= tui/
 obj-$(CONFIG_CMDLINE_HELPER) += cmdline_helper/
 
 obj-$(CONFIG_SEC_DETECT)	+= sec_detect.o
+obj-$(CONFIG_NTSYNC)		+= ntsync.o
