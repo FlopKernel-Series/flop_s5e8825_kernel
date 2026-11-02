@@ -26,7 +26,7 @@ static const unsigned int gpu_stock_lit[] = {1056000, 1056000, 1056000, 1056000,
 /* Overclocked frequencies */
 static const unsigned int gpu_oc_clock[] = {1209000, 1105000, 1001000, 897000, 806000, 702000, 611000, 507000, 403000, 312000, 208000, 104000};
 static const unsigned int gpu_oc_min_threshold[] = {78, 78, 78, 74, 63, 50, 35, 23, 15, 7, 3, 0};
-static const unsigned int gpu_oc_max_threshold[] = {100, 95, 95, 95, 90, 80, 65, 50, 35, 25, 15, 10};
+static const unsigned int gpu_oc_max_threshold[] = {100, 98, 95, 92, 90, 80, 65, 50, 35, 25, 15, 10};
 static const unsigned int gpu_oc_staycount[] = {5, 5, 5, 5, 5, 5, 5, 3, 3, 2, 2, 1};
 static const unsigned int gpu_oc_mem_freq[] = {2093000, 2093000, 1794000, 1794000, 1539000, 1352000, 1352000, 1014000, 1014000, 845000, 676000, 676000};
 static const unsigned int gpu_oc_lit[] = {1536000, 1440000, 1248000, 1056000, 1056000, 1056000, 1056000, 1056000, 0, 0, 0, 0};
