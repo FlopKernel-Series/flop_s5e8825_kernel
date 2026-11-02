@@ -230,6 +230,7 @@ CREATE_SYSFS_KOBJECT_READ_FUNCTION(get_gpu_clklck)
 GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 {
 	int ret;
+	int i;
 	bool enable;
 	int target_clock;
 
@@ -239,6 +240,13 @@ GPEX_STATIC ssize_t set_gpu_unlock(const char *buf, size_t count)
 	enable = sysfs_streq("1", buf);
 	target_clock = enable ? gpex_clock_get_unlock_max_clock() :
 				gpex_clock_get_stock_max_clock();
+
+	for (i = 0; i < NUMBER_LOCK; i++) {
+		gpex_clock_lock_clock(GPU_CLOCK_MAX_UNLOCK, i, 0);
+		gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, i, 0);
+	}
+	clk_info->user_max_lock_input = 0;
+	clk_info->user_min_lock_input = 0;
 
 	ret = gpex_clock_set_runtime_max_clock(target_clock);
 	if (ret)
