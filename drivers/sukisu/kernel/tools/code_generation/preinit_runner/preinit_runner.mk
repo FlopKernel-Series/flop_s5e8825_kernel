@@ -4,7 +4,9 @@
 KSU_UAPI_INC := $(objtree)/usr/include
 
 ifeq ($(wildcard $(KSU_UAPI_INC)/linux/unistd.h),)
-KSU_HEADERS_INSTALL_OUTPUT := $(shell $(MAKE) -s -C "$(abspath $(srctree))" \
+# Inheriting sub_make_done makes the nested make skip the out-of-tree setup,
+# so start it clean.
+KSU_HEADERS_INSTALL_OUTPUT := $(shell env -u sub_make_done $(MAKE) -s -C "$(abspath $(srctree))" \
 	O="$(abspath $(objtree))" ARCH="$(ARCH)" \
 	headers_install INSTALL_HDR_PATH="$(abspath $(objtree))/usr")
 endif
