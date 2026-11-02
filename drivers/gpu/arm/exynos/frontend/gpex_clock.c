@@ -465,6 +465,7 @@ int gpex_clock_set_runtime_max_clock(int clk)
 	unsigned long flags;
 	int i;
 	int target_clk = 0;
+	int prev_max_clock = 0;
 	bool update_clock = false;
 
 	if (gpex_clock_get_table_idx(clk) < 0)
@@ -478,6 +479,7 @@ int gpex_clock_set_runtime_max_clock(int clk)
 		return 0;
 	}
 
+	prev_max_clock = clk_info.gpu_max_clock;
 	clk_info.gpu_max_clock = clk;
 
 	if (clk_info.user_max_lock_input > clk)
@@ -498,6 +500,9 @@ int gpex_clock_set_runtime_max_clock(int clk)
 	gpex_clock_recompute_min_lock_locked();
 
 	if (clk_info.cur_clock > clk) {
+		target_clk = clk;
+		update_clock = true;
+	} else if (clk > prev_max_clock && clk_info.cur_clock == prev_max_clock) {
 		target_clk = clk;
 		update_clock = true;
 	}
