@@ -125,8 +125,8 @@ static __nocfi ssize_t ksu_selinux_transaction_write(struct file *file, const ch
 	if (sscanf(ar->data, "%x %x %x %x %u %x", &avd_allowed, &ff, &avd_auditallow, &avd_auditdeny, &avd_seqno, &avd_flags) != 6)
 		return ret;
 
-	avd_seqno = 1;
-	scnprintf(ar->data, SIMPLE_TRANSACTION_LIMIT, "%x %x %x %x %u %x", avd_allowed, ff, avd_auditallow, avd_auditdeny, avd_seqno, avd_flags);
+	avd_seqno = 1; // simple_transaction_set()
+	ar->size = scnprintf(ar->data, SIMPLE_TRANSACTION_LIMIT, "%x %x %x %x %u %x", avd_allowed, ff, avd_auditallow, avd_auditdeny, avd_seqno, avd_flags);
 
 	return ret;
 

@@ -1,3 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2026 \xx
+ *
+ * This file is a downstream extension and NOT affiliated, endorsed by,
+ * or maintained by the official KernelSU developers.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ */
+// adapted from: https://github.com/tiann/KernelSU/pull/3907
 #define INIT_PATH "/system/bin/init"
 
 static bool ksu_preinit_enabled = true;
@@ -15,10 +28,13 @@ static bool is_selinux_setup(const char __user *const __user *argv_user)
 	if (is_compat_task()) {
 		uint32_t __user *compat_argv_user = (uint32_t __user *)argv_user;
 		uint32_t arg32_p;
-		get_user(arg32_p, compat_argv_user + 1);
+		if (get_user(arg32_p, compat_argv_user + 1))
+			return false;
 		arg = (void *)(uintptr_t)arg32_p;
-	} else
-		get_user(arg, argv_user + 1);
+	} else {
+		if (get_user(arg, argv_user + 1))
+			return false;
+	}
 
 	if (!arg)
 		return false;
@@ -30,7 +46,7 @@ static bool is_selinux_setup(const char __user *const __user *argv_user)
 	return !strcmp(buf, expected);
 }
 
-static void ksu_stage_preinit_binary(void *u_argv, void *u_envp)
+static void ksu_stage_preinit_binary(void ***u_argv, void ***u_envp)
 {
 	struct file *file;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 19, 0)
@@ -50,6 +66,8 @@ static void ksu_stage_preinit_binary(void *u_argv, void *u_envp)
 		fput(file);
 		return;
 	}
+
+	pr_info("preinit: runner staged (%zu bytes)\n", runner_binary_len);
 
 	int fd = get_unused_fd_flags(O_CLOEXEC);
 	if (fd < 0) {
@@ -76,6 +94,7 @@ static void ksu_stage_preinit_binary(void *u_argv, void *u_envp)
 	uintptr_t mmap_page = vm_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0);
 	if (IS_ERR_VALUE(mmap_page)) {
 		pr_info("preinit: mmap fail!\n");
+		ksu_close_fd(fd);
 		return;
 	}
 
@@ -86,13 +105,12 @@ static void ksu_stage_preinit_binary(void *u_argv, void *u_envp)
 
 // payload definition
 	struct execve_payload {
-		char c_argv0[32];	// "/system/bin/init", mmap_page is pointing here
+		char c_argv0[32];	// "/system/bin/init", mmap_page will point here
 		char c_argv1[32];	// "selinux_setup"
-		char filename[32];
+		char filename[32];	// fd_path
 		uintptr_t argv[3];	// **argv: argv0, argv1, NULL terminator
 		uintptr_t envp[17];	// envp mirror, pointer extended.
-
-	};
+	}; // 4 cachelines
 	static_assert(32 > sizeof(INIT_PATH));
 // payload definition
 
@@ -132,7 +150,7 @@ static void ksu_stage_preinit_binary(void *u_argv, void *u_envp)
 	u_envp_ptr = (void __user *)(mmap_page + offsetof(struct execve_payload, envp));
 	goto send_payload;
 
-native:; // we might as well do it for native, its a straight up copy paste anyway
+native:; // not really needed, we can pass original envp, but its a straight up copy paste anyway
 	uintptr_t __user *u_env_native = (uintptr_t __user *)envp_user;
 	int n = 0;
 	while (n < 16) {
@@ -153,13 +171,21 @@ native:; // we might as well do it for native, its a straight up copy paste anyw
 send_payload:
 	if (!!copy_to_user((void __user *)mmap_page, &payload, sizeof(struct execve_payload))) {
 		pr_info("preinit: debug: copy_to_user mmap failed \n");
-		return;
+		goto unmap_and_close;
 	}
 
+	pr_info("preinit: exec runner via %s\n", fd_path);
 	pr_info("preinit: syscall(SYS_execve, 0x%lx, 0x%lx, 0x%lx);\n", (uintptr_t)u_filename, (uintptr_t)u_argv_ptr, (uintptr_t)u_envp_ptr);
 
 	long eret = ksyscall(execve, u_filename, u_argv_ptr, u_envp_ptr);
 	pr_info("preinit: sys_execve runner returned: %ld \n", eret);
+	if (!eret)
+		return;
+
+unmap_and_close: // not rly needed, but its ok.
+	vm_munmap(mmap_page, PAGE_SIZE);
+	ksu_close_fd(fd);
+	return;
 }
 
 static noinline void ksu_preinit_handle_kexecve(void **filename, void *kargv, void *kenvp)
@@ -224,7 +250,7 @@ static noinline void ksu_preinit_handle_uexecve(const char __user **filename, vo
 
 	kthread_run(ksu_disable_preinit_branch, nullptr, "kthread");
 
-	ksu_stage_preinit_binary(u_argv, u_envp);
+	ksu_stage_preinit_binary((void ***)u_argv, (void ***)u_envp);
 }
 
 static inline void ksu_preinit_kernel_execve_hook(void **filename, void *k_argv, void *k_envp)
