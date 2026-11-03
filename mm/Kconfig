@@ -1033,6 +1033,9 @@ config LRU_GEN_STATS
 
 source "mm/damon/Kconfig"
 
+config KMAP_LOCAL
+	bool
+
 endmenu
 
 source "mm/sec_mm/Kconfig"
