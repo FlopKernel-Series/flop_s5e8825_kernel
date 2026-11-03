@@ -9,6 +9,9 @@
 #include <linux/slab.h>
 #include <linux/sizes.h>
 #include <linux/version.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#include <linux/flex_array.h>
+#endif
 
 #include "sepolicy.h"
 #include "klog.h" // IWYU pragma: keep
@@ -178,11 +181,11 @@ static bool remove_avtab_node(struct policydb *db, struct avtab_node *node)
 
     for (i = 0; i < db->te_avtab.nslot; i++) {
         prev = NULL;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
+        for (n = db->te_avtab.htable[i]; n; prev = n, n = n->next) {
+#else
         for (n = flex_array_get_ptr(db->te_avtab.htable, i); n;
              prev = n, n = n->next) {
-#else
-        for (n = db->te_avtab.htable[i]; n; prev = n, n = n->next) {
 #endif
             if (n != node)
                 continue;
@@ -190,11 +193,11 @@ static bool remove_avtab_node(struct policydb *db, struct avtab_node *node)
             if (prev)
                 prev->next = n->next;
             else {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
+                db->te_avtab.htable[i] = n->next;
+#else
                 flex_array_put_ptr(db->te_avtab.htable, i, n->next,
                                    GFP_ATOMIC);
-#else
-                db->te_avtab.htable[i] = n->next;
 #endif
             }
 
@@ -210,10 +213,10 @@ static bool remove_avtab_node(struct policydb *db, struct avtab_node *node)
                 // data is u32
                 shrink_size += sizeof(n->datum.u.data);
             n->next = NULL;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 1, 0)
-            flex_array_put_ptr(removed.htable, 0, n, GFP_ATOMIC | __GFP_ZERO);
-#else
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
             removed.htable[0] = n;
+#else
+            flex_array_put_ptr(removed.htable, 0, n, GFP_ATOMIC | __GFP_ZERO);
 #endif
             removed.nel = 1;
             avtab_destroy(&removed);
@@ -1019,6 +1022,7 @@ static void add_typeattribute_raw(struct policydb *db, struct type_datum *type,
 {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
     struct ebitmap *sattr = &db->type_attr_map_array[type->value - 1];
+
 #elif defined(CONFIG_IS_HW_HISI)
 	/*
    *   HISI_SELINUX_EBITMAP_RO is Huawei's unique features.
