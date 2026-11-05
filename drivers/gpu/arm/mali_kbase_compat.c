@@ -5,7 +5,7 @@
  * Provides /sys/module/mali_kbase/ for userspace tooling compatibility.
  * The real Mali KMD logic lives in versioned modules
  * (mali_kbase_r32p1, mali_kbase_r38p1, mali_kbase_r44p1, mali_kbase_r49p1,
- * mali_kbase_r54p3).
+ * mali_kbase_r54p1, mali_kbase_r54p3).
  *
  * On init, loads the version selected by mali.version= cmdline
  * so the redirector is populated before external consumers probe.
@@ -19,7 +19,7 @@
 
 MODULE_DESCRIPTION("Mali KMD compatibility stub");
 MODULE_LICENSE("GPL");
-MODULE_SOFTDEP("pre: mali_kbase_r32p1 mali_kbase_r38p1 mali_kbase_r44p1 mali_kbase_r49p1 mali_kbase_r54p3");
+MODULE_SOFTDEP("pre: mali_kbase_r32p1 mali_kbase_r38p1 mali_kbase_r44p1 mali_kbase_r49p1 mali_kbase_r54p1 mali_kbase_r54p3");
 MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
 
 extern char mali_selected_version[];
@@ -114,6 +114,8 @@ static int __init mali_kbase_compat_init(void)
 		mali_kbase_version = "r44p1-01eac0 (UK version 11.39)";
 	else if (strcmp(mali_selected_version, "r49p1") == 0)
 		mali_kbase_version = "r49p1-04eac0 (UK version 11.46)";
+	else if (strcmp(mali_selected_version, "r54p1") == 0)
+		mali_kbase_version = "r54p1-12eac0 (UK version 11.46)";
 	else if (strcmp(mali_selected_version, "r54p3") == 0)
 		mali_kbase_version = "r54p3-01eac0 (UK version 11.46)";
 	else
@@ -123,6 +125,7 @@ static int __init mali_kbase_compat_init(void)
 
 	/* Only r49p1 onwards provide these parameters. */
 	if (strcmp(mali_selected_version, "r49p1") == 0 ||
+	    strcmp(mali_selected_version, "r54p1") == 0 ||
 	    strcmp(mali_selected_version, "r54p3") == 0) {
 		ret = sysfs_create_group(&THIS_MODULE->mkobj.kobj,
 					 &mali_kbase_params_group);
