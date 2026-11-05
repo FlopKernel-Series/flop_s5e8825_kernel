@@ -50,6 +50,13 @@ config MALI_MIDGARD_R49P1
 	  Build the Mali Valhall r49p1 kernel-mode driver as a module.
 	  This produces mali_kbase_r49p1.ko.
 
+config MALI_MIDGARD_R54P1
+	tristate "Mali Valhall r54p1 driver"
+	default n
+	help
+	  Build the Mali Valhall r54p1 kernel-mode driver as a module.
+	  This produces mali_kbase_r54p1.ko.
+
 config MALI_MIDGARD_R54P3
 	tristate "Mali Valhall r54p3 driver"
 	default n
