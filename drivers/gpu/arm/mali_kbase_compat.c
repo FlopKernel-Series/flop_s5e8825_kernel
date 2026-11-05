@@ -11,6 +11,7 @@
  * so the redirector is populated before external consumers probe.
  */
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/kmod.h>
 #include <linux/sysfs.h>
 #include <linux/fs.h>
@@ -42,9 +43,6 @@ static ssize_t kmd_param_show(const char *name, char *buf)
 {
 	char path[64];
 	struct file *filp;
-	struct kiocb kiocb;
-	struct kvec kvec;
-	struct iov_iter iter;
 	ssize_t ret;
 
 	snprintf(path, sizeof(path), "/sys/module/mali_kbase_%s/parameters/%s",
@@ -55,14 +53,29 @@ static ssize_t kmd_param_show(const char *name, char *buf)
 	if (IS_ERR(filp))
 		return -ENODEV;
 
-	kvec.iov_base = buf;
-	kvec.iov_len = PAGE_SIZE - 1;
-	iov_iter_kvec(&iter, READ, &kvec, 1, kvec.iov_len);
+#if (KERNEL_VERSION(5, 10, 0) > LINUX_VERSION_CODE)
+	{
+		loff_t pos = 0;
 
-	init_sync_kiocb(&kiocb, filp);
-	kiocb.ki_pos = 0;
+		ret = kernel_read(filp, buf, PAGE_SIZE - 1, &pos);
+	}
+#else
+	{
+		struct kiocb kiocb;
+		struct kvec kvec;
+		struct iov_iter iter;
 
-	ret = filp->f_op->read_iter(&kiocb, &iter);
+		kvec.iov_base = buf;
+		kvec.iov_len = PAGE_SIZE - 1;
+		iov_iter_kvec(&iter, READ, &kvec, 1, kvec.iov_len);
+
+		init_sync_kiocb(&kiocb, filp);
+
+		ret = filp->f_op->read_iter ?
+			      filp->f_op->read_iter(&kiocb, &iter) : -EINVAL;
+	}
+#endif
+
 	if (ret >= 0)
 		buf[ret] = '\0';
 
