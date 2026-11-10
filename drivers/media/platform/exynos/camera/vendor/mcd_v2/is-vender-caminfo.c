@@ -149,6 +149,14 @@ static int is_vender_caminfo_set_efs_data(void __user *p_efsdata_user)
 			ret = -EINVAL;
 			goto EXIT;
 		}
+	} else if (efs_data.tilt_cal_tele_efs_size == 0) {
+		/*
+		 * Size 0 means this device has no telephoto camera.
+		 * That is a normal hardware configuration, not an error, so do
+		 * not fail the whole ioctl: returning -EFAULT here also discards
+		 * the successfully copied blocks below and makes the camera HAL
+		 * treat the entire EFS handoff as failed.
+		 */
 	} else {
 		err("wrong tilt cal tele data size : data size must be smaller than max size.(%d)", efs_data.tilt_cal_tele_efs_size);
 		ret = -EFAULT;
@@ -161,6 +169,14 @@ static int is_vender_caminfo_set_efs_data(void __user *p_efsdata_user)
 			ret = -EINVAL;
 			goto EXIT;
 		}
+	} else if (efs_data.tilt_cal_tele2_efs_size == 0) {
+		/*
+		 * Size 0 means this device has no second telephoto camera.
+		 * That is a normal hardware configuration, not an error, so do
+		 * not fail the whole ioctl: returning -EFAULT here also discards
+		 * the successfully copied blocks below and makes the camera HAL
+		 * treat the entire EFS handoff as failed.
+		 */
 	} else {
 		err("wrong tilt cal tele2 data size : data size must be smaller than max size.(%d)", efs_data.tilt_cal_tele2_efs_size);
 		ret = -EFAULT;
@@ -173,6 +189,14 @@ static int is_vender_caminfo_set_efs_data(void __user *p_efsdata_user)
 			ret = -EINVAL;
 			goto EXIT;
 		}
+	} else if (efs_data.gyro_efs_size == 0) {
+		/*
+		 * Size 0 means this device has no gyro calibration data.
+		 * That is a normal hardware configuration, not an error, so do
+		 * not fail the whole ioctl: returning -EFAULT here also discards
+		 * the successfully copied blocks below and makes the camera HAL
+		 * treat the entire EFS handoff as failed.
+		 */
 	} else {
 		err("wrong gyro data size : data size must be smaller than max size.(%d)", efs_data.gyro_efs_size);
 		ret = -EFAULT;
