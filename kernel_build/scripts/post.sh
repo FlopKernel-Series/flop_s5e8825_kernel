@@ -10,8 +10,6 @@ kernel_modules() {
     mkdir -p "$TMPDIR" "$MODULES_DIR/0.0" "$PLATFORM_RAMDISK_DIR"
 
     cp -rf "$IN_PLATFORM"/* "$PLATFORM_RAMDISK_DIR/"
-    mkdir "$PLATFORM_RAMDISK_DIR/first_stage_ramdisk"
-    cp -f "$PLATFORM_RAMDISK_DIR/fstab.s5e8825" "$PLATFORM_RAMDISK_DIR/first_stage_ramdisk/fstab.s5e8825"
 
     if ! find "$MOD_OUTDIR/lib/modules" -mindepth 1 -type d | read; then
         echo -e "\n$(log_err "Unknown error!")\n"

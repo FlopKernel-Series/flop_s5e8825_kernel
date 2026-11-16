@@ -64,6 +64,7 @@ MOD_OUTDIR="$KDIR/modules_out"
 TMPDIR="$KDIR/kernel_build/tmp"
 IN_PLATFORM="$KDIR/kernel_build/vboot_platform"
 IN_DLKM="$KDIR/kernel_build/vboot_dlkm"
+IN_AOSP="$KDIR/kernel_build/vboot_aosp"
 IN_DTB="$OUTDIR/arch/arm64/boot/dts/exynos/s5e8825.dtb"
 PLATFORM_RAMDISK_DIR="$TMPDIR/ramdisk_platform"
 DLKM_RAMDISK_DIR="$TMPDIR/ramdisk_dlkm"
@@ -75,6 +76,7 @@ OUT_BOOTIMG="$IMAGES_DIR/boot.img"
 OUT_BOOTIMG_ONEUI="$IMAGES_DIR/boot_oneui.img"
 OUT_BOOTIMG_AOSP="$IMAGES_DIR/boot_aosp.img"
 OUT_VENDORBOOTIMG="$IMAGES_DIR/vendor_boot.img"
+OUT_VENDORBOOTIMG_LEGACY="$IMAGES_DIR/vendor_boot_legacy.img"
 OUT_DTBIMAGE="$IMAGES_DIR/dtb.img"
 
 # Tools
@@ -236,6 +238,7 @@ fi
 ZIP_PATH="$KDIR/kernel_build/Floppy_$FK_VER-$FK_TYPE-$CODENAME-$DATE.zip"
 TAR_PATH_ONEUI="$KDIR/kernel_build/FloppyOneUI_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
 TAR_PATH_AOSP="$KDIR/kernel_build/FloppyAOSP_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
+TAR_PATH_AOSP_LEGACY="$KDIR/kernel_build/FloppyAOSPLegacy_$FK_VER-$FK_TYPE_TAR-$CODENAME-$DATE.tar"
 NH_MODULE_PATH=""
 export NH_MODULE_PATH
 

@@ -40,14 +40,38 @@ build_images() {
     echo -e "\n$(log_info "Building vendor_boot image...")"
     cd "$DLKM_RAMDISK_DIR"
     find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > "../ramdisk_dlkm.lz4"
-    cd "../ramdisk_platform"
-    find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > "../ramdisk_platform.lz4"
-    cd ".."
-    echo "buildtime_bootconfig=enable" > bootconfig
+
+    # Preserve the platform ramdisk layout and firmware, replacing only its fstab.
+    echo "buildtime_bootconfig=enable" > "$TMPDIR/bootconfig"
+
+    local AOSP_RAMDISK_DIR="$TMPDIR/ramdisk_vendor"
+    rm -rf "$AOSP_RAMDISK_DIR"
+    mkdir -p "$AOSP_RAMDISK_DIR"
+    cp -rf "$IN_PLATFORM"/* "$AOSP_RAMDISK_DIR"/
+    cp -f "$IN_AOSP/fstab.s5e8825" "$AOSP_RAMDISK_DIR/fstab.s5e8825"
+    cd "$AOSP_RAMDISK_DIR"
+    find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > "$TMPDIR/ramdisk_vendor.lz4"
+    cd "$TMPDIR"
 
     "$MKBOOTIMG" --header_version 4 \
         --vendor_boot "$OUT_VENDORBOOTIMG" \
-        --vendor_bootconfig "$(pwd)/bootconfig" \
+        --vendor_bootconfig "$TMPDIR/bootconfig" \
+        --dtb "$OUT_DTBIMAGE" \
+        --vendor_ramdisk "$(pwd)/ramdisk_vendor.lz4" \
+        --ramdisk_type dlkm \
+        --ramdisk_name dlkm \
+        --vendor_ramdisk_fragment "$(pwd)/ramdisk_dlkm.lz4" \
+        --os_version 15.0.0 \
+        --os_patch_level "$MONTH" || exit 1
+
+    echo -e "\n$(log_info "Building legacy AOSP vendor_boot image...")"
+    cd "$TMPDIR/ramdisk_platform"
+    find . | cpio --quiet -o -H newc -R root:root | lz4 -9cl > "$TMPDIR/ramdisk_platform.lz4"
+    cd "$TMPDIR"
+
+    "$MKBOOTIMG" --header_version 4 \
+        --vendor_boot "$OUT_VENDORBOOTIMG_LEGACY" \
+        --vendor_bootconfig "$TMPDIR/bootconfig" \
         --dtb "$OUT_DTBIMAGE" \
         --vendor_ramdisk "$(pwd)/ramdisk_platform.lz4" \
         --ramdisk_type dlkm \

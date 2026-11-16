@@ -30,19 +30,22 @@ packing() {
         echo -e "\n$(log_info "Creating OneUI TAR...")"
         rm -f "$TAR_PATH_ONEUI"
         lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG_ONEUI" > boot.img.lz4 2>/dev/null
-        lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
+        lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG_LEGACY" > vendor_boot.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_ONEUI" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
         echo -e "$(log_info "Output: $TAR_PATH_ONEUI")"
 
         # Create AOSP TAR
         echo -e "\n$(log_info "Creating AOSP TAR...")"
-        rm -f "$TAR_PATH_AOSP"
+        rm -f "$TAR_PATH_AOSP" "$TAR_PATH_AOSP_LEGACY"
         lz4 -c -12 -B6 --content-size "$OUT_BOOTIMG_AOSP" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
+        lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG_LEGACY" > vendor_boot_legacy.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_AOSP" boot.img.lz4 vendor_boot.img.lz4
-        rm -f boot.img.lz4 vendor_boot.img.lz4
+        tar -cf "$TAR_PATH_AOSP_LEGACY" boot.img.lz4 vendor_boot_legacy.img.lz4
+        rm -f boot.img.lz4 vendor_boot.img.lz4 vendor_boot_legacy.img.lz4
         echo -e "$(log_info "Output: $TAR_PATH_AOSP")"
+        echo -e "$(log_info "Output: $TAR_PATH_AOSP_LEGACY")"
 
         # Create OneUI Permissive TAR (if requested)
         if [ "$DO_PERM" = "1" ]; then
@@ -67,7 +70,7 @@ packing() {
 
             rm -f "$TAR_PATH_ONEUI_PERM"
             lz4 -c -12 -B6 --content-size "$ONEUI_PERM_BOOTIMG" > boot.img.lz4 2>/dev/null
-            lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
+            lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG_LEGACY" > vendor_boot.img.lz4 2>/dev/null
             tar -cf "$TAR_PATH_ONEUI_PERM" boot.img.lz4 vendor_boot.img.lz4
             rm -f boot.img.lz4 vendor_boot.img.lz4
             rm -f "$ONEUI_PERM_KERNEL" "$ONEUI_PERM_BOOTIMG"
@@ -76,6 +79,7 @@ packing() {
             # Create AOSP Permissive TAR
             echo -e "\n$(log_info "Creating AOSP Permissive TAR...")"
             local TAR_PATH_AOSP_PERM="${TAR_PATH_AOSP}"
+            local TAR_PATH_AOSP_LEGACY_PERM="${TAR_PATH_AOSP_LEGACY}"
             local AOSP_PERM_KERNEL="$TMPDIR/Image_aosp_perm"
             cp "$OUT_KERNEL" "$AOSP_PERM_KERNEL"
 
@@ -103,13 +107,16 @@ packing() {
                 --os_version 15.0.0 \
                 --os_patch_level "$(date +%Y-%m)" || exit 1
 
-            rm -f "$TAR_PATH_AOSP_PERM"
+            rm -f "$TAR_PATH_AOSP_PERM" "$TAR_PATH_AOSP_LEGACY_PERM"
             lz4 -c -12 -B6 --content-size "$AOSP_PERM_BOOTIMG" > boot.img.lz4 2>/dev/null
             lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
+            lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG_LEGACY" > vendor_boot_legacy.img.lz4 2>/dev/null
             tar -cf "$TAR_PATH_AOSP_PERM" boot.img.lz4 vendor_boot.img.lz4
-            rm -f boot.img.lz4 vendor_boot.img.lz4
+            tar -cf "$TAR_PATH_AOSP_LEGACY_PERM" boot.img.lz4 vendor_boot_legacy.img.lz4
+            rm -f boot.img.lz4 vendor_boot.img.lz4 vendor_boot_legacy.img.lz4
             rm -f "$AOSP_PERM_KERNEL" "$AOSP_PERM_BOOTIMG"
             echo -e "$(log_info "Output: $TAR_PATH_AOSP_PERM")"
+            echo -e "$(log_info "Output: $TAR_PATH_AOSP_LEGACY_PERM")"
         fi
 
         # Create OneUI Unlocked TAR
@@ -134,7 +141,7 @@ packing() {
 
         rm -f "$TAR_PATH_ONEUI_UNLOCKED"
         lz4 -c -12 -B6 --content-size "$ONEUI_UNLOCKED_BOOTIMG" > boot.img.lz4 2>/dev/null
-        lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
+        lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG_LEGACY" > vendor_boot.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_ONEUI_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
         rm -f boot.img.lz4 vendor_boot.img.lz4
         rm -f "$ONEUI_UNLOCKED_KERNEL" "$ONEUI_UNLOCKED_BOOTIMG"
@@ -143,6 +150,7 @@ packing() {
         # Create AOSP Unlocked TAR
         echo -e "\n$(log_info "Creating AOSP Unlocked TAR...")"
         local TAR_PATH_AOSP_UNLOCKED="${TAR_PATH_AOSP/-$FK_TYPE_TAR-/-$FK_TYPE_TAR+Unlocked-}"
+        local TAR_PATH_AOSP_LEGACY_UNLOCKED="${TAR_PATH_AOSP_LEGACY/-$FK_TYPE_TAR-/-$FK_TYPE_TAR+Unlocked-}"
         local AOSP_UNLOCKED_KERNEL="$TMPDIR/Image_aosp_unlocked"
         cp "$OUT_KERNEL" "$AOSP_UNLOCKED_KERNEL"
 
@@ -170,13 +178,16 @@ packing() {
             --os_version 15.0.0 \
             --os_patch_level "$(date +%Y-%m)" || exit 1
 
-        rm -f "$TAR_PATH_AOSP_UNLOCKED"
+        rm -f "$TAR_PATH_AOSP_UNLOCKED" "$TAR_PATH_AOSP_LEGACY_UNLOCKED"
         lz4 -c -12 -B6 --content-size "$AOSP_UNLOCKED_BOOTIMG" > boot.img.lz4 2>/dev/null
         lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG" > vendor_boot.img.lz4 2>/dev/null
+        lz4 -c -12 -B6 --content-size "$OUT_VENDORBOOTIMG_LEGACY" > vendor_boot_legacy.img.lz4 2>/dev/null
         tar -cf "$TAR_PATH_AOSP_UNLOCKED" boot.img.lz4 vendor_boot.img.lz4
-        rm -f boot.img.lz4 vendor_boot.img.lz4
+        tar -cf "$TAR_PATH_AOSP_LEGACY_UNLOCKED" boot.img.lz4 vendor_boot_legacy.img.lz4
+        rm -f boot.img.lz4 vendor_boot.img.lz4 vendor_boot_legacy.img.lz4
         rm -f "$AOSP_UNLOCKED_KERNEL" "$AOSP_UNLOCKED_BOOTIMG"
         echo -e "$(log_info "Output: $TAR_PATH_AOSP_UNLOCKED")"
+        echo -e "$(log_info "Output: $TAR_PATH_AOSP_LEGACY_UNLOCKED")"
 
         cd "$KDIR"
     fi
