@@ -226,12 +226,12 @@ static void syscall_table_sucompat_enable()
 {
 	guarded_mutex_lock(&sucompat_toggle_mutex);
 
-	read_and_replace_syscall((void *)&armeabi_execve, __ARMEABI_execve, (void *)hook_armeabi_execve, native_sct);
+	replace_syscall((void *)&armeabi_execve, __ARMEABI_execve, (void *)hook_armeabi_execve, native_sct);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0)
-	read_and_replace_syscall((void *)&armeabi_execveat, __ARMEABI_execveat, (void *)hook_armeabi_execveat, native_sct);
+	replace_syscall((void *)&armeabi_execveat, __ARMEABI_execveat, (void *)hook_armeabi_execveat, native_sct);
 #endif
-	read_and_replace_syscall((void *)&armeabi_faccessat, __ARMEABI_faccessat, (void *)hook_armeabi_faccessat, native_sct);
-	read_and_replace_syscall((void *)&armeabi_fstatat64, __ARMEABI_fstatat64, (void *)hook_armeabi_fstatat64, native_sct);
+	replace_syscall((void *)&armeabi_faccessat, __ARMEABI_faccessat, (void *)hook_armeabi_faccessat, native_sct);
+	replace_syscall((void *)&armeabi_fstatat64, __ARMEABI_fstatat64, (void *)hook_armeabi_fstatat64, native_sct);
 }
 
 static void syscall_table_sucompat_disable()
@@ -248,9 +248,9 @@ static void syscall_table_sucompat_disable()
 
 static void syscall_table_ksud_hook_init()
 {
-	read_and_replace_syscall((void *)&armeabi_reboot, __ARMEABI_reboot, (void *)hook_armeabi_reboot, native_sct);
-	read_and_replace_syscall((void *)&armeabi_fstat64, __ARMEABI_fstat64, (void *)hook_armeabi_fstat64_ret, native_sct);
-	read_and_replace_syscall((void *)&armeabi_read, __ARMEABI_read, (void *)hook_armeabi_read, native_sct);
+	replace_syscall((void *)&armeabi_reboot, __ARMEABI_reboot, (void *)hook_armeabi_reboot, native_sct);
+	replace_syscall((void *)&armeabi_fstat64, __ARMEABI_fstat64, (void *)hook_armeabi_fstat64_ret, native_sct);
+	replace_syscall((void *)&armeabi_read, __ARMEABI_read, (void *)hook_armeabi_read, native_sct);
 
 	// start unreg kthread
 	kthread_run(ksu_syscall_table_restore, NULL, "unhook");

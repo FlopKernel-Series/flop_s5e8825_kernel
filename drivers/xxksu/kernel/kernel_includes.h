@@ -72,6 +72,7 @@
 #include <linux/kref.h>
 #include <linux/kthread.h>
 #include <linux/limits.h>
+#include <linux/linkage.h>
 #include <linux/list.h>
 #include <linux/lockdep.h>
 #include <linux/lsm_audit.h>
@@ -141,12 +142,6 @@
 #include <uapi/linux/input.h>
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 7, 0)
-#include <uapi/asm-generic/errno.h>
-#else
-#include <asm-generic/errno.h>
-#endif
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)
 #include <crypto/sha2.h>
 #else
@@ -162,7 +157,7 @@
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
-#include <uapi/linux/eventpoll.h>
+#include <linux/eventpoll.h>
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 11, 0)
@@ -270,6 +265,25 @@ typedef typeof(nullptr) nullptr_t;
 		__scalar_type_to_expr_cases(long),		\
 		__scalar_type_to_expr_cases(long long),		\
 		default: (x)))
+#endif
+
+/**
+ * __overloaded
+ * - not a thing, just communicates intent, for annotation purposes
+ */
+#define __overloaded
+
+/**
+ * __overloadable
+ * now this is an actual thing, however, Clang only.
+ * this enables Cpp-like fn overloading (same fn names, compiler resolved)
+ * so you also get Cpp symbol mangling, c++filt is your friend.
+ * no gcc equivalent.
+ */
+#if defined(__clang__)
+#define __overloadable	__attribute__((overlodable))
+#else
+#define __overloadable
 #endif
 
 /**
@@ -503,6 +517,12 @@ static inline void kfree_byref(void *buf) { kfree(*(void **)buf); }
 #define pr_devel(...)	do { } while (0)
 #define printk(...)	do { } while (0)
 #endif // CONFIG_KSU_NOPRINTK && !CONFIG_KSU_DEBUG
+
+// no ratelimit
+#ifdef pr_warn_ratelimited
+#undef pr_warn_ratelimited
+#endif
+#define pr_warn_ratelimited pr_warn
 
 /**
  * disallow usage of old string functions removed on newer linux kernels
