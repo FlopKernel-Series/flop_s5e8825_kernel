@@ -100,11 +100,66 @@ size_is_sufficient:
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 5, 0)
-__weak int sprint_symbol_no_offset(char *buffer, unsigned long address) { return sprint_symbol(buffer, address); }
+__weak int sprint_symbol_no_offset(char *buffer, unsigned long address)
+{ 
+	int ret = sprint_symbol(buffer, address);
+	if (!(ret > 0))
+		return ret;
+	
+	char *plus = strnchr(buffer, KSYM_SYMBOL_LEN, '+');
+	if (plus) {
+		plus[0] = 0;
+		ret = plus - buffer; // cut
+	}
+	return ret;
+}
 #endif
 
-#ifdef MODULE // https://elixir.bootlin.com/linux/v7.2-rc4/source/kernel/kprobes.c#L1506
-static __nocfi int ksu_kallsyms_lookup_size_offset(uintptr_t symaddr, unsigned long *sym_size, unsigned long *offset)
+#ifdef MODULE
+/**
+ *  kallsyms_lookup_size_offset from sprint_symbol actually
+ */
+static int compat_kallsyms_lookup_size_offset(unsigned long addr, unsigned long *symbolsize, unsigned long *offset)
+{
+	char buf[KSYM_SYMBOL_LEN];
+	unsigned long u_sz;
+	unsigned long u_off;
+
+	if (!addr || !symbolsize || !offset)
+		return 0;
+
+	if (!(sprint_symbol(buf, addr) > 0))
+		return 0;		
+	
+//	pr_info("symbol is: %s \n", buf);
+
+	char *c_sz = strchr(buf, '/');
+	if (!c_sz)
+		return 0;		
+
+	if (kstrtoul(c_sz + 1, 0, &u_sz))
+		return 0;		
+
+	// null '/', strtok called back.
+	c_sz[0] = 0;
+
+	char *c_off = strchr(buf, '+');
+	if (!c_off)
+		return 0;	
+
+	if (kstrtoul(c_off + 1, 0, &u_off))
+		return 0;		
+
+//	pr_info("symbol_size: %zu \n", u_sz);
+//	pr_info("symbol_offset: %zu \n", u_off);
+
+	*symbolsize = u_sz;
+	*offset = u_off;
+	return 1; // ret 1 for success
+}
+
+// https://elixir.bootlin.com/linux/v7.2-rc4/source/kernel/kprobes.c#L1506
+static __nocfi int ksu_kallsyms_lookup_size_offset(unsigned long addr, unsigned long *symbolsize, unsigned long *offset)
 {
 	static typeof(ksu_kallsyms_lookup_size_offset) *fn = nullptr;
 	static bool initialized = false;
@@ -115,51 +170,33 @@ static __nocfi int ksu_kallsyms_lookup_size_offset(uintptr_t symaddr, unsigned l
 	}
 
 	if (fn)
-		return fn(symaddr, sym_size, offset);
+		return fn(addr, symbolsize, offset);
 
-	*sym_size = 0;
-	*offset = 0;
-	return 0;
+	return compat_kallsyms_lookup_size_offset(addr, symbolsize, offset);
 }
 #define kallsyms_lookup_size_offset ksu_kallsyms_lookup_size_offset
 #endif
 
-static noinline void dotted_kallsyms_build_hash_array(void)
+static void dotted_kallsyms_build_hash_array(void)
 {
 	extern char _stext[], _etext[];
 	uintptr_t start = (uintptr_t)_stext;
 	uintptr_t end = (uintptr_t)_etext;
 	uintptr_t iter_count = 0;
-	uintptr_t curr;
 
+	char symbol_buf[KSYM_SYMBOL_LEN];
 	cond_resched();
-
-	char *membuf __offstack(KSYM_SYMBOL_LEN * 2);
-	char *symbol_buf = membuf;
-	char *symbol_cache = membuf + KSYM_SYMBOL_LEN;
-
 	pr_info("%s: hash array init! \n", __func__);
 
-	curr = start;
+	uintptr_t curr = start;
 
 scan_start:
 	iter_count++;
 
-	// not needed actually, sprint_symbol terminates.
-	// we keep it here as a reminder.
-	// memset(symbol_buf, 0, sizeof(symbol_buf));
-
-	sprint_symbol_no_offset(symbol_buf, curr);
-	if (!symbol_buf[0])
+	if (sprint_symbol(symbol_buf, curr) <= 0)
 		goto step_up;
 
-	// if current symbol is same as last entry, skip
-	if (!strcmp(symbol_buf, symbol_cache))
-		goto step_up;
-
-	// symbol is not the same as the last one!
-	// cache this symbol and insert it to our hash array!
-	strscpy(symbol_cache, symbol_buf, KSYM_SYMBOL_LEN);
+	char *slash = strchr(symbol_buf, '/');
 
 	// however we should not use cfi_jt for this
 	// what we want is the target of that cfi_jt
@@ -175,26 +212,24 @@ scan_start:
 	// .llvm.505034 or .lto_priv.0
 	char *dot_ptr = strchr(symbol_buf, '.');
 	if (dot_ptr)
-		dot_ptr[0] = '\0';
+		dot_ptr[0] = 0;
 
 	char *dollar_ptr = strchr(symbol_buf, '$');
 	if (dollar_ptr)
-		dollar_ptr[0] = '\0';
+		dollar_ptr[0] = 0;
 
 	if (!dot_ptr && !dollar_ptr)
 		goto step_up;
 
+//	pr_info("insert: %s \n", symbol_buf);
 	insert_to_kallsyms_array(symbol_buf, curr);
 
 step_up:;
-	unsigned long sym_size = 0;
-	unsigned long offset = 0;
-	kallsyms_lookup_size_offset(curr, &sym_size, &offset);
-	if ((!!sym_size || !!offset) && sym_size > offset)
-		curr =  curr + (sym_size - offset); // we can do larger jumps
-	else
-		curr = curr + 4;
+	size_t sym_sz = sizeof(uint32_t);
+	if (slash && !!kstrtoul(slash + 1, 0, &sym_sz))
+		sym_sz = sizeof(uint32_t);
 
+	curr = curr + sym_sz;
 	if (curr < end)
 		goto scan_start;
 
@@ -203,7 +238,7 @@ step_up:;
 	return;
 }
 
-static noinline uintptr_t kallsyms_lookup_hashed_name(const char *name)
+static uintptr_t kallsyms_lookup_hashed_name(const char *name)
 {
 	if (!name || !kallsyms_hash_array)
 		return 0x0;
@@ -267,11 +302,11 @@ static int kallsyms_on_each_symbol_cb(void *data, const char *name, struct modul
 	strscpy(namebuf, name, KSYM_SYMBOL_LEN);
 	char *dot_ptr = strchr(namebuf, '.');
 	if (dot_ptr)
-		dot_ptr[0] = '\0';
+		dot_ptr[0] = 0;
 
 	char *dollar_ptr = strchr(namebuf, '$');
 	if (dollar_ptr)
-		dollar_ptr[0] = '\0';
+		dollar_ptr[0] = 0;
 
 	if (!!strcmp(namebuf, args->target_name))
 		return 0;
@@ -281,33 +316,32 @@ static int kallsyms_on_each_symbol_cb(void *data, const char *name, struct modul
 	return 1;
 }
 
-static noinline __nocfi uintptr_t try_kallsyms_on_each_symbol(const char *name)
+#ifdef MODULE
+static __nocfi int ksu_kallsyms_on_each_symbol(void *cb, void *data)
 {
-#ifdef MODULE // lazy init
-	static typeof(kallsyms_on_each_symbol) *kallsyms_on_each_symbol_fn __read_mostly;
-	static void *state = &&bootstrap;
-	goto *state;
+	static typeof(kallsyms_on_each_symbol) *fn = nullptr;
+	static bool initialized = false;
 
-bootstrap:
-	*(void **)&kallsyms_on_each_symbol_fn = (void *)kallsyms_lookup_name("kallsyms_on_each_symbol");
-	if (!!kallsyms_on_each_symbol_fn)
-		state = &&fn_ok;
-	else
-		state = &&no_fn;
-	goto *state;
-no_fn:
-	return 0x0;
+	if (!initialized) {
+		fn = (void *)kallsyms_lookup_name("kallsyms_on_each_symbol");
+		initialized = true;
+	}
+	if (!fn)
+		return 0;
 
-fn_ok:;
-#else
-#define kallsyms_on_each_symbol_fn kallsyms_on_each_symbol
+	return fn(cb, data);
+}
+#define kallsyms_on_each_symbol(cb, data) ksu_kallsyms_on_each_symbol((void *)cb, data)
 #endif
+
+static uintptr_t try_kallsyms_on_each_symbol(const char *name)
+{
 	struct lookup_args args;
 	args.target_name = name;
 	args.target_addr = 0x0;
 
-	int ret = kallsyms_on_each_symbol_fn(kallsyms_on_each_symbol_cb, &args);
-	if (ret && args.target_addr)
+	int ret = kallsyms_on_each_symbol(kallsyms_on_each_symbol_cb, &args);
+	if (IS_ENABLED(CONFIG_KSU_DEBUG) && ret && args.target_addr)
 		pr_info("kallsyms_on_each_symbol: success! %s at 0x%lx\n", name, args.target_addr);
 
 	return args.target_addr;
@@ -326,10 +360,22 @@ static uintptr_t kp_kallsyms_lookup_name(const char *name)
 	pr_info("%s: success! %s at 0x%lx\n", __func__, name, addr);
 	return addr;
 }
+#else
+#define kp_kallsyms_lookup_name(name) ({ 0x0; })
 #endif
 
-// if called within kthread, will try to build a kallsyms hash array when everything failed!
-static noinline uintptr_t kallsyms_lookup_retry(const char *name)
+/**
+ * Usage:
+ *	kallsyms_lookup_retry("name")
+ *	kallsyms_lookup_retry("name", op)
+ *
+ * if called within kthread, this will try to build a kallsyms 
+ * hash array when everything failed unless noscan is flagged.
+ *
+ */
+#define lookup_scan	0 // scan, default
+#define lookup_noscan	1 // no scan
+static noinline uintptr_t kallsyms_lookup_retry_op(const char *name, int op)
 {
 	if (!name)
 		return 0x0;
@@ -338,19 +384,21 @@ static noinline uintptr_t kallsyms_lookup_retry(const char *name)
 	if (addr)
 		goto found;
 
-#ifdef CONFIG_KPROBES
 	addr = kp_kallsyms_lookup_name(name);
 	if (addr)
 		goto found;
-#endif
 
 	addr = try_kallsyms_on_each_symbol(name);
 	if (addr)
 		goto found;
 
-	smp_mb();
 	if (kallsyms_hash_array_ready)
-		return kallsyms_lookup_hashed_name(name);
+		addr = kallsyms_lookup_hashed_name(name);
+	if (addr)
+		goto found;		
+
+	if (op == lookup_noscan)
+		return 0x0;
 
 	// only kthread is allowed to go further
 	if (!(current->flags & PF_KTHREAD))
@@ -369,9 +417,11 @@ static noinline uintptr_t kallsyms_lookup_retry(const char *name)
 found:;
 	char namebuf[KSYM_NAME_LEN];
 	sprint_symbol_no_offset(namebuf, addr);
-	pr_info("%s: %s addr: 0x%lx \n", __func__, namebuf, addr);
+	pr_info("kallsyms_lookup_retry: %s addr: 0x%lx \n", namebuf, addr);
 	return addr;
 }
+#define __kallsyms_lookup_retry(name, mode, ...) kallsyms_lookup_retry_op(name, mode)
+#define kallsyms_lookup_retry(name, ...) __kallsyms_lookup_retry(name, ##__VA_ARGS__, lookup_scan)
 
 // NOTE: absolute minimum compat, just to appease API.
 static int kallsyms_lookup_batched(const char *const *names, unsigned long *addrs, u32 count)
@@ -415,9 +465,10 @@ static noinline size_t ksu_get_ksym_size(uintptr_t symbol_addr, size_t retfail)
 	unsigned long offset = 0;
 	unsigned long symbolsize = 0;
 
-	kallsyms_lookup_size_offset(symbol_addr, &symbolsize, &offset);
-
 	// means lookup failed, just return retfail
+	if (!kallsyms_lookup_size_offset(symbol_addr, &symbolsize, &offset))
+		return retfail;		
+
 	if (!symbolsize && !offset)
 		return retfail;
 
@@ -450,7 +501,7 @@ static noinline size_t ksu_get_ksym_size(uintptr_t symbol_addr, size_t retfail)
 
 #define TOTAL_HASH_ARRAY_USERS (HASH_ARRAY_USER1 + HASH_ARRAY_USER2)
 
-static noinline void dotted_kallsyms_destroy_hash_array(void)
+static void dotted_kallsyms_destroy_hash_array(void)
 {
 	guarded_mutex_lock(&kallsyms_hash_array_mutex);
 
