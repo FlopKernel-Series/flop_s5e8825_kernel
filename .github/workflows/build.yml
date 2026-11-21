@@ -3,6 +3,7 @@ name: Build FloppyKernel
 on:
   workflow_dispatch:
   push:
+    branches: [ floppy-new ]
 
 jobs:
   build:
@@ -447,65 +448,50 @@ jobs:
           fi
           printf 'Attaching %d file(s)\n' "${#files[@]}"
 
-          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-          REPO_NAME="${GITHUB_REPOSITORY##*/}"
-          COMMIT_URL="${REPO_URL}/commit/${GITHUB_SHA}"
-          BRANCH_URL="${REPO_URL}/tree/${GITHUB_REF_NAME}"
-          RUN_URL="${REPO_URL}/actions/runs/${GITHUB_RUN_ID}"
+          DEVICE="exynos1280"
 
-          prev_tag="$(gh release list --repo "$TARGET_REPO" --exclude-drafts --limit 100 --json tagName,createdAt 2>/dev/null | jq -r --arg cur "$TAG" --arg p "${safe_branch}-" '[sort_by(.createdAt) | reverse | .[].tagName | select(. != $cur and startswith($p))] | .[0] // empty')"
-          if [ -z "$prev_tag" ]; then
-            CHANGELOG_HEAD="Changelog"
-            CHANGELOG="First release from this branch in the pool — nothing to compare against yet."
-          else
+          prev_tag="$(gh release list --repo "$TARGET_REPO" --exclude-drafts --limit 100 --json tagName,publishedAt 2>/dev/null | jq -r --arg cur "$TAG" --arg p "${safe_branch}-" '[sort_by(.publishedAt) | reverse | .[].tagName | select(. != $cur and startswith($p))] | .[0] // empty')"
+
+          LIMIT=15
+          changes=""
+          if [ -n "$prev_tag" ]; then
             prev_sha="$(printf '%s' "$prev_tag" | grep -oP '[0-9a-f]{7}$' || true)"
-            if [ -z "$prev_sha" ] || [ "$prev_sha" = "$short_sha" ]; then
-              CHANGELOG_HEAD="Changelog"
-              CHANGELOG="No new commits since ${prev_tag}."
-            elif cmp_json="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${prev_sha}...${GITHUB_SHA}" 2>/dev/null)"; then
-              ahead="$(printf '%s' "$cmp_json" | jq -r '.ahead_by // 0')"
-              if [ "$ahead" = "0" ]; then
-                CHANGELOG_HEAD="Changelog"
-                CHANGELOG="No new commits since ${prev_tag}."
-              else
-                CHANGELOG_HEAD="Changes since ${prev_tag} (${ahead} commit(s))"
-                CHANGELOG="$(printf '%s' "$cmp_json" | jq -r --arg ru "$REPO_URL" '[.commits[] | "- [" + .sha[0:7] + "](" + $ru + "/commit/" + .sha + ") " + (.commit.message | split("\n")[0])] | .[:30] | .[]')"
-                if [ "$ahead" -gt 30 ]; then
-                  CHANGELOG+="$(printf '\n- ...and %d more.' "$((ahead - 30))")"
-                fi
-              fi
-            else
-              CHANGELOG_HEAD="Changelog"
-              CHANGELOG="Could not compare ${prev_tag}...${short_sha} (commit history unavailable)."
+            if [ -n "$prev_sha" ] && [ "$prev_sha" != "$short_sha" ] && cmp_json="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${prev_sha}...${GITHUB_SHA}" 2>/dev/null)"; then
+              changes="$(printf '%s' "$cmp_json" | jq -r --argjson n "$LIMIT" '[.commits[] | "- " + .sha[0:8] + " " + (.commit.message | split("\n")[0])] | reverse | .[:$n] | .[]')"
             fi
           fi
+          if [ -z "$changes" ]; then
+            changes="$(gh api "repos/${GITHUB_REPOSITORY}/commits?sha=${GITHUB_SHA}&per_page=${LIMIT}" 2>/dev/null | jq -r '[.[] | "- " + .sha[0:8] + " " + (.commit.message | split("\n")[0])] | .[]' || true)"
+          fi
+          [ -n "$changes" ] || changes="- No changes listed for this build"
 
-          printf -v NOTES 'FloppyKernel exynos1280 build from [%s](%s)\nBranch: [%s](%s)\nCommit: [`%s`](%s)\nRun: [workflow run](%s)\n\n## %s\n%s' \
-            "$REPO_NAME" "$REPO_URL" "$GITHUB_REF_NAME" "$BRANCH_URL" "$short_sha" "$COMMIT_URL" "$RUN_URL" "$CHANGELOG_HEAD" "$CHANGELOG"
+          printf -v NOTES 'Experimental FloppyKernel build for %s from commit %s. This build is auto-generated on every %s push, expect instability.\n\n## Changes\n%s\n' \
+            "$DEVICE" "$short_sha" "$GITHUB_REF_NAME" "$changes"
 
           if gh release view "$TAG" --repo "$TARGET_REPO" >/dev/null 2>&1; then
             echo "Release $TAG exists, updating files and notes"
             gh release upload "$TAG" --repo "$TARGET_REPO" --clobber "${files[@]}"
             gh release edit "$TAG" --repo "$TARGET_REPO" --notes "$NOTES"
           else
-            gh release create "$TAG" --repo "$TARGET_REPO" --title "$TAG" --notes "$NOTES" "${files[@]}"
+            gh release create "$TAG" --repo "$TARGET_REPO" --title "FloppyKernel ${DEVICE} (${datestamp}-${short_sha})" --notes "$NOTES" "${files[@]}"
           fi
 
           default_branch="$(gh api "repos/${GITHUB_REPOSITORY}" --jq .default_branch)"
           safe_default="$(sanitize "$default_branch")"
           [ -n "$safe_default" ] || safe_default="build"
 
-          list_json="$(gh release list --repo "$TARGET_REPO" --exclude-drafts --limit 100 --json tagName,createdAt)"
+          list_json="$(gh release list --repo "$TARGET_REPO" --exclude-drafts --limit 100 --json tagName,publishedAt)"
           total="$(printf '%s' "$list_json" | jq 'length')"
           echo "Releases in $TARGET_REPO: $total"
 
           if [ "$total" -gt 10 ]; then
-            protected_list="$(printf '%s' "$list_json" | jq -r --arg p "${safe_default}-" '[sort_by(.createdAt) | reverse | .[].tagName | select(startswith($p))] | .[:5] | .[]')"
-            mapfile -t ordered < <(printf '%s' "$list_json" | jq -r 'sort_by(.createdAt) | .[].tagName')
+            protected_list="$(printf '%s' "$list_json" | jq -r --arg p "${safe_default}-" '[sort_by(.publishedAt) | reverse | .[].tagName | select(startswith($p))] | .[:5] | .[]')"
+            mapfile -t ordered < <(printf '%s' "$list_json" | jq -r 'sort_by(.publishedAt) | .[].tagName')
             to_delete=$((total - 10))
             deleted=0
             for tag in "${ordered[@]}"; do
               [ "$deleted" -ge "$to_delete" ] && break
+              [ "$tag" = "$TAG" ] && continue
               rest="${tag#"${safe_default}-"}"
               if [ "$rest" != "$tag" ] && [[ "$rest" =~ ^[0-9]{8}-[0-9a-f]+$ ]] && printf '%s\n' "$protected_list" | grep -Fxq "$tag"; then
                 echo "Keeping protected release: $tag"
