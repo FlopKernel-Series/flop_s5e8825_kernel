@@ -146,6 +146,15 @@ void trigger_input_booster(struct work_struct *work)
 
 	mutex_lock(&trigger_ib_lock);
 
+	if (p_IbTrigger->dev_type <= NONE_TYPE_DEVICE ||
+		p_IbTrigger->dev_type >= device_count ||
+		ib_device_trees[p_IbTrigger->dev_type].res == NULL) {
+		pr_err(ITAG" IB Trigger :: invalid dev_type(%d), device_count(%d)",
+			p_IbTrigger->dev_type, device_count);
+		mutex_unlock(&trigger_ib_lock);
+		return;
+	}
+
 	// Input booster On/Off handling
 	if (p_IbTrigger->event_type == BOOSTER_ON) {
 
@@ -813,6 +822,8 @@ void input_booster_init(void)
 		pr_err(ITAG" ib list mem alloc fail");
 		goto out;
 	}
+	for (i = 0; i < ndevice_in_dt; i++)
+		INIT_LIST_HEAD(&ib_list[i]);
 
 // Get Needed Information from dtsi
 	result = sscanf((of_get_property(np, "max_resource_count",
