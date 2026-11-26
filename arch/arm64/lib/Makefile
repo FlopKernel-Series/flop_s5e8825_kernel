@@ -6,9 +6,10 @@ lib-y		:= clear_user.o delay.o copy_from_user.o		\
 		   strnlen.o strchr.o strrchr.o tishift.o
 
 ifeq ($(CONFIG_KERNEL_MODE_NEON), y)
+xor-neon-y := xor-neon-glue.o xor-neon-intrinsics.o
 obj-$(CONFIG_XOR_BLOCKS)	+= xor-neon.o
-CFLAGS_REMOVE_xor-neon.o	+= -mgeneral-regs-only
-CFLAGS_xor-neon.o		+= -ffreestanding
+CFLAGS_REMOVE_xor-neon-intrinsics.o	+= -mgeneral-regs-only
+CFLAGS_xor-neon-intrinsics.o		+= -ffreestanding
 endif
 
 lib-$(CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE) += uaccess_flushcache.o
